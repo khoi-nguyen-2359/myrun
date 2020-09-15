@@ -1,0 +1,72 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
+
+android {
+    compileSdkVersion Versions.compileSdk
+
+    defaultConfig {
+        applicationId "akio.apps.myrun"
+        minSdkVersion Versions.minSdk
+        targetSdkVersion Versions.targetSdk
+        versionCode Versions.versionCode
+        versionName Versions.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$Versions.kotlin"
+
+    implementation "androidx.appcompat:appcompat:$Versions.appCompat"
+    implementation "androidx.constraintlayout:constraintlayout:$Versions.constraintLayout"
+    implementation "com.android.support:multidex:$Versions.multidex"
+
+    implementation "com.google.dagger:dagger-android:$Versions.dagger"
+    implementation "com.google.dagger:dagger-android-support:$Versions.dagger"
+    kapt "com.google.dagger:dagger-compiler:$Versions.dagger"
+    kapt "com.google.dagger:dagger-android-processor:$Versions.dagger"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutinesCore"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$Versions.coroutinesAndroid"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$Versions.coroutinesPlayServices"
+
+    implementation "com.google.android.gms:play-services-maps:$Versions.playServicesMap"
+    implementation "com.google.android.gms:play-services-location:$Versions.playServicesLocation"
+    implementation "com.google.android.gms:play-services-fitness:$Versions.playServicesFitness"
+    implementation "com.google.android.gms:play-services-auth:$Versions.playServicesAuth"
+
+    implementation "com.google.maps.android:android-maps-utils:$Versions.androidMapUtils"
+
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$Versions.lifecycle"
+    implementation "androidx.lifecycle:lifecycle-extensions:$Versions.lifecycle"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$Versions.lifecycle"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$Versions.lifecycle"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$Versions.lifecycle"
+
+    implementation "com.google.firebase:firebase-core:$Versions.firebaseCore"
+    implementation "com.google.firebase:firebase-firestore:$Versions.firebaseFirestore"
+    implementation "com.google.firebase:firebase-auth:$Versions.firebaseAuth"
+    implementation "com.google.firebase:firebase-analytics:$Versions.firebaseAnalytics"
+    implementation "com.google.firebase:firebase-crashlytics:$Versions.firebaseCrashlytics"
+    implementation "com.crashlytics.sdk.android:crashlytics:$Versions.crashlytics"
+
+    implementation "com.jakewharton.timber:timber:$Versions.timber"
+
+    implementation "com.facebook.android:facebook-login:$Versions.facebook"
+
+    implementation "androidx.room:room-runtime:$Versions.room"
+    kapt "androidx.room:room-compiler:$Versions.room"
+    implementation "androidx.room:room-ktx:$Versions.room"
+}
