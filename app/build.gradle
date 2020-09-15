@@ -24,6 +24,10 @@ android {
         }
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     compileOptions {
         sourceCompatibility 1.8
         targetCompatibility 1.8
@@ -40,6 +44,8 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:$Versions.appCompat"
     implementation "androidx.constraintlayout:constraintlayout:$Versions.constraintLayout"
+    implementation "com.google.android.material:material:$Versions.androidMaterial"
+
     implementation "com.android.support:multidex:$Versions.multidex"
 
     implementation "com.google.dagger:dagger-android:$Versions.dagger"

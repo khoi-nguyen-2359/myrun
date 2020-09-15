@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="route_tracking_control_button_size">48dp</dimen>
+    <dimen name="common_page_vertical_padding">16dp</dimen>
+</resources>

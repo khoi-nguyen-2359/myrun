@@ -7,4 +7,27 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="RouteTrackingInfoLabel">
+        <item name="android:gravity">center</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:alpha">0.9</item>
+        <item name="android:textColor">#000</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="RouteTrackingInfoValue">
+        <item name="android:gravity">center</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#222</item>
+        <item name="android:textSize">26sp</item>
+    </style>
+
+    <style name="RouteTrackingUnitLabel">
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#d32024</item>
+        <item name="android:alpha">0.9</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
 </resources>
