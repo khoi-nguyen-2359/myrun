@@ -14,10 +14,10 @@ object PermissionUtils {
      */
     fun requestPermissions(
         activity: Activity,
-        fragment: Fragment?,
         permissions: Array<String>,
         rcPermissions: Int,
-        onPermissionSettingsDisabled: (() -> Unit)?
+        onPermissionSettingsDisabled: (() -> Unit)?,
+        fragment: Fragment? = null
     ) {
         if (permissions.any {
                 ContextCompat.checkSelfPermission(activity, it) != PackageManager.PERMISSION_GRANTED
