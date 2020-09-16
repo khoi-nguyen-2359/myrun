@@ -1,6 +1,6 @@
-package akio.apps.common.viewmodel
+package akio.apps._base.viewmodel
 
-import akio.apps.common.lifecycle.Event
+import akio.apps._base.lifecycle.Event
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

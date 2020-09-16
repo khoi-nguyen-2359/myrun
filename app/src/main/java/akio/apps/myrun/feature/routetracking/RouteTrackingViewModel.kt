@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.routetracking
 
-import akio.apps.common.lifecycle.Event
-import akio.apps.common.viewmodel.BaseViewModel
+import akio.apps._base.lifecycle.Event
+import akio.apps._base.viewmodel.BaseViewModel
 import android.location.Location
 import androidx.lifecycle.LiveData
 

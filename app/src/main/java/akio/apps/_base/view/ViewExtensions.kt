@@ -1,4 +1,4 @@
-package akio.apps.common.view
+package akio.apps._base.view
 
 import android.content.Context
 import android.content.res.Resources

@@ -1,4 +1,4 @@
-package akio.apps.common.lifecycle
+package akio.apps._base.lifecycle
 
 import androidx.lifecycle.Observer
 

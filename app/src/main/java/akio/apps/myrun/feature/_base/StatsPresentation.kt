@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.common
+package akio.apps.myrun.feature._base
 
 object StatsPresentation {
     fun getDisplayTrackingDistance(distanceInMeters: Double): String = String.format("%.2f", distanceInMeters / 1000)

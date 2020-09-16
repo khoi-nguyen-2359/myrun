@@ -1,4 +1,4 @@
-package akio.apps.common.log
+package akio.apps._base.log
 
 import android.util.Log
 import com.crashlytics.android.Crashlytics

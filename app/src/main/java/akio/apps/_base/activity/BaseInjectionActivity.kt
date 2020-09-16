@@ -1,4 +1,4 @@
-package akio.apps.common.activity
+package akio.apps._base.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

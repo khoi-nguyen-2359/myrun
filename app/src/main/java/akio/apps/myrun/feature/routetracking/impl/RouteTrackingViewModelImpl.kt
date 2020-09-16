@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.routetracking.impl
 
-import akio.apps.common.lifecycle.Event
+import akio.apps._base.lifecycle.Event
 import akio.apps.myrun.feature.routetracking.GetMapInitialLocationUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import android.location.Location

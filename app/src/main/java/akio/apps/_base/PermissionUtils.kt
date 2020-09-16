@@ -1,4 +1,4 @@
-package akio.apps.common
+package akio.apps._base
 
 import android.app.Activity
 import android.content.Context

@@ -1,14 +1,14 @@
 package akio.apps.myrun.feature.routetracking.impl
 
-import akio.apps.common.activity.BaseInjectionActivity
-import akio.apps.common.lifecycle.observeEvent
+import akio.apps._base.activity.BaseInjectionActivity
+import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun.R
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
-import akio.apps.myrun.feature.common.AppPermissions.locationPermissions
-import akio.apps.myrun.feature.common.CheckLocationServiceDelegate
-import akio.apps.myrun.feature.common.CheckRequiredPermissionsDelegate
-import akio.apps.myrun.feature.common.MapPresentation
-import akio.apps.myrun.feature.common.toGoogleLatLng
+import akio.apps.myrun.feature._base.AppPermissions.locationPermissions
+import akio.apps.myrun.feature._base.CheckLocationServiceDelegate
+import akio.apps.myrun.feature._base.CheckRequiredPermissionsDelegate
+import akio.apps.myrun.feature._base.MapPresentation
+import akio.apps.myrun.feature._base.toGoogleLatLng
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import android.annotation.SuppressLint
 import android.content.Context

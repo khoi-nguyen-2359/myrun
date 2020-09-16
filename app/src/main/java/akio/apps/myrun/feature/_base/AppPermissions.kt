@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.common
+package akio.apps.myrun.feature._base
 
 import android.Manifest
 

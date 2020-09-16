@@ -1,6 +1,6 @@
-package akio.apps.myrun.feature.common
+package akio.apps.myrun.feature._base
 
-import akio.apps.common.PermissionUtils
+import akio.apps._base.PermissionUtils
 import akio.apps.myrun.R
 import android.app.Activity
 import android.content.Intent
