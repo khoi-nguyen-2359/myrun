@@ -17,62 +17,59 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/route_tracking_distance_label"
-        app:layout_constraintBaseline_toBaselineOf="@+id/time_label_text_view"
-        app:layout_constraintEnd_toStartOf="@+id/time_label_text_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/speed_label_text_view"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/speed_label_text_view"
+        style="@style/RouteTrackingInfoLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/route_tracking_speed_label"
+        app:layout_constraintEnd_toStartOf="@+id/time_label_text_view"
+        app:layout_constraintStart_toEndOf="@+id/distance_label_text_view" />
 
     <TextView
         android:id="@+id/time_label_text_view"
         style="@style/RouteTrackingInfoLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/route_tracking_time_label"
-        app:layout_constraintBaseline_toBaselineOf="@+id/pace_label_text_view"
-        app:layout_constraintEnd_toStartOf="@+id/pace_label_text_view"
-        app:layout_constraintStart_toEndOf="@+id/distance_label_text_view" />
-
-    <TextView
-        android:id="@+id/pace_label_text_view"
-        style="@style/RouteTrackingInfoLabel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/common_page_vertical_padding"
-        android:text="@string/route_tracking_page_label"
-        app:layout_constraintBottom_toTopOf="@+id/pace_text_view"
+        android:text="@string/route_tracking_time_label"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/time_label_text_view" />
+        app:layout_constraintStart_toEndOf="@+id/speed_label_text_view" />
 
     <TextView
         android:id="@+id/distance_text_view"
         style="@style/RouteTrackingInfoValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="0"
-        app:layout_constraintBaseline_toBaselineOf="@+id/pace_text_view"
-        app:layout_constraintEnd_toStartOf="@+id/time_text_view"
+        android:text="--"
+        app:layout_constraintTop_toBottomOf="@id/distance_label_text_view"
+        app:layout_constraintEnd_toStartOf="@+id/speed_text_view"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/speed_text_view"
+        style="@style/RouteTrackingInfoValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="--"
+        app:layout_constraintTop_toBottomOf="@id/speed_label_text_view"
+        app:layout_constraintEnd_toStartOf="@+id/time_text_view"
+        app:layout_constraintStart_toEndOf="@+id/distance_text_view" />
 
     <TextView
         android:id="@+id/time_text_view"
         style="@style/RouteTrackingInfoValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="0:00"
-        app:layout_constraintBaseline_toBaselineOf="@+id/pace_text_view"
-        app:layout_constraintEnd_toStartOf="@+id/pace_text_view"
-        app:layout_constraintStart_toEndOf="@+id/distance_text_view" />
-
-    <TextView
-        android:id="@+id/pace_text_view"
-        style="@style/RouteTrackingInfoValue"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:text="-:-"
-        app:layout_constraintBottom_toTopOf="@+id/pace_unit_text_view"
+        android:text="00:00:00"
+        app:layout_constraintTop_toBottomOf="@id/time_label_text_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/time_text_view" />
+        app:layout_constraintStart_toEndOf="@id/speed_text_view" />
 
     <TextView
         android:id="@+id/distance_unit_text_view"
@@ -80,32 +77,22 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/common_distance_unit"
-        app:layout_constraintBaseline_toBaselineOf="@id/pace_unit_text_view"
-        app:layout_constraintEnd_toStartOf="@+id/duration_unit_text_view"
+        app:layout_constraintTop_toBottomOf="@id/distance_text_view"
+        app:layout_constraintEnd_toEndOf="@id/distance_label_text_view"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/distance_label_text_view"
         tools:layout_editor_absoluteY="16dp" />
 
     <TextView
-        android:id="@+id/duration_unit_text_view"
+        android:id="@+id/speed_unit_text_view"
         style="@style/RouteTrackingUnitLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/common_time_unit"
-        app:layout_constraintBaseline_toBaselineOf="@id/pace_unit_text_view"
-        app:layout_constraintEnd_toStartOf="@+id/pace_unit_text_view"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/distance_unit_text_view"
-        tools:layout_editor_absoluteY="16dp" />
-
-    <TextView
-        android:id="@+id/pace_unit_text_view"
-        style="@style/RouteTrackingUnitLabel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/common_pace_unit"
+        android:text="@string/common_speed_unit"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/duration_unit_text_view" />
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/speed_label_text_view"
+        app:layout_constraintEnd_toEndOf="@id/speed_label_text_view"
+        tools:layout_editor_absoluteY="16dp" />
 
 </merge>

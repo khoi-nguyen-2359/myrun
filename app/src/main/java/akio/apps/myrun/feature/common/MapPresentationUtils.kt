@@ -14,7 +14,7 @@ object MapPresentationUtils {
         }
     }
 
-    fun getDisplayPace(pace: Double): String {
-        return String.format("%d:%02d", pace.toInt(), ((pace - pace.toInt()) * 60).toInt())
+    fun getDisplaySpeed(speed: Double): CharSequence? {
+        TODO("Not yet implemented")
     }
 }

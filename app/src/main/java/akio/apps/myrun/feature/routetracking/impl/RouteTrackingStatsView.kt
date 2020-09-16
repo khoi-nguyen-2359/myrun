@@ -31,9 +31,9 @@ class RouteTrackingStatsView @JvmOverloads constructor(
 
         timeTextView.text = MapPresentationUtils.getDisplayDuration(totalSec)
 
-        val totalMin = totalSec / 60.0
+        val hours = totalSec / 3600.0
         val distanceInKm = distanceInMeter / 1000
-        val pace = if (distanceInKm == 0.0) 0.0 else totalMin / distanceInKm
-        paceTextView.text = MapPresentationUtils.getDisplayPace(pace)
+        val speed = if (distanceInKm == 0.0) 0.0 else distanceInKm / hours
+        speedTextView.text = MapPresentationUtils.getDisplaySpeed(speed)
     }
 }
