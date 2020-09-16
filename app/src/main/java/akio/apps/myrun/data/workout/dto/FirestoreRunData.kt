@@ -1,7 +1,5 @@
 package akio.apps.myrun.data.workout.dto
 
-import com.google.android.gms.fitness.data.DataPoint
-
 data class FirestoreRunData(
     // info
     val routePhoto: String = "",

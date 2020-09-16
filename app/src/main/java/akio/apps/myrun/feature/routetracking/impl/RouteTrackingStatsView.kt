@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.routetracking.impl
 import akio.apps.common.view.getDrawableCompat
 import akio.apps.myrun.R
 import akio.apps.myrun.databinding.MergeRouteTrackingStatsViewBinding
-import akio.apps.myrun.feature.common.MapPresentationUtils
+import akio.apps.myrun.feature.common.MapPresentation
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -27,13 +27,13 @@ class RouteTrackingStatsView @JvmOverloads constructor(
     }
 
     fun update(distanceInMeter: Double, totalSec: Long) = viewBinding.apply {
-        distanceTextView.text = MapPresentationUtils.getDisplayTrackingDistance(distanceInMeter)
+        distanceTextView.text = MapPresentation.getDisplayTrackingDistance(distanceInMeter)
 
-        timeTextView.text = MapPresentationUtils.getDisplayDuration(totalSec)
+        timeTextView.text = MapPresentation.getDisplayDuration(totalSec)
 
         val hours = totalSec / 3600.0
         val distanceInKm = distanceInMeter / 1000
         val speed = if (distanceInKm == 0.0) 0.0 else distanceInKm / hours
-        speedTextView.text = MapPresentationUtils.getDisplaySpeed(speed)
+        speedTextView.text = MapPresentation.getDisplaySpeed(speed)
     }
 }

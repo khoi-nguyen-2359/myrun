@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.common
 
-object MapPresentationUtils {
+object MapPresentation {
     fun getDisplayTrackingDistance(distanceInMeters: Double): String = String.format("%.2f", distanceInMeters / 1000)
 
     fun getDisplayDuration(totalSec: Long): String {
@@ -15,6 +15,6 @@ object MapPresentationUtils {
     }
 
     fun getDisplaySpeed(speed: Double): CharSequence? {
-        TODO("Not yet implemented")
+        return String.format("%.2f", speed)
     }
 }

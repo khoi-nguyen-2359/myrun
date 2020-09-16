@@ -8,4 +8,9 @@
     <string name="common_pace_unit">min/km</string>
     <string name="route_tracking_speed_label">Speed</string>
     <string name="common_speed_unit">km/h</string>
+    <string name="error_permission_settings_disabled">Please grant permissions in app settings</string>
+    <string name="action_open_settings">Open settings</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="error_required_permissions_missing">Please grant permissions to use this features</string>
+    <string name="action_close">Close</string>
 </resources>

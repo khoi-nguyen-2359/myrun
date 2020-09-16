@@ -20,7 +20,6 @@ object Versions {
     const val room = "2.2.5"
     const val lifecycle = "2.2.0"
     const val timber = "4.7.1"
-    const val facebook = "[5,6)"
     const val multidex = "1.0.3"
 
     const val coroutinesCore = "1.3.8"
@@ -29,7 +28,6 @@ object Versions {
 
     const val playServicesMap = "17.0.0"
     const val playServicesLocation = "17.0.0"
-    const val playServicesFitness = "19.0.0"
     const val playServicesAuth = "18.1.0"
 
     const val androidMapUtils = "1.1.0"
