@@ -11,8 +11,11 @@ import akio.apps.myrun.feature.common.MapPresentation
 import akio.apps.myrun.feature.common.toGoogleLatLng
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -22,11 +25,12 @@ import kotlinx.coroutines.launch
 class RouteTrackingActivity : BaseInjectionActivity() {
 
     private val viewBinding by lazy { ActivityRouteTrackingBinding.inflate(layoutInflater) }
+
     private val viewModel: RouteTrackingViewModel by lazy { getViewModel() }
 
     private lateinit var mapView: GoogleMap
 
-    private val checkLocationServiceDelegate by lazy { CheckLocationServiceDelegate(this, emptyList(), RC_LOCATION_SERVICE, onLocationServiceAvailable) }
+    private val checkLocationServiceDelegate by lazy { CheckLocationServiceDelegate(this, listOf(RouteTrackingService.createLocationTrackingRequest()), RC_LOCATION_SERVICE, onLocationServiceAvailable) }
 
     private val checkRequiredPermissionsDelegate by lazy { CheckRequiredPermissionsDelegate(this, RC_LOCATION_PERMISSIONS, locationPermissions, onLocationPermissionsGranted) }
 
@@ -38,11 +42,35 @@ class RouteTrackingActivity : BaseInjectionActivity() {
     }
 
     private fun initObservers() {
+        observeEvent(viewModel.mapInitialLocation) { initLocation ->
+            mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGoogleLatLng(), MapPresentation.MAP_DEFAULT_ZOOM_LEVEL))
+        }
     }
 
     private fun initViews() {
         viewBinding.apply {
             setContentView(root)
+            recordButton.root.setOnClickListener { onStartRouteTracking() }
+        }
+    }
+
+    private fun onStartRouteTracking() {
+        viewBinding.apply {
+            recordButton.root.visibility = View.GONE
+            resetButton.root.visibility = View.GONE
+            stopButton.root.visibility = View.GONE
+            pauseButton.root.visibility = View.VISIBLE
+        }
+
+        startRouteTrackingService()
+    }
+
+    private fun startRouteTrackingService() {
+        val serviceIntent = RouteTrackingService.startIntent(this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
         }
     }
 
@@ -70,9 +98,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
             map.isMyLocationEnabled = true
             map.uiSettings.isMyLocationButtonEnabled = true
 
-            observeEvent(viewModel.mapInitLocation) { initLocation ->
-                mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGoogleLatLng(), MapPresentation.MAP_DEFAULT_ZOOM_LEVEL))
-            }
+            viewModel.requestMapInitialLocation()
         }
     }
 
@@ -87,5 +113,11 @@ class RouteTrackingActivity : BaseInjectionActivity() {
     companion object {
         const val RC_LOCATION_SERVICE = 1
         const val RC_LOCATION_PERMISSIONS = 2
+
+        fun launchIntent(context: Context): Intent {
+            val intent = Intent(context, RouteTrackingActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            return intent
+        }
     }
 }

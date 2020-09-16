@@ -38,4 +38,6 @@ object Versions {
     const val firebaseAnalytics = "17.5.0"
     const val firebaseCrashlytics = "17.2.1"
     const val crashlytics = "2.10.1"
+
+    const val dataStore = "1.0.0-alpha01"
 }

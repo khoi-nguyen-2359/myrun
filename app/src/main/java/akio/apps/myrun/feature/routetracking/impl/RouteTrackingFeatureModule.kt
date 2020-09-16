@@ -1,9 +1,8 @@
-package akio.apps.myrun.feature.routetracking
+package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun._di.ViewModelKey
-import akio.apps.myrun.feature.routetracking.impl.GetMapInitialLocationUsecaseImpl
-import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
-import akio.apps.myrun.feature.routetracking.impl.RouteTrackingViewModelImpl
+import akio.apps.myrun.feature.routetracking.GetMapInitialLocationUsecase
+import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module

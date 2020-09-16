@@ -1,10 +1,11 @@
 package akio.apps.myrun.feature.routetracking
 
 import akio.apps.common.lifecycle.Event
+import akio.apps.common.viewmodel.BaseViewModel
 import android.location.Location
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
 
-abstract class RouteTrackingViewModel: ViewModel() {
-    abstract val mapInitLocation: LiveData<Event<Location>>
+abstract class RouteTrackingViewModel : BaseViewModel() {
+    abstract val mapInitialLocation: LiveData<Event<Location>>
+    abstract fun requestMapInitialLocation()
 }

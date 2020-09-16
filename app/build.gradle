@@ -94,4 +94,6 @@ dependencies {
     implementation "androidx.room:room-runtime:$Versions.room"
     kapt "androidx.room:room-compiler:$Versions.room"
     implementation "androidx.room:room-ktx:$Versions.room"
+
+    implementation "androidx.datastore:datastore-preferences:$Versions.dataStore"
 }

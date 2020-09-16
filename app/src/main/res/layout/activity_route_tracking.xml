@@ -31,10 +31,17 @@
             layout="@layout/include_record_button" />
 
         <include
+            android:visibility="gone"
+            android:id="@+id/pause_button"
+            layout="@layout/include_pause_button" />
+
+        <include
+            android:visibility="gone"
             android:id="@+id/reset_button"
             layout="@layout/include_reset_button" />
 
         <include
+            android:visibility="gone"
             android:id="@+id/stop_button"
             layout="@layout/include_stop_button" />
     </LinearLayout>

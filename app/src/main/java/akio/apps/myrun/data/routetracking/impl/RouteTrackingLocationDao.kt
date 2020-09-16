@@ -1,0 +1,26 @@
+package akio.apps.myrun.data.routetracking.impl
+
+import akio.apps.myrun.data.routetracking.dto.RoomTrackingLocation
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface RouteTrackingLocationDao {
+    @Query("SELECT * FROM tracking_location ORDER BY time ASC LIMIT -1 OFFSET :skip")
+    fun getLocations(skip: Int): Flow<List<RoomTrackingLocation>>
+
+    @Update
+    fun update(updateLocations: List<RoomTrackingLocation>)
+
+    @Insert
+    fun insert(trackingLocations: List<RoomTrackingLocation>)
+
+    @Query("DELETE FROM tracking_location")
+    fun clear(): Int
+
+    @Query("SELECT * FROM tracking_location")
+    fun getAll(): List<RoomTrackingLocation>
+}

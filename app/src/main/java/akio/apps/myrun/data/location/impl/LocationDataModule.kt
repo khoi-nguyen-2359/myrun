@@ -1,7 +1,6 @@
-package akio.apps.myrun.data.location
+package akio.apps.myrun.data.location.impl
 
-import akio.apps.myrun.data.location.impl.LocationDataSourceImpl
-import android.app.Activity
+import akio.apps.myrun.data.location.LocationDataSource
 import android.content.Context
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
