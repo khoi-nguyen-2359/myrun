@@ -1,14 +1,12 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps._base.activity.BaseInjectionActivity
+import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun.R
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
+import akio.apps.myrun.feature._base.*
 import akio.apps.myrun.feature._base.AppPermissions.locationPermissions
-import akio.apps.myrun.feature._base.CheckLocationServiceDelegate
-import akio.apps.myrun.feature._base.CheckRequiredPermissionsDelegate
-import akio.apps.myrun.feature._base.MapPresentation
-import akio.apps.myrun.feature._base.toGoogleLatLng
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import android.annotation.SuppressLint
 import android.content.Context
@@ -23,6 +21,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import kotlinx.coroutines.launch
 
 class RouteTrackingActivity : BaseInjectionActivity() {
+
+    private val dialogDelegate by lazy { ActivityDialogDelegate(this) }
 
     private val viewBinding by lazy { ActivityRouteTrackingBinding.inflate(layoutInflater) }
 
@@ -45,6 +45,9 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         observeEvent(viewModel.mapInitialLocation) { initLocation ->
             mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGoogleLatLng(), MapPresentation.MAP_DEFAULT_ZOOM_LEVEL))
         }
+
+        observe(viewModel.isInProgress, dialogDelegate::toggleProgressDialog)
+        observeEvent(viewModel.error, dialogDelegate::showExceptionAlert)
     }
 
     private fun initViews() {

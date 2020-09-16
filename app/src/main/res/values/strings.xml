@@ -16,4 +16,5 @@
     <string name="error_location_service_unavailable">Please turn on location service to use this feature.</string>
     <string name="route_tracking_notification_title">TrackMe workout session is in progress</string>
     <string name="route_tracking_notification_content">Touch to get back to your route</string>
+    <string name="error_unknown">Unknown Error</string>
 </resources>
