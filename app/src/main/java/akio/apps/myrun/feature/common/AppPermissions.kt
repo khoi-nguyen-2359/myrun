@@ -14,11 +14,15 @@ import androidx.fragment.app.Fragment
 object AppPermissions {
     private val locationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
 
+    fun areLocationPermissionsGranted(context: Context): Boolean {
+        return PermissionUtils.arePermissionsGranted(context, locationPermissions)
+    }
+
     fun requestLocationPermissions(activity: Activity, fragment: Fragment?, requestCode: Int, onPermissionsDenied: (() -> Unit)? = null) {
         requestAppPermissions(activity, fragment, locationPermissions, requestCode, onPermissionsDenied)
     }
 
-    fun verifyPermissions(context: Context, permissions: Array<String>, onPermissionsDenied: (() -> Unit)) {
+    fun showRequiredPermissionsMissingDialog(context: Context, permissions: Array<String>, onPermissionsDenied: (() -> Unit)) {
         if (!PermissionUtils.arePermissionsGranted(context, permissions)) {
             AlertDialog.Builder(context)
                 .setMessage(R.string.error_required_permissions_missing)
@@ -38,14 +42,14 @@ object AppPermissions {
         onPermissionsDenied: (() -> Unit)?
     ) {
         PermissionUtils.requestPermissions(activity, fragment, permissions, requestCode) {
-            showMissingPermissionsDialog(
+            showPermissionSettingsDisabledDialog(
                 activity,
                 onPermissionsDenied
             )
         }
     }
 
-    private fun showMissingPermissionsDialog(activity: Activity, onFailureResult: (() -> Unit)? = null) {
+    private fun showPermissionSettingsDisabledDialog(activity: Activity, onFailureResult: (() -> Unit)? = null) {
         AlertDialog.Builder(activity)
             .setMessage(R.string.error_permission_settings_disabled)
             .setPositiveButton(R.string.action_open_settings) { _, _ ->

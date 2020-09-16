@@ -30,4 +30,10 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="RouteTrackingControlButton">
+        <item name="android:layout_width">@dimen/route_tracking_control_button_size</item>
+        <item name="android:layout_height">@dimen/route_tracking_control_button_size</item>
+        <item name="android:scaleType">center</item>
+    </style>
+
 </resources>

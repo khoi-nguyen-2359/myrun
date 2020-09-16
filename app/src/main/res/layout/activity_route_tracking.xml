@@ -4,29 +4,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.gms.maps.MapView
+    <fragment
         android:id="@+id/tracking_map_view"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/my_location_button"
+        app:layout_constraintBottom_toTopOf="@+id/tracking_stats_view"
         app:layout_constraintTop_toTopOf="parent" />
 
     <akio.apps.myrun.feature.routetracking.impl.RouteTrackingStatsView
         android:id="@+id/tracking_stats_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/my_location_button" />
+        app:layout_constraintBottom_toTopOf="@id/control_button_panel" />
 
-    <ImageButton
-        android:id="@+id/my_location_button"
-        android:layout_width="@dimen/route_tracking_control_button_size"
-        android:layout_height="@dimen/route_tracking_control_button_size"
-        android:src="@drawable/ic_my_location"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent" />
+    <LinearLayout
+        android:id="@+id/control_button_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <include
-        android:id="@+id/record_button"
-        layout="@layout/include_record_button" />
+        <include
+            android:id="@+id/record_button"
+            layout="@layout/include_record_button" />
+
+        <include
+            android:id="@+id/reset_button"
+            layout="@layout/include_reset_button" />
+
+        <include
+            android:id="@+id/stop_button"
+            layout="@layout/include_stop_button" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

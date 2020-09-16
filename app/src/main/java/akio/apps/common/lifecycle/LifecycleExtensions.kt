@@ -1,0 +1,15 @@
+package akio.apps.common.lifecycle
+
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.observe
+
+fun <T> LifecycleOwner.observe(liveData: LiveData<T>, block: (T) -> Unit) {
+    liveData.observe(this, block)
+}
+
+fun <T> LifecycleOwner.observeEvent(liveData: LiveData<Event<T>>, block: (T) -> Unit) {
+    liveData.observe(this, EventObserver { eventData ->
+        block(eventData)
+    })
+}
