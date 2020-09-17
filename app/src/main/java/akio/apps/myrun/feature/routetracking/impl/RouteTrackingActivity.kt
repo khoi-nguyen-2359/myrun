@@ -54,13 +54,49 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         viewBinding.apply {
             setContentView(root)
             recordButton.root.setOnClickListener { onStartRouteTracking() }
+            pauseButton.root.setOnClickListener { onPauseRouteTracking() }
+            resumeButton.root.setOnClickListener { onResumeRouteTracking() }
+            stopButton.root.setOnClickListener { onStopRouteTracking() }
         }
+    }
+
+    private fun onResumeRouteTracking() {
+        viewBinding.apply {
+            recordButton.root.visibility = View.GONE
+            resumeButton.root.visibility = View.GONE
+            stopButton.root.visibility = View.GONE
+            pauseButton.root.visibility = View.VISIBLE
+        }
+
+        startService(RouteTrackingService.resumeIntent(this))
+    }
+
+    private fun onStopRouteTracking() {
+        viewBinding.apply {
+            recordButton.root.visibility = View.VISIBLE
+            resumeButton.root.visibility = View.GONE
+            stopButton.root.visibility = View.GONE
+            pauseButton.root.visibility = View.GONE
+        }
+
+        startService(RouteTrackingService.stopIntent(this))
+    }
+
+    private fun onPauseRouteTracking() {
+        viewBinding.apply {
+            recordButton.root.visibility = View.GONE
+            resumeButton.root.visibility = View.VISIBLE
+            stopButton.root.visibility = View.VISIBLE
+            pauseButton.root.visibility = View.GONE
+        }
+
+        startService(RouteTrackingService.pauseIntent(this))
     }
 
     private fun onStartRouteTracking() {
         viewBinding.apply {
             recordButton.root.visibility = View.GONE
-            resetButton.root.visibility = View.GONE
+            resumeButton.root.visibility = View.GONE
             stopButton.root.visibility = View.GONE
             pauseButton.root.visibility = View.VISIBLE
         }

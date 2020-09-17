@@ -13,9 +13,6 @@ class ActivityDialogDelegate(
 
     private var progressDialog: Dialog? = null
 
-    val a by lazy { this }
-
-
     fun toggleProgressDialog(visible: Boolean) {
         if (visible) {
             showProgressDialog()

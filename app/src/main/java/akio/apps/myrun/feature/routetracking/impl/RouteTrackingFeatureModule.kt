@@ -14,6 +14,9 @@ interface RouteTrackingFeatureModule {
     @ContributesAndroidInjector
     fun trackingActivity(): RouteTrackingActivity
 
+    @ContributesAndroidInjector
+    fun routeTrackingService(): RouteTrackingService
+
     @Binds
     @IntoMap
     @ViewModelKey(RouteTrackingViewModel::class)

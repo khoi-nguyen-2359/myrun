@@ -37,8 +37,8 @@
 
         <include
             android:visibility="gone"
-            android:id="@+id/reset_button"
-            layout="@layout/include_reset_button" />
+            android:id="@+id/resume_button"
+            layout="@layout/include_resume_button" />
 
         <include
             android:visibility="gone"

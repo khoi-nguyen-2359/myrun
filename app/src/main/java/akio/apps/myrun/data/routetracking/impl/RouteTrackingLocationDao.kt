@@ -16,10 +16,10 @@ interface RouteTrackingLocationDao {
     fun update(updateLocations: List<RoomTrackingLocation>)
 
     @Insert
-    fun insert(trackingLocations: List<RoomTrackingLocation>)
+    suspend fun insert(trackingLocations: List<RoomTrackingLocation>)
 
     @Query("DELETE FROM tracking_location")
-    fun clear(): Int
+    suspend fun clear(): Int
 
     @Query("SELECT * FROM tracking_location")
     fun getAll(): List<RoomTrackingLocation>

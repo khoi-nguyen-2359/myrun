@@ -33,10 +33,12 @@ class LocationDataSourceImpl @Inject constructor(
 
         val callback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
+                Timber.d("location result on thread ${Thread.currentThread().name}")
                 sendBlocking(locationResult.locations)
             }
         }
 
+        Timber.d("request location result on thread ${Thread.currentThread().name}")
         locationClient.requestLocationUpdates(locationRequest.toGmsLocationRequest(), callback, null)
 
         awaitClose {
@@ -44,7 +46,7 @@ class LocationDataSourceImpl @Inject constructor(
             locationClient.removeLocationUpdates(callback)
         }
     }
-        .flowOn(Dispatchers.IO)
+        .flowOn(Dispatchers.Main)   // need Main to request updates from location client
 
     private fun LocationRequestEntity.toGmsLocationRequest(): LocationRequest {
         return LocationRequest().also {

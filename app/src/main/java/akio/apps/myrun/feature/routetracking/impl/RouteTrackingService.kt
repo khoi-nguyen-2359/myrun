@@ -23,51 +23,6 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class RouteTrackingService : Service() {
-    companion object {
-        const val TAG = "tracking"
-        const val NOTIF_ID_TRACKING = 101
-        const val NOTIF_ID_COMPLETE = 102
-
-        const val NOTIF_CHANNEL_ID = "NOTIF_CHANNEL_ID"
-
-        const val LOCATION_UPDATE_INTERVAL = 5L
-
-        const val ACTION_START = "ACTION_START"
-        const val ACTION_STOP = "ACTION_STOP"
-        const val ACTION_RESUME = "ACTION_RESUME"
-
-        fun startIntent(
-            context: Context
-        ): Intent {
-            val intent = Intent(context, RouteTrackingService::class.java)
-            intent.action = ACTION_START
-            return intent
-        }
-
-        fun stopIntent(context: Context): Intent {
-            val intent = Intent(context, RouteTrackingService::class.java)
-            intent.action = ACTION_STOP
-            return intent
-        }
-
-        fun createLocationTrackingRequest() = LocationRequest().apply {
-            fastestInterval = LOCATION_UPDATE_INTERVAL * 200
-            interval = LOCATION_UPDATE_INTERVAL * 500
-            maxWaitTime = LOCATION_UPDATE_INTERVAL * 1000
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            smallestDisplacement = 5f
-        }
-
-        fun resumeIntent(context: Context) = Intent(context, RouteTrackingService::class.java).apply {
-            action = ACTION_RESUME
-        }
-
-        fun isTrackingServiceRunning(context: Context): Boolean {
-            val activityMan = ContextCompat.getSystemService(context, ActivityManager::class.java)
-            val infos = activityMan?.getRunningServices(Int.MAX_VALUE)
-            return infos?.any { RouteTrackingService::class.java.name == it.service.className } == true
-        }
-    }
 
     private var locationUpdateJob: Job? = null
 
@@ -119,6 +74,7 @@ class RouteTrackingService : Service() {
             )
         )
 
+        locationUpdateJob?.cancel()
         locationUpdateJob = ioScope.launch {
             locationUpdateFlow.collect { locations ->
                 Timber.d("collect locations: ${locations.size}")
@@ -149,7 +105,7 @@ class RouteTrackingService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent == null) {
             mainScope.launch {
-                // service restarted after process is killed, mark the tracking session as stopped
+                // service restarted after process is killed
                 if (routeTrackingState.isRouteTrackingInProgress()) {
                     onActionResume(false)
                 }
@@ -159,10 +115,15 @@ class RouteTrackingService : Service() {
                 ACTION_START -> onActionStart(intent)
                 ACTION_STOP -> onActionStop()
                 ACTION_RESUME -> onActionResume(true)
+                ACTION_PAUSE -> onActionPause()
             }
         }
 
         return START_STICKY
+    }
+
+    private fun onActionPause() {
+        locationUpdateJob?.cancel()
     }
 
     private fun onActionStop() {
@@ -198,9 +159,10 @@ class RouteTrackingService : Service() {
         Timber.d("onActionStart")
         mainScope.launch {
             routeTrackingState.setRouteTrackingInProgress(true)
+            routeTrackingLocationRepository.clearRouteTrackingLocation()
         }
-        createTrackingNotification()
 
+        createTrackingNotification()
         requestLocationUpdates()
         createWakeLock()
     }
@@ -215,12 +177,61 @@ class RouteTrackingService : Service() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(NOTIF_CHANNEL_ID, "Tracking", NotificationManager.IMPORTANCE_DEFAULT)
-            channel.description = "While app is tracking your run"
+            val channel = NotificationChannel(NOTIF_CHANNEL_ID, "Route Tracking", NotificationManager.IMPORTANCE_DEFAULT)
+            channel.description = "While app is tracking your route"
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
         }
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
+
+    companion object {
+        const val NOTIF_ID_TRACKING = 101
+
+        const val NOTIF_CHANNEL_ID = "NOTIF_CHANNEL_ID"
+
+        const val LOCATION_UPDATE_INTERVAL = 5L
+
+        const val ACTION_START = "ACTION_START"
+        const val ACTION_STOP = "ACTION_STOP"
+        const val ACTION_RESUME = "ACTION_RESUME"
+        const val ACTION_PAUSE = "ACTION_PAUSE"
+
+        fun startIntent(
+            context: Context
+        ): Intent {
+            val intent = Intent(context, RouteTrackingService::class.java)
+            intent.action = ACTION_START
+            return intent
+        }
+
+        fun stopIntent(context: Context): Intent {
+            val intent = Intent(context, RouteTrackingService::class.java)
+            intent.action = ACTION_STOP
+            return intent
+        }
+
+        fun pauseIntent(context: Context) = Intent(context, RouteTrackingService::class.java).apply {
+            action = ACTION_PAUSE
+        }
+
+        fun resumeIntent(context: Context) = Intent(context, RouteTrackingService::class.java).apply {
+            action = ACTION_RESUME
+        }
+
+        fun createLocationTrackingRequest() = LocationRequest().apply {
+            fastestInterval = LOCATION_UPDATE_INTERVAL * 200
+            interval = LOCATION_UPDATE_INTERVAL * 500
+            maxWaitTime = LOCATION_UPDATE_INTERVAL * 1000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            smallestDisplacement = 5f
+        }
+
+        fun isTrackingServiceRunning(context: Context): Boolean {
+            val activityMan = ContextCompat.getSystemService(context, ActivityManager::class.java)
+            val infos = activityMan?.getRunningServices(Int.MAX_VALUE)
+            return infos?.any { RouteTrackingService::class.java.name == it.service.className } == true
+        }
+    }
 }

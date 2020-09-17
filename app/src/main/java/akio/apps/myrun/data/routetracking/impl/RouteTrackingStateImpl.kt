@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RouteTrackingStateImpl @Inject constructor(
@@ -29,7 +30,7 @@ class RouteTrackingStateImpl @Inject constructor(
             .single()
     }
 
-    override suspend fun setRouteTrackingInProgress(isTracking: Boolean) {
+    override suspend fun setRouteTrackingInProgress(isTracking: Boolean): Unit = withContext(Dispatchers.IO) {
         prefDataStore.edit { state ->
             state[KEY_IS_ROUTE_TRACKING] = isTracking
         }
