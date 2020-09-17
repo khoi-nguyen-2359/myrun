@@ -77,7 +77,7 @@ class RouteTrackingService : Service() {
         locationUpdateJob?.cancel()
         locationUpdateJob = ioScope.launch {
             locationUpdateFlow.collect { locations ->
-                Timber.d("collect locations: ${locations.size}")
+//                Timber.d("collect locations: ${locations.size}")
                 routeTrackingLocationRepository.insert(locations)
             }
         }
@@ -133,6 +133,7 @@ class RouteTrackingService : Service() {
         stopSelf()
         mainScope.launch {
             routeTrackingState.setRouteTrackingInProgress(false)
+            routeTrackingLocationRepository.clearRouteTrackingLocation()
         }
         releaseWakeLock()
     }
@@ -159,7 +160,6 @@ class RouteTrackingService : Service() {
         Timber.d("onActionStart")
         mainScope.launch {
             routeTrackingState.setRouteTrackingInProgress(true)
-            routeTrackingLocationRepository.clearRouteTrackingLocation()
         }
 
         createTrackingNotification()

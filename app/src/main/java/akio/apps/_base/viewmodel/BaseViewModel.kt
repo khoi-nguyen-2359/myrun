@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
 open class BaseViewModel : ViewModel() {
@@ -21,17 +22,15 @@ open class BaseViewModel : ViewModel() {
         isInProgressLiveData: MutableLiveData<Boolean>? = _isInProgress,
         errorLiveData: MutableLiveData<Event<Throwable>>? = _error,
         task: suspend CoroutineScope.() -> Unit
-    ): Job {
-        return viewModelScope.launch {
-            try {
-                isInProgressLiveData?.value = true
-                task()
-            } catch (throwable: Throwable) {
-                Timber.e(throwable)
-                errorLiveData?.value = Event(throwable)
-            } finally {
-                isInProgressLiveData?.value = false
-            }
+    ): Job = viewModelScope.launch {
+        try {
+            isInProgressLiveData?.value = true
+            task()
+        } catch (throwable: Throwable) {
+            Timber.e(throwable)
+            errorLiveData?.value = Event(throwable)
+        } finally {
+            isInProgressLiveData?.value = false
         }
     }
 }

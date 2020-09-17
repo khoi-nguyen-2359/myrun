@@ -3,6 +3,7 @@ package akio.apps.myrun.feature.routetracking.impl
 import akio.apps.myrun.data.location.LocationDataSource
 import akio.apps.myrun.feature.routetracking.GetMapInitialLocationUsecase
 import android.location.Location
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 class GetMapInitialLocationUsecaseImpl @Inject constructor(

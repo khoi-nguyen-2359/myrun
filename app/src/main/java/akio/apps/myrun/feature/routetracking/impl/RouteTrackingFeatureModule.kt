@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun._di.ViewModelKey
 import akio.apps.myrun.feature.routetracking.GetMapInitialLocationUsecase
+import akio.apps.myrun.feature.routetracking.GetTrackingLocationUpdatesUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import androidx.lifecycle.ViewModel
 import dagger.Binds
@@ -24,4 +25,7 @@ interface RouteTrackingFeatureModule {
 
     @Binds
     fun getMapInitialLocation(usecaseImpl: GetMapInitialLocationUsecaseImpl): GetMapInitialLocationUsecase
+
+    @Binds
+    fun getTrackingLocationUpdates(usecaseImpl: GetTrackingLocationUpdatesUsecaseImpl): GetTrackingLocationUpdatesUsecase
 }

@@ -3,7 +3,9 @@ package akio.apps.myrun.feature.routetracking.impl
 import akio.apps._base.activity.BaseInjectionActivity
 import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
+import akio.apps._base.view.dp2px
 import akio.apps.myrun.R
+import akio.apps.myrun.data.routetracking.dto.TrackingLocationEntity
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature._base.*
 import akio.apps.myrun.feature._base.AppPermissions.locationPermissions
@@ -14,10 +16,12 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.*
 import kotlinx.coroutines.launch
 
 class RouteTrackingActivity : BaseInjectionActivity() {
@@ -30,9 +34,19 @@ class RouteTrackingActivity : BaseInjectionActivity() {
 
     private lateinit var mapView: GoogleMap
 
-    private val checkLocationServiceDelegate by lazy { CheckLocationServiceDelegate(this, listOf(RouteTrackingService.createLocationTrackingRequest()), RC_LOCATION_SERVICE, onLocationServiceAvailable) }
+    private val checkLocationServiceDelegate by lazy {
+        CheckLocationServiceDelegate(
+            this,
+            listOf(RouteTrackingService.createLocationTrackingRequest()),
+            RC_LOCATION_SERVICE,
+            onLocationServiceAvailable
+        )
+    }
 
     private val checkRequiredPermissionsDelegate by lazy { CheckRequiredPermissionsDelegate(this, RC_LOCATION_PERMISSIONS, locationPermissions, onLocationPermissionsGranted) }
+
+    private var routePolyline: Polyline? = null
+    private var drawnLocationCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +62,35 @@ class RouteTrackingActivity : BaseInjectionActivity() {
 
         observe(viewModel.isInProgress, dialogDelegate::toggleProgressDialog)
         observeEvent(viewModel.error, dialogDelegate::showExceptionAlert)
+
+        observe(viewModel.trackingLocationBatch, ::onTrackingLocationUpdated)
+    }
+
+    private fun onTrackingLocationUpdated(batch: List<TrackingLocationEntity>) {
+        drawTrackingLocations(batch)
+        batch.lastOrNull()?.let {
+            mapView.moveCamera(CameraUpdateFactory.newLatLng(GmsLatLng(it.latitude, it.longitude)))
+        }
+        viewModel.requestRouteTrackingLocationUpdate(drawnLocationCount)
+    }
+
+    private fun drawTrackingLocations(batch: List<TrackingLocationEntity>) {
+        routePolyline?.let { currentPolyline ->
+            val appendedPolypoints = currentPolyline.points
+            appendedPolypoints.addAll(batch.map { LatLng(it.latitude, it.longitude) })
+            currentPolyline.points = appendedPolypoints
+        } ?: run {
+            val polyline = PolylineOptions()
+                .addAll(batch.map { LatLng(it.latitude, it.longitude) })
+                .jointType(JointType.ROUND)
+                .startCap(RoundCap())
+                .endCap(RoundCap())
+                .color(ContextCompat.getColor(this, R.color.route_tracking_polyline))
+                .width(3.dp2px)
+            routePolyline = mapView.addPolyline(polyline)
+        }
+
+        drawnLocationCount += batch.size
     }
 
     private fun initViews() {
@@ -102,6 +145,8 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         }
 
         startRouteTrackingService()
+
+        viewModel.requestRouteTrackingLocationUpdate(drawnLocationCount)
     }
 
     private fun startRouteTrackingService() {
