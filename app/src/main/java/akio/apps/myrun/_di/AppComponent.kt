@@ -4,7 +4,9 @@ import akio.apps.myrun.MyRunApp
 import akio.apps.myrun.data.location.impl.LocationDataModule
 import akio.apps.myrun.data.routetracking.impl.RouteTrackingDataModule
 import akio.apps.myrun.data.workout.WorkoutDataModule
+import akio.apps.myrun.feature.myworkout.impl.MyWorkoutFeatureModule
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingFeatureModule
+import akio.apps.myrun.feature.splash.impl.SplashFeatureModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -20,6 +22,8 @@ import javax.inject.Singleton
 
     // feature modules
     RouteTrackingFeatureModule::class,
+    SplashFeatureModule::class,
+    MyWorkoutFeatureModule::class,
 
     // data modules
     LocationDataModule::class,

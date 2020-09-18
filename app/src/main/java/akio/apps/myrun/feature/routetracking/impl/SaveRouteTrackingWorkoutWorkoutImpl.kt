@@ -7,7 +7,7 @@ import akio.apps.myrun.data.workout.WorkoutRepository
 import akio.apps.myrun.data.workout.dto.ActivityType
 import akio.apps.myrun.data.workout.dto.RunningWorkoutEntity
 import akio.apps.myrun.data.workout.dto.WorkoutEntity
-import akio.apps.myrun.data.workout.dto.WorkoutEntityImpl
+import akio.apps.myrun.data.workout.dto.WorkoutDataEntity
 import akio.apps.myrun.feature._base.GmsLatLng
 import akio.apps.myrun.feature.routetracking.SaveRouteTrackingWorkoutUsecase
 import android.graphics.Bitmap
@@ -23,7 +23,7 @@ class SaveRouteTrackingWorkoutWorkoutImpl @Inject constructor(
     override suspend fun saveCurrentWorkout(activityType: ActivityType, routeMapImage: Bitmap) {
         val saveTime = System.currentTimeMillis()
         val startTime = routeTrackingState.getTrackingStartTime()
-        val workoutData: WorkoutEntity = WorkoutEntityImpl(activityType, startTime, saveTime)
+        val workoutData: WorkoutEntity = WorkoutDataEntity("", activityType, startTime, saveTime)
 
         val savingWorkout = when (activityType) {
             ActivityType.Running -> {

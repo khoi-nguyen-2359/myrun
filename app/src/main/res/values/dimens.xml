@@ -2,4 +2,5 @@
 <resources>
     <dimen name="route_tracking_control_button_size">48dp</dimen>
     <dimen name="common_page_vertical_padding">16dp</dimen>
+    <dimen name="workout_image_height">200dp</dimen>
 </resources>

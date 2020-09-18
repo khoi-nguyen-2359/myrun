@@ -32,21 +32,21 @@ class WorkoutRepositoryImpl @Inject constructor(
 
         val snapshot = query.get().await()
 
-        return snapshot.documents.mapNotNull {
-            it.toObject(FirestoreWorkout::class.java)
+        return snapshot.documents.mapNotNull { doc ->
+            val firestoreWorkout = doc.toObject(FirestoreWorkout::class.java)
+                ?: return@mapNotNull null
+
+            val workoutData = WorkoutDataEntity(doc.id, firestoreWorkout.activityType, firestoreWorkout.startTime, firestoreWorkout.endTime)
+            if (firestoreWorkout.runData != null) {
+                RunningWorkoutEntity(
+                    workoutData = workoutData,
+                    routePhoto = firestoreWorkout.runData.routePhoto,
+                    averagePace = firestoreWorkout.runData.averagePace,
+                    distance = firestoreWorkout.runData.distance,
+                    encodedPolyline = firestoreWorkout.runData.encodedPolyline
+                )
+            } else throw IllegalArgumentException("[Firestore Workout] Unknown activity type")
         }
-            .map {  firestoreWorkout ->
-                val workoutData = WorkoutEntityImpl(firestoreWorkout.activityType, firestoreWorkout.startTime, firestoreWorkout.endTime)
-                return@map if (firestoreWorkout.runData != null) {
-                    RunningWorkoutEntity(
-                        workoutData = workoutData,
-                        routePhoto = firestoreWorkout.runData.routePhoto,
-                        averagePace = firestoreWorkout.runData.averagePace,
-                        distance = firestoreWorkout.runData.distance,
-                        encodedPolyline = firestoreWorkout.runData.encodedPolyline
-                    )
-                } else throw IllegalArgumentException("[Firestore Workout] Unknown activity type")
-            }
     }
 
     override suspend fun saveWorkout(workout: WorkoutEntity, routeMapImage: Bitmap) {

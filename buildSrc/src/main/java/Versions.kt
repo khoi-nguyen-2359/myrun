@@ -21,6 +21,7 @@ object Versions {
     const val lifecycle = "2.2.0"
     const val timber = "4.7.1"
     const val multidex = "1.0.3"
+    const val glide = "4.9.0"
 
     const val coroutinesCore = "1.3.8"
     const val coroutinesAndroid = "1.3.7"

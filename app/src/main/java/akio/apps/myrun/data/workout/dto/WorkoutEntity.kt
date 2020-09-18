@@ -1,6 +1,7 @@
 package akio.apps.myrun.data.workout.dto
 
 interface WorkoutEntity {
+    val id: String
     val activityType: ActivityType
 
     // stats

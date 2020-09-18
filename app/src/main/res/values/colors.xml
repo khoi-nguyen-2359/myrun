@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">#5e92f3</color>
+    <color name="colorPrimaryDark">#003c8f</color>
+    <color name="colorAccent">#fff</color>
     <color name="route_tracking_polyline">#25a9e2</color>
+    <color name="splash_title">#fff</color>
+    <color name="splash_background">#006db3</color>
 </resources>

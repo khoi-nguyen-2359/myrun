@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
 
-        <activity android:name=".feature.routetracking.impl.RouteTrackingActivity">
+        <activity android:name=".feature.routetracking.impl.RouteTrackingActivity"/>
+        <activity android:name=".feature.myworkout.impl.MyWorkoutActivity"/>
+        <activity android:name=".feature.splash.impl.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
