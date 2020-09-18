@@ -48,11 +48,11 @@
         android:layout_height="wrap_content"
         android:text="--"
         app:layout_constraintTop_toBottomOf="@id/distance_label_text_view"
-        app:layout_constraintEnd_toStartOf="@+id/speed_text_view"
+        app:layout_constraintEnd_toStartOf="@+id/instant_speed_text_view"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/speed_text_view"
+        android:id="@+id/instant_speed_text_view"
         style="@style/RouteTrackingInfoValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
         android:text="00:00:00"
         app:layout_constraintTop_toBottomOf="@id/time_label_text_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/speed_text_view" />
+        app:layout_constraintStart_toEndOf="@id/instant_speed_text_view" />
 
     <TextView
         android:id="@+id/distance_unit_text_view"

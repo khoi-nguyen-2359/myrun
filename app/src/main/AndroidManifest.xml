@@ -27,6 +27,7 @@
             android:value="@string/google_maps_sdk_key" />
 
         <service android:name=".feature.routetracking.impl.RouteTrackingService"
+            android:foregroundServiceType="location"
             android:enabled="true"
             android:exported="false" />
 

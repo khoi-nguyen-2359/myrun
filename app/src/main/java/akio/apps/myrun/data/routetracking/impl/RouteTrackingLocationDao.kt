@@ -20,4 +20,7 @@ interface RouteTrackingLocationDao {
 
     @Query("SELECT * FROM tracking_location")
     suspend fun getAll(): List<RoomTrackingLocation>
+
+    @Query("SELECT time from tracking_location ORDER BY time DESC LIMIT 1")
+    suspend fun getLatestLocationTime(): Long
 }

@@ -3,14 +3,9 @@ package akio.apps.myrun.data.routetracking.impl
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import android.content.Context
 import androidx.datastore.DataStore
-import androidx.datastore.preferences.Preferences
-import androidx.datastore.preferences.createDataStore
-import androidx.datastore.preferences.edit
-import androidx.datastore.preferences.preferencesKey
+import androidx.datastore.preferences.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -24,19 +19,82 @@ class RouteTrackingStateImpl @Inject constructor(
 
     }
 
-    override suspend fun isRouteTrackingInProgress(): Boolean {
-        return prefDataStore.data.map { data -> data[KEY_IS_ROUTE_TRACKING] ?: false }
-            .flowOn(Dispatchers.IO)
-            .single()
-    }
+    override suspend fun isTrackingInProgress(): Boolean = prefDataStore.data
+        .map { data -> data[KEY_IS_TRACKING_IN_PROGRESS] ?: false }
+        .flowOn(Dispatchers.IO)
+        .first()
 
-    override suspend fun setRouteTrackingInProgress(isTracking: Boolean): Unit = withContext(Dispatchers.IO) {
+    override suspend fun setTrackingInProgress(isTracking: Boolean): Unit = withContext(Dispatchers.IO) {
         prefDataStore.edit { state ->
-            state[KEY_IS_ROUTE_TRACKING] = isTracking
+            state[KEY_IS_TRACKING_IN_PROGRESS] = isTracking
         }
     }
 
+    override suspend fun setRouteDistance(distance: Double): Unit = withContext(Dispatchers.IO) {
+        prefDataStore.edit { state ->
+            state[KEY_ROUTE_DISTANCE] = distance.toFloat()
+        }
+    }
+
+    override suspend fun setTrackingStartTime(startTime: Long): Unit = withContext(Dispatchers.IO) {
+        prefDataStore.edit { state ->
+            state[KEY_TRACKING_START_TIME] = startTime
+        }
+    }
+
+    override suspend fun getTrackingStartTime(): Long = prefDataStore.data
+        .map { data -> data[KEY_TRACKING_START_TIME] ?: 0L }
+        .flowOn(Dispatchers.IO)
+        .first()
+
+    override suspend fun getRouteDistance(): Double = prefDataStore.data
+        .map { state -> state[KEY_ROUTE_DISTANCE] ?: 0f }
+        .flowOn(Dispatchers.IO)
+        .first()
+        .toDouble()
+
+    override suspend fun setTrackingDuration(totalSec: Long): Unit = withContext(Dispatchers.IO) {
+        prefDataStore.edit { data ->
+            data[KEY_TRACKING_DURATION] = totalSec
+        }
+    }
+
+    override suspend fun getTrackingDuration(): Long = prefDataStore.data
+        .map { state -> state[KEY_TRACKING_DURATION] ?: 0L }
+        .flowOn(Dispatchers.IO)
+        .first()
+
+    override suspend fun getLastResumeTime(): Long = prefDataStore.data
+        .map { state -> state[KEY_LAST_RESUME_TIME] ?: getTrackingStartTime() }
+        .flowOn(Dispatchers.IO)
+        .first()
+
+    override suspend fun setLastResumeTime(resumeTime: Long): Unit = withContext(Dispatchers.IO) {
+        prefDataStore.edit { data -> data[KEY_LAST_RESUME_TIME] }
+    }
+
+    override suspend fun getInstantSpeed(): Double = prefDataStore.data
+        .map { data -> data[KEY_CURRENT_SPEED] ?: 0f }
+        .flowOn(Dispatchers.IO)
+        .first()
+        .toDouble()
+
+    override suspend fun setInstantSpeed(currentSpeed: Double): Unit = withContext(Dispatchers.IO) {
+        prefDataStore.edit { data ->
+            data[KEY_CURRENT_SPEED] = currentSpeed.toFloat()
+        }
+    }
+
+    override suspend fun clear(): Unit = withContext(Dispatchers.IO) {
+        prefDataStore.edit { state -> state.clear() }
+    }
+
     companion object {
-        private val KEY_IS_ROUTE_TRACKING = preferencesKey<Boolean>("IS_TRACKING_ROUTE")
+        private val KEY_IS_TRACKING_IN_PROGRESS = preferencesKey<Boolean>("KEY_IS_TRACKING_IN_PROGRESS")
+        private val KEY_ROUTE_DISTANCE = preferencesKey<Float>("KEY_ROUTE_DISTANCE")
+        private val KEY_TRACKING_START_TIME = preferencesKey<Long>("KEY_TRACKING_START_TIME")
+        private val KEY_CURRENT_SPEED = preferencesKey<Float>("KEY_CURRENT_SPEED")
+        private val KEY_TRACKING_DURATION = preferencesKey<Long>("KEY_TRACKING_DURATION")
+        private val KEY_LAST_RESUME_TIME = preferencesKey<Long>("KEY_LAST_RESUME_TIME")
     }
 }

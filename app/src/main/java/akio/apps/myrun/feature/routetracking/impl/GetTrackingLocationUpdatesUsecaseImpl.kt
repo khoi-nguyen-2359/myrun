@@ -11,9 +11,10 @@ class GetTrackingLocationUpdatesUsecaseImpl @Inject constructor(
     private val routeTrackingLocationRepository: RouteTrackingLocationRepository
 ) : GetTrackingLocationUpdatesUsecase {
 
-    override suspend fun getLocationUpdates(skip: Int): Flow<List<TrackingLocationEntity>> {
+    override suspend fun getLocationUpdates(skip: Int): List<TrackingLocationEntity> {
         return routeTrackingLocationRepository.getRouteTrackingLocationUpdates(skip)
             .filter { it.isNotEmpty() }
             .flowOn(Dispatchers.IO)
+            .first()
     }
 }

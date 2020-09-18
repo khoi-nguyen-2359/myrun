@@ -23,5 +23,6 @@ class RouteTrackingDataModule {
     fun routeTrackingLocationRepo(repositoryImpl: RouteTrackingLocationRepositoryImpl): RouteTrackingLocationRepository = repositoryImpl
 
     @Provides
+    @Singleton
     fun routeTrackingState(routeTrackingStateImpl: RouteTrackingStateImpl): RouteTrackingState = routeTrackingStateImpl
 }

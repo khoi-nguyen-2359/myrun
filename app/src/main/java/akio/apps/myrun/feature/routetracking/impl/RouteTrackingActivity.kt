@@ -10,6 +10,7 @@ import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature._base.*
 import akio.apps.myrun.feature._base.AppPermissions.locationPermissions
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
+import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -55,15 +56,35 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         initObservers()
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        // onStart: check location permissions -> check location service availability -> allow user to use this screen
+        checkRequiredPermissionsDelegate.requestPermissions()
+        viewModel.resumeTrackingStatsUpdates()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        viewModel.stopTrackingStatsUpdates()
+    }
+
     private fun initObservers() {
         observeEvent(viewModel.mapInitialLocation) { initLocation ->
-            mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGoogleLatLng(), MapPresentation.MAP_DEFAULT_ZOOM_LEVEL))
+            mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGmsLatLng(), MapPresentation.MAP_DEFAULT_ZOOM_LEVEL))
         }
 
         observe(viewModel.isInProgress, dialogDelegate::toggleProgressDialog)
         observeEvent(viewModel.error, dialogDelegate::showExceptionAlert)
 
         observe(viewModel.trackingLocationBatch, ::onTrackingLocationUpdated)
+
+        observe(viewModel.trackingStats, ::updateTrackingStatsView)
+    }
+
+    private fun updateTrackingStatsView(routeTrackingStats: RouteTrackingStats) {
+        viewBinding.trackingStatsView.update(routeTrackingStats)
     }
 
     private fun onTrackingLocationUpdated(batch: List<TrackingLocationEntity>) {
@@ -134,6 +155,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         }
 
         startService(RouteTrackingService.pauseIntent(this))
+        viewModel.stopTrackingStatsUpdates()
     }
 
     private fun onStartRouteTracking() {
@@ -147,6 +169,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         startRouteTrackingService()
 
         viewModel.requestRouteTrackingLocationUpdate(drawnLocationCount)
+        viewModel.startTrackingStatsUpdates()
     }
 
     private fun startRouteTrackingService() {
@@ -156,13 +179,6 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         } else {
             startService(serviceIntent)
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        // onStart: check location permissions -> check location service availability -> allow user to use this screen
-        checkRequiredPermissionsDelegate.requestPermissions()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

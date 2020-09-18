@@ -5,10 +5,12 @@ import akio.apps.myrun.data.location.LocationDataSource
 import akio.apps.myrun.data.location.dto.LocationRequestEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
+import akio.apps.myrun.feature._base.toGmsLatLng
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
@@ -16,10 +18,12 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationRequest
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.maps.android.SphericalUtil
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class RouteTrackingService : Service() {
@@ -76,11 +80,48 @@ class RouteTrackingService : Service() {
 
         locationUpdateJob?.cancel()
         locationUpdateJob = ioScope.launch {
-            locationUpdateFlow.collect { locations ->
-//                Timber.d("collect locations: ${locations.size}")
-                routeTrackingLocationRepository.insert(locations)
-            }
+            locationUpdateFlow.collect(::onLocationUpdate)
         }
+    }
+
+    var lastComputeLengthLocation: Location? = null
+    private suspend fun onLocationUpdate(locations: List<Location>) {
+        routeTrackingLocationRepository.insert(locations)
+
+        computeRouteDistance(locations)
+
+        computeInstantSpeed()
+    }
+
+    var lastTimeComputingInstantSpeed = 0L
+    var lastDistanceComputingInstantSpeed = 0.0
+    private suspend fun computeInstantSpeed() {
+        val routeDistance: Double = routeTrackingState.getRouteDistance()
+        val currentTime = System.currentTimeMillis()
+        val deltaTime = currentTime - lastTimeComputingInstantSpeed
+        if (lastTimeComputingInstantSpeed == 0L || (lastTimeComputingInstantSpeed > 0 && deltaTime >= LOCATION_UPDATE_INTERVAL)) {
+            if (lastTimeComputingInstantSpeed > 0) {
+                val instantSpeed = ((routeDistance - lastDistanceComputingInstantSpeed) / 1000f) / (deltaTime / 3600000f)
+                routeTrackingState.setInstantSpeed(instantSpeed)
+            }
+
+            lastTimeComputingInstantSpeed = currentTime
+            lastDistanceComputingInstantSpeed = routeDistance
+        }
+    }
+
+    private suspend fun computeRouteDistance(locations: List<Location>): Double {
+        val computeLengthLocations = mutableListOf<Location>()
+        lastComputeLengthLocation ?. let {
+            computeLengthLocations.add(it)
+        }
+        computeLengthLocations.addAll(locations)
+        val locationUpdateDistance = SphericalUtil.computeLength(computeLengthLocations.map { it.toGmsLatLng() })
+        lastComputeLengthLocation = locations.lastOrNull()
+        val routeDistance = routeTrackingState.getRouteDistance() + locationUpdateDistance
+        routeTrackingState.setRouteDistance(routeDistance)
+
+        return routeDistance
     }
 
     private fun stopLocationUpdates() {
@@ -106,15 +147,15 @@ class RouteTrackingService : Service() {
         if (intent == null) {
             mainScope.launch {
                 // service restarted after process is killed
-                if (routeTrackingState.isRouteTrackingInProgress()) {
-                    onActionResume(false)
+                if (routeTrackingState.isTrackingInProgress()) {
+                    onActionResume(true)
                 }
             }
         } else {
             when (intent.action) {
                 ACTION_START -> onActionStart(intent)
                 ACTION_STOP -> onActionStop()
-                ACTION_RESUME -> onActionResume(true)
+                ACTION_RESUME -> onActionResume(false)
                 ACTION_PAUSE -> onActionPause()
             }
         }
@@ -124,6 +165,14 @@ class RouteTrackingService : Service() {
 
     private fun onActionPause() {
         locationUpdateJob?.cancel()
+        saveTrackingDuration(System.currentTimeMillis())
+    }
+
+    private fun saveTrackingDuration(saveTime: Long) {
+        ioScope.launch {
+            val trackDuration = saveTime - routeTrackingState.getLastResumeTime()
+            routeTrackingState.setTrackingDuration(trackDuration)
+        }
     }
 
     private fun onActionStop() {
@@ -131,8 +180,9 @@ class RouteTrackingService : Service() {
 
         stopLocationUpdates()
         stopSelf()
+//        saveTrackingDuration()
         mainScope.launch {
-            routeTrackingState.setRouteTrackingInProgress(false)
+            routeTrackingState.clear()
             routeTrackingLocationRepository.clearRouteTrackingLocation()
         }
         releaseWakeLock()
@@ -146,20 +196,31 @@ class RouteTrackingService : Service() {
         }
     }
 
-    private fun onActionResume(manualResume: Boolean) {
-        Timber.d("onActionResume")
+    private fun onActionResume(isServiceRestart: Boolean) {
+        Timber.d("onActionResume isServiceRestart=$isServiceRestart")
 
         requestLocationUpdates()
 
-        if (manualResume) {
+        if (isServiceRestart) {
+            ioScope.launch {
+                saveTrackingDuration(routeTrackingLocationRepository.getLatestLocationTime())
+            }
+        } else {
             createTrackingNotification()
+        }
+
+        ioScope.launch {
+            routeTrackingState.setLastResumeTime(System.currentTimeMillis())
         }
     }
 
     private fun onActionStart(intent: Intent) {
         Timber.d("onActionStart")
         mainScope.launch {
-            routeTrackingState.setRouteTrackingInProgress(true)
+            val lastResumeTime = System.currentTimeMillis()
+            routeTrackingState.setTrackingInProgress(true)
+            routeTrackingState.setTrackingStartTime(lastResumeTime)
+            routeTrackingState.setLastResumeTime(lastResumeTime)
         }
 
         createTrackingNotification()
@@ -191,7 +252,8 @@ class RouteTrackingService : Service() {
 
         const val NOTIF_CHANNEL_ID = "NOTIF_CHANNEL_ID"
 
-        const val LOCATION_UPDATE_INTERVAL = 5L
+        const val LOCATION_UPDATE_INTERVAL = 3000L
+        const val SMALLEST_DISPLACEMENT = 5f
 
         const val ACTION_START = "ACTION_START"
         const val ACTION_STOP = "ACTION_STOP"
@@ -221,11 +283,11 @@ class RouteTrackingService : Service() {
         }
 
         fun createLocationTrackingRequest() = LocationRequest().apply {
-            fastestInterval = LOCATION_UPDATE_INTERVAL * 200
-            interval = LOCATION_UPDATE_INTERVAL * 500
-            maxWaitTime = LOCATION_UPDATE_INTERVAL * 1000
+            fastestInterval = LOCATION_UPDATE_INTERVAL
+            interval = LOCATION_UPDATE_INTERVAL
+            maxWaitTime = LOCATION_UPDATE_INTERVAL * 10
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            smallestDisplacement = 5f
+            smallestDisplacement = SMALLEST_DISPLACEMENT
         }
 
         fun isTrackingServiceRunning(context: Context): Boolean {

@@ -32,6 +32,10 @@ class RouteTrackingLocationRepositoryImpl @Inject constructor(
         }
         .flowOn(Dispatchers.IO)
 
+    override suspend fun getLatestLocationTime(): Long = withContext(Dispatchers.IO) {
+        routeTrackingLocationDao.getLatestLocationTime()
+    }
+
     private fun Location.toRoomEntity(id: Int) = RoomTrackingLocation(id, time, latitude, longitude, altitude)
 
     private fun RoomTrackingLocation.toTrackingLocationEntity() = TrackingLocationEntity(time, latitude, longitude, altitude)
