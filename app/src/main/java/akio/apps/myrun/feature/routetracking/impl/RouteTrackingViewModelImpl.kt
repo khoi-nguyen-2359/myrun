@@ -34,12 +34,6 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private var trackingTimerJob: Job? = null
     private var trackingDuration: Long = 0
 
-    init {
-        viewModelScope.launch {
-            trackingDuration = routeTrackingState.getTrackingDuration()
-        }
-    }
-
     override fun requestMapInitialLocation() {
         launchCatching {
             val initialLocation = getMapInitialLocationUsecase.getMapInitialLocation()
@@ -56,6 +50,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
 
     override fun startTrackingStatsUpdates() {
         viewModelScope.launch {
+            trackingDuration = routeTrackingState.getTrackingDuration()
             trackingTimerJob?.cancel()
             trackingTimerJob = flowTimer(0, TRACKING_TIMER_PERIOD, onTrackingTimerTick)
         }

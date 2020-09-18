@@ -23,7 +23,6 @@ import dagger.android.AndroidInjection
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class RouteTrackingService : Service() {
@@ -163,37 +162,23 @@ class RouteTrackingService : Service() {
         return START_STICKY
     }
 
+    private fun onActionStart(intent: Intent) {
+        Timber.d("onActionStart")
+        mainScope.launch {
+            val startTime = System.currentTimeMillis()
+            routeTrackingState.setTrackingInProgress(true)
+            routeTrackingState.setTrackingStartTime(startTime)
+            routeTrackingState.setLastResumeTime(startTime)
+        }
+
+        createTrackingNotification()
+        requestLocationUpdates()
+        createWakeLock()
+    }
+
     private fun onActionPause() {
         locationUpdateJob?.cancel()
         saveTrackingDuration(System.currentTimeMillis())
-    }
-
-    private fun saveTrackingDuration(saveTime: Long) {
-        ioScope.launch {
-            val trackDuration = saveTime - routeTrackingState.getLastResumeTime()
-            routeTrackingState.setTrackingDuration(trackDuration)
-        }
-    }
-
-    private fun onActionStop() {
-        Timber.d("onActionStop")
-
-        stopLocationUpdates()
-        stopSelf()
-//        saveTrackingDuration()
-        mainScope.launch {
-            routeTrackingState.clear()
-            routeTrackingLocationRepository.clearRouteTrackingLocation()
-        }
-        releaseWakeLock()
-    }
-
-    private fun releaseWakeLock() {
-        wakeLock?.let {
-            if (it.isHeld)
-                it.release()
-            wakeLock = null
-        }
     }
 
     private fun onActionResume(isServiceRestart: Boolean) {
@@ -214,18 +199,33 @@ class RouteTrackingService : Service() {
         }
     }
 
-    private fun onActionStart(intent: Intent) {
-        Timber.d("onActionStart")
-        mainScope.launch {
-            val lastResumeTime = System.currentTimeMillis()
-            routeTrackingState.setTrackingInProgress(true)
-            routeTrackingState.setTrackingStartTime(lastResumeTime)
-            routeTrackingState.setLastResumeTime(lastResumeTime)
-        }
+    private fun onActionStop() {
+        Timber.d("onActionStop")
 
-        createTrackingNotification()
-        requestLocationUpdates()
-        createWakeLock()
+        stopLocationUpdates()
+        stopSelf()
+//        saveTrackingDuration()
+        mainScope.launch {
+            routeTrackingState.clear()
+            routeTrackingLocationRepository.clearRouteTrackingLocation()
+        }
+        releaseWakeLock()
+    }
+
+    private fun saveTrackingDuration(saveTime: Long) {
+        ioScope.launch {
+            val trackDuration = saveTime - routeTrackingState.getLastResumeTime()
+            Timber.d("trackDuration $trackDuration")
+            routeTrackingState.setTrackingDuration(routeTrackingState.getTrackingDuration() + trackDuration)
+        }
+    }
+
+    private fun releaseWakeLock() {
+        wakeLock?.let {
+            if (it.isHeld)
+                it.release()
+            wakeLock = null
+        }
     }
 
     private fun createWakeLock() {

@@ -70,7 +70,7 @@ class RouteTrackingStateImpl @Inject constructor(
         .first()
 
     override suspend fun setLastResumeTime(resumeTime: Long): Unit = withContext(Dispatchers.IO) {
-        prefDataStore.edit { data -> data[KEY_LAST_RESUME_TIME] }
+        prefDataStore.edit { data -> data[KEY_LAST_RESUME_TIME] = resumeTime }
     }
 
     override suspend fun getInstantSpeed(): Double = prefDataStore.data

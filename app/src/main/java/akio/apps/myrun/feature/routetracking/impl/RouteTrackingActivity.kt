@@ -133,6 +133,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         }
 
         startService(RouteTrackingService.resumeIntent(this))
+        viewModel.startTrackingStatsUpdates()
     }
 
     private fun onStopRouteTracking() {
@@ -144,6 +145,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         }
 
         startService(RouteTrackingService.stopIntent(this))
+        viewModel.stopTrackingStatsUpdates()
     }
 
     private fun onPauseRouteTracking() {
