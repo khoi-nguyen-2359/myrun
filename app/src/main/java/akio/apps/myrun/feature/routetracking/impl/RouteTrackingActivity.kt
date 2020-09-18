@@ -44,7 +44,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         )
     }
 
-    private val checkRequiredPermissionsDelegate by lazy { CheckRequiredPermissionsDelegate(this, RC_LOCATION_PERMISSIONS, locationPermissions, onLocationPermissionsGranted) }
+    private val checkLocationPermissionsDelegate by lazy { CheckRequiredPermissionsDelegate(this, RC_LOCATION_PERMISSIONS, locationPermissions, onLocationPermissionsGranted) }
 
     private var routePolyline: Polyline? = null
     private var drawnLocationCount: Int = 0
@@ -54,20 +54,21 @@ class RouteTrackingActivity : BaseInjectionActivity() {
 
         initViews()
         initObservers()
+
+        // onCreate: check location permissions -> check location service availability -> allow user to use this screen
+        checkLocationPermissionsDelegate.requestPermissions()
     }
 
     override fun onStart() {
         super.onStart()
 
-        // onStart: check location permissions -> check location service availability -> allow user to use this screen
-        checkRequiredPermissionsDelegate.requestPermissions()
-        viewModel.resumeTrackingStatsUpdates()
+        viewModel.requestDataUpdates()
     }
 
     override fun onStop() {
         super.onStop()
 
-        viewModel.stopTrackingStatsUpdates()
+        viewModel.cancelDataUpdates()
     }
 
     private fun initObservers() {
@@ -80,11 +81,16 @@ class RouteTrackingActivity : BaseInjectionActivity() {
 
         observe(viewModel.trackingLocationBatch, ::onTrackingLocationUpdated)
 
-        observe(viewModel.trackingStats, ::updateTrackingStatsView)
+        observe(viewModel.trackingStats, viewBinding.trackingStatsView::update)
+        observe(viewModel.trackingStatus, ::updateViewForTrackingStatus)
     }
 
-    private fun updateTrackingStatsView(routeTrackingStats: RouteTrackingStats) {
-        viewBinding.trackingStatsView.update(routeTrackingStats)
+    private fun updateViewForTrackingStatus(trackingStatus: RouteTrackingStatus) {
+        when (trackingStatus) {
+            RouteTrackingStatus.Resumed -> updateViewsOnTrackingResumed()
+            RouteTrackingStatus.Paused -> updateViewsOnTrackingPaused()
+            RouteTrackingStatus.Stopped -> updateViewsOnTrackingStopped()
+        }
     }
 
     private fun onTrackingLocationUpdated(batch: List<TrackingLocationEntity>) {
@@ -92,7 +98,6 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         batch.lastOrNull()?.let {
             mapView.moveCamera(CameraUpdateFactory.newLatLng(GmsLatLng(it.latitude, it.longitude)))
         }
-        viewModel.requestRouteTrackingLocationUpdate(drawnLocationCount)
     }
 
     private fun drawTrackingLocations(batch: List<TrackingLocationEntity>) {
@@ -124,54 +129,51 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         }
     }
 
-    private fun onResumeRouteTracking() {
-        viewBinding.apply {
-            recordButton.root.visibility = View.GONE
-            resumeButton.root.visibility = View.GONE
-            stopButton.root.visibility = View.GONE
-            pauseButton.root.visibility = View.VISIBLE
-        }
-
-        startService(RouteTrackingService.resumeIntent(this))
-        viewModel.startTrackingStatsUpdates()
-    }
-
-    private fun onStopRouteTracking() {
+    private fun updateViewsOnTrackingStopped() {
         viewBinding.apply {
             recordButton.root.visibility = View.VISIBLE
             resumeButton.root.visibility = View.GONE
             stopButton.root.visibility = View.GONE
             pauseButton.root.visibility = View.GONE
         }
-
-        startService(RouteTrackingService.stopIntent(this))
-        viewModel.stopTrackingStatsUpdates()
     }
 
-    private fun onPauseRouteTracking() {
+    private fun updateViewsOnTrackingPaused() {
         viewBinding.apply {
             recordButton.root.visibility = View.GONE
             resumeButton.root.visibility = View.VISIBLE
             stopButton.root.visibility = View.VISIBLE
             pauseButton.root.visibility = View.GONE
         }
-
-        startService(RouteTrackingService.pauseIntent(this))
-        viewModel.stopTrackingStatsUpdates()
     }
 
-    private fun onStartRouteTracking() {
+    private fun updateViewsOnTrackingResumed() {
         viewBinding.apply {
             recordButton.root.visibility = View.GONE
             resumeButton.root.visibility = View.GONE
             stopButton.root.visibility = View.GONE
             pauseButton.root.visibility = View.VISIBLE
         }
+    }
 
+    private fun onStartRouteTracking() {
         startRouteTrackingService()
+        viewModel.startRouteTracking()
+    }
 
-        viewModel.requestRouteTrackingLocationUpdate(drawnLocationCount)
-        viewModel.startTrackingStatsUpdates()
+    private fun onResumeRouteTracking() {
+        startService(RouteTrackingService.resumeIntent(this))
+        viewModel.resumeRouteTracking()
+    }
+
+    private fun onStopRouteTracking() {
+        startService(RouteTrackingService.stopIntent(this))
+        viewModel.stopRouteTracking()
+    }
+
+    private fun onPauseRouteTracking() {
+        startService(RouteTrackingService.pauseIntent(this))
+        viewModel.pauseRouteTracking()
     }
 
     private fun startRouteTrackingService() {
@@ -185,7 +187,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        checkRequiredPermissionsDelegate.verifyPermissionsResult()
+        checkLocationPermissionsDelegate.verifyPermissionsResult()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -201,6 +203,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
             map.uiSettings.isMyLocationButtonEnabled = true
 
             viewModel.requestMapInitialLocation()
+            viewModel.restoreTrackingStatus()
         }
     }
 

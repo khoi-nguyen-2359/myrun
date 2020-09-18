@@ -9,9 +9,7 @@ import akio.apps.myrun.feature.routetracking.GetTrackingLocationUpdatesUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
 import android.location.Location
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,14 +23,26 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val _mapInitialLocation = MutableLiveData<Event<Location>>()
     override val mapInitialLocation: LiveData<Event<Location>> = _mapInitialLocation
 
-    private val _trackingLocationBatch = MutableLiveData<List<TrackingLocationEntity>>()
+    private var trackingLocationBatchSource: LiveData<List<TrackingLocationEntity>>? = null
+    private val _trackingLocationBatch = MediatorLiveData<List<TrackingLocationEntity>>()
     override val trackingLocationBatch: LiveData<List<TrackingLocationEntity>> = _trackingLocationBatch
 
     private val _trackingStats = MutableLiveData<RouteTrackingStats>()
     override val trackingStats: LiveData<RouteTrackingStats> = _trackingStats
 
+    private val _trackingStatus = MutableLiveData(RouteTrackingStatus.Stopped)
+    override val trackingStatus: LiveData<RouteTrackingStatus> = _trackingStatus
+
     private var trackingTimerJob: Job? = null
-    private var trackingDuration: Long = 0
+    private var processedLocationCount = 0
+
+    override fun restoreTrackingStatus() {
+        viewModelScope.launch {
+            if (routeTrackingState.isTrackingInProgress()) {
+                startRouteTracking()
+            }
+        }
+    }
 
     override fun requestMapInitialLocation() {
         launchCatching {
@@ -41,38 +51,65 @@ class RouteTrackingViewModelImpl @Inject constructor(
         }
     }
 
-    override fun requestRouteTrackingLocationUpdate(skip: Int) {
-        viewModelScope.launch {
-            val batch = getTrackingLocationUpdatesUsecase.getLocationUpdates(skip)
-            _trackingLocationBatch.value = batch
-        }
+    override fun startRouteTracking() {
+        _trackingStatus.value = RouteTrackingStatus.Resumed
+        requestDataUpdates()
     }
 
-    override fun startTrackingStatsUpdates() {
-        viewModelScope.launch {
-            trackingDuration = routeTrackingState.getTrackingDuration()
-            trackingTimerJob?.cancel()
-            trackingTimerJob = flowTimer(0, TRACKING_TIMER_PERIOD, onTrackingTimerTick)
-        }
+    override fun pauseRouteTracking() {
+        _trackingStatus.value = RouteTrackingStatus.Paused
+        cancelDataUpdates()
+    }
+
+    override fun resumeRouteTracking() {
+        _trackingStatus.value = RouteTrackingStatus.Resumed
+        requestDataUpdates()
+    }
+
+    override fun stopRouteTracking() {
+        _trackingStatus.value = RouteTrackingStatus.Stopped
+        cancelDataUpdates()
     }
 
     private val onTrackingTimerTick: () -> Unit = {
         viewModelScope.launch {
-            trackingDuration += TRACKING_TIMER_PERIOD
+            val trackingDuration = System.currentTimeMillis() - routeTrackingState.getLastResumeTime() + routeTrackingState.getTrackingDuration()
             _trackingStats.value = RouteTrackingStats(routeTrackingState.getRouteDistance(), routeTrackingState.getInstantSpeed(), trackingDuration / 1000)
         }
     }
 
-    override fun resumeTrackingStatsUpdates() {
+    override fun requestDataUpdates() {
         viewModelScope.launch {
-            if (routeTrackingState.isTrackingInProgress()) {
-                startTrackingStatsUpdates()
+            if (_trackingStatus.value == RouteTrackingStatus.Resumed) {
+                trackingTimerJob?.cancel()
+                trackingTimerJob = flowTimer(TRACKING_TIMER_PERIOD, TRACKING_TIMER_PERIOD, onTrackingTimerTick)
+
+                trackingLocationBatchSource?.let {
+                    _trackingLocationBatch.removeSource(it)
+                }
+                trackingLocationBatchSource = getTrackingLocationUpdatesUsecase.getLocationUpdates(processedLocationCount)
+                    .asLiveData()
+                    .also {
+                        _trackingLocationBatch.addSource(it) { batch ->
+                            _trackingLocationBatch.value = batch
+                            processedLocationCount += batch.size
+                        }
+                    }
             }
         }
     }
 
-    override fun stopTrackingStatsUpdates() {
+    override fun cancelDataUpdates() {
         trackingTimerJob?.cancel()
+        trackingLocationBatchSource?.let {
+            _trackingLocationBatch.removeSource(it)
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+
+        cancelDataUpdates()
     }
 
     companion object {

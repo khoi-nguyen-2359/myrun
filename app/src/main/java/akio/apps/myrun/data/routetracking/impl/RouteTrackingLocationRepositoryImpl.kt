@@ -27,9 +27,6 @@ class RouteTrackingLocationRepositoryImpl @Inject constructor(
         Timber.d("repo: get tracking location update ${roomLocations.size}")
         roomLocations.map { it.toTrackingLocationEntity() }
     }
-        .onCompletion {
-            Timber.d("onCompletion")
-        }
         .flowOn(Dispatchers.IO)
 
     override suspend fun getLatestLocationTime(): Long = withContext(Dispatchers.IO) {

@@ -215,7 +215,6 @@ class RouteTrackingService : Service() {
     private fun saveTrackingDuration(saveTime: Long) {
         ioScope.launch {
             val trackDuration = saveTime - routeTrackingState.getLastResumeTime()
-            Timber.d("trackDuration $trackDuration")
             routeTrackingState.setTrackingDuration(routeTrackingState.getTrackingDuration() + trackDuration)
         }
     }
