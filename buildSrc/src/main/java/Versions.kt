@@ -37,6 +37,7 @@ object Versions {
     const val firebaseAuth = "19.4.0"
     const val firebaseAnalytics = "17.5.0"
     const val firebaseCrashlytics = "17.2.1"
+    const val firebaseStorage = "19.2.0"
     const val crashlytics = "2.10.1"
 
     const val dataStore = "1.0.0-alpha01"

@@ -3,11 +3,11 @@ package akio.apps.myrun.feature.routetracking.impl
 import akio.apps._base.lifecycle.Event
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.dto.TrackingLocationEntity
+import akio.apps.myrun.data.workout.dto.ActivityType
 import akio.apps.myrun.feature._base.flowTimer
-import akio.apps.myrun.feature.routetracking.GetMapInitialLocationUsecase
-import akio.apps.myrun.feature.routetracking.GetTrackingLocationUpdatesUsecase
-import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
+import akio.apps.myrun.feature.routetracking.*
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
+import android.graphics.Bitmap
 import android.location.Location
 import androidx.lifecycle.*
 import kotlinx.coroutines.Job
@@ -17,7 +17,9 @@ import javax.inject.Inject
 class RouteTrackingViewModelImpl @Inject constructor(
     private val getMapInitialLocationUsecase: GetMapInitialLocationUsecase,
     private val getTrackingLocationUpdatesUsecase: GetTrackingLocationUpdatesUsecase,
-    private val routeTrackingState: RouteTrackingState
+    private val routeTrackingState: RouteTrackingState,
+    private val saveRouteTrackingWorkoutUsecase: SaveRouteTrackingWorkoutUsecase,
+    private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
 ) : RouteTrackingViewModel() {
 
     private val _mapInitialLocation = MutableLiveData<Event<Location>>()
@@ -32,6 +34,9 @@ class RouteTrackingViewModelImpl @Inject constructor(
 
     private val _trackingStatus = MutableLiveData(RouteTrackingStatus.Stopped)
     override val trackingStatus: LiveData<RouteTrackingStatus> = _trackingStatus
+
+    private val _saveWorkoutResult = MutableLiveData<Event<Unit>>()
+    override val saveWorkoutResult: LiveData<Event<Unit>> = _saveWorkoutResult
 
     private var trackingTimerJob: Job? = null
     private var processedLocationCount = 0
@@ -69,6 +74,14 @@ class RouteTrackingViewModelImpl @Inject constructor(
     override fun stopRouteTracking() {
         _trackingStatus.value = RouteTrackingStatus.Stopped
         cancelDataUpdates()
+    }
+
+    override fun saveWorkout(activityType: ActivityType, routeMapImage: Bitmap) {
+        launchCatching {
+            saveRouteTrackingWorkoutUsecase.saveCurrentWorkout(activityType, routeMapImage)
+            clearRouteTrackingStateUsecase.clear()
+            _saveWorkoutResult.value = Event(Unit)
+        }
     }
 
     private val onTrackingTimerTick: () -> Unit = {

@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -13,6 +14,9 @@ import dagger.Provides
 class AppModule {
     @Provides
     fun firebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    @Provides
+    fun firebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
 
     @Provides
     fun viewModelFactory(viewModelFactory: ViewModelFactory): ViewModelProvider.Factory = viewModelFactory

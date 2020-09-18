@@ -5,7 +5,9 @@ import akio.apps.myrun.data.routetracking.dto.RoomTrackingLocation
 import akio.apps.myrun.data.routetracking.dto.TrackingLocationEntity
 import android.location.Location
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -23,11 +25,17 @@ class RouteTrackingLocationRepositoryImpl @Inject constructor(
         routeTrackingLocationDao.clear()
     }
 
-    override fun getRouteTrackingLocationUpdates(skip: Int): Flow<List<TrackingLocationEntity>> = routeTrackingLocationDao.getLocations(skip).map { roomLocations ->
-        Timber.d("repo: get tracking location update ${roomLocations.size}")
-        roomLocations.map { it.toTrackingLocationEntity() }
-    }
+    override fun getRouteTrackingLocationUpdates(skip: Int): Flow<List<TrackingLocationEntity>> = routeTrackingLocationDao.getLocations(skip)
+        .map { roomLocations ->
+            Timber.d("repo: get tracking location update ${roomLocations.size}")
+            roomLocations.map { it.toTrackingLocationEntity() }
+        }
         .flowOn(Dispatchers.IO)
+
+    override suspend fun getAllLocations(): List<TrackingLocationEntity> = routeTrackingLocationDao.getAll()
+        .map { roomLocation ->
+            roomLocation.toTrackingLocationEntity()
+        }
 
     override suspend fun getLatestLocationTime(): Long = withContext(Dispatchers.IO) {
         routeTrackingLocationDao.getLatestLocationTime()

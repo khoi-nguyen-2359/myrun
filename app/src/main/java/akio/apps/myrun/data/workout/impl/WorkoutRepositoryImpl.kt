@@ -1,25 +1,31 @@
 package akio.apps.myrun.data.workout.impl
 
+import akio.apps._base.firebase.FirebaseStorageUtils
 import akio.apps.myrun.data.workout.WorkoutRepository
-import akio.apps.myrun.data.workout.dto.FirestoreRunData
-import akio.apps.myrun.data.workout.dto.FirestoreWorkout
-import akio.apps.myrun.data.workout.dto.RunDataEntity
-import akio.apps.myrun.data.workout.dto.WorkoutEntity
+import akio.apps.myrun.data.workout.dto.*
+import android.graphics.Bitmap
+import android.net.Uri
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class WorkoutRepositoryImpl @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val firebaseStorage: FirebaseStorage
 ) : WorkoutRepository {
 
     private val workoutCollection: CollectionReference
-        get() = firestore.collection("workout")
+        get() = firestore.collection("_workout_")
 
-    override suspend fun getWorkoutsByStartTime(userId: String, startAfterTime: Long, limit: Int): List<WorkoutEntity> {
-        val query = workoutCollection.whereEqualTo("userId", userId)
+    private val workoutStorage: StorageReference
+        get() = firebaseStorage.getReference("_workout_")
+
+    override suspend fun getWorkoutsByStartTime(startAfterTime: Long, limit: Int): List<WorkoutEntity> {
+        val query = workoutCollection
             .orderBy("startTime", Query.Direction.DESCENDING)
             .startAfter(startAfterTime)
             .limit(limit.toLong())
@@ -29,14 +35,40 @@ class WorkoutRepositoryImpl @Inject constructor(
         return snapshot.documents.mapNotNull {
             it.toObject(FirestoreWorkout::class.java)
         }
-            .map { it.toWorkoutEntity() }
+            .map {  firestoreWorkout ->
+                val workoutData = WorkoutEntityImpl(firestoreWorkout.activityType, firestoreWorkout.startTime, firestoreWorkout.endTime)
+                return@map if (firestoreWorkout.runData != null) {
+                    RunningWorkoutEntity(
+                        workoutData = workoutData,
+                        routePhoto = firestoreWorkout.runData.routePhoto,
+                        averagePace = firestoreWorkout.runData.averagePace,
+                        distance = firestoreWorkout.runData.distance,
+                        encodedPolyline = firestoreWorkout.runData.encodedPolyline
+                    )
+                } else throw IllegalArgumentException("[Firestore Workout] Unknown activity type")
+            }
     }
 
-    private fun FirestoreRunData.toRunDataEntity() = RunDataEntity(
-        routePhoto, avgPace, distance, duration, locations, speeds, steps, cadences
+    override suspend fun saveWorkout(workout: WorkoutEntity, routeMapImage: Bitmap) {
+        val uploadedUri = FirebaseStorageUtils.uploadBitmap(workoutStorage, routeMapImage, THUMBNAIL_SCALED_SIZE)
+
+        val runData: FirestoreRunData? = (workout as? RunningWorkoutEntity)
+            ?.toFirestoreRunData(uploadedUri)
+
+        val firestoreWorkout = FirestoreWorkout(
+            activityType = workout.activityType,
+            startTime = workout.startTime,
+            endTime = workout.endTime,
+            runData = runData
+        )
+        workoutCollection.add(firestoreWorkout).await()
+    }
+
+    private fun RunningWorkoutEntity.toFirestoreRunData(routePhotoUri: Uri? = null) = FirestoreRunData(
+        routePhotoUri?.toString() ?: routePhoto, averagePace, distance, encodedPolyline
     )
 
-    private fun FirestoreWorkout.toWorkoutEntity() = WorkoutEntity(
-        userId, activityType, name, startTime, endTime, heartRates, calories, runData?.toRunDataEntity()
-    )
+    companion object {
+        const val THUMBNAIL_SCALED_SIZE = 512 //px
+    }
 }

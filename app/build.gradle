@@ -87,6 +87,7 @@ dependencies {
     implementation "com.google.firebase:firebase-auth:$Versions.firebaseAuth"
     implementation "com.google.firebase:firebase-analytics:$Versions.firebaseAnalytics"
     implementation "com.google.firebase:firebase-crashlytics:$Versions.firebaseCrashlytics"
+    implementation "com.google.firebase:firebase-storage:$Versions.firebaseStorage"
     implementation "com.crashlytics.sdk.android:crashlytics:$Versions.crashlytics"
 
     implementation "com.jakewharton.timber:timber:$Versions.timber"

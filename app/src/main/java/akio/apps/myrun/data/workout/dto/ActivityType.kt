@@ -1,5 +1,5 @@
 package akio.apps.myrun.data.workout.dto
 
-enum class FirestoreActivityType {
+enum class ActivityType {
     Running, Unknown
 }

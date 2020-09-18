@@ -9,4 +9,5 @@ interface RouteTrackingLocationRepository {
     suspend fun clearRouteTrackingLocation()
     fun getRouteTrackingLocationUpdates(skip: Int): Flow<List<TrackingLocationEntity>>
     suspend fun getLatestLocationTime(): Long
+    suspend fun getAllLocations(): List<TrackingLocationEntity>
 }

@@ -3,14 +3,14 @@ package akio.apps.myrun.feature.routetracking.impl
 import akio.apps._base.activity.BaseInjectionActivity
 import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
-import akio.apps._base.view.dp2px
+import akio.apps._base.ui.dp2px
 import akio.apps.myrun.R
 import akio.apps.myrun.data.routetracking.dto.TrackingLocationEntity
+import akio.apps.myrun.data.workout.dto.ActivityType
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature._base.*
 import akio.apps.myrun.feature._base.AppPermissions.locationPermissions
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
-import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -169,6 +169,10 @@ class RouteTrackingActivity : BaseInjectionActivity() {
     private fun onStopRouteTracking() {
         startService(RouteTrackingService.stopIntent(this))
         viewModel.stopRouteTracking()
+
+        mapView.snapshot { mapSnapshot ->
+            viewModel.saveWorkout(ActivityType.Running, mapSnapshot)
+        }
     }
 
     private fun onPauseRouteTracking() {

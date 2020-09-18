@@ -111,7 +111,7 @@ class RouteTrackingService : Service() {
 
     private suspend fun computeRouteDistance(locations: List<Location>): Double {
         val computeLengthLocations = mutableListOf<Location>()
-        lastComputeLengthLocation ?. let {
+        lastComputeLengthLocation?.let {
             computeLengthLocations.add(it)
         }
         computeLengthLocations.addAll(locations)
@@ -121,10 +121,6 @@ class RouteTrackingService : Service() {
         routeTrackingState.setRouteDistance(routeDistance)
 
         return routeDistance
-    }
-
-    private fun stopLocationUpdates() {
-        locationUpdateJob?.cancel()
     }
 
     private fun createTrackingNotification() {
@@ -202,14 +198,9 @@ class RouteTrackingService : Service() {
     private fun onActionStop() {
         Timber.d("onActionStop")
 
-        stopLocationUpdates()
-        stopSelf()
-//        saveTrackingDuration()
-        mainScope.launch {
-            routeTrackingState.clear()
-            routeTrackingLocationRepository.clearRouteTrackingLocation()
-        }
+        locationUpdateJob?.cancel()
         releaseWakeLock()
+        stopSelf()
     }
 
     private fun saveTrackingDuration(saveTime: Long) {
