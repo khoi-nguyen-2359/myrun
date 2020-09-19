@@ -16,9 +16,6 @@ class MyWorkoutViewModelImpl @Inject constructor(
 
     override val myWorkoutList: LiveData<PagingData<Workout>> = Pager(PagingConfig(pageSize = PAGE_SIZE)) { workoutPagingSource }.liveData
 
-    override fun fetchMyWorkout(startAfter: Long, perPage: Int) {
-    }
-
     companion object {
         const val PAGE_SIZE = 3
     }

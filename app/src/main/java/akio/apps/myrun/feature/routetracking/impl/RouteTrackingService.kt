@@ -168,7 +168,7 @@ class RouteTrackingService : Service() {
         notifyTrackingNotification()
         requestLocationUpdates()
         startTrackingTimer()
-        createWakeLock()
+//        createWakeLock()
     }
 
     private fun startTrackingTimer() {
@@ -217,24 +217,7 @@ class RouteTrackingService : Service() {
 
         locationUpdateJob?.cancel()
         trackingTimerJob?.cancel()
-        releaseWakeLock()
         stopSelf()
-    }
-
-    private fun releaseWakeLock() {
-        wakeLock?.let {
-            if (it.isHeld)
-                it.release()
-            wakeLock = null
-        }
-    }
-
-    private fun createWakeLock() {
-        wakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
-            newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "RidgeRunners::WakelockTag").apply {
-                acquire()
-            }
-        }
     }
 
     private fun createNotificationChannel() {

@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.myworkout.impl
 
 import akio.apps._base.di.ViewModelKey
-import akio.apps.myrun.feature.myworkout.GetWorkoutListUsecase
 import akio.apps.myrun.feature.myworkout.MyWorkoutViewModel
 import androidx.lifecycle.ViewModel
 import dagger.Binds
@@ -18,7 +17,4 @@ interface MyWorkoutFeatureModule {
     @IntoMap
     @ViewModelKey(MyWorkoutViewModel::class)
     fun myWorkoutViewModel(viewModelImpl: MyWorkoutViewModelImpl): ViewModel
-
-    @Binds
-    fun getWorkoutListUsecase(usecaseImpl: GetWorkoutListUsecaseImpl): GetWorkoutListUsecase
 }
