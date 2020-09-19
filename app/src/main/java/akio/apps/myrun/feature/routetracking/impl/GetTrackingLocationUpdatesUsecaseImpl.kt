@@ -14,21 +14,5 @@ class GetTrackingLocationUpdatesUsecaseImpl @Inject constructor(
     private val routeTrackingLocationRepository: RouteTrackingLocationRepository
 ) : GetTrackingLocationUpdatesUsecase {
 
-    override fun getLocationUpdates(drop: Int): Flow<List<TrackingLocationEntity>> = channelFlow {
-        var accumDrop = drop
-        while (!isClosedForSend) {
-            val locationUpdates = routeTrackingLocationRepository.getRouteTrackingLocationUpdates(accumDrop)
-                .filter { it.isNotEmpty() }
-                .flowOn(Dispatchers.IO)
-                .first()
-
-            sendBlocking(locationUpdates)
-            accumDrop += locationUpdates.size
-        }
-
-        awaitClose {
-            Timber.d("getLocationUpdates closed.")
-        }
-    }
-        .flowOn(Dispatchers.IO)
+    override suspend fun getLocationUpdates(skip: Int): List<TrackingLocationEntity> = routeTrackingLocationRepository.getRouteTrackingLocationUpdates(skip)
 }

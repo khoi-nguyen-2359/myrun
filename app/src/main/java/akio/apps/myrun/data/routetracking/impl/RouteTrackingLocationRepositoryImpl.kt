@@ -25,12 +25,8 @@ class RouteTrackingLocationRepositoryImpl @Inject constructor(
         routeTrackingLocationDao.clear()
     }
 
-    override fun getRouteTrackingLocationUpdates(skip: Int): Flow<List<TrackingLocationEntity>> = routeTrackingLocationDao.getLocations(skip)
-        .map { roomLocations ->
-            Timber.d("repo: get tracking location update ${roomLocations.size}")
-            roomLocations.map { it.toTrackingLocationEntity() }
-        }
-        .flowOn(Dispatchers.IO)
+    override suspend fun getRouteTrackingLocationUpdates(skip: Int): List<TrackingLocationEntity> = routeTrackingLocationDao.getLocations(skip)
+        .map { it.toTrackingLocationEntity() }
 
     override suspend fun getAllLocations(): List<TrackingLocationEntity> = routeTrackingLocationDao.getAll()
         .map { roomLocation ->

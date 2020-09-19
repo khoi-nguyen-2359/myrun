@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps._base.lifecycle.Event
 import akio.apps.myrun.data.routetracking.RouteTrackingState
+import akio.apps.myrun.data.routetracking.dto.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.dto.TrackingLocationEntity
 import akio.apps.myrun.data.workout.dto.ActivityType
 import akio.apps.myrun.feature._base.flowTimer
@@ -25,98 +26,79 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val _mapInitialLocation = MutableLiveData<Event<Location>>()
     override val mapInitialLocation: LiveData<Event<Location>> = _mapInitialLocation
 
-    private var trackingLocationBatchSource: LiveData<List<TrackingLocationEntity>>? = null
-    private val _trackingLocationBatch = MediatorLiveData<List<TrackingLocationEntity>>()
+    private val _trackingLocationBatch = MutableLiveData<List<TrackingLocationEntity>>()
     override val trackingLocationBatch: LiveData<List<TrackingLocationEntity>> = _trackingLocationBatch
 
     private val _trackingStats = MutableLiveData<RouteTrackingStats>()
     override val trackingStats: LiveData<RouteTrackingStats> = _trackingStats
 
-    private val _trackingStatus = MutableLiveData(RouteTrackingStatus.Stopped)
-    override val trackingStatus: LiveData<RouteTrackingStatus> = _trackingStatus
+    override val trackingStatus: LiveData<@RouteTrackingStatus Int> = routeTrackingState.getTrackingStatusFlow().asLiveData()
 
-    private val _saveWorkoutResult = MutableLiveData<Event<Unit>>()
-    override val saveWorkoutResult: LiveData<Event<Unit>> = _saveWorkoutResult
+    private val _saveWorkoutSuccess = MutableLiveData<Event<Unit>>()
+    override val saveWorkoutSuccess: LiveData<Event<Unit>> = _saveWorkoutSuccess
 
     private var trackingTimerJob: Job? = null
     private var processedLocationCount = 0
 
-    override fun restoreTrackingStatus() {
-        viewModelScope.launch {
-            if (routeTrackingState.isTrackingInProgress()) {
-                startRouteTracking()
-            }
+    override fun resumeDataUpdates() {
+        if (_mapInitialLocation.value != null && trackingStatus.value == RouteTrackingStatus.RESUMED) {
+            requestDataUpdates()
         }
     }
 
-    override fun requestMapInitialLocation() {
+    private fun restoreTrackingStatus(latestStatus: Int) = viewModelScope.launch {
+        when (latestStatus) {
+            RouteTrackingStatus.RESUMED -> requestDataUpdates()
+            RouteTrackingStatus.PAUSED -> notifyDataUpdates()
+        }
+    }
+
+    override fun initialize() {
         launchCatching {
             val initialLocation = getMapInitialLocationUsecase.getMapInitialLocation()
             _mapInitialLocation.value = Event(initialLocation)
+
+            trackingStatus.observeForever(object : Observer<@RouteTrackingStatus Int> {
+                override fun onChanged(@RouteTrackingStatus latestStatus: Int) {
+                    if (latestStatus != RouteTrackingStatus.STOPPED) {
+                        restoreTrackingStatus(latestStatus)
+                    }
+
+                    // restore in one shot
+                    trackingStatus.removeObserver(this)
+                }
+            })
         }
-    }
-
-    override fun startRouteTracking() {
-        _trackingStatus.value = RouteTrackingStatus.Resumed
-        requestDataUpdates()
-    }
-
-    override fun pauseRouteTracking() {
-        _trackingStatus.value = RouteTrackingStatus.Paused
-        cancelDataUpdates()
-    }
-
-    override fun resumeRouteTracking() {
-        _trackingStatus.value = RouteTrackingStatus.Resumed
-        requestDataUpdates()
-    }
-
-    override fun stopRouteTracking() {
-        _trackingStatus.value = RouteTrackingStatus.Stopped
-        cancelDataUpdates()
     }
 
     override fun saveWorkout(activityType: ActivityType, routeMapImage: Bitmap) {
         launchCatching {
             saveRouteTrackingWorkoutUsecase.saveCurrentWorkout(activityType, routeMapImage)
             clearRouteTrackingStateUsecase.clear()
-            _saveWorkoutResult.value = Event(Unit)
+
+            _saveWorkoutSuccess.value = Event(Unit)
         }
     }
 
-    private val onTrackingTimerTick: () -> Unit = {
-        viewModelScope.launch {
-            val trackingDuration = System.currentTimeMillis() - routeTrackingState.getLastResumeTime() + routeTrackingState.getTrackingDuration()
-            _trackingStats.value = RouteTrackingStats(routeTrackingState.getRouteDistance(), routeTrackingState.getInstantSpeed(), trackingDuration)
+    private suspend fun notifyDataUpdates() {
+        _trackingStats.value = routeTrackingState.run {
+            RouteTrackingStats(getRouteDistance(), getInstantSpeed(), getTrackingDuration())
         }
+
+        val batch = getTrackingLocationUpdatesUsecase.getLocationUpdates(processedLocationCount)
+        _trackingLocationBatch.value = batch
+        processedLocationCount += batch.size
     }
 
     override fun requestDataUpdates() {
-        viewModelScope.launch {
-            if (_trackingStatus.value == RouteTrackingStatus.Resumed) {
-                trackingTimerJob?.cancel()
-                trackingTimerJob = flowTimer(TRACKING_TIMER_PERIOD, TRACKING_TIMER_PERIOD, onTrackingTimerTick)
-
-                trackingLocationBatchSource?.let {
-                    _trackingLocationBatch.removeSource(it)
-                }
-                trackingLocationBatchSource = getTrackingLocationUpdatesUsecase.getLocationUpdates(processedLocationCount)
-                    .asLiveData()
-                    .also {
-                        _trackingLocationBatch.addSource(it) { batch ->
-                            _trackingLocationBatch.value = batch
-                            processedLocationCount += batch.size
-                        }
-                    }
-            }
+        trackingTimerJob?.cancel()
+        trackingTimerJob = viewModelScope.flowTimer(0, TRACKING_TIMER_PERIOD) {
+            notifyDataUpdates()
         }
     }
 
     override fun cancelDataUpdates() {
         trackingTimerJob?.cancel()
-        trackingLocationBatchSource?.let {
-            _trackingLocationBatch.removeSource(it)
-        }
     }
 
     override fun onCleared() {

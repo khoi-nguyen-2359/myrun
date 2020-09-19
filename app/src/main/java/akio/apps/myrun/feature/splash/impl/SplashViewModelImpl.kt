@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.splash.impl
 
 import akio.apps.myrun.data.routetracking.RouteTrackingState
+import akio.apps.myrun.data.routetracking.dto.RouteTrackingStatus.STOPPED
 import akio.apps.myrun.feature.splash.SplashViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,7 +20,7 @@ class SplashViewModelImpl @Inject constructor(
     init {
         viewModelScope.launch {
             delay(1000) // enjoy splash view
-            _isRouteTrackingInProgress.value = routeTrackingState.isTrackingInProgress()
+            _isRouteTrackingInProgress.value = routeTrackingState.getTrackingStatus() != STOPPED
         }
     }
 }

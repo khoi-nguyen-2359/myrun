@@ -5,6 +5,7 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.dp2px
 import akio.apps.myrun.R
+import akio.apps.myrun.data.routetracking.dto.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.dto.TrackingLocationEntity
 import akio.apps.myrun.data.workout.dto.ActivityType
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
@@ -63,7 +64,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
     override fun onStart() {
         super.onStart()
 
-        viewModel.requestDataUpdates()
+        viewModel.resumeDataUpdates()
     }
 
     override fun onStop() {
@@ -82,19 +83,21 @@ class RouteTrackingActivity : BaseInjectionActivity() {
             mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGmsLatLng(), MapPresentation.MAP_DEFAULT_ZOOM_LEVEL))
         }
         observeEvent(viewModel.error, dialogDelegate::showExceptionAlert)
-        observeEvent(viewModel.saveWorkoutResult) { openMyWorkoutScreen() }
+        observeEvent(viewModel.saveWorkoutSuccess) { onSaveWorkoutSuccess() }
     }
 
-    private fun openMyWorkoutScreen() {
+    private fun onSaveWorkoutSuccess() {
+        startService(RouteTrackingService.stopIntent(this))
+
         finish()
         startActivity(MyWorkoutActivity.launchIntent(this))
     }
 
-    private fun updateViewForTrackingStatus(trackingStatus: RouteTrackingStatus) {
+    private fun updateViewForTrackingStatus(@RouteTrackingStatus trackingStatus: Int) {
         when (trackingStatus) {
-            RouteTrackingStatus.Resumed -> updateViewsOnTrackingResumed()
-            RouteTrackingStatus.Paused -> updateViewsOnTrackingPaused()
-            RouteTrackingStatus.Stopped -> updateViewsOnTrackingStopped()
+            RouteTrackingStatus.RESUMED -> updateViewsOnTrackingResumed()
+            RouteTrackingStatus.PAUSED -> updateViewsOnTrackingPaused()
+            RouteTrackingStatus.STOPPED -> updateViewsOnTrackingStopped()
         }
     }
 
@@ -163,26 +166,24 @@ class RouteTrackingActivity : BaseInjectionActivity() {
 
     private fun onStartRouteTracking() {
         startRouteTrackingService()
-        viewModel.startRouteTracking()
-    }
-
-    private fun onResumeRouteTracking() {
-        startService(RouteTrackingService.resumeIntent(this))
-        viewModel.resumeRouteTracking()
-    }
-
-    private fun onStopRouteTracking() {
-        startService(RouteTrackingService.stopIntent(this))
-        viewModel.stopRouteTracking()
-
-        mapView.snapshot { mapSnapshot ->
-            viewModel.saveWorkout(ActivityType.Running, mapSnapshot)
-        }
+        viewModel.requestDataUpdates()
     }
 
     private fun onPauseRouteTracking() {
         startService(RouteTrackingService.pauseIntent(this))
-        viewModel.pauseRouteTracking()
+        viewModel.cancelDataUpdates()
+    }
+
+    private fun onResumeRouteTracking() {
+        startService(RouteTrackingService.resumeIntent(this))
+        viewModel.requestDataUpdates()
+    }
+
+    private fun onStopRouteTracking() {
+        // we are currently paused, do saving:
+        mapView.snapshot { mapSnapshot ->
+            viewModel.saveWorkout(ActivityType.Running, mapSnapshot)
+        }
     }
 
     private fun startRouteTrackingService() {
@@ -211,8 +212,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
             map.isMyLocationEnabled = true
             map.uiSettings.isMyLocationButtonEnabled = true
 
-            viewModel.requestMapInitialLocation()
-            viewModel.restoreTrackingStatus()
+            viewModel.initialize()
         }
     }
 

@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-fun CoroutineScope.flowTimer(initialDelay: Long, period: Long, action: () -> Unit): Job = flow {
+fun CoroutineScope.flowTimer(initialDelay: Long, period: Long, action: suspend CoroutineScope.() -> Unit): Job = flow {
     if (initialDelay > 0) {
         delay(initialDelay)
     }
@@ -17,5 +17,5 @@ fun CoroutineScope.flowTimer(initialDelay: Long, period: Long, action: () -> Uni
     }
 }
     //. this flow is on default dispatcher
-    .onEach { action() }
+    .onEach { this.action() }
     .launchIn(this)

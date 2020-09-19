@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface RouteTrackingLocationDao {
     @Query("SELECT * FROM tracking_location ORDER BY time ASC LIMIT -1 OFFSET :skip")
-    fun getLocations(skip: Int): Flow<List<RoomTrackingLocation>>
+    suspend fun getLocations(skip: Int): List<RoomTrackingLocation>
 
     @Update
     suspend fun update(updateLocations: List<RoomTrackingLocation>)

@@ -1,8 +1,12 @@
 package akio.apps.myrun.data.routetracking
 
+import akio.apps.myrun.data.routetracking.dto.RouteTrackingStatus
+import kotlinx.coroutines.flow.Flow
+
 interface RouteTrackingState {
-    suspend fun isTrackingInProgress(): Boolean
-    suspend fun setTrackingInProgress(isTracking: Boolean)
+    suspend fun getTrackingStatus(): @RouteTrackingStatus Int
+    fun getTrackingStatusFlow(): Flow<@RouteTrackingStatus Int>
+    suspend fun setTrackingStatus(@RouteTrackingStatus status: Int)
     suspend fun setRouteDistance(distance: Double)
     suspend fun getRouteDistance(): Double
     suspend fun setTrackingStartTime(startTime: Long)

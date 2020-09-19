@@ -1,6 +1,7 @@
 package akio.apps.myrun.data.routetracking.impl
 
 import akio.apps.myrun.data.routetracking.RouteTrackingState
+import akio.apps.myrun.data.routetracking.dto.RouteTrackingStatus
 import android.content.Context
 import androidx.datastore.DataStore
 import androidx.datastore.preferences.*
@@ -15,25 +16,19 @@ class RouteTrackingStateImpl @Inject constructor(
 
     private val prefDataStore: DataStore<Preferences> = appContext.createDataStore("route_tracking_state")
 
-    init {
-
-    }
-
-    override suspend fun isTrackingInProgress(): Boolean = prefDataStore.data
-        .map { data -> data[KEY_IS_TRACKING_IN_PROGRESS] ?: false }
-        .flowOn(Dispatchers.IO)
+    override suspend fun getTrackingStatus(): @RouteTrackingStatus Int = getTrackingStatusFlow()
         .first()
 
-    override suspend fun setTrackingInProgress(isTracking: Boolean): Unit = withContext(Dispatchers.IO) {
-        prefDataStore.edit { state ->
-            state[KEY_IS_TRACKING_IN_PROGRESS] = isTracking
-        }
+    override fun getTrackingStatusFlow(): Flow<Int> = prefDataStore.data
+        .map { data -> data[KEY_TRACKING_STATUS] ?: RouteTrackingStatus.STOPPED }
+        .flowOn(Dispatchers.IO)
+
+    override suspend fun setTrackingStatus(@RouteTrackingStatus status: Int): Unit = withContext(Dispatchers.IO) {
+        prefDataStore.edit { state -> state[KEY_TRACKING_STATUS] = status }
     }
 
     override suspend fun setRouteDistance(distance: Double): Unit = withContext(Dispatchers.IO) {
-        prefDataStore.edit { state ->
-            state[KEY_ROUTE_DISTANCE] = distance.toFloat()
-        }
+        prefDataStore.edit { state -> state[KEY_ROUTE_DISTANCE] = distance.toFloat() }
     }
 
     override suspend fun setTrackingStartTime(startTime: Long): Unit = withContext(Dispatchers.IO) {
@@ -90,7 +85,7 @@ class RouteTrackingStateImpl @Inject constructor(
     }
 
     companion object {
-        private val KEY_IS_TRACKING_IN_PROGRESS = preferencesKey<Boolean>("KEY_IS_TRACKING_IN_PROGRESS")
+        private val KEY_TRACKING_STATUS = preferencesKey<Int>("KEY_TRACKING_STATUS")
         private val KEY_ROUTE_DISTANCE = preferencesKey<Float>("KEY_ROUTE_DISTANCE")
         private val KEY_TRACKING_START_TIME = preferencesKey<Long>("KEY_TRACKING_START_TIME")
         private val KEY_CURRENT_SPEED = preferencesKey<Float>("KEY_CURRENT_SPEED")
