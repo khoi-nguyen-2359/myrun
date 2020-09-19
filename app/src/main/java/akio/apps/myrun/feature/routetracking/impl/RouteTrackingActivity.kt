@@ -10,6 +10,7 @@ import akio.apps.myrun.data.workout.dto.ActivityType
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature._base.*
 import akio.apps.myrun.feature._base.AppPermissions.locationPermissions
+import akio.apps.myrun.feature.myworkout.impl.MyWorkoutActivity
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import android.annotation.SuppressLint
 import android.content.Context
@@ -72,17 +73,21 @@ class RouteTrackingActivity : BaseInjectionActivity() {
     }
 
     private fun initObservers() {
+        observe(viewModel.isInProgress, dialogDelegate::toggleProgressDialog)
+        observe(viewModel.trackingLocationBatch, ::onTrackingLocationUpdated)
+        observe(viewModel.trackingStats, viewBinding.trackingStatsView::update)
+        observe(viewModel.trackingStatus, ::updateViewForTrackingStatus)
+
         observeEvent(viewModel.mapInitialLocation) { initLocation ->
             mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGmsLatLng(), MapPresentation.MAP_DEFAULT_ZOOM_LEVEL))
         }
-
-        observe(viewModel.isInProgress, dialogDelegate::toggleProgressDialog)
         observeEvent(viewModel.error, dialogDelegate::showExceptionAlert)
+        observeEvent(viewModel.saveWorkoutResult) { openMyWorkoutScreen() }
+    }
 
-        observe(viewModel.trackingLocationBatch, ::onTrackingLocationUpdated)
-
-        observe(viewModel.trackingStats, viewBinding.trackingStatsView::update)
-        observe(viewModel.trackingStatus, ::updateViewForTrackingStatus)
+    private fun openMyWorkoutScreen() {
+        finish()
+        startActivity(MyWorkoutActivity.launchIntent(this))
     }
 
     private fun updateViewForTrackingStatus(trackingStatus: RouteTrackingStatus) {

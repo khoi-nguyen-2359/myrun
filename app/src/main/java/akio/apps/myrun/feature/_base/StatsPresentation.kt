@@ -1,12 +1,12 @@
 package akio.apps.myrun.feature._base
 
 object StatsPresentation {
-    fun getDisplayTrackingDistance(distanceInMeters: Double): String = String.format("%.2f", distanceInMeters / 1000)
+    fun getDisplayTrackingDistance(distance: Double): String = String.format("%.2f", distance / 1000)
 
-    fun getDisplayDuration(totalSec: Long): String {
-        val hour = totalSec / 3600
-        val min = (totalSec % 3600) / 60
-        val sec = (totalSec % 3600) % 60
+    fun getDisplayDuration(duration: Long): String {
+        val hour = duration / 3600000
+        val min = (duration % 3600000) / 60000
+        val sec = ((duration % 3600000) % 60000) / 1000
         return if (hour > 0) {
             String.format("%d:%02d:%02d", hour, min, sec)
         } else {

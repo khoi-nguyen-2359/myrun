@@ -7,4 +7,5 @@ interface Workout {
     val activityType: ActivityType
     val startTime: Long
     val endTime: Long
+    val duration: Long
 }

@@ -16,15 +16,9 @@ class RunningWorkoutViewHolder(
             .into(viewBinding.runningWorkoutImage)
 
         val distanceInKm = runningWorkout.distance / 1000
-        val duration = runningWorkout.endTime - runningWorkout.startTime
+        val duration = runningWorkout.duration
         val durationInHour = duration / (1000.0 * 60 * 60)
         val speed = distanceInKm / durationInHour
         viewBinding.runningWorkoutStatsView.update(RouteTrackingStats(runningWorkout.distance, speed, duration))
-    }
-
-    companion object {
-        fun create(viewBinding: ItemRunningWorkoutBinding): RunningWorkoutViewHolder {
-            return RunningWorkoutViewHolder(viewBinding)
-        }
     }
 }

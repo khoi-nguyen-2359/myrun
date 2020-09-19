@@ -7,4 +7,5 @@ interface WorkoutEntity {
     // stats
     val startTime: Long
     val endTime: Long
+    val duration: Long
 }

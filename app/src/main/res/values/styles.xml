@@ -7,6 +7,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
     <style name="RouteTrackingInfoLabel">
         <item name="android:gravity">center</item>
         <item name="android:textAllCaps">true</item>
@@ -36,7 +43,7 @@
         <item name="android:scaleType">center</item>
     </style>
 
-    <style name="TransparentDialog" parent="Theme.AppCompat.Light.Dialog">
+    <style name="TransparentDialog" parent="AppDialogTheme">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:windowFrame">@null</item>

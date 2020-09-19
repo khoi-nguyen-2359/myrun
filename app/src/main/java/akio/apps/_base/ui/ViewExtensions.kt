@@ -53,8 +53,8 @@ fun Context.getDrawableCompat(@DrawableRes drawable: Int): Drawable? {
 }
 
 fun View.setVisibleOrGone(visibleOrGone: Boolean) {
-	if (visibleOrGone) visibility = View.VISIBLE
-	else visibility = View.GONE
+	visibility = if (visibleOrGone) View.VISIBLE
+	else View.GONE
 }
 
 fun Array<out View>.setVisibleOrGone(visibleOrGone: Boolean) {

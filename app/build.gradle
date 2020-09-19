@@ -57,6 +57,7 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:$Versions.appCompat"
     implementation "androidx.constraintlayout:constraintlayout:$Versions.constraintLayout"
+    implementation "androidx.paging:paging-runtime:$Versions.paging"
     implementation "com.google.android.material:material:$Versions.androidMaterial"
 
     implementation "com.android.support:multidex:$Versions.multidex"

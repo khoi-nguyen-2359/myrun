@@ -15,6 +15,7 @@ object Versions {
     const val appCompat = "1.2.0"
     const val constraintLayout = "2.0.1"
     const val androidMaterial = "1.2.1"
+    const val paging = "3.0.0-alpha06"
 
     const val dagger = "2.28.3"
     const val room = "2.2.5"

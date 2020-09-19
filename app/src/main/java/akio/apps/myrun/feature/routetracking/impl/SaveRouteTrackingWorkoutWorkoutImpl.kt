@@ -21,14 +21,14 @@ class SaveRouteTrackingWorkoutWorkoutImpl @Inject constructor(
 ) : SaveRouteTrackingWorkoutUsecase {
 
     override suspend fun saveCurrentWorkout(activityType: ActivityType, routeMapImage: Bitmap) {
-        val saveTime = System.currentTimeMillis()
+        val endTime = System.currentTimeMillis()
         val startTime = routeTrackingState.getTrackingStartTime()
-        val workoutData: WorkoutEntity = WorkoutDataEntity("", activityType, startTime, saveTime)
+        val duration = routeTrackingState.getTrackingDuration()
+        val workoutData: WorkoutEntity = WorkoutDataEntity("", activityType, startTime, endTime, duration)
 
         val savingWorkout = when (activityType) {
             ActivityType.Running -> {
                 val distance = routeTrackingState.getRouteDistance()
-                val duration = saveTime - startTime
                 val averagePace = (duration / (1000 * 60)) / (distance / 1000)
                 val encodedLocations = PolyUtil.encode(routeTrackingLocationRepository.getAllLocations().map { it.toGmsLatLng() })
 
@@ -37,7 +37,7 @@ class SaveRouteTrackingWorkoutWorkoutImpl @Inject constructor(
                     averagePace = averagePace,
                     distance = distance,
                     encodedPolyline = encodedLocations,
-                    routePhoto = ""
+                    routePhoto = "",
                 )
             }
 

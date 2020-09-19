@@ -10,7 +10,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 import javax.inject.Inject
 
 class WorkoutRepositoryImpl @Inject constructor(
@@ -25,6 +27,7 @@ class WorkoutRepositoryImpl @Inject constructor(
         get() = firebaseStorage.getReference("_workout_")
 
     override suspend fun getWorkoutsByStartTime(startAfterTime: Long, limit: Int): List<WorkoutEntity> {
+        Timber.d("getWorkoutsByStartTime")
         val query = workoutCollection
             .orderBy("startTime", Query.Direction.DESCENDING)
             .startAfter(startAfterTime)
@@ -36,7 +39,7 @@ class WorkoutRepositoryImpl @Inject constructor(
             val firestoreWorkout = doc.toObject(FirestoreWorkout::class.java)
                 ?: return@mapNotNull null
 
-            val workoutData = WorkoutDataEntity(doc.id, firestoreWorkout.activityType, firestoreWorkout.startTime, firestoreWorkout.endTime)
+            val workoutData = firestoreWorkout.toWorkoutDataEntity(doc.id)
             if (firestoreWorkout.runData != null) {
                 RunningWorkoutEntity(
                     workoutData = workoutData,
@@ -59,6 +62,7 @@ class WorkoutRepositoryImpl @Inject constructor(
             activityType = workout.activityType,
             startTime = workout.startTime,
             endTime = workout.endTime,
+            duration = workout.duration,
             runData = runData
         )
         workoutCollection.add(firestoreWorkout).await()
@@ -66,6 +70,10 @@ class WorkoutRepositoryImpl @Inject constructor(
 
     private fun RunningWorkoutEntity.toFirestoreRunData(routePhotoUri: Uri? = null) = FirestoreRunData(
         routePhotoUri?.toString() ?: routePhoto, averagePace, distance, encodedPolyline
+    )
+
+    private fun FirestoreWorkout.toWorkoutDataEntity(workoutId: String) = WorkoutDataEntity(
+        workoutId, activityType, startTime, endTime, duration
     )
 
     companion object {

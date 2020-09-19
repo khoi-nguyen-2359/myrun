@@ -1,31 +1,25 @@
 package akio.apps.myrun.feature.myworkout.impl
 
-import akio.apps.myrun.feature.myworkout.GetWorkoutListUsecase
+import akio.apps.myrun.data.workout.impl.WorkoutPagingSource
 import akio.apps.myrun.feature.myworkout.MyWorkoutViewModel
 import akio.apps.myrun.feature.myworkout.model.Workout
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.liveData
 import javax.inject.Inject
 
 class MyWorkoutViewModelImpl @Inject constructor(
-    private val getWorkoutListUsecase: GetWorkoutListUsecase
+    private val workoutPagingSource: WorkoutPagingSource
 ) : MyWorkoutViewModel() {
 
-    private val _myWorkoutList = MutableLiveData<List<Workout>>()
-    override val myWorkoutList: LiveData<List<Workout>> = _myWorkoutList
-
-    init {
-        fetchMyWorkout(System.currentTimeMillis(), 10)
-    }
+    override val myWorkoutList: LiveData<PagingData<Workout>> = Pager(PagingConfig(pageSize = PAGE_SIZE)) { workoutPagingSource }.liveData
 
     override fun fetchMyWorkout(startAfter: Long, perPage: Int) {
-        launchCatching {
-            val pageData = getWorkoutListUsecase.getWorkoutList(startAfter, perPage)
-            val currentList = _myWorkoutList.value ?: mutableListOf()
-            _myWorkoutList.value = mutableListOf<Workout>().apply {
-                addAll(currentList)
-                addAll(pageData)
-            }
-        }
+    }
+
+    companion object {
+        const val PAGE_SIZE = 3
     }
 }

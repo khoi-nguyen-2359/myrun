@@ -87,7 +87,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val onTrackingTimerTick: () -> Unit = {
         viewModelScope.launch {
             val trackingDuration = System.currentTimeMillis() - routeTrackingState.getLastResumeTime() + routeTrackingState.getTrackingDuration()
-            _trackingStats.value = RouteTrackingStats(routeTrackingState.getRouteDistance(), routeTrackingState.getInstantSpeed(), trackingDuration / 1000)
+            _trackingStats.value = RouteTrackingStats(routeTrackingState.getRouteDistance(), routeTrackingState.getInstantSpeed(), trackingDuration)
         }
     }
 

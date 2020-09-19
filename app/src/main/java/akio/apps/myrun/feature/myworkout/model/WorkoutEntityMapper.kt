@@ -7,7 +7,7 @@ import javax.inject.Inject
 class WorkoutEntityMapper @Inject constructor() {
     fun map(entity: WorkoutEntity): Workout {
         val workoutData = entity.run {
-            WorkoutData(id, activityType, startTime, endTime)
+            WorkoutData(id, activityType, startTime, endTime, duration)
         }
 
         return if (entity is RunningWorkoutEntity) {

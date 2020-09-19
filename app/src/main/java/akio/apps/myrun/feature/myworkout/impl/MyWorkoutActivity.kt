@@ -10,14 +10,19 @@ import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
-class MyWorkoutActivity: BaseInjectionActivity() {
+class MyWorkoutActivity : BaseInjectionActivity() {
 
     private val viewBinding by lazy { ActivityMyWorkoutBinding.inflate(layoutInflater) }
 
     private val viewModel: MyWorkoutViewModel by lazy { getViewModel() }
 
-    private val workoutAdapter: WorkoutAdapter = WorkoutAdapter()
+    private val workoutPagingAdapter: WorkoutPagingAdapter = WorkoutPagingAdapter()
 
     private val dialogDelegate by lazy { ActivityDialogDelegate(this) }
 
@@ -30,7 +35,9 @@ class MyWorkoutActivity: BaseInjectionActivity() {
 
     private fun initObservers() {
         observe(viewModel.myWorkoutList) {
-            workoutAdapter.submitList(it)
+            lifecycleScope.launch {
+                workoutPagingAdapter.submitData(it)
+            }
         }
 
         observeEvent(viewModel.error, dialogDelegate::showExceptionAlert)
@@ -40,11 +47,14 @@ class MyWorkoutActivity: BaseInjectionActivity() {
         viewBinding.apply {
             setContentView(root)
             recordButton.root.setOnClickListener { openRouteTrackingScreen() }
-            myWorkoutRecyclerView.adapter = workoutAdapter
+            myWorkoutRecyclerView.adapter = workoutPagingAdapter.withLoadStateFooter(
+                footer = WorkoutLoadStateAdapter()
+            )
         }
     }
 
     private fun openRouteTrackingScreen() {
+        finish()
         startActivity(RouteTrackingActivity.launchIntent(this))
     }
 
