@@ -10,7 +10,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -25,7 +27,7 @@ class WorkoutRepositoryImpl @Inject constructor(
     private val workoutStorage: StorageReference
         get() = firebaseStorage.getReference("_workout_")
 
-    override suspend fun getWorkoutsByStartTime(startAfterTime: Long, limit: Int): List<WorkoutEntity> {
+    override suspend fun getWorkoutsByStartTime(startAfterTime: Long, limit: Int): List<WorkoutEntity> = withContext(Dispatchers.IO) {
         Timber.d("getWorkoutsByStartTime")
         val query = workoutCollection
             .orderBy("startTime", Query.Direction.DESCENDING)
@@ -34,7 +36,7 @@ class WorkoutRepositoryImpl @Inject constructor(
 
         val snapshot = query.get().await()
 
-        return snapshot.documents.mapNotNull { doc ->
+        snapshot.documents.mapNotNull { doc ->
             val firestoreWorkout = doc.toObject(FirestoreWorkout::class.java)
                 ?: return@mapNotNull null
 
@@ -51,7 +53,7 @@ class WorkoutRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveWorkout(workout: WorkoutEntity, routeMapImage: Bitmap) {
+    override suspend fun saveWorkout(workout: WorkoutEntity, routeMapImage: Bitmap): Unit = withContext(Dispatchers.IO) {
         val uploadedUri = FirebaseStorageUtils.uploadBitmap(workoutStorage, routeMapImage, THUMBNAIL_SCALED_SIZE)
 
         val runData: FirestoreRunData? = (workout as? RunningWorkoutEntity)
@@ -76,6 +78,6 @@ class WorkoutRepositoryImpl @Inject constructor(
     )
 
     companion object {
-        const val THUMBNAIL_SCALED_SIZE = 512 //px
+        const val THUMBNAIL_SCALED_SIZE = 1024 //px
     }
 }

@@ -7,7 +7,7 @@ import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.model.RouteTrackingStatus
 import akio.apps.myrun.feature._base.utils.StatsPresentations
-import akio.apps.myrun.feature._base.flowTimer
+import akio.apps.myrun.feature._base.utils.flowTimer
 import akio.apps.myrun.feature._base.utils.toGmsLatLng
 import android.annotation.SuppressLint
 import android.app.*

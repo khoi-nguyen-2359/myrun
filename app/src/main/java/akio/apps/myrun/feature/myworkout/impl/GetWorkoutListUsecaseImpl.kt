@@ -13,7 +13,7 @@ class GetWorkoutListUsecaseImpl @Inject constructor(
     private val workoutEntityMapper: WorkoutEntityMapper
 ) : GetWorkoutListUsecase {
 
-    override suspend fun getWorkoutList(startAfter: Long, perPage: Int): List<Workout> = withContext(Dispatchers.IO) {
-        workoutRepository.getWorkoutsByStartTime(startAfter, perPage).map(workoutEntityMapper::map)
+    override suspend fun getWorkoutList(startAfter: Long, perPage: Int): List<Workout> {
+        return workoutRepository.getWorkoutsByStartTime(startAfter, perPage).map(workoutEntityMapper::map)
     }
 }

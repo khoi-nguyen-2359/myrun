@@ -60,7 +60,6 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         super.onCreate(savedInstanceState)
 
         initViews()
-        initObservers()
 
         // onCreate: check location permissions -> check location service availability -> allow user to use this screen
         checkLocationPermissionsDelegate.requestPermissions()
@@ -217,15 +216,19 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         checkLocationServiceDelegate.verifyLocationServiceResolutionResult(requestCode, resultCode)
     }
 
-    @SuppressLint("MissingPermission")
     private fun onLocationRequirementsReady() {
         (supportFragmentManager.findFragmentById(R.id.tracking_map_view) as SupportMapFragment).getMapAsync { map ->
-            this.mapView = map
-            map.isMyLocationEnabled = true
-            map.uiSettings.isMyLocationButtonEnabled = true
-
+            initMapView(map)
+            initObservers()
             viewModel.initialize()
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun initMapView(map: GoogleMap) {
+        this.mapView = map
+        map.isMyLocationEnabled = true
+        map.uiSettings.isMyLocationButtonEnabled = true
     }
 
     private val onLocationPermissionsGranted = {
