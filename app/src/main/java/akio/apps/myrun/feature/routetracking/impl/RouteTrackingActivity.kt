@@ -50,6 +50,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
 
     private var routePolyline: Polyline? = null
     private var drawnLocationCount: Int = 0
+    private val trackingRouteLatLngBounds = LatLngBounds.builder()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +76,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
 
     private fun initObservers() {
         observe(viewModel.isInProgress, dialogDelegate::toggleProgressDialog)
-        observe(viewModel.trackingLocationBatch, ::onTrackingLocationUpdated)
+        observe(viewModel.trackingLocationBatch, ::onTrackingLocationUpdate)
         observe(viewModel.trackingStats, viewBinding.trackingStatsView::update)
         observe(viewModel.trackingStatus, ::updateViewForTrackingStatus)
 
@@ -101,14 +102,21 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         }
     }
 
-    private fun onTrackingLocationUpdated(batch: List<TrackingLocationEntity>) {
-        drawTrackingLocations(batch)
+    private fun onTrackingLocationUpdate(batch: List<TrackingLocationEntity>) {
+        drawTrackingLocationUpdate(batch)
+        moveMapCameraOnTrackingLocationUpdate(batch)
+    }
+
+    private fun moveMapCameraOnTrackingLocationUpdate(batch: List<TrackingLocationEntity>) {
+        batch.forEach {
+            trackingRouteLatLngBounds.include(it.toGmsLatLng())
+        }
         batch.lastOrNull()?.let {
-            mapView.moveCamera(CameraUpdateFactory.newLatLng(GmsLatLng(it.latitude, it.longitude)))
+            mapView.moveCamera(CameraUpdateFactory.newLatLngBounds(trackingRouteLatLngBounds.build(), MapPresentation.MAP_LATLNG_BOUND_PADDING))
         }
     }
 
-    private fun drawTrackingLocations(batch: List<TrackingLocationEntity>) {
+    private fun drawTrackingLocationUpdate(batch: List<TrackingLocationEntity>) {
         routePolyline?.let { currentPolyline ->
             val appendedPolypoints = currentPolyline.points
             appendedPolypoints.addAll(batch.map { LatLng(it.latitude, it.longitude) })
