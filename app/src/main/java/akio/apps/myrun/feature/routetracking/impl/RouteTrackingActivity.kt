@@ -1,16 +1,20 @@
 package akio.apps.myrun.feature.routetracking.impl
 
-import akio.apps._base.activity.BaseInjectionActivity
+import akio.apps._base.di.BaseInjectionActivity
 import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.dp2px
 import akio.apps.myrun.R
-import akio.apps.myrun.data.routetracking.dto.RouteTrackingStatus
-import akio.apps.myrun.data.routetracking.dto.TrackingLocationEntity
-import akio.apps.myrun.data.workout.dto.ActivityType
+import akio.apps.myrun.data.routetracking.model.RouteTrackingStatus
+import akio.apps.myrun.data.routetracking.model.TrackingLocationEntity
+import akio.apps.myrun.data.workout.model.ActivityType
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
-import akio.apps.myrun.feature._base.*
-import akio.apps.myrun.feature._base.AppPermissions.locationPermissions
+import akio.apps.myrun.feature._base.permissions.AppPermissions.locationPermissions
+import akio.apps.myrun.feature._base.permissions.CheckRequiredPermissionsDelegate
+import akio.apps.myrun.feature._base.utils.ActivityDialogDelegate
+import akio.apps.myrun.feature._base.utils.CheckLocationServiceDelegate
+import akio.apps.myrun.feature._base.utils.MapPresentations
+import akio.apps.myrun.feature._base.utils.toGmsLatLng
 import akio.apps.myrun.feature.myworkout.impl.MyWorkoutActivity
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import android.annotation.SuppressLint
@@ -81,7 +85,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         observe(viewModel.trackingStatus, ::updateViewForTrackingStatus)
 
         observeEvent(viewModel.mapInitialLocation) { initLocation ->
-            mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGmsLatLng(), MapPresentation.MAP_DEFAULT_ZOOM_LEVEL))
+            mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGmsLatLng(), MapPresentations.MAP_DEFAULT_ZOOM_LEVEL))
         }
         observeEvent(viewModel.error, dialogDelegate::showExceptionAlert)
         observeEvent(viewModel.saveWorkoutSuccess) { onSaveWorkoutSuccess() }
@@ -112,7 +116,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
             trackingRouteLatLngBounds.include(it.toGmsLatLng())
         }
         batch.lastOrNull()?.let {
-            mapView.moveCamera(CameraUpdateFactory.newLatLngBounds(trackingRouteLatLngBounds.build(), MapPresentation.MAP_LATLNG_BOUND_PADDING))
+            mapView.moveCamera(CameraUpdateFactory.newLatLngBounds(trackingRouteLatLngBounds.build(), MapPresentations.MAP_LATLNG_BOUND_PADDING))
         }
     }
 

@@ -1,8 +1,7 @@
 package akio.apps.myrun.data.routetracking
 
-import akio.apps.myrun.data.routetracking.dto.TrackingLocationEntity
+import akio.apps.myrun.data.routetracking.model.TrackingLocationEntity
 import android.location.Location
-import kotlinx.coroutines.flow.Flow
 
 interface RouteTrackingLocationRepository {
     suspend fun insert(trackingLocations: List<Location>)

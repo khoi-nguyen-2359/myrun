@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.location.impl
 
 import akio.apps.myrun.data.location.LocationDataSource
-import akio.apps.myrun.data.location.dto.LocationRequestEntity
+import akio.apps.myrun.data.location.model.LocationRequestEntity
 import android.annotation.SuppressLint
 import android.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -13,7 +13,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext

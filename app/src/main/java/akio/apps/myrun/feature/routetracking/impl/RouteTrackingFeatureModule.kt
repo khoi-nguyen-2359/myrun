@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.routetracking.impl
 
-import akio.apps.myrun._di.ViewModelKey
+import akio.apps._base.di.ViewModelKey
 import akio.apps.myrun.feature.routetracking.*
 import androidx.lifecycle.ViewModel
 import dagger.Binds

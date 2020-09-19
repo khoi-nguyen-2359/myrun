@@ -1,13 +1,10 @@
 package akio.apps.myrun.data.routetracking.impl
 
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
-import akio.apps.myrun.data.routetracking.dto.RoomTrackingLocation
-import akio.apps.myrun.data.routetracking.dto.TrackingLocationEntity
+import akio.apps.myrun.data.routetracking.model.RoomTrackingLocation
+import akio.apps.myrun.data.routetracking.model.TrackingLocationEntity
 import android.location.Location
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject

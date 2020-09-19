@@ -1,8 +1,8 @@
 package akio.apps.myrun.data.workout.impl
 
-import akio.apps._base.firebase.FirebaseStorageUtils
+import akio.apps._base.utils.FirebaseStorageUtils
 import akio.apps.myrun.data.workout.WorkoutRepository
-import akio.apps.myrun.data.workout.dto.*
+import akio.apps.myrun.data.workout.model.*
 import android.graphics.Bitmap
 import android.net.Uri
 import com.google.firebase.firestore.CollectionReference
@@ -10,7 +10,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject

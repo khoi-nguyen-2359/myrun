@@ -1,20 +1,17 @@
 package akio.apps.myrun.feature.myworkout.impl
 
-import akio.apps._base.activity.BaseInjectionActivity
+import akio.apps._base.di.BaseInjectionActivity
 import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun.databinding.ActivityMyWorkoutBinding
-import akio.apps.myrun.feature._base.ActivityDialogDelegate
+import akio.apps.myrun.feature._base.utils.ActivityDialogDelegate
 import akio.apps.myrun.feature.myworkout.MyWorkoutViewModel
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class MyWorkoutActivity : BaseInjectionActivity() {
 

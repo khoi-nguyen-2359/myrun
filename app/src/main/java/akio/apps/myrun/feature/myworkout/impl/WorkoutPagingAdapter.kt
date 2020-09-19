@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.myworkout.impl
 
-import akio.apps.myrun.data.workout.dto.ActivityType
+import akio.apps.myrun.data.workout.model.ActivityType
 import akio.apps.myrun.databinding.ItemRunningWorkoutBinding
 import akio.apps.myrun.feature.myworkout.model.RunningWorkout
 import akio.apps.myrun.feature.myworkout.model.Workout

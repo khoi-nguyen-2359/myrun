@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.splash.impl
 
-import akio.apps.myrun._di.ViewModelKey
+import akio.apps._base.di.ViewModelKey
 import akio.apps.myrun.feature.splash.SplashViewModel
 import androidx.lifecycle.ViewModel
 import dagger.Binds

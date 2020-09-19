@@ -2,13 +2,13 @@ package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun.R
 import akio.apps.myrun.data.location.LocationDataSource
-import akio.apps.myrun.data.location.dto.LocationRequestEntity
+import akio.apps.myrun.data.location.model.LocationRequestEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.routetracking.dto.RouteTrackingStatus
-import akio.apps.myrun.feature._base.StatsPresentation
+import akio.apps.myrun.data.routetracking.model.RouteTrackingStatus
+import akio.apps.myrun.feature._base.utils.StatsPresentations
 import akio.apps.myrun.feature._base.flowTimer
-import akio.apps.myrun.feature._base.toGmsLatLng
+import akio.apps.myrun.feature._base.utils.toGmsLatLng
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
@@ -123,8 +123,8 @@ class RouteTrackingService : Service() {
         val notificationIntent = RouteTrackingActivity.launchIntent(this@RouteTrackingService)
         val pendingIntent = PendingIntent.getActivity(this@RouteTrackingService, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val durationDisplay = StatsPresentation.getDisplayDuration(routeTrackingState.getTrackingDuration())
-        val distanceDisplay = StatsPresentation.getDisplayTrackingDistance(routeTrackingState.getRouteDistance())
+        val durationDisplay = StatsPresentations.getDisplayDuration(routeTrackingState.getTrackingDuration())
+        val distanceDisplay = StatsPresentations.getDisplayTrackingDistance(routeTrackingState.getRouteDistance())
         val notification: Notification = NotificationCompat.Builder(this@RouteTrackingService, NOTIF_CHANNEL_ID)
             .setContentTitle(getString(R.string.route_tracking_notification_title))
             .setContentText("$durationDisplay - $distanceDisplay Km")

@@ -4,11 +4,12 @@ import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import android.content.Context
 import androidx.room.Room
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module
+@Module(includes = [RouteTrackingDataModule.Bindings::class])
 class RouteTrackingDataModule {
 
     @Provides
@@ -19,10 +20,13 @@ class RouteTrackingDataModule {
     @Provides
     fun routeTrackingLocationDao(database: RouteTrackingDatabase): RouteTrackingLocationDao = database.trackingLocationDao()
 
-    @Provides
-    fun routeTrackingLocationRepo(repositoryImpl: RouteTrackingLocationRepositoryImpl): RouteTrackingLocationRepository = repositoryImpl
+    @Module
+    interface Bindings {
+        @Binds
+        fun routeTrackingLocationRepo(repositoryImpl: RouteTrackingLocationRepositoryImpl): RouteTrackingLocationRepository
 
-    @Provides
-    @Singleton
-    fun routeTrackingState(routeTrackingStateImpl: RouteTrackingStateImpl): RouteTrackingState = routeTrackingStateImpl
+        @Binds
+        @Singleton
+        fun routeTrackingState(routeTrackingStateImpl: RouteTrackingStateImpl): RouteTrackingState
+    }
 }

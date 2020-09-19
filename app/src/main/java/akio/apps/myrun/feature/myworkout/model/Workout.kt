@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.myworkout.model
 
-import akio.apps.myrun.data.workout.dto.ActivityType
+import akio.apps.myrun.data.workout.model.ActivityType
 
 interface Workout {
     val id: String

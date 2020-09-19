@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.routetracking.impl
 
 import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.routetracking.dto.RouteTrackingStatus
+import akio.apps.myrun.data.routetracking.model.RouteTrackingStatus
 import android.content.Context
 import androidx.datastore.DataStore
 import androidx.datastore.preferences.*

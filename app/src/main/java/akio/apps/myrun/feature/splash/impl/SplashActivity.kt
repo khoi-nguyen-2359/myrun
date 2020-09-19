@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.splash.impl
 
-import akio.apps._base.activity.BaseInjectionActivity
+import akio.apps._base.di.BaseInjectionActivity
 import akio.apps._base.lifecycle.observe
 import akio.apps.myrun.R
 import akio.apps.myrun.feature.myworkout.impl.MyWorkoutActivity

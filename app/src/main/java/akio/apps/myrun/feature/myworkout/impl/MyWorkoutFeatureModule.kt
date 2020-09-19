@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.myworkout.impl
 
-import akio.apps.myrun._di.ViewModelKey
+import akio.apps._base.di.ViewModelKey
 import akio.apps.myrun.feature.myworkout.GetWorkoutListUsecase
 import akio.apps.myrun.feature.myworkout.MyWorkoutViewModel
 import androidx.lifecycle.ViewModel

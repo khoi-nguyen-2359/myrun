@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.location
 
-import akio.apps.myrun.data.location.dto.LocationRequestEntity
+import akio.apps.myrun.data.location.model.LocationRequestEntity
 import android.location.Location
 import kotlinx.coroutines.flow.Flow
 

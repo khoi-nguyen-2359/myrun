@@ -1,6 +1,6 @@
 package akio.apps.myrun
 
-import akio.apps._base.log.CrashReportTree
+import akio.apps._base.utils.CrashReportTree
 import akio.apps.myrun._di.DaggerAppComponent
 import android.app.Application
 import dagger.android.AndroidInjector

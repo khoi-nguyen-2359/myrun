@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.splash.impl
 
 import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.routetracking.dto.RouteTrackingStatus.STOPPED
+import akio.apps.myrun.data.routetracking.model.RouteTrackingStatus.STOPPED
 import akio.apps.myrun.feature.splash.SplashViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

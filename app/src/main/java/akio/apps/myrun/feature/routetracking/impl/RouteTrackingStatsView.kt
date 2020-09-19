@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun.R
 import akio.apps.myrun.databinding.MergeRouteTrackingStatsViewBinding
-import akio.apps.myrun.feature._base.StatsPresentation
+import akio.apps.myrun.feature._base.utils.StatsPresentations
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
 import android.content.Context
 import android.util.AttributeSet
@@ -24,8 +24,8 @@ class RouteTrackingStatsView @JvmOverloads constructor(
 
     fun update(stats: RouteTrackingStats) = viewBinding.apply {
         Timber.d(stats.toString())
-        distanceTextView.text = StatsPresentation.getDisplayTrackingDistance(stats.distance)
-        timeTextView.text = StatsPresentation.getDisplayDuration(stats.duration)
-        instantSpeedTextView.text = StatsPresentation.getDisplaySpeed(stats.speed)
+        distanceTextView.text = StatsPresentations.getDisplayTrackingDistance(stats.distance)
+        timeTextView.text = StatsPresentations.getDisplayDuration(stats.duration)
+        instantSpeedTextView.text = StatsPresentations.getDisplaySpeed(stats.speed)
     }
 }
