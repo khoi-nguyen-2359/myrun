@@ -21,7 +21,7 @@ abstract class RouteTrackingViewModel : BaseViewModel() {
     abstract fun requestDataUpdates()
     abstract fun cancelDataUpdates()
 
-    abstract fun initialize()
+    abstract fun requestInitialData()
 
     abstract fun saveWorkout(activityType: ActivityType, routeMapImage: Bitmap)
     abstract fun resumeDataUpdates()

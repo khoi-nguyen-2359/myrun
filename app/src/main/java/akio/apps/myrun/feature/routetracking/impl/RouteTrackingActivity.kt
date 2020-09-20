@@ -61,15 +61,15 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         super.onCreate(savedInstanceState)
 
         initViews()
+
+        // onCreate: check location permissions -> check location service availability -> allow user to use this screen
+        checkLocationPermissionsDelegate.requestPermissions()
     }
 
     override fun onStart() {
         super.onStart()
 
         viewModel.resumeDataUpdates()
-
-        // onStart: check location permissions -> check location service availability -> allow user to use this screen
-        checkLocationPermissionsDelegate.requestPermissions()
     }
 
     override fun onStop() {
@@ -83,7 +83,6 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         observe(viewModel.trackingLocationBatch, ::onTrackingLocationUpdate)
         observe(viewModel.trackingStats, viewBinding.trackingStatsView::update)
         observe(viewModel.trackingStatus, ::updateViewForTrackingStatus)
-
         observeEvent(viewModel.mapInitialLocation) { initLocation ->
             mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGmsLatLng(), MapPresentations.MAP_DEFAULT_ZOOM_LEVEL))
         }
@@ -227,7 +226,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         (supportFragmentManager.findFragmentById(R.id.tracking_map_view) as SupportMapFragment).getMapAsync { map ->
             initMapView(map)
             initObservers()
-            viewModel.initialize()
+            viewModel.requestInitialData()
         }
     }
 

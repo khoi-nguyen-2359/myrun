@@ -52,15 +52,16 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private fun restoreTrackingStatus(latestStatus: Int) = viewModelScope.launch {
         when (latestStatus) {
             RouteTrackingStatus.RESUMED -> requestDataUpdates()
-            RouteTrackingStatus.PAUSED -> notifyDataUpdates()
+            RouteTrackingStatus.PAUSED -> notifyLatestDataUpdate()
         }
     }
 
-    override fun initialize() {
+    override fun requestInitialData() {
         launchCatching {
             val initialLocation = getMapInitialLocationUsecase.getMapInitialLocation()
             _mapInitialLocation.value = Event(initialLocation)
 
+            processedLocationCount = 0
             val latestStatus = routeTrackingState.getTrackingStatus()
             if (latestStatus != RouteTrackingStatus.STOPPED) {
                 restoreTrackingStatus(latestStatus)
@@ -77,7 +78,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
         }
     }
 
-    private suspend fun notifyDataUpdates() {
+    private suspend fun notifyLatestDataUpdate() {
         _trackingStats.value = routeTrackingState.run {
             RouteTrackingStats(getRouteDistance(), getInstantSpeed(), getTrackingDuration())
         }
@@ -90,18 +91,12 @@ class RouteTrackingViewModelImpl @Inject constructor(
     override fun requestDataUpdates() {
         trackingTimerJob?.cancel()
         trackingTimerJob = viewModelScope.flowTimer(0, TRACKING_TIMER_PERIOD) {
-            notifyDataUpdates()
+            notifyLatestDataUpdate()
         }
     }
 
     override fun cancelDataUpdates() {
         trackingTimerJob?.cancel()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-
-        cancelDataUpdates()
     }
 
     companion object {
