@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.workout
 
-import akio.apps.myrun.data.workout.model.WorkoutEntity
 import android.graphics.Bitmap
 
 interface WorkoutRepository {

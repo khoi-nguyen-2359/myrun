@@ -1,7 +1,7 @@
-package akio.apps.myrun.feature.myworkout.model
+package akio.apps.myrun.feature.myworkout
 
-import akio.apps.myrun.data.workout.model.RunningWorkoutEntity
-import akio.apps.myrun.data.workout.model.WorkoutEntity
+import akio.apps.myrun.data.workout.RunningWorkoutEntity
+import akio.apps.myrun.data.workout.WorkoutEntity
 import javax.inject.Inject
 
 class WorkoutEntityMapper @Inject constructor() {

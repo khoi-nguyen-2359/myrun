@@ -5,9 +5,9 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.dp2px
 import akio.apps.myrun.R
-import akio.apps.myrun.data.routetracking.model.RouteTrackingStatus
-import akio.apps.myrun.data.routetracking.model.TrackingLocationEntity
-import akio.apps.myrun.data.workout.model.ActivityType
+import akio.apps.myrun.data.routetracking.RouteTrackingStatus
+import akio.apps.myrun.data.routetracking.TrackingLocationEntity
+import akio.apps.myrun.data.workout.ActivityType
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature._base.permissions.AppPermissions.locationPermissions
 import akio.apps.myrun.feature._base.permissions.CheckRequiredPermissionsDelegate

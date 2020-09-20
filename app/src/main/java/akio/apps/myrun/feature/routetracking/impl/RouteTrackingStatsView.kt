@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.routetracking.impl
 import akio.apps.myrun.R
 import akio.apps.myrun.databinding.MergeRouteTrackingStatsViewBinding
 import akio.apps.myrun.feature._base.utils.StatsPresentations
-import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
+import akio.apps.myrun.feature.routetracking.RouteTrackingStats
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater

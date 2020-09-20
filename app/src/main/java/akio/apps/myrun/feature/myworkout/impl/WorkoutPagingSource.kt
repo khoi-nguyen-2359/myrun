@@ -1,8 +1,8 @@
-package akio.apps.myrun.data.workout.impl
+package akio.apps.myrun.feature.myworkout.impl
 
 import akio.apps.myrun.data.workout.WorkoutRepository
-import akio.apps.myrun.feature.myworkout.model.Workout
-import akio.apps.myrun.feature.myworkout.model.WorkoutEntityMapper
+import akio.apps.myrun.feature.myworkout.Workout
+import akio.apps.myrun.feature.myworkout.WorkoutEntityMapper
 import androidx.paging.PagingSource
 import javax.inject.Inject
 

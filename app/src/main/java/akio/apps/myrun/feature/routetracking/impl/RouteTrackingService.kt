@@ -2,10 +2,10 @@ package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun.R
 import akio.apps.myrun.data.location.LocationDataSource
-import akio.apps.myrun.data.location.model.LocationRequestEntity
+import akio.apps.myrun.data.location.LocationRequestEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.routetracking.model.RouteTrackingStatus
+import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.feature._base.utils.StatsPresentations
 import akio.apps.myrun.feature._base.utils.flowTimer
 import akio.apps.myrun.feature._base.utils.toGmsLatLng
@@ -20,7 +20,6 @@ import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationRequest
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.maps.android.SphericalUtil
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.*

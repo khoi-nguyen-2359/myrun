@@ -1,8 +1,7 @@
 package akio.apps.myrun.feature.myworkout.impl
 
-import akio.apps.myrun.data.workout.impl.WorkoutPagingSource
 import akio.apps.myrun.feature.myworkout.MyWorkoutViewModel
-import akio.apps.myrun.feature.myworkout.model.Workout
+import akio.apps.myrun.feature.myworkout.Workout
 import androidx.lifecycle.LiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -17,6 +16,6 @@ class MyWorkoutViewModelImpl @Inject constructor(
     override val myWorkoutList: LiveData<PagingData<Workout>> = Pager(PagingConfig(pageSize = PAGE_SIZE)) { workoutPagingSource }.liveData
 
     companion object {
-        const val PAGE_SIZE = 3
+        const val PAGE_SIZE = 5
     }
 }

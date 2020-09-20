@@ -1,7 +1,9 @@
-package akio.apps.myrun.feature.myworkout.impl
+package akio.apps.myrun.feature.myworkout._di
 
 import akio.apps._base.di.ViewModelKey
 import akio.apps.myrun.feature.myworkout.MyWorkoutViewModel
+import akio.apps.myrun.feature.myworkout.impl.MyWorkoutActivity
+import akio.apps.myrun.feature.myworkout.impl.MyWorkoutViewModelImpl
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module

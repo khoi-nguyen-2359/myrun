@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.location.model
+package akio.apps.myrun.feature.routetracking
 
 data class LatLng(
     val latitude: Double,

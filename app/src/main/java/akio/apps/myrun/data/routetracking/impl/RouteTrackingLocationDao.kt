@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.routetracking.impl
 
-import akio.apps.myrun.data.routetracking.model.RoomTrackingLocation
 import androidx.room.*
 
 @Dao

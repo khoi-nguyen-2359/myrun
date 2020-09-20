@@ -1,12 +1,12 @@
 package akio.apps.myrun._di
 
 import akio.apps.myrun.MyRunApp
-import akio.apps.myrun.data.location.impl.LocationDataModule
-import akio.apps.myrun.data.routetracking.impl.RouteTrackingDataModule
-import akio.apps.myrun.data.workout.WorkoutDataModule
-import akio.apps.myrun.feature.myworkout.impl.MyWorkoutFeatureModule
-import akio.apps.myrun.feature.routetracking.impl.RouteTrackingFeatureModule
-import akio.apps.myrun.feature.splash.impl.SplashFeatureModule
+import akio.apps.myrun.data.location._di.LocationDataModule
+import akio.apps.myrun.data.routetracking._di.RouteTrackingDataModule
+import akio.apps.myrun.data.workout._di.WorkoutDataModule
+import akio.apps.myrun.feature.myworkout._di.MyWorkoutFeatureModule
+import akio.apps.myrun.feature.routetracking._di.RouteTrackingFeatureModule
+import akio.apps.myrun.feature.splash._di.SplashFeatureModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule

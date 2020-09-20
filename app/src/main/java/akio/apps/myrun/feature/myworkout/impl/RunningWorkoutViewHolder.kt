@@ -2,8 +2,8 @@ package akio.apps.myrun.feature.myworkout.impl
 
 import akio.apps.myrun.R
 import akio.apps.myrun.databinding.ItemRunningWorkoutBinding
-import akio.apps.myrun.feature.myworkout.model.RunningWorkout
-import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
+import akio.apps.myrun.feature.myworkout.RunningWorkout
+import akio.apps.myrun.feature.routetracking.RouteTrackingStats
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 

@@ -2,13 +2,12 @@ package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.routetracking.model.TrackingLocationEntity
 import akio.apps.myrun.data.workout.WorkoutRepository
-import akio.apps.myrun.data.workout.model.ActivityType
-import akio.apps.myrun.data.workout.model.RunningWorkoutEntity
-import akio.apps.myrun.data.workout.model.WorkoutEntity
-import akio.apps.myrun.data.workout.model.WorkoutDataEntity
-import akio.apps.myrun.feature._base.utils.GmsLatLng
+import akio.apps.myrun.data.workout.ActivityType
+import akio.apps.myrun.data.workout.RunningWorkoutEntity
+import akio.apps.myrun.data.workout.WorkoutEntity
+import akio.apps.myrun.data.workout.WorkoutDataEntity
+import akio.apps.myrun.feature._base.utils.toGmsLatLng
 import akio.apps.myrun.feature.routetracking.SaveRouteTrackingWorkoutUsecase
 import android.graphics.Bitmap
 import com.google.maps.android.PolyUtil
@@ -46,6 +45,4 @@ class SaveRouteTrackingWorkoutWorkoutImpl @Inject constructor(
 
         workoutRepository.saveWorkout(savingWorkout, routeMapImage)
     }
-
-    private fun TrackingLocationEntity.toGmsLatLng() = GmsLatLng(latitude, longitude)
 }

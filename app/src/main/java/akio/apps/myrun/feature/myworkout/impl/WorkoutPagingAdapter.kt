@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.myworkout.impl
 
-import akio.apps.myrun.data.workout.model.ActivityType
+import akio.apps.myrun.data.workout.ActivityType
 import akio.apps.myrun.databinding.ItemRunningWorkoutBinding
-import akio.apps.myrun.feature.myworkout.model.RunningWorkout
-import akio.apps.myrun.feature.myworkout.model.Workout
+import akio.apps.myrun.feature.myworkout.RunningWorkout
+import akio.apps.myrun.feature.myworkout.Workout
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter

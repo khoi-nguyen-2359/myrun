@@ -1,5 +1,6 @@
-package akio.apps.myrun.data.workout
+package akio.apps.myrun.data.workout._di
 
+import akio.apps.myrun.data.workout.WorkoutRepository
 import akio.apps.myrun.data.workout.impl.WorkoutRepositoryImpl
 import dagger.Binds
 import dagger.Module

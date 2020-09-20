@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.routetracking.model
+package akio.apps.myrun.feature.routetracking
 
 data class RouteTrackingStats(
     val distance: Double,

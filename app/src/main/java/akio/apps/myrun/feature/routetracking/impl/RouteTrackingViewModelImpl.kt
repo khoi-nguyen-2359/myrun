@@ -1,14 +1,14 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps._base.lifecycle.Event
-import akio.apps.myrun.data.location.model.LatLng
+import akio.apps.myrun.feature.routetracking.LatLng
 import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.routetracking.model.RouteTrackingStatus
-import akio.apps.myrun.data.routetracking.model.TrackingLocationEntity
-import akio.apps.myrun.data.workout.model.ActivityType
+import akio.apps.myrun.data.routetracking.RouteTrackingStatus
+import akio.apps.myrun.data.routetracking.TrackingLocationEntity
+import akio.apps.myrun.data.workout.ActivityType
 import akio.apps.myrun.feature._base.utils.flowTimer
 import akio.apps.myrun.feature.routetracking.*
-import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
+import akio.apps.myrun.feature.routetracking.RouteTrackingStats
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 class RouteTrackingViewModelImpl @Inject constructor(
     private val getMapInitialLocationUsecase: GetMapInitialLocationUsecase,
-    private val getTrackingLocationUpdatesUsecase: GetTrackingLocationUpdatesUsecase,
+    private val getTrackedLocationsUsecase: GetTrackedLocationsUsecase,
     private val routeTrackingState: RouteTrackingState,
     private val saveRouteTrackingWorkoutUsecase: SaveRouteTrackingWorkoutUsecase,
     private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
@@ -83,7 +83,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
             RouteTrackingStats(getRouteDistance(), getInstantSpeed(), getTrackingDuration())
         }
 
-        val batch = getTrackingLocationUpdatesUsecase.getLocationUpdates(processedLocationCount)
+        val batch = getTrackedLocationsUsecase.getTrackedLocations(processedLocationCount)
         _trackingLocationBatch.value = batch
         processedLocationCount += batch.size
     }

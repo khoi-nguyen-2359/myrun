@@ -1,8 +1,10 @@
 package akio.apps.myrun.data.workout.impl
 
 import akio.apps._base.utils.FirebaseStorageUtils
+import akio.apps.myrun.data.workout.RunningWorkoutEntity
+import akio.apps.myrun.data.workout.WorkoutDataEntity
+import akio.apps.myrun.data.workout.WorkoutEntity
 import akio.apps.myrun.data.workout.WorkoutRepository
-import akio.apps.myrun.data.workout.model.*
 import android.graphics.Bitmap
 import android.net.Uri
 import com.google.firebase.firestore.CollectionReference

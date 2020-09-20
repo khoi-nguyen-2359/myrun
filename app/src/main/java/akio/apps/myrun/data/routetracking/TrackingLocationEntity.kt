@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.routetracking.model
+package akio.apps.myrun.data.routetracking
 
 data class TrackingLocationEntity(
     val time: Long,

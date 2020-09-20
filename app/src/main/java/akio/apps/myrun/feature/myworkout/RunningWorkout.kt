@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.myworkout.model
+package akio.apps.myrun.feature.myworkout
 
 data class RunningWorkout(
     val workoutData: WorkoutData,

@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.routetracking
 
-import akio.apps.myrun.data.routetracking.model.RouteTrackingStatus
 import kotlinx.coroutines.flow.Flow
 
 interface RouteTrackingState {

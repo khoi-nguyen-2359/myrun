@@ -1,8 +1,7 @@
 package akio.apps.myrun.data.routetracking.impl
 
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
-import akio.apps.myrun.data.routetracking.model.RoomTrackingLocation
-import akio.apps.myrun.data.routetracking.model.TrackingLocationEntity
+import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import android.location.Location
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -22,7 +21,7 @@ class RouteTrackingLocationRepositoryImpl @Inject constructor(
         routeTrackingLocationDao.clear()
     }
 
-    override suspend fun getRouteTrackingLocationUpdates(skip: Int): List<TrackingLocationEntity> = routeTrackingLocationDao.getLocations(skip)
+    override suspend fun getTrackedLocations(skip: Int): List<TrackingLocationEntity> = routeTrackingLocationDao.getLocations(skip)
         .map { it.toTrackingLocationEntity() }
 
     override suspend fun getAllLocations(): List<TrackingLocationEntity> = routeTrackingLocationDao.getAll()

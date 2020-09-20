@@ -3,7 +3,7 @@ package akio.apps.myrun
 import akio.apps._base.utils.CrashReportTree
 import akio.apps.myrun._di.DaggerAppComponent
 import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.routetracking.model.RouteTrackingStatus
+import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
 import android.app.Application
 import androidx.lifecycle.Lifecycle
@@ -24,6 +24,8 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector {
 
     @Inject
     lateinit var routeTrackingState: RouteTrackingState
+
+    override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
 
     private val exceptionHandler = CoroutineExceptionHandler { context, exception ->
         Timber.e(exception)
@@ -59,6 +61,4 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector {
             Timber.plant(CrashReportTree())
         }
     }
-
-    override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
 }

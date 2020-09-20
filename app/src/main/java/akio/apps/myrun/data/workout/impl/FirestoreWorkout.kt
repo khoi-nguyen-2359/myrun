@@ -1,4 +1,6 @@
-package akio.apps.myrun.data.workout.model
+package akio.apps.myrun.data.workout.impl
+
+import akio.apps.myrun.data.workout.ActivityType
 
 data class FirestoreWorkout(
     val userId: String = "",

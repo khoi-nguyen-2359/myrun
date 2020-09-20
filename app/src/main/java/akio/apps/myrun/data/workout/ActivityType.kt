@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.workout.model
+package akio.apps.myrun.data.workout
 
 enum class ActivityType {
     Running, Unknown

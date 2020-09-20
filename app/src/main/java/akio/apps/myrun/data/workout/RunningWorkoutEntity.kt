@@ -1,4 +1,6 @@
-package akio.apps.myrun.data.workout.model
+package akio.apps.myrun.data.workout
+
+import akio.apps.myrun.data.workout.WorkoutEntity
 
 data class RunningWorkoutEntity(
     val workoutData: WorkoutEntity,

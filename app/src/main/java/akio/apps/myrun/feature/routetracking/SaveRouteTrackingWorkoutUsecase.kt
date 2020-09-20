@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.routetracking
 
-import akio.apps.myrun.data.workout.model.ActivityType
+import akio.apps.myrun.data.workout.ActivityType
 import android.graphics.Bitmap
 
 interface SaveRouteTrackingWorkoutUsecase {

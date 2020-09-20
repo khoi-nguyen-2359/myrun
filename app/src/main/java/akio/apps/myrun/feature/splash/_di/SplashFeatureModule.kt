@@ -1,7 +1,9 @@
-package akio.apps.myrun.feature.splash.impl
+package akio.apps.myrun.feature.splash._di
 
 import akio.apps._base.di.ViewModelKey
 import akio.apps.myrun.feature.splash.SplashViewModel
+import akio.apps.myrun.feature.splash.impl.SplashActivity
+import akio.apps.myrun.feature.splash.impl.SplashViewModelImpl
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module

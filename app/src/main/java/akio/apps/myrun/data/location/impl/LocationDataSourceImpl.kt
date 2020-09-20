@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.location.impl
 
 import akio.apps.myrun.data.location.LocationDataSource
-import akio.apps.myrun.data.location.model.LocationRequestEntity
+import akio.apps.myrun.data.location.LocationRequestEntity
 import android.annotation.SuppressLint
 import android.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
