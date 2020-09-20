@@ -23,6 +23,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -192,9 +193,15 @@ class RouteTrackingActivity : BaseInjectionActivity() {
 
     private fun onStopRouteTracking() {
         // we are currently paused, do saving:
-        mapView.snapshot { mapSnapshot ->
-            viewModel.saveWorkout(ActivityType.Running, mapSnapshot)
-        }
+        AlertDialog.Builder(this)
+            .setTitle(R.string.route_tracking_stop_confirmation_title)
+            .setPositiveButton(R.string.action_just_do_it) { _, _ ->
+                mapView.snapshot { mapSnapshot ->
+                    viewModel.saveWorkout(ActivityType.Running, mapSnapshot)
+                }
+            }
+            .setNegativeButton(R.string.action_cancel) {_,_->}
+            .show()
     }
 
     private fun startRouteTrackingService() {

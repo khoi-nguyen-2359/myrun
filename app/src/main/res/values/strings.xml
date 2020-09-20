@@ -17,4 +17,6 @@
     <string name="route_tracking_notification_title">Track Me workout session is in progress</string>
     <string name="route_tracking_notification_content">Touch to get back to your route</string>
     <string name="error_unknown">Unknown Error</string>
+    <string name="route_tracking_stop_confirmation_title">Stop and save your workout?</string>
+    <string name="action_just_do_it">Just do it</string>
 </resources>
