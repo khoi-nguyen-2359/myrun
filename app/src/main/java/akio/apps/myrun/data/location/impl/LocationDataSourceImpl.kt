@@ -24,7 +24,7 @@ class LocationDataSourceImpl @Inject constructor(
 ) : LocationDataSource {
 
     @SuppressLint("MissingPermission")
-    override suspend fun getLastLocation(): Location = withContext(Dispatchers.IO) {
+    override suspend fun getLastLocation(): Location? = withContext(Dispatchers.IO) {
         locationClient.lastLocation.await()
     }
 

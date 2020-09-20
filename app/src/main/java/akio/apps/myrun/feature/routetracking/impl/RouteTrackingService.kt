@@ -31,10 +31,6 @@ import javax.inject.Inject
 
 class RouteTrackingService : Service() {
 
-    private var locationUpdateJob: Job? = null
-
-    private var wakeLock: PowerManager.WakeLock? = null
-
     @Inject
     lateinit var locationDataSource: LocationDataSource
 
@@ -45,13 +41,16 @@ class RouteTrackingService : Service() {
     lateinit var routeTrackingState: RouteTrackingState
 
     private val exceptionHandler = CoroutineExceptionHandler { context, exception ->
-        exception.printStackTrace()
-        FirebaseCrashlytics.getInstance().recordException(exception)
+        Timber.e(exception)
     }
 
     private val mainScope = CoroutineScope(SupervisorJob() + Dispatchers.Main + exceptionHandler)
 
+    private var locationUpdateJob: Job? = null
     private var trackingTimerJob: Job? = null
+
+    private val instantSpeedCalculator = InstantSpeedCalculator()
+    private val routeDistanceCalculator = RouteDistanceCalculator()
 
     override fun onCreate() {
         super.onCreate()
@@ -79,44 +78,58 @@ class RouteTrackingService : Service() {
             .launchIn(mainScope)
     }
 
-    var lastComputeLengthLocation: Location? = null
     private suspend fun onLocationUpdate(locations: List<Location>) {
         routeTrackingLocationRepository.insert(locations)
 
-        computeRouteDistance(locations)
-
-        computeInstantSpeed()
+        routeDistanceCalculator.calculateRouteDistance(locations)
+        instantSpeedCalculator.calculateInstantSpeed()
     }
 
-    var lastTimeComputingInstantSpeed = 0L
-    var lastDistanceComputingInstantSpeed = 0.0
-    private suspend fun computeInstantSpeed() {
-        val routeDistance: Double = routeTrackingState.getRouteDistance()
-        val currentTime = System.currentTimeMillis()
-        val deltaTime = currentTime - lastTimeComputingInstantSpeed
-        if (lastTimeComputingInstantSpeed == 0L || (lastTimeComputingInstantSpeed > 0 && deltaTime >= LOCATION_UPDATE_INTERVAL)) {
-            if (lastTimeComputingInstantSpeed > 0) {
+    inner class InstantSpeedCalculator() {
+        private var lastTimeComputingInstantSpeed = 0L
+        private var lastDistanceComputingInstantSpeed = 0.0
+
+        suspend fun calculateInstantSpeed() {
+            val routeDistance: Double = routeTrackingState.getRouteDistance()
+            val currentTime = System.currentTimeMillis()
+            val deltaTime = currentTime - lastTimeComputingInstantSpeed
+            // compute instant speed for a period equals to location update interval
+            if (lastTimeComputingInstantSpeed == 0L || (lastTimeComputingInstantSpeed > 0 && deltaTime >= LOCATION_UPDATE_INTERVAL)) {
                 val instantSpeed = ((routeDistance - lastDistanceComputingInstantSpeed) / 1000f) / (deltaTime / 3600000f)
                 routeTrackingState.setInstantSpeed(instantSpeed)
-            }
 
-            lastTimeComputingInstantSpeed = currentTime
-            lastDistanceComputingInstantSpeed = routeDistance
+                lastTimeComputingInstantSpeed = currentTime
+                lastDistanceComputingInstantSpeed = routeDistance
+            }
         }
     }
 
-    private suspend fun computeRouteDistance(locations: List<Location>): Double {
-        val computeLengthLocations = mutableListOf<Location>()
-        lastComputeLengthLocation?.let {
-            computeLengthLocations.add(it)
-        }
-        computeLengthLocations.addAll(locations)
-        val locationUpdateDistance = SphericalUtil.computeLength(computeLengthLocations.map { it.toGmsLatLng() })
-        lastComputeLengthLocation = locations.lastOrNull()
-        val routeDistance = routeTrackingState.getRouteDistance() + locationUpdateDistance
-        routeTrackingState.setRouteDistance(routeDistance)
+    inner class RouteDistanceCalculator {
+        private var lastComputeLengthLocation: Location? = null
 
-        return routeDistance
+        suspend fun calculateRouteDistance(locations: List<Location>): Double {
+            val computeLengthLocations = mutableListOf<Location>()
+
+            // add last location of previous batch to compute distance to first location of this batch
+            lastComputeLengthLocation?.let {
+                computeLengthLocations.add(it)
+            }
+            computeLengthLocations.addAll(locations)
+
+            val locationUpdateDistance = SphericalUtil.computeLength(computeLengthLocations.map { it.toGmsLatLng() })
+
+            // remember last location of this batch for later computing
+            lastComputeLengthLocation = locations.lastOrNull()
+
+            val routeDistance = routeTrackingState.getRouteDistance() + locationUpdateDistance
+            routeTrackingState.setRouteDistance(routeDistance)
+
+            return routeDistance
+        }
+
+        fun clearLastCalculatedLocation() {
+            lastComputeLengthLocation = null
+        }
     }
 
     private fun notifyTrackingNotification() = mainScope.launch {
@@ -131,6 +144,7 @@ class RouteTrackingService : Service() {
             .setSmallIcon(R.drawable.ic_run_circle)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setOnlyAlertOnce(true)
             .build()
 
         startForeground(NOTIF_ID_TRACKING, notification)
@@ -146,7 +160,7 @@ class RouteTrackingService : Service() {
             }
         } else {
             when (intent.action) {
-                ACTION_START -> onActionStart(intent)
+                ACTION_START -> onActionStart()
                 ACTION_STOP -> onActionStop()
                 ACTION_RESUME -> onActionResume(false)
                 ACTION_PAUSE -> onActionPause()
@@ -156,7 +170,7 @@ class RouteTrackingService : Service() {
         return START_STICKY
     }
 
-    private fun onActionStart(intent: Intent) {
+    private fun onActionStart() {
         Timber.d("onActionStart")
         mainScope.launch {
             val startTime = System.currentTimeMillis()
@@ -168,7 +182,6 @@ class RouteTrackingService : Service() {
         notifyTrackingNotification()
         requestLocationUpdates()
         startTrackingTimer()
-//        createWakeLock()
     }
 
     private fun startTrackingTimer() {
@@ -189,7 +202,8 @@ class RouteTrackingService : Service() {
         locationUpdateJob?.cancel()
         trackingTimerJob?.cancel()
 
-        lastComputeLengthLocation = null
+        // dont count the distance in paused moments
+        routeDistanceCalculator.clearLastCalculatedLocation()
     }
 
     private fun onActionResume(isServiceRestart: Boolean) {
