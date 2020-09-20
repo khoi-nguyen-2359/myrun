@@ -52,6 +52,8 @@ class RouteTrackingService : Service() {
     private val instantSpeedCalculator = InstantSpeedCalculator()
     private val routeDistanceCalculator = RouteDistanceCalculator()
 
+    private var wakeLock: PowerManager.WakeLock? = null
+
     override fun onCreate() {
         super.onCreate()
 
@@ -182,6 +184,7 @@ class RouteTrackingService : Service() {
         notifyTrackingNotification()
         requestLocationUpdates()
         startTrackingTimer()
+        acquireWakeLock()
     }
 
     private fun startTrackingTimer() {
@@ -211,10 +214,7 @@ class RouteTrackingService : Service() {
 
         requestLocationUpdates()
         startTrackingTimer()
-
-        if (!isServiceRestart) {
-            notifyTrackingNotification()
-        }
+        notifyTrackingNotification()
 
         mainScope.launch {
             routeTrackingState.setTrackingStatus(RouteTrackingStatus.RESUMED)
@@ -231,6 +231,7 @@ class RouteTrackingService : Service() {
 
         locationUpdateJob?.cancel()
         trackingTimerJob?.cancel()
+        releaseWakeLock()
         stopSelf()
     }
 
@@ -240,6 +241,23 @@ class RouteTrackingService : Service() {
             channel.description = "While app is tracking your route"
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun acquireWakeLock() {
+        wakeLock =
+            (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+                newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "RouteTrackingService::lock").apply {
+                    acquire()
+                }
+            }
+    }
+
+    private fun releaseWakeLock() {
+        wakeLock?.let {
+            if (it.isHeld) {
+                it.release()
+            }
         }
     }
 
