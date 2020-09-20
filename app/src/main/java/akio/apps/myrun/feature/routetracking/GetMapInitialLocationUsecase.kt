@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.routetracking
 
-import android.location.Location
+import akio.apps.myrun.data.location.model.LatLng
 
 interface GetMapInitialLocationUsecase {
-    suspend fun getMapInitialLocation(): Location
+    suspend fun getMapInitialLocation(): LatLng
 }

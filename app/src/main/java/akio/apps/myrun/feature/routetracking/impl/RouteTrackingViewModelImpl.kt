@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps._base.lifecycle.Event
+import akio.apps.myrun.data.location.model.LatLng
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.model.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.model.TrackingLocationEntity
@@ -9,8 +10,10 @@ import akio.apps.myrun.feature._base.utils.flowTimer
 import akio.apps.myrun.feature.routetracking.*
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
 import android.graphics.Bitmap
-import android.location.Location
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,8 +26,8 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
 ) : RouteTrackingViewModel() {
 
-    private val _mapInitialLocation = MutableLiveData<Event<Location>>()
-    override val mapInitialLocation: LiveData<Event<Location>> = _mapInitialLocation
+    private val _mapInitialLocation = MutableLiveData<Event<LatLng>>()
+    override val mapInitialLocation: LiveData<Event<LatLng>> = _mapInitialLocation
 
     private val _trackingLocationBatch = MutableLiveData<List<TrackingLocationEntity>>()
     override val trackingLocationBatch: LiveData<List<TrackingLocationEntity>> = _trackingLocationBatch
@@ -58,16 +61,10 @@ class RouteTrackingViewModelImpl @Inject constructor(
             val initialLocation = getMapInitialLocationUsecase.getMapInitialLocation()
             _mapInitialLocation.value = Event(initialLocation)
 
-            trackingStatus.observeForever(object : Observer<@RouteTrackingStatus Int> {
-                override fun onChanged(@RouteTrackingStatus latestStatus: Int) {
-                    if (latestStatus != RouteTrackingStatus.STOPPED) {
-                        restoreTrackingStatus(latestStatus)
-                    }
-
-                    // restore in one shot
-                    trackingStatus.removeObserver(this)
-                }
-            })
+            val latestStatus = routeTrackingState.getTrackingStatus()
+            if (latestStatus != RouteTrackingStatus.STOPPED) {
+                restoreTrackingStatus(latestStatus)
+            }
         }
     }
 

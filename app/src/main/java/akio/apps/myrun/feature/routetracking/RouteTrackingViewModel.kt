@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.routetracking
 
 import akio.apps._base.lifecycle.Event
 import akio.apps._base.viewmodel.BaseViewModel
+import akio.apps.myrun.data.location.model.LatLng
 import akio.apps.myrun.data.routetracking.model.TrackingLocationEntity
 import akio.apps.myrun.data.workout.model.ActivityType
 import akio.apps.myrun.data.routetracking.model.RouteTrackingStatus
@@ -11,7 +12,7 @@ import android.location.Location
 import androidx.lifecycle.LiveData
 
 abstract class RouteTrackingViewModel : BaseViewModel() {
-    abstract val mapInitialLocation: LiveData<Event<Location>>
+    abstract val mapInitialLocation: LiveData<Event<LatLng>>
     abstract val trackingLocationBatch: LiveData<List<TrackingLocationEntity>>
     abstract val trackingStats: LiveData<RouteTrackingStats>
     abstract val trackingStatus: LiveData<@RouteTrackingStatus Int>

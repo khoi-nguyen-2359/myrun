@@ -60,15 +60,14 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         super.onCreate(savedInstanceState)
 
         initViews()
-
-        // onCreate: check location permissions -> check location service availability -> allow user to use this screen
-        checkLocationPermissionsDelegate.requestPermissions()
     }
 
     override fun onStart() {
         super.onStart()
 
         viewModel.resumeDataUpdates()
+        // onCreate: check location permissions -> check location service availability -> allow user to use this screen
+        checkLocationPermissionsDelegate.requestPermissions()
     }
 
     override fun onStop() {
