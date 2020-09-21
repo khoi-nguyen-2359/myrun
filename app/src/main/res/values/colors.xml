@@ -6,4 +6,5 @@
     <color name="route_tracking_polyline">#25a9e2</color>
     <color name="splash_title">#fff</color>
     <color name="splash_background">#006db3</color>
+    <color name="item_my_workout_background">#fff</color>
 </resources>

@@ -1,5 +1,7 @@
 package akio.apps.myrun.feature._base.utils
 
+import java.util.concurrent.TimeUnit
+
 object StatsPresentations {
     fun getDisplayTrackingDistance(distance: Double): String = String.format("%.2f", distance / 1000)
 
@@ -14,7 +16,19 @@ object StatsPresentations {
         }
     }
 
+    /**
+     * @param speed of unit meter/milisec
+     */
     fun getDisplaySpeed(speed: Double): CharSequence? {
-        return String.format("%.2f", speed)
+        val speedInKmPerHour = speed * (TimeUnit.HOURS.toMillis(1) / 1000)
+        return String.format("%.2f", speedInKmPerHour)
+    }
+
+    /**
+     * @param speed of unit meter/milisec
+     */
+    fun getDisplayPace(speed: Double): String {
+        val pace = 1 / ((TimeUnit.MINUTES.toMillis(1) / 1000) * speed)
+        return String.format("%d:%02d", pace.toInt(), ((pace % 1) * 60).toInt())
     }
 }

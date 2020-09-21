@@ -17,10 +17,7 @@ class RunningWorkoutViewHolder(
             .placeholder(R.drawable.ic_run_circle)
             .into(viewBinding.runningWorkoutImage)
 
-        val distanceInKm = runningWorkout.distance / 1000
-        val duration = runningWorkout.duration
-        val durationInHour = duration / (1000.0 * 60 * 60)
-        val speed = distanceInKm / durationInHour
-        viewBinding.runningWorkoutStatsView.update(RouteTrackingStats(runningWorkout.distance, speed, duration))
+        val speed = runningWorkout.distance / runningWorkout.duration
+        viewBinding.runningWorkoutStatsView.update(RouteTrackingStats(runningWorkout.distance, speed, runningWorkout.duration))
     }
 }

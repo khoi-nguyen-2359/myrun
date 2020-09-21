@@ -2,7 +2,7 @@
     <string name="app_name">My Run</string>
     <string name="route_tracking_distance_label">Distance</string>
     <string name="route_tracking_time_label">Time</string>
-    <string name="route_tracking_page_label">Pace</string>
+    <string name="route_tracking_pace_label">Pace</string>
     <string name="common_distance_unit">km</string>
     <string name="common_time_unit">minute</string>
     <string name="common_pace_unit">min/km</string>
