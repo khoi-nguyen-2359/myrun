@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.routetracking.impl
 
+import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import android.content.Context
@@ -19,7 +20,7 @@ class RouteTrackingStateImpl @Inject constructor(
     override suspend fun getTrackingStatus(): @RouteTrackingStatus Int = getTrackingStatusFlow()
         .first()
 
-    override fun getTrackingStatusFlow(): Flow<Int> = prefDataStore.data
+    override fun getTrackingStatusFlow(): Flow<@RouteTrackingStatus Int> = prefDataStore.data
         .map { data -> data[KEY_TRACKING_STATUS] ?: RouteTrackingStatus.STOPPED }
         .flowOn(Dispatchers.IO)
 
@@ -84,8 +85,22 @@ class RouteTrackingStateImpl @Inject constructor(
         prefDataStore.edit { state -> state.clear() }
     }
 
+    override suspend fun getActivityType(): ActivityType = prefDataStore.data
+        .map { data ->
+            data[KEY_ACTIVITY_TYPE]
+                ?.let { ActivityType.valueOf(it) }
+                ?: ActivityType.Running
+        }
+        .flowOn(Dispatchers.IO)
+        .first()
+
+    override suspend fun setActivityType(activityType: ActivityType) {
+        prefDataStore.edit { data -> data[KEY_ACTIVITY_TYPE] = activityType.name }
+    }
+
     companion object {
         private val KEY_TRACKING_STATUS = preferencesKey<Int>("KEY_TRACKING_STATUS")
+        private val KEY_ACTIVITY_TYPE = preferencesKey<String>("KEY_ACTIVITY_TYPE")
         private val KEY_ROUTE_DISTANCE = preferencesKey<Float>("KEY_ROUTE_DISTANCE")
         private val KEY_TRACKING_START_TIME = preferencesKey<Long>("KEY_TRACKING_START_TIME")
         private val KEY_CURRENT_SPEED = preferencesKey<Float>("KEY_CURRENT_SPEED")

@@ -7,7 +7,6 @@ import akio.apps.myrun.feature.routetracking.usecase.ClearRouteTrackingStateUsec
 import akio.apps.myrun.feature.routetracking.usecase.GetMapInitialLocationUsecaseImpl
 import akio.apps.myrun.feature.routetracking.usecase.GetTrackedLocationsUsecaseImpl
 import akio.apps.myrun.feature.routetracking.usecase.SaveRouteTrackingActivityUsecaseImpl
-import akio.apps.myrun.feature.routetracking.viewmodel.ActivitySettingsViewModelImpl
 import akio.apps.myrun.feature.routetracking.viewmodel.RouteTrackingViewModelImpl
 import androidx.lifecycle.ViewModel
 import dagger.Binds
@@ -27,11 +26,6 @@ interface RouteTrackingFeatureModule {
     @IntoMap
     @ViewModelKey(RouteTrackingViewModel::class)
     fun routeTrackingViewModel(viewModelImpl: RouteTrackingViewModelImpl): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ActivitySettingsViewModel::class)
-    fun activitySettingsViewModel(viewModelImpl: ActivitySettingsViewModelImpl): ViewModel
 
     @Binds
     fun getMapInitialLocation(usecaseImpl: GetMapInitialLocationUsecaseImpl): GetMapInitialLocationUsecase

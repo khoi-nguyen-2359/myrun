@@ -16,12 +16,15 @@ abstract class RouteTrackingViewModel : BaseViewModel() {
     abstract val trackingStats: LiveData<RouteTrackingStats>
     abstract val trackingStatus: LiveData<@RouteTrackingStatus Int>
     abstract val saveActivitySuccess: LiveData<Event<Unit>>
+    abstract val activityType: LiveData<ActivityType>
 
     abstract fun requestDataUpdates()
+
     abstract fun cancelDataUpdates()
 
     abstract fun requestInitialData()
-
-    abstract fun saveActivity(activityType: ActivityType, routeMapImage: Bitmap)
+    abstract fun saveActivity(routeMapImage: Bitmap)
     abstract fun resumeDataUpdates()
+
+    abstract fun onSelectActivityType(activityType: ActivityType)
 }

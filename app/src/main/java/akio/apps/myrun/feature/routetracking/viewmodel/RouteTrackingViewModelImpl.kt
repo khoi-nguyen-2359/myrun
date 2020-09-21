@@ -40,6 +40,9 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val _saveActivitySuccess = MutableLiveData<Event<Unit>>()
     override val saveActivitySuccess: LiveData<Event<Unit>> = _saveActivitySuccess
 
+    private val _activityType = MutableLiveData<ActivityType>()
+    override val activityType: LiveData<ActivityType> = _activityType
+
     private var trackingTimerJob: Job? = null
     private var processedLocationCount = 0
 
@@ -61,6 +64,8 @@ class RouteTrackingViewModelImpl @Inject constructor(
             val initialLocation = getMapInitialLocationUsecase.getMapInitialLocation()
             _mapInitialLocation.value = Event(initialLocation)
 
+            _activityType.value = routeTrackingState.getActivityType()
+
             processedLocationCount = 0
             val latestStatus = routeTrackingState.getTrackingStatus()
             if (latestStatus != RouteTrackingStatus.STOPPED) {
@@ -69,8 +74,11 @@ class RouteTrackingViewModelImpl @Inject constructor(
         }
     }
 
-    override fun saveActivity(activityType: ActivityType, routeMapImage: Bitmap) {
+    override fun saveActivity(routeMapImage: Bitmap) {
         launchCatching {
+            val activityType = activityType.value
+                ?: return@launchCatching
+
             saveRouteTrackingActivityUsecase.saveCurrentActivity(activityType, routeMapImage)
             clearRouteTrackingStateUsecase.clear()
 
@@ -97,6 +105,13 @@ class RouteTrackingViewModelImpl @Inject constructor(
 
     override fun cancelDataUpdates() {
         trackingTimerJob?.cancel()
+    }
+
+    override fun onSelectActivityType(activityType: ActivityType) {
+        _activityType.value = activityType
+        viewModelScope.launch {
+            routeTrackingState.setActivityType(activityType)
+        }
     }
 
     companion object {

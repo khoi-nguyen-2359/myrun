@@ -1,12 +1,8 @@
 package akio.apps.myrun.data.activity.impl
 
 import akio.apps._base.utils.FirebaseStorageUtils
-import akio.apps.myrun.data.activity.RunningActivityEntity
-import akio.apps.myrun.data.activity.ActivityDataEntity
-import akio.apps.myrun.data.activity.ActivityEntity
-import akio.apps.myrun.data.activity.ActivityRepository
+import akio.apps.myrun.data.activity.*
 import android.graphics.Bitmap
-import android.net.Uri
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -41,41 +37,48 @@ class ActivityRepositoryImpl @Inject constructor(
                 ?: return@mapNotNull null
 
             val activityData = firestoreActivity.toActivityDataEntity(doc.id)
-            if (firestoreActivity.runData != null) {
-                RunningActivityEntity(
-                    activityData = activityData,
-                    routePhoto = firestoreActivity.runData.routePhoto,
-                    averagePace = firestoreActivity.runData.averagePace,
-                    distance = firestoreActivity.runData.distance,
-                    encodedPolyline = firestoreActivity.runData.encodedPolyline
-                )
-            } else throw IllegalArgumentException("Unknown activity type")
+            firestoreActivity.run {
+                runningData?.run {
+                    RunningActivityEntity(activityData = activityData, pace = pace)
+                } ?: cyclingData?.run {
+                    CyclingActivityEntity(activityData = activityData, speed = speed)
+                }
+            }
         }
     }
 
     override suspend fun saveActivity(activity: ActivityEntity, routeMapImage: Bitmap): Unit = withContext(Dispatchers.IO) {
         val uploadedUri = FirebaseStorageUtils.uploadBitmap(activityStotage, routeMapImage, THUMBNAIL_SCALED_SIZE)
 
-        val runData: FirestoreRunData? = (activity as? RunningActivityEntity)
-            ?.toFirestoreRunData(uploadedUri)
+        val runData: FirestoreRunningData? = (activity as? RunningActivityEntity)
+            ?.toFirestoreRunData()
+
+        val cyclingData: FirestoreCyclingData? = (activity as? CyclingActivityEntity)
+            ?.toFirestoreCyclingData()
 
         val firestoreActivity = FirestoreActivity(
+            userId = activity.userId,
             activityType = activity.activityType,
+            name = activity.name,
+            routeImage = uploadedUri.toString(),
             startTime = activity.startTime,
             endTime = activity.endTime,
             duration = activity.duration,
-            runData = runData
+            distance = activity.distance,
+            encodedPolyline = activity.encodedPolyline,
+            runningData = runData,
+            cyclingData = cyclingData
         )
         activityCollection.add(firestoreActivity).await()
     }
 
-    private fun RunningActivityEntity.toFirestoreRunData(routePhotoUri: Uri? = null) = FirestoreRunData(
-        routePhotoUri?.toString() ?: routePhoto, averagePace, distance, encodedPolyline
-    )
+    private fun RunningActivityEntity.toFirestoreRunData() = FirestoreRunningData(pace)
 
     private fun FirestoreActivity.toActivityDataEntity(activityId: String) = ActivityDataEntity(
-        activityId, activityType, startTime, endTime, duration
+        activityId, userId, activityType, name, routeImage, startTime, endTime, duration, distance, encodedPolyline
     )
+
+    private fun CyclingActivityEntity.toFirestoreCyclingData() = FirestoreCyclingData(speed)
 
     companion object {
         const val THUMBNAIL_SCALED_SIZE = 1024 //px

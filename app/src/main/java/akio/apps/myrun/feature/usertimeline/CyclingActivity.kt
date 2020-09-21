@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.usertimeline
 
-data class RunningActivity(
+data class CyclingActivity(
     val activityData: ActivityData,
 
     // stats
-    val pace: Double
+    val speed: Double
 ): Activity by activityData

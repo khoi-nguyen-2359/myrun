@@ -5,6 +5,7 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.dp2px
 import akio.apps.myrun.R
+import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
@@ -14,8 +15,8 @@ import akio.apps.myrun.feature._base.utils.ActivityDialogDelegate
 import akio.apps.myrun.feature._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun.feature._base.utils.toGmsLatLng
 import akio.apps.myrun.feature.usertimeline.impl.UserTimelineActivity
-import akio.apps.myrun.feature.routetracking.ActivitySettingsViewModel
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
+import akio.apps.myrun.feature.routetracking.view.ActivitySettingsView
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -33,14 +34,13 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.coroutines.launch
 
-class RouteTrackingActivity : BaseInjectionActivity() {
+class RouteTrackingActivity : BaseInjectionActivity(), ActivitySettingsView.EventListener {
 
     private val dialogDelegate by lazy { ActivityDialogDelegate(this) }
 
     private val viewBinding by lazy { ActivityRouteTrackingBinding.inflate(layoutInflater) }
 
     private val routeTrackingViewModel: RouteTrackingViewModel by lazy { getViewModel() }
-    private val activitySettingsViewModel: ActivitySettingsViewModel by lazy { getViewModel() }
 
     private lateinit var mapView: GoogleMap
 
@@ -90,7 +90,8 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         }
         observeEvent(routeTrackingViewModel.error, dialogDelegate::showExceptionAlert)
         observeEvent(routeTrackingViewModel.saveActivitySuccess) { onSaveActivitySuccess() }
-        viewBinding.activitySettingsView.bindViewModel(this, activitySettingsViewModel)
+        observe(routeTrackingViewModel.activityType, viewBinding.activitySettingsView::setActivityType)
+        observe(routeTrackingViewModel.activityType, viewBinding.trackingStatsView::setActivityType)
     }
 
     private fun onSaveActivitySuccess() {
@@ -173,6 +174,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
             pauseButton.root.setOnClickListener { onPauseRouteTracking() }
             resumeButton.root.setOnClickListener { onResumeRouteTracking() }
             stopButton.root.setOnClickListener { onStopRouteTracking() }
+            viewBinding.activitySettingsView.eventListener = this@RouteTrackingActivity
         }
     }
 
@@ -234,15 +236,12 @@ class RouteTrackingActivity : BaseInjectionActivity() {
 
     @SuppressLint("MissingPermission")
     private fun saveActivity() {
-        val activityType = activitySettingsViewModel.activityType.value
-            ?: return
-
         mapView.isMyLocationEnabled = false
         val boundingBox = recenterMapOnTrackingRoute(false)
         mapView.snapshot { mapSnapshot ->
             mapView.isMyLocationEnabled = true
             val cropped = Bitmap.createBitmap(mapSnapshot, (mapSnapshot.width - boundingBox.width()) / 2, (mapSnapshot.height - boundingBox.height()) / 2, boundingBox.width(), boundingBox.height())
-            routeTrackingViewModel.saveActivity(activityType, cropped)
+            routeTrackingViewModel.saveActivity(cropped)
         }
     }
 
@@ -288,6 +287,10 @@ class RouteTrackingActivity : BaseInjectionActivity() {
     }
 
     private val onLocationServiceAvailable = { onLocationRequirementsReady() }
+
+    override fun onActivityTypeSelected(activityType: ActivityType) {
+        routeTrackingViewModel.onSelectActivityType(activityType)
+    }
 
     companion object {
         val MAP_LATLNG_BOUND_PADDING = 30.dp2px.toInt()

@@ -1,16 +1,13 @@
 package akio.apps.myrun.feature.routetracking.usecase
 
+import akio.apps.myrun.data.activity.*
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.activity.ActivityRepository
-import akio.apps.myrun.data.activity.ActivityType
-import akio.apps.myrun.data.activity.RunningActivityEntity
-import akio.apps.myrun.data.activity.ActivityEntity
-import akio.apps.myrun.data.activity.ActivityDataEntity
 import akio.apps.myrun.feature._base.utils.toGmsLatLng
 import akio.apps.myrun.feature.routetracking.SaveRouteTrackingActivityUsecase
 import android.graphics.Bitmap
 import com.google.maps.android.PolyUtil
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
@@ -23,21 +20,19 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
         val endTime = System.currentTimeMillis()
         val startTime = routeTrackingState.getTrackingStartTime()
         val duration = routeTrackingState.getTrackingDuration()
-        val activityData: ActivityEntity = ActivityDataEntity("", activityType, startTime, endTime, duration)
+        val distance = routeTrackingState.getRouteDistance()
+        val encodedPolyline = PolyUtil.encode(routeTrackingLocationRepository.getAllLocations().map { it.toGmsLatLng() })
+        val activityData: ActivityEntity = ActivityDataEntity("", "", activityType, "", "", startTime, endTime, duration, distance, encodedPolyline)
 
         val savingActivity = when (activityType) {
             ActivityType.Running -> {
-                val distance = routeTrackingState.getRouteDistance()
-                val averagePace = (duration / (1000 * 60)) / (distance / 1000)
-                val encodedLocations = PolyUtil.encode(routeTrackingLocationRepository.getAllLocations().map { it.toGmsLatLng() })
+                val pace = (duration / (1000 * 60)) / (distance / 1000)
+                RunningActivityEntity(activityData, pace)
+            }
 
-                RunningActivityEntity(
-                    activityData = activityData,
-                    averagePace = averagePace,
-                    distance = distance,
-                    encodedPolyline = encodedLocations,
-                    routePhoto = "",
-                )
+            ActivityType.Cycling -> {
+                val speed = (distance / 1000) / (TimeUnit.MILLISECONDS.toHours(duration))
+                CyclingActivityEntity(activityData, speed)
             }
 
             else -> return  // stop saving for unknown type

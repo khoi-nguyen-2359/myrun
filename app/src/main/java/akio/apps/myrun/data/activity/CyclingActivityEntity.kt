@@ -1,8 +1,8 @@
 package akio.apps.myrun.data.activity
 
-data class RunningActivityEntity(
+data class CyclingActivityEntity(
     val activityData: ActivityEntity,
 
     // stats
-    val pace: Double,
+    val speed: Double,
 ): ActivityEntity by activityData

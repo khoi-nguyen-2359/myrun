@@ -18,11 +18,9 @@ class RouteTrackingStatsView @JvmOverloads constructor(
     private val viewBinding: MergeRouteTrackingStatsViewBinding =
         MergeRouteTrackingStatsViewBinding.inflate(LayoutInflater.from(context), this)
 
-    var activityType: ActivityType = ActivityType.Running
-        set(value) {
-            field = value
-            onActivityTypeChanged()
-        }
+    private var speedPresenter: ((Double) -> String)? = null
+
+    private val activityTypes = listOf(ActivityType.Running, ActivityType.Cycling)
 
     init {
         val verticalPadding = resources.getDimensionPixelSize(R.dimen.common_page_vertical_padding)
@@ -37,18 +35,20 @@ class RouteTrackingStatsView @JvmOverloads constructor(
         val activityTypeIndex = styledAttrs.getInteger(R.styleable.RouteTrackingStatsView_activityTypeIndex, 0)
         styledAttrs.recycle()
 
-        this.activityType = ActivityType.values()[activityTypeIndex]
+        setActivityType(activityTypes[activityTypeIndex])
     }
 
-    private fun onActivityTypeChanged() {
-        when (this.activityType) {
+    fun setActivityType(activityType: ActivityType) {
+        when (activityType) {
             ActivityType.Running -> {
                 viewBinding.speedLabelTextView.setText(R.string.route_tracking_pace_label)
                 viewBinding.speedUnitTextView.setText(R.string.common_pace_unit)
+                speedPresenter = { speed -> StatsPresentations.getDisplayPace(speed) }
             }
             ActivityType.Cycling -> {
                 viewBinding.speedLabelTextView.setText(R.string.route_tracking_speed_label)
-                viewBinding.speedUnitTextView.setText(R.string.route_tracking_speed_label)
+                viewBinding.speedUnitTextView.setText(R.string.common_speed_unit)
+                speedPresenter = { speed -> StatsPresentations.getDisplaySpeed(speed) }
             }
         }
     }
@@ -57,10 +57,6 @@ class RouteTrackingStatsView @JvmOverloads constructor(
         Timber.d(stats.toString())
         distanceTextView.text = StatsPresentations.getDisplayTrackingDistance(stats.distance)
         timeTextView.text = StatsPresentations.getDisplayDuration(stats.duration)
-
-        when (activityType) {
-            ActivityType.Cycling -> speedTextView.text = StatsPresentations.getDisplaySpeed(stats.speed)
-            ActivityType.Running -> speedTextView.text = StatsPresentations.getDisplayPace(stats.speed)
-        }
+        speedTextView.text = speedPresenter?.invoke(stats.speed)
     }
 }

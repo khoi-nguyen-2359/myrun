@@ -19,7 +19,7 @@ object StatsPresentations {
     /**
      * @param speed of unit meter/milisec
      */
-    fun getDisplaySpeed(speed: Double): CharSequence? {
+    fun getDisplaySpeed(speed: Double): String {
         val speedInKmPerHour = speed * (TimeUnit.HOURS.toMillis(1) / 1000)
         return String.format("%.2f", speedInKmPerHour)
     }
@@ -28,7 +28,10 @@ object StatsPresentations {
      * @param speed of unit meter/milisec
      */
     fun getDisplayPace(speed: Double): String {
-        val pace = 1 / ((TimeUnit.MINUTES.toMillis(1) / 1000) * speed)
+        val pace = if (speed == 0.0)
+            0.0
+        else
+            1 / ((TimeUnit.MINUTES.toMillis(1) / 1000) * speed)
         return String.format("%d:%02d", pace.toInt(), ((pace % 1) * 60).toInt())
     }
 }

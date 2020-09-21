@@ -4,7 +4,6 @@ import akio.apps._base.lifecycle.observe
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.databinding.MergeActivitySettingsViewBinding
-import akio.apps.myrun.feature.routetracking.ActivitySettingsViewModel
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
@@ -20,7 +19,7 @@ class ActivitySettingsView @JvmOverloads constructor(
 
     private val viewBinding = MergeActivitySettingsViewBinding.inflate(LayoutInflater.from(context), this)
 
-    private lateinit var viewModel: ActivitySettingsViewModel
+    var eventListener: EventListener? = null
 
     private val activityTypeDisplays = mapOf(
         ActivityType.Running to ActivityTypeDisplay(R.string.activity_type_name_running),
@@ -38,22 +37,21 @@ class ActivitySettingsView @JvmOverloads constructor(
             .toTypedArray()
         AlertDialog.Builder(context)
             .setItems(activityTypeNames) { dialog, activityTypeIndex ->
-                viewModel.onSelectActivityType(activityTypeDisplays.keys.elementAt(activityTypeIndex))
+                eventListener?.onActivityTypeSelected(activityTypeDisplays.keys.elementAt(activityTypeIndex))
             }
             .show()
     }
 
-    private fun setActivityType(activityType: ActivityType) {
+    fun setActivityType(activityType: ActivityType) {
         val activityTypeDisplay = activityTypeDisplays[activityType]
             ?: return
 
         viewBinding.activityTypeSelectionTextView.text = resources.getString(R.string.route_tracking_activity_settings_activity_selection, resources.getString(activityTypeDisplay.nameResId))
     }
 
-    fun bindViewModel(lifecycleOwner: LifecycleOwner, activitySettingsViewModel: ActivitySettingsViewModel) {
-        viewModel = activitySettingsViewModel
-        lifecycleOwner.observe(activitySettingsViewModel.activityType, ::setActivityType)
-    }
-
     class ActivityTypeDisplay(@StringRes val nameResId: Int)
+
+    interface EventListener {
+        fun onActivityTypeSelected(activityType: ActivityType)
+    }
 }
