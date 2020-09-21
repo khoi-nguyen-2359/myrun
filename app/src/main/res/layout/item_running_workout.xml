@@ -9,9 +9,10 @@
     android:elevation="@dimen/item_my_workout_elevation">
 
     <ImageView
+        app:layout_constraintDimensionRatio="@string/route_tracking_captured_image_ratio"
         android:id="@+id/running_workout_image"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/workout_image_height"
+        android:layout_height="0dp"
         android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="parent" />
 

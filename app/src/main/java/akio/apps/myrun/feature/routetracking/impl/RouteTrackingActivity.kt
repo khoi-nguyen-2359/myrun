@@ -7,13 +7,11 @@ import akio.apps._base.ui.dp2px
 import akio.apps.myrun.R
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
-import akio.apps.myrun.data.workout.ActivityType
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature._base.permissions.AppPermissions.locationPermissions
 import akio.apps.myrun.feature._base.permissions.CheckRequiredPermissionsDelegate
 import akio.apps.myrun.feature._base.utils.ActivityDialogDelegate
 import akio.apps.myrun.feature._base.utils.CheckLocationServiceDelegate
-import akio.apps.myrun.feature._base.utils.MapPresentations
 import akio.apps.myrun.feature._base.utils.toGmsLatLng
 import akio.apps.myrun.feature.myworkout.impl.MyWorkoutActivity
 import akio.apps.myrun.feature.routetracking.ActivitySettingsViewModel
@@ -21,12 +19,14 @@ import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Rect
+import android.graphics.RectF
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -87,7 +87,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         observe(routeTrackingViewModel.trackingStats, viewBinding.trackingStatsView::update)
         observe(routeTrackingViewModel.trackingStatus, ::updateViewForTrackingStatus)
         observeEvent(routeTrackingViewModel.mapInitialLocation) { initLocation ->
-            mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGmsLatLng(), MapPresentations.MAP_DEFAULT_ZOOM_LEVEL))
+            mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGmsLatLng(), MAP_DEFAULT_ZOOM_LEVEL))
         }
         observeEvent(routeTrackingViewModel.error, dialogDelegate::showExceptionAlert)
         observeEvent(routeTrackingViewModel.saveWorkoutSuccess) { onSaveWorkoutSuccess() }
@@ -118,9 +118,34 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         batch.forEach {
             trackingRouteLatLngBounds.include(it.toGmsLatLng())
         }
-        batch.lastOrNull()?.let {
-            mapView.moveCamera(CameraUpdateFactory.newLatLngBounds(trackingRouteLatLngBounds.build(), MapPresentations.MAP_LATLNG_BOUND_PADDING))
+
+        // LatLngBounds doesn't have method to check empty!
+        if (batch.isNotEmpty()) {
+            recenterMapOnTrackingRoute(true)
         }
+    }
+
+    private fun recenterMapOnTrackingRoute(animation: Boolean): Rect {
+        val mapWidth = supportFragmentManager.findFragmentById(R.id.tracking_map_view)?.view?.measuredWidth
+            ?: application.resources.displayMetrics.widthPixels
+        val routeImageRatio = resources.getString(R.string.route_tracking_captured_image_ratio).toFloatOrNull()
+            ?: ROUTE_IMAGE_RATIO
+
+        val boundingBox = Rect(0, 0, mapWidth, (mapWidth / routeImageRatio).toInt())
+
+        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(
+            trackingRouteLatLngBounds.build(),
+            boundingBox.right,
+            boundingBox.bottom,
+            MAP_LATLNG_BOUND_PADDING)
+
+        if (animation) {
+            mapView.animateCamera(cameraUpdate)
+        } else {
+            mapView.moveCamera(cameraUpdate)
+        }
+
+        return boundingBox
     }
 
     private fun drawTrackingLocationUpdate(batch: List<TrackingLocationEntity>) {
@@ -202,12 +227,24 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         AlertDialog.Builder(this)
             .setTitle(R.string.route_tracking_stop_confirmation_title)
             .setPositiveButton(R.string.action_just_do_it) { _, _ ->
-                mapView.snapshot { mapSnapshot ->
-                    routeTrackingViewModel.saveWorkout(ActivityType.Running, mapSnapshot)
-                }
+                saveWorkout()
             }
             .setNegativeButton(R.string.action_cancel) { _, _ -> }
             .show()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun saveWorkout() {
+        val activityType = activitySettingsViewModel.activityType.value
+            ?: return
+
+        mapView.isMyLocationEnabled = false
+        val boundingBox = recenterMapOnTrackingRoute(false)
+        mapView.snapshot { mapSnapshot ->
+            mapView.isMyLocationEnabled = true
+            val cropped = Bitmap.createBitmap(mapSnapshot, (mapSnapshot.width - boundingBox.width()) / 2, (mapSnapshot.height - boundingBox.height()) / 2, boundingBox.width(), boundingBox.height())
+            routeTrackingViewModel.saveWorkout(activityType, cropped)
+        }
     }
 
     private fun startRouteTrackingService() {
@@ -240,6 +277,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
     @SuppressLint("MissingPermission")
     private fun initMapView(map: GoogleMap) {
         this.mapView = map
+        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.route_tracking_google_map_styles))
         map.isMyLocationEnabled = true
         map.uiSettings.isMyLocationButtonEnabled = true
     }
@@ -253,6 +291,10 @@ class RouteTrackingActivity : BaseInjectionActivity() {
     private val onLocationServiceAvailable = { onLocationRequirementsReady() }
 
     companion object {
+        val MAP_LATLNG_BOUND_PADDING = 30.dp2px.toInt()
+        const val MAP_DEFAULT_ZOOM_LEVEL = 18f
+        const val ROUTE_IMAGE_RATIO = 1.7f
+
         const val RC_LOCATION_SERVICE = 1
         const val RC_LOCATION_PERMISSIONS = 2
 
