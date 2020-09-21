@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Track Me</string>
+    <string name="app_name">My Run</string>
     <string name="route_tracking_distance_label">Distance</string>
     <string name="route_tracking_time_label">Time</string>
     <string name="route_tracking_page_label">Pace</string>
@@ -14,8 +14,7 @@
     <string name="error_required_permissions_missing">Please grant permissions to use this features</string>
     <string name="action_close">Close</string>
     <string name="error_location_service_unavailable">Please turn on location service to use this feature.</string>
-    <string name="route_tracking_notification_title">Track Me workout session is in progress</string>
-    <string name="route_tracking_notification_content">Touch to get back to your route</string>
+    <string name="route_tracking_notification_title">Workout session is in progress</string>
     <string name="error_unknown">Unknown Error</string>
     <string name="route_tracking_stop_confirmation_title">Stop and save your workout?</string>
     <string name="action_just_do_it">Just do it</string>
