@@ -96,7 +96,7 @@ class RouteTrackingService : Service() {
             val deltaTime = currentTime - lastTimeComputingInstantSpeed
             // compute instant speed for a period equals to location update interval
             if (lastTimeComputingInstantSpeed == 0L || (lastTimeComputingInstantSpeed > 0 && deltaTime >= LOCATION_UPDATE_INTERVAL)) {
-                val instantSpeed = ((routeDistance - lastDistanceComputingInstantSpeed) / 1000f) / (deltaTime / 3600000f)
+                val instantSpeed = (routeDistance - lastDistanceComputingInstantSpeed) / deltaTime
                 routeTrackingState.setInstantSpeed(instantSpeed)
 
                 lastTimeComputingInstantSpeed = currentTime

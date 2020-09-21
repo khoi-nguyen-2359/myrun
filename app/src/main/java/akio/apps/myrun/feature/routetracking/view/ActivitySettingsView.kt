@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.routetracking.view
 
 import akio.apps._base.lifecycle.observe
 import akio.apps.myrun.R
-import akio.apps.myrun.data.workout.ActivityType
+import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.databinding.MergeActivitySettingsViewBinding
 import akio.apps.myrun.feature.routetracking.ActivitySettingsViewModel
 import android.content.Context

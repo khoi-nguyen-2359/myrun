@@ -5,7 +5,7 @@ import akio.apps.myrun.feature.routetracking.model.LatLng
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
-import akio.apps.myrun.data.workout.ActivityType
+import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.feature._base.utils.flowTimer
 import akio.apps.myrun.feature.routetracking.*
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
@@ -22,7 +22,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val getMapInitialLocationUsecase: GetMapInitialLocationUsecase,
     private val getTrackedLocationsUsecase: GetTrackedLocationsUsecase,
     private val routeTrackingState: RouteTrackingState,
-    private val saveRouteTrackingWorkoutUsecase: SaveRouteTrackingWorkoutUsecase,
+    private val saveRouteTrackingActivityUsecase: SaveRouteTrackingActivityUsecase,
     private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
 ) : RouteTrackingViewModel() {
 
@@ -37,8 +37,8 @@ class RouteTrackingViewModelImpl @Inject constructor(
 
     override val trackingStatus: LiveData<@RouteTrackingStatus Int> = routeTrackingState.getTrackingStatusFlow().asLiveData()
 
-    private val _saveWorkoutSuccess = MutableLiveData<Event<Unit>>()
-    override val saveWorkoutSuccess: LiveData<Event<Unit>> = _saveWorkoutSuccess
+    private val _saveActivitySuccess = MutableLiveData<Event<Unit>>()
+    override val saveActivitySuccess: LiveData<Event<Unit>> = _saveActivitySuccess
 
     private var trackingTimerJob: Job? = null
     private var processedLocationCount = 0
@@ -69,12 +69,12 @@ class RouteTrackingViewModelImpl @Inject constructor(
         }
     }
 
-    override fun saveWorkout(activityType: ActivityType, routeMapImage: Bitmap) {
+    override fun saveActivity(activityType: ActivityType, routeMapImage: Bitmap) {
         launchCatching {
-            saveRouteTrackingWorkoutUsecase.saveCurrentWorkout(activityType, routeMapImage)
+            saveRouteTrackingActivityUsecase.saveCurrentActivity(activityType, routeMapImage)
             clearRouteTrackingStateUsecase.clear()
 
-            _saveWorkoutSuccess.value = Event(Unit)
+            _saveActivitySuccess.value = Event(Unit)
         }
     }
 

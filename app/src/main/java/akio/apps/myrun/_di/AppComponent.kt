@@ -3,8 +3,8 @@ package akio.apps.myrun._di
 import akio.apps.myrun.MyRunApp
 import akio.apps.myrun.data.location._di.LocationDataModule
 import akio.apps.myrun.data.routetracking._di.RouteTrackingDataModule
-import akio.apps.myrun.data.workout._di.WorkoutDataModule
-import akio.apps.myrun.feature.myworkout._di.MyWorkoutFeatureModule
+import akio.apps.myrun.data.activity._di.ActivityDataModule
+import akio.apps.myrun.feature.usertimeline._di.UserTimelineFeatureModule
 import akio.apps.myrun.feature.routetracking._di.RouteTrackingFeatureModule
 import akio.apps.myrun.feature.splash._di.SplashFeatureModule
 import dagger.BindsInstance
@@ -23,12 +23,12 @@ import javax.inject.Singleton
     // feature modules
     RouteTrackingFeatureModule::class,
     SplashFeatureModule::class,
-    MyWorkoutFeatureModule::class,
+    UserTimelineFeatureModule::class,
 
     // data modules
     LocationDataModule::class,
     RouteTrackingDataModule::class,
-    WorkoutDataModule::class,
+    ActivityDataModule::class,
 ])
 interface AppComponent: AndroidInjector<MyRunApp> {
     @Component.Factory

@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.routetracking.view
 
 import akio.apps.myrun.R
-import akio.apps.myrun.data.workout.ActivityType
+import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.databinding.MergeRouteTrackingStatsViewBinding
 import akio.apps.myrun.feature._base.utils.StatsPresentations
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats

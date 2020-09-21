@@ -4,7 +4,7 @@ import akio.apps._base.lifecycle.Event
 import akio.apps._base.viewmodel.BaseViewModel
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
-import akio.apps.myrun.data.workout.ActivityType
+import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.feature.routetracking.model.LatLng
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
 import android.graphics.Bitmap
@@ -15,13 +15,13 @@ abstract class RouteTrackingViewModel : BaseViewModel() {
     abstract val trackingLocationBatch: LiveData<List<TrackingLocationEntity>>
     abstract val trackingStats: LiveData<RouteTrackingStats>
     abstract val trackingStatus: LiveData<@RouteTrackingStatus Int>
-    abstract val saveWorkoutSuccess: LiveData<Event<Unit>>
+    abstract val saveActivitySuccess: LiveData<Event<Unit>>
 
     abstract fun requestDataUpdates()
     abstract fun cancelDataUpdates()
 
     abstract fun requestInitialData()
 
-    abstract fun saveWorkout(activityType: ActivityType, routeMapImage: Bitmap)
+    abstract fun saveActivity(activityType: ActivityType, routeMapImage: Bitmap)
     abstract fun resumeDataUpdates()
 }

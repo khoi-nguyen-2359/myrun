@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.routetracking.viewmodel
 
-import akio.apps.myrun.data.workout.ActivityType
+import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.feature.routetracking.ActivitySettingsViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

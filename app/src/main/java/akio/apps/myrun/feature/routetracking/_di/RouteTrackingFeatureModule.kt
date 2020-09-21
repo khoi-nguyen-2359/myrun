@@ -6,7 +6,7 @@ import akio.apps.myrun.feature.routetracking.impl.*
 import akio.apps.myrun.feature.routetracking.usecase.ClearRouteTrackingStateUsecaseImpl
 import akio.apps.myrun.feature.routetracking.usecase.GetMapInitialLocationUsecaseImpl
 import akio.apps.myrun.feature.routetracking.usecase.GetTrackedLocationsUsecaseImpl
-import akio.apps.myrun.feature.routetracking.usecase.SaveRouteTrackingWorkoutUsecaseImpl
+import akio.apps.myrun.feature.routetracking.usecase.SaveRouteTrackingActivityUsecaseImpl
 import akio.apps.myrun.feature.routetracking.viewmodel.ActivitySettingsViewModelImpl
 import akio.apps.myrun.feature.routetracking.viewmodel.RouteTrackingViewModelImpl
 import androidx.lifecycle.ViewModel
@@ -40,7 +40,7 @@ interface RouteTrackingFeatureModule {
     fun getTrackingLocationUpdates(usecaseImpl: GetTrackedLocationsUsecaseImpl): GetTrackedLocationsUsecase
 
     @Binds
-    fun saveRouteTrackingWorkoutUsecase(usecaseImpl: SaveRouteTrackingWorkoutUsecaseImpl): SaveRouteTrackingWorkoutUsecase
+    fun saveRouteTrackingActivityUsecase(usecaseImpl: SaveRouteTrackingActivityUsecaseImpl): SaveRouteTrackingActivityUsecase
 
     @Binds
     fun clearRouteTrackingStateUsecase(usecase: ClearRouteTrackingStateUsecaseImpl): ClearRouteTrackingStateUsecase

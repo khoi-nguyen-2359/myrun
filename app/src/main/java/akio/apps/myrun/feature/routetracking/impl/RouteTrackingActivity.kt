@@ -13,7 +13,7 @@ import akio.apps.myrun.feature._base.permissions.CheckRequiredPermissionsDelegat
 import akio.apps.myrun.feature._base.utils.ActivityDialogDelegate
 import akio.apps.myrun.feature._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun.feature._base.utils.toGmsLatLng
-import akio.apps.myrun.feature.myworkout.impl.MyWorkoutActivity
+import akio.apps.myrun.feature.usertimeline.impl.UserTimelineActivity
 import akio.apps.myrun.feature.routetracking.ActivitySettingsViewModel
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import android.annotation.SuppressLint
@@ -21,7 +21,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Rect
-import android.graphics.RectF
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -90,15 +89,15 @@ class RouteTrackingActivity : BaseInjectionActivity() {
             mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGmsLatLng(), MAP_DEFAULT_ZOOM_LEVEL))
         }
         observeEvent(routeTrackingViewModel.error, dialogDelegate::showExceptionAlert)
-        observeEvent(routeTrackingViewModel.saveWorkoutSuccess) { onSaveWorkoutSuccess() }
+        observeEvent(routeTrackingViewModel.saveActivitySuccess) { onSaveActivitySuccess() }
         viewBinding.activitySettingsView.bindViewModel(this, activitySettingsViewModel)
     }
 
-    private fun onSaveWorkoutSuccess() {
+    private fun onSaveActivitySuccess() {
         startService(RouteTrackingService.stopIntent(this))
 
         finish()
-        startActivity(MyWorkoutActivity.launchIntent(this))
+        startActivity(UserTimelineActivity.launchIntent(this))
     }
 
     private fun updateViewForTrackingStatus(@RouteTrackingStatus trackingStatus: Int) {
@@ -227,14 +226,14 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         AlertDialog.Builder(this)
             .setTitle(R.string.route_tracking_stop_confirmation_title)
             .setPositiveButton(R.string.action_just_do_it) { _, _ ->
-                saveWorkout()
+                saveActivity()
             }
             .setNegativeButton(R.string.action_cancel) { _, _ -> }
             .show()
     }
 
     @SuppressLint("MissingPermission")
-    private fun saveWorkout() {
+    private fun saveActivity() {
         val activityType = activitySettingsViewModel.activityType.value
             ?: return
 
@@ -243,7 +242,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         mapView.snapshot { mapSnapshot ->
             mapView.isMyLocationEnabled = true
             val cropped = Bitmap.createBitmap(mapSnapshot, (mapSnapshot.width - boundingBox.width()) / 2, (mapSnapshot.height - boundingBox.height()) / 2, boundingBox.width(), boundingBox.height())
-            routeTrackingViewModel.saveWorkout(activityType, cropped)
+            routeTrackingViewModel.saveActivity(activityType, cropped)
         }
     }
 
