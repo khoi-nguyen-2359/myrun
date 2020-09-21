@@ -1,5 +1,5 @@
 package akio.apps.myrun.data.workout
 
 enum class ActivityType {
-    Running, Unknown
+    Running, Cycling, Unknown
 }

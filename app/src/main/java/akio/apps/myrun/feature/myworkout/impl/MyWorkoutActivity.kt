@@ -3,6 +3,7 @@ package akio.apps.myrun.feature.myworkout.impl
 import akio.apps._base.di.BaseInjectionActivity
 import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
+import akio.apps.myrun.R
 import akio.apps.myrun.databinding.ActivityMyWorkoutBinding
 import akio.apps.myrun.feature._base.utils.ActivityDialogDelegate
 import akio.apps.myrun.feature.myworkout.MyWorkoutViewModel
@@ -10,6 +11,7 @@ import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
@@ -43,8 +45,8 @@ class MyWorkoutActivity : BaseInjectionActivity() {
     private fun initViews() {
         viewBinding.apply {
             setContentView(root)
-            recordButton.root.setOnClickListener { openRouteTrackingScreen() }
-            myWorkoutRecyclerView.adapter = workoutPagingAdapter.withLoadStateFooter(
+            addNewButton.setOnClickListener { openRouteTrackingScreen() }
+            workoutRecyclerView.adapter = workoutPagingAdapter.withLoadStateFooter(
                 footer = WorkoutLoadStateAdapter()
             )
         }

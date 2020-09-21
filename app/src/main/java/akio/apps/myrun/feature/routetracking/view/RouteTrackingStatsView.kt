@@ -1,9 +1,10 @@
-package akio.apps.myrun.feature.routetracking.impl
+package akio.apps.myrun.feature.routetracking.view
 
 import akio.apps.myrun.R
+import akio.apps.myrun.data.workout.ActivityType
 import akio.apps.myrun.databinding.MergeRouteTrackingStatsViewBinding
 import akio.apps.myrun.feature._base.utils.StatsPresentations
-import akio.apps.myrun.feature.routetracking.RouteTrackingStats
+import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -33,10 +34,10 @@ class RouteTrackingStatsView @JvmOverloads constructor(
         attrs ?: return
 
         val styledAttrs = context.obtainStyledAttributes(attrs, R.styleable.RouteTrackingStatsView)
-        val activityTypeValue = styledAttrs.getInteger(R.styleable.RouteTrackingStatsView_activityType, ACTIVITY_TYPE_RUNNING)
+        val activityTypeIndex = styledAttrs.getInteger(R.styleable.RouteTrackingStatsView_activityTypeIndex, 0)
         styledAttrs.recycle()
 
-        this.activityType = ActivityType.valueOf(activityTypeValue)
+        this.activityType = ActivityType.values()[activityTypeIndex]
     }
 
     private fun onActivityTypeChanged() {
@@ -60,26 +61,6 @@ class RouteTrackingStatsView @JvmOverloads constructor(
         when (activityType) {
             ActivityType.Cycling -> speedTextView.text = StatsPresentations.getDisplaySpeed(stats.speed)
             ActivityType.Running -> speedTextView.text = StatsPresentations.getDisplayPace(stats.speed)
-        }
-    }
-
-    companion object {
-        // This maps with RouteTrackingStatsView_activityType
-        const val ACTIVITY_TYPE_RUNNING = 0
-        const val ACTIVITY_TYPE_CYCLING = 1
-    }
-
-    enum class ActivityType(val value: Int) {
-        Running(ACTIVITY_TYPE_RUNNING), Cycling(ACTIVITY_TYPE_CYCLING);
-
-        companion object {
-            fun valueOf(value: Int): ActivityType {
-                return when (value) {
-                    ACTIVITY_TYPE_RUNNING -> Running
-                    ACTIVITY_TYPE_CYCLING -> Cycling
-                    else -> throw IllegalArgumentException("Unknown activity type $value")
-                }
-            }
         }
     }
 }

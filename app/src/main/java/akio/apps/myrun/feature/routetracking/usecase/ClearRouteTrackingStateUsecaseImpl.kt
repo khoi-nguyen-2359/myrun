@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.routetracking.impl
+package akio.apps.myrun.feature.routetracking.usecase
 
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState

@@ -16,6 +16,7 @@ import akio.apps.myrun.feature._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun.feature._base.utils.MapPresentations
 import akio.apps.myrun.feature._base.utils.toGmsLatLng
 import akio.apps.myrun.feature.myworkout.impl.MyWorkoutActivity
+import akio.apps.myrun.feature.routetracking.ActivitySettingsViewModel
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import android.annotation.SuppressLint
 import android.content.Context
@@ -25,6 +26,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -38,7 +40,8 @@ class RouteTrackingActivity : BaseInjectionActivity() {
 
     private val viewBinding by lazy { ActivityRouteTrackingBinding.inflate(layoutInflater) }
 
-    private val viewModel: RouteTrackingViewModel by lazy { getViewModel() }
+    private val routeTrackingViewModel: RouteTrackingViewModel by lazy { getViewModel() }
+    private val activitySettingsViewModel: ActivitySettingsViewModel by lazy { getViewModel() }
 
     private lateinit var mapView: GoogleMap
 
@@ -69,25 +72,26 @@ class RouteTrackingActivity : BaseInjectionActivity() {
     override fun onStart() {
         super.onStart()
 
-        viewModel.resumeDataUpdates()
+        routeTrackingViewModel.resumeDataUpdates()
     }
 
     override fun onStop() {
         super.onStop()
 
-        viewModel.cancelDataUpdates()
+        routeTrackingViewModel.cancelDataUpdates()
     }
 
     private fun initObservers() {
-        observe(viewModel.isInProgress, dialogDelegate::toggleProgressDialog)
-        observe(viewModel.trackingLocationBatch, ::onTrackingLocationUpdate)
-        observe(viewModel.trackingStats, viewBinding.trackingStatsView::update)
-        observe(viewModel.trackingStatus, ::updateViewForTrackingStatus)
-        observeEvent(viewModel.mapInitialLocation) { initLocation ->
+        observe(routeTrackingViewModel.isInProgress, dialogDelegate::toggleProgressDialog)
+        observe(routeTrackingViewModel.trackingLocationBatch, ::onTrackingLocationUpdate)
+        observe(routeTrackingViewModel.trackingStats, viewBinding.trackingStatsView::update)
+        observe(routeTrackingViewModel.trackingStatus, ::updateViewForTrackingStatus)
+        observeEvent(routeTrackingViewModel.mapInitialLocation) { initLocation ->
             mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGmsLatLng(), MapPresentations.MAP_DEFAULT_ZOOM_LEVEL))
         }
-        observeEvent(viewModel.error, dialogDelegate::showExceptionAlert)
-        observeEvent(viewModel.saveWorkoutSuccess) { onSaveWorkoutSuccess() }
+        observeEvent(routeTrackingViewModel.error, dialogDelegate::showExceptionAlert)
+        observeEvent(routeTrackingViewModel.saveWorkoutSuccess) { onSaveWorkoutSuccess() }
+        viewBinding.activitySettingsView.bindViewModel(this, activitySettingsViewModel)
     }
 
     private fun onSaveWorkoutSuccess() {
@@ -172,22 +176,25 @@ class RouteTrackingActivity : BaseInjectionActivity() {
             resumeButton.root.visibility = View.GONE
             stopButton.root.visibility = View.GONE
             pauseButton.root.visibility = View.VISIBLE
+
+            viewBinding.activitySettingsView.visibility = View.GONE
+            viewBinding.trackingStatsView.visibility = View.VISIBLE
         }
     }
 
     private fun onStartRouteTracking() {
         startRouteTrackingService()
-        viewModel.requestDataUpdates()
+        routeTrackingViewModel.requestDataUpdates()
     }
 
     private fun onPauseRouteTracking() {
         startService(RouteTrackingService.pauseIntent(this))
-        viewModel.cancelDataUpdates()
+        routeTrackingViewModel.cancelDataUpdates()
     }
 
     private fun onResumeRouteTracking() {
         startService(RouteTrackingService.resumeIntent(this))
-        viewModel.requestDataUpdates()
+        routeTrackingViewModel.requestDataUpdates()
     }
 
     private fun onStopRouteTracking() {
@@ -196,10 +203,10 @@ class RouteTrackingActivity : BaseInjectionActivity() {
             .setTitle(R.string.route_tracking_stop_confirmation_title)
             .setPositiveButton(R.string.action_just_do_it) { _, _ ->
                 mapView.snapshot { mapSnapshot ->
-                    viewModel.saveWorkout(ActivityType.Running, mapSnapshot)
+                    routeTrackingViewModel.saveWorkout(ActivityType.Running, mapSnapshot)
                 }
             }
-            .setNegativeButton(R.string.action_cancel) {_,_->}
+            .setNegativeButton(R.string.action_cancel) { _, _ -> }
             .show()
     }
 
@@ -226,7 +233,7 @@ class RouteTrackingActivity : BaseInjectionActivity() {
         (supportFragmentManager.findFragmentById(R.id.tracking_map_view) as SupportMapFragment).getMapAsync { map ->
             initMapView(map)
             initObservers()
-            viewModel.requestInitialData()
+            routeTrackingViewModel.requestInitialData()
         }
     }
 

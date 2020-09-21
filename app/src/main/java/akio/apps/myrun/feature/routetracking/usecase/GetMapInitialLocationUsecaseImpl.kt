@@ -1,7 +1,7 @@
-package akio.apps.myrun.feature.routetracking.impl
+package akio.apps.myrun.feature.routetracking.usecase
 
 import akio.apps.myrun.data.location.LocationDataSource
-import akio.apps.myrun.feature.routetracking.LatLng
+import akio.apps.myrun.feature.routetracking.model.LatLng
 import akio.apps.myrun.feature._base.utils.toLatLng
 import akio.apps.myrun.feature.routetracking.GetMapInitialLocationUsecase
 import javax.inject.Inject

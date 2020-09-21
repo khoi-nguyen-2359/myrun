@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.routetracking.impl
+package akio.apps.myrun.feature.routetracking.usecase
 
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
@@ -13,7 +13,7 @@ import android.graphics.Bitmap
 import com.google.maps.android.PolyUtil
 import javax.inject.Inject
 
-class SaveRouteTrackingWorkoutWorkoutImpl @Inject constructor(
+class SaveRouteTrackingWorkoutUsecaseImpl @Inject constructor(
     private val routeTrackingState: RouteTrackingState,
     private val routeTrackingLocationRepository: RouteTrackingLocationRepository,
     private val workoutRepository: WorkoutRepository

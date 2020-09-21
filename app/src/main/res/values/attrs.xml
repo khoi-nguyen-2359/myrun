@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RouteTrackingStatsView">
-        <attr name="activityType" format="enum">
+        <attr name="activityTypeIndex" format="enum">
             <enum name="running" value="0" />
             <enum name="cycling" value="1" />
         </attr>

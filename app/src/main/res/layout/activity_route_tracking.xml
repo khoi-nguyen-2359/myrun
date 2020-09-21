@@ -12,10 +12,17 @@
         app:layout_constraintBottom_toTopOf="@+id/tracking_stats_view"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <akio.apps.myrun.feature.routetracking.impl.RouteTrackingStatsView
+    <akio.apps.myrun.feature.routetracking.view.ActivitySettingsView
+        android:id="@+id/activity_settings_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/control_button_panel" />
+
+    <akio.apps.myrun.feature.routetracking.view.RouteTrackingStatsView
         android:id="@+id/tracking_stats_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/control_button_panel" />
 
     <LinearLayout
@@ -31,19 +38,19 @@
             layout="@layout/include_record_button" />
 
         <include
-            android:visibility="gone"
             android:id="@+id/pause_button"
-            layout="@layout/include_pause_button" />
+            layout="@layout/include_pause_button"
+            android:visibility="gone" />
 
         <include
-            android:visibility="gone"
             android:id="@+id/resume_button"
-            layout="@layout/include_resume_button" />
+            layout="@layout/include_resume_button"
+            android:visibility="gone" />
 
         <include
-            android:visibility="gone"
             android:id="@+id/stop_button"
-            layout="@layout/include_stop_button" />
+            layout="@layout/include_stop_button"
+            android:visibility="gone" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

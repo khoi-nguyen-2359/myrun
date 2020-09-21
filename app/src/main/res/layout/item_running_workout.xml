@@ -15,11 +15,11 @@
         android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <akio.apps.myrun.feature.routetracking.impl.RouteTrackingStatsView
+    <akio.apps.myrun.feature.routetracking.view.RouteTrackingStatsView
         android:id="@+id/running_workout_stats_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:activityType="running"
+        app:activityTypeIndex="running"
         app:layout_constraintTop_toBottomOf="@id/running_workout_image" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

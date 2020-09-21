@@ -18,4 +18,11 @@
     <string name="error_unknown">Unknown Error</string>
     <string name="route_tracking_stop_confirmation_title">Stop and save your workout?</string>
     <string name="action_just_do_it">Just do it</string>
+    <string name="route_tracking_activity_settings_activity_selection">"Activity type: %1$s"</string>
+    <string name="activity_type_name_running">Running</string>
+    <string name="activity_type_name_cycling">Cycling</string>
+    <string-array name="my_workout_activity_selection_items">
+        <item>Running</item>
+        <item>Cycling</item>
+    </string-array>
 </resources>

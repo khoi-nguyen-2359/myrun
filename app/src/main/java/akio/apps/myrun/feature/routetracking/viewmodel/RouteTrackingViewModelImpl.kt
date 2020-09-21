@@ -1,14 +1,14 @@
-package akio.apps.myrun.feature.routetracking.impl
+package akio.apps.myrun.feature.routetracking.viewmodel
 
 import akio.apps._base.lifecycle.Event
-import akio.apps.myrun.feature.routetracking.LatLng
+import akio.apps.myrun.feature.routetracking.model.LatLng
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.data.workout.ActivityType
 import akio.apps.myrun.feature._base.utils.flowTimer
 import akio.apps.myrun.feature.routetracking.*
-import akio.apps.myrun.feature.routetracking.RouteTrackingStats
+import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

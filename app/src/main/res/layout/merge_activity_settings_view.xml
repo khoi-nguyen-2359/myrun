@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <TextView
+        android:id="@+id/activity_type_selection_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/common_page_vertical_padding"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        tools:text="Activity type: Running" />
+
+</merge>

@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/my_workout_recycler_view"
+        android:id="@+id/workout_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -14,10 +14,13 @@
         android:paddingBottom="@dimen/route_tracking_control_button_size"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-    <include
-        android:id="@+id/record_button"
-        style="@style/RouteTrackingControlButton"
-        layout="@layout/include_record_button"
-        android:layout_gravity="bottom|center_horizontal" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_new_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add"
+        android:tint="#fff" />
 
 </FrameLayout>
