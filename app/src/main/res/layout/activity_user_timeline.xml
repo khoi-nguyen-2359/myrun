@@ -20,8 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_add"
-        android:tint="#fff"
+        app:srcCompat="@drawable/ic_add"
+        app:tint="#fff"
         app:backgroundTint="@color/colorAccent" />
 
 </FrameLayout>

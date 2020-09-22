@@ -1,17 +1,22 @@
 package akio.apps.myrun.feature.routetracking.view
 
-import akio.apps._base.lifecycle.observe
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.databinding.MergeActivitySettingsViewBinding
 import android.content.Context
 import android.graphics.Color
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.DynamicDrawableSpan
+import android.text.style.DynamicDrawableSpan.ALIGN_CENTER
+import android.text.style.ImageSpan
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.LifecycleOwner
+import androidx.core.content.ContextCompat
 
 class ActivitySettingsView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -22,18 +27,25 @@ class ActivitySettingsView @JvmOverloads constructor(
     var eventListener: EventListener? = null
 
     private val activityTypeDisplays = mapOf(
-        ActivityType.Running to ActivityTypeDisplay(R.string.activity_type_name_running),
-        ActivityType.Cycling to ActivityTypeDisplay(R.string.activity_type_name_cycling)
+        ActivityType.Running to ActivityTypeDisplay(R.string.activity_type_name_running, R.drawable.ic_directions_run),
+        ActivityType.Cycling to ActivityTypeDisplay(R.string.activity_type_name_cycling, R.drawable.ic_directions_bike)
     )
 
     init {
-        setBackgroundColor(Color.WHITE)
-        viewBinding.activityTypeSelectionTextView.setOnClickListener { showActivityTypeSelectionDialog() }
+        setBackgroundColor(Color.TRANSPARENT)
+        viewBinding.activityTypeSelectionChip.setOnClickListener { showActivityTypeSelectionDialog() }
     }
 
     private fun showActivityTypeSelectionDialog() {
         val activityTypeNames = activityTypeDisplays
-            .map { resources.getString(it.value.nameResId) }
+            .map { entry ->
+                val name = "  " + resources.getString(entry.value.nameRes)
+                val builder = SpannableStringBuilder(name)
+                val iconSpan = ImageSpan(context, entry.value.iconRes)
+                builder.setSpan(iconSpan, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                builder
+            }
             .toTypedArray()
         AlertDialog.Builder(context)
             .setItems(activityTypeNames) { dialog, activityTypeIndex ->
@@ -46,10 +58,14 @@ class ActivitySettingsView @JvmOverloads constructor(
         val activityTypeDisplay = activityTypeDisplays[activityType]
             ?: return
 
-        viewBinding.activityTypeSelectionTextView.text = resources.getString(R.string.route_tracking_activity_settings_activity_selection, resources.getString(activityTypeDisplay.nameResId))
+        viewBinding.activityTypeSelectionChip.text = resources.getString(activityTypeDisplay.nameRes)
+        viewBinding.activityTypeSelectionChip.chipIcon = ContextCompat.getDrawable(context, activityTypeDisplay.iconRes)
     }
 
-    class ActivityTypeDisplay(@StringRes val nameResId: Int)
+    class ActivityTypeDisplay(
+        @StringRes val nameRes: Int,
+        @DrawableRes val iconRes: Int,
+    )
 
     interface EventListener {
         fun onActivityTypeSelected(activityType: ActivityType)
