@@ -193,6 +193,10 @@ class RouteTrackingActivity : BaseInjectionActivity(), ActivitySettingsView.Even
             resumeButton.visibility = View.VISIBLE
             stopButton.visibility = View.VISIBLE
             pauseButton.visibility = View.GONE
+
+            viewBinding.activitySettingsView.visibility = View.GONE
+            viewBinding.trackingStatsView.visibility = View.VISIBLE
+            viewBinding.semiTransparentBackdropView.visibility = View.VISIBLE
         }
     }
 

@@ -51,14 +51,6 @@
         app:barrierDirection="top"
         app:constraint_referenced_ids="record_button,resume_button,pause_button" />
 
-    <!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-    <!--        android:id="@+id/bottom_panel"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:elevation="8dp"-->
-    <!--        android:orientation="vertical"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent">-->
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/record_button"
         style="@style/RouteTrackingControlButton"
@@ -100,5 +92,4 @@
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/resume_button" />
 
-    <!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>
