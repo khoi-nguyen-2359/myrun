@@ -8,26 +8,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:259635118302:android:4735c80b675e9529e0c24f",
+        "mobilesdk_app_id": "1:259635118302:android:ae68c3a3d3dff6b3e0c24f",
         "android_client_info": {
-          "package_name": "akio.apps.myrun"
+          "package_name": "akio.apps.myrun.debug"
         }
       },
       "oauth_client": [
         {
-          "client_id": "259635118302-gacgcvcv86v45a3i94bt3ha1knrd4fkt.apps.googleusercontent.com",
+          "client_id": "259635118302-njjrc0m96gmfvrvt2bh5d168i0mpuggp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "akio.apps.myrun",
-            "certificate_hash": "652786e3a34bc525ed4cf556af0c0bff526e7231"
-          }
-        },
-        {
-          "client_id": "259635118302-dn0st54a9h6cq8ulg457spfsc2hj0vds.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "akio.apps.myrun",
-            "certificate_hash": "25818bc6fccfdf2b04eea844b1e71df7ec62758a"
+            "package_name": "akio.apps.myrun.debug",
+            "certificate_hash": "1124ccc9fc34514a9e1ed60b1a00c735793e5eb4"
           }
         },
         {
@@ -37,7 +29,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAGHD_JcnStQy2kTfr46k_VVTfaPrKGI8A"
+          "current_key": "AIzaSyC3GTZz5dRYphtrGY5-o7h5393YjzH6Njo"
         }
       ],
       "services": {

@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "818848282563",
+    "firebase_url": "https://my-run-3548c.firebaseio.com",
+    "project_id": "my-run-3548c",
+    "storage_bucket": "my-run-3548c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:818848282563:android:0c2bb68bcd35971d706f76",
+        "android_client_info": {
+          "package_name": "akio.apps.myrun"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "818848282563-tggkt36o3e3fl610mke5k9jkf5kli14d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "akio.apps.myrun",
+            "certificate_hash": "1124ccc9fc34514a9e1ed60b1a00c735793e5eb4"
+          }
+        },
+        {
+          "client_id": "818848282563-hi54kkqoh3cniop5t27ren2m6fg76t95.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "akio.apps.myrun",
+            "certificate_hash": "68149ef53bbc792860d08ac4400040ccc84a2153"
+          }
+        },
+        {
+          "client_id": "818848282563-l3bgkkasnpvf6oofjk668u1pdevq976b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIN0ZGa9wMgWftWfbGt1wOHHRdgm1m8D8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "818848282563-l3bgkkasnpvf6oofjk668u1pdevq976b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
