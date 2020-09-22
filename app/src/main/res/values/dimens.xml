@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="route_tracking_control_button_size">48dp</dimen>
+    <dimen name="route_tracking_control_button_size">90dp</dimen>
     <dimen name="common_page_vertical_padding">16dp</dimen>
     <dimen name="route_tracking_map_capture_height">200dp</dimen>
     <dimen name="user_timeline_loading_progress_size">48dp</dimen>

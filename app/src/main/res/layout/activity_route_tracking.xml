@@ -35,7 +35,7 @@
 
         <include
             android:id="@+id/record_button"
-            layout="@layout/include_record_button" />
+            layout="@layout/include_start_button" />
 
         <include
             android:id="@+id/pause_button"

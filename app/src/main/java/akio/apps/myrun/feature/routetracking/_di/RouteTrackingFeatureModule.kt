@@ -7,7 +7,7 @@ import akio.apps.myrun.feature.routetracking.usecase.ClearRouteTrackingStateUsec
 import akio.apps.myrun.feature.routetracking.usecase.GetMapInitialLocationUsecaseImpl
 import akio.apps.myrun.feature.routetracking.usecase.GetTrackedLocationsUsecaseImpl
 import akio.apps.myrun.feature.routetracking.usecase.SaveRouteTrackingActivityUsecaseImpl
-import akio.apps.myrun.feature.routetracking.viewmodel.RouteTrackingViewModelImpl
+import akio.apps.myrun.feature.routetracking.impl.RouteTrackingViewModelImpl
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module

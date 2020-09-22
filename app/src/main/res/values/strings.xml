@@ -22,6 +22,10 @@
     <string name="activity_type_name_running">Running</string>
     <string name="activity_type_name_cycling">Cycling</string>
     <string name="route_tracking_captured_image_ratio">1.5</string>
+    <string name="action_start">Start</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_resume">Resume</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>

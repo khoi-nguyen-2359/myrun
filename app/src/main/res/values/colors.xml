@@ -7,4 +7,7 @@
     <color name="splash_title">#fff</color>
     <color name="splash_background">#006db3</color>
     <color name="item_activity_background">#fff</color>
+    <color name="route_tracking_pause_button_background_tint">#263238</color>
+    <color name="route_tracking_start_button_background_tint">#b71c1c</color>
+    <color name="route_tracking_resume_button_background_tint">#00c853</color>
 </resources>

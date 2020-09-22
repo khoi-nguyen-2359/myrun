@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.routetracking.viewmodel
+package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps._base.lifecycle.Event
 import akio.apps.myrun.feature.routetracking.model.LatLng
