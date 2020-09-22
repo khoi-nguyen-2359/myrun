@@ -1,23 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/item_user_timeline_margin_vertical"
     android:layout_marginBottom="@dimen/item_user_timeline_margin_vertical"
     android:background="@color/item_activity_background"
-    android:elevation="@dimen/item_user_timeline_elevation">
+    android:elevation="@dimen/item_user_timeline_elevation"
+    android:paddingTop="@dimen/common_item_vertical_padding">
+
+    <TextView
+        android:id="@+id/activity_time_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_item_horizontal_padding"
+        android:layout_marginEnd="@dimen/common_item_horizontal_padding"
+        android:textColor="#000"
+        android:textSize="12sp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Today at 6:30am" />
+
+    <TextView
+        android:id="@+id/activity_title_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/common_item_horizontal_padding"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="@dimen/common_item_horizontal_padding"
+        android:textColor="#000"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/activity_time_text_view"
+        tools:text="Morning Run" />
 
     <ImageView
-        app:layout_constraintDimensionRatio="@string/route_tracking_captured_image_ratio"
         android:id="@+id/running_activity_image"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="@dimen/common_item_section_vertical_spacing"
         android:scaleType="centerCrop"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintDimensionRatio="@string/route_tracking_captured_image_ratio"
+        app:layout_constraintTop_toBottomOf="@id/activity_title_text_view" />
 
     <akio.apps.myrun.feature.routetracking.view.RouteTrackingStatsView
-        android:id="@+id/running_activity_stats_view"
+        android:id="@+id/activity_stats_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:activityTypeIndex="running"

@@ -5,5 +5,9 @@
     <dimen name="route_tracking_map_capture_height">200dp</dimen>
     <dimen name="user_timeline_loading_progress_size">48dp</dimen>
     <dimen name="item_user_timeline_margin_vertical">12dp</dimen>
-    <dimen name="item_user_timeline_elevation">3dp</dimen>
+    <dimen name="item_user_timeline_elevation">4dp</dimen>
+    <dimen name="common_item_horizontal_padding">16dp</dimen>
+    <dimen name="common_item_vertical_padding">12dp</dimen>
+    <dimen name="common_item_section_vertical_spacing">8dp</dimen>
+    <dimen name="common_item_vertical_spacing">4dp</dimen>
 </resources>
