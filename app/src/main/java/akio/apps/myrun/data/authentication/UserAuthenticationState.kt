@@ -8,5 +8,6 @@ interface UserAuthenticationState {
     fun getUserAccount(): UserAccount?
     fun getUserAccountId(): String?
     fun isLinkedWithFacebook(): Boolean
-    fun isLoggedIn(): Boolean
+    fun isSignedIn(): Boolean
+    fun isAnonymousUser(): Boolean
 }

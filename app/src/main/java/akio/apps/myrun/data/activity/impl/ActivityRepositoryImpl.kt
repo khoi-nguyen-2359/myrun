@@ -24,8 +24,8 @@ class ActivityRepositoryImpl @Inject constructor(
     private val activityStotage: StorageReference
         get() = firebaseStorage.getReference("activity")
 
-    override suspend fun getActivitiesByStartTime(startAfterTime: Long, limit: Int): List<ActivityEntity> = withContext(Dispatchers.IO) {
-        val query = activityCollection
+    override suspend fun getActivitiesByStartTime(userId: String, startAfterTime: Long, limit: Int): List<ActivityEntity> = withContext(Dispatchers.IO) {
+        val query = activityCollection.whereEqualTo("userId", userId)
             .orderBy("startTime", Query.Direction.DESCENDING)
             .startAfter(startAfterTime)
             .limit(limit.toLong())
