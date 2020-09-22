@@ -205,6 +205,7 @@ class RouteTrackingActivity : BaseInjectionActivity(), ActivitySettingsView.Even
 
             viewBinding.activitySettingsView.visibility = View.GONE
             viewBinding.trackingStatsView.visibility = View.VISIBLE
+            viewBinding.semiTransparentBackdropView.visibility = View.VISIBLE
         }
     }
 
