@@ -33,6 +33,7 @@
     <string name="item_activity_title_evening">Evening %1$s</string>
     <string name="activity_name_running">Run</string>
     <string name="activity_name_cycling">Ride</string>
+    <string name="user_timeline_error_loading_list">There\'s an error loading activities.\nRetry.</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>

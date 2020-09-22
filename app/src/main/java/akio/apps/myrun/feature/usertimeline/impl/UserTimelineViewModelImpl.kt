@@ -13,9 +13,15 @@ class UserTimelineViewModelImpl @Inject constructor(
     private val activityPagingSource: ActivityPagingSource
 ) : UserTimelineViewModel() {
 
-    override val myActivityList: LiveData<PagingData<Activity>> = Pager(PagingConfig(pageSize = PAGE_SIZE)) { activityPagingSource }.liveData
+    override val myActivityList: LiveData<PagingData<Activity>> = Pager(
+        config = PagingConfig(
+            pageSize = PAGE_SIZE,
+            prefetchDistance = PAGE_SIZE / 2
+        ),
+        initialKey = System.currentTimeMillis()
+    ) { activityPagingSource }.liveData
 
     companion object {
-        const val PAGE_SIZE = 5
+        const val PAGE_SIZE = 4
     }
 }

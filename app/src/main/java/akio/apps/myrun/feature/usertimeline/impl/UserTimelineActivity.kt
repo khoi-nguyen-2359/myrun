@@ -45,7 +45,7 @@ class UserTimelineActivity : BaseInjectionActivity() {
             setContentView(root)
             addNewButton.setOnClickListener { openRouteTrackingScreen() }
             activityRecyclerView.adapter = activityPagingAdapter.withLoadStateFooter(
-                footer = ActivityLoadStateAdapter()
+                footer = ActivityLoadStateAdapter(activityPagingAdapter::retry)
             )
         }
     }

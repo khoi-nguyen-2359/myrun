@@ -7,13 +7,18 @@ import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import timber.log.Timber
 
-class ActivityLoadStateAdapter: LoadStateAdapter<UserTimelineLoadStateViewHolder>() {
+class ActivityLoadStateAdapter(
+    private val retry: () -> Unit
+) : LoadStateAdapter<UserTimelineLoadStateViewHolder>() {
     override fun onBindViewHolder(holder: UserTimelineLoadStateViewHolder, loadState: LoadState) {
         Timber.d("bind VH $loadState")
         holder.bind(loadState)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): UserTimelineLoadStateViewHolder {
-        return UserTimelineLoadStateViewHolder(ItemUserTimelineLoadStateBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return UserTimelineLoadStateViewHolder(
+            ItemUserTimelineLoadStateBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            retry
+        )
     }
 }
