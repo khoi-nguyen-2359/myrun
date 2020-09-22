@@ -9,48 +9,77 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/tracking_stats_view"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_panel"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <akio.apps.myrun.feature.routetracking.view.ActivitySettingsView
-        android:id="@+id/activity_settings_view"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottom_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/control_button_panel" />
-
-    <akio.apps.myrun.feature.routetracking.view.RouteTrackingStatsView
-        android:id="@+id/tracking_stats_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/control_button_panel" />
-
-    <LinearLayout
-        android:id="@+id/control_button_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
+        android:elevation="8dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <include
+        <akio.apps.myrun.feature.routetracking.view.ActivitySettingsView
+            android:id="@+id/activity_settings_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/control_buttons_barrier" />
+
+        <akio.apps.myrun.feature.routetracking.view.RouteTrackingStatsView
+            android:id="@+id/tracking_stats_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/control_buttons_barrier" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/control_buttons_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="top"
+            app:constraint_referenced_ids="record_button,resume_button,pause_button" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/record_button"
-            layout="@layout/include_start_button" />
+            style="@style/RouteTrackingControlButton"
+            android:text="@string/action_start"
+            app:backgroundTint="@color/route_tracking_start_button_background_tint"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <include
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/pause_button"
-            layout="@layout/include_pause_button"
-            android:visibility="gone" />
+            style="@style/RouteTrackingControlButton"
+            android:text="@string/action_pause"
+            android:visibility="gone"
+            app:backgroundTint="@color/route_tracking_pause_button_background_tint"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <include
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/resume_button"
-            layout="@layout/include_resume_button"
-            android:visibility="gone" />
+            style="@style/RouteTrackingControlButton"
+            android:text="@string/action_resume"
+            android:visibility="gone"
+            app:backgroundTint="@color/route_tracking_resume_button_background_tint"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/stop_button"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <include
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/stop_button"
-            layout="@layout/include_stop_button"
-            android:visibility="gone" />
-    </LinearLayout>
+            style="@style/RouteTrackingControlButton"
+            android:text="@string/action_stop"
+            android:visibility="gone"
+            app:backgroundTint="@color/route_tracking_pause_button_background_tint"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@id/resume_button" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

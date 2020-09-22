@@ -170,38 +170,38 @@ class RouteTrackingActivity : BaseInjectionActivity(), ActivitySettingsView.Even
     private fun initViews() {
         viewBinding.apply {
             setContentView(root)
-            recordButton.root.setOnClickListener { onStartRouteTracking() }
-            pauseButton.root.setOnClickListener { onPauseRouteTracking() }
-            resumeButton.root.setOnClickListener { onResumeRouteTracking() }
-            stopButton.root.setOnClickListener { onStopRouteTracking() }
+            recordButton.setOnClickListener { onStartRouteTracking() }
+            pauseButton.setOnClickListener { onPauseRouteTracking() }
+            resumeButton.setOnClickListener { onResumeRouteTracking() }
+            stopButton.setOnClickListener { onStopRouteTracking() }
             viewBinding.activitySettingsView.eventListener = this@RouteTrackingActivity
         }
     }
 
     private fun updateViewsOnTrackingStopped() {
         viewBinding.apply {
-            recordButton.root.visibility = View.VISIBLE
-            resumeButton.root.visibility = View.GONE
-            stopButton.root.visibility = View.GONE
-            pauseButton.root.visibility = View.GONE
+            recordButton.visibility = View.VISIBLE
+            resumeButton.visibility = View.GONE
+            stopButton.visibility = View.GONE
+            pauseButton.visibility = View.GONE
         }
     }
 
     private fun updateViewsOnTrackingPaused() {
         viewBinding.apply {
-            recordButton.root.visibility = View.GONE
-            resumeButton.root.visibility = View.VISIBLE
-            stopButton.root.visibility = View.VISIBLE
-            pauseButton.root.visibility = View.GONE
+            recordButton.visibility = View.GONE
+            resumeButton.visibility = View.VISIBLE
+            stopButton.visibility = View.VISIBLE
+            pauseButton.visibility = View.GONE
         }
     }
 
     private fun updateViewsOnTrackingResumed() {
         viewBinding.apply {
-            recordButton.root.visibility = View.GONE
-            resumeButton.root.visibility = View.GONE
-            stopButton.root.visibility = View.GONE
-            pauseButton.root.visibility = View.VISIBLE
+            recordButton.visibility = View.GONE
+            resumeButton.visibility = View.GONE
+            stopButton.visibility = View.GONE
+            pauseButton.visibility = View.VISIBLE
 
             viewBinding.activitySettingsView.visibility = View.GONE
             viewBinding.trackingStatsView.visibility = View.VISIBLE
