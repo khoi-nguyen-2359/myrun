@@ -3,8 +3,8 @@ package akio.apps.myrun.feature.usertimeline.impl
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.feature.usertimeline.Activity
-import akio.apps.myrun.feature.usertimeline.ActivityEntityMapper
+import akio.apps.myrun.feature.usertimeline.model.Activity
+import akio.apps.myrun.feature.usertimeline.model.ActivityEntityMapper
 import androidx.paging.PagingSource
 import javax.inject.Inject
 

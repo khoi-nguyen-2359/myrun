@@ -5,8 +5,7 @@ import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.databinding.ItemUserTimelineActivityBinding
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
-import akio.apps.myrun.feature.usertimeline.Activity
-import androidx.annotation.StringRes
+import akio.apps.myrun.feature.usertimeline.model.Activity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat

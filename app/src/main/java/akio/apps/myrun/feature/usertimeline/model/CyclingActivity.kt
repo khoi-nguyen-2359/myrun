@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.usertimeline
+package akio.apps.myrun.feature.usertimeline.model
 
 data class CyclingActivity(
     val activityData: ActivityData,

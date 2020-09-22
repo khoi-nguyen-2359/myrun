@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.usertimeline.impl
 
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
-import akio.apps.myrun.feature.usertimeline.Activity
+import akio.apps.myrun.feature.usertimeline.model.Activity
 import androidx.lifecycle.LiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig

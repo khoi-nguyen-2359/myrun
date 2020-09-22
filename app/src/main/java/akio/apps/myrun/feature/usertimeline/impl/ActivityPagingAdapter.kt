@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.usertimeline.impl
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.databinding.ItemUserTimelineActivityBinding
-import akio.apps.myrun.feature.usertimeline.Activity
+import akio.apps.myrun.feature.usertimeline.model.Activity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter

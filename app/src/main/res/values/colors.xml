@@ -11,4 +11,5 @@
     <color name="route_tracking_start_button_background_tint">#b71c1c</color>
     <color name="route_tracking_resume_button_background_tint">#00c853</color>
     <color name="common_error_text">#7f0000</color>
+    <color name="user_timeline_welcome_text">#66000000</color>
 </resources>

@@ -5,12 +5,16 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun.databinding.ActivityUserTimelineBinding
 import akio.apps.myrun.feature._base.utils.ActivityDialogDelegate
-import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
+import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class UserTimelineActivity : BaseInjectionActivity() {
@@ -32,9 +36,7 @@ class UserTimelineActivity : BaseInjectionActivity() {
 
     private fun initObservers() {
         observe(viewModel.myActivityList) {
-            lifecycleScope.launch {
-                activityPagingAdapter.submitData(it)
-            }
+            activityPagingAdapter.submitData(this@UserTimelineActivity.lifecycle, it)
         }
 
         observeEvent(viewModel.error, dialogDelegate::showExceptionAlert)
@@ -47,6 +49,16 @@ class UserTimelineActivity : BaseInjectionActivity() {
             activityRecyclerView.adapter = activityPagingAdapter.withLoadStateFooter(
                 footer = ActivityLoadStateAdapter(activityPagingAdapter::retry)
             )
+
+            lifecycleScope.launch {
+                activityPagingAdapter.loadStateFlow.collectLatest {
+                    if (it.refresh is LoadState.NotLoading && activityPagingAdapter.itemCount == 0) {
+                        viewBinding.welcomeTextView.visibility = View.VISIBLE
+                    } else {
+                        viewBinding.welcomeTextView.visibility = View.GONE
+                    }
+                }
+            }
         }
     }
 
