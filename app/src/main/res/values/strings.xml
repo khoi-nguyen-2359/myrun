@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Run</string>
+    <string name="app_name">My Run Debug</string>
     <string name="route_tracking_distance_label">Distance</string>
     <string name="route_tracking_time_label">Time</string>
     <string name="route_tracking_pace_label">Pace</string>

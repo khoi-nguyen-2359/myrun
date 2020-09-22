@@ -19,21 +19,26 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file('./keystores/debug.keystore')
-            storePassword 'android'
-            keyAlias = 'androiddebugkey'
-            keyPassword 'android'
+            storeFile file('./keystores/myrun_debug_key.jks')
+            storePassword 'ak127601'
+            keyAlias = 'myrun_debug_key'
+            keyPassword 'ak127601'
         }
     }
 
     buildTypes {
         release {
             minifyEnabled false
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.debug
         }
 
         debug {
             signingConfig signingConfigs.debug
+
+            applicationIdSuffix ".debug"
         }
     }
 
