@@ -16,9 +16,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
 
-        <activity android:name=".feature.routetracking.impl.RouteTrackingActivity"/>
-        <activity android:name=".feature.usertimeline.impl.UserTimelineActivity"/>
-        <activity android:name=".feature.splash.impl.SplashActivity">
+        <activity android:name=".feature.routetracking.impl.RouteTrackingActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".feature.usertimeline.impl.UserTimelineActivity"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".feature.splash.impl.SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
