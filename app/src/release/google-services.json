@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "818848282563-ata7ol898f1e1fdvcmueqknsjfmsp4li.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "akio.apps.myrun",
+            "certificate_hash": "1124ccc9fc34514a9e1ed60b1a00c735793e5eb4"
+          }
+        },
+        {
           "client_id": "818848282563-hi54kkqoh3cniop5t27ren2m6fg76t95.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
