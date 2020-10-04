@@ -9,8 +9,8 @@ object Versions {
     const val androidGradlePlugin = "4.0.1"
     const val googleServices = "4.3.3"
     const val kotlin = "1.4.10"
-    const val crashlyticsGradlePlugin = "2.2.1"
-    const val playServicesGradlePlugin = "4.3.3"
+    const val crashlyticsGradlePlugin = "2.3.0"
+    const val playServicesGradlePlugin = "4.3.4"
 
     const val appCompat = "1.2.0"
     const val constraintLayout = "2.0.1"
@@ -22,11 +22,9 @@ object Versions {
     const val lifecycle = "2.2.0"
     const val timber = "4.7.1"
     const val multidex = "1.0.3"
-    const val glide = "4.9.0"
+    const val glide = "4.11.0"
 
-    const val coroutinesCore = "1.3.8"
-    const val coroutinesAndroid = "1.3.7"
-    const val coroutinesPlayServices = "1.3.2"
+    const val coroutines = "1.3.9"
 
     const val playServicesMap = "17.0.0"
     const val playServicesLocation = "17.0.0"
@@ -38,7 +36,7 @@ object Versions {
     const val firebaseFirestore = "21.6.0"
     const val firebaseAuth = "19.4.0"
     const val firebaseAnalytics = "17.5.0"
-    const val firebaseCrashlytics = "17.2.1"
+    const val firebaseCrashlytics = "17.2.2"
     const val firebaseStorage = "19.2.0"
     const val crashlytics = "2.10.1"
 
