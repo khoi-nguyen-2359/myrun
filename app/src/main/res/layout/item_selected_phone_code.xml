@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:drawableStart="@drawable/ic_call"
+    android:drawableEnd="@drawable/ic_arrow_drop_down"
+    android:textColor="#000"
+    android:drawablePadding="10dp"
+    android:ellipsize="end"
+    android:gravity="center"
+    android:lines="1"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:textSize="@dimen/phone_box_item_text_size"
+    tools:text="+359" />

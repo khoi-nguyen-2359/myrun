@@ -57,6 +57,11 @@
         <item name="android:textColor">#fff</item>
     </style>
 
+    <style name="PhoneCodeEntryText">
+        <item name="android:textSize">@dimen/phone_box_item_text_size</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
     <style name="TransparentDialog" parent="AppDialogTheme">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
@@ -73,6 +78,11 @@
 
     <style name="RouteTrackingSelectedActivityTypeText" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SignInPhoneText">
+        <item name="android:textSize">@dimen/phone_box_item_text_size</item>
+        <item name="android:padding">15dp</item>
     </style>
 
 </resources>

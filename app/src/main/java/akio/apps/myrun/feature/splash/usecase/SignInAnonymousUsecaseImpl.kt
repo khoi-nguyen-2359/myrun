@@ -1,15 +1,15 @@
-package akio.apps.myrun.feature.splash.impl
+package akio.apps.myrun.feature.splash.usecase
 
-import akio.apps.myrun.feature.splash.SignInAnonymouslyUsecase
+import akio.apps.myrun.feature.splash.SignInAnonymousUsecase
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class SignInAnonymouslyUsecaseImpl @Inject constructor(
+class SignInAnonymousUsecaseImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth
-) : SignInAnonymouslyUsecase {
+) : SignInAnonymousUsecase {
 
     override suspend fun signInAnonymously(): Unit = withContext(Dispatchers.IO) {
         firebaseAuth.signInAnonymously().await()

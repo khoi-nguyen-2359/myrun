@@ -4,7 +4,7 @@ import akio.apps._base.di.BaseInjectionActivity
 import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun.databinding.ActivityUserTimelineBinding
-import akio.apps.myrun.feature._base.utils.ActivityDialogDelegate
+import akio.apps.myrun.feature._base.utils.DialogDelegate
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import android.content.Context
@@ -13,7 +13,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -25,7 +24,7 @@ class UserTimelineActivity : BaseInjectionActivity() {
 
     private val activityPagingAdapter: ActivityPagingAdapter = ActivityPagingAdapter()
 
-    private val dialogDelegate by lazy { ActivityDialogDelegate(this) }
+    private val dialogDelegate by lazy { DialogDelegate(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -5,9 +5,9 @@ import akio.apps.myrun.data.location._di.LocationDataModule
 import akio.apps.myrun.data.routetracking._di.RouteTrackingDataModule
 import akio.apps.myrun.data.activity._di.ActivityDataModule
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
-import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.feature.usertimeline._di.UserTimelineFeatureModule
 import akio.apps.myrun.feature.routetracking._di.RouteTrackingFeatureModule
+import akio.apps.myrun.feature.signin.SignInFeatureModule
 import akio.apps.myrun.feature.splash._di.SplashFeatureModule
 import dagger.BindsInstance
 import dagger.Component
@@ -26,6 +26,7 @@ import javax.inject.Singleton
     RouteTrackingFeatureModule::class,
     SplashFeatureModule::class,
     UserTimelineFeatureModule::class,
+    SignInFeatureModule::class,
 
     // data modules
     LocationDataModule::class,

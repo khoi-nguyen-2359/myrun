@@ -1,14 +1,13 @@
 package akio.apps.myrun.feature._base.utils
 
 import akio.apps.myrun.R
-import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
 
-class ActivityDialogDelegate(
-    private val activity: Activity
+class DialogDelegate(
+    private val context: Context
 ) {
 
     private var progressDialog: Dialog? = null
@@ -17,18 +16,18 @@ class ActivityDialogDelegate(
         if (visible) {
             showProgressDialog()
         } else {
-            hideProgressDialog()
+            dismissProgressDialog()
         }
     }
 
     fun showProgressDialog() {
         if (progressDialog == null || progressDialog?.isShowing == false) {
-            progressDialog = showTransparentProgressDialog(activity)
+            progressDialog = showTransparentProgressDialog(context)
         }
     }
 
-    fun hideProgressDialog() {
-        if (activity.isFinishing || activity.isDestroyed)
+    fun dismissProgressDialog() {
+        if (progressDialog?.isShowing != true)
             return
 
         progressDialog?.dismiss()
@@ -38,9 +37,9 @@ class ActivityDialogDelegate(
         showErrorAlert(throwable.message)
     }
 
-    fun showErrorAlert(errorMessage: String?) {
-        val dialogMessage = errorMessage ?: activity.getString(R.string.error_unknown)
-        showErrorAlert(activity, dialogMessage)
+    fun showErrorAlert(errorMessage: String?): Dialog {
+        val dialogMessage = errorMessage ?: context.getString(R.string.error_unknown)
+        return showErrorAlert(context, dialogMessage)
     }
 
     private fun showErrorAlert(context: Context, message: String?, onClose: DialogInterface.OnClickListener? = null): Dialog {
