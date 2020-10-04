@@ -7,8 +7,6 @@ import android.content.Context
 import android.graphics.Color
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.text.style.DynamicDrawableSpan
-import android.text.style.DynamicDrawableSpan.ALIGN_CENTER
 import android.text.style.ImageSpan
 import android.util.AttributeSet
 import android.view.LayoutInflater

@@ -5,4 +5,8 @@
     <dimen name="user_timeline_loading_progress_size">48dp</dimen>
     <dimen name="item_user_timeline_margin_vertical">12dp</dimen>
     <dimen name="item_user_timeline_elevation">4dp</dimen>
+    <dimen name="sign_in_phone_code_spinner_width">150dp</dimen>
+    <dimen name="sign_in_phone_code_dropdown_width">180dp</dimen>
+    <dimen name="sign_in_option_vertical_padding">12dp</dimen>
+    <dimen name="phone_box_item_text_size">14sp</dimen>
 </resources>

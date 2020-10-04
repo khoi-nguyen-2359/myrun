@@ -23,6 +23,7 @@ object Versions {
     const val timber = "4.7.1"
     const val multidex = "1.0.3"
     const val glide = "4.11.0"
+    const val facebookSdk = "[5,6)"
 
     const val coroutines = "1.3.9"
 

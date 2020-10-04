@@ -11,7 +11,7 @@ import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature._base.permissions.AppPermissions.locationPermissions
 import akio.apps.myrun.feature._base.permissions.CheckRequiredPermissionsDelegate
-import akio.apps.myrun.feature._base.utils.ActivityDialogDelegate
+import akio.apps.myrun.feature._base.utils.DialogDelegate
 import akio.apps.myrun.feature._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun.feature._base.utils.toGmsLatLng
 import akio.apps.myrun.feature.usertimeline.impl.UserTimelineActivity
@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 
 class RouteTrackingActivity : BaseInjectionActivity(), ActivitySettingsView.EventListener {
 
-    private val dialogDelegate by lazy { ActivityDialogDelegate(this) }
+    private val dialogDelegate by lazy { DialogDelegate(this) }
 
     private val viewBinding by lazy { ActivityRouteTrackingBinding.inflate(layoutInflater) }
 

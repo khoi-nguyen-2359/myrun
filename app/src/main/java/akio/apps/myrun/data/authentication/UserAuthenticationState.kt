@@ -10,4 +10,5 @@ interface UserAuthenticationState {
     fun isLinkedWithFacebook(): Boolean
     fun isSignedIn(): Boolean
     fun isAnonymousUser(): Boolean
+    fun clear()
 }

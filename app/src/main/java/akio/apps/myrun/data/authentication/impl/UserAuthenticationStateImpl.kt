@@ -46,4 +46,8 @@ class UserAuthenticationStateImpl @Inject constructor(
 
     override fun isSignedIn(): Boolean = firebaseAuth.currentUser?.uid != null
     override fun isAnonymousUser(): Boolean = firebaseAuth.currentUser?.isAnonymous == true
+
+    override fun clear() {
+        firebaseAuth.signOut()
+    }
 }

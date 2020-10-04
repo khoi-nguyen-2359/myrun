@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion Versions.compileSdk
@@ -55,6 +56,10 @@ android {
     }
 }
 
+androidExtensions {
+    experimental = true
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$Versions.kotlin"
@@ -104,4 +109,6 @@ dependencies {
     implementation "androidx.room:room-ktx:$Versions.room"
 
     implementation "androidx.datastore:datastore-preferences:$Versions.dataStore"
+
+    implementation "com.facebook.android:facebook-login:$Versions.facebookSdk"
 }

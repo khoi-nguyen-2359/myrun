@@ -35,6 +35,17 @@
     <string name="activity_name_cycling">Ride</string>
     <string name="user_timeline_error_loading_list">There\'s an error loading activities.\nRetry.</string>
     <string name="splash_welcome_text">Let\'s start your\nfirst activity!</string>
+    <string name="sign_in_with_facebook_button">Continue with Facebook</string>
+    <string name="sign_in_hint_mobile_number">Mobile Number</string>
+    <string name="action_login">Login</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="otp_instruction">Enter the OTP sent to your phone number</string>
+    <string name="otp_hint">SMS OTP</string>
+    <string name="otp_resend_button">Resend</string>
+    <string name="otp_invalid_code_error">Incorrect otp code</string>
+    <string name="otp_resend_template">Resend OTP in %1$d seconds</string>
+    <string name="sign_in_title">Log In</string>
+    <string name="sign_in_option_separator">or</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>

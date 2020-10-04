@@ -1,5 +1,5 @@
 package akio.apps.myrun.feature.splash
 
-interface SignInAnonymouslyUsecase {
+interface SignInAnonymousUsecase {
     suspend fun signInAnonymously()
 }
