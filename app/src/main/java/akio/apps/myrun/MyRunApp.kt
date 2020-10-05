@@ -1,6 +1,7 @@
 package akio.apps.myrun
 
 import akio.apps._base.utils.CrashReportTree
+import akio.apps.myrun._di.AppComponent
 import akio.apps.myrun._di.DaggerAppComponent
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
@@ -26,6 +27,9 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector {
     @Inject
     lateinit var routeTrackingState: RouteTrackingState
 
+    lateinit var appComponent: AppComponent
+    private set
+
     override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
 
     private val exceptionHandler = CoroutineExceptionHandler { context, exception ->
@@ -39,11 +43,16 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector {
 
         setupLogging()
 
-        DaggerAppComponent.factory().create(this).inject(this)
+        createAppComponent().inject(this)
 
         ProcessLifecycleOwner.get()
             .lifecycle
             .addObserver(this)
+    }
+
+    private fun createAppComponent(): AppComponent {
+        appComponent = DaggerAppComponent.factory().create(this)
+        return appComponent
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)

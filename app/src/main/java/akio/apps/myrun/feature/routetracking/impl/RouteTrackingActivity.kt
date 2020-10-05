@@ -14,7 +14,7 @@ import akio.apps.myrun.feature._base.permissions.CheckRequiredPermissionsDelegat
 import akio.apps.myrun.feature._base.utils.DialogDelegate
 import akio.apps.myrun.feature._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun.feature._base.utils.toGmsLatLng
-import akio.apps.myrun.feature.usertimeline.impl.UserTimelineActivity
+import akio.apps.myrun.feature.home.impl.HomeActivity
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.routetracking.view.ActivitySettingsView
 import android.annotation.SuppressLint
@@ -97,8 +97,7 @@ class RouteTrackingActivity : BaseInjectionActivity(), ActivitySettingsView.Even
     private fun onSaveActivitySuccess() {
         startService(RouteTrackingService.stopIntent(this))
 
-        finish()
-        startActivity(UserTimelineActivity.launchIntent(this))
+        startActivity(HomeActivity.clearTaskIntent(this))
     }
 
     private fun updateViewForTrackingStatus(@RouteTrackingStatus trackingStatus: Int) {

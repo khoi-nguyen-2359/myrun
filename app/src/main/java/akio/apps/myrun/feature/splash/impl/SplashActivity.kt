@@ -5,7 +5,7 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun.R
 import akio.apps.myrun.feature._base.utils.DialogDelegate
-import akio.apps.myrun.feature.usertimeline.impl.UserTimelineActivity
+import akio.apps.myrun.feature.home.impl.HomeActivity
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
 import akio.apps.myrun.feature.signin.impl.SignInActivity
 import akio.apps.myrun.feature.signin.impl.SignInSuccessResult
@@ -36,7 +36,7 @@ class SplashActivity: BaseInjectionActivity() {
             if (isTracking) {
                 startActivity(RouteTrackingActivity.launchIntent(this@SplashActivity))
             } else {
-                startActivity(UserTimelineActivity.launchIntent(this@SplashActivity))
+                startActivity(HomeActivity.launchIntent(this@SplashActivity))
             }
         }
     }
@@ -51,11 +51,10 @@ class SplashActivity: BaseInjectionActivity() {
             return
         }
 
-        val signInResult = data?.getParcelableExtra<SignInSuccessResult>(SignInActivity.RESULT_SIGN_RESULT_DATA)
+        data?.getParcelableExtra<SignInSuccessResult>(SignInActivity.RESULT_SIGN_RESULT_DATA)
             ?: return
 
-        finish()
-        startActivity(UserTimelineActivity.launchIntent(this@SplashActivity))
+        startActivity(HomeActivity.clearTaskIntent(this))
     }
 
     companion object {

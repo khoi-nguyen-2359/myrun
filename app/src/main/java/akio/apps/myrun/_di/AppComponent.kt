@@ -39,4 +39,6 @@ interface AppComponent: AndroidInjector<MyRunApp> {
     interface Factory {
         fun create(@BindsInstance instance: MyRunApp): AppComponent
     }
+
+    fun inject(viewModelInjectionDelegate: ViewModelInjectionDelegate)
 }
