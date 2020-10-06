@@ -49,7 +49,12 @@ class SplashActivity: AppCompatActivity() {
     }
 
     private fun verifySignInResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode != RC_SIGN_IN || resultCode != RESULT_OK) {
+        if (requestCode != RC_SIGN_IN) {
+            return
+        }
+
+        if (resultCode == RESULT_CANCELED) {
+            finish()
             return
         }
 
