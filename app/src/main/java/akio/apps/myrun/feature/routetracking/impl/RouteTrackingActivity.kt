@@ -1,18 +1,18 @@
 package akio.apps.myrun.feature.routetracking.impl
 
-import akio.apps._base.di.BaseInjectionActivity
 import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.dp2px
 import akio.apps.myrun.R
+import akio.apps.myrun._di.createViewModelInjectionDelegate
 import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature._base.permissions.AppPermissions.locationPermissions
 import akio.apps.myrun.feature._base.permissions.CheckRequiredPermissionsDelegate
-import akio.apps.myrun.feature._base.utils.DialogDelegate
 import akio.apps.myrun.feature._base.utils.CheckLocationServiceDelegate
+import akio.apps.myrun.feature._base.utils.DialogDelegate
 import akio.apps.myrun.feature._base.utils.toGmsLatLng
 import akio.apps.myrun.feature.home.impl.HomeActivity
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
@@ -26,6 +26,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -34,13 +35,14 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.coroutines.launch
 
-class RouteTrackingActivity : BaseInjectionActivity(), ActivitySettingsView.EventListener {
+class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventListener {
 
     private val dialogDelegate by lazy { DialogDelegate(this) }
 
     private val viewBinding by lazy { ActivityRouteTrackingBinding.inflate(layoutInflater) }
 
-    private val routeTrackingViewModel: RouteTrackingViewModel by lazy { getViewModel() }
+    private val viewModelInjectionDelegate by lazy { createViewModelInjectionDelegate() }
+    private val routeTrackingViewModel by lazy { viewModelInjectionDelegate.getViewModel<RouteTrackingViewModel>() }
 
     private lateinit var mapView: GoogleMap
 
@@ -136,7 +138,8 @@ class RouteTrackingActivity : BaseInjectionActivity(), ActivitySettingsView.Even
             trackingRouteLatLngBounds.build(),
             boundingBox.right,
             boundingBox.bottom,
-            MAP_LATLNG_BOUND_PADDING)
+            MAP_LATLNG_BOUND_PADDING
+        )
 
         if (animation) {
             mapView.animateCamera(cameraUpdate)

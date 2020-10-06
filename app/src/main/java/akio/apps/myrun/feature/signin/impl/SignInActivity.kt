@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.signin.impl
 
-import akio.apps._base.di.BaseInjectionActivity
 import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
+import akio.apps.myrun._di.createViewModelInjectionDelegate
 import akio.apps.myrun.databinding.ActivitySignInBinding
 import akio.apps.myrun.feature._base.utils.DialogDelegate
 import akio.apps.myrun.feature.signin.SignInViewModel
@@ -11,6 +11,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -20,9 +21,10 @@ import com.facebook.login.LoginResult
 import com.google.firebase.auth.PhoneAuthCredential
 
 
-class SignInActivity : BaseInjectionActivity(), OtpDialogFragment.EventListener {
+class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
 
-    private val signInVM by lazy { getViewModel<SignInViewModel>() }
+    private val viewModelInjectionDelegate by lazy { createViewModelInjectionDelegate() }
+    private val signInVM: SignInViewModel by lazy { viewModelInjectionDelegate.getViewModel() }
 
     private val viewBinding: ActivitySignInBinding by lazy { ActivitySignInBinding.inflate(layoutInflater) }
 

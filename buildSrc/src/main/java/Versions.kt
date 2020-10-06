@@ -13,6 +13,8 @@ object Versions {
     const val playServicesGradlePlugin = "4.3.4"
 
     const val appCompat = "1.2.0"
+    const val activity = "1.1.0"
+    const val fragment = "1.2.5"
     const val constraintLayout = "2.0.1"
     const val androidMaterial = "1.2.1"
     const val paging = "3.0.0-alpha06"
