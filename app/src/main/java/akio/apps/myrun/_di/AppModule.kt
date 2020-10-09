@@ -11,9 +11,18 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
+import dagger.android.ContributesAndroidInjector
+import javax.inject.Singleton
 
-@Module
+@Module(includes = [AppModule.Bindings::class])
 class AppModule {
+
+    @Module
+    interface Bindings {
+        @ContributesAndroidInjector
+        fun viewModelInjectionDelegate(): ViewModelInjectionDelegate
+    }
+
     @Provides
     fun firebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 
