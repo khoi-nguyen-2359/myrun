@@ -4,6 +4,8 @@ import akio.apps._base.di.ViewModelFactory
 import akio.apps.myrun.MyRunApp
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage

@@ -3,6 +3,7 @@ package akio.apps.myrun.feature.routetracking.usecase
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.activity.*
 import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.data.place.PlaceEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.feature._base.utils.toGmsLatLng

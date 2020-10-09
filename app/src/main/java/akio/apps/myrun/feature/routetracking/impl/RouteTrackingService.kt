@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun.R
+import akio.apps.myrun.data.location.LatLngEntity
 import akio.apps.myrun.data.location.LocationDataSource
 import akio.apps.myrun.data.location.LocationRequestEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
@@ -47,6 +48,7 @@ class RouteTrackingService : Service() {
 
     private var locationUpdateJob: Job? = null
     private var trackingTimerJob: Job? = null
+    private var startLocation: Location? = null
 
     private val instantSpeedCalculator = InstantSpeedCalculator()
     private val routeDistanceCalculator = RouteDistanceCalculator()
@@ -84,6 +86,12 @@ class RouteTrackingService : Service() {
 
         routeDistanceCalculator.calculateRouteDistance(locations)
         instantSpeedCalculator.calculateInstantSpeed()
+
+        if (startLocation == null) {
+            startLocation = locations.firstOrNull()?.also {
+                routeTrackingState.setStartLocation(LatLngEntity(it.latitude, it.longitude))
+            }
+        }
     }
 
     inner class InstantSpeedCalculator() {

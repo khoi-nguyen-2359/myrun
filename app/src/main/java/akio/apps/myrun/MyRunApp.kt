@@ -11,7 +11,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.work.Configuration
 import com.facebook.FacebookSdk
+import com.google.android.libraries.places.api.Places
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
@@ -19,7 +21,7 @@ import kotlinx.coroutines.*
 import timber.log.Timber
 import javax.inject.Inject
 
-class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector {
+class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configuration.Provider {
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
@@ -48,6 +50,13 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector {
         ProcessLifecycleOwner.get()
             .lifecycle
             .addObserver(this)
+
+        initPlacesSdk()
+    }
+
+    private fun initPlacesSdk() {
+        val apiKey = getString(R.string.google_maps_sdk_key)
+        Places.initialize(applicationContext, apiKey)
     }
 
     private fun createAppComponent(): AppComponent {
@@ -69,6 +78,18 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector {
             Timber.plant(Timber.DebugTree())
         } else {
             Timber.plant(CrashReportTree())
+        }
+    }
+
+    override fun getWorkManagerConfiguration(): Configuration {
+        return if (BuildConfig.DEBUG) {
+            Configuration.Builder()
+                .setMinimumLoggingLevel(android.util.Log.DEBUG)
+                .build()
+        } else {
+            Configuration.Builder()
+                .setMinimumLoggingLevel(android.util.Log.ERROR)
+                .build()
         }
     }
 }

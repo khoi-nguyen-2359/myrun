@@ -69,9 +69,15 @@ dependencies {
     implementation "androidx.paging:paging-runtime:$Versions.paging"
     implementation "androidx.fragment:fragment-ktx:$Versions.fragment"
     implementation "androidx.activity:activity-ktx:$Versions.activity"
+    implementation "androidx.work:work-runtime-ktx:$Versions.workManager"
     implementation "com.google.android.material:material:$Versions.androidMaterial"
-
     implementation "com.android.support:multidex:$Versions.multidex"
+
+    implementation "com.squareup.okhttp3:okhttp:$Versions.okhttp"
+    implementation "com.squareup.okhttp3:logging-interceptor:$Versions.okhttp"
+
+    implementation "com.squareup.retrofit2:retrofit:$Versions.retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$Versions.retrofit"
 
     implementation "com.google.dagger:dagger-android:$Versions.dagger"
     implementation "com.google.dagger:dagger-android-support:$Versions.dagger"
@@ -86,6 +92,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:$Versions.playServicesLocation"
     implementation "com.google.android.gms:play-services-auth:$Versions.playServicesAuth"
 
+    implementation "com.google.android.libraries.places:places:$Versions.places"
     implementation "com.google.maps.android:android-maps-utils:$Versions.androidMapUtils"
 
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$Versions.lifecycle"
