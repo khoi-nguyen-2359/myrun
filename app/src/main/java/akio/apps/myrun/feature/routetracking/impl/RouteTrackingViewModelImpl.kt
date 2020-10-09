@@ -6,24 +6,29 @@ import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.data.activity.ActivityType
+import akio.apps.myrun.data.location.LatLngEntity
 import akio.apps.myrun.feature._base.utils.flowTimer
 import akio.apps.myrun.feature.routetracking.*
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
+import android.content.Context
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.work.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class RouteTrackingViewModelImpl @Inject constructor(
+    private val appContext: Context,
     private val getMapInitialLocationUsecase: GetMapInitialLocationUsecase,
     private val getTrackedLocationsUsecase: GetTrackedLocationsUsecase,
     private val routeTrackingState: RouteTrackingState,
     private val saveRouteTrackingActivityUsecase: SaveRouteTrackingActivityUsecase,
-    private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
+    private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase,
 ) : RouteTrackingViewModel() {
 
     private val _mapInitialLocation = MutableLiveData<Event<LatLng>>()
@@ -80,10 +85,29 @@ class RouteTrackingViewModelImpl @Inject constructor(
                 ?: return@launchCatching
 
             saveRouteTrackingActivityUsecase.saveCurrentActivity(activityType, routeMapImage)
+            routeTrackingState.getStartLocation()?.let { startLocation ->
+                updateUserRecentPlace(startLocation)
+            }
             clearRouteTrackingStateUsecase.clear()
 
             _saveActivitySuccess.value = Event(Unit)
         }
+    }
+
+    private fun updateUserRecentPlace(activityStartPoint: LatLngEntity) {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.UNMETERED)
+            .setRequiresBatteryNotLow(true)
+            .build()
+        val workRequest = OneTimeWorkRequestBuilder<UpdateUserRecentPlaceWorker>()
+            .setConstraints(constraints)
+            .setBackoffCriteria(BackoffPolicy.LINEAR, 5, TimeUnit.MINUTES)
+            .setInputData(workDataOf(
+                UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LAT to activityStartPoint.lat,
+                UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LNG to activityStartPoint.lng
+            ))
+            .build()
+        WorkManager.getInstance(appContext).enqueue(workRequest)
     }
 
     private suspend fun notifyLatestDataUpdate() {

@@ -1,6 +1,8 @@
 package akio.apps.myrun.data.routetracking
 
 import akio.apps.myrun.data.activity.ActivityType
+import akio.apps.myrun.data.location.LatLngEntity
+import android.location.Location
 import kotlinx.coroutines.flow.Flow
 
 interface RouteTrackingState {
@@ -20,4 +22,6 @@ interface RouteTrackingState {
     suspend fun clear()
     suspend fun getActivityType(): ActivityType
     suspend fun setActivityType(activityType: ActivityType)
+    suspend fun setStartLocation(latLng: LatLngEntity)
+    suspend fun getStartLocation(): LatLngEntity?
 }

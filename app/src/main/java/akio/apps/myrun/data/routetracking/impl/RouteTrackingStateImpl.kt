@@ -1,6 +1,7 @@
 package akio.apps.myrun.data.routetracking.impl
 
 import akio.apps.myrun.data.activity.ActivityType
+import akio.apps.myrun.data.location.LatLngEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import android.content.Context
@@ -98,6 +99,26 @@ class RouteTrackingStateImpl @Inject constructor(
         prefDataStore.edit { data -> data[KEY_ACTIVITY_TYPE] = activityType.name }
     }
 
+    override suspend fun setStartLocation(latLng: LatLngEntity) {
+        prefDataStore.edit { data ->
+            data[KEY_START_LOCATION_LAT] = latLng.lat.toFloat()
+            data[KEY_START_LOCATION_LNG] = latLng.lng.toFloat()
+        }
+    }
+
+    override suspend fun getStartLocation(): LatLngEntity? {
+        return prefDataStore.data.map { data ->
+            val lat = data[KEY_START_LOCATION_LAT]
+            val lng = data[KEY_START_LOCATION_LNG]
+            if (lat == null || lng == null)
+                null
+            else
+                LatLngEntity(lat.toDouble(), lng.toDouble())
+        }
+            .flowOn(Dispatchers.IO)
+            .first()
+    }
+
     companion object {
         private val KEY_TRACKING_STATUS = preferencesKey<Int>("KEY_TRACKING_STATUS")
         private val KEY_ACTIVITY_TYPE = preferencesKey<String>("KEY_ACTIVITY_TYPE")
@@ -106,5 +127,7 @@ class RouteTrackingStateImpl @Inject constructor(
         private val KEY_CURRENT_SPEED = preferencesKey<Float>("KEY_CURRENT_SPEED")
         private val KEY_TRACKING_DURATION = preferencesKey<Long>("KEY_TRACKING_DURATION")
         private val KEY_LAST_RESUME_TIME = preferencesKey<Long>("KEY_LAST_RESUME_TIME")
+        private val KEY_START_LOCATION_LAT = preferencesKey<Float>("KEY_START_LOCATION_LAT")
+        private val KEY_START_LOCATION_LNG = preferencesKey<Float>("KEY_START_LOCATION_LNG")
     }
 }
