@@ -6,7 +6,7 @@ object Versions {
     const val targetSdk = 30
     const val minSdk = 21
 
-    const val androidGradlePlugin = "4.0.2"
+    const val androidGradlePlugin = "4.1.0"
     const val googleServices = "4.3.3"
     const val kotlin = "1.4.10"
     const val crashlyticsGradlePlugin = "2.3.0"
