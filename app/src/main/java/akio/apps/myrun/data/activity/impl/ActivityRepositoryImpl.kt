@@ -4,8 +4,6 @@ import akio.apps._base.utils.FirebaseStorageUtils
 import akio.apps.myrun.data.activity.*
 import akio.apps.myrun.data.activity.entity.FirestoreActivity
 import akio.apps.myrun.data.activity.entity.FirestoreActivityMapper
-import akio.apps.myrun.data.activity.entity.FirestoreCyclingData
-import akio.apps.myrun.data.activity.entity.FirestoreRunningData
 import android.graphics.Bitmap
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -15,7 +13,6 @@ import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import javax.inject.Inject
 
 class ActivityRepositoryImpl @Inject constructor(
@@ -30,8 +27,8 @@ class ActivityRepositoryImpl @Inject constructor(
     private val activityStotage: StorageReference
         get() = firebaseStorage.getReference("activity")
 
-    override suspend fun getActivitiesByStartTime(userId: String, startAfterTime: Long, limit: Int): List<ActivityEntity> = withContext(Dispatchers.IO) {
-        val query = activityCollection.whereEqualTo("userId", userId)
+    override suspend fun getActivitiesByStartTime(userIds: List<String>, startAfterTime: Long, limit: Int): List<ActivityEntity> = withContext(Dispatchers.IO) {
+        val query = activityCollection.whereIn("userId", userIds)
             .orderBy("startTime", Query.Direction.DESCENDING)
             .startAfter(startAfterTime)
             .limit(limit.toLong())
