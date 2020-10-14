@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:menu="@menu/home_bottom_bar"
+        app:menu="@menu/home_menu_bar"
         tools:title="Title" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

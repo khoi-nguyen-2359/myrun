@@ -100,11 +100,11 @@
         <item name="android:background">@drawable/common_edittext_background</item>
     </style>
 
-    <style name="ProfileItem">
+    <style name="UserProfileField">
         <item name="android:lineSpacingExtra">5dp</item>
         <item name="android:padding">20dp</item>
         <item name="android:drawablePadding">20dp</item>
-        <item name="android:background">@drawable/home_user_profile_text_background</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
 
     <style name="TextFieldLabel">
@@ -115,7 +115,7 @@
 
     <style name="TextFieldValue">
         <item name="android:textColor">@color/darkText</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
 </resources>
