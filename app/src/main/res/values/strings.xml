@@ -58,7 +58,7 @@
     <string name="profile_link_running_app_button">Connect to running app</string>
     <string name="error_invalid_display_name">Please type in your name</string>
     <string name="profile_link_running_app_success_message">You have successfully linked your account</string>
-    <string name="profile_link_running_app_dialog_title">Select app to upload your Ridge Runs</string>
+    <string name="profile_link_running_app_dialog_title">Select app to upload your activity</string>
     <string name="photo_selection_dialog_title">Update image from</string>
     <string name="user_profile_recent_login_required_error_message">Your session has expired. You need to re-login first.</string>
     <string name="profile_crop_photo_instruction">Drag to resize the image. Your profile photo will be cropped within the circle</string>
