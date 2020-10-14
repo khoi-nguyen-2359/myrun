@@ -3,14 +3,13 @@ package akio.apps.myrun.data.externalapp._di
 import akio.apps.myrun.STRAVA_APP_ID
 import akio.apps.myrun.STRAVA_APP_SECRET
 import akio.apps.myrun.STRAVA_BASE_ENDPOINT
+import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
-import akio.apps.myrun.data.externalapp.StravaApi
+import akio.apps.myrun.data.externalapp.impl.StravaApi
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.externalapp.impl.ExternalAppProvidersRepositoryImpl
 import akio.apps.myrun.data.externalapp.impl.StravaTokenStorageImpl
-import akio.apps.myrun.feature.externalapp.impl.StravaAuthenticator
-import akio.apps.myrun.feature.editprofile.UpdateStravaTokenUsecase
-import akio.apps.myrun.feature.userprofile.RemoveStravaTokenUsecase
+import akio.apps.myrun.data.externalapp.impl.StravaAuthenticator
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
@@ -35,27 +34,38 @@ class ExternalAppDataModule {
     }
 
     @Provides
+    @Named(NAME_STRAVA_GSON)
+    fun stravaGson(): Gson = Gson()
+
+    @Provides
+    fun stravaApiTokenRefreshAuthenticator(
+        okHttpClientBuilder: OkHttpClient.Builder,
+        externalAppProvidersRepository: ExternalAppProvidersRepository,
+        userAuthenticationState: UserAuthenticationState,
+        stravaTokenStorage: StravaTokenStorage,
+        @Named(NAME_STRAVA_GSON) gson: Gson
+    ): StravaAuthenticator {
+        val refreshTokenClient = okHttpClientBuilder.build()
+        return StravaAuthenticator(
+            refreshTokenClient,
+            externalAppProvidersRepository,
+            userAuthenticationState,
+            stravaTokenStorage,
+            STRAVA_BASE_ENDPOINT,
+            gson,
+            STRAVA_APP_ID,
+            STRAVA_APP_SECRET
+        )
+    }
+
+    @Provides
     @Singleton
     fun stravaApiService(
         okHttpClientBuilder: OkHttpClient.Builder,
-        updateStravaTokenUsecase: UpdateStravaTokenUsecase,
-        removeStravaTokenUsecase: RemoveStravaTokenUsecase,
-        stravaTokenStorage: StravaTokenStorage
+        stravaAuthenticator: StravaAuthenticator,
+        @Named(NAME_STRAVA_GSON) gson: Gson
     ): StravaApi {
-        val refreshTokenClient = okHttpClientBuilder.build()
-        val gson = Gson()
-        okHttpClientBuilder.authenticator(
-            StravaAuthenticator(
-                refreshTokenClient,
-                updateStravaTokenUsecase,
-                removeStravaTokenUsecase,
-                stravaTokenStorage,
-                STRAVA_BASE_ENDPOINT,
-                gson,
-                STRAVA_APP_ID,
-                STRAVA_APP_SECRET
-            )
-        )
+        okHttpClientBuilder.authenticator(stravaAuthenticator)
 
         val okHttpClient = okHttpClientBuilder.build()
 
@@ -74,6 +84,8 @@ class ExternalAppDataModule {
 
     companion object {
         const val PREFS_STRAVA_TOKEN = "ExternalAppDataModule.PREFS_STRAVA_TOKEN"
+
+        const val NAME_STRAVA_GSON = "ExternalAppDataModule.NAME_STRAVA_GSON"
         const val NAME_STRAVA_TOKEN_PREFERENCES = "ExternalAppDataModule.NAME_STRAVA_TOKEN_PREFERENCES"
     }
 }

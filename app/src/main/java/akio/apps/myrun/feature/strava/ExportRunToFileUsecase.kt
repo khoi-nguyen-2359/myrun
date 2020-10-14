@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.externalapp
+package akio.apps.myrun.feature.strava
 
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import java.io.File
