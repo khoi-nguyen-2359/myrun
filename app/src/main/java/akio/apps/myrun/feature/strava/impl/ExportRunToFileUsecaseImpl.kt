@@ -1,6 +1,6 @@
-package akio.apps.myrun.feature.externalapp.impl
+package akio.apps.myrun.feature.strava.impl
 
-import akio.apps.myrun.feature.externalapp.ExportRunToFileUsecase
+import akio.apps.myrun.feature.strava.ExportRunToFileUsecase
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.helper.runfile.ClosableFileSerializer
 import akio.apps.myrun.helper.runfile.ZipFileSerializer

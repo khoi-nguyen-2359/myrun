@@ -11,7 +11,7 @@ import akio.apps.myrun.data.recentplace._di.RecentPlaceDataModule
 import akio.apps.myrun.data.userfollow._di.UserFollowDataModule
 import akio.apps.myrun.data.userprofile._di.UserProfileDataModule
 import akio.apps.myrun.feature.editprofile._di.EditProfileFeatureModule
-import akio.apps.myrun.feature.externalapp._di.ExternalAppFeatureModule
+import akio.apps.myrun.feature.strava._di.StravaConnectFeatureModule
 import akio.apps.myrun.feature.usertimeline._di.UserTimelineFeatureModule
 import akio.apps.myrun.feature.routetracking._di.RouteTrackingFeatureModule
 import akio.apps.myrun.feature.signin.SignInFeatureModule
@@ -38,7 +38,7 @@ import javax.inject.Singleton
     UserTimelineFeatureModule::class,
     SignInFeatureModule::class,
     UserProfileFeatureModule::class,
-    ExternalAppFeatureModule::class,
+    StravaConnectFeatureModule::class,
     EditProfileFeatureModule::class,
 
     // data modules

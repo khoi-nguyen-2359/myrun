@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.externalapp
+package akio.apps.myrun.data.externalapp.impl
 
 import akio.apps.myrun.data.externalapp.entity.StravaRoute
 import akio.apps.myrun.data.externalapp.entity.StravaTokenEntity

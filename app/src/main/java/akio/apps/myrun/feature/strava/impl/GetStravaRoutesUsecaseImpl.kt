@@ -1,9 +1,9 @@
-package akio.apps.myrun.feature.externalapp.impl
+package akio.apps.myrun.feature.strava.impl
 
-import akio.apps.myrun.data.externalapp.StravaApi
+import akio.apps.myrun.data.externalapp.impl.StravaApi
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.externalapp.entity.StravaRoute
-import akio.apps.myrun.feature.externalapp.GetStravaRoutesUsecase
+import akio.apps.myrun.feature.strava.GetStravaRoutesUsecase
 import javax.inject.Inject
 
 class GetStravaRoutesUsecaseImpl @Inject constructor(

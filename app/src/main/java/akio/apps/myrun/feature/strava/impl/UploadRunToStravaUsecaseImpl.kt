@@ -1,8 +1,8 @@
-package akio.apps.myrun.feature.externalapp.impl
+package akio.apps.myrun.feature.strava.impl
 
-import akio.apps.myrun.data.externalapp.StravaApi
+import akio.apps.myrun.data.externalapp.impl.StravaApi
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
-import akio.apps.myrun.feature.externalapp.UploadRunToStravaUsecase
+import akio.apps.myrun.feature.strava.UploadRunToStravaUsecase
 import akio.apps.myrun._base.runfile.TCX_MIME_TYPE
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody

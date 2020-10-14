@@ -1,10 +1,10 @@
-package akio.apps.myrun.feature.externalapp.impl
+package akio.apps.myrun.data.externalapp.impl
 
+import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntity
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
-import akio.apps.myrun.feature.userprofile.RemoveStravaTokenUsecase
-import akio.apps.myrun.feature.editprofile.UpdateStravaTokenUsecase
 import com.google.gson.Gson
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -13,8 +13,8 @@ import timber.log.Timber
 
 class StravaAuthenticator(
 	private val httpClient: OkHttpClient,
-	private val updateStravaTokenUsecase: UpdateStravaTokenUsecase,
-	private val removeStravaTokenUsecase: RemoveStravaTokenUsecase,
+	private val externalAppProvidersRepository: ExternalAppProvidersRepository,
+	private val userAuthenticationState: UserAuthenticationState,
 	private val stravaTokenStorage: StravaTokenStorage,
 	private val baseStravaUrl: String,
 	private val gson: Gson,
@@ -60,7 +60,8 @@ class StravaAuthenticator(
 					refreshToken,
 					originalToken.athlete
 				)
-			updateStravaTokenUsecase.updateStravaToken(newToken)
+
+			updateStravaToken(newToken)
 
 			Timber.d("refresh Strava token request succeed")
 			return response.request
@@ -70,8 +71,24 @@ class StravaAuthenticator(
 		}
 
 		Timber.d("refresh Strava token request failed")
-		removeStravaTokenUsecase.removeStravaTokenUsecase()
+		clearStravaToken()
 
 		return null
+	}
+
+	private fun clearStravaToken() {
+		val userId = userAuthenticationState.getUserAccountId()
+			?: return
+
+		externalAppProvidersRepository.removeStravaProvider(userId)
+		stravaTokenStorage.clear()
+	}
+
+	private fun updateStravaToken(token: ExternalAppToken.StravaToken) {
+		val userId = userAuthenticationState.getUserAccountId()
+			?: return
+
+		externalAppProvidersRepository.updateStravaProvider(userId, token)
+		stravaTokenStorage.setToken(token)
 	}
 }

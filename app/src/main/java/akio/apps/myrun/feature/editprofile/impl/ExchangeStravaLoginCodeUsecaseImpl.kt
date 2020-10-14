@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.editprofile.impl
 
 import akio.apps.myrun.STRAVA_APP_ID
 import akio.apps.myrun.STRAVA_APP_SECRET
-import akio.apps.myrun.data.externalapp.StravaApi
+import akio.apps.myrun.data.externalapp.impl.StravaApi
 import akio.apps.myrun.feature.editprofile.ExchangeStravaLoginCodeUsecase
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.mapper.StravaTokenEntityMapper

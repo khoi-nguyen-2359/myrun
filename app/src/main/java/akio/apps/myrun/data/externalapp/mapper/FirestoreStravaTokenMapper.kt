@@ -8,8 +8,8 @@ import javax.inject.Inject
 class FirestoreStravaTokenMapper @Inject constructor() {
     fun map(input: FirestoreProvidersEntity.FirestoreStravaToken): ExternalAppToken.StravaToken {
         return ExternalAppToken.StravaToken(
-            input.access_token,
-            input.refresh_token,
+            input.accessToken,
+            input.refreshToken,
             StravaAthlete(input.athlete.id)
         )
     }

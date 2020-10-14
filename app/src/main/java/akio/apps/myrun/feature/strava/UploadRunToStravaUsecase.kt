@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.externalapp
+package akio.apps.myrun.feature.strava
 
 import java.io.File
 

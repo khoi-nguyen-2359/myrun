@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.userprofile.usecase
 
-import akio.apps.myrun.data.externalapp.StravaApi
+import akio.apps.myrun.data.externalapp.impl.StravaApi
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.feature.userprofile.DeauthorizeStravaUsecase
 import javax.inject.Inject
