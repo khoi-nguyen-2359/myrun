@@ -20,11 +20,11 @@
             android:showDividers="middle">
 
             <FrameLayout
-                android:foregroundTint="@color/colorAccent"
-                android:foreground="@drawable/profile_avatar_foreground"
                 android:layout_width="@dimen/profile_avatar_size"
                 android:layout_height="@dimen/profile_avatar_size"
-                android:layout_marginTop="25dp">
+                android:layout_marginTop="25dp"
+                android:foreground="@drawable/profile_avatar_foreground"
+                android:foregroundTint="@color/colorAccent">
 
                 <ImageView
                     android:id="@+id/avatar_image_view"

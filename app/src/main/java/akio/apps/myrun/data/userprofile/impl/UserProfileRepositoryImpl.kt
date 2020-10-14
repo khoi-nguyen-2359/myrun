@@ -131,7 +131,7 @@ class UserProfileRepositoryImpl @Inject constructor(
                 profileEditData.weight?.let { weight(it) }
                 updatedEmail?.let { email(it) }
             }
-        getUserInfoDocument(currentUser.uid).set(updateMap, SetOptions.merge()).await()
+        getUserInfoDocument(currentUser.uid).set(updateMap.profile, SetOptions.merge()).await()
     }
 
     private fun createChangeRequestBuilder(): UserProfileChangeRequest.Builder {

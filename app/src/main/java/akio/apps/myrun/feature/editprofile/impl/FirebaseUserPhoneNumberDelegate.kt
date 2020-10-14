@@ -48,6 +48,7 @@ class FirebaseUserPhoneNumberDelegate @Inject constructor(
      */
     override fun updatePhoneNumber(phoneAuthCredential: PhoneAuthCredential) {
         launch {
+            _isUpdatingPhoneNumber.postValue(true)
             val currentUser = firebaseAuth.currentUser
 
             if (currentUser == null) {
@@ -68,10 +69,13 @@ class FirebaseUserPhoneNumberDelegate @Inject constructor(
                         phoneNumber(currentNumber)
                     }
 
-                getUserInfoDocument(currentUser.uid).set(updateMap, SetOptions.merge()).await()
+                getUserInfoDocument(currentUser.uid).set(updateMap.profile, SetOptions.merge()).await()
             }
 
             _isUpdatePhoneNumberSuccess.postValue(Event(Unit))
         }
+            .invokeOnCompletion {
+                _isUpdatingPhoneNumber.postValue(false)
+            }
     }
 }
