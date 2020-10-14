@@ -17,15 +17,8 @@ import akio.apps.myrun.feature.splash.impl.SplashActivity
 import akio.apps.myrun.feature.userprofile.UserProfileViewModel
 import android.content.Context
 import android.content.Intent
-import android.graphics.Typeface.BOLD
-import android.graphics.Typeface.NORMAL
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.style.StyleSpan
-import android.text.style.TextAppearanceSpan
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -95,7 +88,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
             linkedAppsContainer.setVisibleOrGone(externalTokenList.isNotEmpty())
             linkedAppsContainer.removeViews(1, linkedAppsContainer.childCount - 1)
             externalTokenList.forEach { providerToken ->
-                val itemView = linkedAppsContainer.inflate(R.layout.item_linked_running_app) as TextField
+                val itemView = linkedAppsContainer.inflate(R.layout.item_user_profile_linked_running_app) as TextField
                 itemView.setValue(providerToken.runningApp.appName)
                 linkedAppsContainer.addView(itemView)
                 itemView.setOnClickListener {
