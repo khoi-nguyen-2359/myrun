@@ -4,12 +4,13 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun.R
 import akio.apps.myrun._di.createViewModelInjectionDelegate
-import akio.apps.myrun.feature._base.utils.DialogDelegate
+import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun.feature.home.impl.HomeActivity
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
 import akio.apps.myrun.feature.signin.impl.SignInActivity
 import akio.apps.myrun.feature.signin.impl.SignInSuccessResult
 import akio.apps.myrun.feature.splash.SplashViewModel
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -66,5 +67,9 @@ class SplashActivity: AppCompatActivity() {
 
     companion object {
         const val RC_SIGN_IN = 1
+
+        fun clearTaskIntent(context: Context) = Intent(context, HomeActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
     }
 }

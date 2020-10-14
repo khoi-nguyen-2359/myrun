@@ -6,4 +6,9 @@
             <enum name="cycling" value="1" />
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="TextField">
+        <attr name="tf_label" format="string" />
+    </declare-styleable>
+
 </resources>

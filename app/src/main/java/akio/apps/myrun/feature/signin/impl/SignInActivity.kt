@@ -4,7 +4,7 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun._di.createViewModelInjectionDelegate
 import akio.apps.myrun.databinding.ActivitySignInBinding
-import akio.apps.myrun.feature._base.utils.DialogDelegate
+import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun.feature.signin.SignInViewModel
 import akio.apps.myrun.feature.signin.view.PhoneBox
 import android.app.Activity

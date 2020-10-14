@@ -6,7 +6,7 @@ import akio.apps._base.ui.ViewBindingDelegate
 import akio.apps.myrun.R
 import akio.apps.myrun._di.createViewModelInjectionDelegate
 import akio.apps.myrun.databinding.FragmentUserTimelineBinding
-import akio.apps.myrun.feature._base.utils.DialogDelegate
+import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import android.os.Bundle

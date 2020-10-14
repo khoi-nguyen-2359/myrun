@@ -9,4 +9,6 @@
     <dimen name="sign_in_phone_code_dropdown_width">180dp</dimen>
     <dimen name="sign_in_option_vertical_padding">12dp</dimen>
     <dimen name="phone_box_item_text_size">14sp</dimen>
+    <dimen name="profile_avatar_size">100dp</dimen>
+    <dimen name="profile_field_spacing">15dp</dimen>
 </resources>

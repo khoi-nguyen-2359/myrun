@@ -3,10 +3,9 @@ package akio.apps.myrun.feature.routetracking.usecase
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.activity.*
 import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.place.PlaceEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.feature._base.utils.toGmsLatLng
+import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.feature.routetracking.SaveRouteTrackingActivityUsecase
 import android.graphics.Bitmap
 import com.google.maps.android.PolyUtil

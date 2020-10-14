@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipe_refresh_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:paddingHorizontal="@dimen/common_page_horizontal_padding"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:showDividers="middle"
+            android:divider="@drawable/profile_fields_divider"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/avatar_image"
+                android:layout_width="@dimen/profile_avatar_size"
+                android:layout_height="@dimen/profile_avatar_size"
+                android:layout_marginTop="25dp"
+                android:background="@drawable/profile_avatar_background"
+                android:padding="8dp" />
+
+            <Button
+                android:id="@+id/edit_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/profile_field_spacing"
+                android:text="@string/home_edit_profile_button" />
+
+            <TextView
+                style="@style/ProfileSectionLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/profile_basic_label" />
+
+            <TextView
+                android:id="@+id/user_name_text_view"
+                style="@style/ProfileItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_face" />
+
+            <TextView
+                android:id="@+id/email_text_view"
+                style="@style/ProfileItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_alternate_email" />
+
+            <TextView
+                android:id="@+id/phone_text_view"
+                style="@style/ProfileItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_call" />
+
+            <TextView
+                style="@style/ProfileSectionLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/profile_physical_label" />
+
+            <TextView
+                android:id="@+id/gender_text_view"
+                style="@style/ProfileItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_person" />
+
+            <TextView
+                android:id="@+id/height_text_view"
+                style="@style/ProfileItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_height" />
+
+            <TextView
+                android:id="@+id/weight_text_view"
+                style="@style/ProfileItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_fitness_center" />
+
+            <LinearLayout
+                android:id="@+id/linked_apps_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/ProfileSectionLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_linked_app_section_label" />
+
+            </LinearLayout>
+
+            <Button
+                app:icon="@drawable/ic_facebook"
+                android:id="@+id/facebook_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/facebook_background"
+                android:paddingVertical="@dimen/sign_in_option_vertical_padding"
+                android:text="@string/sign_in_with_facebook_button" />
+
+            <Button
+                android:id="@+id/logout_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/common_page_vertical_padding"
+                android:text="@string/action_logout" />
+
+        </LinearLayout>
+
+    </ScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
