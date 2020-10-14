@@ -1,15 +1,12 @@
 package akio.apps.myrun.data.externalapp._di
 
-import akio.apps.myrun.STRAVA_APP_ID
-import akio.apps.myrun.STRAVA_APP_SECRET
 import akio.apps.myrun.STRAVA_BASE_ENDPOINT
-import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
+import akio.apps.myrun.data.externalapp.StravaAuthenticator
 import akio.apps.myrun.data.externalapp.impl.StravaApi
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.externalapp.impl.ExternalAppProvidersRepositoryImpl
 import akio.apps.myrun.data.externalapp.impl.StravaTokenStorageImpl
-import akio.apps.myrun.data.externalapp.impl.StravaAuthenticator
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
@@ -38,34 +35,13 @@ class ExternalAppDataModule {
     fun stravaGson(): Gson = Gson()
 
     @Provides
-    fun stravaApiTokenRefreshAuthenticator(
-        okHttpClientBuilder: OkHttpClient.Builder,
-        externalAppProvidersRepository: ExternalAppProvidersRepository,
-        userAuthenticationState: UserAuthenticationState,
-        stravaTokenStorage: StravaTokenStorage,
-        @Named(NAME_STRAVA_GSON) gson: Gson
-    ): StravaAuthenticator {
-        val refreshTokenClient = okHttpClientBuilder.build()
-        return StravaAuthenticator(
-            refreshTokenClient,
-            externalAppProvidersRepository,
-            userAuthenticationState,
-            stravaTokenStorage,
-            STRAVA_BASE_ENDPOINT,
-            gson,
-            STRAVA_APP_ID,
-            STRAVA_APP_SECRET
-        )
-    }
-
-    @Provides
     @Singleton
     fun stravaApiService(
         okHttpClientBuilder: OkHttpClient.Builder,
-        stravaAuthenticator: StravaAuthenticator,
+        stravaAuthenticatorImpl: StravaAuthenticator,
         @Named(NAME_STRAVA_GSON) gson: Gson
     ): StravaApi {
-        okHttpClientBuilder.authenticator(stravaAuthenticator)
+        okHttpClientBuilder.authenticator(stravaAuthenticatorImpl)
 
         val okHttpClient = okHttpClientBuilder.build()
 
