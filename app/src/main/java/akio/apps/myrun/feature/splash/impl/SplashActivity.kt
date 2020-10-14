@@ -68,7 +68,7 @@ class SplashActivity: AppCompatActivity() {
     companion object {
         const val RC_SIGN_IN = 1
 
-        fun clearTaskIntent(context: Context) = Intent(context, HomeActivity::class.java).apply {
+        fun clearTaskIntent(context: Context) = Intent(context, SplashActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         }
     }
