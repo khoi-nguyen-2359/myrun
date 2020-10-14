@@ -2,6 +2,7 @@ package akio.apps._base.ui
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import kotlin.math.roundToInt
 
 object BitmapUtils {
     fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
@@ -22,14 +23,14 @@ object BitmapUtils {
         return inSampleSize
     }
 
-    fun decodeSampledByteArray(
-        byteArray: ByteArray,
+    fun decodeSampledFile(
+        filePath: String,
         reqWidth: Int,
         reqHeight: Int
     ): Bitmap {
         return BitmapFactory.Options().run {
             inJustDecodeBounds = true
-            BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size, this)
+            BitmapFactory.decodeFile(filePath, this)
 
             // Calculate inSampleSize
             inSampleSize = calculateInSampleSize(this, reqWidth, reqHeight)
@@ -37,11 +38,11 @@ object BitmapUtils {
             // Decode bitmap with inSampleSize set
             inJustDecodeBounds = false
 
-            BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size, this)
+            BitmapFactory.decodeFile(filePath, this)
         }
     }
 
-    fun scale(origin: Bitmap, maxWidthAndHeight:Int):Bitmap{
+    fun scale(origin: Bitmap, maxWidthAndHeight:Int): Bitmap {
         var newWidth = 0
         var newHeight = 0
 
@@ -50,7 +51,7 @@ object BitmapUtils {
 
             newWidth = maxWidthAndHeight
             // Calculate the new height for the scaled bitmap
-            newHeight = Math.round(maxWidthAndHeight / ratio)
+            newHeight = (maxWidthAndHeight / ratio).roundToInt()
         }else{
             val ratio:Float = origin.height.toFloat() / origin.width.toFloat()
 

@@ -9,11 +9,11 @@ import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
-import akio.apps.myrun.feature._base.permissions.AppPermissions.locationPermissions
-import akio.apps.myrun.feature._base.permissions.CheckRequiredPermissionsDelegate
-import akio.apps.myrun.feature._base.utils.CheckLocationServiceDelegate
-import akio.apps.myrun.feature._base.utils.DialogDelegate
-import akio.apps.myrun.feature._base.utils.toGmsLatLng
+import akio.apps.myrun._base.permissions.AppPermissions.locationPermissions
+import akio.apps.myrun._base.permissions.RequiredPermissionsDelegate
+import akio.apps.myrun._base.utils.CheckLocationServiceDelegate
+import akio.apps.myrun._base.utils.DialogDelegate
+import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.feature.home.impl.HomeActivity
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.routetracking.view.ActivitySettingsView
@@ -55,7 +55,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         )
     }
 
-    private val checkLocationPermissionsDelegate by lazy { CheckRequiredPermissionsDelegate(this, RC_LOCATION_PERMISSIONS, locationPermissions, onLocationPermissionsGranted) }
+    private val checkLocationPermissionsDelegate by lazy { RequiredPermissionsDelegate(this) }
 
     private var routePolyline: Polyline? = null
     private var drawnLocationCount: Int = 0
@@ -67,7 +67,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         initViews()
 
         // onCreate: check location permissions -> check location service availability -> allow user to use this screen
-        checkLocationPermissionsDelegate.requestPermissions()
+        checkLocationPermissionsDelegate.requestPermissions(locationPermissions, RC_LOCATION_PERMISSIONS)
     }
 
     override fun onStart() {
@@ -263,7 +263,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        checkLocationPermissionsDelegate.verifyPermissionsResult()
+        checkLocationPermissionsDelegate.verifyPermissionsResult(locationPermissions, onLocationPermissionsGranted)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

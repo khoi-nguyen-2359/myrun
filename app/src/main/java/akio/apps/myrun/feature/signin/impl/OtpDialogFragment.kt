@@ -14,7 +14,7 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import akio.apps.myrun.R
 import akio.apps.myrun.databinding.DialogOtpBinding
-import akio.apps.myrun.feature._base.utils.DialogDelegate
+import akio.apps.myrun._base.utils.DialogDelegate
 import android.view.inputmethod.EditorInfo
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

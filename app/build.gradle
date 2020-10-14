@@ -120,4 +120,6 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:$Versions.dataStore"
 
     implementation "com.facebook.android:facebook-login:$Versions.facebookSdk"
+
+    implementation "com.sweetzpot.tcxzpot:lib:$Versions.tcxzPot"
 }

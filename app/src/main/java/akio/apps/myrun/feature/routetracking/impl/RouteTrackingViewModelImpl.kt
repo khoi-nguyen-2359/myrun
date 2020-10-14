@@ -7,7 +7,7 @@ import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.data.location.LatLngEntity
-import akio.apps.myrun.feature._base.utils.flowTimer
+import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun.feature.routetracking.*
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
 import android.content.Context

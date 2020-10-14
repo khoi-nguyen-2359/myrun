@@ -29,6 +29,7 @@ object Versions {
     const val facebookSdk = "[5,6)"
     const val okhttp = "4.7.1"
     const val retrofit = "2.9.0"
+    const val tcxzPot = "0.2.0"
 
     const val coroutines = "1.3.9"
 

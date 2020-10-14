@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/profile_fields_divider"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/common_page_horizontal_padding"
+            android:paddingRight="@dimen/common_page_horizontal_padding"
+            android:showDividers="middle">
+
+            <FrameLayout
+                android:foregroundTint="@color/colorAccent"
+                android:foreground="@drawable/profile_avatar_foreground"
+                android:layout_width="@dimen/profile_avatar_size"
+                android:layout_height="@dimen/profile_avatar_size"
+                android:layout_marginTop="25dp">
+
+                <ImageView
+                    android:id="@+id/avatar_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/profile_avatar_background"
+                    android:padding="8dp" />
+
+            </FrameLayout>
+
+            <TextView
+                style="@style/ProfileSectionLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/profile_basic_label" />
+
+            <EditText
+                android:id="@+id/name_edit_text"
+                style="@style/CommonEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_face"
+                android:hint="@string/profile_hint_name"
+                android:lines="1"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/email_edit_text"
+                style="@style/CommonEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_alternate_email"
+                android:hint="@string/profile_hint_email"
+                android:inputType="textEmailAddress" />
+
+            <akio.apps.myrun.feature.signin.view.PhoneBox
+                android:id="@+id/phoneBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="@style/ProfileSectionLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/profile_physical_label" />
+
+            <TextView
+                android:id="@+id/gender_text_view"
+                style="@style/CommonEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/profile_hint_gender"
+                app:drawableStartCompat="@drawable/ic_person" />
+
+            <EditText
+                android:id="@+id/height_edit_text"
+                style="@style/CommonEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_height"
+                android:hint="@string/profile_hint_height"
+                android:inputType="numberDecimal" />
+
+            <EditText
+                android:id="@+id/weight_edit_text"
+                style="@style/CommonEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/ic_fitness_center"
+                android:hint="@string/profile_hint_weight"
+                android:inputType="numberDecimal" />
+
+            <Button
+                android:id="@+id/connect_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#fff"
+                android:text="@string/profile_link_running_app_button"
+                android:textColor="@color/colorPrimary" />
+
+            <Button
+                android:id="@+id/save_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:text="@string/profile_save_button" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

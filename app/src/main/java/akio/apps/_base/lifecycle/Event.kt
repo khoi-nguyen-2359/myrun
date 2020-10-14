@@ -1,6 +1,6 @@
 package akio.apps._base.lifecycle
 
-open class Event<out T>(private val content: T?) {
+open class Event<out T>(private val content: T? = null) {
 
     var hasBeenHandled = false
         private set // Allow external read but not write
