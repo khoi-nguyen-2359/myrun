@@ -73,6 +73,8 @@
     <string name="profile_linked_with_fb">Linked with Facebook</string>
     <string name="profile_link_to_fb_button">Link to Facebook</string>
     <string name="profile_hint_phone">Mobile number</string>
+    <string name="user_timeline_title">Timeline</string>
+    <string name="user_profile_title">Profile</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>
