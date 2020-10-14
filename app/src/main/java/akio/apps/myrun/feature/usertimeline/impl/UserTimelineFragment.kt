@@ -46,7 +46,6 @@ class UserTimelineFragment : Fragment(R.layout.fragment_user_timeline) {
     }
 
     private fun initViews() = viewBinding.apply {
-        addNewButton.setOnClickListener { openRouteTrackingScreen() }
         activityRecyclerView.adapter = activityPagingAdapter.withLoadStateFooter(
             footer = ActivityLoadStateAdapter(activityPagingAdapter::retry)
         )
@@ -60,10 +59,6 @@ class UserTimelineFragment : Fragment(R.layout.fragment_user_timeline) {
                 }
             }
         }
-    }
-
-    private fun openRouteTrackingScreen() {
-        startActivity(RouteTrackingActivity.launchIntent(requireContext()))
     }
 
     override fun onDestroyView() {
