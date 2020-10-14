@@ -31,16 +31,36 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".feature.home.impl.HomeActivity"
-            android:screenOrientation="portrait"
-            />
+        <activity
+            android:name=".feature.home.impl.HomeActivity"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".feature.signin.impl.SignInActivity"
             android:screenOrientation="portrait" />
 
-        <activity android:name="akio.apps._base.ui.SingleFragmentActivity"
+        <activity
+            android:name="akio.apps._base.ui.SingleFragmentActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".feature.editprofile.impl.EditProfileActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
+            <!-- for Strava callback intent -->
+            <intent-filter>
+                <data
+                    android:host="@string/strava_callback_host"
+                    android:scheme="@string/app_scheme" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+
+
+        </activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

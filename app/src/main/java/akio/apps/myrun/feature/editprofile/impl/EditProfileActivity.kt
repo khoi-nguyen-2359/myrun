@@ -29,6 +29,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.PhoneAuthCredential
 import java.io.File
 import java.text.DecimalFormat
@@ -42,7 +43,7 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
 		), this
 	)
 
-    private val stravaRedirectUri by lazy { getString(R.string.app_scheme) + "://localhost" }
+    private val stravaRedirectUri by lazy { "${getString(R.string.app_scheme)}://${getString(R.string.strava_callback_host)}" }
 
     private val onboardingMethod: SignInMethod? by lazy { intent.getSerializableExtra(EXT_ONBOARDING_METHOD) as SignInMethod? }
     private val isOnboarding by lazy { onboardingMethod != null }
@@ -69,6 +70,7 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
     private fun initObservers() {
         observe(editProfileVM.isInProgress, dialogDelegate::toggleProgressDialog)
         observe(editProfileVM.isUpdatingPhoneNumber, dialogDelegate::toggleProgressDialog)
+        observeEvent(editProfileVM.isUpdatePhoneNumberSuccess, ::onUpdatePhoneNumberSuccess)
         observe(editProfileVM.userProfile, ::fillCurrentUserProfile)
 
         observeEvent(editProfileVM.error, dialogDelegate::showExceptionAlert)
@@ -89,9 +91,14 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
         }
     }
 
+    private fun onUpdatePhoneNumberSuccess(unit: Unit) {
+        Snackbar.make(viewBinding.saveButton, R.string.edit_user_profile_mobile_number_update_success_message, Snackbar.LENGTH_LONG).show()
+        (supportFragmentManager.findFragmentByTag(TAG_OTP_DIALOG) as? OtpDialogFragment)?.dismiss()
+    }
+
     private fun onStravaTokenExchanged() {
         setResult(Activity.RESULT_OK)
-        Toast.makeText(this@EditProfileActivity, getString(R.string.profile_link_running_app_success_message), Toast.LENGTH_LONG).show()
+        Snackbar.make(viewBinding.saveButton, getString(R.string.edit_user_profile_link_running_app_success_message), Snackbar.LENGTH_LONG).show()
     }
 
     override fun onAttachFragment(fragment: Fragment) {
@@ -194,7 +201,7 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
     }
 
     private fun requestReauthenticate() {
-        Toast.makeText(this, R.string.user_profile_recent_login_required_error_message, Toast.LENGTH_LONG).show()
+        Toast.makeText(this, R.string.edit_user_profile_session_expired_error_message, Toast.LENGTH_LONG).show()
         val signInIntent = SignInActivity.launchIntent(this)
         startActivityForResult(signInIntent, RC_REAUTHENTICATE)
     }

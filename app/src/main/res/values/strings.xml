@@ -46,7 +46,6 @@
     <string name="otp_resend_template">Resend OTP in %1$d seconds</string>
     <string name="sign_in_title">Log In</string>
     <string name="sign_in_option_separator">or</string>
-    <string name="app_scheme">myrun</string>
     <string name="profile_basic_label">Basic Information</string>
     <string name="user_profile_hint_name">Name</string>
     <string name="user_profile_hint_email">Email Address</string>
@@ -57,10 +56,10 @@
     <string name="profile_save_button">Save Profile</string>
     <string name="profile_link_running_app_button">Connect to running app</string>
     <string name="error_invalid_display_name">Please type in your name</string>
-    <string name="profile_link_running_app_success_message">You have successfully linked your account</string>
+    <string name="edit_user_profile_link_running_app_success_message">You have successfully linked your account</string>
     <string name="profile_link_running_app_dialog_title">Select app to upload your activity</string>
     <string name="photo_selection_dialog_title">Update image from</string>
-    <string name="user_profile_recent_login_required_error_message">Your session has expired. You need to re-login first.</string>
+    <string name="edit_user_profile_session_expired_error_message">Your session has expired. You need to re-login first.</string>
     <string name="profile_crop_photo_instruction">Drag to resize the image. Your profile photo will be cropped within the circle</string>
     <string name="profile_crop_button">Crop</string>
     <string name="home_edit_profile_button">Edit profile</string>
@@ -75,6 +74,7 @@
     <string name="user_profile_hint_phone">Mobile number</string>
     <string name="user_timeline_title">Timeline</string>
     <string name="user_profile_title">Profile</string>
+    <string name="edit_user_profile_mobile_number_update_success_message">Your phone number has been changed</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>
