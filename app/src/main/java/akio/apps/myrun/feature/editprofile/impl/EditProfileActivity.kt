@@ -33,7 +33,7 @@ import com.google.firebase.auth.PhoneAuthCredential
 import java.io.File
 import java.text.DecimalFormat
 
-class EditProfileActivity: AppCompatActivity(), PhotoSelectionDelegate.EventListener, OtpDialogFragment.EventListener {
+class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), PhotoSelectionDelegate.EventListener, OtpDialogFragment.EventListener {
 
     private var croppedPhotoFile: File? = null
     private val photoSelectionDelegate = PhotoSelectionDelegate(
@@ -59,8 +59,6 @@ class EditProfileActivity: AppCompatActivity(), PhotoSelectionDelegate.EventList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContentView(viewBinding.root)
 
         initViews()
         initObservers()
@@ -176,6 +174,8 @@ class EditProfileActivity: AppCompatActivity(), PhotoSelectionDelegate.EventList
     }
 
     private fun initViews() = viewBinding.apply {
+        setContentView(root)
+
         connectButton.setOnClickListener { openExternalAppList() }
 
         avatarImageView.setOnClickListener { photoSelectionDelegate.showPhotoSelectionDialog(getString(R.string.photo_selection_dialog_title)) }

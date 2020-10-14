@@ -10,20 +10,20 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:paddingHorizontal="@dimen/common_page_horizontal_padding"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:showDividers="middle"
             android:divider="@drawable/profile_fields_divider"
-            android:orientation="vertical">
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/common_page_horizontal_padding">
 
             <ImageView
                 android:id="@+id/avatar_image"
                 android:layout_width="@dimen/profile_avatar_size"
                 android:layout_height="@dimen/profile_avatar_size"
                 android:layout_marginTop="25dp"
-                android:background="@drawable/profile_avatar_background"
+                android:background="@drawable/ic_account_circle"
+                android:backgroundTint="@color/colorAccent"
                 android:padding="8dp" />
 
             <Button
@@ -39,26 +39,29 @@
                 android:layout_height="wrap_content"
                 android:text="@string/profile_basic_label" />
 
-            <TextView
-                android:id="@+id/user_name_text_view"
-                style="@style/ProfileItem"
+            <akio.apps.myrun._base.view.TextField
+                android:id="@+id/user_name_text_field"
+                style="@style/UserProfileField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_face" />
+                app:drawableStartCompat="@drawable/ic_face"
+                app:tf_label="@string/user_profile_hint_name" />
 
-            <TextView
-                android:id="@+id/email_text_view"
-                style="@style/ProfileItem"
+            <akio.apps.myrun._base.view.TextField
+                android:id="@+id/email_text_field"
+                style="@style/UserProfileField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_alternate_email" />
+                app:drawableStartCompat="@drawable/ic_alternate_email"
+                app:tf_label="@string/user_profile_hint_email" />
 
-            <TextView
-                android:id="@+id/phone_text_view"
-                style="@style/ProfileItem"
+            <akio.apps.myrun._base.view.TextField
+                android:id="@+id/phone_text_field"
+                style="@style/UserProfileField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_call" />
+                app:drawableStartCompat="@drawable/ic_call"
+                app:tf_label="@string/user_profile_hint_phone" />
 
             <TextView
                 style="@style/ProfileSectionLabel"
@@ -66,26 +69,29 @@
                 android:layout_height="wrap_content"
                 android:text="@string/profile_physical_label" />
 
-            <TextView
-                android:id="@+id/gender_text_view"
-                style="@style/ProfileItem"
+            <akio.apps.myrun._base.view.TextField
+                android:id="@+id/gender_text_field"
+                style="@style/UserProfileField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_person" />
+                app:drawableStartCompat="@drawable/ic_person"
+                app:tf_label="@string/user_profile_hint_gender" />
 
-            <TextView
-                android:id="@+id/height_text_view"
-                style="@style/ProfileItem"
+            <akio.apps.myrun._base.view.TextField
+                android:id="@+id/height_text_field"
+                style="@style/UserProfileField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_height" />
+                app:drawableStartCompat="@drawable/ic_height"
+                app:tf_label="@string/user_profile_hint_height" />
 
-            <TextView
-                android:id="@+id/weight_text_view"
-                style="@style/ProfileItem"
+            <akio.apps.myrun._base.view.TextField
+                android:id="@+id/weight_text_field"
+                style="@style/UserProfileField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_fitness_center" />
+                app:drawableStartCompat="@drawable/ic_fitness_center"
+                app:tf_label="@string/user_profile_hint_weight" />
 
             <LinearLayout
                 android:id="@+id/linked_apps_container"
@@ -103,13 +109,13 @@
             </LinearLayout>
 
             <Button
-                app:icon="@drawable/ic_facebook"
                 android:id="@+id/facebook_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/facebook_background"
                 android:paddingVertical="@dimen/sign_in_option_vertical_padding"
-                android:text="@string/sign_in_with_facebook_button" />
+                android:text="@string/sign_in_with_facebook_button"
+                app:icon="@drawable/ic_facebook" />
 
             <Button
                 android:id="@+id/logout_button"

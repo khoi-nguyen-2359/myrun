@@ -39,6 +39,9 @@
             android:name=".feature.signin.impl.SignInActivity"
             android:screenOrientation="portrait" />
 
+        <activity android:name="akio.apps._base.ui.SingleFragmentActivity"
+            android:screenOrientation="portrait" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_sdk_key" />

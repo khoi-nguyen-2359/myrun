@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         app:iconTint="#fff"
-        android:id="@+id/search"
+        android:id="@+id/home_menu_user_profile"
         android:icon="@drawable/ic_person"
         android:title="@string/user_profile_title"
         app:showAsAction="ifRoom" />

@@ -48,12 +48,12 @@
     <string name="sign_in_option_separator">or</string>
     <string name="app_scheme">myrun</string>
     <string name="profile_basic_label">Basic Information</string>
-    <string name="profile_hint_name">Name</string>
-    <string name="profile_hint_email">Email Address</string>
+    <string name="user_profile_hint_name">Name</string>
+    <string name="user_profile_hint_email">Email Address</string>
     <string name="profile_physical_label">Physical Information</string>
-    <string name="profile_hint_gender">Gender</string>
-    <string name="profile_hint_height">Height (cm)</string>
-    <string name="profile_hint_weight">Weight (kg)</string>
+    <string name="user_profile_hint_gender">Gender</string>
+    <string name="user_profile_hint_height">Height (cm)</string>
+    <string name="user_profile_hint_weight">Weight (kg)</string>
     <string name="profile_save_button">Save Profile</string>
     <string name="profile_link_running_app_button">Connect to running app</string>
     <string name="error_invalid_display_name">Please type in your name</string>
@@ -72,7 +72,7 @@
     <string name="profile_logout_confirmation">Are you sure you want to log out?</string>
     <string name="profile_linked_with_fb">Linked with Facebook</string>
     <string name="profile_link_to_fb_button">Link to Facebook</string>
-    <string name="profile_hint_phone">Mobile number</string>
+    <string name="user_profile_hint_phone">Mobile number</string>
     <string name="user_timeline_title">Timeline</string>
     <string name="user_profile_title">Profile</string>
     <string-array name="user_timeline_activity_selection_items">

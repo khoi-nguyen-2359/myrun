@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.userprofile.impl
 
 import akio.apps._base.data.Resource
+import akio.apps._base.ui.SingleFragmentActivity
 import akio.apps._base.ui.inflate
 import akio.apps._base.ui.setVisibleOrGone
 import akio.apps.myrun.R
@@ -14,6 +15,7 @@ import akio.apps.myrun.databinding.FragmentUserProfileBinding
 import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
 import akio.apps.myrun.feature.splash.impl.SplashActivity
 import akio.apps.myrun.feature.userprofile.UserProfileViewModel
+import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface.BOLD
 import android.graphics.Typeface.NORMAL
@@ -149,12 +151,12 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 ImageLoaderUtils.loadCircleCropAvatar(avatarImage, it, resources.getDimensionPixelSize(R.dimen.profile_avatar_size))
             }
 
-            setFieldValue(userNameTextView, R.string.profile_hint_name, updatedUserProfile.name)
-            setFieldValue(emailTextView, R.string.profile_hint_email, updatedUserProfile.email)
-            setFieldValue(phoneTextView, R.string.profile_hint_phone, updatedUserProfile.phone)
-            setFieldValue(genderTextView, R.string.profile_hint_gender, updatedUserProfile.gender?.name?.capitalize())
-            setFieldValue(heightTextView, R.string.profile_hint_height, updatedUserProfile.getHeightText())
-            setFieldValue(weightTextView, R.string.profile_hint_weight, updatedUserProfile.getWeightText())
+            userNameTextField.setValue(updatedUserProfile.name)
+            emailTextField.setValue(updatedUserProfile.email)
+            phoneTextField.setValue(updatedUserProfile.phone)
+            genderTextField.setValue(updatedUserProfile.gender?.name?.capitalize())
+            heightTextField.setValue(updatedUserProfile.getHeightText())
+            weightTextField.setValue(updatedUserProfile.getWeightText())
         }
     }
 
@@ -163,26 +165,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         startActivity(intent)
     }
 
-    private fun setFieldValue(textField: TextView, labelRes: Int, value: String?) {
-        val noneNullValue = value ?: ""
-        val label = getString(labelRes)
-        val spannedValue = SpannableString("$label\n$noneNullValue")
-        val labelTfSpan = StyleSpan(BOLD)
-        spannedValue.setSpan(labelTfSpan, 0, label.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        val labelTextSpan = TextAppearanceSpan(requireContext(), R.style.TextFieldLabel)
-        spannedValue.setSpan(labelTextSpan, 0, label.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-        if (noneNullValue.isNotEmpty()) {
-            val valueSpan = StyleSpan(NORMAL)
-            spannedValue.setSpan(valueSpan, label.length + 1, spannedValue.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            val valueTextSpan = TextAppearanceSpan(requireContext(), R.style.TextFieldValue)
-            spannedValue.setSpan(valueTextSpan, label.length + 1, spannedValue.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
-
-        textField.setText(spannedValue)
-    }
-
     companion object {
-        fun instantiate() = UserProfileFragment()
+        fun launchIntent(context: Context) = SingleFragmentActivity.launchIntent<UserProfileFragment>(context)
     }
 }
