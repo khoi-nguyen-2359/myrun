@@ -7,6 +7,7 @@ import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.feature.editprofile.UpdateStravaTokenUsecase
 import akio.apps.myrun.feature.userprofile.RemoveStravaTokenUsecase
 import com.google.gson.Gson
+import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -31,7 +32,7 @@ class StravaAuthenticatorImpl(
             return null
         }
 
-        val originalToken = stravaTokenStorage.getToken()
+        val originalToken = runBlocking { stravaTokenStorage.getToken()  }
         val originalRequest = response.request
         val originalAccessToken = originalRequest.header("Authorization")?.removePrefix("Bearer ")
         if (originalToken == null || originalAccessToken == null) {
@@ -61,13 +62,12 @@ class StravaAuthenticatorImpl(
             val stringResponse = refreshResponse.body?.string()
             val refreshToken = gson.fromJson(stringResponse, StravaTokenRefreshEntity::class.java)
             val newAccessToken = refreshToken.accessToken
-            val newToken =
-                ExternalAppToken.StravaToken(
-					refreshToken,
-					originalToken.athlete
-				)
+            val newToken = ExternalAppToken.StravaToken(
+                refreshToken,
+                originalToken.athlete
+            )
 
-            updateStravaTokenUsecase.updateStravaToken(newToken)
+            runBlocking { updateStravaTokenUsecase.updateStravaToken(newToken) }
 
             Timber.d("refresh Strava token request succeed")
             return response.request
