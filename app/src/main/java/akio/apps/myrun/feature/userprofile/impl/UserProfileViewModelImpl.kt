@@ -63,7 +63,9 @@ class UserProfileViewModelImpl @Inject constructor(
     }
 
     override fun logout() {
-        logoutUsecase.logout()
+        launchCatching {
+            logoutUsecase.logout()
+        }
     }
 
     override fun unlinkProvider(unlinkProviderToken: ProviderToken<out ExternalAppToken>) {

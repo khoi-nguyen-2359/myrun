@@ -11,7 +11,7 @@ class RemoveStravaTokenUsecaseImpl @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
     private val stravaTokenStorage: StravaTokenStorage
 ) : RemoveStravaTokenUsecase {
-    override fun removeStravaTokenUsecase() {
+    override suspend fun removeStravaTokenUsecase() {
         val accountId = userAuthenticationState.getUserAccountId()
             ?: return
 

@@ -9,7 +9,7 @@ class FirebaseLogoutUsecase @Inject constructor(
     private val stravaTokenStorage: StravaTokenStorage,
     private val authenticationState: UserAuthenticationState
 ) : LogoutUsecase {
-    override fun logout() {
+    override suspend fun logout() {
         stravaTokenStorage.clear()
         authenticationState.clear()
     }

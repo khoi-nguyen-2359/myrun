@@ -58,18 +58,11 @@ class ExternalAppDataModule {
         return retrofit.create(StravaApi::class.java)
     }
 
-    @Provides
-    @Named(NAME_STRAVA_TOKEN_PREFERENCES)
-    fun stravaTokenPreference(context: Context): SharedPreferences = context.getSharedPreferences(PREFS_STRAVA_TOKEN, Context.MODE_PRIVATE)
-
     companion object {
-        const val PREFS_STRAVA_TOKEN = "ExternalAppDataModule.PREFS_STRAVA_TOKEN"
-
         const val STRAVA_APP_ID = "54817"
         const val STRAVA_APP_SECRET = "805c1da4993b9439d583d4264809b50270ebae3a"
         const val STRAVA_BASE_ENDPOINT = "https://www.strava.com/"
 
         const val NAME_STRAVA_GSON = "ExternalAppDataModule.NAME_STRAVA_GSON"
-        const val NAME_STRAVA_TOKEN_PREFERENCES = "ExternalAppDataModule.NAME_STRAVA_TOKEN_PREFERENCES"
     }
 }
