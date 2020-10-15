@@ -77,7 +77,7 @@ class StravaAuthenticatorImpl(
         }
 
         Timber.d("refresh Strava token request failed")
-        removeStravaTokenUsecase.removeStravaTokenUsecase()
+        runBlocking { removeStravaTokenUsecase.removeStravaTokenUsecase() }
 
         return null
     }

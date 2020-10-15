@@ -6,13 +6,8 @@ import com.google.gson.annotations.SerializedName
 
 sealed class ExternalAppToken {
     class StravaToken(
-        @SerializedName("access_token")
         val accessToken: String,
-
-        @SerializedName("refresh_token")
         val refreshToken: String,
-
-        @SerializedName("athlete")
         val athlete: StravaAthlete
     ) : ExternalAppToken() {
 
