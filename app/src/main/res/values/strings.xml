@@ -62,7 +62,7 @@
     <string name="edit_user_profile_session_expired_error_message">Your session has expired. You need to re-login first.</string>
     <string name="profile_crop_photo_instruction">Drag to resize the image. Your profile photo will be cropped within the circle</string>
     <string name="profile_crop_button">Crop</string>
-    <string name="home_edit_profile_button">Edit profile</string>
+    <string name="user_profile_edit_button">Edit</string>
     <string name="profile_linked_app_section_label">App Information</string>
     <string name="action_logout">Log out</string>
     <string name="profile_linked_app_label">Linked App</string>

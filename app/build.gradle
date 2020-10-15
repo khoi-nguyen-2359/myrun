@@ -66,7 +66,7 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:$Versions.appCompat"
     implementation "androidx.constraintlayout:constraintlayout:$Versions.constraintLayout"
-    implementation "androidx.paging:paging-runtime:$Versions.paging"
+    implementation "androidx.paging:paging-runtime-ktx:$Versions.paging"
     implementation "androidx.fragment:fragment-ktx:$Versions.fragment"
     implementation "androidx.activity:activity-ktx:$Versions.activity"
     implementation "androidx.work:work-runtime-ktx:$Versions.workManager"
