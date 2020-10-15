@@ -10,10 +10,10 @@ import akio.apps.myrun.feature.strava.impl.StravaAuthenticatorImpl
 import akio.apps.myrun.feature.editprofile.UpdateStravaTokenUsecase
 import akio.apps.myrun.feature.strava.ExportRunToFileUsecase
 import akio.apps.myrun.feature.strava.GetStravaRoutesUsecase
-import akio.apps.myrun.feature.strava.UploadRunToStravaUsecase
+import akio.apps.myrun.feature.strava.UploadActivityToStravaUsecase
 import akio.apps.myrun.feature.strava.impl.ExportRunToFileUsecaseImpl
 import akio.apps.myrun.feature.strava.impl.GetStravaRoutesUsecaseImpl
-import akio.apps.myrun.feature.strava.impl.UploadRunToStravaUsecaseImpl
+import akio.apps.myrun.feature.strava.impl.UploadActivityToStravaUsecaseImpl
 import akio.apps.myrun.feature.userprofile.RemoveStravaTokenUsecase
 import com.google.gson.Gson
 import dagger.Binds
@@ -31,7 +31,7 @@ class StravaConnectFeatureModule {
         fun getStravaRoutesUsecase(usecase: GetStravaRoutesUsecaseImpl): GetStravaRoutesUsecase
 
         @Binds
-        fun updateLoadRunToStravaUsecase(usecase: UploadRunToStravaUsecaseImpl): UploadRunToStravaUsecase
+        fun updateLoadRunToStravaUsecase(usecase: UploadActivityToStravaUsecaseImpl): UploadActivityToStravaUsecase
 
         @Binds
         fun exportRunToFileUsecase(exportRunToFileUsecase: ExportRunToFileUsecaseImpl): ExportRunToFileUsecase

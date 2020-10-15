@@ -1,22 +1,20 @@
 package akio.apps.myrun.feature.strava.impl
 
+import akio.apps.myrun.data.externalapp.StravaDataRepository
 import akio.apps.myrun.data.externalapp.impl.StravaApi
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
-import akio.apps.myrun.data.externalapp.entity.StravaRoute
+import akio.apps.myrun.data.externalapp.model.StravaRoute
 import akio.apps.myrun.feature.strava.GetStravaRoutesUsecase
 import javax.inject.Inject
 
 class GetStravaRoutesUsecaseImpl @Inject constructor(
-    val stravaTokenStorage: StravaTokenStorage,
-    val stravaApi: StravaApi
+    private val stravaTokenStorage: StravaTokenStorage,
+    private val stravaDataRepository: StravaDataRepository
 ): GetStravaRoutesUsecase {
     override suspend fun getStravaRoutes(): List<StravaRoute> {
-        val stravaToken = stravaTokenStorage.getToken()
+        val athleteId = stravaTokenStorage.getToken()?.athlete?.id
             ?: return emptyList()
 
-        return stravaApi.getAthleteRoutes(
-            "Bearer ${stravaToken.accessToken}",
-            stravaToken.athlete.id
-        )
+        return stravaDataRepository.getRoutes(athleteId)
     }
 }

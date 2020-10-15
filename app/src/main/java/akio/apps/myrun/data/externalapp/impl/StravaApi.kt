@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.externalapp.impl
 
-import akio.apps.myrun.data.externalapp.entity.StravaRoute
+import akio.apps.myrun.data.externalapp.entity.StravaRouteEntity
 import akio.apps.myrun.data.externalapp.entity.StravaTokenEntity
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -32,5 +32,5 @@ interface StravaApi {
 	@GET("api/v3/athletes/{id}/routes")
 	suspend fun getAthleteRoutes(
 		@Header("Authorization") bearer: String,
-		@Path("id") athleteId: Long): List<StravaRoute>
+		@Path("id") athleteId: Long): List<StravaRouteEntity>
 }
