@@ -22,7 +22,7 @@ interface StravaApi {
 	
 	@POST("api/v3/uploads")
 	@Multipart
-	suspend fun uploadRun(
+	suspend fun uploadActivity(
 		@Header("Authorization") bearer: String,
 		@Part file: MultipartBody.Part,
 		@Part("name") name: RequestBody,

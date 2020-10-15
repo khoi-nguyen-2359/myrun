@@ -24,6 +24,6 @@ class UploadRunToStravaUsecaseImpl @Inject constructor(
         val runNamePart = runTitle.toRequestBody(MultipartBody.FORM)
         val dataTypePart = "tcx".toRequestBody(MultipartBody.FORM)
 
-        stravaApi.uploadRun("Bearer ${stravaToken.accessToken}", uploadBody, runNamePart, dataTypePart)
+        stravaApi.uploadActivity("Bearer ${stravaToken.accessToken}", uploadBody, runNamePart, dataTypePart)
     }
 }
