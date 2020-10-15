@@ -9,13 +9,57 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@drawable/profile_fields_divider"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/common_page_horizontal_padding">
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/start_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/common_page_horizontal_padding" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/end_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/common_page_horizontal_padding" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/bottom_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_end="@dimen/common_page_vertical_padding" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/top_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="@dimen/common_page_vertical_padding" />
+
+            <androidx.constraintlayout.helper.widget.Flow
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="avatar_image,section_spacing_1st,basic_info_section_label_text_view,user_name_text_field,email_text_field,phone_text_field,section_spacing_2nd,physical_info_label_text_view,gender_text_field,height_text_field,weight_text_field,section_spacing_3,linked_apps_container,section_spacing_4,facebook_button,logout_button"
+                app:flow_maxElementsWrap="1"
+                app:flow_wrapMode="chain"
+                app:layout_constraintBottom_toTopOf="@id/bottom_guideline"
+                app:layout_constraintTop_toBottomOf="@id/top_guideline"
+                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                app:layout_constraintStart_toStartOf="@id/start_guideline" />
+
+            <Button
+                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                app:layout_constraintTop_toBottomOf="@id/top_guideline"
+                android:id="@+id/edit_button"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_profile_edit_button" />
 
             <ImageView
                 android:id="@+id/avatar_image"
@@ -26,23 +70,24 @@
                 android:backgroundTint="@color/colorAccent"
                 android:padding="8dp" />
 
-            <Button
-                android:id="@+id/edit_button"
+            <Space
+                android:id="@+id/section_spacing_1st"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/profile_field_spacing"
-                android:text="@string/home_edit_profile_button" />
+                android:layout_height="@dimen/user_profile_section_spacing" />
 
             <TextView
-                style="@style/ProfileSectionLabel"
-                android:layout_width="match_parent"
+                android:id="@+id/basic_info_section_label_text_view"
+                style="@style/UserProfileSectionLabel"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/profile_basic_label" />
+                android:text="@string/profile_basic_label"
+                app:layout_constraintEnd_toEndOf="@id/end_guideline"
+                app:layout_constraintStart_toStartOf="@id/start_guideline" />
 
             <akio.apps.myrun._base.view.TextField
                 android:id="@+id/user_name_text_field"
                 style="@style/UserProfileField"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:drawableStartCompat="@drawable/ic_face"
                 app:tf_label="@string/user_profile_hint_name" />
@@ -50,7 +95,7 @@
             <akio.apps.myrun._base.view.TextField
                 android:id="@+id/email_text_field"
                 style="@style/UserProfileField"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:drawableStartCompat="@drawable/ic_alternate_email"
                 app:tf_label="@string/user_profile_hint_email" />
@@ -58,21 +103,27 @@
             <akio.apps.myrun._base.view.TextField
                 android:id="@+id/phone_text_field"
                 style="@style/UserProfileField"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:drawableStartCompat="@drawable/ic_call"
                 app:tf_label="@string/user_profile_hint_phone" />
 
+            <Space
+                android:id="@+id/section_spacing_2nd"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/user_profile_section_spacing" />
+
             <TextView
-                style="@style/ProfileSectionLabel"
-                android:layout_width="match_parent"
+                android:id="@+id/physical_info_label_text_view"
+                style="@style/UserProfileSectionLabel"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/profile_physical_label" />
 
             <akio.apps.myrun._base.view.TextField
                 android:id="@+id/gender_text_field"
                 style="@style/UserProfileField"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:drawableStartCompat="@drawable/ic_person"
                 app:tf_label="@string/user_profile_hint_gender" />
@@ -80,7 +131,7 @@
             <akio.apps.myrun._base.view.TextField
                 android:id="@+id/height_text_field"
                 style="@style/UserProfileField"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:drawableStartCompat="@drawable/ic_height"
                 app:tf_label="@string/user_profile_hint_height" />
@@ -88,29 +139,39 @@
             <akio.apps.myrun._base.view.TextField
                 android:id="@+id/weight_text_field"
                 style="@style/UserProfileField"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:drawableStartCompat="@drawable/ic_fitness_center"
                 app:tf_label="@string/user_profile_hint_weight" />
 
+            <Space
+                android:id="@+id/section_spacing_3"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/user_profile_section_spacing" />
+
             <LinearLayout
                 android:id="@+id/linked_apps_container"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone">
 
                 <TextView
-                    style="@style/ProfileSectionLabel"
+                    style="@style/UserProfileSectionLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/profile_linked_app_section_label" />
 
             </LinearLayout>
 
+            <Space
+                android:id="@+id/section_spacing_4"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/user_profile_section_spacing" />
+
             <Button
                 android:id="@+id/facebook_button"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/facebook_background"
                 android:paddingVertical="@dimen/sign_in_option_vertical_padding"
@@ -124,7 +185,8 @@
                 android:layout_margin="@dimen/common_page_vertical_padding"
                 android:text="@string/action_logout" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
