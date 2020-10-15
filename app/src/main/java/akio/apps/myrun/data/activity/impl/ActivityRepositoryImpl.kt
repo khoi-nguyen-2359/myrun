@@ -24,8 +24,8 @@ class ActivityRepositoryImpl @Inject constructor(
     private val activityCollection: CollectionReference
         get() = firestore.collection("activity")
 
-    private val activityStotage: StorageReference
-        get() = firebaseStorage.getReference("activity")
+    private fun getActivityImageStorage(userId: String): StorageReference
+            = firebaseStorage.getReference("activity_image/$userId")
 
     override suspend fun getActivitiesByStartTime(userIds: List<String>, startAfterTime: Long, limit: Int): List<ActivityEntity> = withContext(Dispatchers.IO) {
         val query = activityCollection.whereIn("userId", userIds)
@@ -44,9 +44,10 @@ class ActivityRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveActivity(activity: ActivityEntity, routeMapImage: Bitmap): Unit = withContext(Dispatchers.IO) {
-        val uploadedUri = FirebaseStorageUtils.uploadBitmap(activityStotage, routeMapImage, THUMBNAIL_SCALED_SIZE)
-
         val docRef = activityCollection.document()
+
+        val uploadedUri = FirebaseStorageUtils.uploadBitmap(getActivityImageStorage(activity.userId), docRef.id, routeMapImage, THUMBNAIL_SCALED_SIZE)
+
         val firestoreActivity = firestoreActivityMapper.mapRev(activity, docRef.id, uploadedUri)
         docRef.set(firestoreActivity).await()
     }

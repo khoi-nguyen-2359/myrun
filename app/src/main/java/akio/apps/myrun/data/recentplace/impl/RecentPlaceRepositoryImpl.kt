@@ -13,7 +13,7 @@ class RecentPlaceRepositoryImpl @Inject constructor(
 ) : RecentPlaceRepository {
 
     private val recentPlaceCollection: CollectionReference
-    get() = firestore.collection("recentplace")
+    get() = firestore.collection("recent_place")
 
     override suspend fun saveRecentPlace(userId: String, addressComponents: List<String>) {
         val areaIdentifier = StringBuilder()

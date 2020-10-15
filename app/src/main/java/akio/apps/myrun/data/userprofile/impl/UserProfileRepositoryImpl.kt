@@ -42,8 +42,8 @@ class UserProfileRepositoryImpl @Inject constructor(
             .document(userId)
     }
 
-    private fun getAvatarStorage(userId: String) =
-        firebaseStorage.getReference("$FIRESTORE_USER_PROFILE_DOCUMENT/${userId}")
+    private fun getAvatarStorage() =
+        firebaseStorage.getReference("$FIREBASE_STORAGE_USER_FOLDER")
 
     @ExperimentalCoroutinesApi
     override fun getUserProfileFlow(userId: String): Flow<Resource<UserProfile>> = callbackFlow<Resource<UserProfile>> {
@@ -109,10 +109,7 @@ class UserProfileRepositoryImpl @Inject constructor(
         }
 
         val avatarDownloadUri = profileEditData.avatarFile?.let {
-            FirebaseStorageUtils.uploadLocalBitmap(
-                getAvatarStorage(currentUser.uid), it,
-                AVATAR_SCALED_SIZE
-            )
+            FirebaseStorageUtils.uploadLocalBitmap(getAvatarStorage(), userId, it, AVATAR_SCALED_SIZE)
         }
 
         val builder = createChangeRequestBuilder()
@@ -139,7 +136,8 @@ class UserProfileRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        const val FIRESTORE_USER_PROFILE_DOCUMENT = "userprofile"
+        const val FIRESTORE_USER_PROFILE_DOCUMENT = "user_profile"
+        const val FIREBASE_STORAGE_USER_FOLDER = "user_avatar"
 
         const val AVATAR_SCALED_SIZE = 512 //px
     }

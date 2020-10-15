@@ -32,7 +32,7 @@ class PhotoSelectionDelegate(
 					1 -> requestPermissions(AppPermissions.pickPhotoPermissions, requestCodes.rcPickPhotoPermissions)
 				}
 			}
-			.create()
+			.show()
     }
 
     private fun requestPermissions(permissions: Array<String>, requestCode: Int) {

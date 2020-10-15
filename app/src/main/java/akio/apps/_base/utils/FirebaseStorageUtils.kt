@@ -2,18 +2,15 @@ package akio.apps._base.utils
 
 import akio.apps._base.ui.BitmapUtils
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.util.*
 
 object FirebaseStorageUtils {
 
-    suspend fun uploadBitmap(storageRef: StorageReference, bitmap: Bitmap, scaledSize: Int): Uri {
-        val storeName = UUID.randomUUID().toString()
+    suspend fun uploadBitmap(storageRef: StorageReference, storeName: String, bitmap: Bitmap, scaledSize: Int): Uri {
         val photoRef = storageRef.child(storeName)
 
         val uploadBitmap = if (scaledSize != 1)
@@ -30,9 +27,9 @@ object FirebaseStorageUtils {
         return photoRef.downloadUrl.await()
     }
 
-    suspend fun uploadLocalBitmap(storage: StorageReference, imageFile: File, scaledSize: Int): Uri? {
+    suspend fun uploadLocalBitmap(storage: StorageReference, storeName: String, imageFile: File, scaledSize: Int): Uri? {
         val imageBitmap = BitmapUtils.decodeSampledFile(imageFile.absolutePath, scaledSize, scaledSize)
-        val downloadUrl = uploadBitmap(storage, imageBitmap, 1)
+        val downloadUrl = uploadBitmap(storage, storeName, imageBitmap, 1)
         imageBitmap.recycle()
 
         return downloadUrl
