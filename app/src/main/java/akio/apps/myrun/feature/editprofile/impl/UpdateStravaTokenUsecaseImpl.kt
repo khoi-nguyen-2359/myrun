@@ -12,7 +12,7 @@ class UpdateStravaTokenUsecaseImpl @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
     private val stravaTokenStorage: StravaTokenStorage
 ) : UpdateStravaTokenUsecase {
-    override fun updateStravaToken(stravaToken: ExternalAppToken.StravaToken) {
+    override suspend fun updateStravaToken(stravaToken: ExternalAppToken.StravaToken) {
         val accountId = userAuthenticationState.getUserAccountId()
             ?: return
 
