@@ -1,11 +1,12 @@
 package akio.apps.myrun.data.externalapp._di
 
-import akio.apps.myrun.STRAVA_BASE_ENDPOINT
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.StravaAuthenticator
+import akio.apps.myrun.data.externalapp.StravaTokenRepository
 import akio.apps.myrun.data.externalapp.impl.StravaApi
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.externalapp.impl.ExternalAppProvidersRepositoryImpl
+import akio.apps.myrun.data.externalapp.impl.StravaTokenRepositoryImpl
 import akio.apps.myrun.data.externalapp.impl.StravaTokenStorageImpl
 import android.content.Context
 import android.content.SharedPreferences
@@ -28,6 +29,9 @@ class ExternalAppDataModule {
 
         @Binds
         fun stravaTokenStorage(storageImpl: StravaTokenStorageImpl): StravaTokenStorage
+
+        @Binds
+        fun stravaTokenRepository(repositoryImpl: StravaTokenRepositoryImpl): StravaTokenRepository
     }
 
     @Provides
@@ -60,6 +64,10 @@ class ExternalAppDataModule {
 
     companion object {
         const val PREFS_STRAVA_TOKEN = "ExternalAppDataModule.PREFS_STRAVA_TOKEN"
+
+        const val STRAVA_APP_ID = "54817"
+        const val STRAVA_APP_SECRET = "805c1da4993b9439d583d4264809b50270ebae3a"
+        const val STRAVA_BASE_ENDPOINT = "https://www.strava.com/"
 
         const val NAME_STRAVA_GSON = "ExternalAppDataModule.NAME_STRAVA_GSON"
         const val NAME_STRAVA_TOKEN_PREFERENCES = "ExternalAppDataModule.NAME_STRAVA_TOKEN_PREFERENCES"

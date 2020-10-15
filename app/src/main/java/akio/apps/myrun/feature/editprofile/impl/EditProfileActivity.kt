@@ -5,11 +5,11 @@ import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.getNoneEmptyTextOrNull
 import akio.apps._base.ui.getTextAsString
 import akio.apps.myrun.R
-import akio.apps.myrun.STRAVA_APP_ID
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.ImageLoaderUtils
 import akio.apps.myrun._base.utils.PhotoSelectionDelegate
 import akio.apps.myrun._di.createViewModelInjectionDelegate
+import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule.Companion.STRAVA_APP_ID
 import akio.apps.myrun.data.externalapp.model.RunningApp
 import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.UserProfile

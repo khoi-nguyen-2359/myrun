@@ -1,11 +1,11 @@
 package akio.apps.myrun.feature.strava._di
 
-import akio.apps.myrun.STRAVA_APP_ID
-import akio.apps.myrun.STRAVA_APP_SECRET
-import akio.apps.myrun.STRAVA_BASE_ENDPOINT
 import akio.apps.myrun.data.externalapp.StravaAuthenticator
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
+import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule.Companion.STRAVA_APP_ID
+import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule.Companion.STRAVA_APP_SECRET
+import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule.Companion.STRAVA_BASE_ENDPOINT
 import akio.apps.myrun.feature.strava.impl.StravaAuthenticatorImpl
 import akio.apps.myrun.feature.editprofile.UpdateStravaTokenUsecase
 import akio.apps.myrun.feature.strava.ExportRunToFileUsecase
