@@ -1,15 +1,5 @@
 package akio.apps.myrun._base.utils
 
-import android.widget.ImageView
-import com.bumptech.glide.Glide
+import com.bumptech.glide.request.BaseRequestOptions
 
-object ImageLoaderUtils {
-    fun loadCircleCropAvatar(imageView: ImageView, avatarUrl: Any?, size: Int? = null) {
-        Glide.with(imageView)
-            .load(avatarUrl)
-            .apply { if (size != null) override(size) }
-            .centerCrop()
-            .circleCrop()
-            .into(imageView)
-    }
-}
+fun <T:BaseRequestOptions<T>> BaseRequestOptions<T>.circleCenterCrop() = this.centerCrop().circleCrop()

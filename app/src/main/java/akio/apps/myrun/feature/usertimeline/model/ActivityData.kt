@@ -4,8 +4,14 @@ import akio.apps.myrun.data.activity.ActivityType
 
 data class ActivityData(
     override val id: String,
-    override val activityType: ActivityType,
+
+    // user info
     override val userId: String,
+    override val userName: String?,
+    override val userAvatar: String?,
+
+    // activity info
+    override val activityType: ActivityType,
     override val name: String,
     override val routeImage: String,
     override val startTime: Long,

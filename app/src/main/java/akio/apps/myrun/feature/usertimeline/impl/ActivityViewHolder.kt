@@ -1,7 +1,9 @@
 package akio.apps.myrun.feature.usertimeline.impl
 
+import akio.apps._base.ui.getResources
 import akio.apps._base.ui.getString
 import akio.apps.myrun.R
+import akio.apps.myrun._base.utils.circleCenterCrop
 import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.databinding.ItemUserTimelineActivityBinding
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
@@ -20,6 +22,18 @@ class ActivityViewHolder(
 ) : RecyclerView.ViewHolder(viewBinding.root) {
 
     fun bind(activity: Activity) = viewBinding.apply {
+        activity.userAvatar?.let { userAvatar ->
+            Glide.with(itemView)
+                .load(userAvatar)
+                .override(getResources().getDimensionPixelSize(R.dimen.user_timeline_avatar_size))
+                .circleCenterCrop()
+                .into(userAvatarImageView)
+        }
+
+        activity.userName?.let { userName ->
+            userNameTextView.text = userName
+        }
+
         Glide.with(itemView)
             .load(activity.routeImage)
             .placeholder(R.drawable.ic_run_circle)

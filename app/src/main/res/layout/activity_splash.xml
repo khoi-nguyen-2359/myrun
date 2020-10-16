@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
-        android:layout_marginTop="@dimen/common_item_section_vertical_spacing"
+        android:layout_marginTop="@dimen/common_page_section_vertical_spacing"
         android:layout_width="@dimen/user_timeline_loading_progress_size"
         android:layout_height="@dimen/user_timeline_loading_progress_size"
         app:layout_constraintEnd_toEndOf="parent"
