@@ -33,7 +33,7 @@
             android:text="@string/sign_in_with_facebook_button" />
 
         <TextView
-            android:layout_marginVertical="@dimen/common_item_section_vertical_spacing"
+            android:layout_marginVertical="@dimen/common_page_section_vertical_spacing"
             android:text="@string/sign_in_option_separator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

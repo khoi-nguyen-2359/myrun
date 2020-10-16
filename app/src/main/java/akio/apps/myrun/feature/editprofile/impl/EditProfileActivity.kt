@@ -6,8 +6,8 @@ import akio.apps._base.ui.getNoneEmptyTextOrNull
 import akio.apps._base.ui.getTextAsString
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
-import akio.apps.myrun._base.utils.ImageLoaderUtils
 import akio.apps.myrun._base.utils.PhotoSelectionDelegate
+import akio.apps.myrun._base.utils.circleCenterCrop
 import akio.apps.myrun._di.createViewModelInjectionDelegate
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule.Companion.STRAVA_APP_ID
 import akio.apps.myrun.data.externalapp.model.RunningApp
@@ -29,6 +29,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.PhoneAuthCredential
 import java.io.File
@@ -175,8 +176,12 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
         weightEditText.setText(userProfile.weight?.let { bodyDimensFormat.format(it) })
         heightEditText.setText(userProfile.height?.let { bodyDimensFormat.format(it) })
 
-        userProfile.photo?.let {
-            ImageLoaderUtils.loadCircleCropAvatar(avatarImageView, it, resources.getDimensionPixelSize(R.dimen.profile_avatar_size))
+        userProfile.photo?.let { userPhoto ->
+            Glide.with(this@EditProfileActivity)
+                .load(userPhoto)
+                .override(resources.getDimensionPixelSize(R.dimen.profile_avatar_size))
+                .circleCenterCrop()
+                .into(avatarImageView)
         }
     }
 
@@ -262,7 +267,11 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
 
         croppedPhotoFile = data.getSerializableExtra(CropAvatarActivity.RESULT_CROPPED_AVATAR_FILE) as File
 
-        ImageLoaderUtils.loadCircleCropAvatar(viewBinding.avatarImageView, croppedPhotoFile, resources.getDimensionPixelSize(R.dimen.profile_avatar_size))
+        Glide.with(this)
+            .load(croppedPhotoFile)
+            .override(resources.getDimensionPixelSize(R.dimen.profile_avatar_size))
+            .circleCenterCrop()
+            .into(viewBinding.avatarImageView)
     }
 
     private fun checkReauthenticateResult(requestCode: Int, resultCode: Int) {

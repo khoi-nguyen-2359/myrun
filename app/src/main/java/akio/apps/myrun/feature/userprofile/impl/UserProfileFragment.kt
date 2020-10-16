@@ -6,7 +6,7 @@ import akio.apps._base.ui.inflate
 import akio.apps._base.ui.setVisibleOrGone
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
-import akio.apps.myrun._base.utils.ImageLoaderUtils
+import akio.apps.myrun._base.utils.circleCenterCrop
 import akio.apps.myrun._base.view.TextField
 import akio.apps.myrun._di.createViewModelInjectionDelegate
 import akio.apps.myrun.data.externalapp.model.ExternalProviders
@@ -22,6 +22,7 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.bumptech.glide.Glide
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -140,8 +141,12 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
     private fun fillUserProfile(updatedUserProfile: UserProfile) {
         viewBinding.apply {
-            updatedUserProfile.photo?.let {
-                ImageLoaderUtils.loadCircleCropAvatar(avatarImage, it, resources.getDimensionPixelSize(R.dimen.profile_avatar_size))
+            updatedUserProfile.photo?.let { userPhoto ->
+                Glide.with(requireContext())
+                    .load(userPhoto)
+                    .override(resources.getDimensionPixelSize(R.dimen.profile_avatar_size))
+                    .circleCenterCrop()
+                    .into(avatarImage)
             }
 
             userNameTextField.setValue(updatedUserProfile.name)

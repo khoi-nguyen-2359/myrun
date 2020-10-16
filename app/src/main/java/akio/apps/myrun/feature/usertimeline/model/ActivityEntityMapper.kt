@@ -8,7 +8,7 @@ import javax.inject.Inject
 class ActivityEntityMapper @Inject constructor() {
     fun map(entity: ActivityEntity): Activity {
         val activityData = entity.run {
-            ActivityData(id, activityType, userId, name, routeImage, startTime, endTime, duration, distance, encodedPolyline)
+            ActivityData(id, userId, userName, userAvatar, activityType, name, routeImage, startTime, endTime, duration, distance, encodedPolyline)
         }
 
         return when (entity) {

@@ -4,8 +4,14 @@ import akio.apps.myrun.data.activity.ActivityType
 
 interface Activity {
     val id: String
-    val activityType: ActivityType
+
+    // user info
     val userId: String
+    val userName: String?
+    val userAvatar: String?
+
+    // activity info
+    val activityType: ActivityType
     val name: String
     val routeImage: String
     val startTime: Long
