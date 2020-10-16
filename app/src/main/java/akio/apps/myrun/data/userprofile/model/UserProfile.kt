@@ -18,5 +18,4 @@ data class UserProfile(
 		DecimalFormat("#.# kg").format(it)
 	}
 
-	fun extractUserAccount() = UserAccount(accountId, email, phone)
 }

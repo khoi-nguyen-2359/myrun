@@ -28,7 +28,7 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
         val duration = routeTrackingState.getTrackingDuration()
         val distance = routeTrackingState.getRouteDistance()
         val encodedPolyline = PolyUtil.encode(routeTrackingLocationRepository.getAllLocations().map { it.toGmsLatLng() })
-        val activityData: ActivityEntity = ActivityDataEntity("", userAccount.uid, activityType, "", "", startTime, endTime, duration, distance, encodedPolyline)
+        val activityData: ActivityEntity = ActivityDataEntity("", userAccount.uid, userAccount.displayName, userAccount.photoUrl, activityType, "", "", startTime, endTime, duration, distance, encodedPolyline)
 
         val savingActivity = when (activityType) {
             ActivityType.Running -> {
