@@ -108,6 +108,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     private fun logout() {
         AlertDialog.Builder(requireContext())
             .setMessage(R.string.profile_logout_confirmation)
+            .setNegativeButton(R.string.action_no, null)
             .setPositiveButton(R.string.action_yes) { _, _ ->
                 profileViewModel.logout()
                 startActivity(SplashActivity.clearTaskIntent(requireContext()))
