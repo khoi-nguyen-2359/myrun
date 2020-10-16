@@ -19,10 +19,12 @@ class UserAuthenticationStateImpl @Inject constructor(
 ) : UserAuthenticationState {
 
     @ExperimentalCoroutinesApi
-    override fun getUserAccountFlow(): Flow<UserAccount> = callbackFlow {
+    override fun getUserAccountFlow(): Flow<UserAccount?> = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener {
             it.currentUser?.let { firebaseUser ->
                 sendBlocking(firebaseUserMapper.map(firebaseUser))
+            } ?: run {
+                sendBlocking(null)
             }
         }
 
