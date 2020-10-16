@@ -2,10 +2,14 @@ package akio.apps.myrun.data.activity
 
 data class ActivityDataEntity(
     override val id: String,
+
+    // user info
     override val userId: String,
-    override val activityType: ActivityType,
+    override val userName: String?,
+    override val userAvatar: String?,
 
     // info
+    override val activityType: ActivityType,
     override val name: String,
     override val routeImage: String,
 

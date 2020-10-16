@@ -5,12 +5,18 @@ import com.google.firebase.firestore.PropertyName
 data class FirestoreActivity(
     @JvmField @PropertyName("id")
     val id: String = "",
+
+    // user info
     @JvmField @PropertyName("userId")
     val userId: String = "",
+    @JvmField @PropertyName("userName")
+    val userName: String? = null,
+    @JvmField @PropertyName("userAvatar")
+    val userAvatar: String? = null,
+
+    // activity info
     @JvmField @PropertyName("activityType")
     val activityType: FirestoreActivityType = FirestoreActivityType.Unknown,
-
-    // info
     @JvmField @PropertyName("name")
     val name: String = "",
     @JvmField @PropertyName("routeImage")

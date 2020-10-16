@@ -14,7 +14,7 @@ class FirestoreActivityMapper @Inject constructor() {
 
         val activityData = input.run {
             ActivityDataEntity(
-                id, userId, activityType, name, routeImage, startTime, endTime, duration, distance, encodedPolyline
+                id, userId, userName, userAvatar, activityType, name, routeImage, startTime, endTime, duration, distance, encodedPolyline
             )
         }
 
@@ -45,6 +45,8 @@ class FirestoreActivityMapper @Inject constructor() {
             FirestoreActivity(
                 id = createdId,
                 userId = userId,
+                userName = userName,
+                userAvatar = userAvatar,
                 activityType = activityType,
                 name = name,
                 routeImage = uploadedUri.toString(),
