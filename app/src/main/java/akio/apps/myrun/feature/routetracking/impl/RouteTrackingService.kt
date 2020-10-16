@@ -10,6 +10,9 @@ import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun._base.utils.toGmsLatLng
+import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.feature.routetracking.ClearRouteTrackingStateUsecase
+import akio.apps.myrun.feature.routetracking.usecase.ClearRouteTrackingStateUsecaseImpl
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
@@ -40,6 +43,12 @@ class RouteTrackingService : Service() {
     @Inject
     lateinit var routeTrackingState: RouteTrackingState
 
+    @Inject
+    lateinit var userAuthenticationState: UserAuthenticationState
+
+    @Inject
+    lateinit var clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
+
     private val exceptionHandler = CoroutineExceptionHandler { context, exception ->
         Timber.e(exception)
     }
@@ -61,6 +70,22 @@ class RouteTrackingService : Service() {
         AndroidInjection.inject(this)
 
         createNotificationChannel()
+
+        trackUserAuthenticationState()
+    }
+
+    /**
+     * Track to stop service if user is logged out
+     */
+    private fun trackUserAuthenticationState() {
+        userAuthenticationState.getUserAccountFlow()
+            .onEach {
+                if (it == null) {
+                    onActionStop()
+                    clearRouteTrackingStateUsecase.clear()
+                }
+            }
+            .launchIn(mainScope)
     }
 
     @SuppressLint("MissingPermission")

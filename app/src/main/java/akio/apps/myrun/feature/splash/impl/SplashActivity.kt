@@ -29,17 +29,11 @@ class SplashActivity: AppCompatActivity() {
         observeEvent(splashViewModel.error, dialogDelegate::showExceptionAlert)
 
         observe(splashViewModel.isUserSignedIn) { isSignedIn ->
-            if (!isSignedIn) {
-                startActivityForResult(SignInActivity.launchIntent(this), RC_SIGN_IN)
-            }
-        }
-
-        observe(splashViewModel.isRouteTrackingInProgress) { isTracking ->
-            finish()
-            if (isTracking) {
-                startActivity(RouteTrackingActivity.launchIntent(this@SplashActivity))
-            } else {
+            if (isSignedIn) {
+                finish()
                 startActivity(HomeActivity.launchIntent(this@SplashActivity))
+            } else {
+                startActivityForResult(SignInActivity.launchIntent(this), RC_SIGN_IN)
             }
         }
     }
