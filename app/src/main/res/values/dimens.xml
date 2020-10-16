@@ -14,4 +14,5 @@
     <dimen name="user_profile_section_spacing">24dp</dimen>
     <dimen name="text_size_body_1">16sp</dimen>
     <dimen name="text_size_body_2">14sp</dimen>
+    <dimen name="user_timeline_avatar_size">42dp</dimen>
 </resources>

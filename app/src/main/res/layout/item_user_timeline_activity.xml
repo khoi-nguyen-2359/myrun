@@ -10,15 +10,39 @@
     android:elevation="@dimen/item_user_timeline_elevation"
     android:paddingTop="@dimen/common_item_vertical_padding">
 
+    <ImageView
+        tools:background="@color/colorAccent"
+        android:id="@+id/user_avatar_image_view"
+        android:layout_width="@dimen/user_timeline_avatar_size"
+        android:layout_height="@dimen/user_timeline_avatar_size"
+        android:layout_marginStart="@dimen/common_item_horizontal_padding"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/user_name_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="@dimen/common_item_horizontal_padding"
+        android:lines="1"
+        android:textColor="@color/darkText"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/user_avatar_image_view"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="User" />
+
     <TextView
         android:id="@+id/activity_time_text_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/common_item_horizontal_padding"
         android:layout_marginEnd="@dimen/common_item_horizontal_padding"
         android:textColor="#000"
         android:textSize="12sp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/user_name_text_view"
+        app:layout_constraintTop_toBottomOf="@id/user_name_text_view"
         tools:text="Today at 6:30am" />
 
     <TextView
@@ -26,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/common_item_horizontal_padding"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="@dimen/common_item_horizontal_padding"
         android:textColor="#000"
         android:textSize="18sp"
