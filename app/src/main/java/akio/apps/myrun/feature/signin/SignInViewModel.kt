@@ -10,4 +10,5 @@ abstract class SignInViewModel : BaseViewModel() {
     abstract val signInSuccessResult: LiveData<Event<SignInSuccessResult>>
     abstract fun signInWithFirebasePhoneCredential(phoneAuthCredential: PhoneAuthCredential)
     abstract fun signInWithFacebookToken(tokenValue: String)
+    abstract fun signInWithGoogleToken(googleIdToken: String)
 }

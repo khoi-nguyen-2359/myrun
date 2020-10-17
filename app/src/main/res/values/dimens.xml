@@ -15,4 +15,5 @@
     <dimen name="text_size_body_1">16sp</dimen>
     <dimen name="text_size_body_2">14sp</dimen>
     <dimen name="user_timeline_avatar_size">42dp</dimen>
+    <dimen name="sign_in_page_horizontal_padding">48dp</dimen>
 </resources>

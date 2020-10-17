@@ -14,7 +14,7 @@ import akio.apps.myrun.feature.editprofile._di.EditProfileFeatureModule
 import akio.apps.myrun.feature.strava._di.StravaConnectFeatureModule
 import akio.apps.myrun.feature.usertimeline._di.UserTimelineFeatureModule
 import akio.apps.myrun.feature.routetracking._di.RouteTrackingFeatureModule
-import akio.apps.myrun.feature.signin.SignInFeatureModule
+import akio.apps.myrun.feature.signin._di.SignInFeatureModule
 import akio.apps.myrun.feature.splash._di.SplashFeatureModule
 import akio.apps.myrun.feature.userprofile._di.UserProfileFeatureModule
 import dagger.BindsInstance
