@@ -13,6 +13,7 @@ import akio.apps.myrun.data.externalapp.model.ExternalProviders
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.databinding.FragmentUserProfileBinding
 import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
+import akio.apps.myrun.feature.signin.impl.SignInActivity
 import akio.apps.myrun.feature.splash.impl.SplashActivity
 import akio.apps.myrun.feature.userprofile.UserProfileViewModel
 import android.content.Context
@@ -143,6 +144,9 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 facebookButton.isEnabled = true
                 facebookButton.setText(R.string.profile_link_to_fb_button)
                 LoginManager.getInstance().registerCallback(facebookCallbackManager, fbCallback)
+                facebookButton.setOnClickListener {
+                    LoginManager.getInstance().logInWithReadPermissions(this@UserProfileFragment, SignInActivity.FB_LOGIN_PERMISSIONS)
+                }
             }
         }
     }
