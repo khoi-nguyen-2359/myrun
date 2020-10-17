@@ -1,42 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingStart="@dimen/common_page_horizontal_padding"
         android:paddingEnd="@dimen/common_page_horizontal_padding">
 
-        <TextView
-            android:layout_marginTop="100dp"
-            android:layout_marginBottom="50dp"
-            android:gravity="center"
-            android:textColor="#000"
-            android:textStyle="bold"
-            android:textSize="30sp"
-            android:text="@string/sign_in_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
         <Button
-            app:icon="@drawable/ic_facebook"
             android:id="@+id/facebook_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/facebook_background"
             android:paddingVertical="@dimen/sign_in_option_vertical_padding"
-            android:text="@string/sign_in_with_facebook_button" />
+            android:text="@string/sign_in_with_facebook_button"
+            app:icon="@drawable/ic_facebook" />
 
         <TextView
-            android:layout_marginVertical="@dimen/common_page_section_vertical_spacing"
-            android:text="@string/sign_in_option_separator"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/common_page_section_vertical_spacing"
+            android:text="@string/sign_in_option_separator" />
 
         <akio.apps.myrun.feature.signin.view.PhoneBox
             android:id="@+id/phoneBox"
