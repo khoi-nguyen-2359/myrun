@@ -42,17 +42,24 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewBinding.apply {
-            editButton.setOnClickListener { openProfileDetails() }
-            logoutButton.setOnClickListener { logout() }
-            swipeRefreshLayout.isEnabled = false
-        }
+        initViews()
+        initObservers()
+    }
 
+    private fun initObservers() {
         profileViewModel.getUserProfileAlive().observe(viewLifecycleOwner, userProfileObserver)
         profileViewModel.isInlineLoading.observe(viewLifecycleOwner, inlineLoadingObserver)
         profileViewModel.isFacebookAccountLinked().observe(viewLifecycleOwner, facebookLinkObserver)
         profileViewModel.isInProgress.observe(viewLifecycleOwner, dialogDelegate::toggleProgressDialog)
         profileViewModel.getProvidersAlive().observe(viewLifecycleOwner, providersObserver)
+    }
+
+    private fun initViews() {
+        viewBinding.apply {
+            editButton.setOnClickListener { openProfileDetails() }
+            logoutButton.setOnClickListener { logout() }
+            swipeRefreshLayout.isEnabled = false
+        }
     }
 
     private val providersObserver = Observer<Resource<ExternalProviders>> {

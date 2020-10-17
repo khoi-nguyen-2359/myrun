@@ -3,6 +3,7 @@ package akio.apps.myrun.feature.signin.impl
 import akio.apps._base.lifecycle.Event
 import akio.apps.myrun.feature.signin.SignInViewModel
 import akio.apps.myrun.feature.signin.SignInWithFacebookUsecase
+import akio.apps.myrun.feature.signin.SignInWithGoogleUsecase
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.PhoneAuthCredential
@@ -10,6 +11,7 @@ import javax.inject.Inject
 
 class SignInViewModelImpl @Inject constructor(
     private val signInWithFacebookUsecase: SignInWithFacebookUsecase,
+    private val signInWithGoogleUsecase: SignInWithGoogleUsecase,
     private val signInWithPhoneUsecase: FirebaseSignInWithPhoneUsecase
 ) : SignInViewModel() {
 
@@ -26,6 +28,13 @@ class SignInViewModelImpl @Inject constructor(
     override fun signInWithFacebookToken(tokenValue: String) {
         launchCatching {
             val result = signInWithFacebookUsecase.signInWithFacebookAccessToken(tokenValue)
+            _signInSuccessResult.value = Event(result)
+        }
+    }
+
+    override fun signInWithGoogleToken(googleIdToken: String) {
+        launchCatching {
+            val result = signInWithGoogleUsecase.signInWithGoogleToken(googleIdToken)
             _signInSuccessResult.value = Event(result)
         }
     }
