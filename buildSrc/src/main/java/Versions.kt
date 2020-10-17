@@ -40,13 +40,7 @@ object Versions {
     const val places = "2.4.0"
     const val androidMapUtils = "1.1.0"
 
-    const val firebaseCore = "17.5.1"
-    const val firebaseFirestore = "21.7.1"
-    const val firebaseAuth = "19.4.0"
-    const val firebaseAnalytics = "17.6.0"
-    const val firebaseCrashlytics = "17.2.2"
-    const val firebaseStorage = "19.2.0"
-    const val crashlytics = "2.10.1"
+    const val firebaseBom = "25.12.0"
 
     const val dataStore = "1.0.0-alpha01"
 }

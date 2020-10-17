@@ -101,12 +101,12 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$Versions.lifecycle"
     implementation "androidx.lifecycle:lifecycle-common-java8:$Versions.lifecycle"
 
-    implementation "com.google.firebase:firebase-core:$Versions.firebaseCore"
-    implementation "com.google.firebase:firebase-firestore:$Versions.firebaseFirestore"
-    implementation "com.google.firebase:firebase-auth:$Versions.firebaseAuth"
-    implementation "com.google.firebase:firebase-analytics:$Versions.firebaseAnalytics"
-    implementation "com.google.firebase:firebase-crashlytics:$Versions.firebaseCrashlytics"
-    implementation "com.google.firebase:firebase-storage:$Versions.firebaseStorage"
+    implementation platform("com.google.firebase:firebase-bom:$Versions.firebaseBom")
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-storage-ktx'
 
     implementation "com.jakewharton.timber:timber:$Versions.timber"
 
