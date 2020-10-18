@@ -17,4 +17,6 @@
     <dimen name="user_timeline_avatar_size">42dp</dimen>
     <dimen name="sign_in_page_horizontal_padding">48dp</dimen>
     <dimen name="user_timeline_listing_padding_bottom">100dp</dimen>
+    <dimen name="common_no_topbar_page_top_margin">25dp</dimen>
+    <dimen name="phone_box_corner_radius">4dp</dimen>
 </resources>

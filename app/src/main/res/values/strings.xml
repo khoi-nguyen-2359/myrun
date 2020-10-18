@@ -77,6 +77,7 @@
     <string name="edit_user_profile_mobile_number_update_success_message">Your phone number has been changed</string>
     <string name="action_no">No</string>
     <string name="sign_in_with_google_button">Sign in with Google</string>
+    <string name="action_sign_out">Sign out</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>

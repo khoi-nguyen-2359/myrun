@@ -42,6 +42,7 @@
             android:text="@string/sign_in_option_separator" />
 
         <akio.apps.myrun.feature.signin.view.PhoneBox
+            android:background="@drawable/common_edittext_background"
             android:id="@+id/phoneBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
