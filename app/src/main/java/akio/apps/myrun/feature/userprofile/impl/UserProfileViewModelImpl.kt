@@ -15,7 +15,6 @@ import javax.inject.Inject
 
 class UserProfileViewModelImpl @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
-    private val linkFacebookUsecase: LinkFacebookUsecase,
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val getProviderTokensUsecase: GetProviderTokensUsecase,
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
@@ -28,9 +27,6 @@ class UserProfileViewModelImpl @Inject constructor(
 
     private val liveUserProfile = MutableLiveData<UserProfile>()
     override fun getUserProfileAlive(): LiveData<UserProfile> = liveUserProfile
-
-    private val isFacebookAccountLinked = MutableLiveData<Boolean>(userAuthenticationState.isLinkedWithFacebook())
-    override fun isFacebookAccountLinked(): LiveData<Boolean> = isFacebookAccountLinked
 
     private val liveUserProfileResource = getUserProfileUsecase.getUserProfile()
 
@@ -53,13 +49,6 @@ class UserProfileViewModelImpl @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         liveUserProfileResource.removeObserver(userProfileResourceObserver)
-    }
-
-    override fun linkFacebookAccount(accessTokenValue: String) {
-        launchCatching {
-            linkFacebookUsecase.linkFacebook(accessTokenValue)
-            isFacebookAccountLinked.postValue(userAuthenticationState.isLinkedWithFacebook())
-        }
     }
 
     override fun logout() {

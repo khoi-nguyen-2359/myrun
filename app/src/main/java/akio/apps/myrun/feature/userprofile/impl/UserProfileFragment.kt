@@ -35,10 +35,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     private val dialogDelegate by lazy { DialogDelegate(requireContext()) }
     private val viewModelInjectionDelegate by lazy { createViewModelInjectionDelegate() }
     private val viewBinding by lazy { FragmentUserProfileBinding.bind(requireView()) }
-
     private val profileViewModel by lazy { viewModelInjectionDelegate.getViewModel<UserProfileViewModel>() }
-
-    private val facebookCallbackManager by lazy { CallbackManager.Factory.create() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -50,7 +47,6 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     private fun initObservers() {
         profileViewModel.getUserProfileAlive().observe(viewLifecycleOwner, userProfileObserver)
         profileViewModel.isInlineLoading.observe(viewLifecycleOwner, inlineLoadingObserver)
-        profileViewModel.isFacebookAccountLinked().observe(viewLifecycleOwner, facebookLinkObserver)
         profileViewModel.isInProgress.observe(viewLifecycleOwner, dialogDelegate::toggleProgressDialog)
         profileViewModel.getProvidersAlive().observe(viewLifecycleOwner, providersObserver)
     }
@@ -67,28 +63,12 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         it.data?.let { showLinkedRunningApps(it) }
     }
 
-    private val facebookLinkObserver = Observer<Boolean> {
-        setupFacebookButton(it)
-    }
-
     private val inlineLoadingObserver = Observer<Boolean> {
         viewBinding.swipeRefreshLayout.isRefreshing = it
     }
 
     private val userProfileObserver = Observer<UserProfile> {
         fillUserProfile(it)
-    }
-
-    private val fbCallback = object : FacebookCallback<LoginResult> {
-        override fun onSuccess(result: LoginResult) {
-            profileViewModel.linkFacebookAccount(result.accessToken.token)
-        }
-
-        override fun onCancel() {}
-
-        override fun onError(error: FacebookException?) {
-            dialogDelegate.showErrorAlert(error?.message)
-        }
     }
 
     private fun showLinkedRunningApps(providers: ExternalProviders) {
@@ -122,33 +102,6 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 startActivity(SplashActivity.clearTaskIntent(requireContext()))
             }
             .show()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        facebookCallbackManager.onActivityResult(requestCode, resultCode, data)
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-
-        LoginManager.getInstance().unregisterCallback(facebookCallbackManager)
-    }
-
-    private fun setupFacebookButton(isLinked: Boolean) {
-        viewBinding.apply {
-            if (isLinked) {
-                facebookButton.setText(R.string.profile_linked_with_fb)
-                facebookButton.isEnabled = false
-            } else {
-                facebookButton.isEnabled = true
-                facebookButton.setText(R.string.profile_link_to_fb_button)
-                LoginManager.getInstance().registerCallback(facebookCallbackManager, fbCallback)
-                facebookButton.setOnClickListener {
-                    LoginManager.getInstance().logInWithReadPermissions(this@UserProfileFragment, SignInActivity.FB_LOGIN_PERMISSIONS)
-                }
-            }
-        }
     }
 
     private fun fillUserProfile(updatedUserProfile: UserProfile) {
