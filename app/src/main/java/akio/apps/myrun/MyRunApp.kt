@@ -29,8 +29,7 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
     @Inject
     lateinit var routeTrackingState: RouteTrackingState
 
-    lateinit var appComponent: AppComponent
-    private set
+    private lateinit var appComponent: AppComponent
 
     override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
 
