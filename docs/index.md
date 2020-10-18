@@ -14,9 +14,9 @@ While using our Application, we may ask you to provide us with certain personall
 
 ## Log Data
 
-Like many Application operators, we collect information that your browser sends whenever you visit our Application ("Log Data").
+Like many Application operators, we collect information whenever you use our Application ("Log Data").
 
-This Log Data may include information such as your computer's Internet Protocol ("IP") address, browser type, browser version, the pages of our Application that you visit, the time and date of your visit, the time spent on those pages and other statistics.
+This Log Data may include information such as your device's Internet Protocol ("IP") address, device brand, OS version, name of the screens in our Application that you view, the time and date of your view, the time spent on those screens and other statistics.
 
 In addition, we may use third party services such as Google Analytics that collect, monitor and analyze this …
 <br/><br/>
