@@ -1,37 +1,35 @@
-## Welcome to GitHub Pages
+# Privacy Policy
 
-You can use the [editor on GitHub](https://github.com/khoi-nguyen-2359/myrun/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+Last updated: September 22 2020
+<br/><br/><br/>
+My Company ("us", "we", or "our") operates My Run application (the "Application"). This page informs you of our policies regarding the collection, use and disclosure of Personal Information we receive from users of the Site.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+We use your Personal Information only for providing and improving the Application. By using the Application, you agree to the collection and use of information in accordance with this policy.
+<br/><br/>
 
-### Markdown
+## Information Collection And Use
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+While using our Application, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you. Personally identifiable information may include, but is not limited to your name ("Personal Information").
+<br/><br/>
 
-```markdown
-Syntax highlighted code block
+## Log Data
 
-# Header 1
-## Header 2
-### Header 3
+Like many Application operators, we collect information that your browser sends whenever you visit our Application ("Log Data").
 
-- Bulleted
-- List
+This Log Data may include information such as your computer's Internet Protocol ("IP") address, browser type, browser version, the pages of our Application that you visit, the time and date of your visit, the time spent on those pages and other statistics.
 
-1. Numbered
-2. List
+In addition, we may use third party services such as Google Analytics that collect, monitor and analyze this …
+<br/><br/>
 
-**Bold** and _Italic_ and `Code` text
+## Changes To This Privacy Policy
 
-[Link](url) and ![Image](src)
-```
+This Privacy Policy is effective as of September 22 2020 and will remain in effect except with respect to any changes in its provisions in the future, which will be in effect immediately after being posted on this page.
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+We reserve the right to update or change our Privacy Policy at any time and you should check this Privacy Policy periodically. Your continued use of the Service after we post any modifications to the Privacy Policy on this page will constitute your acknowledgment of the modifications and your consent to abide and be bound by the modified Privacy Policy.
 
-### Jekyll Themes
+If we make any material changes to this Privacy Policy, we will notify you either through the email address you have provided us, or by placing a prominent notice on our website.
+<br/><br/><br/>
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/khoi-nguyen-2359/myrun/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+### Contact Us
 
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+If you have any questions about this Privacy Policy, please contact us at akhoi90@gmail.com
