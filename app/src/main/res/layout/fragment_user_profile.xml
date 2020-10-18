@@ -45,7 +45,7 @@
             <androidx.constraintlayout.helper.widget.Flow
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:constraint_referenced_ids="avatar_image,section_spacing_1st,basic_info_section_label_text_view,user_name_text_field,email_text_field,phone_text_field,section_spacing_2nd,physical_info_label_text_view,gender_text_field,height_text_field,weight_text_field,section_spacing_3,linked_apps_container,section_4_spacing,facebook_button,section_5_spacing,logout_button"
+                app:constraint_referenced_ids="avatar_image,section_spacing_1st,basic_info_section_label_text_view,user_name_text_field,email_text_field,phone_text_field,section_spacing_2nd,physical_info_label_text_view,gender_text_field,height_text_field,weight_text_field,section_spacing_3,linked_apps_container,section_4_spacing,section_5_spacing,logout_button"
                 app:flow_maxElementsWrap="1"
                 app:flow_wrapMode="chain"
                 app:layout_constraintBottom_toTopOf="@id/bottom_guideline"
@@ -167,15 +167,6 @@
                 android:id="@+id/section_4_spacing"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/user_profile_section_spacing" />
-
-            <Button
-                android:id="@+id/facebook_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/facebook_background"
-                android:paddingVertical="@dimen/sign_in_option_vertical_padding"
-                tools:text="@string/profile_link_to_fb_button"
-                app:icon="@drawable/ic_facebook" />
 
             <Space
                 android:id="@+id/section_5_spacing"

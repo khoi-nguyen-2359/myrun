@@ -11,9 +11,7 @@ import androidx.lifecycle.LiveData
 abstract class UserProfileViewModel: BaseViewModel() {
     abstract val isInlineLoading: LiveData<Boolean>
     abstract fun getUserProfileAlive(): LiveData<UserProfile>
-    abstract fun isFacebookAccountLinked(): LiveData<Boolean>
     abstract fun getProvidersAlive(): LiveData<Resource<ExternalProviders>>
     abstract fun unlinkProvider(unlinkProviderToken: ProviderToken<out ExternalAppToken>)
     abstract fun logout()
-    abstract fun linkFacebookAccount(accessTokenValue: String)
 }
