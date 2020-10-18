@@ -30,8 +30,8 @@ class SingleFragmentActivity : AppCompatActivity(R.layout.activity_single_fragme
     }
 
     companion object {
-        const val EXT_FRAGMENT_CLASS_NAME = "SingleFragmentActivity.FRAGMENT_FACTORY"
-        const val EXT_FRAGMENT_ARGUMENTS = "SingleFragmentActivity.FRAGMENT_ARGUMENTS"
+        const val EXT_FRAGMENT_CLASS_NAME = "SingleFragmentActivity.EXT_FRAGMENT_CLASS_NAME"
+        const val EXT_FRAGMENT_ARGUMENTS = "SingleFragmentActivity.EXT_FRAGMENT_ARGUMENTS"
 
         inline fun <reified T : Fragment> launchIntent(context: Context, arguments: Bundle? = null): Intent {
             return Intent(context, SingleFragmentActivity::class.java).also {
