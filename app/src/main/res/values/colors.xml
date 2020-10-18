@@ -13,6 +13,7 @@
     <color name="common_error_text">#7f0000</color>
     <color name="user_timeline_welcome_text">#66000000</color>
     <color name="facebook_background">#3b5998</color>
+    <color name="greyStroke">#b34a4a4a</color>
     <color name="greyText">#4a4a4a</color>
     <color name="darkText">#e6222222</color>
 </resources>

@@ -23,7 +23,7 @@ class TextField @JvmOverloads constructor(
 		label = styledAttrs.getString(R.styleable.TextField_tf_label) ?: ""
 		styledAttrs.recycle()
 		
-		setValue("")
+		setValue(" ")
 	}
 	
 	fun setValue(value: String?) {

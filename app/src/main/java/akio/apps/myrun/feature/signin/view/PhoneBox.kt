@@ -42,7 +42,6 @@ class PhoneBox @JvmOverloads constructor(
         viewBinding.phoneCodeSpinner.adapter = PhoneCodeAdapter(context, allEntries.first)
         viewBinding.phoneCodeSpinner.setSelection(allEntries.second)
         viewBinding.phoneNumberEditText.addTextChangedListener(phoneNumberWatcher)
-        setBackgroundResource(R.drawable.phone_box_border_background)
     }
 
     /**
