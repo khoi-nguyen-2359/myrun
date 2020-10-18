@@ -32,6 +32,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.PhoneAuthCredential
+import timber.log.Timber
 import java.io.File
 import java.text.DecimalFormat
 
@@ -133,6 +134,7 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
             return
 
         data.getQueryParameter("error")?.let {
+            Timber.e(it)
             dialogDelegate.showErrorAlert(it)
             return
         }

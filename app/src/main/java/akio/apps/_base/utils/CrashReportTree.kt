@@ -11,8 +11,10 @@ class CrashReportTree : Timber.Tree() {
             return
         }
 
-        FirebaseCrashlytics.getInstance().log(message)
         if (t != null) {
+            if (message.isNotEmpty()) {
+                FirebaseCrashlytics.getInstance().log(message)
+            }
             FirebaseCrashlytics.getInstance().recordException(t)
         }
     }

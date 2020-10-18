@@ -35,6 +35,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
+        internal {
+            initWith release
+            debuggable true
+        }
+
         debug {
             applicationIdSuffix ".debug"
 
