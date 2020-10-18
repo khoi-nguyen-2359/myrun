@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="akio.apps.myrun">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -105,6 +106,13 @@
             </intent-filter>
         </activity>
         <!--        Facebook Login -->
+
+        <!--        Remove the default initializer of WorkManager -->
+        <!--        https://developer.android.com/topic/libraries/architecture/workmanager/advanced/custom-configuration#remove-default-->
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            tools:node="remove" />
 
     </application>
 
