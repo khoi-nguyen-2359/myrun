@@ -13,22 +13,15 @@ import akio.apps.myrun.data.externalapp.model.ExternalProviders
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.databinding.FragmentUserProfileBinding
 import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
-import akio.apps.myrun.feature.signin.impl.SignInActivity
 import akio.apps.myrun.feature.splash.impl.SplashActivity
 import akio.apps.myrun.feature.userprofile.UserProfileViewModel
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
 
 class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
@@ -110,6 +103,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 Glide.with(requireContext())
                     .load(userPhoto)
                     .override(resources.getDimensionPixelSize(R.dimen.profile_avatar_size))
+                    .placeholder(R.drawable.common_avatar_placeholder_image)
                     .circleCenterCrop()
                     .into(avatarImage)
             }

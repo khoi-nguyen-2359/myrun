@@ -26,6 +26,7 @@ class ActivityViewHolder(
             Glide.with(itemView)
                 .load(userAvatar)
                 .override(getResources().getDimensionPixelSize(R.dimen.user_timeline_avatar_size))
+                .placeholder(R.drawable.common_avatar_placeholder_image)
                 .circleCenterCrop()
                 .into(userAvatarImageView)
         }
