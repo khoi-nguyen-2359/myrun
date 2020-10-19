@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.signin.view
 
+import akio.apps._base.ui.inflate
 import akio.apps._base.utils.PhoneNumberHelper
 import akio.apps.myrun.R
 import akio.apps.myrun.databinding.ItemDropdownPhoneCodeBinding
@@ -11,9 +12,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import timber.log.Timber
 import java.util.*
 
@@ -35,13 +34,18 @@ class PhoneBox @JvmOverloads constructor(
         }
     }
 
-    private val viewBinding = MergePhoneBoxBinding.inflate(LayoutInflater.from(context), this)
+    private val phoneCodeSpinner: Spinner
+    private val phoneNumberEditText: EditText
 
     init {
+        inflate(R.layout.merge_phone_box, true)
+        phoneCodeSpinner = findViewById<Spinner>(R.id.phone_code_spinner)
+        phoneNumberEditText = findViewById<EditText>(R.id.phone_number_edit_text)
+
         val allEntries = createPhoneCodeEntries()
-        viewBinding.phoneCodeSpinner.adapter = PhoneCodeAdapter(context, allEntries.first)
-        viewBinding.phoneCodeSpinner.setSelection(allEntries.second)
-        viewBinding.phoneNumberEditText.addTextChangedListener(phoneNumberWatcher)
+        phoneCodeSpinner.adapter = PhoneCodeAdapter(context, allEntries.first)
+        phoneCodeSpinner.setSelection(allEntries.second)
+        phoneNumberEditText.addTextChangedListener(phoneNumberWatcher)
     }
 
     /**
@@ -72,6 +76,13 @@ class PhoneBox @JvmOverloads constructor(
         return Pair(phoneCodeEntries, selectedIndex)
     }
 
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
+
+        phoneCodeSpinner.isEnabled = enabled
+        phoneNumberEditText.isEnabled = enabled
+    }
+
     /**
      * @param numberWithCode number in format +PhoneCode_PhoneNumber
      */
@@ -83,12 +94,12 @@ class PhoneBox @JvmOverloads constructor(
         else
             numberWithCode
 
-        for (index in 0 until viewBinding.phoneCodeSpinner.count) {
-            val phoneCodeEntry = viewBinding.phoneCodeSpinner.getItemAtPosition(index) as PhoneCodeEntry
+        for (index in 0 until phoneCodeSpinner.count) {
+            val phoneCodeEntry = phoneCodeSpinner.getItemAtPosition(index) as PhoneCodeEntry
             val phoneCodeString = phoneCodeEntry.code.toString()
             if (unwrappedNumber.startsWith(phoneCodeString)) {
-                viewBinding.phoneCodeSpinner.setSelection(index)
-                viewBinding.phoneNumberEditText.setText(unwrappedNumber.removePrefix(phoneCodeString))
+                phoneCodeSpinner.setSelection(index)
+                phoneNumberEditText.setText(unwrappedNumber.removePrefix(phoneCodeString))
                 return
             }
         }
@@ -103,11 +114,11 @@ class PhoneBox @JvmOverloads constructor(
         else "+${getPhoneCodeEntry().code}${getPhoneNumber()}"
     }
 
-    private fun getPhoneCodeEntry() = viewBinding.phoneCodeSpinner.selectedItem as PhoneCodeEntry
+    private fun getPhoneCodeEntry() = phoneCodeSpinner.selectedItem as PhoneCodeEntry
 
     fun getPhoneCode() = getPhoneCodeEntry().code
 
-    fun getPhoneNumber() = viewBinding.phoneNumberEditText.text.trim()
+    fun getPhoneNumber() = phoneNumberEditText.text.trim()
 
     interface EventListener {
         fun onPhoneBoxValueChanged(value: String?)

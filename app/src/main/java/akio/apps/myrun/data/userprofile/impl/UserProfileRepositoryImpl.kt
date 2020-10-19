@@ -1,7 +1,6 @@
 package akio.apps.myrun.data.userprofile.impl
 
 import akio.apps._base.data.Resource
-import akio.apps._base.error.LoginSessionExpiredError
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps._base.utils.FirebaseStorageUtils
 import akio.apps.myrun.data.userprofile.UserProfileRepository
@@ -9,9 +8,8 @@ import akio.apps.myrun.data.userprofile.entity.FirestoreUserProfileEntity
 import akio.apps.myrun.data.userprofile.entity.FirestoreUserProfileUpdateMapEntity
 import akio.apps.myrun.data.userprofile.mapper.FirestoreUserProfileMapper
 import akio.apps.myrun.data.userprofile.model.UserProfile
-import akio.apps.myrun.feature.userprofile.impl.ProfileEditData
+import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -95,21 +93,24 @@ class UserProfileRepositoryImpl @Inject constructor(
         val currentUser = firebaseAuth.currentUser
             ?: throw UnauthorizedUserError()
 
-        val avatarDownloadUri = profileEditData.avatarFile?.let {
-            FirebaseStorageUtils.uploadLocalBitmap(getAvatarStorage(), userId, it, AVATAR_SCALED_SIZE)
+        val avatarUri = profileEditData.avatarUri?.toString()
+        val avatarUploadedUri = if (avatarUri != null && avatarUri.startsWith("file://")) {
+            FirebaseStorageUtils.uploadLocalBitmap(getAvatarStorage(), userId, avatarUri, AVATAR_SCALED_SIZE)
+        } else {
+            profileEditData.avatarUri
         }
 
         val builder = createChangeRequestBuilder()
             .setDisplayName(profileEditData.displayName)
-        if (avatarDownloadUri != null) {
-            builder.photoUri = avatarDownloadUri
+        if (avatarUploadedUri != null) {
+            builder.photoUri = avatarUploadedUri
         }
         currentUser.updateProfile(builder.build()).await()
 
         val updateMap = FirestoreUserProfileUpdateMapEntity()
             .apply {
                 displayName(profileEditData.displayName)
-                avatarDownloadUri?.toString()?.let { photoUrl(it) }
+                avatarUploadedUri?.toString()?.let { photoUrl(it) }
                 profileEditData.gender?.name?.let { gender(it) }
                 profileEditData.height?.let { height(it) }
                 profileEditData.weight?.let { weight(it) }

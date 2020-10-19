@@ -18,8 +18,7 @@ import akio.apps.myrun.feature.cropavatar.CropAvatarActivity
 import akio.apps.myrun.feature.editprofile.EditProfileViewModel
 import akio.apps.myrun.feature.signin.impl.OtpDialogFragment
 import akio.apps.myrun.feature.signin.impl.SignInActivity
-import akio.apps.myrun.feature.signin.impl.SignInMethod
-import akio.apps.myrun.feature.userprofile.impl.ProfileEditData
+import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -47,8 +46,7 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
 
     private val stravaRedirectUri by lazy { "${getString(R.string.app_scheme)}://${getString(R.string.strava_callback_host)}" }
 
-    private val onboardingMethod: SignInMethod? by lazy { intent.getSerializableExtra(EXT_IS_ONBOARDING) as SignInMethod? }
-    private val isOnboarding by lazy { onboardingMethod != null }
+    private val isOnboarding: Boolean by lazy { intent.getBooleanExtra(EXT_IS_ONBOARDING, false) }
 
     private val bodyDimensFormat = DecimalFormat("#.#")
 
@@ -123,12 +121,6 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
         croppedPhotoFile?.delete()
     }
 
-    override fun onBackPressed() {
-        if (!isOnboarding) {
-            super.onBackPressed()
-        }
-    }
-
     private fun checkStravaLoginResult(data: Uri) {
         if (!data.toString().startsWith(stravaRedirectUri))
             return
@@ -200,8 +192,8 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
             editProfileVM.updateProfile(userProfileUpdateData)
         }
 
-        when (onboardingMethod) {
-			SignInMethod.Phone -> phoneBox.isEnabled = false
+        if (isOnboarding) {
+			phoneBox.isEnabled = false
         }
     }
 
@@ -230,7 +222,7 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
 				Gender.parse(genderTextView.getNoneEmptyTextOrNull()),
 				heightEditText.getNoneEmptyTextOrNull()?.toFloat(),
 				weightEditText.getNoneEmptyTextOrNull()?.toFloat(),
-				croppedPhotoFile,
+                croppedPhotoFile?.let { Uri.fromFile(it) },
 				phoneBox.getFullNumber()
 			)
         }
@@ -307,9 +299,9 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
 
         const val EXT_IS_ONBOARDING = "EXT_IS_ONBOARDING"
 
-        fun launchIntentForOnboarding(context: Context, signInMethod: SignInMethod): Intent {
+        fun launchIntentForOnboarding(context: Context): Intent {
             val intent = Intent(context, EditProfileActivity::class.java)
-            intent.putExtra(EXT_IS_ONBOARDING, signInMethod)
+            intent.putExtra(EXT_IS_ONBOARDING, true)
             return intent
         }
 
