@@ -12,13 +12,13 @@ import akio.apps.myrun._di.createViewModelInjectionDelegate
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule.Companion.STRAVA_APP_ID
 import akio.apps.myrun.data.externalapp.model.RunningApp
 import akio.apps.myrun.data.userprofile.model.Gender
+import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.databinding.ActivityEditProfileBinding
 import akio.apps.myrun.feature.cropavatar.CropAvatarActivity
 import akio.apps.myrun.feature.editprofile.EditProfileViewModel
 import akio.apps.myrun.feature.signin.impl.OtpDialogFragment
 import akio.apps.myrun.feature.signin.impl.SignInActivity
-import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -35,14 +35,14 @@ import timber.log.Timber
 import java.io.File
 import java.text.DecimalFormat
 
-class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), PhotoSelectionDelegate.EventListener, OtpDialogFragment.EventListener {
+class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), PhotoSelectionDelegate.EventListener, OtpDialogFragment.EventListener {
 
     private var croppedPhotoFile: File? = null
     private val photoSelectionDelegate = PhotoSelectionDelegate(
-		this, null, PhotoSelectionDelegate.RequestCodes(
-			RC_TAKE_PHOTO_PERMISSIONS, RC_PICK_PHOTO_PERMISSIONS, RC_TAKE_PHOTO, RC_PICK_PHOTO
-		), this
-	)
+        this, null, PhotoSelectionDelegate.RequestCodes(
+            RC_TAKE_PHOTO_PERMISSIONS, RC_PICK_PHOTO_PERMISSIONS, RC_TAKE_PHOTO, RC_PICK_PHOTO
+        ), this
+    )
 
     private val stravaRedirectUri by lazy { "${getString(R.string.app_scheme)}://${getString(R.string.strava_callback_host)}" }
 
@@ -87,7 +87,10 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
             onUpdateProfileSuccess()
         }
         observeEvent(editProfileVM.recentLoginRequiredError) {
-            requestReauthenticate()
+            requestReauthenticate(RC_REAUTHENTICATE_FOR_PROFILE_UPDATE)
+        }
+        observeEvent(editProfileVM.phoneNumberReauthenticateError) {
+            requestReauthenticate(RC_REAUTHENTICATE_FOR_PHONE_UPDATE)
         }
     }
 
@@ -105,7 +108,7 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
         super.onAttachFragment(fragment)
 
         when (fragment) {
-			is OtpDialogFragment -> fragment.eventListener = this
+            is OtpDialogFragment -> fragment.eventListener = this
         }
     }
 
@@ -193,14 +196,14 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
         }
 
         if (isOnboarding) {
-			phoneBox.isEnabled = false
+            phoneBox.isEnabled = false
         }
     }
 
-    private fun requestReauthenticate() {
+    private fun requestReauthenticate(requestCode: Int) {
         Toast.makeText(this, R.string.edit_user_profile_session_expired_error_message, Toast.LENGTH_LONG).show()
         val signInIntent = SignInActivity.launchIntent(this)
-        startActivityForResult(signInIntent, RC_REAUTHENTICATE)
+        startActivityForResult(signInIntent, requestCode)
     }
 
     private fun onUpdateProfileSuccess() {
@@ -218,13 +221,13 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
     private fun createUpdateData(): ProfileEditData {
         viewBinding.apply {
             return ProfileEditData(
-				nameEditText.getTextAsString(),
-				Gender.parse(genderTextView.getNoneEmptyTextOrNull()),
-				heightEditText.getNoneEmptyTextOrNull()?.toFloat(),
-				weightEditText.getNoneEmptyTextOrNull()?.toFloat(),
+                nameEditText.getTextAsString(),
+                Gender.parse(genderTextView.getNoneEmptyTextOrNull()),
+                heightEditText.getNoneEmptyTextOrNull()?.toFloat(),
+                weightEditText.getNoneEmptyTextOrNull()?.toFloat(),
                 croppedPhotoFile?.let { Uri.fromFile(it) },
-				phoneBox.getFullNumber()
-			)
+                phoneBox.getFullNumber()
+            )
         }
     }
 
@@ -266,10 +269,15 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
     }
 
     private fun checkReauthenticateResult(requestCode: Int, resultCode: Int) {
-        if (requestCode != RC_REAUTHENTICATE || resultCode != Activity.RESULT_OK)
-            return
+        if (requestCode == RC_REAUTHENTICATE_FOR_PROFILE_UPDATE && resultCode == RESULT_OK) {
+            editProfileVM.updateProfile(createUpdateData())
+        }
 
-        editProfileVM.updateProfile(createUpdateData())
+        if (requestCode == RC_REAUTHENTICATE_FOR_PHONE_UPDATE && resultCode == RESULT_OK) {
+            viewBinding.phoneBox.getFullNumber()?.let { phoneNumber ->
+                openOtp(phoneNumber)
+            }
+        }
     }
 
     private fun checkPhoneUpdateResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -292,8 +300,9 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
         const val RC_TAKE_PHOTO = 3
         const val RC_PICK_PHOTO = 4
         const val RC_UPDATE_PHONE = 5
-        const val RC_REAUTHENTICATE = 6
+        const val RC_REAUTHENTICATE_FOR_PROFILE_UPDATE = 6
         const val RC_CROP_AVATAR = 7
+        const val RC_REAUTHENTICATE_FOR_PHONE_UPDATE = 8
 
         const val TAG_OTP_DIALOG = "TAG_OTP_DIALOG"
 

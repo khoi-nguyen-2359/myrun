@@ -16,12 +16,12 @@ class ActivityPagingSource @Inject constructor(
     private val userFollowRepository: UserFollowRepository
 ): PagingSource<Long, Activity>() {
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Activity> {
-        val userAccount = userAuthenticationState.getUserAccount()
+        val userAccountId = userAuthenticationState.getUserAccountId()
             ?: return LoadResult.Error(UnauthorizedUserError())
 
-        val userIds = userFollowRepository.getUserFollowings(userAccount.uid)
+        val userIds = userFollowRepository.getUserFollowings(userAccountId)
             .toMutableList()
-        userIds.add(userAccount.uid)
+        userIds.add(userAccountId)
 
         val startAfter = params.key ?: System.currentTimeMillis()
         val pageData = activityRepository.getActivitiesByStartTime(userIds, startAfter, params.loadSize)

@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.editprofile.impl
 
+import akio.apps._base.error.LoginSessionExpiredError
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps._base.lifecycle.Event
 import akio.apps.myrun.data.userprofile.entity.FirestoreUserProfileUpdateMapEntity
@@ -36,16 +37,14 @@ class FirebaseUserPhoneNumberDelegate @Inject constructor(
     private val _updatePhoneError = MutableLiveData<Event<Throwable>>()
     override val updatePhoneError: LiveData<Event<Throwable>> = _updatePhoneError
 
+    private val _phoneNumberReauthenticateError = MutableLiveData<Event<Throwable>>()
+    override val phoneNumberReauthenticateError: LiveData<Event<Throwable>> = _phoneNumberReauthenticateError
+
     private fun getUserInfoDocument(userId: String): DocumentReference {
         return firebaseFirestore.collection(FIRESTORE_USER_PROFILE_DOCUMENT)
             .document(userId)
     }
 
-    /**
-     * Exception:
-     * + FirebaseAuthRecentLoginRequiredException
-     * + InvalidUserState
-     */
     override fun updatePhoneNumber(phoneAuthCredential: PhoneAuthCredential) {
         launch {
             _isUpdatingPhoneNumber.postValue(true)
@@ -59,7 +58,7 @@ class FirebaseUserPhoneNumberDelegate @Inject constructor(
             try {
                 currentUser.updatePhoneNumber(phoneAuthCredential).await()
             } catch (expiredException: FirebaseAuthRecentLoginRequiredException) {
-                _updatePhoneError.postValue(Event(expiredException))
+                _phoneNumberReauthenticateError.postValue(Event(LoginSessionExpiredError()))
                 return@launch
             }
 

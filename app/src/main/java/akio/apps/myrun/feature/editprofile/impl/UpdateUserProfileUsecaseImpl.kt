@@ -1,11 +1,10 @@
 package akio.apps.myrun.feature.editprofile.impl
 
-import akio.apps._base.data.Resource
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.userprofile.UserProfileRepository
-import akio.apps.myrun.feature.editprofile.UpdateUserProfileUsecase
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
+import akio.apps.myrun.feature.editprofile.UpdateUserProfileUsecase
 import javax.inject.Inject
 
 class UpdateUserProfileUsecaseImpl @Inject constructor(
@@ -13,13 +12,8 @@ class UpdateUserProfileUsecaseImpl @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState
 ) : UpdateUserProfileUsecase {
 
-    override suspend fun updateUserProfile(profileEditData: ProfileEditData): Resource<Unit> = userAuthenticationState.getUserAccountId()?.let { userId ->
-        return try {
-            userProfileRepository.updateUserProfile(userId, profileEditData)
-            Resource.Success(Unit)
-        } catch (ex: Exception) {
-            Resource.Error(ex)
-        }
+    override suspend fun updateUserProfile(profileEditData: ProfileEditData) = userAuthenticationState.getUserAccountId()?.let { userId ->
+        userProfileRepository.updateUserProfile(userId, profileEditData)
     }
         ?: throw UnauthorizedUserError()
 }

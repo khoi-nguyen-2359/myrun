@@ -78,21 +78,12 @@ class EditProfileViewModelImpl @Inject constructor(
                 return@launchCatching
             }
 
-            when (val result = updateUserProfileUsecase.updateUserProfile(profileEditData)) {
-                is Resource.Success -> {
-                    val updatePhone = profileEditData.phoneNumber
-                    if (updatePhone?.isNotEmpty() == true && updatePhone != getCurrentPhoneNumber()) {
-                        _openOpt.value = Event(OtpNavigationInfo(updatePhone))
-                    } else {
-                        _updateProfileSuccess.value = Event(Unit)
-                    }
-                }
-                is Resource.Error -> {
-                    when (result.exception) {
-                        is LoginSessionExpiredError -> _recentLoginRequiredError.value = Event(Unit)
-                        else -> _error.value = Event(result.exception)
-                    }
-                }
+            updateUserProfileUsecase.updateUserProfile(profileEditData)
+            val updatePhone = profileEditData.phoneNumber
+            if (updatePhone?.isNotEmpty() == true && updatePhone != getCurrentPhoneNumber()) {
+                _openOpt.value = Event(OtpNavigationInfo(updatePhone))
+            } else {
+                _updateProfileSuccess.value = Event(Unit)
             }
         }
     }
