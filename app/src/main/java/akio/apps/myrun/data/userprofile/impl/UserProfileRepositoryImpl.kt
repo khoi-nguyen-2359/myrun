@@ -95,19 +95,6 @@ class UserProfileRepositoryImpl @Inject constructor(
         val currentUser = firebaseAuth.currentUser
             ?: throw UnauthorizedUserError()
 
-        val updatedEmail = try {
-            profileEditData.email?.let {
-                if (it != currentUser.email) {
-                    currentUser.updateEmail(it).await()
-                    it
-                } else {
-                    null
-                }
-            }
-        } catch (loginRequiredException: FirebaseAuthRecentLoginRequiredException) {
-            throw LoginSessionExpiredError()
-        }
-
         val avatarDownloadUri = profileEditData.avatarFile?.let {
             FirebaseStorageUtils.uploadLocalBitmap(getAvatarStorage(), userId, it, AVATAR_SCALED_SIZE)
         }
@@ -126,7 +113,6 @@ class UserProfileRepositoryImpl @Inject constructor(
                 profileEditData.gender?.name?.let { gender(it) }
                 profileEditData.height?.let { height(it) }
                 profileEditData.weight?.let { weight(it) }
-                updatedEmail?.let { email(it) }
             }
         getUserInfoDocument(currentUser.uid).set(updateMap.profile, SetOptions.merge()).await()
     }

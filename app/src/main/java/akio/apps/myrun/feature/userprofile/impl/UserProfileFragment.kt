@@ -109,7 +109,6 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
             }
 
             userNameTextField.setValue(updatedUserProfile.name)
-            emailTextField.setValue(updatedUserProfile.email)
             phoneTextField.setValue(updatedUserProfile.phone)
             genderTextField.setValue(updatedUserProfile.gender?.name?.capitalize())
             heightTextField.setValue(updatedUserProfile.getHeightText())

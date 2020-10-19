@@ -47,7 +47,7 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
 
     private val stravaRedirectUri by lazy { "${getString(R.string.app_scheme)}://${getString(R.string.strava_callback_host)}" }
 
-    private val onboardingMethod: SignInMethod? by lazy { intent.getSerializableExtra(EXT_ONBOARDING_METHOD) as SignInMethod? }
+    private val onboardingMethod: SignInMethod? by lazy { intent.getSerializableExtra(EXT_IS_ONBOARDING) as SignInMethod? }
     private val isOnboarding by lazy { onboardingMethod != null }
 
     private val bodyDimensFormat = DecimalFormat("#.#")
@@ -172,7 +172,6 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
 
     private fun fillCurrentUserProfile(userProfile: UserProfile) = viewBinding.apply {
         nameEditText.setText(userProfile.name)
-        emailEditText.setText(userProfile.email)
         phoneBox.setFullNumber(userProfile.phone)
         genderTextView.text = userProfile.gender?.name?.capitalize()
         weightEditText.setText(userProfile.weight?.let { bodyDimensFormat.format(it) })
@@ -202,7 +201,6 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
         }
 
         when (onboardingMethod) {
-			SignInMethod.Facebook -> emailEditText.isEnabled = false
 			SignInMethod.Phone -> phoneBox.isEnabled = false
         }
     }
@@ -229,7 +227,6 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
         viewBinding.apply {
             return ProfileEditData(
 				nameEditText.getTextAsString(),
-				emailEditText.getNoneEmptyTextOrNull(),
 				Gender.parse(genderTextView.getNoneEmptyTextOrNull()),
 				heightEditText.getNoneEmptyTextOrNull()?.toFloat(),
 				weightEditText.getNoneEmptyTextOrNull()?.toFloat(),
@@ -308,11 +305,11 @@ class EditProfileActivity: AppCompatActivity(R.layout.activity_edit_profile), Ph
 
         const val TAG_OTP_DIALOG = "TAG_OTP_DIALOG"
 
-        const val EXT_ONBOARDING_METHOD = "EXT_ONBOARDING_METHOD"
+        const val EXT_IS_ONBOARDING = "EXT_IS_ONBOARDING"
 
         fun launchIntentForOnboarding(context: Context, signInMethod: SignInMethod): Intent {
             val intent = Intent(context, EditProfileActivity::class.java)
-            intent.putExtra(EXT_ONBOARDING_METHOD, signInMethod)
+            intent.putExtra(EXT_IS_ONBOARDING, signInMethod)
             return intent
         }
 

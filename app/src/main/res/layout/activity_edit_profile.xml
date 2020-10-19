@@ -50,15 +50,6 @@
                 android:lines="1"
                 android:singleLine="true" />
 
-            <EditText
-                android:id="@+id/email_edit_text"
-                style="@style/CommonEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_alternate_email"
-                android:hint="@string/user_profile_hint_email"
-                android:inputType="textEmailAddress" />
-
             <akio.apps.myrun.feature.signin.view.PhoneBox
                 android:background="@drawable/common_edittext_background"
                 android:id="@+id/phoneBox"
