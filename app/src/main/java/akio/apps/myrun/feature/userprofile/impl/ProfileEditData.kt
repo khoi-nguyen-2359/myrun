@@ -7,7 +7,6 @@ import java.io.File
 // Leave a field null in order not to send an update request for that field
 data class ProfileEditData(
     var displayName: String = "",
-    var email: String? = null,
     var gender: Gender? = null,
     var height: Float? = null,
     var weight: Float? = null,
