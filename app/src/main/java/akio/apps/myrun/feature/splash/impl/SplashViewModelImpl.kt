@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.splash.impl
 
+import akio.apps._base.lifecycle.Event
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.feature.splash.SignOutAnonymousUserUsecase
 import akio.apps.myrun.feature.splash.SplashViewModel
@@ -12,8 +13,8 @@ class SplashViewModelImpl @Inject constructor(
     private val signOutAnonymousUserUsecase: SignOutAnonymousUserUsecase
 ) : SplashViewModel() {
 
-    private val _isUserSignedIn = MutableLiveData<Boolean>()
-    override val isUserSignedIn: LiveData<Boolean> = _isUserSignedIn
+    private val _isUserSignedIn = MutableLiveData<Event<Boolean>>()
+    override val isUserSignedIn: LiveData<Event<Boolean>> = _isUserSignedIn
 
     init {
         // Ensure remove all obsolete logic of anonymous user
@@ -21,7 +22,7 @@ class SplashViewModelImpl @Inject constructor(
 
         launchCatching {
             val isSignedIn = userAuthenticationState.isSignedIn()
-            _isUserSignedIn.value = isSignedIn
+            _isUserSignedIn.value = Event(isSignedIn)
         }
     }
 }

@@ -13,7 +13,9 @@ import akio.apps.myrun.feature.splash.SplashViewModel
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import timber.log.Timber
 
 class SplashActivity: AppCompatActivity() {
 
@@ -31,13 +33,12 @@ class SplashActivity: AppCompatActivity() {
 
     private fun initObservers() {
         observeEvent(splashViewModel.error, dialogDelegate::showExceptionAlert)
-        observe(splashViewModel.isUserSignedIn, ::onUserSignIn)
+        observeEvent(splashViewModel.isUserSignedIn, ::onUserSignIn)
     }
 
     private fun onUserSignIn(isSignedIn: Boolean) {
         if (isSignedIn) {
-            finish()
-            startActivity(HomeActivity.launchIntent(this))
+            goHome()
         } else {
             startActivityForResult(SignInActivity.launchIntent(this), RC_SIGN_IN)
         }
