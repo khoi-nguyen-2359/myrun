@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.editprofile
 import akio.apps._base.lifecycle.Event
 import akio.apps._base.viewmodel.BaseViewModel
 import akio.apps.myrun.data.userprofile.model.UserProfile
-import akio.apps.myrun.feature.userprofile.impl.ProfileEditData
+import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import androidx.lifecycle.LiveData
 
 abstract class EditProfileViewModel: BaseViewModel(), UserPhoneNumberDelegate {

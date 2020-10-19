@@ -5,7 +5,7 @@ import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.feature.editprofile.UpdateUserProfileUsecase
-import akio.apps.myrun.feature.userprofile.impl.ProfileEditData
+import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import javax.inject.Inject
 
 class UpdateUserProfileUsecaseImpl @Inject constructor(

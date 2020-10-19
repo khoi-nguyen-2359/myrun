@@ -22,14 +22,12 @@ class ActivityViewHolder(
 ) : RecyclerView.ViewHolder(viewBinding.root) {
 
     fun bind(activity: Activity) = viewBinding.apply {
-        activity.userAvatar?.let { userAvatar ->
-            Glide.with(itemView)
-                .load(userAvatar)
-                .override(getResources().getDimensionPixelSize(R.dimen.user_timeline_avatar_size))
-                .placeholder(R.drawable.common_avatar_placeholder_image)
-                .circleCenterCrop()
-                .into(userAvatarImageView)
-        }
+        Glide.with(itemView)
+            .load(activity.userAvatar)
+            .override(getResources().getDimensionPixelSize(R.dimen.user_timeline_avatar_size))
+            .placeholder(R.drawable.common_avatar_placeholder_image)
+            .circleCenterCrop()
+            .into(userAvatarImageView)
 
         activity.userName?.let { userName ->
             userNameTextView.text = userName

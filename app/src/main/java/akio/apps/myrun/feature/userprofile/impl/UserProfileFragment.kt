@@ -99,14 +99,12 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
     private fun fillUserProfile(updatedUserProfile: UserProfile) {
         viewBinding.apply {
-            updatedUserProfile.photo?.let { userPhoto ->
-                Glide.with(requireContext())
-                    .load(userPhoto)
-                    .override(resources.getDimensionPixelSize(R.dimen.profile_avatar_size))
-                    .placeholder(R.drawable.common_avatar_placeholder_image)
-                    .circleCenterCrop()
-                    .into(avatarImage)
-            }
+            Glide.with(requireContext())
+                .load(updatedUserProfile.photo)
+                .override(resources.getDimensionPixelSize(R.dimen.profile_avatar_size))
+                .placeholder(R.drawable.common_avatar_placeholder_image)
+                .circleCenterCrop()
+                .into(avatarImage)
 
             userNameTextField.setValue(updatedUserProfile.name)
             phoneTextField.setValue(updatedUserProfile.phone)

@@ -10,7 +10,7 @@ import akio.apps.myrun.feature.editprofile.UpdateUserProfileUsecase
 import akio.apps.myrun.feature.editprofile.UserPhoneNumberDelegate
 import akio.apps.myrun.feature.editprofile.UpdateStravaTokenUsecase
 import akio.apps.myrun.feature.userprofile.GetUserProfileUsecase
-import akio.apps.myrun.feature.userprofile.impl.ProfileEditData
+import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer

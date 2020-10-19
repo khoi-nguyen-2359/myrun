@@ -27,8 +27,8 @@ object FirebaseStorageUtils {
         return photoRef.downloadUrl.await()
     }
 
-    suspend fun uploadLocalBitmap(storage: StorageReference, storeName: String, imageFile: File, scaledSize: Int): Uri? {
-        val imageBitmap = BitmapUtils.decodeSampledFile(imageFile.absolutePath, scaledSize, scaledSize)
+    suspend fun uploadLocalBitmap(storage: StorageReference, storeName: String, filePath: String, scaledSize: Int): Uri? {
+        val imageBitmap = BitmapUtils.decodeSampledFile(filePath, scaledSize, scaledSize)
         val downloadUrl = uploadBitmap(storage, storeName, imageBitmap, 1)
         imageBitmap.recycle()
 
