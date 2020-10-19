@@ -65,9 +65,7 @@
             <ImageView
                 android:id="@+id/avatar_image"
                 android:layout_width="@dimen/profile_avatar_size"
-                android:layout_height="@dimen/profile_avatar_size"
-                android:background="@drawable/ic_account_circle"
-                android:backgroundTint="@color/colorAccent" />
+                android:layout_height="@dimen/profile_avatar_size"/>
 
             <Space
                 android:id="@+id/section_spacing_1st"

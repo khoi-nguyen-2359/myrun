@@ -11,8 +11,6 @@
     android:paddingTop="@dimen/common_item_vertical_padding">
 
     <ImageView
-        android:backgroundTint="@color/colorAccent"
-        android:background="@drawable/ic_account_circle"
         android:id="@+id/user_avatar_image_view"
         android:layout_width="@dimen/user_timeline_avatar_size"
         android:layout_height="@dimen/user_timeline_avatar_size"
