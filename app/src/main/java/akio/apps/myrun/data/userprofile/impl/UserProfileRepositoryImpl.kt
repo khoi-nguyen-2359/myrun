@@ -6,6 +6,7 @@ import akio.apps._base.utils.FirebaseStorageUtils
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.data.userprofile.entity.FirestoreUserProfileEntity
 import akio.apps.myrun.data.userprofile.entity.FirestoreUserProfileUpdateMapEntity
+import akio.apps.myrun.data.userprofile.error.UserProfileNotFoundError
 import akio.apps.myrun.data.userprofile.mapper.FirestoreUserProfileMapper
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
@@ -78,34 +79,22 @@ class UserProfileRepositoryImpl @Inject constructor(
     }
         .flowOn(Dispatchers.IO)
 
-    override suspend fun getUserProfile(userId: String): UserProfile? {
+    override suspend fun getUserProfile(userId: String): UserProfile {
         return getUserInfoDocument(userId)
             .get()
             .await()
             .toObject(FirestoreUserProfileEntity::class.java)
             ?.run(firestoreUserProfileMapper::map)
+            ?: throw UserProfileNotFoundError("Could not find userId $userId")
     }
 
-    /**
-     * TODO: split user account vs. user profile editing by moving user account editing into another component (user account manager? admin cloud function?)
-     */
     override suspend fun updateUserProfile(userId: String, profileEditData: ProfileEditData) {
-        val currentUser = firebaseAuth.currentUser
-            ?: throw UnauthorizedUserError()
-
         val avatarUri = profileEditData.avatarUri?.toString()
         val avatarUploadedUri = if (avatarUri != null && avatarUri.startsWith("file://")) {
-            FirebaseStorageUtils.uploadLocalBitmap(getAvatarStorage(), userId, avatarUri, AVATAR_SCALED_SIZE)
+            FirebaseStorageUtils.uploadLocalBitmap(getAvatarStorage(), userId, avatarUri.removePrefix("file://"), AVATAR_SCALED_SIZE)
         } else {
             profileEditData.avatarUri
         }
-
-        val builder = createChangeRequestBuilder()
-            .setDisplayName(profileEditData.displayName)
-        if (avatarUploadedUri != null) {
-            builder.photoUri = avatarUploadedUri
-        }
-        currentUser.updateProfile(builder.build()).await()
 
         val updateMap = FirestoreUserProfileUpdateMapEntity()
             .apply {
@@ -115,11 +104,7 @@ class UserProfileRepositoryImpl @Inject constructor(
                 profileEditData.height?.let { height(it) }
                 profileEditData.weight?.let { weight(it) }
             }
-        getUserInfoDocument(currentUser.uid).set(updateMap.profile, SetOptions.merge()).await()
-    }
-
-    private fun createChangeRequestBuilder(): UserProfileChangeRequest.Builder {
-        return UserProfileChangeRequest.Builder()
+        getUserInfoDocument(userId).set(updateMap.profile, SetOptions.merge()).await()
     }
 
     companion object {
