@@ -78,11 +78,11 @@ class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
 
             phoneBox.eventListener = object : PhoneBox.EventListener {
                 override fun onPhoneBoxValueChanged(value: String?) {
-                    loginButton.isEnabled = value != null
+                    sendOtpButton.isEnabled = value != null
                 }
             }
 
-            loginButton.setOnClickListener { openOtp() }
+            sendOtpButton.setOnClickListener { openOtp() }
 
             googleButton.setOnClickListener {
                 startGoogleSignIn()
