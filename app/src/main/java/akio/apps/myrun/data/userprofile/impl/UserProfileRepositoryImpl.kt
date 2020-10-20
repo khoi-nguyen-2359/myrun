@@ -1,7 +1,6 @@
 package akio.apps.myrun.data.userprofile.impl
 
 import akio.apps._base.data.Resource
-import akio.apps._base.error.UnauthorizedUserError
 import akio.apps._base.utils.FirebaseStorageUtils
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.data.userprofile.entity.FirestoreUserProfileEntity
@@ -11,7 +10,6 @@ import akio.apps.myrun.data.userprofile.mapper.FirestoreUserProfileMapper
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
