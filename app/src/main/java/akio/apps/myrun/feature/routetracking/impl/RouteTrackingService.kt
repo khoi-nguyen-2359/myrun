@@ -23,6 +23,9 @@ import android.os.IBinder
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.fitness.Fitness
+import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.location.LocationRequest
 import com.google.maps.android.SphericalUtil
 import dagger.android.AndroidInjection
@@ -63,6 +66,12 @@ class RouteTrackingService : Service() {
     private val routeDistanceCalculator = RouteDistanceCalculator()
 
     private var wakeLock: PowerManager.WakeLock? = null
+
+    private val fitnessRecordClient by lazy {
+        GoogleSignIn.getLastSignedInAccount(applicationContext)?.let {
+            Fitness.getRecordingClient(applicationContext, it)
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -290,6 +299,30 @@ class RouteTrackingService : Service() {
             if (it.isHeld) {
                 it.release()
             }
+        }
+    }
+
+    private fun subscribeFitnessData() {
+        try {
+            fitnessRecordClient?.subscribe(DataType.TYPE_SPEED)
+            fitnessRecordClient?.subscribe(DataType.TYPE_STEP_COUNT_DELTA)
+            fitnessRecordClient?.subscribe(DataType.TYPE_STEP_COUNT_CADENCE)
+            fitnessRecordClient?.subscribe(DataType.TYPE_CALORIES_EXPENDED)
+            fitnessRecordClient?.subscribe(DataType.TYPE_HEART_RATE_BPM)
+        } catch (throwable: Throwable) {
+            throwable.printStackTrace()
+        }
+    }
+
+    private fun unsubscribeFitnessData() {
+        try {
+            fitnessRecordClient?.unsubscribe(DataType.TYPE_SPEED)
+            fitnessRecordClient?.unsubscribe(DataType.TYPE_STEP_COUNT_DELTA)
+            fitnessRecordClient?.unsubscribe(DataType.TYPE_STEP_COUNT_CADENCE)
+            fitnessRecordClient?.unsubscribe(DataType.TYPE_CALORIES_EXPENDED)
+            fitnessRecordClient?.unsubscribe(DataType.TYPE_HEART_RATE_BPM)
+        } catch (throwable: Throwable) {
+            throwable.printStackTrace()
         }
     }
 

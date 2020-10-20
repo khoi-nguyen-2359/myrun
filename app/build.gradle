@@ -96,6 +96,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-maps:$Versions.playServicesMap"
     implementation "com.google.android.gms:play-services-location:$Versions.playServicesLocation"
     implementation "com.google.android.gms:play-services-auth:$Versions.playServicesAuth"
+    implementation "com.google.android.gms:play-services-fitness:$Versions.playServicesFitness"
 
     implementation "com.google.android.libraries.places:places:$Versions.places"
     implementation "com.google.maps.android:android-maps-utils:$Versions.androidMapUtils"

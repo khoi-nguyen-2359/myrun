@@ -10,6 +10,8 @@ import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun._base.permissions.AppPermissions.locationPermissions
+import akio.apps._base.utils.GoogleSignInPermissionUtils
+import akio.apps.myrun._base.permissions.AppPermissions
 import akio.apps.myrun._base.permissions.RequiredPermissionsDelegate
 import akio.apps.myrun._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun._base.utils.DialogDelegate
@@ -55,8 +57,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         )
     }
 
-    private val checkLocationPermissionsDelegate by lazy { RequiredPermissionsDelegate(this) }
-
     private var routePolyline: Polyline? = null
     private var drawnLocationCount: Int = 0
     private val trackingRouteLatLngBounds = LatLngBounds.builder()
@@ -67,7 +67,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         initViews()
 
         // onCreate: check location permissions -> check location service availability -> allow user to use this screen
-        checkLocationPermissionsDelegate.requestPermissions(locationPermissions, RC_LOCATION_PERMISSIONS)
+        RequiredPermissionsDelegate.requestPermissions(locationPermissions, RC_LOCATION_PERMISSIONS, this)
     }
 
     override fun onStart() {
@@ -263,7 +263,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        checkLocationPermissionsDelegate.verifyPermissionsResult(locationPermissions, onLocationPermissionsGranted)
+        RequiredPermissionsDelegate.verifyPermissionsResult(this, locationPermissions, onLocationPermissionsGranted) { finish() }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -306,6 +306,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
         const val RC_LOCATION_SERVICE = 1
         const val RC_LOCATION_PERMISSIONS = 2
+        const val RC_FITNESS_DATA_PERMISSIONS = 3
 
         fun launchIntent(context: Context): Intent {
             val intent = Intent(context, RouteTrackingActivity::class.java)
