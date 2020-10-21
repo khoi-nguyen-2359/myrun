@@ -5,40 +5,50 @@ import akio.apps.myrun.feature.routetracking.*
 import akio.apps.myrun.feature.routetracking.impl.*
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingViewModelImpl
 import akio.apps.myrun.feature.routetracking.usecase.*
+import android.content.Context
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.fitness.Fitness
+import com.google.android.gms.fitness.HistoryClient
+import com.google.android.gms.fitness.RecordingClient
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
+import javax.annotation.Nullable
 
-@Module
-interface RouteTrackingFeatureModule {
+@Module(includes = [RouteTrackingFeatureModule.Bindings::class])
+abstract class RouteTrackingFeatureModule {
     @ContributesAndroidInjector
-    fun trackingActivity(): RouteTrackingActivity
-
-    @ContributesAndroidInjector
-    fun routeTrackingService(): RouteTrackingService
+    abstract fun trackingActivity(): RouteTrackingActivity
 
     @ContributesAndroidInjector
-    fun updateUserRecentPlaceWorker(): UpdateUserRecentPlaceWorker
+    abstract fun routeTrackingService(): RouteTrackingService
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(RouteTrackingViewModel::class)
-    fun routeTrackingViewModel(viewModelImpl: RouteTrackingViewModelImpl): ViewModel
+    @ContributesAndroidInjector
+    abstract fun updateUserRecentPlaceWorker(): UpdateUserRecentPlaceWorker
 
-    @Binds
-    fun getMapInitialLocation(usecaseImpl: GetMapInitialLocationUsecaseImpl): GetMapInitialLocationUsecase
+    @Module
+    interface Bindings {
+        @Binds
+        @IntoMap
+        @ViewModelKey(RouteTrackingViewModel::class)
+        fun routeTrackingViewModel(viewModelImpl: RouteTrackingViewModelImpl): ViewModel
 
-    @Binds
-    fun getTrackingLocationUpdates(usecaseImpl: GetTrackedLocationsUsecaseImpl): GetTrackedLocationsUsecase
+        @Binds
+        fun getMapInitialLocation(usecaseImpl: GetMapInitialLocationUsecaseImpl): GetMapInitialLocationUsecase
 
-    @Binds
-    fun saveRouteTrackingActivityUsecase(usecaseImpl: SaveRouteTrackingActivityUsecaseImpl): SaveRouteTrackingActivityUsecase
+        @Binds
+        fun getTrackingLocationUpdates(usecaseImpl: GetTrackedLocationsUsecaseImpl): GetTrackedLocationsUsecase
 
-    @Binds
-    fun clearRouteTrackingStateUsecase(usecase: ClearRouteTrackingStateUsecaseImpl): ClearRouteTrackingStateUsecase
+        @Binds
+        fun saveRouteTrackingActivityUsecase(usecaseImpl: SaveRouteTrackingActivityUsecaseImpl): SaveRouteTrackingActivityUsecase
 
-    @Binds
-    fun getCurrentAreaPlaceUsecase(usecaseImpl: UpdateUserRecentPlaceUsecaseImpl): UpdateUserRecentPlaceUsecase
+        @Binds
+        fun clearRouteTrackingStateUsecase(usecase: ClearRouteTrackingStateUsecaseImpl): ClearRouteTrackingStateUsecase
+
+        @Binds
+        fun getCurrentAreaPlaceUsecase(usecaseImpl: UpdateUserRecentPlaceUsecaseImpl): UpdateUserRecentPlaceUsecase
+    }
 }

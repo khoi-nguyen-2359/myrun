@@ -6,6 +6,7 @@ import akio.apps.myrun.data.routetracking._di.RouteTrackingDataModule
 import akio.apps.myrun.data.activity._di.ActivityDataModule
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
+import akio.apps.myrun.data.fitness._di.FitnessDataModule
 import akio.apps.myrun.data.place._di.PlaceDataModule
 import akio.apps.myrun.data.recentplace._di.RecentPlaceDataModule
 import akio.apps.myrun.data.userfollow._di.UserFollowDataModule
@@ -50,7 +51,8 @@ import javax.inject.Singleton
     RecentPlaceDataModule::class,
     UserFollowDataModule::class,
     UserProfileDataModule::class,
-    ExternalAppDataModule::class
+    ExternalAppDataModule::class,
+    FitnessDataModule::class
 ])
 interface AppComponent: AndroidInjector<MyRunApp> {
     @Component.Factory
