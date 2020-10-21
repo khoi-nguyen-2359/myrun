@@ -11,6 +11,7 @@ import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.feature.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.feature.routetracking.usecase.ClearRouteTrackingStateUsecaseImpl
 import android.annotation.SuppressLint
@@ -24,7 +25,9 @@ import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.fitness.Fitness
+import com.google.android.gms.fitness.RecordingClient
 import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.location.LocationRequest
 import com.google.maps.android.SphericalUtil
@@ -33,6 +36,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
+import javax.annotation.Nullable
 import javax.inject.Inject
 
 class RouteTrackingService : Service() {
@@ -52,6 +56,9 @@ class RouteTrackingService : Service() {
     @Inject
     lateinit var clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
 
+    @Inject
+    lateinit var fitnessDataRepository: FitnessDataRepository
+
     private val exceptionHandler = CoroutineExceptionHandler { context, exception ->
         Timber.e(exception)
     }
@@ -66,12 +73,6 @@ class RouteTrackingService : Service() {
     private val routeDistanceCalculator = RouteDistanceCalculator()
 
     private var wakeLock: PowerManager.WakeLock? = null
-
-    private val fitnessRecordClient by lazy {
-        GoogleSignIn.getLastSignedInAccount(applicationContext)?.let {
-            Fitness.getRecordingClient(applicationContext, it)
-        }
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -224,6 +225,7 @@ class RouteTrackingService : Service() {
 
         notifyTrackingNotification()
         requestLocationUpdates()
+        fitnessDataRepository.subscribeFitnessData()
         startTrackingTimer()
         acquireWakeLock()
     }
@@ -248,12 +250,15 @@ class RouteTrackingService : Service() {
 
         // dont count the distance in paused moments
         routeDistanceCalculator.clearLastCalculatedLocation()
+
+        fitnessDataRepository.unsubscribeFitnessData()
     }
 
     private fun onActionResume(isServiceRestart: Boolean) {
         Timber.d("onActionResume isServiceRestart=$isServiceRestart")
 
         requestLocationUpdates()
+        fitnessDataRepository.subscribeFitnessData()
         startTrackingTimer()
         notifyTrackingNotification()
 
@@ -272,6 +277,7 @@ class RouteTrackingService : Service() {
 
         locationUpdateJob?.cancel()
         trackingTimerJob?.cancel()
+        fitnessDataRepository.unsubscribeFitnessData()
         releaseWakeLock()
         stopSelf()
     }
@@ -299,30 +305,6 @@ class RouteTrackingService : Service() {
             if (it.isHeld) {
                 it.release()
             }
-        }
-    }
-
-    private fun subscribeFitnessData() {
-        try {
-            fitnessRecordClient?.subscribe(DataType.TYPE_SPEED)
-            fitnessRecordClient?.subscribe(DataType.TYPE_STEP_COUNT_DELTA)
-            fitnessRecordClient?.subscribe(DataType.TYPE_STEP_COUNT_CADENCE)
-            fitnessRecordClient?.subscribe(DataType.TYPE_CALORIES_EXPENDED)
-            fitnessRecordClient?.subscribe(DataType.TYPE_HEART_RATE_BPM)
-        } catch (throwable: Throwable) {
-            throwable.printStackTrace()
-        }
-    }
-
-    private fun unsubscribeFitnessData() {
-        try {
-            fitnessRecordClient?.unsubscribe(DataType.TYPE_SPEED)
-            fitnessRecordClient?.unsubscribe(DataType.TYPE_STEP_COUNT_DELTA)
-            fitnessRecordClient?.unsubscribe(DataType.TYPE_STEP_COUNT_CADENCE)
-            fitnessRecordClient?.unsubscribe(DataType.TYPE_CALORIES_EXPENDED)
-            fitnessRecordClient?.unsubscribe(DataType.TYPE_HEART_RATE_BPM)
-        } catch (throwable: Throwable) {
-            throwable.printStackTrace()
         }
     }
 
