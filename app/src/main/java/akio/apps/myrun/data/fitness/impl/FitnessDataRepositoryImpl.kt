@@ -124,9 +124,11 @@ class FitnessDataRepositoryImpl @Inject constructor(
         val mergeDataPoints = mutableListOf<SingleDataPoint<V>>()
         while (i < dp1.size || j < dp2.size) {
             val dp1StartTime = dp1.getOrNull(i)
-                ?.getStartTime(TimeUnit.MILLISECONDS) ?: -1
+                ?.getStartTime(TimeUnit.MILLISECONDS)
+                ?: -1
             val dp2StartTime = dp2.getOrNull(j)
-                ?.getStartTime(TimeUnit.MILLISECONDS) ?: -1
+                ?.getStartTime(TimeUnit.MILLISECONDS)
+                ?: -1
             if (dp2StartTime == -1L || dp1StartTime <= dp2StartTime) {
                 mergeDataPoints.add(dp1Converter(dp1[i]))
                 ++i
