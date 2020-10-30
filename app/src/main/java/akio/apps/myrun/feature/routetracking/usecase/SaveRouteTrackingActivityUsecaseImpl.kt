@@ -6,6 +6,8 @@ import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun._base.utils.toGmsLatLng
+import akio.apps.myrun.data.fitness.FitnessDataRepository
+import akio.apps.myrun.data.fitness.SingleDataPoint
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.feature.routetracking.SaveRouteTrackingActivityUsecase
 import android.graphics.Bitmap
@@ -18,7 +20,8 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
     private val routeTrackingLocationRepository: RouteTrackingLocationRepository,
     private val activityRepository: ActivityRepository,
     private val userAuthenticationState: UserAuthenticationState,
-    private val userProfileRepository: UserProfileRepository
+    private val userProfileRepository: UserProfileRepository,
+    private val fitnessDataRepository: FitnessDataRepository
 ) : SaveRouteTrackingActivityUsecase {
 
     override suspend fun saveCurrentActivity(activityType: ActivityType, routeMapImage: Bitmap) {
@@ -34,6 +37,12 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
         val encodedPolyline = PolyUtil.encode(routeTrackingLocationRepository.getAllLocations().map { it.toGmsLatLng() })
         val activityData: ActivityEntity = ActivityDataEntity("", userProfile.accountId, userProfile.name, userProfile.photo, activityType, "", "", startTime, endTime, duration, distance, encodedPolyline)
 
+        val speedDataPoints = fitnessDataRepository.getSpeedDataPoints(startTime, endTime, FITNESS_DATA_INTERVAL)
+        val stepCadenceDataPoints: List<SingleDataPoint<Int>>? = if (activityType == ActivityType.Running) {
+            fitnessDataRepository.getSteppingCadenceDataPoints(startTime, endTime, FITNESS_DATA_INTERVAL)
+        } else {
+            null
+        }
         val savingActivity = when (activityType) {
             ActivityType.Running -> {
                 val pace = (duration / (1000 * 60)) / (distance / 1000)
@@ -48,6 +57,10 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
             else -> return  // stop saving for unknown type
         }
 
-        activityRepository.saveActivity(savingActivity, routeMapImage)
+        activityRepository.saveActivity(savingActivity, routeMapImage, speedDataPoints, stepCadenceDataPoints)
+    }
+
+    companion object {
+        const val FITNESS_DATA_INTERVAL = 3000L
     }
 }
