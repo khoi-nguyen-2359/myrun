@@ -96,6 +96,7 @@ class UserProfileRepositoryImpl @Inject constructor(
 
         val updateMap = FirestoreUserProfileUpdateMapEntity()
             .apply {
+                uid(userId)
                 displayName(profileEditData.displayName)
                 avatarUploadedUri?.toString()?.let { photoUrl(it) }
                 profileEditData.gender?.name?.let { gender(it) }
