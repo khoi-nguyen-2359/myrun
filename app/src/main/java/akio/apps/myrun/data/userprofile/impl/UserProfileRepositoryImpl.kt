@@ -3,13 +3,13 @@ package akio.apps.myrun.data.userprofile.impl
 import akio.apps._base.data.Resource
 import akio.apps._base.utils.FirebaseStorageUtils
 import akio.apps.myrun.data.userprofile.UserProfileRepository
+import akio.apps.myrun.data.userprofile.entity.FirestoreUserEntity
 import akio.apps.myrun.data.userprofile.entity.FirestoreUserProfileEntity
 import akio.apps.myrun.data.userprofile.entity.FirestoreUserProfileUpdateMapEntity
 import akio.apps.myrun.data.userprofile.error.UserProfileNotFoundError
 import akio.apps.myrun.data.userprofile.mapper.FirestoreUserProfileMapper
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -29,35 +29,23 @@ import javax.inject.Inject
 
 class UserProfileRepositoryImpl @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore,
-    private val firebaseAuth: FirebaseAuth,
     private val firebaseStorage: FirebaseStorage,
     private val firestoreUserProfileMapper: FirestoreUserProfileMapper
 ) : UserProfileRepository {
 
-    private fun getUserInfoDocument(userId: String): DocumentReference {
-        return firebaseFirestore.collection(FIRESTORE_USER_PROFILE_DOCUMENT)
+    private fun getUserDocument(userId: String): DocumentReference {
+        return firebaseFirestore.collection(FIRESTORE_USERS_DOCUMENT)
             .document(userId)
     }
 
-    private fun getAvatarStorage() =
-        firebaseStorage.getReference("$FIREBASE_STORAGE_USER_FOLDER")
+    private fun getAvatarStorage() = firebaseStorage.getReference(FIREBASE_STORAGE_USER_FOLDER)
 
     @ExperimentalCoroutinesApi
     override fun getUserProfileFlow(userId: String): Flow<Resource<UserProfile>> = callbackFlow<Resource<UserProfile>> {
-        try {
-            val cache = getUserInfoDocument(userId)
-                .get(Source.CACHE)
-                .await()
-                .toObject(FirestoreUserProfileEntity::class.java)
-
-            send(Resource.Loading(cache?.run(firestoreUserProfileMapper::map)))
-        } catch (ex: Exception) {
-            send(Resource.Loading<UserProfile>(null))
-        }
-
         val listener = withContext(Dispatchers.Main.immediate) {
-            getUserInfoDocument(userId).addSnapshotListener { snapshot, error ->
-                snapshot?.toObject(FirestoreUserProfileEntity::class.java)
+            getUserDocument(userId).addSnapshotListener { snapshot, error ->
+                snapshot?.toObject(FirestoreUserEntity::class.java)
+                    ?.profile
                     ?.run(firestoreUserProfileMapper::map)
                     ?.let { userProfile ->
                         sendBlocking(Resource.Success(userProfile))
@@ -78,10 +66,11 @@ class UserProfileRepositoryImpl @Inject constructor(
         .flowOn(Dispatchers.IO)
 
     override suspend fun getUserProfile(userId: String): UserProfile {
-        return getUserInfoDocument(userId)
+        return getUserDocument(userId)
             .get()
             .await()
-            .toObject(FirestoreUserProfileEntity::class.java)
+            .toObject(FirestoreUserEntity::class.java)
+            ?.profile
             ?.run(firestoreUserProfileMapper::map)
             ?: throw UserProfileNotFoundError("Could not find userId $userId")
     }
@@ -103,11 +92,11 @@ class UserProfileRepositoryImpl @Inject constructor(
                 profileEditData.height?.let { height(it) }
                 profileEditData.weight?.let { weight(it) }
             }
-        getUserInfoDocument(userId).set(updateMap.profile, SetOptions.merge()).await()
+        getUserDocument(userId).set(updateMap, SetOptions.merge()).await()
     }
 
     companion object {
-        const val FIRESTORE_USER_PROFILE_DOCUMENT = "user_profile"
+        const val FIRESTORE_USERS_DOCUMENT = "users"
         const val FIREBASE_STORAGE_USER_FOLDER = "user_avatar"
 
         const val AVATAR_SCALED_SIZE = 512 //px

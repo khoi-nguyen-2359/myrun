@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.model.DocumentCollections
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.Dispatchers
@@ -23,14 +24,18 @@ class ActivityRepositoryImpl @Inject constructor(
     private val firestoreActivityMapper: FirestoreActivityMapper
 ) : ActivityRepository {
 
-    private val activityCollection: CollectionReference
-        get() = firestore.collection("activity")
+    private val userActivitiesCollectionGroup: Query
+        get() = firestore.collectionGroup(PATH_USER_ACTIVITIES_COLLECTION_GROUP)
+
+    private fun getUserActivitiesCollection(userId: String): CollectionReference {
+        return firestore.collection("$PATH_USERS/$userId/$PATH_USER_ACTIVITIES")
+    }
 
     private fun getActivityImageStorage(userId: String): StorageReference
             = firebaseStorage.getReference("activity_image/$userId")
 
     override suspend fun getActivitiesByStartTime(userIds: List<String>, startAfterTime: Long, limit: Int): List<ActivityEntity> = withContext(Dispatchers.IO) {
-        val query = activityCollection.whereIn("userId", userIds)
+        val query = userActivitiesCollectionGroup.whereIn("userId", userIds)
             .orderBy("startTime", Query.Direction.DESCENDING)
             .startAfter(startAfterTime)
             .limit(limit.toLong())
@@ -51,9 +56,10 @@ class ActivityRepositoryImpl @Inject constructor(
         speedDataPoints: List<SingleDataPoint<Float>>,
         stepCadenceDataPoints: List<SingleDataPoint<Int>>?
     ): Unit = withContext(Dispatchers.IO) {
-        val docRef = activityCollection.document()
+        val docRef = getUserActivitiesCollection(activity.userId).document()
 
-        val uploadedUri = FirebaseStorageUtils.uploadBitmap(getActivityImageStorage(activity.userId), docRef.id, routeMapImage, THUMBNAIL_SCALED_SIZE)
+        val userActivityImageStorage = getActivityImageStorage(activity.userId)
+        val uploadedUri = FirebaseStorageUtils.uploadBitmap(userActivityImageStorage, docRef.id, routeMapImage, THUMBNAIL_SCALED_SIZE)
 
         val firestoreActivity = firestoreActivityMapper.mapRev(activity, docRef.id, uploadedUri)
 
@@ -70,10 +76,12 @@ class ActivityRepositoryImpl @Inject constructor(
     }
 
     companion object {
+        const val PATH_USER_ACTIVITIES_COLLECTION_GROUP = "userActivities"
+        const val PATH_USERS = "users"
+        const val PATH_USER_ACTIVITIES = "userActivities"
         const val PATH_DATA_POINTS = "dataPoints"
         const val PATH_DATA_POINTS_SPEED = "speed"
         const val PATH_DATA_POINTS_STEP_CADENCE = "stepCadence"
-        const val PATH_DATA_POINTS_PEDALING_CADENCE = "pedalingCadence"
         const val THUMBNAIL_SCALED_SIZE = 1024 //px
     }
 }
