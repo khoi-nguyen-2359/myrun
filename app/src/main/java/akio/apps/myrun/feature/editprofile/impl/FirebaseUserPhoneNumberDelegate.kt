@@ -4,7 +4,7 @@ import akio.apps._base.error.LoginSessionExpiredError
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps._base.lifecycle.Event
 import akio.apps.myrun.data.userprofile.entity.FirestoreUserProfileUpdateMapEntity
-import akio.apps.myrun.data.userprofile.impl.UserProfileRepositoryImpl.Companion.FIRESTORE_USER_PROFILE_DOCUMENT
+import akio.apps.myrun.data.userprofile.impl.UserProfileRepositoryImpl.Companion.FIRESTORE_USERS_DOCUMENT
 import akio.apps.myrun.feature.editprofile.UserPhoneNumberDelegate
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -41,7 +41,7 @@ class FirebaseUserPhoneNumberDelegate @Inject constructor(
     override val phoneNumberReauthenticateError: LiveData<Event<Throwable>> = _phoneNumberReauthenticateError
 
     private fun getUserInfoDocument(userId: String): DocumentReference {
-        return firebaseFirestore.collection(FIRESTORE_USER_PROFILE_DOCUMENT)
+        return firebaseFirestore.collection(FIRESTORE_USERS_DOCUMENT)
             .document(userId)
     }
 
