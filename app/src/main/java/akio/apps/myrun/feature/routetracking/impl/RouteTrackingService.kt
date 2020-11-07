@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun.R
-import akio.apps.myrun.data.location.LatLngEntity
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.location.LocationDataSource
 import akio.apps.myrun.data.location.LocationRequestEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
@@ -13,7 +13,6 @@ import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.feature.routetracking.ClearRouteTrackingStateUsecase
-import akio.apps.myrun.feature.routetracking.usecase.ClearRouteTrackingStateUsecaseImpl
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
@@ -24,11 +23,6 @@ import android.os.IBinder
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.fitness.Fitness
-import com.google.android.gms.fitness.RecordingClient
-import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.location.LocationRequest
 import com.google.maps.android.SphericalUtil
 import dagger.android.AndroidInjection
@@ -36,7 +30,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
-import javax.annotation.Nullable
 import javax.inject.Inject
 
 class RouteTrackingService : Service() {
@@ -124,7 +117,7 @@ class RouteTrackingService : Service() {
 
         if (startLocation == null) {
             startLocation = locations.firstOrNull()?.also {
-                routeTrackingState.setStartLocation(LatLngEntity(it.latitude, it.longitude))
+                routeTrackingState.setStartLocation(LocationEntity(it.latitude, it.longitude, it.altitude))
             }
         }
     }

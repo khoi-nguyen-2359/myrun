@@ -6,11 +6,12 @@ import akio.apps.myrun.data.activity.entity.FirestoreActivity
 import akio.apps.myrun.data.activity.entity.FirestoreActivityMapper
 import akio.apps.myrun.data.activity.entity.FirestoreDataPointArray
 import akio.apps.myrun.data.fitness.SingleDataPoint
+import akio.apps.myrun.data.location.LocationEntity
 import android.graphics.Bitmap
+import android.location.Location
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.model.DocumentCollections
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +55,8 @@ class ActivityRepositoryImpl @Inject constructor(
         activity: ActivityEntity,
         routeMapImage: Bitmap,
         speedDataPoints: List<SingleDataPoint<Float>>,
-        stepCadenceDataPoints: List<SingleDataPoint<Int>>?
+        stepCadenceDataPoints: List<SingleDataPoint<Int>>?,
+        locationDataPoints: List<SingleDataPoint<LocationEntity>>
     ): Unit = withContext(Dispatchers.IO) {
         val docRef = getUserActivitiesCollection(activity.userId).document()
 
@@ -63,11 +65,14 @@ class ActivityRepositoryImpl @Inject constructor(
 
         val firestoreActivity = firestoreActivityMapper.mapRev(activity, docRef.id, uploadedUri)
 
-        val speedDocRef = docRef.collection(PATH_DATA_POINTS).document(PATH_DATA_POINTS_SPEED)
-        val stepCadenceDocRef = docRef.collection(PATH_DATA_POINTS).document(PATH_DATA_POINTS_STEP_CADENCE)
+        val dataPointCollections = docRef.collection(PATH_DATA_POINTS)
+        val speedDocRef = dataPointCollections.document(PATH_DATA_POINTS_SPEED)
+        val stepCadenceDocRef = dataPointCollections.document(PATH_DATA_POINTS_STEP_CADENCE)
+        val locationDocRef = dataPointCollections.document(PATH_DATA_POINTS_LOCATIONS)
         firestore.runBatch { batch ->
             batch.set(docRef, firestoreActivity)
             batch.set(speedDocRef, FirestoreDataPointArray(speedDataPoints.map { dp -> listOf(dp.timestamp.toDouble(), dp.value.toDouble()) }))
+            batch.set(locationDocRef, FirestoreDataPointArray(locationDataPoints.map { listOf(it.timestamp.toDouble(), it.value.latitude, it.value.longitude, it.value.altitude) }))
 
             if (stepCadenceDataPoints != null) {
                 batch.set(stepCadenceDocRef, FirestoreDataPointArray(stepCadenceDataPoints.map { dp -> listOf(dp.timestamp.toDouble(), dp.value.toDouble()) }))
@@ -82,6 +87,7 @@ class ActivityRepositoryImpl @Inject constructor(
         const val PATH_DATA_POINTS = "dataPoints"
         const val PATH_DATA_POINTS_SPEED = "speed"
         const val PATH_DATA_POINTS_STEP_CADENCE = "stepCadence"
+        const val PATH_DATA_POINTS_LOCATIONS = "location"
         const val THUMBNAIL_SCALED_SIZE = 1024 //px
     }
 }

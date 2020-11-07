@@ -6,7 +6,7 @@ import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.data.activity.ActivityType
-import akio.apps.myrun.data.location.LatLngEntity
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun.feature.routetracking.*
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
@@ -94,7 +94,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
         }
     }
 
-    private fun updateUserRecentPlace(activityStartPoint: LatLngEntity) {
+    private fun updateUserRecentPlace(activityStartPoint: LocationEntity) {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.UNMETERED)
             .setRequiresBatteryNotLow(true)
@@ -103,8 +103,8 @@ class RouteTrackingViewModelImpl @Inject constructor(
             .setConstraints(constraints)
             .setBackoffCriteria(BackoffPolicy.LINEAR, 5, TimeUnit.MINUTES)
             .setInputData(workDataOf(
-                UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LAT to activityStartPoint.lat,
-                UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LNG to activityStartPoint.lng
+                UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LAT to activityStartPoint.latitude,
+                UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LNG to activityStartPoint.longitude
             ))
             .build()
         WorkManager.getInstance(appContext).enqueue(workRequest)

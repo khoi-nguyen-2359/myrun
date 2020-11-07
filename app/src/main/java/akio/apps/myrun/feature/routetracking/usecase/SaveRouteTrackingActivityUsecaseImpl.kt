@@ -8,6 +8,7 @@ import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.fitness.SingleDataPoint
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.feature.routetracking.SaveRouteTrackingActivityUsecase
 import android.graphics.Bitmap
@@ -34,7 +35,8 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
         val startTime = routeTrackingState.getTrackingStartTime()
         val duration = routeTrackingState.getTrackingDuration()
         val distance = routeTrackingState.getRouteDistance()
-        val encodedPolyline = PolyUtil.encode(routeTrackingLocationRepository.getAllLocations().map { it.toGmsLatLng() })
+        val trackedLocations = routeTrackingLocationRepository.getAllLocations()
+        val encodedPolyline = PolyUtil.encode(trackedLocations.map { it.toGmsLatLng() })
         val activityData: ActivityEntity = ActivityDataEntity("", userProfile.accountId, userProfile.name, userProfile.photo, activityType, "", "", startTime, endTime, duration, distance, encodedPolyline)
 
         val speedDataPoints = fitnessDataRepository.getSpeedDataPoints(startTime, endTime, FITNESS_DATA_INTERVAL)
@@ -43,6 +45,7 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
         } else {
             null
         }
+        val locationDataPoints = trackedLocations.map { SingleDataPoint(it.time, LocationEntity(it.latitude, it.longitude, it.altitude)) }
         val savingActivity = when (activityType) {
             ActivityType.Running -> {
                 val pace = (duration / (1000 * 60)) / (distance / 1000)
@@ -57,7 +60,7 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
             else -> return  // stop saving for unknown type
         }
 
-        activityRepository.saveActivity(savingActivity, routeMapImage, speedDataPoints, stepCadenceDataPoints)
+        activityRepository.saveActivity(savingActivity, routeMapImage, speedDataPoints, stepCadenceDataPoints, locationDataPoints)
     }
 
     companion object {
