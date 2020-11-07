@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.place.impl
 
-import akio.apps.myrun._di.GoogleMapApiModule
 import akio.apps.myrun.data.location.LatLngEntity
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.place.PlaceAddressComponent
 import akio.apps.myrun.data.place.PlaceDataSource
 import akio.apps.myrun.data.place.PlaceEntity
@@ -16,7 +16,6 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.tasks.await
 import java.util.*
 import javax.inject.Inject
-import javax.inject.Named
 
 class PlaceDataSourceImpl @Inject constructor(
     private val placesClient: PlacesClient,

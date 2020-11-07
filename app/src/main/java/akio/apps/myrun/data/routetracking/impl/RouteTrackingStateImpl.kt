@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.routetracking.impl
 
 import akio.apps.myrun.data.activity.ActivityType
-import akio.apps.myrun.data.location.LatLngEntity
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import android.content.Context
@@ -92,21 +92,22 @@ class RouteTrackingStateImpl @Inject constructor(
         prefDataStore.edit { data -> data[KEY_ACTIVITY_TYPE] = activityType.name }
     }
 
-    override suspend fun setStartLocation(latLng: LatLngEntity) {
+    override suspend fun setStartLocation(location: LocationEntity) {
         prefDataStore.edit { data ->
-            data[KEY_START_LOCATION_LAT] = latLng.lat.toFloat()
-            data[KEY_START_LOCATION_LNG] = latLng.lng.toFloat()
+            data[KEY_START_LOCATION_LAT] = location.latitude.toFloat()
+            data[KEY_START_LOCATION_LNG] = location.longitude.toFloat()
         }
     }
 
-    override suspend fun getStartLocation(): LatLngEntity? {
+    override suspend fun getStartLocation(): LocationEntity? {
         return prefDataStore.data.map { data ->
             val lat = data[KEY_START_LOCATION_LAT]
             val lng = data[KEY_START_LOCATION_LNG]
-            if (lat == null || lng == null)
+            val alt = data[KEY_START_LOCATION_ALT]
+            if (lat == null || lng == null || alt == null)
                 null
             else
-                LatLngEntity(lat.toDouble(), lng.toDouble())
+                LocationEntity(lat.toDouble(), lng.toDouble(), alt.toDouble())
         }
             .first()
     }
@@ -121,5 +122,6 @@ class RouteTrackingStateImpl @Inject constructor(
         private val KEY_LAST_RESUME_TIME = preferencesKey<Long>("KEY_LAST_RESUME_TIME")
         private val KEY_START_LOCATION_LAT = preferencesKey<Float>("KEY_START_LOCATION_LAT")
         private val KEY_START_LOCATION_LNG = preferencesKey<Float>("KEY_START_LOCATION_LNG")
+        private val KEY_START_LOCATION_ALT = preferencesKey<Float>("KEY_START_LOCATION_ALT")
     }
 }

@@ -1,6 +1,7 @@
 package akio.apps.myrun.data.activity
 
 import akio.apps.myrun.data.fitness.SingleDataPoint
+import akio.apps.myrun.data.location.LocationEntity
 import android.graphics.Bitmap
 
 interface ActivityRepository {
@@ -9,6 +10,7 @@ interface ActivityRepository {
         activity: ActivityEntity,
         routeMapImage: Bitmap,
         speedDataPoints: List<SingleDataPoint<Float>>,
-        stepCadenceDataPoints: List<SingleDataPoint<Int>>?
+        stepCadenceDataPoints: List<SingleDataPoint<Int>>?,
+        locationDataPoints: List<SingleDataPoint<LocationEntity>>
     )
 }
