@@ -2,13 +2,10 @@ package akio.apps.myrun.data.activity.impl
 
 import akio.apps._base.utils.FirebaseStorageUtils
 import akio.apps.myrun.data.activity.*
-import akio.apps.myrun.data.activity.entity.FirestoreActivity
-import akio.apps.myrun.data.activity.entity.FirestoreActivityMapper
-import akio.apps.myrun.data.activity.entity.FirestoreDataPointArray
+import akio.apps.myrun.data.activity.entity.*
 import akio.apps.myrun.data.fitness.SingleDataPoint
 import akio.apps.myrun.data.location.LocationEntity
 import android.graphics.Bitmap
-import android.location.Location
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -71,11 +68,11 @@ class ActivityRepositoryImpl @Inject constructor(
         val locationDocRef = dataPointCollections.document(PATH_DATA_POINTS_LOCATIONS)
         firestore.runBatch { batch ->
             batch.set(docRef, firestoreActivity)
-            batch.set(speedDocRef, FirestoreDataPointArray(speedDataPoints.map { dp -> listOf(dp.timestamp.toDouble(), dp.value.toDouble()) }))
-            batch.set(locationDocRef, FirestoreDataPointArray(locationDataPoints.map { listOf(it.timestamp.toDouble(), it.value.latitude, it.value.longitude, it.value.altitude) }))
+            batch.set(speedDocRef, FirestoreDataPointSerializer(FirestoreFloatDataPointParser()).serialize(speedDataPoints))
+            batch.set(locationDocRef, FirestoreDataPointSerializer(FirestoreLocationDataPointParser()).serialize(locationDataPoints))
 
             if (stepCadenceDataPoints != null) {
-                batch.set(stepCadenceDocRef, FirestoreDataPointArray(stepCadenceDataPoints.map { dp -> listOf(dp.timestamp.toDouble(), dp.value.toDouble()) }))
+                batch.set(stepCadenceDocRef, FirestoreDataPointSerializer(FirestoreIntegerDataPointParser()).serialize(stepCadenceDataPoints))
             }
         }.await()
     }
