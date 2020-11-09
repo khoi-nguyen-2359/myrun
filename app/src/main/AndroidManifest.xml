@@ -55,24 +55,7 @@
             android:screenOrientation="portrait"
             />
 
-        <activity
-            android:name=".feature.editprofile.impl.EditProfileActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait">
-
-            <!-- for Strava callback intent -->
-            <intent-filter>
-                <data
-                    android:host="@string/strava_callback_host"
-                    android:scheme="@string/app_scheme" />
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-            </intent-filter>
-
-
-        </activity>
+        <activity android:name=".feature.editprofile.impl.EditProfileActivity"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -105,6 +88,23 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".feature.strava.impl.LinkStravaActivity"
+            android:theme="@style/TransparentAppCompat"
+            android:launchMode="singleTask"
+            >
+            <!-- for Strava callback intent -->
+            <intent-filter>
+                <data
+                    android:host="@string/strava_callback_host"
+                    android:scheme="@string/app_scheme" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
+
         <!--        Facebook Login -->
 
         <!--        Remove the default initializer of WorkManager -->

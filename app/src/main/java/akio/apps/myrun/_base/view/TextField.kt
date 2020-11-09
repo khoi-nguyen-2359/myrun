@@ -21,9 +21,10 @@ class TextField @JvmOverloads constructor(
 	init {
 		val styledAttrs = context.obtainStyledAttributes(attrs, R.styleable.TextField)
 		label = styledAttrs.getString(R.styleable.TextField_tf_label) ?: ""
+		value = styledAttrs.getString(R.styleable.TextField_tf_value) ?: " "
 		styledAttrs.recycle()
 		
-		setValue(" ")
+		setValue(value)
 	}
 	
 	fun setValue(value: String?) {

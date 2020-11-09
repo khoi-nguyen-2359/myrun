@@ -1,24 +1,27 @@
 package akio.apps.myrun.feature.strava._di
 
+import akio.apps._base.di.ViewModelKey
 import akio.apps.myrun.data.externalapp.StravaAuthenticator
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule.Companion.STRAVA_APP_ID
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule.Companion.STRAVA_APP_SECRET
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule.Companion.STRAVA_BASE_ENDPOINT
-import akio.apps.myrun.feature.strava.impl.StravaAuthenticatorImpl
 import akio.apps.myrun.feature.editprofile.UpdateStravaTokenUsecase
+import akio.apps.myrun.feature.splash.SplashViewModel
+import akio.apps.myrun.feature.splash.impl.SplashViewModelImpl
 import akio.apps.myrun.feature.strava.ExportRunToFileUsecase
 import akio.apps.myrun.feature.strava.GetStravaRoutesUsecase
+import akio.apps.myrun.feature.strava.LinkStravaViewModel
 import akio.apps.myrun.feature.strava.UploadActivityToStravaUsecase
-import akio.apps.myrun.feature.strava.impl.ExportRunToFileUsecaseImpl
-import akio.apps.myrun.feature.strava.impl.GetStravaRoutesUsecaseImpl
-import akio.apps.myrun.feature.strava.impl.UploadActivityToStravaUsecaseImpl
+import akio.apps.myrun.feature.strava.impl.*
 import akio.apps.myrun.feature.userprofile.RemoveStravaTokenUsecase
+import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.multibindings.IntoMap
 import okhttp3.OkHttpClient
 import javax.inject.Named
 
@@ -35,6 +38,11 @@ class StravaConnectFeatureModule {
 
         @Binds
         fun exportRunToFileUsecase(exportRunToFileUsecase: ExportRunToFileUsecaseImpl): ExportRunToFileUsecase
+
+        @Binds
+        @IntoMap
+        @ViewModelKey(LinkStravaViewModel::class)
+        fun linkStravaViewModel(viewModelImpl: LinkStravaViewModelImpl): ViewModel
     }
 
     @Provides
