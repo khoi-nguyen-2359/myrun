@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<akio.apps.myrun._base.view.TextField
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/textField"
-    style="@style/UserProfileField"
-    app:drawableStartCompat="@drawable/ic_settings_applications"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textAllCaps="true"
-    app:tf_label="@string/profile_linked_app_label" />
+    android:orientation="horizontal">
+
+    <akio.apps.myrun._base.view.TextField
+        android:id="@+id/linking_app_text"
+        style="@style/UserProfileField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textAllCaps="true"
+        app:drawableStartCompat="@drawable/ic_settings_applications"
+        app:tf_label="@string/profile_linked_app_label" />
+
+    <CheckBox
+        android:checked="true"
+        android:background="?selectableItemBackgroundBorderless"
+        android:id="@+id/is_app_linked_check_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical" />
+</LinearLayout>

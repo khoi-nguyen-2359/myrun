@@ -142,14 +142,65 @@
                 android:id="@+id/linked_apps_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
+                android:orientation="vertical">
 
                 <TextView
                     style="@style/UserProfileSectionLabel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/profile_linked_app_section_label" />
+
+                <LinearLayout
+                    android:background="?selectableItemBackground"
+                    android:id="@+id/strava_item_view_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <akio.apps.myrun._base.view.TextField
+                        android:id="@+id/strava_app_text_field"
+                        style="@style/UserProfileField"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:drawableStartCompat="@drawable/ic_settings_applications"
+                        app:tf_label="@string/strava_app_name"
+                        app:tf_value="@string/user_profile_strava_description"
+                        />
+
+                    <CheckedTextView
+                        android:checkMark="@drawable/common_checked_text_view_check_mark"
+                        android:id="@+id/is_strava_linked_check_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:background="?selectableItemBackground"
+                    android:id="@+id/google_fit_item_view_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <akio.apps.myrun._base.view.TextField
+                        android:id="@+id/google_fit_app_text_field"
+                        style="@style/UserProfileField"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:drawableStartCompat="@drawable/ic_settings_applications"
+                        app:tf_label="@string/google_fit_app_name"
+                        app:tf_value="@string/user_profile_google_fit_description"
+                        />
+
+                    <CheckedTextView
+                        android:checkMark="@drawable/common_checked_text_view_check_mark"
+                        android:id="@+id/is_google_fit_linked_check_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical" />
+                </LinearLayout>
 
             </LinearLayout>
 

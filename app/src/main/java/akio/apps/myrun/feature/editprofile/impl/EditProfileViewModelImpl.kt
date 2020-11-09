@@ -18,8 +18,6 @@ import javax.inject.Inject
 
 class EditProfileViewModelImpl @Inject constructor(
     private val getUserProfileUsecase: GetUserProfileUsecase,
-    private val exchangeStravaLoginCodeUsecase: ExchangeStravaLoginCodeUsecase,
-    private val updateStravaTokenUsecase: UpdateStravaTokenUsecase,
     private val updateUserProfileUsecase: UpdateUserProfileUsecase,
     private val updateUserPhoneDelegate: UserPhoneNumberDelegate
 ) : EditProfileViewModel(), UserPhoneNumberDelegate by updateUserPhoneDelegate {
@@ -62,14 +60,6 @@ class EditProfileViewModelImpl @Inject constructor(
     private fun getCurrentPhoneNumber() = liveUserProfile.value
         ?.data
         ?.phone
-
-    override fun exchangeStravaToken(stravaLoginCode: String) {
-        launchCatching {
-            val stravaToken = exchangeStravaLoginCodeUsecase.exchangeStravaLoginCode(stravaLoginCode)
-            updateStravaTokenUsecase.updateStravaToken(stravaToken)
-            _stravaTokenExchangedSuccess.value = Event(Unit)
-        }
-    }
 
     override fun updateProfile(profileEditData: ProfileEditData) {
         launchCatching {

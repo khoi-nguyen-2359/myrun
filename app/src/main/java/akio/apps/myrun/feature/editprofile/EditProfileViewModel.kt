@@ -17,7 +17,6 @@ abstract class EditProfileViewModel: BaseViewModel(), UserPhoneNumberDelegate {
     abstract val blankEditDisplayNameError: LiveData<Event<Unit>>
     abstract val recentLoginRequiredError: LiveData<Event<Unit>>
 
-    abstract fun exchangeStravaToken(stravaLoginCode: String)
     abstract fun updateProfile(profileEditData: ProfileEditData)
 
     data class OtpNavigationInfo(val phoneNumber: String)

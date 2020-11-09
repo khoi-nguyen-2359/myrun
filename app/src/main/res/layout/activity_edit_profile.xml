@@ -90,14 +90,6 @@
                 android:inputType="numberDecimal" />
 
             <Button
-                android:id="@+id/connect_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#fff"
-                android:text="@string/profile_link_running_app_button"
-                android:textColor="@color/colorPrimary" />
-
-            <Button
                 android:id="@+id/save_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

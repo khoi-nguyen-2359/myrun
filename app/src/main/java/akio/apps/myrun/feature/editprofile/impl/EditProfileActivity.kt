@@ -44,8 +44,6 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
         ), this
     )
 
-    private val stravaRedirectUri by lazy { "${getString(R.string.app_scheme)}://${getString(R.string.strava_callback_host)}" }
-
     private val isOnboarding: Boolean by lazy { intent.getBooleanExtra(EXT_IS_ONBOARDING, false) }
 
     private val bodyDimensFormat = DecimalFormat("#.#")
@@ -63,8 +61,6 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
 
         initViews()
         initObservers()
-
-        intent.data?.let { checkStravaLoginResult(it) }
     }
 
     private fun initObservers() {
@@ -112,57 +108,10 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-
-        intent?.data?.let { checkStravaLoginResult(it) }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
 
         croppedPhotoFile?.delete()
-    }
-
-    private fun checkStravaLoginResult(data: Uri) {
-        if (!data.toString().startsWith(stravaRedirectUri))
-            return
-
-        data.getQueryParameter("error")?.let {
-            Timber.e(it)
-            dialogDelegate.showErrorAlert(it)
-            return
-        }
-
-        data.getQueryParameter("code")?.let { loginCode ->
-            editProfileVM.exchangeStravaToken(loginCode)
-        }
-    }
-
-    private fun openExternalAppList() {
-        val dialog = AlertDialog.Builder(this)
-            .setTitle(getString(R.string.profile_link_running_app_dialog_title))
-            .setItems(RunningApp.values().map { it.appName }.toTypedArray()) { dialog, which ->
-                when (which) {
-                    RunningApp.Strava.ordinal -> openStravaLogin()
-                }
-            }
-            .create()
-        dialog.show()
-    }
-
-    private fun openStravaLogin() {
-        val intentUri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")
-            .buildUpon()
-            .appendQueryParameter("client_id", STRAVA_APP_ID)
-            .appendQueryParameter("redirect_uri", stravaRedirectUri)
-            .appendQueryParameter("response_type", "code")
-            .appendQueryParameter("approval_prompt", "auto")
-            .appendQueryParameter("scope", "activity:write,read")
-            .build()
-
-        val intent = Intent(Intent.ACTION_VIEW, intentUri)
-        startActivity(intent)
     }
 
     private fun fillCurrentUserProfile(userProfile: UserProfile) = viewBinding.apply {
@@ -183,8 +132,6 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
 
     private fun initViews() = viewBinding.apply {
         setContentView(root)
-
-        connectButton.setOnClickListener { openExternalAppList() }
 
         avatarImageView.setOnClickListener { photoSelectionDelegate.showPhotoSelectionDialog(getString(R.string.photo_selection_dialog_title)) }
 

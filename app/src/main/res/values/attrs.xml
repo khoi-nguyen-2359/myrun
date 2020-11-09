@@ -9,6 +9,7 @@
 
     <declare-styleable name="TextField">
         <attr name="tf_label" format="string" />
+        <attr name="tf_value" format="string" />
     </declare-styleable>
 
 </resources>

@@ -2,14 +2,13 @@ package akio.apps.myrun.feature.userprofile.impl
 
 import akio.apps._base.data.Resource
 import akio.apps._base.ui.SingleFragmentActivity
-import akio.apps._base.ui.inflate
-import akio.apps._base.ui.setVisibleOrGone
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.circleCenterCrop
-import akio.apps.myrun._base.view.TextField
 import akio.apps.myrun._di.createViewModelInjectionDelegate
+import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.ExternalProviders
+import akio.apps.myrun.data.externalapp.model.ProviderToken
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.databinding.FragmentUserProfileBinding
 import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
@@ -18,6 +17,8 @@ import akio.apps.myrun.feature.userprofile.UserProfileViewModel
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.CheckedTextView
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -65,22 +66,41 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     }
 
     private fun showLinkedRunningApps(providers: ExternalProviders) {
+        val linkedAppMap = mapOf<ExternalAppItemViewIds, ProviderToken<out ExternalAppToken>?>(
+            ExternalAppItemViewIds.Strava to providers.strava,
+            ExternalAppItemViewIds.GoogleFit to null
+        )
+
         viewBinding.apply {
-            val externalTokenList = providers.toList()
-            linkedAppsContainer.setVisibleOrGone(externalTokenList.isNotEmpty())
-            linkedAppsContainer.removeViews(1, linkedAppsContainer.childCount - 1)
-            externalTokenList.forEach { providerToken ->
-                val itemView = linkedAppsContainer.inflate(R.layout.item_user_profile_linked_running_app) as TextField
-                itemView.setValue(providerToken.runningApp.appName)
-                linkedAppsContainer.addView(itemView)
-                itemView.setOnClickListener {
-                    AlertDialog.Builder(requireContext())
-                        .setMessage(R.string.profile_app_unlink_dialog_message)
-                        .setPositiveButton(R.string.action_yes) { dialog, which ->
-                            dialog.dismiss()
-                            profileViewModel.unlinkProvider(providerToken)
+            linkedAppMap.forEach { (viewIds, token) ->
+                val itemViewContainer = linkedAppsContainer.findViewById<View>(viewIds.containerId)
+                itemViewContainer.findViewById<CheckedTextView>(viewIds.checkBoxId).isChecked = token != null
+                if (token != null) {
+                    itemViewContainer.setOnClickListener { view ->
+                        AlertDialog.Builder(requireContext())
+                            .setMessage(R.string.profile_app_unlink_dialog_message)
+                            .setPositiveButton(R.string.action_yes) { dialog, which ->
+                                dialog.dismiss()
+                                profileViewModel.unlinkProvider(token)
+                            }
+                            .setNegativeButton(R.string.action_no) { dialog, which ->
+                                dialog.dismiss()
+                            }
+                            .setCancelable(false)
+                            .create().apply { setCanceledOnTouchOutside(false) }
+                            .show()
+                    }
+                } else {
+                    itemViewContainer.setOnClickListener { view ->
+                        when (viewIds) {
+                            ExternalAppItemViewIds.Strava -> {
+                                val loginIntent = LinkStravaDelegate.buildStravaLoginIntent(requireContext())
+                                startActivity(loginIntent)
+                            }
+
+                            ExternalAppItemViewIds.GoogleFit -> {}
                         }
-                        .show()
+                    }
                 }
             }
         }
@@ -121,5 +141,13 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
     companion object {
         fun launchIntent(context: Context) = SingleFragmentActivity.launchIntent<UserProfileFragment>(context)
+    }
+
+    enum class ExternalAppItemViewIds(
+        @IdRes val containerId: Int,
+        @IdRes val checkBoxId: Int
+    ) {
+        Strava(R.id.strava_item_view_container, R.id.is_strava_linked_check_box),
+        GoogleFit(R.id.google_fit_item_view_container, R.id.is_google_fit_linked_check_box)
     }
 }
