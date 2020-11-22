@@ -10,12 +10,11 @@ import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun._base.permissions.AppPermissions.locationPermissions
-import akio.apps._base.utils.GoogleSignInPermissionUtils
-import akio.apps.myrun._base.permissions.AppPermissions
 import akio.apps.myrun._base.permissions.RequiredPermissionsDelegate
 import akio.apps.myrun._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.toGmsLatLng
+import akio.apps.myrun.feature.googlefit.GoogleFitLinkingDelegate
 import akio.apps.myrun.feature.home.impl.HomeActivity
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.routetracking.view.ActivitySettingsView
@@ -35,7 +34,6 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import kotlinx.coroutines.launch
 
 class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventListener {
 
@@ -46,14 +44,14 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private val viewModelInjectionDelegate by lazy { createViewModelInjectionDelegate() }
     private val routeTrackingViewModel by lazy { viewModelInjectionDelegate.getViewModel<RouteTrackingViewModel>() }
 
+    private val googleFitLinkingDelegate = GoogleFitLinkingDelegate()
+
     private lateinit var mapView: GoogleMap
 
     private val checkLocationServiceDelegate by lazy {
         CheckLocationServiceDelegate(
             this,
-            listOf(RouteTrackingService.createLocationTrackingRequest()),
-            RC_LOCATION_SERVICE,
-            onLocationServiceAvailable
+            listOf(RouteTrackingService.createLocationTrackingRequest())
         )
     }
 
@@ -61,13 +59,23 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private var drawnLocationCount: Int = 0
     private val trackingRouteLatLngBounds = LatLngBounds.builder()
 
+    private val requiredPermissionsDelegate = RequiredPermissionsDelegate()
+    private val requisiteJobs = lifecycleScope.launchWhenCreated {
+        // onCreate: check location permissions -> check location service availability -> allow user to use this screen
+        if (!requiredPermissionsDelegate.requestPermissions(locationPermissions, RC_LOCATION_PERMISSIONS, this@RouteTrackingActivity)
+            || !checkLocationServiceDelegate.checkLocationServiceAvailability(this@RouteTrackingActivity, RC_LOCATION_SERVICE)) {
+            finish()
+        }
+
+        googleFitLinkingDelegate.requestGoogleFitPermissions(this@RouteTrackingActivity, RC_ACTIVITY_REGCONITION_PERMISSION, RC_FITNESS_DATA_PERMISSIONS)
+
+        initMap()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         initViews()
-
-        // onCreate: check location permissions -> check location service availability -> allow user to use this screen
-        RequiredPermissionsDelegate.requestPermissions(locationPermissions, RC_LOCATION_PERMISSIONS, this)
     }
 
     override fun onStart() {
@@ -80,6 +88,12 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         super.onStop()
 
         routeTrackingViewModel.cancelDataUpdates()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        requisiteJobs.cancel()
     }
 
     private fun initObservers() {
@@ -263,15 +277,22 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        RequiredPermissionsDelegate.verifyPermissionsResult(this, locationPermissions, onLocationPermissionsGranted) { finish() }
+        requiredPermissionsDelegate.verifyPermissionsResult(this, locationPermissions)
+
+        when (requestCode) {
+            RC_ACTIVITY_REGCONITION_PERMISSION -> googleFitLinkingDelegate.verifyActivityRecognitionPermission()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        checkLocationServiceDelegate.verifyLocationServiceResolutionResult(requestCode, resultCode)
+        when (requestCode) {
+            RC_FITNESS_DATA_PERMISSIONS -> googleFitLinkingDelegate.verifyFitnessDataPermission()
+            RC_LOCATION_SERVICE -> checkLocationServiceDelegate.verifyLocationServiceResolutionResult(resultCode)
+        }
     }
 
-    private fun onLocationRequirementsReady() {
+    private fun initMap() {
         (supportFragmentManager.findFragmentById(R.id.tracking_map_view) as SupportMapFragment).getMapAsync { map ->
             initMapView(map)
             initObservers()
@@ -287,14 +308,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         map.uiSettings.isMyLocationButtonEnabled = true
     }
 
-    private val onLocationPermissionsGranted = {
-        lifecycleScope.launch {
-            checkLocationServiceDelegate.checkLocationServiceAvailability(this@RouteTrackingActivity)
-        }
-    }
-
-    private val onLocationServiceAvailable = { onLocationRequirementsReady() }
-
     override fun onActivityTypeSelected(activityType: ActivityType) {
         routeTrackingViewModel.onSelectActivityType(activityType)
     }
@@ -307,6 +320,8 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         const val RC_LOCATION_SERVICE = 1
         const val RC_LOCATION_PERMISSIONS = 2
         const val RC_FITNESS_DATA_PERMISSIONS = 3
+
+        const val RC_ACTIVITY_REGCONITION_PERMISSION = 4
 
         fun launchIntent(context: Context): Intent {
             val intent = Intent(context, RouteTrackingActivity::class.java)

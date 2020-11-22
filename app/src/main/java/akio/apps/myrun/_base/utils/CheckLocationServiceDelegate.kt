@@ -7,55 +7,66 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 class CheckLocationServiceDelegate(
-    private val activity: Activity,
-    private val locationSampleRequests: List<LocationRequest>,
-    private val rcLocationService: Int,
-    private val onLocationServiceAvailable: () -> Any
+    activity: Activity,
+    private val locationSampleRequests: List<LocationRequest>
 ) {
 
     private val locationSettingsClient: SettingsClient = LocationServices.getSettingsClient(activity)
+    private val resolveForResultJob = Job()
+    private val showLocationUnavailableDialogJob = Job()
 
     // work with activity only!!
-    suspend fun checkLocationServiceAvailability(activity: Activity) = withContext(Dispatchers.IO) {
+    suspend fun checkLocationServiceAvailability(activity: Activity, rcLocationService: Int): Boolean = withContext(Dispatchers.IO) {
         val settingsReq = LocationSettingsRequest.Builder()
             .addAllLocationRequests(locationSampleRequests)
             .build()
 
         return@withContext try {
             locationSettingsClient.checkLocationSettings(settingsReq).await()
-            withContext(Dispatchers.Main) { onLocationServiceAvailable() }
+            true
         } catch (apiEx: ApiException) {
             when (apiEx.statusCode) {
                 LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
                     (apiEx as? ResolvableApiException)?.startResolutionForResult(activity, rcLocationService)
+                    try {
+                        resolveForResultJob.join()
+                        true
+                    } catch (ex: ResolutionNotFound) {
+                        showLocationServiceUnavailableDialog(activity)
+                    }
                 }
 
                 else -> {
-                    showLocationServiceUnavailableDialog()
+                    showLocationServiceUnavailableDialog(activity)
                 }
             }
         }
     }
 
-    fun verifyLocationServiceResolutionResult(requestCode: Int, resultCode: Int) {
-        if (requestCode == rcLocationService)
-            if (resultCode == Activity.RESULT_OK)
-                onLocationServiceAvailable()
-            else
-                showLocationServiceUnavailableDialog()
+    fun verifyLocationServiceResolutionResult(resultCode: Int) {
+        if (resultCode == Activity.RESULT_OK) {
+            resolveForResultJob.complete()
+        } else {
+            resolveForResultJob.completeExceptionally(ResolutionNotFound())
+        }
     }
 
-    private fun showLocationServiceUnavailableDialog() {
+    private suspend fun showLocationServiceUnavailableDialog(activity: Activity): Boolean {
         AlertDialog.Builder(activity)
             .setMessage(R.string.error_location_service_unavailable)
             .setPositiveButton(R.string.action_close) { _, _ ->
-                activity.finish()
+                showLocationUnavailableDialogJob.complete()
             }
             .setCancelable(false)
             .show()
+        showLocationUnavailableDialogJob.join()
+        return false
     }
+
+    internal class ResolutionNotFound: Throwable()
 }

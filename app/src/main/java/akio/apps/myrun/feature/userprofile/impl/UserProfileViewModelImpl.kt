@@ -2,7 +2,6 @@ package akio.apps.myrun.feature.userprofile.impl
 
 import akio.apps._base.data.Resource
 import akio.apps._base.lifecycle.Event
-import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.ProviderToken
 import akio.apps.myrun.data.externalapp.model.RunningApp
@@ -14,7 +13,6 @@ import androidx.lifecycle.Observer
 import javax.inject.Inject
 
 class UserProfileViewModelImpl @Inject constructor(
-    private val userAuthenticationState: UserAuthenticationState,
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val getProviderTokensUsecase: GetProviderTokensUsecase,
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
