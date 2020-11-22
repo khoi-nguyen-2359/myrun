@@ -39,10 +39,7 @@ class FitnessDataRepositoryImpl @Inject constructor(
         DataType.TYPE_SPEED,
         DataType.TYPE_STEP_COUNT_DELTA,
         DataType.TYPE_STEP_COUNT_CADENCE,
-        DataType.TYPE_CYCLING_PEDALING_CADENCE,
-        DataType.TYPE_CYCLING_PEDALING_CUMULATIVE,
-        DataType.TYPE_CALORIES_EXPENDED,
-        DataType.TYPE_HEART_RATE_BPM
+        DataType.TYPE_STEP_COUNT_CUMULATIVE
     )
 
     override fun subscribeFitnessData() {
@@ -164,34 +161,6 @@ class FitnessDataRepositoryImpl @Inject constructor(
 
                 SingleDataPoint(
                     stepDeltaDp.getStartTime(TimeUnit.MILLISECONDS),
-                    avgRpm
-                )
-            }
-        )
-    }
-
-    override suspend fun getPedalingCadenceDataPoints(startTime: Long, endTime: Long, interval: Long): List<SingleDataPoint<Int>> {
-        val cadenceDataPoints = readFitnessData(startTime, endTime, interval, DataType.TYPE_CYCLING_PEDALING_CADENCE)
-        val cumulativeDataPoints = readFitnessData(startTime, endTime, interval, DataType.TYPE_CYCLING_PEDALING_CUMULATIVE)
-        var lastCumulativeDp: DataPoint? = null
-        return mergeDataPoints(
-            cadenceDataPoints,
-            { cadenceDp ->
-                SingleDataPoint(
-                    cadenceDp.getStartTime(TimeUnit.MILLISECONDS),
-                    cadenceDp.getValue(Field.FIELD_RPM).asInt()
-                )
-            },
-            cumulativeDataPoints,
-            { cumulativeDp ->
-                val endValue = cumulativeDp.getValue(Field.FIELD_REVOLUTIONS).asInt()
-                val startValue = lastCumulativeDp?.getValue(Field.FIELD_REVOLUTIONS)?.asInt() ?: endValue   // fallback to endValue to make avg value = zero
-                val cumulativeEndTime = cumulativeDp.getEndTime(TimeUnit.MILLISECONDS)
-                val cumulativeStartTime = lastCumulativeDp?.getEndTime(TimeUnit.MILLISECONDS) ?: 0
-                val avgRpm: Int = ((endValue - startValue) / ((cumulativeEndTime - cumulativeStartTime) / 60000f)).toInt()
-                lastCumulativeDp = cumulativeDp
-                SingleDataPoint(
-                    cumulativeDp.getStartTime(TimeUnit.MILLISECONDS),
                     avgRpm
                 )
             }

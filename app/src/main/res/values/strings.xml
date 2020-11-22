@@ -82,6 +82,8 @@
     <string name="user_profile_strava_description">Automatically upload your activity to Strava</string>
     <string name="google_fit_app_name">Google Fit</string>
     <string name="user_profile_google_fit_description">Access to Google Fit fitness data</string>
+    <string name="user_profile_error_app_disconnect">Can not disconnect app at the moment</string>
+    <string name="user_profile_error_app_connect">Can not connect this app at the moment.</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>

@@ -5,6 +5,5 @@ interface FitnessDataRepository {
     fun unsubscribeFitnessData()
     suspend fun getSpeedDataPoints(startTime: Long, endTime: Long, interval: Long): List<SingleDataPoint<Float>>
     suspend fun getSteppingCadenceDataPoints(startTime: Long, endTime: Long, interval: Long): List<SingleDataPoint<Int>>
-    suspend fun getPedalingCadenceDataPoints(startTime: Long, endTime: Long, interval: Long): List<SingleDataPoint<Int>>
     suspend fun getHeartRateDataPoints(startTime: Long, endTime: Long, interval: Long): List<SingleDataPoint<Int>>
 }
