@@ -8,14 +8,10 @@ import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule.Companion.STRA
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule.Companion.STRAVA_APP_SECRET
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule.Companion.STRAVA_BASE_ENDPOINT
 import akio.apps.myrun.feature.editprofile.UpdateStravaTokenUsecase
-import akio.apps.myrun.feature.splash.SplashViewModel
-import akio.apps.myrun.feature.splash.impl.SplashViewModelImpl
-import akio.apps.myrun.feature.strava.ExportRunToFileUsecase
-import akio.apps.myrun.feature.strava.GetStravaRoutesUsecase
-import akio.apps.myrun.feature.strava.LinkStravaViewModel
-import akio.apps.myrun.feature.strava.UploadActivityToStravaUsecase
+import akio.apps.myrun.feature.strava.*
 import akio.apps.myrun.feature.strava.impl.*
 import akio.apps.myrun.feature.userprofile.RemoveStravaTokenUsecase
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import dagger.Binds
@@ -23,6 +19,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
 import okhttp3.OkHttpClient
+import java.io.File
 import javax.inject.Named
 
 @Module(includes = [StravaConnectFeatureModule.Bindings::class])
@@ -37,12 +34,22 @@ class StravaConnectFeatureModule {
         fun updateLoadRunToStravaUsecase(usecase: UploadActivityToStravaUsecaseImpl): UploadActivityToStravaUsecase
 
         @Binds
-        fun exportRunToFileUsecase(exportRunToFileUsecase: ExportRunToFileUsecaseImpl): ExportRunToFileUsecase
+        fun exportRunToFileUsecase(exportRunToTcxFileUsecase: ExportActivityToTcxFileUsecase): ExportActivityToFileUsecase
+
+        @Binds
+        fun getTcxActivityFileExporter(tcxActivityFileExporter: TcxActivityFileExporter): ActivityFileExporter
 
         @Binds
         @IntoMap
         @ViewModelKey(LinkStravaViewModel::class)
         fun linkStravaViewModel(viewModelImpl: LinkStravaViewModelImpl): ViewModel
+    }
+
+    @Provides
+    @Named(NAME_STRAVA_UPLOAD_FILE_MANAGER)
+    fun uploadFileManager(appContext: Context): UploadFileManager {
+        val fileDir = File(appContext.filesDir, "strava_upload/")
+        return UploadFileManagerImpl(fileDir)
     }
 
     @Provides
@@ -64,5 +71,9 @@ class StravaConnectFeatureModule {
             STRAVA_APP_ID,
             STRAVA_APP_SECRET
         )
+    }
+
+    companion object {
+        const val NAME_STRAVA_UPLOAD_FILE_MANAGER = "StravaConnectFeatureModule.NAME_STRAVA_UPLOAD_FILE_MANAGER"
     }
 }

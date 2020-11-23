@@ -11,6 +11,8 @@ import akio.apps.myrun.data.fitness.SingleDataPoint
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.feature.routetracking.SaveRouteTrackingActivityUsecase
+import akio.apps.myrun.feature.usertimeline.model.Activity
+import akio.apps.myrun.feature.usertimeline.model.ActivityEntityMapper
 import android.graphics.Bitmap
 import com.google.maps.android.PolyUtil
 import java.util.concurrent.TimeUnit
@@ -22,10 +24,11 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
     private val activityRepository: ActivityRepository,
     private val userAuthenticationState: UserAuthenticationState,
     private val userProfileRepository: UserProfileRepository,
-    private val fitnessDataRepository: FitnessDataRepository
+    private val fitnessDataRepository: FitnessDataRepository,
+    private val activityEntityMapper: ActivityEntityMapper
 ) : SaveRouteTrackingActivityUsecase {
 
-    override suspend fun saveCurrentActivity(activityType: ActivityType, routeMapImage: Bitmap) {
+    override suspend fun saveCurrentActivity(activityType: ActivityType, routeMapImage: Bitmap): Activity {
         val userAccountId = userAuthenticationState.getUserAccountId()
             ?: throw UnauthorizedUserError()
 
@@ -57,10 +60,12 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
                 CyclingActivityEntity(activityData, speed)
             }
 
-            else -> return  // stop saving for unknown type
+            else -> throw UnsupportedOperationException("Saving unknown activity type $activityType")
         }
 
         activityRepository.saveActivity(savingActivity, routeMapImage, speedDataPoints, stepCadenceDataPoints, locationDataPoints)
+
+        return activityEntityMapper.map(savingActivity)
     }
 
     companion object {
