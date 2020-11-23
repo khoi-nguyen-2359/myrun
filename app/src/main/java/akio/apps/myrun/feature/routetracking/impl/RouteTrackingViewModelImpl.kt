@@ -8,8 +8,11 @@ import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun._base.utils.flowTimer
+import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.feature.routetracking.*
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
+import akio.apps.myrun.feature.strava.ExportActivityToFileUsecase
+import akio.apps.myrun.feature.usertimeline.model.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
@@ -29,6 +32,8 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val routeTrackingState: RouteTrackingState,
     private val saveRouteTrackingActivityUsecase: SaveRouteTrackingActivityUsecase,
     private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase,
+    private val stravaTokenStorage: StravaTokenStorage,
+    private val exportActivityToFileUsecase: ExportActivityToFileUsecase
 ) : RouteTrackingViewModel() {
 
     private val _mapInitialLocation = MutableLiveData<Event<LatLng>>()
@@ -84,9 +89,12 @@ class RouteTrackingViewModelImpl @Inject constructor(
             val activityType = activityType.value
                 ?: return@launchCatching
 
-            saveRouteTrackingActivityUsecase.saveCurrentActivity(activityType, routeMapImage)
+            val activity = saveRouteTrackingActivityUsecase.saveCurrentActivity(activityType, routeMapImage)
+            stravaTokenStorage.getToken()?.let { stravaToken ->
+                scheduleStravaActivityUpload(activity)
+            }
             routeTrackingState.getStartLocation()?.let { startLocation ->
-                updateUserRecentPlace(startLocation)
+                scheduleUserRecentPlaceUpdate(startLocation)
             }
             clearRouteTrackingStateUsecase.clear()
 
@@ -94,7 +102,11 @@ class RouteTrackingViewModelImpl @Inject constructor(
         }
     }
 
-    private fun updateUserRecentPlace(activityStartPoint: LocationEntity) {
+    private suspend fun scheduleStravaActivityUpload(activity: Activity) {
+        exportActivityToFileUsecase.exportActivityToFile(activity, false)
+    }
+
+    private fun scheduleUserRecentPlaceUpdate(activityStartPoint: LocationEntity) {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.UNMETERED)
             .setRequiresBatteryNotLow(true)
