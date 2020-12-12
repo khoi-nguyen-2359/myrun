@@ -4,14 +4,14 @@ import akio.apps.myrun._base.runfile.ClosableFileSerializer
 import akio.apps.myrun._base.runfile.ZipFileSerializer
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.ActivityType
+import akio.apps.myrun.data.activityfile.ActivityFileTrackingRepository
+import akio.apps.myrun.data.activityfile.model.FileTarget
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.fitness.SingleDataPoint
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.feature.routetracking.usecase.SaveRouteTrackingActivityUsecaseImpl
-import akio.apps.myrun.feature.strava.ExportActivityToFileUsecase
-import akio.apps.myrun.feature.strava.UploadFileManager
-import akio.apps.myrun.feature.strava._di.StravaConnectFeatureModule
+import akio.apps.myrun.feature.strava.ExportTrackingActivityToStravaFileUsecase
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import com.google.maps.android.SphericalUtil
 import com.sweetzpot.tcxzpot.*
@@ -22,33 +22,30 @@ import com.sweetzpot.tcxzpot.builders.TrainingCenterDatabaseBuilder
 import java.io.File
 import java.util.*
 import javax.inject.Inject
-import javax.inject.Named
 
-class ExportActivityToTcxFileUsecase @Inject constructor(
+class ExportTrackingActivityToStravaFileUsecaseImpl @Inject constructor(
     private val routeTrackingLocationRepository: RouteTrackingLocationRepository,
     private val fitnessDataRepository: FitnessDataRepository,
+    private val activityFileTrackingRepository: ActivityFileTrackingRepository
+) : ExportTrackingActivityToStravaFileUsecase {
 
-    @Named(StravaConnectFeatureModule.NAME_STRAVA_UPLOAD_FILE_MANAGER)
-    private val uploadFileManager: UploadFileManager
-) : ExportActivityToFileUsecase {
-
-    override suspend fun exportActivityToFile(activity: Activity, zip: Boolean): File {
+    override suspend fun export(activity: Activity, zip: Boolean): File {
+        val outputFile = activityFileTrackingRepository.createEmptyFile(activity.id)
         val startDate = Date(activity.startTime)
-        val tempFile = uploadFileManager.createUploadFile(activity.id)
         val serializer = if (zip)
-            ZipFileSerializer(tempFile, ".tcx")
+            ZipFileSerializer(outputFile, ".tcx")
         else
-            ClosableFileSerializer(tempFile)
+            ClosableFileSerializer(outputFile)
 
         val stepCadenceDataPoints: List<SingleDataPoint<Int>>? = if (activity.activityType == ActivityType.Running) {
             fitnessDataRepository.getSteppingCadenceDataPoints(activity.startTime, activity.endTime, SaveRouteTrackingActivityUsecaseImpl.FITNESS_DATA_INTERVAL)
         } else {
             null
         }
-        val avgCadence: Int? = if (stepCadenceDataPoints == null)
+        val avgCadence: Int? = if (stepCadenceDataPoints.isNullOrEmpty())
             null
         else
-            (stepCadenceDataPoints.sumOf { it.value } / stepCadenceDataPoints.size)
+            stepCadenceDataPoints.sumOf { it.value } / stepCadenceDataPoints.size
 
         val trackedLocations = routeTrackingLocationRepository.getAllLocations()
 
@@ -89,6 +86,7 @@ class ExportActivityToTcxFileUsecase @Inject constructor(
                                 .withDistance(activity.distance)
                                 .withIntensity(Intensity.ACTIVE)
                                 .withTriggerMethod(TriggerMethod.MANUAL)
+                                .withCalories(0)
                                 .apply {
                                     avgCadence?.let { withCadence(Cadence.cadence(it)) }
                                 }
@@ -117,6 +115,8 @@ class ExportActivityToTcxFileUsecase @Inject constructor(
             .serialize(serializer)
         serializer.close()
 
-        return tempFile
+        activityFileTrackingRepository.track(activity.id, activity.name, outputFile, FileTarget.STRAVA_UPLOAD)
+
+        return outputFile
     }
 }

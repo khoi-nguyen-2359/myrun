@@ -5,29 +5,23 @@ import akio.apps.myrun.feature.routetracking.*
 import akio.apps.myrun.feature.routetracking.impl.*
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingViewModelImpl
 import akio.apps.myrun.feature.routetracking.usecase.*
-import android.content.Context
+import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.fitness.Fitness
-import com.google.android.gms.fitness.HistoryClient
-import com.google.android.gms.fitness.RecordingClient
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
-import javax.annotation.Nullable
 
 @Module(includes = [RouteTrackingFeatureModule.Bindings::class])
-abstract class RouteTrackingFeatureModule {
+interface RouteTrackingFeatureModule {
     @ContributesAndroidInjector
-    abstract fun trackingActivity(): RouteTrackingActivity
+    fun trackingActivity(): RouteTrackingActivity
 
     @ContributesAndroidInjector
-    abstract fun routeTrackingService(): RouteTrackingService
+    fun routeTrackingService(): RouteTrackingService
 
     @ContributesAndroidInjector
-    abstract fun updateUserRecentPlaceWorker(): UpdateUserRecentPlaceWorker
+    fun updateUserRecentPlaceWorker(): UpdateUserRecentPlaceWorker
 
     @Module
     interface Bindings {

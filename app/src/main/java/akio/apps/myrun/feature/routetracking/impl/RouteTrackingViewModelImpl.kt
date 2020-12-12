@@ -11,7 +11,8 @@ import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.feature.routetracking.*
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
-import akio.apps.myrun.feature.strava.ExportActivityToFileUsecase
+import akio.apps.myrun.feature.strava.ExportTrackingActivityToStravaFileUsecase
+import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import android.content.Context
 import android.graphics.Bitmap
@@ -33,7 +34,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val saveRouteTrackingActivityUsecase: SaveRouteTrackingActivityUsecase,
     private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase,
     private val stravaTokenStorage: StravaTokenStorage,
-    private val exportActivityToFileUsecase: ExportActivityToFileUsecase
+    private val exportActivityToStravaFileUsecase: ExportTrackingActivityToStravaFileUsecase
 ) : RouteTrackingViewModel() {
 
     private val _mapInitialLocation = MutableLiveData<Event<LatLng>>()
@@ -103,7 +104,8 @@ class RouteTrackingViewModelImpl @Inject constructor(
     }
 
     private suspend fun scheduleStravaActivityUpload(activity: Activity) {
-        exportActivityToFileUsecase.exportActivityToFile(activity, false)
+        exportActivityToStravaFileUsecase.export(activity, false)
+        UploadStravaFileWorker.enqueueForFinishedActivity(appContext)
     }
 
     private fun scheduleUserRecentPlaceUpdate(activityStartPoint: LocationEntity) {
