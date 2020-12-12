@@ -6,12 +6,9 @@ import akio.apps.myrun._di.DaggerAppComponent
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
-import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
+import akio.apps.myrun.feature.strava.InitializeStravaUploadWorkerUsecase
 import android.app.Application
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
-import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.*
 import androidx.work.Configuration
 import com.google.android.libraries.places.api.Places
 import dagger.android.AndroidInjector
@@ -28,6 +25,9 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
 
     @Inject
     lateinit var routeTrackingState: RouteTrackingState
+
+    @Inject
+    lateinit var initializeStravaUploadWorkerUsecase: InitializeStravaUploadWorkerUsecase
 
     private lateinit var appComponent: AppComponent
 
@@ -52,7 +52,13 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
 
         initPlacesSdk()
 
-        UploadStravaFileWorker.enqueueDaily(this)
+        mayEnqueueStravaUploadWorker()
+    }
+
+    private fun mayEnqueueStravaUploadWorker() {
+        mainScope.launch {
+            initializeStravaUploadWorkerUsecase.mayInitializeWorker()
+        }
     }
 
     private fun initPlacesSdk() {
