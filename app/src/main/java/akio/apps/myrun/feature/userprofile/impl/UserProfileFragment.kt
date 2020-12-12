@@ -115,10 +115,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 } else {
                     itemViewContainer.setOnClickListener { view ->
                         when (viewIds) {
-                            ExternalAppItemViewIds.Strava -> {
-                                val loginIntent = LinkStravaDelegate.buildStravaLoginIntent(requireContext())
-                                startActivity(loginIntent)
-                            }
+                            ExternalAppItemViewIds.Strava -> openStravaLinking()
                         }
                     }
                 }
@@ -126,12 +123,17 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         }
     }
 
-    private fun showUnlinkConfirmationDialog(function: () -> Unit) {
+    private fun openStravaLinking() {
+        val loginIntent = LinkStravaDelegate.buildStravaLoginIntent(requireContext())
+        startActivity(loginIntent)
+    }
+
+    private fun showUnlinkConfirmationDialog(onConfirmation: () -> Unit) {
         AlertDialog.Builder(requireContext())
             .setMessage(R.string.profile_app_unlink_dialog_message)
             .setPositiveButton(R.string.action_yes) { dialog, which ->
                 dialog.dismiss()
-                function()
+                onConfirmation()
             }
             .setNegativeButton(R.string.action_no) { dialog, which ->
                 dialog.dismiss()

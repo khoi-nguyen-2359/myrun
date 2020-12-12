@@ -42,6 +42,9 @@ class StravaConnectFeatureModule {
         fun getActivityFileManager(managerImpl: ActivityFileManagerImpl): ActivityFileManager
 
         @Binds
+        fun initStravaUploadWorkerUsecase(initStravaUploadWorkerUsecase: InitializeStravaUploadWorkerUsecaseImpl): InitializeStravaUploadWorkerUsecase
+
+        @Binds
         @IntoMap
         @ViewModelKey(LinkStravaViewModel::class)
         fun linkStravaViewModel(viewModelImpl: LinkStravaViewModelImpl): ViewModel

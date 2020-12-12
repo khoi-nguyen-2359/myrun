@@ -6,10 +6,13 @@ import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.ProviderToken
 import akio.apps.myrun.data.externalapp.model.RunningApp
 import akio.apps.myrun.data.userprofile.model.UserProfile
+import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import akio.apps.myrun.feature.userprofile.*
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.work.WorkManager
 import javax.inject.Inject
 
 class UserProfileViewModelImpl @Inject constructor(
@@ -17,8 +20,9 @@ class UserProfileViewModelImpl @Inject constructor(
     private val getProviderTokensUsecase: GetProviderTokensUsecase,
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
     private val removeStravaTokenUsecase: RemoveStravaTokenUsecase,
-    private val logoutUsecase: LogoutUsecase
-): UserProfileViewModel() {
+    private val logoutUsecase: LogoutUsecase,
+    val appContext: Context
+) : UserProfileViewModel() {
 
     private val _isInlineLoading = MutableLiveData<Boolean>()
     override val isInlineLoading: LiveData<Boolean> = _isInlineLoading
@@ -66,5 +70,8 @@ class UserProfileViewModelImpl @Inject constructor(
     private suspend fun deauthorizeStrava() {
         deauthorizeStravaUsecase.deauthorizeStrava()
         removeStravaTokenUsecase.removeStravaTokenUsecase()
+
+        WorkManager.getInstance(appContext)
+            .cancelUniqueWork(UploadStravaFileWorker.UNIQUE_WORK_NAME)
     }
 }
