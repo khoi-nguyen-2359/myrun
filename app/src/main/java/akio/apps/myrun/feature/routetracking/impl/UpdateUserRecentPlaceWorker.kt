@@ -16,7 +16,7 @@ class UpdateUserRecentPlaceWorker(
     lateinit var updateUserRecentPlaceUsecase: UpdateUserRecentPlaceUsecase
 
     init {
-        applicationContext.androidInjector?.inject(this)
+        applicationContext.androidInjector.inject(this)
     }
 
     override suspend fun doWork(): Result {

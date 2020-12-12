@@ -2,7 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="akio.apps.myrun">
 
+    <!-- Networking -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -93,6 +96,8 @@
             </intent-filter>
         </activity>
 
+        <!--        Facebook Login -->
+
         <activity android:name=".feature.strava.impl.LinkStravaActivity"
             android:theme="@style/TransparentAppCompat"
             android:launchMode="singleTask"
@@ -108,8 +113,6 @@
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
-
-        <!--        Facebook Login -->
 
         <!--        Remove the default initializer of WorkManager -->
         <!--        https://developer.android.com/topic/libraries/architecture/workmanager/advanced/custom-configuration#remove-default-->

@@ -12,5 +12,5 @@ interface ActivityRepository {
         speedDataPoints: List<SingleDataPoint<Float>>,
         stepCadenceDataPoints: List<SingleDataPoint<Int>>?,
         locationDataPoints: List<SingleDataPoint<LocationEntity>>
-    )
+    ): String
 }

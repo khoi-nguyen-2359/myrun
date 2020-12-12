@@ -49,7 +49,7 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
             null
         }
         val locationDataPoints = trackedLocations.map { SingleDataPoint(it.time, LocationEntity(it.latitude, it.longitude, it.altitude)) }
-        val savingActivity = when (activityType) {
+        val savingActivity: ActivityEntity = when (activityType) {
             ActivityType.Running -> {
                 val pace = (duration / (1000 * 60)) / (distance / 1000)
                 RunningActivityEntity(activityData, pace)
@@ -63,9 +63,9 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
             else -> throw UnsupportedOperationException("Saving unknown activity type $activityType")
         }
 
-        activityRepository.saveActivity(savingActivity, routeMapImage, speedDataPoints, stepCadenceDataPoints, locationDataPoints)
+        val activityId = activityRepository.saveActivity(savingActivity, routeMapImage, speedDataPoints, stepCadenceDataPoints, locationDataPoints)
 
-        return activityEntityMapper.map(savingActivity)
+        return activityEntityMapper.map(activityId, savingActivity)
     }
 
     companion object {

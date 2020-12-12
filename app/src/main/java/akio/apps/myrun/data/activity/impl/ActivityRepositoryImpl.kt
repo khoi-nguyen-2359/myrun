@@ -54,7 +54,7 @@ class ActivityRepositoryImpl @Inject constructor(
         speedDataPoints: List<SingleDataPoint<Float>>,
         stepCadenceDataPoints: List<SingleDataPoint<Int>>?,
         locationDataPoints: List<SingleDataPoint<LocationEntity>>
-    ): Unit = withContext(Dispatchers.IO) {
+    ): String = withContext(Dispatchers.IO) {
         val docRef = getUserActivitiesCollection(activity.userId).document()
 
         val userActivityImageStorage = getActivityImageStorage(activity.userId)
@@ -75,6 +75,8 @@ class ActivityRepositoryImpl @Inject constructor(
                 batch.set(stepCadenceDocRef, FirestoreDataPointSerializer(FirestoreIntegerDataPointParser()).serialize(stepCadenceDataPoints))
             }
         }.await()
+
+        docRef.id
     }
 
     companion object {

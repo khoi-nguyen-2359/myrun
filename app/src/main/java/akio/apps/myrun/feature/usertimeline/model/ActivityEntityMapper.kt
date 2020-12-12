@@ -6,9 +6,9 @@ import akio.apps.myrun.data.activity.CyclingActivityEntity
 import javax.inject.Inject
 
 class ActivityEntityMapper @Inject constructor() {
-    fun map(entity: ActivityEntity): Activity {
+    fun map(activityId: String, entity: ActivityEntity): Activity {
         val activityData = entity.run {
-            ActivityData(id, userId, userName, userAvatar, activityType, name, routeImage, startTime, endTime, duration, distance, encodedPolyline)
+            ActivityData(activityId, userId, userName, userAvatar, activityType, name, routeImage, startTime, endTime, duration, distance, encodedPolyline)
         }
 
         return when (entity) {
@@ -17,4 +17,6 @@ class ActivityEntityMapper @Inject constructor() {
             else -> throw IllegalArgumentException("Unknown activity type")
         }
     }
+
+    fun map(entity: ActivityEntity) = map(entity.id, entity)
 }
