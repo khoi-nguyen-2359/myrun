@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.userprofile.impl
 
 import akio.apps.MockAsynchronousTest
 import akio.apps._base.data.Resource
+import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.authentication.impl.UserAccount
 import akio.apps.myrun.data.userprofile.UserProfileRepository
@@ -10,8 +11,9 @@ import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.feature.userprofile.GetUserProfileUsecase
 import akio.apps.myrun.feature.userprofile.usecase.GetUserProfileUsecaseImpl
 import junit.framework.Assert.assertEquals
-import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyString
@@ -47,18 +49,18 @@ class GetUserProfileUsecaseImplTest: MockAsynchronousTest() {
     fun `given user logged in, when get user profile, then return user profile data`() {
         // given
         val userProfile = createUserProfile()
-        val userAccount = createUserAccount()
-        whenever(userAuthenticationState.getUserAccountFlow()).thenReturn(flowOf(userAccount))
+        whenever(userAuthenticationState.getUserAccountId()).thenReturn(defaultUserId)
         whenever(userProfileRepository.getUserProfileFlow(defaultUserId)).thenReturn(flowOf(Resource.Success(userProfile)))
 
         // when
-        val userProfileLiveData = testee.getUserProfile()
-        userProfileLiveData.observeForever { value ->
-            // then
-            assertEquals(userProfile, value.data)
+        runBlockingTest {
+            val userProfileFlow = testee.getUserProfileFlow()
+            userProfileFlow.collect {
+                assertEquals(userProfile, it.data)
+            }
         }
 
-        verify(userAuthenticationState).getUserAccountFlow()
+        verify(userAuthenticationState).getUserAccountId()
         verify(userProfileRepository).getUserProfileFlow(defaultUserId)
     }
 
@@ -66,20 +68,16 @@ class GetUserProfileUsecaseImplTest: MockAsynchronousTest() {
         return UserAccount(defaultUserId, defaultEmail, defaultDisplayName, defaultPhotoUrl, defaultPhoneNumber)
     }
 
-    @Test
-    fun `given user not logged in, when get user profile, then return empty live data`() {
+    @Test(expected = UnauthorizedUserError::class)
+    fun `given user not logged in, when get user profile, then exception thrown`() {
         // given
-        whenever(userAuthenticationState.getUserAccountFlow()).thenReturn(emptyFlow())
+        whenever(userAuthenticationState.getUserAccountId()).thenReturn(null)
 
         // when
-        testee.getUserProfile().observeForever { value ->
-
-            //then
-            assertEquals(null, value.data)
-        }
+        testee.getUserProfileFlow()
 
         // then
-        verify(userAuthenticationState).getUserAccountFlow()
+        verify(userAuthenticationState).getUserAccountId()
         verify(userProfileRepository, never()).getUserProfileFlow(anyString())
     }
 

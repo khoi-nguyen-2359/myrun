@@ -82,9 +82,6 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
         observeEvent(editProfileVM.updateProfileSuccess) {
             onUpdateProfileSuccess()
         }
-        observeEvent(editProfileVM.recentLoginRequiredError) {
-            requestReauthenticate(RC_REAUTHENTICATE_FOR_PROFILE_UPDATE)
-        }
         observeEvent(editProfileVM.phoneNumberReauthenticateError) {
             requestReauthenticate(RC_REAUTHENTICATE_FOR_PHONE_UPDATE)
         }

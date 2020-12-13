@@ -2,7 +2,6 @@ package akio.apps.myrun.feature.editprofile.impl
 
 import akio.apps.MockAsynchronousTest
 import akio.apps._base.data.Resource
-import akio.apps._base.error.LoginSessionExpiredError
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
@@ -12,10 +11,14 @@ import akio.apps.myrun.feature.editprofile.UpdateUserProfileUsecase
 import akio.apps.myrun.feature.editprofile.UserPhoneNumberDelegate
 import akio.apps.myrun.feature.userprofile.GetUserProfileUsecase
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -48,9 +51,8 @@ class EditProfileViewModelImplTest : MockAsynchronousTest() {
     fun `given user profile, when create view model, user profile live data has correct value`() {
         // given
         val userProfile = createUserProfile()
-        val liveDataUserProfile =
-            MutableLiveData<Resource<UserProfile>>(Resource.Success(userProfile))
-        whenever(getUserProfileUsecase.getUserProfile()).thenReturn(liveDataUserProfile)
+        val liveDataUserProfile = flowOf(Resource.Success(userProfile))
+        whenever(getUserProfileUsecase.getUserProfileFlow()).thenReturn(liveDataUserProfile)
 
         // when
         testee = createEditUserProfileViewModel()
@@ -59,7 +61,7 @@ class EditProfileViewModelImplTest : MockAsynchronousTest() {
         assertNull(testee.error.value)
         assertNull(testee.isInProgress.value)
         assertEquals(userProfile, testee.userProfile.value)
-        verify(getUserProfileUsecase).getUserProfile()
+        verify(getUserProfileUsecase).getUserProfileFlow()
     }
 
     @Test
@@ -119,45 +121,23 @@ class EditProfileViewModelImplTest : MockAsynchronousTest() {
     }
 
     @Test
-    fun `given view model created and login session has expired, when select update profile, then login required error triggered`() {
-        // given
-        `given user profile, when create view model, user profile live data has correct value`()
-
-        runBlocking {
-            val editData = createProfileEditData()
-            whenever(updateUserProfileUsecase.updateUserProfile(editData)).thenThrow(
-                LoginSessionExpiredError()
-            )
-
-            // when
-            testee.updateProfile(editData)
-
-            // then
-            assertNull(testee.updateProfileSuccess.value)
-            assertNotNull(testee.recentLoginRequiredError.value)
-            assertNull(testee.error.value)
-            verify(updateUserProfileUsecase).updateUserProfile(editData)
-        }
-    }
-
-    @Test
     fun `given view model created and user login state is invalid, when select update profile, then login required error triggered`() {
         // given
         `given user profile, when create view model, user profile live data has correct value`()
 
-        runBlocking {
+        runBlockingTest {
             val editData = createProfileEditData()
-            whenever(updateUserProfileUsecase.updateUserProfile(editData)).thenThrow(
-                UnauthorizedUserError()
-            )
+
+            whenever(updateUserProfileUsecase.updateUserProfile(editData))
+                .thenThrow(UnauthorizedUserError::class.java)
 
             // when
             testee.updateProfile(editData)
 
             // then
             assertNull(testee.updateProfileSuccess.value)
-            assertNull(testee.recentLoginRequiredError.value)
             assertNotNull(testee.error.value)
+            assertTrue(testee.error.value?.peekContent() is UnauthorizedUserError)
             verify(updateUserProfileUsecase).updateUserProfile(editData)
         }
     }

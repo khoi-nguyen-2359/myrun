@@ -11,6 +11,7 @@ import akio.apps.myrun.feature.userprofile.GetUserProfileUsecase
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
 import javax.inject.Inject
 
 class EditProfileViewModelImpl @Inject constructor(
@@ -18,9 +19,6 @@ class EditProfileViewModelImpl @Inject constructor(
     private val updateUserProfileUsecase: UpdateUserProfileUsecase,
     private val updateUserPhoneDelegate: UserPhoneNumberDelegate
 ) : EditProfileViewModel(), UserPhoneNumberDelegate by updateUserPhoneDelegate {
-
-    private val _recentLoginRequiredError = MutableLiveData<Event<Unit>>()
-    override val recentLoginRequiredError: LiveData<Event<Unit>> = _recentLoginRequiredError
 
     private val _blankEditDisplayNameError = MutableLiveData<Event<Unit>>()
     override val blankEditDisplayNameError: LiveData<Event<Unit>> = _blankEditDisplayNameError
@@ -37,7 +35,7 @@ class EditProfileViewModelImpl @Inject constructor(
     private val _openOpt = MutableLiveData<Event<OtpNavigationInfo>>()
     override val openOtp: LiveData<Event<OtpNavigationInfo>> = _openOpt
 
-    private val liveUserProfile = getUserProfileUsecase.getUserProfile()
+    private val liveUserProfile = getUserProfileUsecase.getUserProfileFlow().asLiveData(timeoutInMs = 0)
     private val userProfileObserver = Observer<Resource<UserProfile>> { resource ->
         when (resource) {
             is Resource.Success -> _userProfile.value = resource.data
