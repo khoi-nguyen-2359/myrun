@@ -15,7 +15,6 @@ abstract class EditProfileViewModel: BaseViewModel(), UserPhoneNumberDelegate {
     abstract val updateProfileSuccess: LiveData<Event<Unit>>
 
     abstract val blankEditDisplayNameError: LiveData<Event<Unit>>
-    abstract val recentLoginRequiredError: LiveData<Event<Unit>>
 
     abstract fun updateProfile(profileEditData: ProfileEditData)
 
