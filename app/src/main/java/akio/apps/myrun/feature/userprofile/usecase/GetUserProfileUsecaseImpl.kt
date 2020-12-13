@@ -6,9 +6,8 @@ import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.feature.userprofile.GetUserProfileUsecase
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetUserProfileUsecaseImpl @Inject constructor(
@@ -16,11 +15,10 @@ class GetUserProfileUsecaseImpl @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState
 ) : GetUserProfileUsecase {
     @ExperimentalCoroutinesApi
-    override fun getUserProfile(): LiveData<Resource<UserProfile>> {
+    override fun getUserProfileFlow(): Flow<Resource<UserProfile>> {
         val userId = userAuthenticationState.getUserAccountId()
             ?: throw UnauthorizedUserError()
 
         return userProfileRepository.getUserProfileFlow(userId)
-            .asLiveData(timeoutInMs = 0)
     }
 }

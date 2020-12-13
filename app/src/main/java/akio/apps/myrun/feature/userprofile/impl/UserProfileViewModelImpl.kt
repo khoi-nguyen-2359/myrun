@@ -7,11 +7,17 @@ import akio.apps.myrun.data.externalapp.model.ProviderToken
 import akio.apps.myrun.data.externalapp.model.RunningApp
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
-import akio.apps.myrun.feature.userprofile.*
+import akio.apps.myrun.feature.userprofile.DeauthorizeStravaUsecase
+import akio.apps.myrun.feature.userprofile.GetProviderTokensUsecase
+import akio.apps.myrun.feature.userprofile.GetUserProfileUsecase
+import akio.apps.myrun.feature.userprofile.LogoutUsecase
+import akio.apps.myrun.feature.userprofile.RemoveStravaTokenUsecase
+import akio.apps.myrun.feature.userprofile.UserProfileViewModel
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
 import androidx.work.WorkManager
 import javax.inject.Inject
 
@@ -30,7 +36,8 @@ class UserProfileViewModelImpl @Inject constructor(
     private val liveUserProfile = MutableLiveData<UserProfile>()
     override fun getUserProfileAlive(): LiveData<UserProfile> = liveUserProfile
 
-    private val liveUserProfileResource = getUserProfileUsecase.getUserProfile()
+    private val liveUserProfileResource = getUserProfileUsecase.getUserProfileFlow()
+        .asLiveData(timeoutInMs = 0)
 
     private val liveProviders = getProviderTokensUsecase.getProviderTokens()
     override fun getProvidersAlive() = liveProviders

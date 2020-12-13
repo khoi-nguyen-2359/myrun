@@ -44,4 +44,16 @@ object Versions {
     const val firebaseBom = "25.12.0"
 
     const val dataStore = "1.0.0-alpha01"
+
+    // testing
+    const val junit = "4.13.1"
+    const val coroutinesTest = "1.3.8"
+    const val androidXCoreTesting = "2.1.0"
+    const val mockitoCore = "3.5.10"
+    const val mockitoAndroid = "3.5.10"
+    const val androidXTestRunner = "1.3.0"
+    const val androidXTestRules = "1.3.0"
+    const val androidXJunit = "1.1.2"
+    const val uiAutomator = "2.2.0"
+    const val espresso = "3.3.0"
 }
