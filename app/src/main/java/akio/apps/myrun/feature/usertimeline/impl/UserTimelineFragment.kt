@@ -4,9 +4,9 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.ViewBindingDelegate
 import akio.apps.myrun.R
+import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._di.createViewModelInjectionDelegate
 import akio.apps.myrun.databinding.FragmentUserTimelineBinding
-import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import android.os.Bundle
 import android.view.View
@@ -20,7 +20,7 @@ class UserTimelineFragment : Fragment(R.layout.fragment_user_timeline) {
 
     private val viewModelInjectionDelegate by lazy { createViewModelInjectionDelegate() }
 
-    private val viewBindingDelegate = ViewBindingDelegate { FragmentUserTimelineBinding.bind(it) }
+    private val viewBindingDelegate = ViewBindingDelegate(FragmentUserTimelineBinding::bind)
     private val viewBinding by viewBindingDelegate
 
     private val viewModel: UserTimelineViewModel by lazy { viewModelInjectionDelegate.getViewModel() }
@@ -49,7 +49,7 @@ class UserTimelineFragment : Fragment(R.layout.fragment_user_timeline) {
             footer = ActivityLoadStateAdapter(activityPagingAdapter::retry)
         )
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             activityPagingAdapter.loadStateFlow.collectLatest {
                 if (it.refresh is LoadState.NotLoading && activityPagingAdapter.itemCount == 0) {
                     welcomeTextView.visibility = View.VISIBLE
