@@ -37,7 +37,7 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
         Timber.e(exception)
     }
 
-    private val mainScope = CoroutineScope(SupervisorJob() + Dispatchers.Main + exceptionHandler)
+    private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO + exceptionHandler)
 
     override fun onCreate() {
         super.onCreate()
@@ -56,7 +56,7 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
     }
 
     private fun mayEnqueueStravaUploadWorker() {
-        mainScope.launch {
+        ioScope.launch {
             initializeStravaUploadWorkerUsecase.mayInitializeWorker()
         }
     }
@@ -67,15 +67,20 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
     }
 
     private fun createAppComponent(): AppComponent {
-        appComponent = DaggerAppComponent.factory().create(this)
+        appComponent = DaggerAppComponent.factory()
+            .create(this)
         return appComponent
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onAppStarted() {
-        mainScope.launch {
-            if (routeTrackingState.getTrackingStatus() == RouteTrackingStatus.RESUMED && !RouteTrackingService.isTrackingServiceRunning(this@MyRunApp)) {
-                startService(RouteTrackingService.resumeIntent(this@MyRunApp))
+        ioScope.launch {
+            if (routeTrackingState.getTrackingStatus() == RouteTrackingStatus.RESUMED
+                && !RouteTrackingService.isTrackingServiceRunning(this@MyRunApp)
+            ) {
+                withContext(Dispatchers.Main) {
+                    startService(RouteTrackingService.resumeIntent(this@MyRunApp))
+                }
             }
         }
     }

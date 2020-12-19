@@ -5,6 +5,7 @@ import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.feature.strava.UploadActivityFilesToStravaUsecase
 import android.content.Context
 import androidx.work.*
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -24,6 +25,7 @@ class UploadStravaFileWorker(
     }
 
     override suspend fun doWork(): Result {
+        Timber.d("worker start")
         if (stravaTokenStorage.getToken() == null) {
             return Result.failure(workDataOf(
                 OUTPUT_ERROR_MESSAGE to "Use has turned off strava sync"
