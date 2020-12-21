@@ -9,3 +9,5 @@ build
 /captures
 .externalNativeBuild
 .cxx
+app/src/release/google-services.json
+app/src/release/res/values/secrets.xml
