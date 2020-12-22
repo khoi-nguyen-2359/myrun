@@ -26,7 +26,7 @@ class PhotoSelectionDelegate(
         val options = activity.resources.getStringArray(R.array.photo_selection_options)
         AlertDialog.Builder(activity)
             .setTitle(title)
-            .setItems(options) { dialog, which ->
+            .setItems(options) { _, which ->
 				when (which) {
 					0 -> requestPermissions(AppPermissions.takePhotoPermissions, requestCodes.rcTakePhotoPermissions)
 					1 -> requestPermissions(AppPermissions.pickPhotoPermissions, requestCodes.rcPickPhotoPermissions)

@@ -33,7 +33,7 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
 
     override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
 
-    private val exceptionHandler = CoroutineExceptionHandler { context, exception ->
+    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         Timber.e(exception)
     }
 

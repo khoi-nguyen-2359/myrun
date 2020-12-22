@@ -9,6 +9,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +29,7 @@ class LocationDataSourceImpl @Inject constructor(
         locationClient.lastLocation.await()
     }
 
+    @ExperimentalCoroutinesApi
     @SuppressLint("MissingPermission")
     override fun getLocationUpdate(locationRequest: LocationRequestEntity): Flow<List<Location>> = callbackFlow<List<Location>> {
 

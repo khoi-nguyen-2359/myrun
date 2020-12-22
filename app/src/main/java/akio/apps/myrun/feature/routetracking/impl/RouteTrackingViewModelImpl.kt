@@ -91,7 +91,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
                 ?: return@launchCatching
 
             val activity = saveRouteTrackingActivityUsecase.saveCurrentActivity(activityType, routeMapImage)
-            stravaTokenStorage.getToken()?.let { stravaToken ->
+            stravaTokenStorage.getToken()?.let { _ ->
                 scheduleStravaActivityUpload(activity)
             }
             routeTrackingState.getStartLocation()?.let { startLocation ->

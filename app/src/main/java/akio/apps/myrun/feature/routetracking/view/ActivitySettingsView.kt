@@ -46,7 +46,7 @@ class ActivitySettingsView @JvmOverloads constructor(
             }
             .toTypedArray()
         AlertDialog.Builder(context)
-            .setItems(activityTypeNames) { dialog, activityTypeIndex ->
+            .setItems(activityTypeNames) { _, activityTypeIndex ->
                 eventListener?.onActivityTypeSelected(activityTypeDisplays.keys.elementAt(activityTypeIndex))
             }
             .show()

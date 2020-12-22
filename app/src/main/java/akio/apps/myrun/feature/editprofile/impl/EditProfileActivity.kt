@@ -9,8 +9,6 @@ import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.PhotoSelectionDelegate
 import akio.apps.myrun._base.utils.circleCenterCrop
 import akio.apps.myrun._di.createViewModelInjectionDelegate
-import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule.Companion.STRAVA_APP_ID
-import akio.apps.myrun.data.externalapp.model.RunningApp
 import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import akio.apps.myrun.data.userprofile.model.UserProfile
@@ -31,7 +29,6 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.PhoneAuthCredential
-import timber.log.Timber
 import java.io.File
 import java.text.DecimalFormat
 
@@ -87,6 +84,7 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun onUpdatePhoneNumberSuccess(unit: Unit) {
         Snackbar.make(viewBinding.saveButton, R.string.edit_user_profile_mobile_number_update_success_message, Snackbar.LENGTH_LONG).show()
         (supportFragmentManager.findFragmentByTag(TAG_OTP_DIALOG) as? OtpDialogFragment)?.dismiss()
@@ -178,7 +176,7 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
     private fun openGenderPicker() {
         val genderList = resources.getStringArray(R.array.gender_list)
         val dialog = AlertDialog.Builder(this)
-            .setItems(genderList) { dialog, which ->
+            .setItems(genderList) { _, which ->
                 viewBinding.genderTextView.text = genderList[which]
             }
             .create()
@@ -193,7 +191,7 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         photoSelectionDelegate.onActivityResult(requestCode, resultCode, data)
-        checkPhoneUpdateResult(requestCode, resultCode, data)
+        checkPhoneUpdateResult(requestCode, resultCode)
         checkReauthenticateResult(requestCode, resultCode)
         checkCropPhotoResult(requestCode, resultCode, data)
     }
@@ -224,7 +222,7 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
         }
     }
 
-    private fun checkPhoneUpdateResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    private fun checkPhoneUpdateResult(requestCode: Int, resultCode: Int) {
         if (requestCode == RC_UPDATE_PHONE && resultCode == Activity.RESULT_OK) {
             finish()
         }
