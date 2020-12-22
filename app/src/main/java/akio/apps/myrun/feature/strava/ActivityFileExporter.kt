@@ -7,7 +7,7 @@ import java.io.File
 
 interface ActivityFileExporter {
     fun export(
-        saveDir: File,
+        outputFile: File,
         activity: ActivityEntity,
         locationDataPoints: List<SingleDataPoint<LocationEntity>>,
         speedDataPoints: List<SingleDataPoint<Float>>,

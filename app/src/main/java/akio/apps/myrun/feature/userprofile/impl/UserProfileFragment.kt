@@ -107,13 +107,13 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 val itemViewContainer = linkedAppsContainer.findViewById<View>(viewIds.containerId)
                 itemViewContainer.findViewById<CheckedTextView>(viewIds.checkBoxId).isChecked = token != null
                 if (token != null) {
-                    itemViewContainer.setOnClickListener { view ->
+                    itemViewContainer.setOnClickListener {
                         showUnlinkConfirmationDialog {
                             profileViewModel.unlinkProvider(token)
                         }
                     }
                 } else {
-                    itemViewContainer.setOnClickListener { view ->
+                    itemViewContainer.setOnClickListener {
                         when (viewIds) {
                             ExternalAppItemViewIds.Strava -> openStravaLinking()
                         }
@@ -131,11 +131,11 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     private fun showUnlinkConfirmationDialog(onConfirmation: () -> Unit) {
         AlertDialog.Builder(requireContext())
             .setMessage(R.string.profile_app_unlink_dialog_message)
-            .setPositiveButton(R.string.action_yes) { dialog, which ->
+            .setPositiveButton(R.string.action_yes) { dialog, _ ->
                 dialog.dismiss()
                 onConfirmation()
             }
-            .setNegativeButton(R.string.action_no) { dialog, which ->
+            .setNegativeButton(R.string.action_no) { dialog, _ ->
                 dialog.dismiss()
             }
             .setCancelable(false)

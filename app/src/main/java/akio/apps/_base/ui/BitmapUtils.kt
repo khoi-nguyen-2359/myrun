@@ -43,8 +43,8 @@ object BitmapUtils {
     }
 
     fun scale(origin: Bitmap, maxWidthAndHeight:Int): Bitmap {
-        var newWidth = 0
-        var newHeight = 0
+        val newWidth: Int
+        val newHeight: Int
 
         if (origin.width >= origin.height){
             val ratio:Float = origin.width.toFloat() / origin.height.toFloat()
@@ -56,7 +56,7 @@ object BitmapUtils {
             val ratio:Float = origin.height.toFloat() / origin.width.toFloat()
 
             // Calculate the new width for the scaled bitmap
-            newWidth = Math.round(maxWidthAndHeight / ratio)
+            newWidth = (maxWidthAndHeight / ratio).roundToInt()
             newHeight = maxWidthAndHeight
         }
 

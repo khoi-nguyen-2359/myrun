@@ -16,7 +16,8 @@ class ZipFileSerializer(file: File, entryExtension: String): CloseableSerializer
 		zipOutputStream.putNextEntry(ZipEntry(file.nameWithoutExtension + entryExtension))
 		streamWriter = OutputStreamWriter(zipOutputStream)
 	}
-	
+
+	@Suppress("DEPRECATION")
 	override fun print(line: String) {
 		try {
 			streamWriter.write(line)

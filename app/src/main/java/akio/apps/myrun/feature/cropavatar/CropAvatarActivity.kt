@@ -37,6 +37,7 @@ class CropAvatarActivity : AppCompatActivity() {
             }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun onClickCrop(view: View) {
         viewBinding.cropImageView.crop()?.let {
             lifecycleScope.launch {

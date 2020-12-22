@@ -99,7 +99,9 @@ class CropImageView @JvmOverloads constructor(
 		srcDrawRect.bottom = srcDrawRect.top + newHeight
 	}
 	
+	@Suppress("NOTHING_TO_INLINE")
 	private inline fun getInBoundsTranslateX(x: Float, width: Float) = max(imageBounds.left - paddingLeft, min(x, imageBounds.right - width + paddingRight))
+	@Suppress("NOTHING_TO_INLINE")
 	private inline fun getInBoundsTranslateY(y: Float, height: Float) = max(imageBounds.top - paddingTop, min(y, imageBounds.bottom - height + paddingBottom))
 	
 	private fun offsetSrcRect(distanceX: Float, distanceY: Float) {
