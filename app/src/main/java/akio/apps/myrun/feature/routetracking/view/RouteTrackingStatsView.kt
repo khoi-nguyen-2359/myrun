@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.routetracking.view
 
 import akio.apps.myrun.R
+import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun.data.activity.ActivityType
 import akio.apps.myrun.databinding.MergeRouteTrackingStatsViewBinding
-import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
 import android.content.Context
 import android.util.AttributeSet
@@ -32,7 +32,8 @@ class RouteTrackingStatsView @JvmOverloads constructor(
         attrs ?: return
 
         val styledAttrs = context.obtainStyledAttributes(attrs, R.styleable.RouteTrackingStatsView)
-        val activityTypeIndex = styledAttrs.getInteger(R.styleable.RouteTrackingStatsView_activityTypeIndex, 0)
+        val activityTypeIndex =
+            styledAttrs.getInteger(R.styleable.RouteTrackingStatsView_activityTypeIndex, 0)
         styledAttrs.recycle()
 
         setActivityType(activityTypes[activityTypeIndex])

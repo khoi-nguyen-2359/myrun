@@ -58,7 +58,7 @@ class OtpDialogFragment : DialogFragment() {
 	private fun initViews() = viewBinding.apply {
 		confirmButton.setOnClickListener { onClickConfirm() }
 		resendButton.setOnClickListener { verifyPhoneNumber() }
-		otpEditText.setOnEditorActionListener { v, actionId, event ->
+		otpEditText.setOnEditorActionListener { _, actionId, _ ->
 			if (actionId == EditorInfo.IME_ACTION_DONE) {
 				onClickConfirm()
 				return@setOnEditorActionListener true

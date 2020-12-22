@@ -52,7 +52,7 @@ class RouteTrackingService : Service() {
     @Inject
     lateinit var fitnessDataRepository: FitnessDataRepository
 
-    private val exceptionHandler = CoroutineExceptionHandler { context, exception ->
+    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         Timber.e(exception)
     }
 
@@ -348,6 +348,7 @@ class RouteTrackingService : Service() {
             smallestDisplacement = SMALLEST_DISPLACEMENT
         }
 
+        @Suppress("DEPRECATION")
         fun isTrackingServiceRunning(context: Context): Boolean {
             val activityMan = ContextCompat.getSystemService(context, ActivityManager::class.java)
             val infos = activityMan?.getRunningServices(Int.MAX_VALUE)
