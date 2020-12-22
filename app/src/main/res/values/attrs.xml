@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RouteTrackingStatsView">
+        <attr name="activityTypeIndex" format="enum">
+            <enum name="running" value="0" />
+            <enum name="cycling" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="TextField">
+        <attr name="tf_label" format="string" />
+        <attr name="tf_value" format="string" />
+    </declare-styleable>
+
+</resources>

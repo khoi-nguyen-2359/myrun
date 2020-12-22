@@ -1,14 +1,18 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun.R
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.location.LocationDataSource
 import akio.apps.myrun.data.location.LocationRequestEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
-import akio.apps.myrun.feature._base.utils.StatsPresentations
-import akio.apps.myrun.feature._base.utils.flowTimer
-import akio.apps.myrun.feature._base.utils.toGmsLatLng
+import akio.apps.myrun._base.utils.StatsPresentations
+import akio.apps.myrun._base.utils.flowTimer
+import akio.apps.myrun._base.utils.toGmsLatLng
+import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.data.fitness.FitnessDataRepository
+import akio.apps.myrun.feature.routetracking.ClearRouteTrackingStateUsecase
 import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
@@ -39,6 +43,15 @@ class RouteTrackingService : Service() {
     @Inject
     lateinit var routeTrackingState: RouteTrackingState
 
+    @Inject
+    lateinit var userAuthenticationState: UserAuthenticationState
+
+    @Inject
+    lateinit var clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
+
+    @Inject
+    lateinit var fitnessDataRepository: FitnessDataRepository
+
     private val exceptionHandler = CoroutineExceptionHandler { context, exception ->
         Timber.e(exception)
     }
@@ -47,6 +60,7 @@ class RouteTrackingService : Service() {
 
     private var locationUpdateJob: Job? = null
     private var trackingTimerJob: Job? = null
+    private var startLocation: Location? = null
 
     private val instantSpeedCalculator = InstantSpeedCalculator()
     private val routeDistanceCalculator = RouteDistanceCalculator()
@@ -59,6 +73,22 @@ class RouteTrackingService : Service() {
         AndroidInjection.inject(this)
 
         createNotificationChannel()
+
+        trackUserAuthenticationState()
+    }
+
+    /**
+     * Track to stop service if user is logged out
+     */
+    private fun trackUserAuthenticationState() {
+        userAuthenticationState.getUserAccountFlow()
+            .onEach {
+                if (it == null) {
+                    onActionStop()
+                    clearRouteTrackingStateUsecase.clear()
+                }
+            }
+            .launchIn(mainScope)
     }
 
     @SuppressLint("MissingPermission")
@@ -84,6 +114,12 @@ class RouteTrackingService : Service() {
 
         routeDistanceCalculator.calculateRouteDistance(locations)
         instantSpeedCalculator.calculateInstantSpeed()
+
+        if (startLocation == null) {
+            startLocation = locations.firstOrNull()?.also {
+                routeTrackingState.setStartLocation(LocationEntity(it.latitude, it.longitude, it.altitude))
+            }
+        }
     }
 
     inner class InstantSpeedCalculator() {
@@ -96,7 +132,7 @@ class RouteTrackingService : Service() {
             val deltaTime = currentTime - lastTimeComputingInstantSpeed
             // compute instant speed for a period equals to location update interval
             if (lastTimeComputingInstantSpeed == 0L || (lastTimeComputingInstantSpeed > 0 && deltaTime >= LOCATION_UPDATE_INTERVAL)) {
-                val instantSpeed = ((routeDistance - lastDistanceComputingInstantSpeed) / 1000f) / (deltaTime / 3600000f)
+                val instantSpeed = (routeDistance - lastDistanceComputingInstantSpeed) / deltaTime
                 routeTrackingState.setInstantSpeed(instantSpeed)
 
                 lastTimeComputingInstantSpeed = currentTime
@@ -182,6 +218,7 @@ class RouteTrackingService : Service() {
 
         notifyTrackingNotification()
         requestLocationUpdates()
+        fitnessDataRepository.subscribeFitnessData()
         startTrackingTimer()
         acquireWakeLock()
     }
@@ -206,12 +243,15 @@ class RouteTrackingService : Service() {
 
         // dont count the distance in paused moments
         routeDistanceCalculator.clearLastCalculatedLocation()
+
+        fitnessDataRepository.unsubscribeFitnessData()
     }
 
     private fun onActionResume(isServiceRestart: Boolean) {
         Timber.d("onActionResume isServiceRestart=$isServiceRestart")
 
         requestLocationUpdates()
+        fitnessDataRepository.subscribeFitnessData()
         startTrackingTimer()
         notifyTrackingNotification()
 
@@ -230,6 +270,7 @@ class RouteTrackingService : Service() {
 
         locationUpdateJob?.cancel()
         trackingTimerJob?.cancel()
+        fitnessDataRepository.unsubscribeFitnessData()
         releaseWakeLock()
         stopSelf()
     }

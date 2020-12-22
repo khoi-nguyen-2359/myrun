@@ -6,15 +6,17 @@ import android.net.Uri
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
-import java.util.*
 
 object FirebaseStorageUtils {
 
-    suspend fun uploadBitmap(storageRef: StorageReference, bitmap: Bitmap, scaledSize: Int): Uri {
-        val storeName = UUID.randomUUID().toString()
+    suspend fun uploadBitmap(storageRef: StorageReference, storeName: String, bitmap: Bitmap, scaledSize: Int): Uri {
         val photoRef = storageRef.child(storeName)
 
-        val uploadBitmap = BitmapUtils.scale(bitmap, scaledSize)
+        val uploadBitmap = if (scaledSize != 1)
+            BitmapUtils.scale(bitmap, scaledSize)
+        else
+            bitmap
+
         val uploadBaos = ByteArrayOutputStream()
         uploadBitmap.compress(Bitmap.CompressFormat.JPEG, 100, uploadBaos)
         val uploadData = uploadBaos.toByteArray()
@@ -24,4 +26,11 @@ object FirebaseStorageUtils {
         return photoRef.downloadUrl.await()
     }
 
+    suspend fun uploadLocalBitmap(storage: StorageReference, storeName: String, filePath: String, scaledSize: Int): Uri? {
+        val imageBitmap = BitmapUtils.decodeSampledFile(filePath, scaledSize, scaledSize)
+        val downloadUrl = uploadBitmap(storage, storeName, imageBitmap, 1)
+        imageBitmap.recycle()
+
+        return downloadUrl
+    }
 }

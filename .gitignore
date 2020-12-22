@@ -1,9 +1,15 @@
 *.iml
 .gradle
 /local.properties
+/app/release
+/app/internal
 .idea
 .DS_Store
 build
 /captures
 .externalNativeBuild
 .cxx
+app/src/release/google-services.json
+app/src/release/res/values/secrets.xml
+app/src/internal/google-services.json
+app/src/internal/res/values/secrets.xml
