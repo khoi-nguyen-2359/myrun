@@ -3,6 +3,7 @@ package akio.apps.myrun.data.fitness.impl
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.fitness.SingleDataPoint
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessOptions
@@ -110,50 +111,17 @@ class FitnessDataRepositoryImpl @Inject constructor(
         return speedDataPoints.map { SingleDataPoint(it.getStartTime(TimeUnit.MILLISECONDS), it.getValue(Field.FIELD_AVERAGE).asFloat()) }
     }
 
-    private fun <V> mergeDataPoints(
-        dp1: List<DataPoint>,
-        dp1Converter: (DataPoint) -> SingleDataPoint<V>,
-        dp2: List<DataPoint>,
-        dp2Converter: (DataPoint) -> SingleDataPoint<V>
-    ): List<SingleDataPoint<V>> {
-        var i = 0
-        var j = 0
-        val mergeDataPoints = mutableListOf<SingleDataPoint<V>>()
-        while (i < dp1.size || j < dp2.size) {
-            val dp1StartTime = dp1.getOrNull(i)
-                ?.getStartTime(TimeUnit.MILLISECONDS)
-                ?: -1
-            val dp2StartTime = dp2.getOrNull(j)
-                ?.getStartTime(TimeUnit.MILLISECONDS)
-                ?: -1
-            if (dp2StartTime == -1L || dp1StartTime <= dp2StartTime) {
-                mergeDataPoints.add(dp1Converter(dp1[i]))
-                ++i
-                if (dp1StartTime == dp2StartTime) {
-                    ++j
-                }
-            } else if (dp1StartTime == -1L || dp1StartTime > dp2StartTime) {
-                mergeDataPoints.add(dp2Converter(dp2[j]))
-                ++j
-            }
-        }
-
-        return mergeDataPoints
-    }
-
     override suspend fun getSteppingCadenceDataPoints(startTime: Long, endTime: Long, interval: Long): List<SingleDataPoint<Int>> {
         val cadenceDataPoints = readFitnessData(startTime, endTime, interval, DataType.TYPE_STEP_COUNT_CADENCE)
-        val stepDeltaDataPoints = readFitnessData(startTime, endTime, interval, DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-        return mergeDataPoints(
-            cadenceDataPoints,
-            { cadenceDp ->
+            .map { cadenceDp ->
                 SingleDataPoint(
                     cadenceDp.getStartTime(TimeUnit.MILLISECONDS),
                     cadenceDp.getValue(Field.FIELD_RPM).asInt()
                 )
-            },
-            stepDeltaDataPoints,
-            { stepDeltaDp ->
+            }
+
+        val stepDeltaDataPoints = readFitnessData(startTime, endTime, interval, DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+            .map { stepDeltaDp ->
                 val value = stepDeltaDp.getValue(Field.FIELD_STEPS).asInt()
                 val valueStartTime = stepDeltaDp.getStartTime(TimeUnit.MILLISECONDS)
                 val valueEndTime = stepDeltaDp.getEndTime(TimeUnit.MILLISECONDS)
@@ -164,11 +132,45 @@ class FitnessDataRepositoryImpl @Inject constructor(
                     avgRpm
                 )
             }
+
+        return mergeDataPoints(
+            cadenceDataPoints,
+            stepDeltaDataPoints,
         )
     }
 
     override suspend fun getHeartRateDataPoints(startTime: Long, endTime: Long, interval: Long): List<SingleDataPoint<Int>> {
         val heartRateDataPoints = readFitnessData(startTime, endTime, interval, DataType.TYPE_HEART_RATE_BPM, DataType.AGGREGATE_HEART_RATE_SUMMARY)
         return heartRateDataPoints.map { SingleDataPoint(it.getStartTime(TimeUnit.MILLISECONDS), it.getValue(Field.FIELD_AVERAGE).asInt()) }
+    }
+
+    companion object {
+        @VisibleForTesting
+        fun <V> mergeDataPoints(
+            dp1: List<SingleDataPoint<V>>,
+            dp2: List<SingleDataPoint<V>>,
+        ): List<SingleDataPoint<V>> {
+            var i = 0
+            var j = 0
+            val mergeDataPoints = mutableListOf<SingleDataPoint<V>>()
+            while (i < dp1.size || j < dp2.size) {
+                val dp1StartTime = dp1.getOrNull(i)
+                    ?.timestamp
+                val dp2StartTime = dp2.getOrNull(j)
+                    ?.timestamp
+                if (dp2StartTime == null || (dp1StartTime != null && dp1StartTime <= dp2StartTime)) {
+                    mergeDataPoints.add(dp1[i])
+                    ++i
+                    if (dp1StartTime == dp2StartTime) {
+                        ++j
+                    }
+                } else if (dp1StartTime == null || dp1StartTime > dp2StartTime) {
+                    mergeDataPoints.add(dp2[j])
+                    ++j
+                }
+            }
+
+            return mergeDataPoints
+        }
     }
 }
