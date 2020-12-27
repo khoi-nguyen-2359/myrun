@@ -14,6 +14,7 @@ import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.fitness.request.DataReadRequest
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -79,7 +80,11 @@ class FitnessDataRepositoryImpl @Inject constructor(
                 .build()
 
             return fitnessHistoryClient.readData(readRequest).await()?.run {
-                val dataPoints = mutableListOf<DataPoint>()
+                val dataPoints = TreeSet<DataPoint> { o1, o2 ->
+                    val startTime1 = o1.getStartTime(TimeUnit.MILLISECONDS)
+                    val startTime2 = o2.getStartTime(TimeUnit.MILLISECONDS)
+                    (startTime1 - startTime2).toInt()
+                }
                 if (buckets.isNotEmpty()) {
                     Timber.d("bucket count = ${buckets.size}")
 
@@ -97,9 +102,9 @@ class FitnessDataRepositoryImpl @Inject constructor(
                         dataPoints.addAll(dataset.dataPoints)
                     }
                 }
-                dataPoints.sortBy { it.getStartTime(TimeUnit.MILLISECONDS) }
-                dataPoints
-            } ?: emptyList()
+                dataPoints.toList()
+            }
+                ?: emptyList()
         } catch (throwable: Throwable) {
             throwable.printStackTrace()
             return emptyList()
@@ -133,10 +138,7 @@ class FitnessDataRepositoryImpl @Inject constructor(
                 )
             }
 
-        return mergeDataPoints(
-            cadenceDataPoints,
-            stepDeltaDataPoints,
-        )
+        return mergeDataPoints(cadenceDataPoints, stepDeltaDataPoints,)
     }
 
     override suspend fun getHeartRateDataPoints(startTime: Long, endTime: Long, interval: Long): List<SingleDataPoint<Int>> {
@@ -145,7 +147,7 @@ class FitnessDataRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        @VisibleForTesting
+        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         fun <V> mergeDataPoints(
             dp1: List<SingleDataPoint<V>>,
             dp2: List<SingleDataPoint<V>>,
