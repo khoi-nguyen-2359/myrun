@@ -308,8 +308,9 @@ class RouteTrackingService : Service() {
 
         const val NOTIF_CHANNEL_ID = "NOTIF_CHANNEL_ID"
 
-        const val LOCATION_UPDATE_INTERVAL = 3000L
-        const val SMALLEST_DISPLACEMENT = 5f
+        const val LOCATION_UPDATE_INTERVAL = 2000L
+        const val LOCATION_MAX_WAIT_TIME = 8000L
+        const val SMALLEST_DISPLACEMENT = 1f
 
         const val TRACKING_TIMER_PERIOD = 1000L
 
@@ -343,7 +344,7 @@ class RouteTrackingService : Service() {
         fun createLocationTrackingRequest() = LocationRequest().apply {
             fastestInterval = LOCATION_UPDATE_INTERVAL
             interval = LOCATION_UPDATE_INTERVAL
-            maxWaitTime = LOCATION_UPDATE_INTERVAL * 10
+            maxWaitTime = LOCATION_MAX_WAIT_TIME
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             smallestDisplacement = SMALLEST_DISPLACEMENT
         }
