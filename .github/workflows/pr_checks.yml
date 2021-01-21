@@ -5,6 +5,17 @@ on:
     branches: [ develop ]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Check ktlint"
+        uses: nbadal/action-ktlint-setup@v1
+
+      - run: ktlint
+        shell: bash
+
   unit_test:
     name: Unit Tests
     runs-on: ubuntu-latest
