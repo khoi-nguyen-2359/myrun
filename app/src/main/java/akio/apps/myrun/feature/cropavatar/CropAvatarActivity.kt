@@ -39,28 +39,29 @@ class CropAvatarActivity : AppCompatActivity() {
 
     @Suppress("UNUSED_PARAMETER")
     fun onClickCrop(view: View) {
-        viewBinding.cropImageView.crop()?.let {
-            lifecycleScope.launch {
-                dialogDelegate.showProgressDialog()
+        viewBinding.cropImageView.crop()
+            ?.let {
+                lifecycleScope.launch {
+                    dialogDelegate.showProgressDialog()
 
-                val tempFile = withContext(Dispatchers.IO) {
-                    val tempFile = File.createTempFile("cropped_avatar_", ".jpg")
-                    val output = FileOutputStream(tempFile)
-                    it.compress(Bitmap.CompressFormat.JPEG, 100, output)
-                    output.flush()
-                    output.close()
+                    val tempFile = withContext(Dispatchers.IO) {
+                        val tempFile = File.createTempFile("cropped_avatar_", ".jpg")
+                        val output = FileOutputStream(tempFile)
+                        it.compress(Bitmap.CompressFormat.JPEG, 100, output)
+                        output.flush()
+                        output.close()
 
-                    tempFile
-                }
+                        tempFile
+                    }
 
-                withContext(Dispatchers.Main) {
-                    val data = Intent()
-                    data.putExtra(RESULT_CROPPED_AVATAR_FILE, tempFile)
-                    setResult(RESULT_OK, data)
-                    finish()
+                    withContext(Dispatchers.Main) {
+                        val data = Intent()
+                        data.putExtra(RESULT_CROPPED_AVATAR_FILE, tempFile)
+                        setResult(RESULT_OK, data)
+                        finish()
+                    }
                 }
             }
-        }
     }
 
     companion object {
@@ -75,4 +76,3 @@ class CropAvatarActivity : AppCompatActivity() {
         }
     }
 }
-

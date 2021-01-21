@@ -1,8 +1,7 @@
 package akio.apps.myrun.data.externalapp.model
 
-import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntity
 import akio.apps.myrun.data.externalapp.entity.StravaAthlete
-import com.google.gson.annotations.SerializedName
+import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntity
 
 sealed class ExternalAppToken {
     class StravaToken(

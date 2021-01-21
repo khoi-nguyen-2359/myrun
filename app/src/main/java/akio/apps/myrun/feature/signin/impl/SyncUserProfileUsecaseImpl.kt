@@ -1,14 +1,9 @@
 package akio.apps.myrun.feature.signin.impl
 
 import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
-import akio.apps.myrun.data.externalapp.StravaDataRepository
-import akio.apps.myrun.data.externalapp.StravaTokenRepository
-import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.userprofile.UserProfileRepository
-import akio.apps.myrun.feature.signin.SyncUserProfileUsecase
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
-import timber.log.Timber
+import akio.apps.myrun.feature.signin.SyncUserProfileUsecase
 import javax.inject.Inject
 
 class SyncUserProfileUsecaseImpl @Inject constructor(

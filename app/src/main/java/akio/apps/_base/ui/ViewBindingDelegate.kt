@@ -7,13 +7,13 @@ import androidx.viewbinding.ViewBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-class ViewBindingDelegate<T: ViewBinding>(
+class ViewBindingDelegate<T : ViewBinding>(
     private val creator: (View) -> T
 ) : ReadOnlyProperty<Fragment, T> {
 
     private var _value: T? = null
     val value: T
-    get() = _value!!
+        get() = _value!!
 
     fun release() {
         _value = null

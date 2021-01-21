@@ -12,7 +12,7 @@ open class BaseTestTask<T>(
     val mockException: Exception? = null,
     val _isComplete: Boolean = false,
     val _isSuccessful: Boolean = false
-): Task<T>() {
+) : Task<T>() {
     override fun isComplete(): Boolean {
         return _isComplete
     }

@@ -1,15 +1,15 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps._base.lifecycle.Event
-import akio.apps.myrun.feature.routetracking.model.LatLng
+import akio.apps.myrun._base.utils.flowTimer
+import akio.apps.myrun.data.activity.ActivityType
+import akio.apps.myrun.data.externalapp.StravaTokenStorage
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
-import akio.apps.myrun.data.activity.ActivityType
-import akio.apps.myrun.data.location.LocationEntity
-import akio.apps.myrun._base.utils.flowTimer
-import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.feature.routetracking.*
+import akio.apps.myrun.feature.routetracking.model.LatLng
 import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
 import akio.apps.myrun.feature.strava.ExportTrackingActivityToStravaFileUsecase
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
@@ -20,7 +20,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.work.*
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
@@ -41,12 +46,15 @@ class RouteTrackingViewModelImpl @Inject constructor(
     override val mapInitialLocation: LiveData<Event<LatLng>> = _mapInitialLocation
 
     private val _trackingLocationBatch = MutableLiveData<List<TrackingLocationEntity>>()
-    override val trackingLocationBatch: LiveData<List<TrackingLocationEntity>> = _trackingLocationBatch
+    override val trackingLocationBatch: LiveData<List<TrackingLocationEntity>> =
+        _trackingLocationBatch
 
     private val _trackingStats = MutableLiveData<RouteTrackingStats>()
     override val trackingStats: LiveData<RouteTrackingStats> = _trackingStats
 
-    override val trackingStatus: LiveData<@RouteTrackingStatus Int> = routeTrackingState.getTrackingStatusFlow().asLiveData()
+    override val trackingStatus: LiveData<@RouteTrackingStatus Int> =
+        routeTrackingState.getTrackingStatusFlow()
+            .asLiveData()
 
     private val _saveActivitySuccess = MutableLiveData<Event<Unit>>()
     override val saveActivitySuccess: LiveData<Event<Unit>> = _saveActivitySuccess
@@ -90,13 +98,16 @@ class RouteTrackingViewModelImpl @Inject constructor(
             val activityType = activityType.value
                 ?: return@launchCatching
 
-            val activity = saveRouteTrackingActivityUsecase.saveCurrentActivity(activityType, routeMapImage)
-            stravaTokenStorage.getToken()?.let { _ ->
-                scheduleStravaActivityUpload(activity)
-            }
-            routeTrackingState.getStartLocation()?.let { startLocation ->
-                scheduleUserRecentPlaceUpdate(startLocation)
-            }
+            val activity =
+                saveRouteTrackingActivityUsecase.saveCurrentActivity(activityType, routeMapImage)
+            stravaTokenStorage.getToken()
+                ?.let { _ ->
+                    scheduleStravaActivityUpload(activity)
+                }
+            routeTrackingState.getStartLocation()
+                ?.let { startLocation ->
+                    scheduleUserRecentPlaceUpdate(startLocation)
+                }
             clearRouteTrackingStateUsecase.clear()
 
             _saveActivitySuccess.value = Event(Unit)
@@ -116,12 +127,15 @@ class RouteTrackingViewModelImpl @Inject constructor(
         val workRequest = OneTimeWorkRequestBuilder<UpdateUserRecentPlaceWorker>()
             .setConstraints(constraints)
             .setBackoffCriteria(BackoffPolicy.LINEAR, 5, TimeUnit.MINUTES)
-            .setInputData(workDataOf(
-                UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LAT to activityStartPoint.latitude,
-                UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LNG to activityStartPoint.longitude
-            ))
+            .setInputData(
+                workDataOf(
+                    UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LAT to activityStartPoint.latitude,
+                    UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LNG to activityStartPoint.longitude
+                )
+            )
             .build()
-        WorkManager.getInstance(appContext).enqueue(workRequest)
+        WorkManager.getInstance(appContext)
+            .enqueue(workRequest)
     }
 
     private suspend fun notifyLatestDataUpdate() {

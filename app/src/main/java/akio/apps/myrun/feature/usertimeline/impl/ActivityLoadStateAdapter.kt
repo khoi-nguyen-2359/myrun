@@ -15,9 +15,16 @@ class ActivityLoadStateAdapter(
         holder.bind(loadState)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): UserTimelineLoadStateViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        loadState: LoadState
+    ): UserTimelineLoadStateViewHolder {
         return UserTimelineLoadStateViewHolder(
-            ItemUserTimelineLoadStateBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            ItemUserTimelineLoadStateBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            ),
             retry
         )
     }

@@ -33,7 +33,12 @@ class ActivityFileTrackingRepositoryImpl @Inject constructor(
         return File.createTempFile("$activityFilePrefix$activityId", null, contentDir)
     }
 
-    override suspend fun track(activityId: String, activityName: String, activityFile: File, target: FileTarget) {
+    override suspend fun track(
+        activityId: String,
+        activityName: String,
+        activityFile: File,
+        target: FileTarget
+    ) {
         val record = ActivityFileRecord(
             id = 0,
             activityId = activityId,

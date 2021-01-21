@@ -24,5 +24,4 @@ interface ActivityFileDao {
 
     @Query("SELECT count(*) FROM activity_file WHERE status = :status AND target = :target")
     suspend fun count(status: String, target: String): Int
-
 }

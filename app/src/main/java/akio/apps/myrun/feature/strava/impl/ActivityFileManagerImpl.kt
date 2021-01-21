@@ -18,9 +18,10 @@ class ActivityFileManagerImpl @Inject constructor(
     }
 
     override fun getAllFiles(): List<File> {
-        return fileDir.listFiles()?.filter {
-            it.isFile && it.exists() && it.name.startsWith(prefix)
-        }
+        return fileDir.listFiles()
+            ?.filter {
+                it.isFile && it.exists() && it.name.startsWith(prefix)
+            }
             ?: emptyList()
     }
 }

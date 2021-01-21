@@ -15,8 +15,18 @@ class RequiredPermissionsDelegate {
 
     private val requestPermissionJob = Job()
 
-    suspend fun requestPermissions(permissions: Array<String>, rcPermissions: Int, activity: Activity, fragment: Fragment? = null): Boolean {
-        RequiredPermissionsDelegate.requestPermissions(permissions, rcPermissions, activity, fragment)
+    suspend fun requestPermissions(
+        permissions: Array<String>,
+        rcPermissions: Int,
+        activity: Activity,
+        fragment: Fragment? = null
+    ): Boolean {
+        RequiredPermissionsDelegate.requestPermissions(
+            permissions,
+            rcPermissions,
+            activity,
+            fragment
+        )
         return try {
             requestPermissionJob.join()
             true
@@ -41,7 +51,12 @@ class RequiredPermissionsDelegate {
     }
 
     companion object {
-        fun requestPermissions(permissions: Array<String>, rcPermissions: Int, activity: Activity, fragment: Fragment? = null) {
+        fun requestPermissions(
+            permissions: Array<String>,
+            rcPermissions: Int,
+            activity: Activity,
+            fragment: Fragment? = null
+        ) {
             if (fragment != null) {
                 fragment.requestPermissions(permissions, rcPermissions)
             } else {
@@ -49,12 +64,24 @@ class RequiredPermissionsDelegate {
             }
         }
 
-        fun requestFitnessDataPermissions(activity: Activity, requestCode: Int, fragment: Fragment? = null): Boolean {
-            return GoogleSignInPermissionUtils.mayRequestGoogleSignInPermissions(activity, AppPermissions.fitnessDataTypes, requestCode, fragment)
+        fun requestFitnessDataPermissions(
+            activity: Activity,
+            requestCode: Int,
+            fragment: Fragment? = null
+        ): Boolean {
+            return GoogleSignInPermissionUtils.mayRequestGoogleSignInPermissions(
+                activity,
+                AppPermissions.fitnessDataTypes,
+                requestCode,
+                fragment
+            )
         }
 
         fun isFitnessDataPermissionsGranted(activity: Activity): Boolean {
-            return GoogleSignInPermissionUtils.isDataTypePermissionsGranted(activity, AppPermissions.fitnessDataTypes)
+            return GoogleSignInPermissionUtils.isDataTypePermissionsGranted(
+                activity,
+                AppPermissions.fitnessDataTypes
+            )
         }
 
         fun buildFitnessDataOptions(): FitnessOptions {
@@ -62,5 +89,5 @@ class RequiredPermissionsDelegate {
         }
     }
 
-    internal class PermissionRequestError: Throwable()
+    internal class PermissionRequestError : Throwable()
 }

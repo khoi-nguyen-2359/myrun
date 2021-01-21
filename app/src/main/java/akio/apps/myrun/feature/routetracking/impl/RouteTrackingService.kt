@@ -1,20 +1,24 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun.R
-import akio.apps.myrun.data.location.LocationEntity
-import akio.apps.myrun.data.location.LocationDataSource
-import akio.apps.myrun.data.location.LocationRequestEntity
-import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
-import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.fitness.FitnessDataRepository
+import akio.apps.myrun.data.location.LocationDataSource
+import akio.apps.myrun.data.location.LocationEntity
+import akio.apps.myrun.data.location.LocationRequestEntity
+import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
+import akio.apps.myrun.data.routetracking.RouteTrackingState
+import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.feature.routetracking.ClearRouteTrackingStateUsecase
 import android.annotation.SuppressLint
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.location.Location
@@ -116,9 +120,16 @@ class RouteTrackingService : Service() {
         instantSpeedCalculator.calculateInstantSpeed()
 
         if (startLocation == null) {
-            startLocation = locations.firstOrNull()?.also {
-                routeTrackingState.setStartLocation(LocationEntity(it.latitude, it.longitude, it.altitude))
-            }
+            startLocation = locations.firstOrNull()
+                ?.also {
+                    routeTrackingState.setStartLocation(
+                        LocationEntity(
+                            it.latitude,
+                            it.longitude,
+                            it.altitude
+                        )
+                    )
+                }
         }
     }
 
@@ -153,7 +164,8 @@ class RouteTrackingService : Service() {
             }
             computeLengthLocations.addAll(locations)
 
-            val locationUpdateDistance = SphericalUtil.computeLength(computeLengthLocations.map { it.toGmsLatLng() })
+            val locationUpdateDistance =
+                SphericalUtil.computeLength(computeLengthLocations.map { it.toGmsLatLng() })
 
             // remember last location of this batch for later computing
             lastComputeLengthLocation = locations.lastOrNull()
@@ -171,18 +183,26 @@ class RouteTrackingService : Service() {
 
     private fun notifyTrackingNotification() = mainScope.launch {
         val notificationIntent = RouteTrackingActivity.launchIntent(this@RouteTrackingService)
-        val pendingIntent = PendingIntent.getActivity(this@RouteTrackingService, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(
+            this@RouteTrackingService,
+            0,
+            notificationIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
-        val durationDisplay = StatsPresentations.getDisplayDuration(routeTrackingState.getTrackingDuration())
-        val distanceDisplay = StatsPresentations.getDisplayTrackingDistance(routeTrackingState.getRouteDistance())
-        val notification: Notification = NotificationCompat.Builder(this@RouteTrackingService, NOTIF_CHANNEL_ID)
-            .setContentTitle(getString(R.string.route_tracking_notification_title))
-            .setContentText("$durationDisplay - $distanceDisplay Km")
-            .setSmallIcon(R.drawable.ic_run_circle)
-            .setContentIntent(pendingIntent)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setOnlyAlertOnce(true)
-            .build()
+        val durationDisplay =
+            StatsPresentations.getDisplayDuration(routeTrackingState.getTrackingDuration())
+        val distanceDisplay =
+            StatsPresentations.getDisplayTrackingDistance(routeTrackingState.getRouteDistance())
+        val notification: Notification =
+            NotificationCompat.Builder(this@RouteTrackingService, NOTIF_CHANNEL_ID)
+                .setContentTitle(getString(R.string.route_tracking_notification_title))
+                .setContentText("$durationDisplay - $distanceDisplay Km")
+                .setSmallIcon(R.drawable.ic_run_circle)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setOnlyAlertOnce(true)
+                .build()
 
         startForeground(NOTIF_ID_TRACKING, notification)
     }
@@ -277,7 +297,11 @@ class RouteTrackingService : Service() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(NOTIF_CHANNEL_ID, "Route Tracking", NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(
+                NOTIF_CHANNEL_ID,
+                "Route Tracking",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
             channel.description = "While app is tracking your route"
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
@@ -333,13 +357,15 @@ class RouteTrackingService : Service() {
             return intent
         }
 
-        fun pauseIntent(context: Context) = Intent(context, RouteTrackingService::class.java).apply {
-            action = ACTION_PAUSE
-        }
+        fun pauseIntent(context: Context) =
+            Intent(context, RouteTrackingService::class.java).apply {
+                action = ACTION_PAUSE
+            }
 
-        fun resumeIntent(context: Context) = Intent(context, RouteTrackingService::class.java).apply {
-            action = ACTION_RESUME
-        }
+        fun resumeIntent(context: Context) =
+            Intent(context, RouteTrackingService::class.java).apply {
+                action = ACTION_RESUME
+            }
 
         fun createLocationTrackingRequest() = LocationRequest().apply {
             fastestInterval = LOCATION_UPDATE_INTERVAL

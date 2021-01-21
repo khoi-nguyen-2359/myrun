@@ -16,23 +16,31 @@ class CheckLocationServiceDelegate(
     private val locationSampleRequests: List<LocationRequest>
 ) {
 
-    private val locationSettingsClient: SettingsClient = LocationServices.getSettingsClient(activity)
+    private val locationSettingsClient: SettingsClient =
+        LocationServices.getSettingsClient(activity)
     private val resolveForResultJob = Job()
     private val showLocationUnavailableDialogJob = Job()
 
     // work with activity only!!
-    suspend fun checkLocationServiceAvailability(activity: Activity, rcLocationService: Int): Boolean = withContext(Dispatchers.IO) {
+    suspend fun checkLocationServiceAvailability(
+        activity: Activity,
+        rcLocationService: Int
+    ): Boolean = withContext(Dispatchers.IO) {
         val settingsReq = LocationSettingsRequest.Builder()
             .addAllLocationRequests(locationSampleRequests)
             .build()
 
         return@withContext try {
-            locationSettingsClient.checkLocationSettings(settingsReq).await()
+            locationSettingsClient.checkLocationSettings(settingsReq)
+                .await()
             true
         } catch (apiEx: ApiException) {
             when (apiEx.statusCode) {
                 LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
-                    (apiEx as? ResolvableApiException)?.startResolutionForResult(activity, rcLocationService)
+                    (apiEx as? ResolvableApiException)?.startResolutionForResult(
+                        activity,
+                        rcLocationService
+                    )
                     try {
                         resolveForResultJob.join()
                         true
@@ -68,5 +76,5 @@ class CheckLocationServiceDelegate(
         return false
     }
 
-    internal class ResolutionNotFound: Throwable()
+    internal class ResolutionNotFound : Throwable()
 }

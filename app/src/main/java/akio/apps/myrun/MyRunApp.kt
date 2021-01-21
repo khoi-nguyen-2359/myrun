@@ -8,7 +8,10 @@ import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
 import akio.apps.myrun.feature.strava.InitializeStravaUploadWorkerUsecase
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration
 import com.google.android.libraries.places.api.Places
 import dagger.android.AndroidInjector

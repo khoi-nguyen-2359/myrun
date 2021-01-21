@@ -11,6 +11,7 @@ class FirebaseLinkWithFacebookUsecase @Inject constructor(
 ) : LinkFacebookUsecase {
     override suspend fun linkFacebook(accessTokenValue: String) {
         val credential = FacebookAuthProvider.getCredential(accessTokenValue)
-        firebaseAuth.currentUser?.linkWithCredential(credential)?.await()
+        firebaseAuth.currentUser?.linkWithCredential(credential)
+            ?.await()
     }
 }

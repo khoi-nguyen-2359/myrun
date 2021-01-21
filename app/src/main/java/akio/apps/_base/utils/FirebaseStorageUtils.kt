@@ -9,7 +9,12 @@ import java.io.ByteArrayOutputStream
 
 object FirebaseStorageUtils {
 
-    suspend fun uploadBitmap(storageRef: StorageReference, storeName: String, bitmap: Bitmap, scaledSize: Int): Uri {
+    suspend fun uploadBitmap(
+        storageRef: StorageReference,
+        storeName: String,
+        bitmap: Bitmap,
+        scaledSize: Int
+    ): Uri {
         val photoRef = storageRef.child(storeName)
 
         val uploadBitmap = if (scaledSize != 1)
@@ -20,13 +25,19 @@ object FirebaseStorageUtils {
         val uploadBaos = ByteArrayOutputStream()
         uploadBitmap.compress(Bitmap.CompressFormat.JPEG, 100, uploadBaos)
         val uploadData = uploadBaos.toByteArray()
-        photoRef.putBytes(uploadData).await()
+        photoRef.putBytes(uploadData)
+            .await()
         uploadBaos.close()
         uploadBitmap.recycle()
         return photoRef.downloadUrl.await()
     }
 
-    suspend fun uploadLocalBitmap(storage: StorageReference, storeName: String, filePath: String, scaledSize: Int): Uri? {
+    suspend fun uploadLocalBitmap(
+        storage: StorageReference,
+        storeName: String,
+        filePath: String,
+        scaledSize: Int
+    ): Uri? {
         val imageBitmap = BitmapUtils.decodeSampledFile(filePath, scaledSize, scaledSize)
         val downloadUrl = uploadBitmap(storage, storeName, imageBitmap, 1)
         imageBitmap.recycle()

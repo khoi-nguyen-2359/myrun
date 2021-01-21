@@ -27,8 +27,8 @@ object BitmapUtils {
         filePath: String,
         reqWidth: Int,
         reqHeight: Int
-    ): Bitmap {
-        return BitmapFactory.Options().run {
+    ): Bitmap = BitmapFactory.Options()
+        .run {
             inJustDecodeBounds = true
             BitmapFactory.decodeFile(filePath, this)
 
@@ -40,31 +40,25 @@ object BitmapUtils {
 
             BitmapFactory.decodeFile(filePath, this)
         }
-    }
 
-    fun scale(origin: Bitmap, maxWidthAndHeight:Int): Bitmap {
+    fun scale(origin: Bitmap, maxWidthAndHeight: Int): Bitmap {
         val newWidth: Int
         val newHeight: Int
 
-        if (origin.width >= origin.height){
-            val ratio:Float = origin.width.toFloat() / origin.height.toFloat()
+        if (origin.width >= origin.height) {
+            val ratio: Float = origin.width.toFloat() / origin.height.toFloat()
 
             newWidth = maxWidthAndHeight
             // Calculate the new height for the scaled bitmap
             newHeight = (maxWidthAndHeight / ratio).roundToInt()
-        }else{
-            val ratio:Float = origin.height.toFloat() / origin.width.toFloat()
+        } else {
+            val ratio: Float = origin.height.toFloat() / origin.width.toFloat()
 
             // Calculate the new width for the scaled bitmap
             newWidth = (maxWidthAndHeight / ratio).roundToInt()
             newHeight = maxWidthAndHeight
         }
 
-        return Bitmap.createScaledBitmap(
-            origin,
-            newWidth,
-            newHeight,
-            false
-        )
+        return Bitmap.createScaledBitmap(origin, newWidth, newHeight, false)
     }
 }

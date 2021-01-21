@@ -6,11 +6,9 @@ import dagger.Module
 
 @Module(includes = [AuthenticationDataModule.Bindings::class])
 interface AuthenticationDataModule {
-
     @Module
     interface Bindings {
         @Binds
         fun userAuthStorage(state: UserAuthenticationStateImpl): UserAuthenticationState
     }
-
 }

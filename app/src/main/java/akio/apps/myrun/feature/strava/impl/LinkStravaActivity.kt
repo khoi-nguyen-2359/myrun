@@ -29,11 +29,17 @@ class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.EventListener
         linkStravaDelegate.checkStravaLoginResult(intent)
         observe(linkStravaViewModel.isInProgress, dialogDelegate::toggleProgressDialog)
         observeEvent(linkStravaViewModel.error) {
-            Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+            Toast.makeText(this, it.message, Toast.LENGTH_LONG)
+                .show()
             finish()
         }
         observeEvent(linkStravaViewModel.stravaTokenExchangedSuccess) {
-            Toast.makeText(this, getString(R.string.edit_user_profile_link_running_app_success_message), Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                getString(R.string.edit_user_profile_link_running_app_success_message),
+                Toast.LENGTH_LONG
+            )
+                .show()
             finish()
         }
     }

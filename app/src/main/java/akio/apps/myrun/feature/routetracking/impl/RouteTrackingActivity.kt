@@ -4,16 +4,16 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.dp2px
 import akio.apps.myrun.R
-import akio.apps.myrun._di.createViewModelInjectionDelegate
-import akio.apps.myrun.data.activity.ActivityType
-import akio.apps.myrun.data.routetracking.RouteTrackingStatus
-import akio.apps.myrun.data.routetracking.TrackingLocationEntity
-import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun._base.permissions.AppPermissions.locationPermissions
 import akio.apps.myrun._base.permissions.RequiredPermissionsDelegate
 import akio.apps.myrun._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.toGmsLatLng
+import akio.apps.myrun._di.createViewModelInjectionDelegate
+import akio.apps.myrun.data.activity.ActivityType
+import akio.apps.myrun.data.routetracking.RouteTrackingStatus
+import akio.apps.myrun.data.routetracking.TrackingLocationEntity
+import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature.googlefit.GoogleFitLinkingDelegate
 import akio.apps.myrun.feature.home.impl.HomeActivity
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
@@ -33,7 +33,13 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.JointType
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.RoundCap
 
 class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventListener {
 
@@ -62,12 +68,24 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private val requiredPermissionsDelegate = RequiredPermissionsDelegate()
     private val requisiteJobs = lifecycleScope.launchWhenCreated {
         // onCreate: check location permissions -> check location service availability -> allow user to use this screen
-        if (!requiredPermissionsDelegate.requestPermissions(locationPermissions, RC_LOCATION_PERMISSIONS, this@RouteTrackingActivity)
-            || !checkLocationServiceDelegate.checkLocationServiceAvailability(this@RouteTrackingActivity, RC_LOCATION_SERVICE)) {
+        if (!requiredPermissionsDelegate.requestPermissions(
+                locationPermissions,
+                RC_LOCATION_PERMISSIONS,
+                this@RouteTrackingActivity
+            )
+            || !checkLocationServiceDelegate.checkLocationServiceAvailability(
+                this@RouteTrackingActivity,
+                RC_LOCATION_SERVICE
+            )
+        ) {
             finish()
         }
 
-        googleFitLinkingDelegate.requestGoogleFitPermissions(this@RouteTrackingActivity, RC_ACTIVITY_REGCONITION_PERMISSION, RC_FITNESS_DATA_PERMISSIONS)
+        googleFitLinkingDelegate.requestGoogleFitPermissions(
+            this@RouteTrackingActivity,
+            RC_ACTIVITY_REGCONITION_PERMISSION,
+            RC_FITNESS_DATA_PERMISSIONS
+        )
 
         initMap()
     }
@@ -102,11 +120,19 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         observe(routeTrackingViewModel.trackingStats, viewBinding.trackingStatsView::update)
         observe(routeTrackingViewModel.trackingStatus, ::updateViewForTrackingStatus)
         observeEvent(routeTrackingViewModel.mapInitialLocation) { initLocation ->
-            mapView.moveCamera(CameraUpdateFactory.newLatLngZoom(initLocation.toGmsLatLng(), MAP_DEFAULT_ZOOM_LEVEL))
+            mapView.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    initLocation.toGmsLatLng(),
+                    MAP_DEFAULT_ZOOM_LEVEL
+                )
+            )
         }
         observeEvent(routeTrackingViewModel.error, dialogDelegate::showExceptionAlert)
         observeEvent(routeTrackingViewModel.saveActivitySuccess) { onSaveActivitySuccess() }
-        observe(routeTrackingViewModel.activityType, viewBinding.activitySettingsView::setActivityType)
+        observe(
+            routeTrackingViewModel.activityType,
+            viewBinding.activitySettingsView::setActivityType
+        )
         observe(routeTrackingViewModel.activityType, viewBinding.trackingStatsView::setActivityType)
     }
 
@@ -141,9 +167,11 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     private fun recenterMapOnTrackingRoute(animation: Boolean): Rect {
-        val mapWidth = supportFragmentManager.findFragmentById(R.id.tracking_map_view)?.view?.measuredWidth
-            ?: application.resources.displayMetrics.widthPixels
-        val routeImageRatio = resources.getString(R.string.route_tracking_captured_image_ratio).toFloatOrNull()
+        val mapWidth =
+            supportFragmentManager.findFragmentById(R.id.tracking_map_view)?.view?.measuredWidth
+                ?: application.resources.displayMetrics.widthPixels
+        val routeImageRatio = resources.getString(R.string.route_tracking_captured_image_ratio)
+            .toFloatOrNull()
             ?: ROUTE_IMAGE_RATIO
 
         val boundingBox = Rect(0, 0, mapWidth, (mapWidth / routeImageRatio).toInt())
@@ -261,7 +289,13 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         val boundingBox = recenterMapOnTrackingRoute(false)
         mapView.snapshot { mapSnapshot ->
             mapView.isMyLocationEnabled = true
-            val cropped = Bitmap.createBitmap(mapSnapshot, (mapSnapshot.width - boundingBox.width()) / 2, (mapSnapshot.height - boundingBox.height()) / 2, boundingBox.width(), boundingBox.height())
+            val cropped = Bitmap.createBitmap(
+                mapSnapshot,
+                (mapSnapshot.width - boundingBox.width()) / 2,
+                (mapSnapshot.height - boundingBox.height()) / 2,
+                boundingBox.width(),
+                boundingBox.height()
+            )
             routeTrackingViewModel.saveActivity(cropped)
         }
     }
@@ -275,7 +309,11 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         requiredPermissionsDelegate.verifyPermissionsResult(this, locationPermissions)
 
@@ -288,7 +326,9 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             RC_FITNESS_DATA_PERMISSIONS -> googleFitLinkingDelegate.verifyFitnessDataPermission()
-            RC_LOCATION_SERVICE -> checkLocationServiceDelegate.verifyLocationServiceResolutionResult(resultCode)
+            RC_LOCATION_SERVICE -> checkLocationServiceDelegate.verifyLocationServiceResolutionResult(
+                resultCode
+            )
         }
     }
 
@@ -303,7 +343,12 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     @SuppressLint("MissingPermission")
     private fun initMapView(map: GoogleMap) {
         this.mapView = map
-        map.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.route_tracking_google_map_styles))
+        map.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(
+                this,
+                R.raw.route_tracking_google_map_styles
+            )
+        )
         map.isMyLocationEnabled = true
         map.uiSettings.isMyLocationButtonEnabled = true
     }

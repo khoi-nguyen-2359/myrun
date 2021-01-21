@@ -11,7 +11,8 @@ class SignInWithGoogleUsecaseImpl @Inject constructor(
 ) : SignInWithGoogleUsecase {
     override suspend fun signInWithGoogleToken(googleIdToken: String): SignInSuccessResult {
         val googleAuthCredential = GoogleAuthProvider.getCredential(googleIdToken, null)
-        val signInResult = firebaseAuth.signInWithCredential(googleAuthCredential).await()
+        val signInResult = firebaseAuth.signInWithCredential(googleAuthCredential)
+            .await()
         return SignInSuccessResult(
             signInResult.additionalUserInfo?.isNewUser ?: false,
             SignInMethod.Google

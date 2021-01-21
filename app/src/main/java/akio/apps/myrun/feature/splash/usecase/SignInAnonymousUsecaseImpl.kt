@@ -12,6 +12,7 @@ class SignInAnonymousUsecaseImpl @Inject constructor(
 ) : SignInAnonymousUsecase {
 
     override suspend fun signInAnonymously(): Unit = withContext(Dispatchers.IO) {
-        firebaseAuth.signInAnonymously().await()
+        firebaseAuth.signInAnonymously()
+            .await()
     }
 }

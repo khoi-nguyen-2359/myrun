@@ -5,4 +5,4 @@ data class CyclingActivity(
 
     // stats
     val speed: Double
-): Activity by activityData
+) : Activity by activityData

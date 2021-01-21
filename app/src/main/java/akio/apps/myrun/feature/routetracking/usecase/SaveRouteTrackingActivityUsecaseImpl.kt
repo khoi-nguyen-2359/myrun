@@ -1,14 +1,19 @@
 package akio.apps.myrun.feature.routetracking.usecase
 
 import akio.apps._base.error.UnauthorizedUserError
-import akio.apps.myrun.data.activity.*
-import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
-import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun._base.utils.toGmsLatLng
+import akio.apps.myrun.data.activity.ActivityDataEntity
+import akio.apps.myrun.data.activity.ActivityEntity
+import akio.apps.myrun.data.activity.ActivityRepository
+import akio.apps.myrun.data.activity.ActivityType
+import akio.apps.myrun.data.activity.CyclingActivityEntity
+import akio.apps.myrun.data.activity.RunningActivityEntity
+import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.fitness.SingleDataPoint
 import akio.apps.myrun.data.location.LocationEntity
+import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
+import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.feature.routetracking.SaveRouteTrackingActivityUsecase
 import akio.apps.myrun.feature.usertimeline.model.Activity
@@ -28,7 +33,10 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
     private val activityEntityMapper: ActivityEntityMapper
 ) : SaveRouteTrackingActivityUsecase {
 
-    override suspend fun saveCurrentActivity(activityType: ActivityType, routeMapImage: Bitmap): Activity {
+    override suspend fun saveCurrentActivity(
+        activityType: ActivityType,
+        routeMapImage: Bitmap
+    ): Activity {
         val userAccountId = userAuthenticationState.getUserAccountId()
             ?: throw UnauthorizedUserError()
 
@@ -40,15 +48,39 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
         val distance = routeTrackingState.getRouteDistance()
         val trackedLocations = routeTrackingLocationRepository.getAllLocations()
         val encodedPolyline = PolyUtil.encode(trackedLocations.map { it.toGmsLatLng() })
-        val activityData: ActivityEntity = ActivityDataEntity("", userProfile.accountId, userProfile.name, userProfile.photo, activityType, "", "", startTime, endTime, duration, distance, encodedPolyline)
+        val activityData: ActivityEntity = ActivityDataEntity(
+            "",
+            userProfile.accountId,
+            userProfile.name,
+            userProfile.photo,
+            activityType,
+            "",
+            "",
+            startTime,
+            endTime,
+            duration,
+            distance,
+            encodedPolyline
+        )
 
-        val speedDataPoints = fitnessDataRepository.getSpeedDataPoints(startTime, endTime, FITNESS_DATA_INTERVAL)
-        val stepCadenceDataPoints: List<SingleDataPoint<Int>>? = if (activityType == ActivityType.Running) {
-            fitnessDataRepository.getSteppingCadenceDataPoints(startTime, endTime, FITNESS_DATA_INTERVAL)
-        } else {
-            null
+        val speedDataPoints =
+            fitnessDataRepository.getSpeedDataPoints(startTime, endTime, FITNESS_DATA_INTERVAL)
+        val stepCadenceDataPoints: List<SingleDataPoint<Int>>? =
+            if (activityType == ActivityType.Running) {
+                fitnessDataRepository.getSteppingCadenceDataPoints(
+                    startTime,
+                    endTime,
+                    FITNESS_DATA_INTERVAL
+                )
+            } else {
+                null
+            }
+        val locationDataPoints = trackedLocations.map {
+            SingleDataPoint(
+                it.time,
+                LocationEntity(it.latitude, it.longitude, it.altitude)
+            )
         }
-        val locationDataPoints = trackedLocations.map { SingleDataPoint(it.time, LocationEntity(it.latitude, it.longitude, it.altitude)) }
         val savingActivity: ActivityEntity = when (activityType) {
             ActivityType.Running -> {
                 val pace = (duration / (1000 * 60)) / (distance / 1000)
@@ -63,7 +95,13 @@ class SaveRouteTrackingActivityUsecaseImpl @Inject constructor(
             else -> throw UnsupportedOperationException("Saving unknown activity type $activityType")
         }
 
-        val activityId = activityRepository.saveActivity(savingActivity, routeMapImage, speedDataPoints, stepCadenceDataPoints, locationDataPoints)
+        val activityId = activityRepository.saveActivity(
+            savingActivity,
+            routeMapImage,
+            speedDataPoints,
+            stepCadenceDataPoints,
+            locationDataPoints
+        )
 
         return activityEntityMapper.map(activityId, savingActivity)
     }

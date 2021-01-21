@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.editprofile.impl
 
-import akio.apps._base.error.UnauthorizedUserError
 import akio.apps._base.any
 import akio.apps._base.eq
+import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.data.userprofile.model.Gender

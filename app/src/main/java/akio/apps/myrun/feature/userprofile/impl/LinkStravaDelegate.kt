@@ -20,15 +20,17 @@ class LinkStravaDelegate(
         if (!data.toString().startsWith(stravaRedirectUri))
             return
 
-        data.getQueryParameter("error")?.let { errorMessage ->
-            Timber.e(errorMessage)
-            eventListener.onGetStravaLoginError(errorMessage)
-            return
-        }
+        data.getQueryParameter("error")
+            ?.let { errorMessage ->
+                Timber.e(errorMessage)
+                eventListener.onGetStravaLoginError(errorMessage)
+                return
+            }
 
-        data.getQueryParameter("code")?.let { loginCode ->
-            eventListener.onGetStravaLoginCode(loginCode)
-        }
+        data.getQueryParameter("code")
+            ?.let { loginCode ->
+                eventListener.onGetStravaLoginCode(loginCode)
+            }
     }
 
     fun openStravaLogin() {
@@ -46,7 +48,8 @@ class LinkStravaDelegate(
     }
 
     companion object {
-        fun createRedirectUri(context: Context) = "${context.getString(R.string.app_scheme)}://${context.getString(R.string.strava_callback_host)}"
+        fun createRedirectUri(context: Context) =
+            "${context.getString(R.string.app_scheme)}://${context.getString(R.string.strava_callback_host)}"
 
         fun buildStravaLoginIntent(context: Context): Intent {
             val intentUri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")

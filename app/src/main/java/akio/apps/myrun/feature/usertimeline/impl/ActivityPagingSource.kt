@@ -14,7 +14,7 @@ class ActivityPagingSource @Inject constructor(
     private val activityEntityMapper: ActivityEntityMapper,
     private val userAuthenticationState: UserAuthenticationState,
     private val userFollowRepository: UserFollowRepository
-): PagingSource<Long, Activity>() {
+) : PagingSource<Long, Activity>() {
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Activity> {
         val userAccountId = userAuthenticationState.getUserAccountId()
             ?: return LoadResult.Error(UnauthorizedUserError())
@@ -24,7 +24,8 @@ class ActivityPagingSource @Inject constructor(
         userIds.add(userAccountId)
 
         val startAfter = params.key ?: System.currentTimeMillis()
-        val pageData = activityRepository.getActivitiesByStartTime(userIds, startAfter, params.loadSize)
+        val pageData =
+            activityRepository.getActivitiesByStartTime(userIds, startAfter, params.loadSize)
         return LoadResult.Page(
             data = pageData.map(activityEntityMapper::map),
             prevKey = null,

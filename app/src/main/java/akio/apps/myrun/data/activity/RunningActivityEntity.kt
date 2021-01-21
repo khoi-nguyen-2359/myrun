@@ -5,4 +5,4 @@ data class RunningActivityEntity(
 
     // stats
     val pace: Double,
-): ActivityEntity by activityData
+) : ActivityEntity by activityData

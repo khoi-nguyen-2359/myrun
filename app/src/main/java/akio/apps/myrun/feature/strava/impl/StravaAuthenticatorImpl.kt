@@ -17,14 +17,14 @@ import okhttp3.Route
 import timber.log.Timber
 
 class StravaAuthenticatorImpl(
-	private val httpClient: OkHttpClient,
-	private val updateStravaTokenUsecase: UpdateStravaTokenUsecase,
-	private val removeStravaTokenUsecase: RemoveStravaTokenUsecase,
-	private val stravaTokenStorage: StravaTokenStorage,
-	private val baseStravaUrl: String,
-	private val gson: Gson,
-	private val clientId: String,
-	private val clientSecret: String
+    private val httpClient: OkHttpClient,
+    private val updateStravaTokenUsecase: UpdateStravaTokenUsecase,
+    private val removeStravaTokenUsecase: RemoveStravaTokenUsecase,
+    private val stravaTokenStorage: StravaTokenStorage,
+    private val baseStravaUrl: String,
+    private val gson: Gson,
+    private val clientId: String,
+    private val clientSecret: String
 ) : StravaAuthenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
@@ -32,9 +32,10 @@ class StravaAuthenticatorImpl(
             return null
         }
 
-        val originalToken = runBlocking { stravaTokenStorage.getToken()  }
+        val originalToken = runBlocking { stravaTokenStorage.getToken() }
         val originalRequest = response.request
-        val originalAccessToken = originalRequest.header("Authorization")?.removePrefix("Bearer ")
+        val originalAccessToken = originalRequest.header("Authorization")
+            ?.removePrefix("Bearer ")
         if (originalToken == null || originalAccessToken == null) {
             return null
         }
@@ -50,14 +51,15 @@ class StravaAuthenticatorImpl(
         val refreshRequest = Request.Builder()
             .method("POST", "".toRequestBody("text/plain".toMediaType()))
             .url(
-				baseStravaUrl + "oauth/token?grant_type=refresh_token" +
-						"&client_id=$clientId" +
-						"&client_secret=$clientSecret" +
-						"&refresh_token=${originalToken.refreshToken}"
-			)
+                baseStravaUrl + "oauth/token?grant_type=refresh_token" +
+                    "&client_id=$clientId" +
+                    "&client_secret=$clientSecret" +
+                    "&refresh_token=${originalToken.refreshToken}"
+            )
             .build()
 
-        val refreshResponse = httpClient.newCall(refreshRequest).execute()
+        val refreshResponse = httpClient.newCall(refreshRequest)
+            .execute()
         if (refreshResponse.isSuccessful && refreshResponse.code == 200) {
             val stringResponse = refreshResponse.body?.string()
             val refreshToken = gson.fromJson(stringResponse, StravaTokenRefreshEntity::class.java)

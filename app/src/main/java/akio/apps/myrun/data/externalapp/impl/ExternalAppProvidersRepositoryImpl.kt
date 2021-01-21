@@ -34,40 +34,43 @@ class ExternalAppProvidersRepositoryImpl @Inject constructor(
     }
 
     private fun getProviderTokenDocument(userUid: String): DocumentReference {
-        return firestore.collection(PROVIDERS_COLLECTION_PATH).document(userUid)
+        return firestore.collection(PROVIDERS_COLLECTION_PATH)
+            .document(userUid)
     }
 
     @ExperimentalCoroutinesApi
-    override fun getExternalProvidersFlow(accountId: String): Flow<Resource<ExternalProviders>> = callbackFlow {
-        val providerTokenDocument = getProviderTokenDocument(accountId)
-        try {
-            val cached = providerTokenDocument.get(Source.CACHE)
-                .await()
-                .toObject(FirestoreProvidersEntity::class.java)
-                ?.run(firestoreProvidersMapper::map)
+    override fun getExternalProvidersFlow(accountId: String): Flow<Resource<ExternalProviders>> =
+        callbackFlow {
+            val providerTokenDocument = getProviderTokenDocument(accountId)
+            try {
+                val cached = providerTokenDocument.get(Source.CACHE)
+                    .await()
+                    .toObject(FirestoreProvidersEntity::class.java)
+                    ?.run(firestoreProvidersMapper::map)
 
-            send(Resource.Loading(cached))
-        } catch (ex: Exception) {
-            send(Resource.Loading<ExternalProviders>(null))
-        }
+                send(Resource.Loading(cached))
+            } catch (ex: Exception) {
+                send(Resource.Loading<ExternalProviders>(null))
+            }
 
-        val listener = providerTokenDocument.addSnapshotListener { snapshot, error ->
-            if (error == null) {
-                val providers = snapshot?.toObject(FirestoreProvidersEntity::class.java)?.run(firestoreProvidersMapper::map)
-                    ?: ExternalProviders.createEmpty()
-                sendBlocking(Resource.Success(providers))
-            } else {
-                sendBlocking(Resource.Error<ExternalProviders>(error))
+            val listener = providerTokenDocument.addSnapshotListener { snapshot, error ->
+                if (error == null) {
+                    val providers = snapshot?.toObject(FirestoreProvidersEntity::class.java)
+                        ?.run(firestoreProvidersMapper::map)
+                        ?: ExternalProviders.createEmpty()
+                    sendBlocking(Resource.Success(providers))
+                } else {
+                    sendBlocking(Resource.Error<ExternalProviders>(error))
+                }
+            }
+
+            awaitClose {
+                runBlocking(Dispatchers.Main.immediate) {
+                    listener.remove()
+                }
             }
         }
-
-        awaitClose {
-            runBlocking(Dispatchers.Main.immediate) {
-                listener.remove()
-            }
-        }
-    }
-        .flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.IO)
 
     override suspend fun getExternalProviders(accountId: String): ExternalProviders {
         return getProviderTokenDocument(accountId)
@@ -80,17 +83,19 @@ class ExternalAppProvidersRepositoryImpl @Inject constructor(
 
     override fun updateStravaProvider(accountId: String, token: ExternalAppToken.StravaToken) {
         val providerTokenDocument = getProviderTokenDocument(accountId)
-        providerTokenDocument.set(mapOf(RunningApp.Strava.id to token.let {
-            FirestoreProvidersEntity.FirestoreProviderToken(
-                RunningApp.Strava.appName,
-                firestoreStravaTokenMapper.mapReversed(it)
-            )
-        }), SetOptions.merge())
+        providerTokenDocument.set(
+            mapOf(RunningApp.Strava.id to token.let {
+                FirestoreProvidersEntity.FirestoreProviderToken(
+                    RunningApp.Strava.appName,
+                    firestoreStravaTokenMapper.mapReversed(it)
+                )
+            }),
+            SetOptions.merge()
+        )
     }
 
     override fun removeStravaProvider(accountId: String) {
         val providerTokenDocument = getProviderTokenDocument(accountId)
         providerTokenDocument.set(mapOf(RunningApp.Strava.id to null), SetOptions.merge())
     }
-
 }

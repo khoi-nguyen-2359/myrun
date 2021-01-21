@@ -5,4 +5,4 @@ data class RunningActivity(
 
     // stats
     val pace: Double
-): Activity by activityData
+) : Activity by activityData

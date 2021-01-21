@@ -5,6 +5,6 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class SignInSuccessResult(
-	val isNewUser: Boolean,
-	val signInMethod: SignInMethod
-): Parcelable
+    val isNewUser: Boolean,
+    val signInMethod: SignInMethod
+) : Parcelable

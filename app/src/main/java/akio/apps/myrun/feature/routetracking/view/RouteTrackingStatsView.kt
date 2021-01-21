@@ -12,7 +12,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import timber.log.Timber
 
 class RouteTrackingStatsView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val viewBinding: MergeRouteTrackingStatsViewBinding =
