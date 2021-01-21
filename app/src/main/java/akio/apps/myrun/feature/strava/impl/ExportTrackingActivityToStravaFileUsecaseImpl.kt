@@ -14,13 +14,20 @@ import akio.apps.myrun.feature.routetracking.usecase.SaveRouteTrackingActivityUs
 import akio.apps.myrun.feature.strava.ExportTrackingActivityToStravaFileUsecase
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import com.google.maps.android.SphericalUtil
-import com.sweetzpot.tcxzpot.*
+import com.sweetzpot.tcxzpot.Activities
+import com.sweetzpot.tcxzpot.Cadence
+import com.sweetzpot.tcxzpot.Intensity
+import com.sweetzpot.tcxzpot.Position
+import com.sweetzpot.tcxzpot.Sport
+import com.sweetzpot.tcxzpot.TCXDate
+import com.sweetzpot.tcxzpot.Track
+import com.sweetzpot.tcxzpot.TriggerMethod
 import com.sweetzpot.tcxzpot.builders.ActivityBuilder
 import com.sweetzpot.tcxzpot.builders.LapBuilder
 import com.sweetzpot.tcxzpot.builders.TrackpointBuilder
 import com.sweetzpot.tcxzpot.builders.TrainingCenterDatabaseBuilder
 import java.io.File
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 class ExportTrackingActivityToStravaFileUsecaseImpl @Inject constructor(
@@ -37,11 +44,16 @@ class ExportTrackingActivityToStravaFileUsecaseImpl @Inject constructor(
         else
             ClosableFileSerializer(outputFile)
 
-        val stepCadenceDataPoints: List<SingleDataPoint<Int>>? = if (activity.activityType == ActivityType.Running) {
-            fitnessDataRepository.getSteppingCadenceDataPoints(activity.startTime, activity.endTime, SaveRouteTrackingActivityUsecaseImpl.FITNESS_DATA_INTERVAL)
-        } else {
-            null
-        }
+        val stepCadenceDataPoints: List<SingleDataPoint<Int>>? =
+            if (activity.activityType == ActivityType.Running) {
+                fitnessDataRepository.getSteppingCadenceDataPoints(
+                    activity.startTime,
+                    activity.endTime,
+                    SaveRouteTrackingActivityUsecaseImpl.FITNESS_DATA_INTERVAL
+                )
+            } else {
+                null
+            }
         val avgCadence: Int? = if (stepCadenceDataPoints.isNullOrEmpty())
             null
         else
@@ -95,12 +107,20 @@ class ExportTrackingActivityToStravaFileUsecaseImpl @Inject constructor(
                                         trackedLocations.mapIndexed { index, waypoint ->
                                             TrackpointBuilder.aTrackpoint()
                                                 .onTime(TCXDate(Date(waypoint.time)))
-                                                .withPosition(Position.position(waypoint.latitude, waypoint.longitude))
+                                                .withPosition(
+                                                    Position.position(
+                                                        waypoint.latitude,
+                                                        waypoint.longitude
+                                                    )
+                                                )
                                                 .withAltitude(waypoint.altitude)
                                                 .withCadence(Cadence.cadence(flattenCadences[index]))
                                                 .apply {
                                                     lastLocation?.let {
-                                                        currentDistance += SphericalUtil.computeDistanceBetween(it.toGmsLatLng(), waypoint.toGmsLatLng())
+                                                        currentDistance += SphericalUtil.computeDistanceBetween(
+                                                            it.toGmsLatLng(),
+                                                            waypoint.toGmsLatLng()
+                                                        )
                                                         lastLocation = waypoint
                                                         withDistance(currentDistance)
                                                     }
@@ -115,7 +135,12 @@ class ExportTrackingActivityToStravaFileUsecaseImpl @Inject constructor(
             .serialize(serializer)
         serializer.close()
 
-        activityFileTrackingRepository.track(activity.id, activity.name, outputFile, FileTarget.STRAVA_UPLOAD)
+        activityFileTrackingRepository.track(
+            activity.id,
+            activity.name,
+            outputFile,
+            FileTarget.STRAVA_UPLOAD
+        )
 
         return outputFile
     }

@@ -22,7 +22,8 @@ class SignInViewModelImpl @Inject constructor(
 
     override fun signInWithFirebasePhoneCredential(phoneAuthCredential: PhoneAuthCredential) {
         launchCatching {
-            val result = signInWithPhoneUsecase.signInWithFirebasePhoneCredential(phoneAuthCredential)
+            val result =
+                signInWithPhoneUsecase.signInWithFirebasePhoneCredential(phoneAuthCredential)
             onSignInSuccess(result)
         }
     }
@@ -47,6 +48,5 @@ class SignInViewModelImpl @Inject constructor(
             onSignInSuccess(result)
         }
     }
-
 
 }

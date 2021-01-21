@@ -8,7 +8,7 @@ import akio.apps.myrun.data.externalapp.model.ProviderToken
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import androidx.lifecycle.LiveData
 
-abstract class UserProfileViewModel: BaseViewModel() {
+abstract class UserProfileViewModel : BaseViewModel() {
     abstract val isInlineLoading: LiveData<Boolean>
     abstract fun getUserProfileAlive(): LiveData<UserProfile>
     abstract fun getProvidersAlive(): LiveData<Resource<ExternalProviders>>

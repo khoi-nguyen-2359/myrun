@@ -12,12 +12,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 
-
 class PhotoSelectionDelegate(
-	private val activity: Activity,
-	private val fragment: Fragment?,
-	private val requestCodes: RequestCodes,
-	private var eventListener: EventListener? = null
+    private val activity: Activity,
+    private val fragment: Fragment?,
+    private val requestCodes: RequestCodes,
+    private var eventListener: EventListener? = null
 ) {
 
     private var capturedPhotoContentUri: Uri? = null
@@ -27,12 +26,18 @@ class PhotoSelectionDelegate(
         AlertDialog.Builder(activity)
             .setTitle(title)
             .setItems(options) { _, which ->
-				when (which) {
-					0 -> requestPermissions(AppPermissions.takePhotoPermissions, requestCodes.rcTakePhotoPermissions)
-					1 -> requestPermissions(AppPermissions.pickPhotoPermissions, requestCodes.rcPickPhotoPermissions)
-				}
-			}
-			.show()
+                when (which) {
+                    0 -> requestPermissions(
+                        AppPermissions.takePhotoPermissions,
+                        requestCodes.rcTakePhotoPermissions
+                    )
+                    1 -> requestPermissions(
+                        AppPermissions.pickPhotoPermissions,
+                        requestCodes.rcPickPhotoPermissions
+                    )
+                }
+            }
+            .show()
     }
 
     private fun requestPermissions(permissions: Array<String>, requestCode: Int) {
@@ -62,28 +67,40 @@ class PhotoSelectionDelegate(
 
     private fun launchCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        intent.resolveActivity(activity.packageManager)?.also {
-            val values = ContentValues(1)
-            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg")
-            capturedPhotoContentUri = activity.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, capturedPhotoContentUri)
-            startActivityForResult(intent, requestCodes.rcTakePhoto)
-        }
+        intent.resolveActivity(activity.packageManager)
+            ?.also {
+                val values = ContentValues(1)
+                values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg")
+                capturedPhotoContentUri = activity.contentResolver.insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    values
+                )
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, capturedPhotoContentUri)
+                startActivityForResult(intent, requestCodes.rcTakePhoto)
+            }
     }
 
     fun onRequestPermissionsResult(requestCode: Int) {
         when (requestCode) {
-			requestCodes.rcTakePhotoPermissions -> {
-				if (PermissionUtils.arePermissionsGranted(activity, AppPermissions.takePhotoPermissions)) {
-					launchCamera()
-				}
-			}
+            requestCodes.rcTakePhotoPermissions -> {
+                if (PermissionUtils.arePermissionsGranted(
+                        activity,
+                        AppPermissions.takePhotoPermissions
+                    )
+                ) {
+                    launchCamera()
+                }
+            }
 
-			requestCodes.rcPickPhotoPermissions -> {
-				if (PermissionUtils.arePermissionsGranted(activity, AppPermissions.pickPhotoPermissions)) {
-					openGallery()
-				}
-			}
+            requestCodes.rcPickPhotoPermissions -> {
+                if (PermissionUtils.arePermissionsGranted(
+                        activity,
+                        AppPermissions.pickPhotoPermissions
+                    )
+                ) {
+                    openGallery()
+                }
+            }
         }
     }
 
@@ -97,8 +114,8 @@ class PhotoSelectionDelegate(
             return
 
         data.data?.let {
-			eventListener?.onPhotoSelectionReady(it)
-		}
+            eventListener?.onPhotoSelectionReady(it)
+        }
     }
 
     private fun handleCapturedPhoto(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -113,11 +130,11 @@ class PhotoSelectionDelegate(
     }
 
     class RequestCodes(
-		val rcTakePhotoPermissions: Int,
-		val rcPickPhotoPermissions: Int,
-		val rcTakePhoto: Int,
-		val rcPickPhoto: Int
-	)
+        val rcTakePhotoPermissions: Int,
+        val rcPickPhotoPermissions: Int,
+        val rcTakePhoto: Int,
+        val rcPickPhoto: Int
+    )
 
     interface EventListener {
         fun onPhotoSelectionReady(photoContentUri: Uri)

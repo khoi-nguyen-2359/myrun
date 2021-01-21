@@ -1,8 +1,14 @@
 package akio.apps.myrun.data.activity.impl
 
 import akio.apps._base.utils.FirebaseStorageUtils
-import akio.apps.myrun.data.activity.*
-import akio.apps.myrun.data.activity.entity.*
+import akio.apps.myrun.data.activity.ActivityEntity
+import akio.apps.myrun.data.activity.ActivityRepository
+import akio.apps.myrun.data.activity.entity.FirestoreActivity
+import akio.apps.myrun.data.activity.entity.FirestoreActivityMapper
+import akio.apps.myrun.data.activity.entity.FirestoreDataPointSerializer
+import akio.apps.myrun.data.activity.entity.FirestoreFloatDataPointParser
+import akio.apps.myrun.data.activity.entity.FirestoreIntegerDataPointParser
+import akio.apps.myrun.data.activity.entity.FirestoreLocationDataPointParser
 import akio.apps.myrun.data.fitness.SingleDataPoint
 import akio.apps.myrun.data.location.LocationEntity
 import android.graphics.Bitmap
@@ -29,16 +35,21 @@ class ActivityRepositoryImpl @Inject constructor(
         return firestore.collection("$PATH_USERS/$userId/$PATH_USER_ACTIVITIES")
     }
 
-    private fun getActivityImageStorage(userId: String): StorageReference
-            = firebaseStorage.getReference("activity_image/$userId")
+    private fun getActivityImageStorage(userId: String): StorageReference =
+        firebaseStorage.getReference("activity_image/$userId")
 
-    override suspend fun getActivitiesByStartTime(userIds: List<String>, startAfterTime: Long, limit: Int): List<ActivityEntity> = withContext(Dispatchers.IO) {
+    override suspend fun getActivitiesByStartTime(
+        userIds: List<String>,
+        startAfterTime: Long,
+        limit: Int
+    ): List<ActivityEntity> = withContext(Dispatchers.IO) {
         val query = userActivitiesCollectionGroup.whereIn("userId", userIds)
             .orderBy("startTime", Query.Direction.DESCENDING)
             .startAfter(startAfterTime)
             .limit(limit.toLong())
 
-        val snapshot = query.get().await()
+        val snapshot = query.get()
+            .await()
 
         snapshot.documents.mapNotNull { doc ->
             val firestoreActivity = doc.toObject(FirestoreActivity::class.java)
@@ -58,7 +69,12 @@ class ActivityRepositoryImpl @Inject constructor(
         val docRef = getUserActivitiesCollection(activity.userId).document()
 
         val userActivityImageStorage = getActivityImageStorage(activity.userId)
-        val uploadedUri = FirebaseStorageUtils.uploadBitmap(userActivityImageStorage, docRef.id, routeMapImage, THUMBNAIL_SCALED_SIZE)
+        val uploadedUri = FirebaseStorageUtils.uploadBitmap(
+            userActivityImageStorage,
+            docRef.id,
+            routeMapImage,
+            THUMBNAIL_SCALED_SIZE
+        )
 
         val firestoreActivity = firestoreActivityMapper.mapRev(activity, docRef.id, uploadedUri)
 
@@ -68,13 +84,29 @@ class ActivityRepositoryImpl @Inject constructor(
         val locationDocRef = dataPointCollections.document(PATH_DATA_POINTS_LOCATIONS)
         firestore.runBatch { batch ->
             batch.set(docRef, firestoreActivity)
-            batch.set(speedDocRef, FirestoreDataPointSerializer(FirestoreFloatDataPointParser()).serialize(speedDataPoints))
-            batch.set(locationDocRef, FirestoreDataPointSerializer(FirestoreLocationDataPointParser()).serialize(locationDataPoints))
+            batch.set(
+                speedDocRef,
+                FirestoreDataPointSerializer(FirestoreFloatDataPointParser()).serialize(
+                    speedDataPoints
+                )
+            )
+            batch.set(
+                locationDocRef,
+                FirestoreDataPointSerializer(FirestoreLocationDataPointParser()).serialize(
+                    locationDataPoints
+                )
+            )
 
             if (stepCadenceDataPoints != null) {
-                batch.set(stepCadenceDocRef, FirestoreDataPointSerializer(FirestoreIntegerDataPointParser()).serialize(stepCadenceDataPoints))
+                batch.set(
+                    stepCadenceDocRef,
+                    FirestoreDataPointSerializer(FirestoreIntegerDataPointParser()).serialize(
+                        stepCadenceDataPoints
+                    )
+                )
             }
-        }.await()
+        }
+            .await()
 
         docRef.id
     }
@@ -87,6 +119,6 @@ class ActivityRepositoryImpl @Inject constructor(
         const val PATH_DATA_POINTS_SPEED = "speed"
         const val PATH_DATA_POINTS_STEP_CADENCE = "stepCadence"
         const val PATH_DATA_POINTS_LOCATIONS = "location"
-        const val THUMBNAIL_SCALED_SIZE = 1024 //px
+        const val THUMBNAIL_SCALED_SIZE = 1024 // px
     }
 }

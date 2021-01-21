@@ -1,26 +1,21 @@
 package akio.apps.myrun.data.externalapp.impl
 
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
-import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
 import akio.apps.myrun.data.externalapp.entity.StravaAthlete
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.datastore.DataStore
 import androidx.datastore.preferences.*
-import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Named
 
 class StravaTokenStorageImpl @Inject constructor(
     appContext: Context
 ) : StravaTokenStorage {
 
-    private val prefDataStore: DataStore<Preferences> = appContext.createDataStore("strava_token_storage")
+    private val prefDataStore: DataStore<Preferences> =
+        appContext.createDataStore("strava_token_storage")
 
     override suspend fun setToken(token: ExternalAppToken.StravaToken) {
         prefDataStore.edit {
@@ -39,7 +34,11 @@ class StravaTokenStorageImpl @Inject constructor(
                 return@map null
             }
 
-            return@map ExternalAppToken.StravaToken(accessToken, refreshToken, StravaAthlete(athleteId))
+            return@map ExternalAppToken.StravaToken(
+                accessToken,
+                refreshToken,
+                StravaAthlete(athleteId)
+            )
         }
             .first()
     }

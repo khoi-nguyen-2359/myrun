@@ -11,14 +11,15 @@ import javax.inject.Inject
 class LinkStravaViewModelImpl @Inject constructor(
     private val exchangeStravaLoginCodeUsecase: ExchangeStravaLoginCodeUsecase,
     private val updateStravaTokenUsecase: UpdateStravaTokenUsecase,
-): LinkStravaViewModel() {
+) : LinkStravaViewModel() {
 
     private val _stravaTokenExchangedSuccess = MutableLiveData<Event<Unit>>()
     override val stravaTokenExchangedSuccess: LiveData<Event<Unit>> = _stravaTokenExchangedSuccess
 
     override fun exchangeStravaToken(stravaLoginCode: String) {
         launchCatching {
-            val stravaToken = exchangeStravaLoginCodeUsecase.exchangeStravaLoginCode(stravaLoginCode)
+            val stravaToken =
+                exchangeStravaLoginCodeUsecase.exchangeStravaLoginCode(stravaLoginCode)
             updateStravaTokenUsecase.updateStravaToken(stravaToken)
             _stravaTokenExchangedSuccess.value = Event(Unit)
         }

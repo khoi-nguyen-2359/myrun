@@ -15,7 +15,7 @@ class ViewModelInjectionDelegate(
 
     val viewModelProvider by lazy { ViewModelProvider(viewModelStoreOwner, viewModelFactory) }
 
-    inline fun <reified T: ViewModel> getViewModel(): T = viewModelProvider[T::class.java]
+    inline fun <reified T : ViewModel> getViewModel(): T = viewModelProvider[T::class.java]
 
     init {
         androidInjector.inject(this)

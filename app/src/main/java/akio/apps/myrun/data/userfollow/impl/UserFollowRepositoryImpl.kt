@@ -8,7 +8,7 @@ class UserFollowRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : UserFollowRepository {
     private val userFollowCollection
-    get() = firestore.collection("userfollow")
+        get() = firestore.collection("userfollow")
 
     override fun getUserFollowings(userId: String): List<String> {
         return emptyList()

@@ -12,7 +12,8 @@ import dagger.Provides
 @Module(includes = [LocationDataModule.Bindings::class])
 class LocationDataModule {
     @Provides
-    fun locationClient(appContext: Context): FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(appContext)
+    fun locationClient(appContext: Context): FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(appContext)
 
     @Module
     interface Bindings {

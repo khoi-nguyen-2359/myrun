@@ -10,5 +10,7 @@ typealias GmsLatLng = LatLng
 fun Location.toLatLng() = akio.apps.myrun.feature.routetracking.model.LatLng(latitude, longitude)
 fun Location.toGmsLatLng() = GmsLatLng(latitude, longitude)
 fun TrackingLocationEntity.toGmsLatLng() = GmsLatLng(latitude, longitude)
-fun akio.apps.myrun.feature.routetracking.model.LatLng.toGmsLatLng() = GmsLatLng(latitude, longitude)
+fun akio.apps.myrun.feature.routetracking.model.LatLng.toGmsLatLng() =
+    GmsLatLng(latitude, longitude)
+
 fun LocationEntity.toGmsLatLng() = GmsLatLng(latitude, longitude)

@@ -5,6 +5,6 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 
 @Database(entities = [ActivityFileRecord::class], version = 1)
-abstract class ActivityFileTrackingDatabase: RoomDatabase() {
+abstract class ActivityFileTrackingDatabase : RoomDatabase() {
     abstract fun activityFileDao(): ActivityFileDao
 }

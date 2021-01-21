@@ -21,7 +21,8 @@ class FirestoreDataPointDeserializer<T>(
         val dataPointIterator = dataPointList.iterator()
         val result = mutableListOf<SingleDataPoint<T>>()
         while (dataPointIterator.hasNext()) {
-            val time = dataPointIterator.next().toLong()
+            val time = dataPointIterator.next()
+                .toLong()
             val value = dataPointParser.build(dataPointIterator)
 
             result.add(SingleDataPoint(time, value))
@@ -36,19 +37,30 @@ interface FirestoreDataPointParser<T> {
     fun build(firestoreDataIterator: Iterator<Double>): T
 }
 
-class FirestoreFloatDataPointParser: FirestoreDataPointParser<Float> {
-    override fun flatten(dataPoint: SingleDataPoint<Float>): List<Double> = listOf(dataPoint.timestamp.toDouble(), dataPoint.value.toDouble())
-    override fun build(firestoreDataIterator: Iterator<Double>): Float = firestoreDataIterator.next().toFloat()
+class FirestoreFloatDataPointParser : FirestoreDataPointParser<Float> {
+    override fun flatten(dataPoint: SingleDataPoint<Float>): List<Double> =
+        listOf(dataPoint.timestamp.toDouble(), dataPoint.value.toDouble())
+
+    override fun build(firestoreDataIterator: Iterator<Double>): Float =
+        firestoreDataIterator.next()
+            .toFloat()
 }
 
-class FirestoreIntegerDataPointParser: FirestoreDataPointParser<Int> {
-    override fun flatten(dataPoint: SingleDataPoint<Int>): List<Double> = listOf(dataPoint.timestamp.toDouble(), dataPoint.value.toDouble())
-    override fun build(firestoreDataIterator: Iterator<Double>): Int = firestoreDataIterator.next().toInt()
+class FirestoreIntegerDataPointParser : FirestoreDataPointParser<Int> {
+    override fun flatten(dataPoint: SingleDataPoint<Int>): List<Double> =
+        listOf(dataPoint.timestamp.toDouble(), dataPoint.value.toDouble())
+
+    override fun build(firestoreDataIterator: Iterator<Double>): Int = firestoreDataIterator.next()
+        .toInt()
 }
 
-class FirestoreLocationDataPointParser: FirestoreDataPointParser<LocationEntity> {
-    override fun flatten(dataPoint: SingleDataPoint<LocationEntity>): List<Double>
-            = listOf(dataPoint.timestamp.toDouble(), dataPoint.value.latitude, dataPoint.value.longitude, dataPoint.value.altitude)
+class FirestoreLocationDataPointParser : FirestoreDataPointParser<LocationEntity> {
+    override fun flatten(dataPoint: SingleDataPoint<LocationEntity>): List<Double> = listOf(
+        dataPoint.timestamp.toDouble(),
+        dataPoint.value.latitude,
+        dataPoint.value.longitude,
+        dataPoint.value.altitude
+    )
 
     override fun build(firestoreDataIterator: Iterator<Double>): LocationEntity {
         val latitude = firestoreDataIterator.next()

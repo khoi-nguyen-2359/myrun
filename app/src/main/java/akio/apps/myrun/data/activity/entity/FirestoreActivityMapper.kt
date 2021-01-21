@@ -1,6 +1,10 @@
 package akio.apps.myrun.data.activity.entity
 
-import akio.apps.myrun.data.activity.*
+import akio.apps.myrun.data.activity.ActivityDataEntity
+import akio.apps.myrun.data.activity.ActivityEntity
+import akio.apps.myrun.data.activity.ActivityType
+import akio.apps.myrun.data.activity.CyclingActivityEntity
+import akio.apps.myrun.data.activity.RunningActivityEntity
 import android.net.Uri
 import javax.inject.Inject
 
@@ -14,7 +18,18 @@ class FirestoreActivityMapper @Inject constructor() {
 
         val activityData = input.run {
             ActivityDataEntity(
-                id, userId, userName, userAvatar, activityType, name, routeImage, startTime, endTime, duration, distance, encodedPolyline
+                id,
+                userId,
+                userName,
+                userAvatar,
+                activityType,
+                name,
+                routeImage,
+                startTime,
+                endTime,
+                duration,
+                distance,
+                encodedPolyline
             )
         }
 

@@ -1,10 +1,9 @@
 package akio.apps.myrun.feature.splash.impl
 
-import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun.R
-import akio.apps.myrun._di.createViewModelInjectionDelegate
 import akio.apps.myrun._base.utils.DialogDelegate
+import akio.apps.myrun._di.createViewModelInjectionDelegate
 import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
 import akio.apps.myrun.feature.home.impl.HomeActivity
 import akio.apps.myrun.feature.signin.impl.SignInActivity
@@ -13,11 +12,9 @@ import akio.apps.myrun.feature.splash.SplashViewModel
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import timber.log.Timber
 
-class SplashActivity: AppCompatActivity() {
+class SplashActivity : AppCompatActivity() {
 
     private val viewModelInjectionDelegate by lazy { createViewModelInjectionDelegate() }
     private val splashViewModel: SplashViewModel by lazy { viewModelInjectionDelegate.getViewModel() }
@@ -62,11 +59,15 @@ class SplashActivity: AppCompatActivity() {
             return
         }
 
-        val signInResult = data?.getParcelableExtra<SignInSuccessResult>(SignInActivity.RESULT_SIGN_RESULT_DATA)
-            ?: return
+        val signInResult =
+            data?.getParcelableExtra<SignInSuccessResult>(SignInActivity.RESULT_SIGN_RESULT_DATA)
+                ?: return
 
         if (signInResult.isNewUser) {
-            startActivityForResult(EditProfileActivity.launchIntentForOnboarding(this), RC_ON_BOARDING)
+            startActivityForResult(
+                EditProfileActivity.launchIntentForOnboarding(this),
+                RC_ON_BOARDING
+            )
         } else {
             goHome()
         }

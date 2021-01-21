@@ -1,14 +1,27 @@
 package akio.apps.myrun.feature.usertimeline.model
 
-import akio.apps.myrun.data.activity.RunningActivityEntity
 import akio.apps.myrun.data.activity.ActivityEntity
 import akio.apps.myrun.data.activity.CyclingActivityEntity
+import akio.apps.myrun.data.activity.RunningActivityEntity
 import javax.inject.Inject
 
 class ActivityEntityMapper @Inject constructor() {
     fun map(activityId: String, entity: ActivityEntity): Activity {
         val activityData = entity.run {
-            ActivityData(activityId, userId, userName, userAvatar, activityType, name, routeImage, startTime, endTime, duration, distance, encodedPolyline)
+            ActivityData(
+                activityId,
+                userId,
+                userName,
+                userAvatar,
+                activityType,
+                name,
+                routeImage,
+                startTime,
+                endTime,
+                duration,
+                distance,
+                encodedPolyline
+            )
         }
 
         return when (entity) {

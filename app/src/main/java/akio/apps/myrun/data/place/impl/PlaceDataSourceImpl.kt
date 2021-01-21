@@ -1,7 +1,6 @@
 package akio.apps.myrun.data.place.impl
 
 import akio.apps.myrun.data.location.LatLngEntity
-import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.place.PlaceAddressComponent
 import akio.apps.myrun.data.place.PlaceDataSource
 import akio.apps.myrun.data.place.PlaceEntity
@@ -23,22 +22,27 @@ class PlaceDataSourceImpl @Inject constructor(
 ) : PlaceDataSource {
     @SuppressLint("MissingPermission")
     override suspend fun getCurrentPlace(): PlaceEntity? {
-        val request: FindCurrentPlaceRequest = FindCurrentPlaceRequest.newInstance(listOf(Place.Field.ID, Place.Field.NAME))
+        val request: FindCurrentPlaceRequest =
+            FindCurrentPlaceRequest.newInstance(listOf(Place.Field.ID, Place.Field.NAME))
 
-        val placeResponse = placesClient.findCurrentPlace(request).await()
+        val placeResponse = placesClient.findCurrentPlace(request)
+            .await()
         placeResponse.placeLikelihoods
             .maxByOrNull { it.likelihood }
             ?.let { placeLikelihood ->
                 val placeId = placeLikelihood.place.id
                     ?: return null
 
-                val fetchPlaceRequest = FetchPlaceRequest.newInstance(placeId, listOf(Place.Field.ADDRESS_COMPONENTS))
-                val fetchPlaceResponse = placesClient.fetchPlace(fetchPlaceRequest).await()
+                val fetchPlaceRequest =
+                    FetchPlaceRequest.newInstance(placeId, listOf(Place.Field.ADDRESS_COMPONENTS))
+                val fetchPlaceResponse = placesClient.fetchPlace(fetchPlaceRequest)
+                    .await()
                 val latLng = fetchPlaceResponse.place.latLng
                 return PlaceEntity(
                     placeId,
                     placeLikelihood.place.name ?: "",
-                    fetchPlaceResponse.place.addressComponents?.asList()?.map { PlaceAddressComponent(it.name, it.types) } ?: emptyList(),
+                    fetchPlaceResponse.place.addressComponents?.asList()
+                        ?.map { PlaceAddressComponent(it.name, it.types) } ?: emptyList(),
                     LatLngEntity(latLng?.latitude ?: 0.0, latLng?.longitude ?: 0.0)
                 )
             }
@@ -46,7 +50,10 @@ class PlaceDataSourceImpl @Inject constructor(
         return null
     }
 
-    override suspend fun getAddressFromLocation(lat: Double, lng: Double): List<PlaceAddressComponent> {
+    override suspend fun getAddressFromLocation(
+        lat: Double,
+        lng: Double
+    ): List<PlaceAddressComponent> {
         val geoCoder = Geocoder(appContext, Locale.US)
         val addresses = geoCoder.getFromLocation(lat, lng, Int.MAX_VALUE)
         val addedAddressTypes = mutableSetOf<String>()
@@ -63,16 +70,21 @@ class PlaceDataSourceImpl @Inject constructor(
             )
         }
         return addresses?.flatMap { addr ->
-                val addressComponents = mutableListOf<PlaceAddressComponent>()
-                createAddressEntries(addr).forEach { (addressComponentName, addressComponentType) ->
-                    if (addressComponentName != null && !addedAddressTypes.contains(addressComponentType)) {
-                        addressComponents.add(PlaceAddressComponent(addressComponentName, listOf(addressComponentType)))
-                        addedAddressTypes.add(addressComponentType)
-                    }
+            val addressComponents = mutableListOf<PlaceAddressComponent>()
+            createAddressEntries(addr).forEach { (addressComponentName, addressComponentType) ->
+                if (addressComponentName != null && !addedAddressTypes.contains(addressComponentType)) {
+                    addressComponents.add(
+                        PlaceAddressComponent(
+                            addressComponentName,
+                            listOf(addressComponentType)
+                        )
+                    )
+                    addedAddressTypes.add(addressComponentType)
                 }
-
-                addressComponents
             }
+
+            addressComponents
+        }
             ?: emptyList()
     }
 

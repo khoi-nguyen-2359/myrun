@@ -6,7 +6,6 @@ import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModelImpl
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
-import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
 
 @Module

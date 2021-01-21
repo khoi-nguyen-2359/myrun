@@ -17,4 +17,3 @@ data class StravaTokenEntity(
         val id: Long
     )
 }
-

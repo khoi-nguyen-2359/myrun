@@ -35,7 +35,8 @@ class EditProfileViewModelImpl @Inject constructor(
     private val _openOpt = MutableLiveData<Event<OtpNavigationInfo>>()
     override val openOtp: LiveData<Event<OtpNavigationInfo>> = _openOpt
 
-    private val liveUserProfile = getUserProfileUsecase.getUserProfileFlow().asLiveData(timeoutInMs = 0)
+    private val liveUserProfile = getUserProfileUsecase.getUserProfileFlow()
+        .asLiveData(timeoutInMs = 0)
     private val userProfileObserver = Observer<Resource<UserProfile>> { resource ->
         when (resource) {
             is Resource.Success -> _userProfile.value = resource.data

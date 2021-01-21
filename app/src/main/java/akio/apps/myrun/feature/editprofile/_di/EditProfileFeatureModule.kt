@@ -1,8 +1,17 @@
 package akio.apps.myrun.feature.editprofile._di
 
 import akio.apps._base.di.ViewModelKey
-import akio.apps.myrun.feature.editprofile.*
-import akio.apps.myrun.feature.editprofile.impl.*
+import akio.apps.myrun.feature.editprofile.EditProfileViewModel
+import akio.apps.myrun.feature.editprofile.ExchangeStravaLoginCodeUsecase
+import akio.apps.myrun.feature.editprofile.UpdateStravaTokenUsecase
+import akio.apps.myrun.feature.editprofile.UpdateUserProfileUsecase
+import akio.apps.myrun.feature.editprofile.UserPhoneNumberDelegate
+import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
+import akio.apps.myrun.feature.editprofile.impl.EditProfileViewModelImpl
+import akio.apps.myrun.feature.editprofile.impl.ExchangeStravaLoginCodeUsecaseImpl
+import akio.apps.myrun.feature.editprofile.impl.FirebaseUserPhoneNumberDelegate
+import akio.apps.myrun.feature.editprofile.impl.UpdateStravaTokenUsecaseImpl
+import akio.apps.myrun.feature.editprofile.impl.UpdateUserProfileUsecaseImpl
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
