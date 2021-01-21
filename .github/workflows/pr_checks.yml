@@ -6,18 +6,19 @@ on:
 
 jobs:
   lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: "Check ktlint"
+      - name: "Install ktlint"
         uses: nbadal/action-ktlint-setup@v1
 
       - run: ktlint
         shell: bash
 
   unit_test:
-    name: Unit Tests
+    name: Test
     runs-on: ubuntu-latest
 
     steps:
@@ -27,11 +28,11 @@ jobs:
       with:
         java-version: 1.8
         
-    - name: Run Unit tests
+    - name: Run unit tests
       run: bash ./gradlew testDebugUnitTest
 
   build:
-    name: Build APK
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
