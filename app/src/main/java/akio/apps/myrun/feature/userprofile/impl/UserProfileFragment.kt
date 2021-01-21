@@ -45,25 +45,34 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     }
 
     private fun initGoogleFitAppView() {
-        viewBinding.isGoogleFitLinkedCheckBox.isChecked = googleFitLinkingDelegate.isGoogleFitLinked(requireActivity())
+        viewBinding.isGoogleFitLinkedCheckBox.isChecked =
+            googleFitLinkingDelegate.isGoogleFitLinked(requireActivity())
         viewBinding.googleFitItemViewContainer.setOnClickListener {
             if (googleFitLinkingDelegate.isGoogleFitLinked(requireActivity())) {
                 showUnlinkConfirmationDialog {
                     viewLifecycleOwner.lifecycle.coroutineScope.launch {
                         dialogDelegate.toggleProgressDialog(true)
-                        val isSuccessfullyDisconnected = googleFitLinkingDelegate.disconnectGoogleFit(requireActivity())
+                        val isSuccessfullyDisconnected =
+                            googleFitLinkingDelegate.disconnectGoogleFit(requireActivity())
                         dialogDelegate.toggleProgressDialog(false)
                         if (!isSuccessfullyDisconnected) {
                             dialogDelegate.showErrorAlert(getString(R.string.user_profile_error_app_disconnect))
                         }
-                        viewBinding.isGoogleFitLinkedCheckBox.isChecked = !isSuccessfullyDisconnected
+                        viewBinding.isGoogleFitLinkedCheckBox.isChecked =
+                            !isSuccessfullyDisconnected
                     }
                 }
             } else {
                 viewLifecycleOwner.lifecycle.coroutineScope.launch {
                     dialogDelegate.toggleProgressDialog(true)
-                    googleFitLinkingDelegate.requestGoogleFitPermissions(requireActivity(), RC_ACTIVITY_RECOGNITION_PERMISSION, RC_FITNESS_DATA_PERMISSION, this@UserProfileFragment)
-                    viewBinding.isGoogleFitLinkedCheckBox.isChecked = googleFitLinkingDelegate.isGoogleFitLinked(requireActivity())
+                    googleFitLinkingDelegate.requestGoogleFitPermissions(
+                        requireActivity(),
+                        RC_ACTIVITY_RECOGNITION_PERMISSION,
+                        RC_FITNESS_DATA_PERMISSION,
+                        this@UserProfileFragment
+                    )
+                    viewBinding.isGoogleFitLinkedCheckBox.isChecked =
+                        googleFitLinkingDelegate.isGoogleFitLinked(requireActivity())
                     dialogDelegate.toggleProgressDialog(false)
                 }
             }
@@ -71,10 +80,15 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     }
 
     private fun initObservers() {
-        profileViewModel.getUserProfileAlive().observe(viewLifecycleOwner, userProfileObserver)
+        profileViewModel.getUserProfileAlive()
+            .observe(viewLifecycleOwner, userProfileObserver)
         profileViewModel.isInlineLoading.observe(viewLifecycleOwner, inlineLoadingObserver)
-        profileViewModel.isInProgress.observe(viewLifecycleOwner, dialogDelegate::toggleProgressDialog)
-        profileViewModel.getProvidersAlive().observe(viewLifecycleOwner, providersObserver)
+        profileViewModel.isInProgress.observe(
+            viewLifecycleOwner,
+            dialogDelegate::toggleProgressDialog
+        )
+        profileViewModel.getProvidersAlive()
+            .observe(viewLifecycleOwner, providersObserver)
     }
 
     private fun initViews() {
@@ -105,7 +119,8 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         viewBinding.apply {
             linkedAppMap.forEach { (viewIds, token) ->
                 val itemViewContainer = linkedAppsContainer.findViewById<View>(viewIds.containerId)
-                itemViewContainer.findViewById<CheckedTextView>(viewIds.checkBoxId).isChecked = token != null
+                itemViewContainer.findViewById<CheckedTextView>(viewIds.checkBoxId).isChecked =
+                    token != null
                 if (token != null) {
                     itemViewContainer.setOnClickListener {
                         showUnlinkConfirmationDialog {
@@ -139,7 +154,8 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 dialog.dismiss()
             }
             .setCancelable(false)
-            .create().apply { setCanceledOnTouchOutside(false) }
+            .create()
+            .apply { setCanceledOnTouchOutside(false) }
             .show()
     }
 
@@ -176,7 +192,11 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         startActivity(intent)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             RC_ACTIVITY_RECOGNITION_PERMISSION -> googleFitLinkingDelegate.verifyActivityRecognitionPermission()
@@ -194,7 +214,8 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         const val RC_ACTIVITY_RECOGNITION_PERMISSION = 1
         const val RC_FITNESS_DATA_PERMISSION = 2
 
-        fun launchIntent(context: Context) = SingleFragmentActivity.launchIntent<UserProfileFragment>(context)
+        fun launchIntent(context: Context) =
+            SingleFragmentActivity.launchIntent<UserProfileFragment>(context)
     }
 
     enum class ExternalAppItemViewIds(

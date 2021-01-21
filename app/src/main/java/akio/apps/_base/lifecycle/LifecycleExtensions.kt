@@ -14,7 +14,5 @@ fun <T> LifecycleOwner.observe(liveData: LiveData<T>, observer: Observer<T>) {
 }
 
 fun <T> LifecycleOwner.observeEvent(liveData: LiveData<Event<T>>, block: (T) -> Unit) {
-    liveData.observe(this, EventObserver { eventData ->
-        block(eventData)
-    })
+    liveData.observe(this, EventObserver { eventData -> block(eventData) })
 }

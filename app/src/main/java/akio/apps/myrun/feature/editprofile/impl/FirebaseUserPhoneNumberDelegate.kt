@@ -24,7 +24,7 @@ import kotlin.coroutines.CoroutineContext
 class FirebaseUserPhoneNumberDelegate @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val firebaseFirestore: FirebaseFirestore
-): UserPhoneNumberDelegate, CoroutineScope {
+) : UserPhoneNumberDelegate, CoroutineScope {
 
     override val coroutineContext: CoroutineContext = Dispatchers.IO
 
@@ -38,7 +38,8 @@ class FirebaseUserPhoneNumberDelegate @Inject constructor(
     override val updatePhoneError: LiveData<Event<Throwable>> = _updatePhoneError
 
     private val _phoneNumberReauthenticateError = MutableLiveData<Event<Throwable>>()
-    override val phoneNumberReauthenticateError: LiveData<Event<Throwable>> = _phoneNumberReauthenticateError
+    override val phoneNumberReauthenticateError: LiveData<Event<Throwable>> =
+        _phoneNumberReauthenticateError
 
     private fun getUserInfoDocument(userId: String): DocumentReference {
         return firebaseFirestore.collection(FIRESTORE_USERS_DOCUMENT)
@@ -56,19 +57,21 @@ class FirebaseUserPhoneNumberDelegate @Inject constructor(
             }
 
             try {
-                currentUser.updatePhoneNumber(phoneAuthCredential).await()
+                currentUser.updatePhoneNumber(phoneAuthCredential)
+                    .await()
             } catch (expiredException: FirebaseAuthRecentLoginRequiredException) {
                 _phoneNumberReauthenticateError.postValue(Event(LoginSessionExpiredError()))
                 return@launch
             }
 
-            currentUser.phoneNumber ?. let { currentNumber ->
+            currentUser.phoneNumber?.let { currentNumber ->
                 val updateMap = FirestoreUserProfileUpdateMapEntity()
                     .apply {
                         phoneNumber(currentNumber)
                     }
 
-                getUserInfoDocument(currentUser.uid).set(updateMap.profile, SetOptions.merge()).await()
+                getUserInfoDocument(currentUser.uid).set(updateMap.profile, SetOptions.merge())
+                    .await()
             }
 
             _isUpdatePhoneNumberSuccess.postValue(Event(Unit))

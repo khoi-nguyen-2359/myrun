@@ -9,7 +9,11 @@ class FirebaseSignInWithPhoneUsecase @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) {
     suspend fun signInWithFirebasePhoneCredential(phoneAuthCredential: PhoneAuthCredential): SignInSuccessResult {
-        val authResult = firebaseAuth.signInWithCredential(phoneAuthCredential).await()
-        return SignInSuccessResult(authResult.additionalUserInfo?.isNewUser ?: false, SignInMethod.Phone)
+        val authResult = firebaseAuth.signInWithCredential(phoneAuthCredential)
+            .await()
+        return SignInSuccessResult(
+            authResult.additionalUserInfo?.isNewUser ?: false,
+            SignInMethod.Phone
+        )
     }
 }

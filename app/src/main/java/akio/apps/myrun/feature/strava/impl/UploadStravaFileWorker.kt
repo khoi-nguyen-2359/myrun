@@ -4,7 +4,14 @@ import akio.apps.myrun._di.androidInjector
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.feature.strava.UploadActivityFilesToStravaUsecase
 import android.content.Context
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -27,14 +34,17 @@ class UploadStravaFileWorker(
     override suspend fun doWork(): Result {
         Timber.d("worker start")
         if (stravaTokenStorage.getToken() == null) {
-            return Result.failure(workDataOf(
-                OUTPUT_ERROR_MESSAGE to "Use has turned off strava sync"
-            ))
+            return Result.failure(
+                workDataOf(
+                    OUTPUT_ERROR_MESSAGE to "Use has turned off strava sync"
+                )
+            )
         }
 
         val remaining = uploadActivityFilesToStravaUsecase.upload()
         if (remaining == 0) {
-            WorkManager.getInstance(applicationContext).cancelWorkById(this.id)
+            WorkManager.getInstance(applicationContext)
+                .cancelWorkById(this.id)
         }
 
         return Result.success()
@@ -61,11 +71,12 @@ class UploadStravaFileWorker(
             val workRequest = PeriodicWorkRequestBuilder<UploadStravaFileWorker>(1, TimeUnit.DAYS)
                 .setConstraints(constraints)
                 .build()
-            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-                UNIQUE_WORK_NAME,
-                policy,
-                workRequest
-            )
+            WorkManager.getInstance(context)
+                .enqueueUniquePeriodicWork(
+                    UNIQUE_WORK_NAME,
+                    policy,
+                    workRequest
+                )
         }
     }
 }

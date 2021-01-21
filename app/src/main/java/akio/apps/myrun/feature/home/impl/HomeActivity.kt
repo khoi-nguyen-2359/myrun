@@ -1,6 +1,5 @@
 package akio.apps.myrun.feature.home.impl
 
-import akio.apps._base.ui.SingleFragmentActivity
 import akio.apps.myrun.R
 import akio.apps.myrun.databinding.ActivityHomeBinding
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity

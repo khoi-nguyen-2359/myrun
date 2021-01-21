@@ -11,7 +11,8 @@ import akio.apps.myrun.feature.usertimeline.model.Activity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 class ActivityViewHolder(
@@ -47,16 +48,42 @@ class ActivityViewHolder(
         val todayDate = TimeUnit.MILLISECONDS.toDays(calendar.timeInMillis)
         val activityDate = TimeUnit.MILLISECONDS.toDays(activity.startTime)
         when {
-            activityDate == todayDate -> activityTimeTextView.text = getString(R.string.item_activity_time_today, timeFormatter.format(Date(activity.startTime)))
-            todayDate - activityDate == 1L -> activityTimeTextView.text = getString(R.string.item_activity_time_yesterday, timeFormatter.format(Date(activity.startTime)))
-            else -> activityTimeTextView.text = "${dateFormatter.format(Date(activity.startTime))} ${timeFormatter.format(Date(activity.startTime))}"
+            activityDate == todayDate -> {
+                activityTimeTextView.text = getString(
+                    R.string.item_activity_time_today,
+                    timeFormatter.format(Date(activity.startTime))
+                )
+            }
+            todayDate - activityDate == 1L -> {
+                activityTimeTextView.text = getString(
+                    R.string.item_activity_time_yesterday,
+                    timeFormatter.format(Date(activity.startTime))
+                )
+            }
+            else -> {
+                activityTimeTextView.text =
+                    "${dateFormatter.format(Date(activity.startTime))} ${
+                        timeFormatter.format(
+                            Date(activity.startTime)
+                        )
+                    }"
+            }
         }
 
         calendar.timeInMillis = activity.startTime
         when (calendar.get(Calendar.HOUR_OF_DAY)) {
-            in 5..11 -> activityTitleTextView.text = getString(R.string.item_activity_title_morning, getString(activityTypeNameMap[activity.activityType] ?: 0))
-            in 12..16 -> activityTitleTextView.text = getString(R.string.item_activity_title_afternoon, getString(activityTypeNameMap[activity.activityType] ?: 0))
-            in 17..24, in 0..4 -> activityTitleTextView.text = getString(R.string.item_activity_title_evening, getString(activityTypeNameMap[activity.activityType] ?: 0))
+            in 5..11 -> activityTitleTextView.text = getString(
+                R.string.item_activity_title_morning,
+                getString(activityTypeNameMap[activity.activityType] ?: 0)
+            )
+            in 12..16 -> activityTitleTextView.text = getString(
+                R.string.item_activity_title_afternoon,
+                getString(activityTypeNameMap[activity.activityType] ?: 0)
+            )
+            in 17..24, in 0..4 -> activityTitleTextView.text = getString(
+                R.string.item_activity_title_evening,
+                getString(activityTypeNameMap[activity.activityType] ?: 0)
+            )
         }
     }
 }

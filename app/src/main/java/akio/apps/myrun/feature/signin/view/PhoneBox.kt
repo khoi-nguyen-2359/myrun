@@ -3,8 +3,6 @@ package akio.apps.myrun.feature.signin.view
 import akio.apps._base.ui.inflate
 import akio.apps._base.utils.PhoneNumberHelper
 import akio.apps.myrun.R
-import akio.apps.myrun.databinding.ItemDropdownPhoneCodeBinding
-import akio.apps.myrun.databinding.MergePhoneBoxBinding
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,12 +10,18 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.Spinner
+import android.widget.TextView
 import timber.log.Timber
-import java.util.*
+import java.util.Locale
 
 class PhoneBox @JvmOverloads constructor(
-	context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
     var eventListener: EventListener? = null
@@ -59,18 +63,24 @@ class PhoneBox @JvmOverloads constructor(
         var selectedIndex = -1
         for (index in 0 until phoneCodeMap.size()) {
             val phoneCode = phoneCodeMap.keyAt(index)
-            phoneCodeMap.valueAt(index).forEach { country ->
-                availableLocales.firstOrNull { it.country.equals(country, true) }
-                    ?.let { locale ->
-                        val phoneEntry = PhoneCodeEntry(locale.country, locale.displayCountry, phoneCode)
-                        phoneCodeEntries.add(phoneEntry)
-                        Timber.d("phoneEntry = ${phoneEntry.displayCountry}")
+            phoneCodeMap.valueAt(index)
+                .forEach { country ->
+                    availableLocales.firstOrNull { it.country.equals(country, true) }
+                        ?.let { locale ->
+                            val phoneEntry =
+                                PhoneCodeEntry(locale.country, locale.displayCountry, phoneCode)
+                            phoneCodeEntries.add(phoneEntry)
+                            Timber.d("phoneEntry = ${phoneEntry.displayCountry}")
 
-                        if (selectedIndex == -1 && phoneEntry.country.equals(defaultLocale.country, true)) {
-                            selectedIndex = phoneCodeEntries.size - 1
+                            if (selectedIndex == -1 && phoneEntry.country.equals(
+                                    defaultLocale.country,
+                                    true
+                                )
+                            ) {
+                                selectedIndex = phoneCodeEntries.size - 1
+                            }
                         }
-                    }
-            }
+                }
         }
 
         return Pair(phoneCodeEntries, selectedIndex)
@@ -125,13 +135,14 @@ class PhoneBox @JvmOverloads constructor(
     }
 
     class PhoneCodeAdapter(
-		context: Context,
-		entries: List<PhoneCodeEntry>
-	) : ArrayAdapter<PhoneCodeEntry>(context, R.layout.item_selected_phone_code, entries) {
+        context: Context,
+        entries: List<PhoneCodeEntry>
+    ) : ArrayAdapter<PhoneCodeEntry>(context, R.layout.item_selected_phone_code, entries) {
 
         override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
             val itemView = convertView
-                ?: LayoutInflater.from(context).inflate(R.layout.item_dropdown_phone_code, parent, false)
+                ?: LayoutInflater.from(context)
+                    .inflate(R.layout.item_dropdown_phone_code, parent, false)
 
             val viewHolder = itemView.tag as? PhoneCodeViewHolder
                 ?: PhoneCodeViewHolder(
@@ -155,10 +166,10 @@ class PhoneBox @JvmOverloads constructor(
     )
 
     class PhoneCodeEntry(
-		val country: String,
-		val displayCountry: String,
-		val code: Int
-	) {
+        val country: String,
+        val displayCountry: String,
+        val code: Int
+    ) {
         /**
          * For displaying the selected item text of spinner
          */

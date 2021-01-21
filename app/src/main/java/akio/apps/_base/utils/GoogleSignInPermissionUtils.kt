@@ -12,7 +12,12 @@ object GoogleSignInPermissionUtils {
     /**
      * @return false if permissions were already granted, no request sent. Otherwise true.
      */
-    fun mayRequestGoogleSignInPermissions(activity: Activity, dataTypes: Array<DataType>, requestCode: Int, fragment: Fragment? = null): Boolean {
+    fun mayRequestGoogleSignInPermissions(
+        activity: Activity,
+        dataTypes: Array<DataType>,
+        requestCode: Int,
+        fragment: Fragment? = null
+    ): Boolean {
         val googleSignInOptionsExtension = buildFitnessOptions(dataTypes)
         val account = GoogleSignIn.getAccountForExtension(activity, googleSignInOptionsExtension)
         if (isFitnessOptionsPermissionsGranted(account, googleSignInOptionsExtension)) {
@@ -20,15 +25,28 @@ object GoogleSignInPermissionUtils {
         }
 
         if (fragment != null) {
-            GoogleSignIn.requestPermissions(fragment, requestCode, account, googleSignInOptionsExtension)
+            GoogleSignIn.requestPermissions(
+                fragment,
+                requestCode,
+                account,
+                googleSignInOptionsExtension
+            )
         } else {
-            GoogleSignIn.requestPermissions(activity, requestCode, account, googleSignInOptionsExtension)
+            GoogleSignIn.requestPermissions(
+                activity,
+                requestCode,
+                account,
+                googleSignInOptionsExtension
+            )
         }
 
         return true
     }
 
-    fun isFitnessOptionsPermissionsGranted(account: GoogleSignInAccount, googleSignInOptionsExtension: FitnessOptions): Boolean {
+    fun isFitnessOptionsPermissionsGranted(
+        account: GoogleSignInAccount,
+        googleSignInOptionsExtension: FitnessOptions
+    ): Boolean {
         return GoogleSignIn.hasPermissions(account, googleSignInOptionsExtension)
     }
 

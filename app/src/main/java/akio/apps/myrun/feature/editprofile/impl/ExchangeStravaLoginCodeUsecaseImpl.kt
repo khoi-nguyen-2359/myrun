@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class ExchangeStravaLoginCodeUsecaseImpl @Inject constructor(
     private val stravaTokenRepository: StravaTokenRepository
-): ExchangeStravaLoginCodeUsecase {
+) : ExchangeStravaLoginCodeUsecase {
     override suspend fun exchangeStravaLoginCode(code: String): ExternalAppToken.StravaToken {
         return stravaTokenRepository.exchangeToken(code)
     }

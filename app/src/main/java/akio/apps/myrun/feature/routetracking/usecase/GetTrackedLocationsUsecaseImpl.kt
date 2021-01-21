@@ -9,5 +9,6 @@ class GetTrackedLocationsUsecaseImpl @Inject constructor(
     private val routeTrackingLocationRepository: RouteTrackingLocationRepository
 ) : GetTrackedLocationsUsecase {
 
-    override suspend fun getTrackedLocations(skip: Int): List<TrackingLocationEntity> = routeTrackingLocationRepository.getTrackedLocations(skip)
+    override suspend fun getTrackedLocations(skip: Int): List<TrackingLocationEntity> =
+        routeTrackingLocationRepository.getTrackedLocations(skip)
 }

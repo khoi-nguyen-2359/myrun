@@ -12,7 +12,6 @@ import javax.inject.Inject
 class UserTimelineViewModelImpl @Inject constructor(
     private val activityPagingSource: ActivityPagingSource
 ) : UserTimelineViewModel() {
-
     override val myActivityList: LiveData<PagingData<Activity>> = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,

@@ -3,8 +3,8 @@ package akio.apps.myrun.feature.editprofile.impl
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
-import akio.apps.myrun.feature.editprofile.UpdateStravaTokenUsecase
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
+import akio.apps.myrun.feature.editprofile.UpdateStravaTokenUsecase
 import javax.inject.Inject
 
 class UpdateStravaTokenUsecaseImpl @Inject constructor(

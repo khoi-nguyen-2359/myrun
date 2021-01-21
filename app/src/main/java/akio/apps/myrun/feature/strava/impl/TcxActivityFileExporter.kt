@@ -1,12 +1,12 @@
 package akio.apps.myrun.feature.strava.impl
 
-import akio.apps.myrun._base.utils.toGmsLatLng
-import akio.apps.myrun.data.fitness.SingleDataPoint
-import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun._base.runfile.ClosableFileSerializer
 import akio.apps.myrun._base.runfile.ZipFileSerializer
+import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.ActivityEntity
 import akio.apps.myrun.data.activity.ActivityType
+import akio.apps.myrun.data.fitness.SingleDataPoint
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.feature.strava.ActivityFileExporter
 import android.content.Context
 import com.google.maps.android.SphericalUtil
@@ -16,7 +16,7 @@ import com.sweetzpot.tcxzpot.builders.LapBuilder
 import com.sweetzpot.tcxzpot.builders.TrackpointBuilder
 import com.sweetzpot.tcxzpot.builders.TrainingCenterDatabaseBuilder
 import java.io.File
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 class TcxActivityFileExporter @Inject constructor(
@@ -87,12 +87,20 @@ class TcxActivityFileExporter @Inject constructor(
                                         locationDataPoints.mapIndexed { index, waypoint ->
                                             TrackpointBuilder.aTrackpoint()
                                                 .onTime(TCXDate(Date(waypoint.timestamp)))
-                                                .withPosition(Position.position(waypoint.value.latitude, waypoint.value.longitude))
+                                                .withPosition(
+                                                    Position.position(
+                                                        waypoint.value.latitude,
+                                                        waypoint.value.longitude
+                                                    )
+                                                )
                                                 .withAltitude(waypoint.value.latitude)
                                                 .withCadence(Cadence.cadence(flattenCadences[index]))
                                                 .apply {
                                                     lastLocation?.let {
-                                                        currentDistance += SphericalUtil.computeDistanceBetween(it.value.toGmsLatLng(), waypoint.value.toGmsLatLng())
+                                                        currentDistance += SphericalUtil.computeDistanceBetween(
+                                                            it.value.toGmsLatLng(),
+                                                            waypoint.value.toGmsLatLng()
+                                                        )
                                                         lastLocation = waypoint
                                                         withDistance(currentDistance)
                                                     }

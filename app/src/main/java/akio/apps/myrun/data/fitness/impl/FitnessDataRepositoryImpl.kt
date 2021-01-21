@@ -68,42 +68,45 @@ class FitnessDataRepositoryImpl @Inject constructor(
         aggregateType: DataType? = dataType.aggregateType
     ): List<DataPoint> {
         try {
-            val readRequest = DataReadRequest.Builder().apply {
-                if (aggregateType != null) {
-                    aggregate(dataType)
-                } else {
-                    read(dataType)
+            val readRequest = DataReadRequest.Builder()
+                .apply {
+                    if (aggregateType != null) {
+                        aggregate(dataType)
+                    } else {
+                        read(dataType)
+                    }
                 }
-            }
                 .bucketByTime(bucketTimeInSec.toInt(), TimeUnit.SECONDS)
                 .setTimeRange(startTimeInSec, endTimeInSec, TimeUnit.SECONDS)
                 .build()
 
-            return fitnessHistoryClient.readData(readRequest).await()?.run {
-                val dataPoints = TreeSet<DataPoint> { o1, o2 ->
-                    val startTime1 = o1.getStartTime(TimeUnit.MILLISECONDS)
-                    val startTime2 = o2.getStartTime(TimeUnit.MILLISECONDS)
-                    (startTime1 - startTime2).toInt()
-                }
-                if (buckets.isNotEmpty()) {
-                    Timber.d("bucket count = ${buckets.size}")
+            return fitnessHistoryClient.readData(readRequest)
+                .await()
+                ?.run {
+                    val dataPoints = TreeSet<DataPoint> { o1, o2 ->
+                        val startTime1 = o1.getStartTime(TimeUnit.MILLISECONDS)
+                        val startTime2 = o2.getStartTime(TimeUnit.MILLISECONDS)
+                        (startTime1 - startTime2).toInt()
+                    }
+                    if (buckets.isNotEmpty()) {
+                        Timber.d("bucket count = ${buckets.size}")
 
-                    for (bucket in buckets) {
-                        Timber.d("dataset count = ${bucket.dataSets.size}")
-                        for (dataset in bucket.dataSets) {
+                        for (bucket in buckets) {
+                            Timber.d("dataset count = ${bucket.dataSets.size}")
+                            for (dataset in bucket.dataSets) {
+                                Timber.d("datapoint count = ${dataset.dataPoints.size}")
+                                dataPoints.addAll(dataset.dataPoints)
+                            }
+                        }
+                    } else {
+                        Timber.d("dataset count = ${dataSets.size}")
+                        for (dataset in dataSets) {
                             Timber.d("datapoint count = ${dataset.dataPoints.size}")
                             dataPoints.addAll(dataset.dataPoints)
                         }
                     }
-                } else {
-                    Timber.d("dataset count = ${dataSets.size}")
-                    for (dataset in dataSets) {
-                        Timber.d("datapoint count = ${dataset.dataPoints.size}")
-                        dataPoints.addAll(dataset.dataPoints)
-                    }
+                    dataPoints.toList()
                 }
-                dataPoints.toList()
-            }
                 ?: emptyList()
         } catch (throwable: Throwable) {
             throwable.printStackTrace()
@@ -111,23 +114,52 @@ class FitnessDataRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSpeedDataPoints(startTime: Long, endTime: Long, interval: Long): List<SingleDataPoint<Float>> {
-        val speedDataPoints = readFitnessData(startTime, endTime, interval, DataType.TYPE_SPEED, DataType.AGGREGATE_SPEED_SUMMARY)
-        return speedDataPoints.map { SingleDataPoint(it.getStartTime(TimeUnit.MILLISECONDS), it.getValue(Field.FIELD_AVERAGE).asFloat()) }
+    override suspend fun getSpeedDataPoints(
+        startTime: Long,
+        endTime: Long,
+        interval: Long
+    ): List<SingleDataPoint<Float>> {
+        val speedDataPoints = readFitnessData(
+            startTime,
+            endTime,
+            interval,
+            DataType.TYPE_SPEED,
+            DataType.AGGREGATE_SPEED_SUMMARY
+        )
+        return speedDataPoints.map {
+            SingleDataPoint(
+                it.getStartTime(TimeUnit.MILLISECONDS),
+                it.getValue(Field.FIELD_AVERAGE)
+                    .asFloat()
+            )
+        }
     }
 
-    override suspend fun getSteppingCadenceDataPoints(startTime: Long, endTime: Long, interval: Long): List<SingleDataPoint<Int>> {
-        val cadenceDataPoints = readFitnessData(startTime, endTime, interval, DataType.TYPE_STEP_COUNT_CADENCE)
-            .map { cadenceDp ->
-                SingleDataPoint(
-                    cadenceDp.getStartTime(TimeUnit.MILLISECONDS),
-                    cadenceDp.getValue(Field.FIELD_RPM).asInt()
-                )
-            }
+    override suspend fun getSteppingCadenceDataPoints(
+        startTime: Long,
+        endTime: Long,
+        interval: Long
+    ): List<SingleDataPoint<Int>> {
+        val cadenceDataPoints =
+            readFitnessData(startTime, endTime, interval, DataType.TYPE_STEP_COUNT_CADENCE)
+                .map { cadenceDp ->
+                    SingleDataPoint(
+                        cadenceDp.getStartTime(TimeUnit.MILLISECONDS),
+                        cadenceDp.getValue(Field.FIELD_RPM)
+                            .asInt()
+                    )
+                }
 
-        val stepDeltaDataPoints = readFitnessData(startTime, endTime, interval, DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+        val stepDeltaDataPoints = readFitnessData(
+            startTime,
+            endTime,
+            interval,
+            DataType.TYPE_STEP_COUNT_DELTA,
+            DataType.AGGREGATE_STEP_COUNT_DELTA
+        )
             .map { stepDeltaDp ->
-                val value = stepDeltaDp.getValue(Field.FIELD_STEPS).asInt()
+                val value = stepDeltaDp.getValue(Field.FIELD_STEPS)
+                    .asInt()
                 val valueStartTime = stepDeltaDp.getStartTime(TimeUnit.MILLISECONDS)
                 val valueEndTime = stepDeltaDp.getEndTime(TimeUnit.MILLISECONDS)
                 val avgRpm: Int = ((60000f * value) / (valueEndTime - valueStartTime)).toInt()
@@ -138,12 +170,28 @@ class FitnessDataRepositoryImpl @Inject constructor(
                 )
             }
 
-        return mergeDataPoints(cadenceDataPoints, stepDeltaDataPoints,)
+        return mergeDataPoints(cadenceDataPoints, stepDeltaDataPoints)
     }
 
-    override suspend fun getHeartRateDataPoints(startTime: Long, endTime: Long, interval: Long): List<SingleDataPoint<Int>> {
-        val heartRateDataPoints = readFitnessData(startTime, endTime, interval, DataType.TYPE_HEART_RATE_BPM, DataType.AGGREGATE_HEART_RATE_SUMMARY)
-        return heartRateDataPoints.map { SingleDataPoint(it.getStartTime(TimeUnit.MILLISECONDS), it.getValue(Field.FIELD_AVERAGE).asInt()) }
+    override suspend fun getHeartRateDataPoints(
+        startTime: Long,
+        endTime: Long,
+        interval: Long
+    ): List<SingleDataPoint<Int>> {
+        val heartRateDataPoints = readFitnessData(
+            startTime,
+            endTime,
+            interval,
+            DataType.TYPE_HEART_RATE_BPM,
+            DataType.AGGREGATE_HEART_RATE_SUMMARY
+        )
+        return heartRateDataPoints.map {
+            SingleDataPoint(
+                it.getStartTime(TimeUnit.MILLISECONDS),
+                it.getValue(Field.FIELD_AVERAGE)
+                    .asInt()
+            )
+        }
     }
 
     companion object {

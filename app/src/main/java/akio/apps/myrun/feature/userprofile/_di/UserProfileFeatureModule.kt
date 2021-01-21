@@ -1,10 +1,21 @@
 package akio.apps.myrun.feature.userprofile._di
 
 import akio.apps._base.di.ViewModelKey
-import akio.apps.myrun.feature.userprofile.*
+import akio.apps.myrun.feature.userprofile.DeauthorizeStravaUsecase
+import akio.apps.myrun.feature.userprofile.GetProviderTokensUsecase
+import akio.apps.myrun.feature.userprofile.GetUserProfileUsecase
+import akio.apps.myrun.feature.userprofile.LinkFacebookUsecase
+import akio.apps.myrun.feature.userprofile.LogoutUsecase
+import akio.apps.myrun.feature.userprofile.RemoveStravaTokenUsecase
+import akio.apps.myrun.feature.userprofile.UserProfileViewModel
 import akio.apps.myrun.feature.userprofile.impl.UserProfileFragment
 import akio.apps.myrun.feature.userprofile.impl.UserProfileViewModelImpl
-import akio.apps.myrun.feature.userprofile.usecase.*
+import akio.apps.myrun.feature.userprofile.usecase.DeauthorizeStravaUsecaseImpl
+import akio.apps.myrun.feature.userprofile.usecase.FirebaseLinkWithFacebookUsecase
+import akio.apps.myrun.feature.userprofile.usecase.FirebaseLogoutUsecase
+import akio.apps.myrun.feature.userprofile.usecase.GetProviderTokensUsecaseImpl
+import akio.apps.myrun.feature.userprofile.usecase.GetUserProfileUsecaseImpl
+import akio.apps.myrun.feature.userprofile.usecase.RemoveStravaTokenUsecaseImpl
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module

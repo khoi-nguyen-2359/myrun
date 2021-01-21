@@ -39,12 +39,14 @@ class UserAuthenticationStateImpl @Inject constructor(
         }
     }
 
-    override fun getUserAccount(): UserAccount? = firebaseAuth.currentUser?.let { firebaseUserMapper.map(it) }
+    override fun getUserAccount(): UserAccount? =
+        firebaseAuth.currentUser?.let { firebaseUserMapper.map(it) }
 
     override fun getUserAccountId(): String? = firebaseAuth.currentUser?.uid
 
     override fun isLinkedWithFacebook(): Boolean =
-        firebaseAuth.currentUser?.providerData?.any { it.providerId == FacebookAuthProvider.PROVIDER_ID } ?: false
+        firebaseAuth.currentUser?.providerData?.any { it.providerId == FacebookAuthProvider.PROVIDER_ID }
+            ?: false
 
     override fun isSignedIn(): Boolean = firebaseAuth.currentUser?.uid != null
     override fun isAnonymousUser(): Boolean = firebaseAuth.currentUser?.isAnonymous == true

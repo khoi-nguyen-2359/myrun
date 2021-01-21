@@ -26,14 +26,22 @@ class StravaDataRepositoryImpl @Inject constructor(
         val runNamePart = activityTitle.toRequestBody(MultipartBody.FORM)
         val dataTypePart = "tcx".toRequestBody(MultipartBody.FORM)
 
-        stravaApi.uploadActivity("Bearer ${stravaToken.accessToken}", uploadBody, runNamePart, dataTypePart)
+        stravaApi.uploadActivity(
+            "Bearer ${stravaToken.accessToken}",
+            uploadBody,
+            runNamePart,
+            dataTypePart
+        )
     }
 
     override suspend fun getRoutes(athleteId: Long): List<StravaRoute> {
         val stravaToken = stravaTokenStorage.getToken()
             ?: return emptyList()
 
-        return stravaApi.getAthleteRoutes("Bearer ${stravaToken.accessToken}", stravaToken.athlete.id)
+        return stravaApi.getAthleteRoutes(
+            "Bearer ${stravaToken.accessToken}",
+            stravaToken.athlete.id
+        )
             .map(stravaRouteEntityMapper::map)
     }
 }

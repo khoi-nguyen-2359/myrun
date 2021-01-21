@@ -3,7 +3,8 @@ package akio.apps.myrun._base.utils
 import java.util.concurrent.TimeUnit
 
 object StatsPresentations {
-    fun getDisplayTrackingDistance(distance: Double): String = String.format("%.2f", distance / 1000)
+    fun getDisplayTrackingDistance(distance: Double): String =
+        String.format("%.2f", distance / 1000)
 
     fun getDisplayDuration(duration: Long): String {
         val hour = duration / 3600000

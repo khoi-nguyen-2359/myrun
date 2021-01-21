@@ -11,7 +11,8 @@ class FirebaseSignInWithFacebookUsecase @Inject constructor(
 ) : SignInWithFacebookUsecase {
     override suspend fun signInWithFacebookAccessToken(tokenValue: String): SignInSuccessResult {
         val credential = FacebookAuthProvider.getCredential(tokenValue)
-        val authResult = firebaseAuth.signInWithCredential(credential).await()
+        val authResult = firebaseAuth.signInWithCredential(credential)
+            .await()
         return SignInSuccessResult(
             authResult.additionalUserInfo?.isNewUser ?: false,
             SignInMethod.Facebook

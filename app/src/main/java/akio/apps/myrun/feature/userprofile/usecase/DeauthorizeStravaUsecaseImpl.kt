@@ -8,7 +8,7 @@ import javax.inject.Inject
 class DeauthorizeStravaUsecaseImpl @Inject constructor(
     private val stravaTokenRepository: StravaTokenRepository,
     private val stravaTokenStorage: StravaTokenStorage
-): DeauthorizeStravaUsecase {
+) : DeauthorizeStravaUsecase {
     override suspend fun deauthorizeStrava() {
         val stravaToken = stravaTokenStorage.getToken()
             ?: return

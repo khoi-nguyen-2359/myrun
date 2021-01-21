@@ -19,10 +19,12 @@ class RouteTrackingDataModule {
     @Provides
     @Singleton
     fun routeTrackingDatabase(application: Context): RouteTrackingDatabase =
-        Room.databaseBuilder(application, RouteTrackingDatabase::class.java, "route_tracking_db").build()
+        Room.databaseBuilder(application, RouteTrackingDatabase::class.java, "route_tracking_db")
+            .build()
 
     @Provides
-    fun routeTrackingLocationDao(database: RouteTrackingDatabase): RouteTrackingLocationDao = database.trackingLocationDao()
+    fun routeTrackingLocationDao(database: RouteTrackingDatabase): RouteTrackingLocationDao =
+        database.trackingLocationDao()
 
     @Module
     interface Bindings {

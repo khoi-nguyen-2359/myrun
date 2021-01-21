@@ -5,7 +5,6 @@ import akio.apps.myrun.data.recentplace.entity.FirestoreRecentPlace
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
-import java.lang.StringBuilder
 import javax.inject.Inject
 
 class RecentPlaceRepositoryImpl @Inject constructor(
@@ -13,7 +12,7 @@ class RecentPlaceRepositoryImpl @Inject constructor(
 ) : RecentPlaceRepository {
 
     private val recentPlaceCollection: CollectionReference
-    get() = firestore.collection("recent_place")
+        get() = firestore.collection("recent_place")
 
     override suspend fun saveRecentPlace(userId: String, addressComponents: List<String>) {
         val areaIdentifier = StringBuilder()
@@ -24,7 +23,7 @@ class RecentPlaceRepositoryImpl @Inject constructor(
             .set(firestoreRecentPlace)
             .await()
     }
-    
+
     override suspend fun getRecentPlaceIdentifier(userId: String): String? {
         return recentPlaceCollection.document(userId)
             .get()

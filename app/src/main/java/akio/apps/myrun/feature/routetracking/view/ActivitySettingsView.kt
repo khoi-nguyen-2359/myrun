@@ -17,16 +17,25 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 
 class ActivitySettingsView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private val viewBinding = MergeActivitySettingsViewBinding.inflate(LayoutInflater.from(context), this)
+    private val viewBinding =
+        MergeActivitySettingsViewBinding.inflate(LayoutInflater.from(context), this)
 
     var eventListener: EventListener? = null
 
     private val activityTypeDisplays = mapOf(
-        ActivityType.Running to ActivityTypeDisplay(R.string.activity_type_name_running, R.drawable.ic_directions_run),
-        ActivityType.Cycling to ActivityTypeDisplay(R.string.activity_type_name_cycling, R.drawable.ic_directions_bike)
+        ActivityType.Running to ActivityTypeDisplay(
+            R.string.activity_type_name_running,
+            R.drawable.ic_directions_run
+        ),
+        ActivityType.Cycling to ActivityTypeDisplay(
+            R.string.activity_type_name_cycling,
+            R.drawable.ic_directions_bike
+        )
     )
 
     init {
@@ -47,7 +56,11 @@ class ActivitySettingsView @JvmOverloads constructor(
             .toTypedArray()
         AlertDialog.Builder(context)
             .setItems(activityTypeNames) { _, activityTypeIndex ->
-                eventListener?.onActivityTypeSelected(activityTypeDisplays.keys.elementAt(activityTypeIndex))
+                eventListener?.onActivityTypeSelected(
+                    activityTypeDisplays.keys.elementAt(
+                        activityTypeIndex
+                    )
+                )
             }
             .show()
     }
@@ -56,8 +69,10 @@ class ActivitySettingsView @JvmOverloads constructor(
         val activityTypeDisplay = activityTypeDisplays[activityType]
             ?: return
 
-        viewBinding.activityTypeSelectionChip.text = resources.getString(activityTypeDisplay.nameRes)
-        viewBinding.activityTypeSelectionChip.chipIcon = ContextCompat.getDrawable(context, activityTypeDisplay.iconRes)
+        viewBinding.activityTypeSelectionChip.text =
+            resources.getString(activityTypeDisplay.nameRes)
+        viewBinding.activityTypeSelectionChip.chipIcon =
+            ContextCompat.getDrawable(context, activityTypeDisplay.iconRes)
     }
 
     class ActivityTypeDisplay(

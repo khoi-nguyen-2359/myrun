@@ -32,13 +32,20 @@ import com.google.firebase.auth.PhoneAuthCredential
 import java.io.File
 import java.text.DecimalFormat
 
-class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), PhotoSelectionDelegate.EventListener, OtpDialogFragment.EventListener {
+class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile),
+    PhotoSelectionDelegate.EventListener, OtpDialogFragment.EventListener {
 
     private var croppedPhotoFile: File? = null
     private val photoSelectionDelegate = PhotoSelectionDelegate(
-        this, null, PhotoSelectionDelegate.RequestCodes(
-            RC_TAKE_PHOTO_PERMISSIONS, RC_PICK_PHOTO_PERMISSIONS, RC_TAKE_PHOTO, RC_PICK_PHOTO
-        ), this
+        this,
+        null,
+        PhotoSelectionDelegate.RequestCodes(
+            RC_TAKE_PHOTO_PERMISSIONS,
+            RC_PICK_PHOTO_PERMISSIONS,
+            RC_TAKE_PHOTO,
+            RC_PICK_PHOTO
+        ),
+        this
     )
 
     private val isOnboarding: Boolean by lazy { intent.getBooleanExtra(EXT_IS_ONBOARDING, false) }
@@ -86,13 +93,23 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
 
     @Suppress("UNUSED_PARAMETER")
     private fun onUpdatePhoneNumberSuccess(unit: Unit) {
-        Snackbar.make(viewBinding.saveButton, R.string.edit_user_profile_mobile_number_update_success_message, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(
+            viewBinding.saveButton,
+            R.string.edit_user_profile_mobile_number_update_success_message,
+            Snackbar.LENGTH_LONG
+        )
+            .show()
         (supportFragmentManager.findFragmentByTag(TAG_OTP_DIALOG) as? OtpDialogFragment)?.dismiss()
     }
 
     private fun onStravaTokenExchanged() {
         setResult(Activity.RESULT_OK)
-        Snackbar.make(viewBinding.saveButton, getString(R.string.edit_user_profile_link_running_app_success_message), Snackbar.LENGTH_LONG).show()
+        Snackbar.make(
+            viewBinding.saveButton,
+            getString(R.string.edit_user_profile_link_running_app_success_message),
+            Snackbar.LENGTH_LONG
+        )
+            .show()
     }
 
     override fun onAttachFragment(fragment: Fragment) {
@@ -128,7 +145,11 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
     private fun initViews() = viewBinding.apply {
         setContentView(root)
 
-        avatarImageView.setOnClickListener { photoSelectionDelegate.showPhotoSelectionDialog(getString(R.string.photo_selection_dialog_title)) }
+        avatarImageView.setOnClickListener {
+            photoSelectionDelegate.showPhotoSelectionDialog(
+                getString(R.string.photo_selection_dialog_title)
+            )
+        }
 
         genderTextView.setOnClickListener { openGenderPicker() }
 
@@ -143,7 +164,12 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
     }
 
     private fun requestReauthenticate(requestCode: Int) {
-        Toast.makeText(this, R.string.edit_user_profile_session_expired_error_message, Toast.LENGTH_LONG).show()
+        Toast.makeText(
+            this,
+            R.string.edit_user_profile_session_expired_error_message,
+            Toast.LENGTH_LONG
+        )
+            .show()
         val signInIntent = SignInActivity.launchIntent(this)
         startActivityForResult(signInIntent, requestCode)
     }
@@ -165,8 +191,10 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
             return ProfileEditData(
                 nameEditText.getTextAsString(),
                 Gender.parse(genderTextView.getNoneEmptyTextOrNull()),
-                heightEditText.getNoneEmptyTextOrNull()?.toFloat(),
-                weightEditText.getNoneEmptyTextOrNull()?.toFloat(),
+                heightEditText.getNoneEmptyTextOrNull()
+                    ?.toFloat(),
+                weightEditText.getNoneEmptyTextOrNull()
+                    ?.toFloat(),
                 croppedPhotoFile?.let { Uri.fromFile(it) },
                 phoneBox.getFullNumber()
             )
@@ -183,7 +211,11 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
         dialog.show()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         photoSelectionDelegate.onRequestPermissionsResult(requestCode)
     }
@@ -201,7 +233,8 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
             return
         }
 
-        croppedPhotoFile = data.getSerializableExtra(CropAvatarActivity.RESULT_CROPPED_AVATAR_FILE) as File
+        croppedPhotoFile =
+            data.getSerializableExtra(CropAvatarActivity.RESULT_CROPPED_AVATAR_FILE) as File
 
         Glide.with(this)
             .load(croppedPhotoFile)
@@ -216,9 +249,10 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
         }
 
         if (requestCode == RC_REAUTHENTICATE_FOR_PHONE_UPDATE && resultCode == RESULT_OK) {
-            viewBinding.phoneBox.getFullNumber()?.let { phoneNumber ->
-                openOtp(phoneNumber)
-            }
+            viewBinding.phoneBox.getFullNumber()
+                ?.let { phoneNumber ->
+                    openOtp(phoneNumber)
+                }
         }
     }
 
@@ -229,7 +263,10 @@ class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile), P
     }
 
     override fun onPhotoSelectionReady(photoContentUri: Uri) {
-        startActivityForResult(CropAvatarActivity.launchIntent(this, photoContentUri), RC_CROP_AVATAR)
+        startActivityForResult(
+            CropAvatarActivity.launchIntent(this, photoContentUri),
+            RC_CROP_AVATAR
+        )
     }
 
     override fun onConfirmOtp(phoneAuthCredential: PhoneAuthCredential) {

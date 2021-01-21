@@ -4,16 +4,14 @@ import akio.apps._base.data.Resource
 import akio.apps._base.utils.FirebaseStorageUtils
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.data.userprofile.entity.FirestoreUserEntity
-import akio.apps.myrun.data.userprofile.entity.FirestoreUserProfileEntity
 import akio.apps.myrun.data.userprofile.entity.FirestoreUserProfileUpdateMapEntity
 import akio.apps.myrun.data.userprofile.error.UserProfileNotFoundError
 import akio.apps.myrun.data.userprofile.mapper.FirestoreUserProfileMapper
-import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
+import akio.apps.myrun.data.userprofile.model.UserProfile
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.Source
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -41,29 +39,30 @@ class UserProfileRepositoryImpl @Inject constructor(
     private fun getAvatarStorage() = firebaseStorage.getReference(FIREBASE_STORAGE_USER_FOLDER)
 
     @ExperimentalCoroutinesApi
-    override fun getUserProfileFlow(userId: String): Flow<Resource<UserProfile>> = callbackFlow<Resource<UserProfile>> {
-        val listener = withContext(Dispatchers.Main.immediate) {
-            getUserDocument(userId).addSnapshotListener { snapshot, error ->
-                snapshot?.toObject(FirestoreUserEntity::class.java)
-                    ?.profile
-                    ?.run(firestoreUserProfileMapper::map)
-                    ?.let { userProfile ->
-                        sendBlocking(Resource.Success(userProfile))
+    override fun getUserProfileFlow(userId: String): Flow<Resource<UserProfile>> =
+        callbackFlow<Resource<UserProfile>> {
+            val listener = withContext(Dispatchers.Main.immediate) {
+                getUserDocument(userId).addSnapshotListener { snapshot, error ->
+                    snapshot?.toObject(FirestoreUserEntity::class.java)
+                        ?.profile
+                        ?.run(firestoreUserProfileMapper::map)
+                        ?.let { userProfile ->
+                            sendBlocking(Resource.Success(userProfile))
+                        }
+                    error?.let {
+                        sendBlocking(Resource.Error<UserProfile>(it))
+                        close(it)
                     }
-                error?.let {
-                    sendBlocking(Resource.Error<UserProfile>(it))
-                    close(it)
+                }
+            }
+
+            awaitClose {
+                runBlocking(Dispatchers.Main.immediate) {
+                    listener.remove()
                 }
             }
         }
-
-        awaitClose {
-            runBlocking(Dispatchers.Main.immediate) {
-                listener.remove()
-            }
-        }
-    }
-        .flowOn(Dispatchers.IO)
+            .flowOn(Dispatchers.IO)
 
     override suspend fun getUserProfile(userId: String): UserProfile {
         return getUserDocument(userId)
@@ -78,7 +77,12 @@ class UserProfileRepositoryImpl @Inject constructor(
     override suspend fun updateUserProfile(userId: String, profileEditData: ProfileEditData) {
         val avatarUri = profileEditData.avatarUri?.toString()
         val avatarUploadedUri = if (avatarUri != null && avatarUri.startsWith("file://")) {
-            FirebaseStorageUtils.uploadLocalBitmap(getAvatarStorage(), userId, avatarUri.removePrefix("file://"), AVATAR_SCALED_SIZE)
+            FirebaseStorageUtils.uploadLocalBitmap(
+                getAvatarStorage(),
+                userId,
+                avatarUri.removePrefix("file://"),
+                AVATAR_SCALED_SIZE
+            )
         } else {
             profileEditData.avatarUri
         }
@@ -87,12 +91,14 @@ class UserProfileRepositoryImpl @Inject constructor(
             .apply {
                 uid(userId)
                 displayName(profileEditData.displayName)
-                avatarUploadedUri?.toString()?.let { photoUrl(it) }
+                avatarUploadedUri?.toString()
+                    ?.let { photoUrl(it) }
                 profileEditData.gender?.name?.let { gender(it) }
                 profileEditData.height?.let { height(it) }
                 profileEditData.weight?.let { weight(it) }
             }
-        getUserDocument(userId).set(updateMap, SetOptions.merge()).await()
+        getUserDocument(userId).set(updateMap, SetOptions.merge())
+            .await()
     }
 
     companion object {

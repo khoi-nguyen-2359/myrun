@@ -12,8 +12,10 @@ class UpdateUserProfileUsecaseImpl @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState
 ) : UpdateUserProfileUsecase {
 
-    override suspend fun updateUserProfile(profileEditData: ProfileEditData) = userAuthenticationState.getUserAccountId()?.let { userId ->
-        userProfileRepository.updateUserProfile(userId, profileEditData)
-    }
-        ?: throw UnauthorizedUserError()
+    override suspend fun updateUserProfile(profileEditData: ProfileEditData) =
+        userAuthenticationState.getUserAccountId()
+            ?.let { userId ->
+                userProfileRepository.updateUserProfile(userId, profileEditData)
+            }
+            ?: throw UnauthorizedUserError()
 }

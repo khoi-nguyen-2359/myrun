@@ -23,7 +23,7 @@ import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import org.mockito.Mockito.`when` as whenever
 
-class GetUserProfileUsecaseImplTest: MockAsynchronousTest() {
+class GetUserProfileUsecaseImplTest : MockAsynchronousTest() {
 
     @Mock
     lateinit var userProfileRepository: UserProfileRepository
@@ -50,7 +50,13 @@ class GetUserProfileUsecaseImplTest: MockAsynchronousTest() {
         // given
         val userProfile = createUserProfile()
         whenever(userAuthenticationState.getUserAccountId()).thenReturn(defaultUserId)
-        whenever(userProfileRepository.getUserProfileFlow(defaultUserId)).thenReturn(flowOf(Resource.Success(userProfile)))
+        whenever(userProfileRepository.getUserProfileFlow(defaultUserId)).thenReturn(
+            flowOf(
+                Resource.Success(
+                    userProfile
+                )
+            )
+        )
 
         // when
         runBlockingTest {
@@ -65,7 +71,13 @@ class GetUserProfileUsecaseImplTest: MockAsynchronousTest() {
     }
 
     private fun createUserAccount(): UserAccount {
-        return UserAccount(defaultUserId, defaultEmail, defaultDisplayName, defaultPhotoUrl, defaultPhoneNumber)
+        return UserAccount(
+            defaultUserId,
+            defaultEmail,
+            defaultDisplayName,
+            defaultPhotoUrl,
+            defaultPhoneNumber
+        )
     }
 
     @Test(expected = UnauthorizedUserError::class)
@@ -94,4 +106,3 @@ class GetUserProfileUsecaseImplTest: MockAsynchronousTest() {
         )
     }
 }
-

@@ -18,18 +18,37 @@ class GoogleFitLinkingDelegate {
     /**
      * @return false to indicate there's an error while connecting
      */
-    suspend fun requestGoogleFitPermissions(activity: Activity, rcActivityRecognitionPermission: Int, rcFitnessDataPermission: Int, fragment: Fragment? = null) {
+    suspend fun requestGoogleFitPermissions(
+        activity: Activity,
+        rcActivityRecognitionPermission: Int,
+        rcFitnessDataPermission: Int,
+        fragment: Fragment? = null
+    ) {
         if (isGoogleFitLinked(activity)) {
             return
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            RequiredPermissionsDelegate.requestPermissions(arrayOf(Manifest.permission.ACTIVITY_RECOGNITION), rcActivityRecognitionPermission, activity, fragment)
+            RequiredPermissionsDelegate.requestPermissions(
+                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+                rcActivityRecognitionPermission,
+                activity,
+                fragment
+            )
             activityRegPermissionJob.join()
         }
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || PermissionUtils.arePermissionsGranted(activity, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION))) {
-            if (RequiredPermissionsDelegate.requestFitnessDataPermissions(activity, rcFitnessDataPermission, fragment)) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || PermissionUtils.arePermissionsGranted(
+                activity,
+                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION)
+            )
+        ) {
+            if (RequiredPermissionsDelegate.requestFitnessDataPermissions(
+                    activity,
+                    rcFitnessDataPermission,
+                    fragment
+                )
+            ) {
                 fitnessDataPermissionJob.join()
             }
         }
@@ -37,7 +56,12 @@ class GoogleFitLinkingDelegate {
 
     suspend fun disconnectGoogleFit(activity: Activity): Boolean {
         try {
-            GoogleSignIn.getClient(activity, GoogleSignInOptions.Builder().addExtension(RequiredPermissionsDelegate.buildFitnessDataOptions()).build())
+            GoogleSignIn.getClient(
+                activity,
+                GoogleSignInOptions.Builder()
+                    .addExtension(RequiredPermissionsDelegate.buildFitnessDataOptions())
+                    .build()
+            )
                 .revokeAccess()
                 .await()
         } catch (ex: Exception) {

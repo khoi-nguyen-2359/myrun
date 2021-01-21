@@ -42,7 +42,11 @@ class DialogDelegate(
         return showErrorAlert(context, dialogMessage)
     }
 
-    private fun showErrorAlert(context: Context, message: String?, onClose: DialogInterface.OnClickListener? = null): Dialog {
+    private fun showErrorAlert(
+        context: Context,
+        message: String?,
+        onClose: DialogInterface.OnClickListener? = null
+    ): Dialog {
         val noneNullMessage = message ?: context.getString(R.string.error_unknown)
         val dialog = AlertDialog.Builder(context)
             .setMessage(noneNullMessage)
