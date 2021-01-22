@@ -76,7 +76,7 @@ class UserProfileViewModelImpl @Inject constructor(
 
     private suspend fun deauthorizeStrava() {
         deauthorizeStravaUsecase.deauthorizeStrava()
-        removeStravaTokenUsecase.removeStravaTokenUsecase()
+        removeStravaTokenUsecase.removeStravaToken()
 
         WorkManager.getInstance(appContext)
             .cancelUniqueWork(UploadStravaFileWorker.UNIQUE_WORK_NAME)
