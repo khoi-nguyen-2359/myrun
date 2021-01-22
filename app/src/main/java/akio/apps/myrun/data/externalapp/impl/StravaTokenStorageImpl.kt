@@ -5,7 +5,11 @@ import akio.apps.myrun.data.externalapp.entity.StravaAthlete
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import android.content.Context
 import androidx.datastore.DataStore
-import androidx.datastore.preferences.*
+import androidx.datastore.preferences.Preferences
+import androidx.datastore.preferences.clear
+import androidx.datastore.preferences.createDataStore
+import androidx.datastore.preferences.edit
+import androidx.datastore.preferences.preferencesKey
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

@@ -20,6 +20,6 @@ fun CoroutineScope.flowTimer(
         delay(period)
     }
 }
-    //. this flow is on default dispatcher
+    // this flow is on default dispatcher
     .onEach { this.action() }
     .launchIn(this)

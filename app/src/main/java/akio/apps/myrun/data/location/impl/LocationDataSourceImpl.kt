@@ -53,7 +53,7 @@ class LocationDataSourceImpl @Inject constructor(
                 locationClient.removeLocationUpdates(callback)
             }
         }
-            .flowOn(Dispatchers.Main)   // need Main to request updates from location client
+            .flowOn(Dispatchers.Main) // need Main to request updates from location client
 
     private fun LocationRequestEntity.toGmsLocationRequest(): LocationRequest {
         return LocationRequest().also {

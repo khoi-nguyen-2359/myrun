@@ -17,7 +17,12 @@ import com.google.android.libraries.places.api.Places
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -78,8 +83,8 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onAppStarted() {
         ioScope.launch {
-            if (routeTrackingState.getTrackingStatus() == RouteTrackingStatus.RESUMED
-                && !RouteTrackingService.isTrackingServiceRunning(this@MyRunApp)
+            if (routeTrackingState.getTrackingStatus() == RouteTrackingStatus.RESUMED &&
+                !RouteTrackingService.isTrackingServiceRunning(this@MyRunApp)
             ) {
                 withContext(Dispatchers.Main) {
                     startService(RouteTrackingService.resumeIntent(this@MyRunApp))

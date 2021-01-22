@@ -10,7 +10,14 @@ import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.feature.strava.ActivityFileExporter
 import android.content.Context
 import com.google.maps.android.SphericalUtil
-import com.sweetzpot.tcxzpot.*
+import com.sweetzpot.tcxzpot.Activities
+import com.sweetzpot.tcxzpot.Cadence
+import com.sweetzpot.tcxzpot.Intensity
+import com.sweetzpot.tcxzpot.Position
+import com.sweetzpot.tcxzpot.Sport
+import com.sweetzpot.tcxzpot.TCXDate
+import com.sweetzpot.tcxzpot.Track
+import com.sweetzpot.tcxzpot.TriggerMethod
 import com.sweetzpot.tcxzpot.builders.ActivityBuilder
 import com.sweetzpot.tcxzpot.builders.LapBuilder
 import com.sweetzpot.tcxzpot.builders.TrackpointBuilder
@@ -107,7 +114,8 @@ class TcxActivityFileExporter @Inject constructor(
                                                 }
                                                 .build()
                                         }
-                                    ))
+                                    )
+                                )
                         )
                 )
             )

@@ -122,8 +122,8 @@ class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
     }
 
     private fun onSignInSuccess(signInSuccessResult: SignInSuccessResult) {
-        (supportFragmentManager.findFragmentByTag(FRAGMENT_TAG_OTP_DIALOG)
-            as? OtpDialogFragment)?.dismiss()
+        (supportFragmentManager.findFragmentByTag(FRAGMENT_TAG_OTP_DIALOG) as? OtpDialogFragment)
+            ?.dismiss()
 
         val resultIntent = Intent()
         resultIntent.putExtra(RESULT_SIGN_RESULT_DATA, signInSuccessResult)
