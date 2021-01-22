@@ -47,7 +47,7 @@ class StravaAuthenticatorImpl(
         }
 
         val originalRefreshToken = originalToken.refreshToken
-        Timber.d("refresh Strava token access_token=$originalAccessToken refresh_token=${originalRefreshToken}")
+        Timber.d("refresh Strava token access_token=$originalAccessToken refresh_token=$originalRefreshToken")
 
         val refreshRequest = Request.Builder()
             .method("POST", "".toRequestBody("text/plain".toMediaType()))
@@ -55,7 +55,7 @@ class StravaAuthenticatorImpl(
                 baseStravaUrl + "oauth/token?grant_type=refresh_token" +
                     "&client_id=$clientId" +
                     "&client_secret=$clientSecret" +
-                    "&refresh_token=${originalRefreshToken}"
+                    "&refresh_token=$originalRefreshToken"
             )
             .build()
 
@@ -77,7 +77,9 @@ class StravaAuthenticatorImpl(
         }
 
         Timber.e("refresh Strava token failed. code=${refreshResponse.code}, access_token=$originalAccessToken, refresh_token=$originalRefreshToken")
-        runBlocking { removeStravaTokenUsecase.removeStravaToken() }
+        runBlocking {
+            removeStravaTokenUsecase.removeStravaToken()
+        }
 
         return null
     }
