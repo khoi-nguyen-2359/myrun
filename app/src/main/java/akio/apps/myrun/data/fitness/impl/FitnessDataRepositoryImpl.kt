@@ -14,7 +14,7 @@ import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.fitness.request.DataReadRequest
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
-import java.util.*
+import java.util.TreeSet
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

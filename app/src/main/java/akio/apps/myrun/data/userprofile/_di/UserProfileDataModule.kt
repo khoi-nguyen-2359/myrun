@@ -7,7 +7,6 @@ import dagger.Module
 
 @Module
 interface UserProfileDataModule {
-
     @Binds
     fun userProfileRepo(repo: UserProfileRepositoryImpl): UserProfileRepository
 }

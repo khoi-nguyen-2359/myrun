@@ -32,7 +32,7 @@ class CropImageView @JvmOverloads constructor(
         const val CROP_CIRCLE_RADIUS_PERCENT = 0.35f
     }
 
-    private var centerCropScale = 1f;
+    private var centerCropScale = 1f
 
     private val overPaint = Paint(Paint.ANTI_ALIAS_FLAG).also {
         it.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OVER)
@@ -86,18 +86,21 @@ class CropImageView @JvmOverloads constructor(
     }
 
     private val scrollDetector =
-        GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onScroll(
-                e1: MotionEvent,
-                e2: MotionEvent,
-                distanceX: Float,
-                distanceY: Float
-            ): Boolean {
-                offsetSrcRect(distanceX / accScaleFactor, distanceY / accScaleFactor)
-                ViewCompat.postInvalidateOnAnimation(this@CropImageView)
-                return true
+        GestureDetector(
+            context,
+            object : GestureDetector.SimpleOnGestureListener() {
+                override fun onScroll(
+                    e1: MotionEvent,
+                    e2: MotionEvent,
+                    distanceX: Float,
+                    distanceY: Float
+                ): Boolean {
+                    offsetSrcRect(distanceX / accScaleFactor, distanceY / accScaleFactor)
+                    ViewCompat.postInvalidateOnAnimation(this@CropImageView)
+                    return true
+                }
             }
-        })
+        )
 
     private fun scaleSrcRect(scaleFactor: Float, pivotPercentX: Float, pivotPercentY: Float) {
         val newWidth = srcDrawRect.width() / scaleFactor
@@ -137,29 +140,32 @@ class CropImageView @JvmOverloads constructor(
     private var accScaleFactor = 1f
 
     private val scaleDetector =
-        ScaleGestureDetector(context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-            override fun onScale(detector: ScaleGestureDetector): Boolean {
-                accScaleFactor *= detector.scaleFactor
+        ScaleGestureDetector(
+            context,
+            object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                override fun onScale(detector: ScaleGestureDetector): Boolean {
+                    accScaleFactor *= detector.scaleFactor
 
-                val scaleFactor = if (accScaleFactor < centerCropScale) {
-                    val result = centerCropScale / (accScaleFactor / detector.scaleFactor)
-                    accScaleFactor = centerCropScale
-                    result
-                } else {
-                    detector.scaleFactor
+                    val scaleFactor = if (accScaleFactor < centerCropScale) {
+                        val result = centerCropScale / (accScaleFactor / detector.scaleFactor)
+                        accScaleFactor = centerCropScale
+                        result
+                    } else {
+                        detector.scaleFactor
+                    }
+
+                    scaleSrcRect(
+                        scaleFactor,
+                        detector.focusX / destDrawRect.width(),
+                        detector.focusY / destDrawRect.height()
+                    )
+
+                    ViewCompat.postInvalidateOnAnimation(this@CropImageView)
+
+                    return true
                 }
-
-                scaleSrcRect(
-                    scaleFactor,
-                    detector.focusX / destDrawRect.width(),
-                    detector.focusY / destDrawRect.height()
-                )
-
-                ViewCompat.postInvalidateOnAnimation(this@CropImageView)
-
-                return true
             }
-        })
+        )
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         scrollDetector.onTouchEvent(event)

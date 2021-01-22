@@ -16,5 +16,4 @@ data class UserProfile(
     fun getWeightText() = weight?.let {
         DecimalFormat("#.# kg").format(it)
     }
-
 }

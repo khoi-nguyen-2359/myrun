@@ -13,6 +13,7 @@ class FirestoreProvidersMapper @Inject constructor(
         return ExternalProviders(
             strava = input.strava?.token?.let { stravaToken ->
                 ProviderToken(RunningApp.Strava, stravaTokenMapper.map(stravaToken))
-            })
+            }
+        )
     }
 }

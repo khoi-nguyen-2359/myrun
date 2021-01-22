@@ -48,5 +48,4 @@ class SignInViewModelImpl @Inject constructor(
             onSignInSuccess(result)
         }
     }
-
 }

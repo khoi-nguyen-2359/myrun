@@ -31,9 +31,14 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationRequest
 import com.google.maps.android.SphericalUtil
 import dagger.android.AndroidInjection
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 

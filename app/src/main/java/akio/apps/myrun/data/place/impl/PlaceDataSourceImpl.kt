@@ -13,7 +13,7 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.tasks.await
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 
 class PlaceDataSourceImpl @Inject constructor(
