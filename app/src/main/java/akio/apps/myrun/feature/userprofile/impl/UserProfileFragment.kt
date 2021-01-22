@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.userprofile.impl
 
 import akio.apps._base.data.Resource
+import akio.apps._base.lifecycle.viewLifecycleScope
 import akio.apps._base.ui.SingleFragmentActivity
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
@@ -24,7 +25,6 @@ import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.coroutineScope
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.launch
 
@@ -50,33 +50,41 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         viewBinding.googleFitItemViewContainer.setOnClickListener {
             if (googleFitLinkingDelegate.isGoogleFitLinked(requireActivity())) {
                 showUnlinkConfirmationDialog {
-                    viewLifecycleOwner.lifecycle.coroutineScope.launch {
-                        dialogDelegate.toggleProgressDialog(true)
-                        val isSuccessfullyDisconnected =
-                            googleFitLinkingDelegate.disconnectGoogleFit(requireActivity())
-                        dialogDelegate.toggleProgressDialog(false)
-                        if (!isSuccessfullyDisconnected) {
-                            dialogDelegate.showErrorAlert(getString(R.string.user_profile_error_app_disconnect))
-                        }
-                        viewBinding.isGoogleFitLinkedCheckBox.isChecked =
-                            !isSuccessfullyDisconnected
+                    viewLifecycleScope.launch {
+                        disconnectGoogleFit()
                     }
                 }
             } else {
-                viewLifecycleOwner.lifecycle.coroutineScope.launch {
-                    dialogDelegate.toggleProgressDialog(true)
-                    googleFitLinkingDelegate.requestGoogleFitPermissions(
-                        requireActivity(),
-                        RC_ACTIVITY_RECOGNITION_PERMISSION,
-                        RC_FITNESS_DATA_PERMISSION,
-                        this@UserProfileFragment
-                    )
-                    viewBinding.isGoogleFitLinkedCheckBox.isChecked =
-                        googleFitLinkingDelegate.isGoogleFitLinked(requireActivity())
-                    dialogDelegate.toggleProgressDialog(false)
+                viewLifecycleScope.launch {
+                    connectGoogleFit()
                 }
             }
         }
+    }
+
+    private suspend fun connectGoogleFit() {
+        dialogDelegate.toggleProgressDialog(true)
+        googleFitLinkingDelegate.requestGoogleFitPermissions(
+            requireActivity(),
+            RC_ACTIVITY_RECOGNITION_PERMISSION,
+            RC_FITNESS_DATA_PERMISSION,
+            this@UserProfileFragment
+        )
+        viewBinding.isGoogleFitLinkedCheckBox.isChecked =
+            googleFitLinkingDelegate.isGoogleFitLinked(requireActivity())
+        dialogDelegate.toggleProgressDialog(false)
+    }
+
+    private suspend fun disconnectGoogleFit() {
+        dialogDelegate.toggleProgressDialog(true)
+        val isSuccessfullyDisconnected =
+            googleFitLinkingDelegate.disconnectGoogleFit(requireActivity())
+        dialogDelegate.toggleProgressDialog(false)
+        if (!isSuccessfullyDisconnected) {
+            dialogDelegate.showErrorAlert(getString(R.string.user_profile_error_app_disconnect))
+        }
+        viewBinding.isGoogleFitLinkedCheckBox.isChecked =
+            !isSuccessfullyDisconnected
     }
 
     private fun initObservers() {
