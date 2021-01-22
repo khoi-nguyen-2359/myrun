@@ -46,7 +46,8 @@ class StravaAuthenticatorImpl(
                 .build()
         }
 
-        Timber.d("refresh Strava token original=$originalAccessToken refresh=${originalToken.refreshToken}")
+        val originalRefreshToken = originalToken.refreshToken
+        Timber.d("refresh Strava token access_token=$originalAccessToken refresh_token=${originalRefreshToken}")
 
         val refreshRequest = Request.Builder()
             .method("POST", "".toRequestBody("text/plain".toMediaType()))
@@ -54,7 +55,7 @@ class StravaAuthenticatorImpl(
                 baseStravaUrl + "oauth/token?grant_type=refresh_token" +
                     "&client_id=$clientId" +
                     "&client_secret=$clientSecret" +
-                    "&refresh_token=${originalToken.refreshToken}"
+                    "&refresh_token=${originalRefreshToken}"
             )
             .build()
 
@@ -64,10 +65,7 @@ class StravaAuthenticatorImpl(
             val stringResponse = refreshResponse.body?.string()
             val refreshToken = gson.fromJson(stringResponse, StravaTokenRefreshEntity::class.java)
             val newAccessToken = refreshToken.accessToken
-            val newToken = ExternalAppToken.StravaToken(
-                refreshToken,
-                originalToken.athlete
-            )
+            val newToken = ExternalAppToken.StravaToken(refreshToken, originalToken.athlete)
 
             runBlocking { updateStravaTokenUsecase.updateStravaToken(newToken) }
 
@@ -78,7 +76,7 @@ class StravaAuthenticatorImpl(
                 .build()
         }
 
-        Timber.d("refresh Strava token request failed")
+        Timber.e("refresh Strava token failed. code=${refreshResponse.code}, access_token=$originalAccessToken, refresh_token=$originalRefreshToken")
         runBlocking { removeStravaTokenUsecase.removeStravaTokenUsecase() }
 
         return null
