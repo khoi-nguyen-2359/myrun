@@ -105,6 +105,6 @@ class UserProfileRepositoryImpl @Inject constructor(
         const val FIRESTORE_USERS_DOCUMENT = "users"
         const val FIREBASE_STORAGE_USER_FOLDER = "user_avatar"
 
-        const val AVATAR_SCALED_SIZE = 512 //px
+        const val AVATAR_SCALED_SIZE = 512 // px
     }
 }

@@ -83,13 +83,12 @@ class ExternalAppProvidersRepositoryImpl @Inject constructor(
 
     override fun updateStravaProvider(accountId: String, token: ExternalAppToken.StravaToken) {
         val providerTokenDocument = getProviderTokenDocument(accountId)
+        val providerToken = FirestoreProvidersEntity.FirestoreProviderToken(
+            RunningApp.Strava.appName,
+            firestoreStravaTokenMapper.mapReversed(token)
+        )
         providerTokenDocument.set(
-            mapOf(RunningApp.Strava.id to token.let {
-                FirestoreProvidersEntity.FirestoreProviderToken(
-                    RunningApp.Strava.appName,
-                    firestoreStravaTokenMapper.mapReversed(it)
-                )
-            }),
+            mapOf(RunningApp.Strava.id to providerToken),
             SetOptions.merge()
         )
     }

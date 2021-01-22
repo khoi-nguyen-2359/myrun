@@ -61,12 +61,9 @@ class ActivityViewHolder(
                 )
             }
             else -> {
-                activityTimeTextView.text =
-                    "${dateFormatter.format(Date(activity.startTime))} ${
-                        timeFormatter.format(
-                            Date(activity.startTime)
-                        )
-                    }"
+                val formattedTime = timeFormatter.format(Date(activity.startTime))
+                val formattedDate = dateFormatter.format(Date(activity.startTime))
+                activityTimeTextView.text = "$formattedDate $formattedTime"
             }
         }
 

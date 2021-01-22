@@ -68,16 +68,15 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private val requiredPermissionsDelegate = RequiredPermissionsDelegate()
     private val requisiteJobs = lifecycleScope.launchWhenCreated {
         // onCreate: check location permissions -> check location service availability -> allow user to use this screen
-        if (!requiredPermissionsDelegate.requestPermissions(
-                locationPermissions,
-                RC_LOCATION_PERMISSIONS,
-                this@RouteTrackingActivity
-            )
-            || !checkLocationServiceDelegate.checkLocationServiceAvailability(
-                this@RouteTrackingActivity,
-                RC_LOCATION_SERVICE
-            )
-        ) {
+        val missingRequiredPermission = !requiredPermissionsDelegate.requestPermissions(
+            locationPermissions,
+            RC_LOCATION_PERMISSIONS,
+            this@RouteTrackingActivity
+        ) || !checkLocationServiceDelegate.checkLocationServiceAvailability(
+            this@RouteTrackingActivity,
+            RC_LOCATION_SERVICE
+        )
+        if (missingRequiredPermission) {
             finish()
         }
 

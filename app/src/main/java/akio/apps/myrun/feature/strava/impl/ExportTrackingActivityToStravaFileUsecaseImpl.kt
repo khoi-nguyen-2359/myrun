@@ -127,7 +127,8 @@ class ExportTrackingActivityToStravaFileUsecaseImpl @Inject constructor(
                                                 }
                                                 .build()
                                         }
-                                    ))
+                                    )
+                                )
                         )
                 )
             )

@@ -28,4 +28,3 @@ class FirestoreUserProfileEntity(
     @JvmField @PropertyName("weight")
     var weight: Float? = null
 )
-

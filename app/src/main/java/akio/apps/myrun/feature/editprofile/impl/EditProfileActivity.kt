@@ -32,8 +32,10 @@ import com.google.firebase.auth.PhoneAuthCredential
 import java.io.File
 import java.text.DecimalFormat
 
-class EditProfileActivity : AppCompatActivity(R.layout.activity_edit_profile),
-    PhotoSelectionDelegate.EventListener, OtpDialogFragment.EventListener {
+class EditProfileActivity :
+    AppCompatActivity(R.layout.activity_edit_profile),
+    PhotoSelectionDelegate.EventListener,
+    OtpDialogFragment.EventListener {
 
     private var croppedPhotoFile: File? = null
     private val photoSelectionDelegate = PhotoSelectionDelegate(
