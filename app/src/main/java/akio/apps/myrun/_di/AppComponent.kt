@@ -1,11 +1,14 @@
 package akio.apps.myrun._di
 
 import akio.apps.myrun.MyRunApp
+import akio.apps.myrun.data._base.FirebaseDataModule
+import akio.apps.myrun.data._base.NetworkModule
 import akio.apps.myrun.data.activity._di.ActivityDataModule
 import akio.apps.myrun.data.activityfile._di.ActivityFileDataModule
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
 import akio.apps.myrun.data.fitness._di.FitnessDataModule
+import akio.apps.myrun.data.googlemap.GoogleMapApiModule
 import akio.apps.myrun.data.location._di.LocationDataModule
 import akio.apps.myrun.data.place._di.PlaceDataModule
 import akio.apps.myrun.data.recentplace._di.RecentPlaceDataModule
@@ -55,7 +58,8 @@ import javax.inject.Singleton
         UserProfileDataModule::class,
         ExternalAppDataModule::class,
         FitnessDataModule::class,
-        ActivityFileDataModule::class
+        ActivityFileDataModule::class,
+        FirebaseDataModule::class
     ]
 )
 interface AppComponent : AndroidInjector<MyRunApp> {
