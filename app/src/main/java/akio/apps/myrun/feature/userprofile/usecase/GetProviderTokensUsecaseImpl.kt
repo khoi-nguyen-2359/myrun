@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.userprofile.usecase
 
-import akio.apps._base.data.Resource
+import akio.apps.myrun.data._base.Resource
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
