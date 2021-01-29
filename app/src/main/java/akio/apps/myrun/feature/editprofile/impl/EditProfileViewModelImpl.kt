@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.editprofile.impl
 
-import akio.apps._base.data.Resource
+import akio.apps.myrun.data._base.Resource
 import akio.apps._base.lifecycle.Event
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import akio.apps.myrun.data.userprofile.model.UserProfile
