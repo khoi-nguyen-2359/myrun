@@ -5,8 +5,9 @@ import akio.apps.myrun._di.AppComponent
 import akio.apps.myrun._di.DaggerAppComponent
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
+import akio.apps.myrun.domain.strava.SyncStravaTokenUsecase
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
-import akio.apps.myrun.feature.strava.InitializeStravaUploadWorkerDelegate
+import akio.apps.myrun.feature.strava.RescheduleStravaUploadWorkerDelegate
 import android.app.Application
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -35,7 +36,10 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
     lateinit var routeTrackingState: RouteTrackingState
 
     @Inject
-    lateinit var initializeStravaUploadWorkerDelegate: InitializeStravaUploadWorkerDelegate
+    lateinit var rescheduleStravaUploadWorkerDelegate: RescheduleStravaUploadWorkerDelegate
+
+    @Inject
+    lateinit var syncStravaTokenUsecase: SyncStravaTokenUsecase
 
     lateinit var appComponent: AppComponent
     private set
@@ -59,16 +63,15 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
 
         initPlacesSdk()
 
-        mayEnqueueStravaUploadWorker()
+        syncStravaTokenAndRescheduleStravaUploadWorker()
+    }
+
+    private fun syncStravaTokenAndRescheduleStravaUploadWorker() = ioScope.launch {
+        syncStravaTokenUsecase.syncStravaToken()
+        rescheduleStravaUploadWorkerDelegate.rescheduleWorker()
     }
 
     override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
-
-    private fun mayEnqueueStravaUploadWorker() {
-        ioScope.launch {
-            initializeStravaUploadWorkerDelegate.mayInitializeWorker()
-        }
-    }
 
     private fun initPlacesSdk() {
         val apiKey = getString(R.string.google_maps_sdk_key)

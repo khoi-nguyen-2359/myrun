@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.editprofile.impl
 
 import akio.apps.MockAsynchronousTest
-import akio.apps.myrun.data._base.Resource
+import akio.apps._base.Resource
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
@@ -9,7 +9,6 @@ import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.feature.editprofile.EditProfileViewModel
 import akio.apps.myrun.feature.editprofile.UpdateUserProfileUsecase
 import akio.apps.myrun.feature.editprofile.UserPhoneNumberDelegate
-import akio.apps.myrun.feature.userprofile.GetUserProfileUsecase
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest

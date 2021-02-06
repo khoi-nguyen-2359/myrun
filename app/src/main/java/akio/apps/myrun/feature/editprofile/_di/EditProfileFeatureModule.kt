@@ -16,7 +16,6 @@ import dagger.multibindings.IntoMap
 @Module
 interface EditProfileFeatureModule {
     @ContributesAndroidInjector(modules = [
-        EditProfileDomainModule::class,
         Bindings::class,
         ViewModelFactoryModule::class
     ])

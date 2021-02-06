@@ -1,0 +1,29 @@
+package akio.apps.myrun.feature.usertimeline.impl
+
+import akio.apps._base.Resource
+import akio.apps.myrun.domain.usertimeline.GetUserTimelineActivitiesUsecase
+import akio.apps.myrun.feature.usertimeline.model.Activity
+import akio.apps.myrun.feature.usertimeline.model.ActivityEntityMapper
+import androidx.paging.PagingSource
+import javax.inject.Inject
+
+class ActivityPagingSource @Inject constructor(
+    private val getUserTimelineActivitiesUsecase: GetUserTimelineActivitiesUsecase,
+    private val activityEntityMapper: ActivityEntityMapper,
+) : PagingSource<Long, Activity>() {
+    override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Activity> {
+        val startAfter = params.key ?: System.currentTimeMillis()
+        val resource =
+            getUserTimelineActivitiesUsecase.getUserTimelineActivity(startAfter, params.loadSize)
+        return when (resource) {
+            is Resource.Success ->
+                LoadResult.Page(
+                    data = resource.data.map(activityEntityMapper::map),
+                    prevKey = null,
+                    nextKey = resource.data.lastOrNull()?.startTime
+                )
+            is Resource.Error -> LoadResult.Error(resource.exception)
+            else -> LoadResult.Error(Exception("Invalid timeline resource"))
+        }
+    }
+}

@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.activity
 
+import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.fitness.SingleDataPoint
 import akio.apps.myrun.data.location.LocationEntity
 import android.graphics.Bitmap
@@ -9,10 +10,10 @@ interface ActivityRepository {
         userIds: List<String>,
         startAfterTime: Long,
         limit: Int
-    ): List<ActivityEntity>
+    ): List<ActivityModel>
 
     suspend fun saveActivity(
-        activity: ActivityEntity,
+        activity: ActivityModel,
         routeMapImage: Bitmap,
         speedDataPoints: List<SingleDataPoint<Float>>,
         stepCadenceDataPoints: List<SingleDataPoint<Int>>?,

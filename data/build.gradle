@@ -36,17 +36,16 @@ android {
 
 dependencies {
     implementation project(":domain")
-    
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}"
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    implementation "com.squareup.okhttp3:okhttp:$Versions.okhttp"
-    implementation "com.squareup.okhttp3:logging-interceptor:$Versions.okhttp"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$Versions.kotlin"
+    testImplementation "junit:junit:$Versions.junit"
+    androidTestImplementation "androidx.test.ext:junit:$Versions.androidXJunit"
+
+    api "com.squareup.okhttp3:okhttp:$Versions.okhttp"
+    api "com.squareup.okhttp3:logging-interceptor:$Versions.okhttp"
 
     api "com.squareup.retrofit2:retrofit:$Versions.retrofit"
-    implementation "com.squareup.retrofit2:converter-gson:$Versions.retrofit"
+    api "com.squareup.retrofit2:converter-gson:$Versions.retrofit"
 
     implementation "com.google.dagger:dagger:$Versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$Versions.dagger"
@@ -58,8 +57,6 @@ dependencies {
     implementation platform("com.google.firebase:firebase-bom:$Versions.firebaseBom")
     api 'com.google.firebase:firebase-auth-ktx'
     api 'com.google.firebase:firebase-firestore-ktx'
-    api 'com.google.firebase:firebase-crashlytics-ktx'
-    api 'com.google.firebase:firebase-analytics-ktx'
     api 'com.google.firebase:firebase-storage-ktx'
 
     api "androidx.room:room-runtime:$Versions.room"

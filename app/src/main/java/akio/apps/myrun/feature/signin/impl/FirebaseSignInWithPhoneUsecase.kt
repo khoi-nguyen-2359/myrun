@@ -1,5 +1,7 @@
 package akio.apps.myrun.feature.signin.impl
 
+import akio.apps.myrun.data.authentication.model.SignInMethod
+import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import kotlinx.coroutines.tasks.await

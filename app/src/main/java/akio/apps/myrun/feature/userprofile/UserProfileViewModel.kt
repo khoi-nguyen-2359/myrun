@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.userprofile
 
-import akio.apps.myrun.data._base.Resource
+import akio.apps._base.Resource
 import akio.apps._base.viewmodel.BaseViewModel
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.ExternalProviders

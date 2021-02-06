@@ -37,10 +37,9 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}"
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$Versions.kotlin"
+    testImplementation "junit:junit:$Versions.junit"
+    androidTestImplementation "androidx.test.ext:junit:$Versions.androidXJunit"
 
     implementation "com.google.maps.android:android-maps-utils:$Versions.androidMapUtils"
     implementation "com.google.android.gms:play-services-maps:$Versions.playServicesMap"
@@ -50,11 +49,8 @@ dependencies {
     implementation "com.sweetzpot.tcxzpot:lib:$Versions.tcxzPot"
 
     implementation "com.google.dagger:dagger:$Versions.dagger"
-    kapt "com.google.dagger:dagger-compiler:$Versions.dagger"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$Versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$Versions.coroutines"
-
-    implementation "androidx.paging:paging-runtime-ktx:$Versions.paging"
 }
