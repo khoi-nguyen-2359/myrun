@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.authentication
 
-import akio.apps.myrun.data.authentication.impl.UserAccount
+import akio.apps.myrun.data.authentication.model.UserAccount
 import kotlinx.coroutines.flow.Flow
 
 interface UserAuthenticationState {

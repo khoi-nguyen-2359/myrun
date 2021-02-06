@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.userprofile.impl
 
-import akio.apps.myrun.data._base.Resource
+import akio.apps._base.Resource
 import akio.apps._base.lifecycle.viewLifecycleScope
 import akio.apps._base.ui.SingleFragmentActivity
 import akio.apps.myrun.R

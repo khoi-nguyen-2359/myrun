@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.signin
 
 import akio.apps._base.lifecycle.Event
 import akio.apps._base.viewmodel.BaseViewModel
-import akio.apps.myrun.feature.signin.impl.SignInSuccessResult
+import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import androidx.lifecycle.LiveData
 import com.google.firebase.auth.PhoneAuthCredential
 

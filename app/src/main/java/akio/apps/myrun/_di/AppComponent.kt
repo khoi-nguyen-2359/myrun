@@ -7,16 +7,11 @@ import akio.apps.myrun.data.authentication._di.AuthenticationDataModule
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
 import akio.apps.myrun.data.googlemap.GoogleMapApiModule
 import akio.apps.myrun.data.routetracking._di.RouteTrackingDataModule
-import akio.apps.myrun.data.userprofile._di.UserProfileDataModule
 import akio.apps.myrun.feature.editprofile._di.EditProfileFeatureModule
-import akio.apps.myrun.feature.recentplace._di.RecentPlaceDomainModule
-import akio.apps.myrun.feature.routetracking._di.RouteTrackingDomainModule
 import akio.apps.myrun.feature.routetracking._di.RouteTrackingFeatureModule
 import akio.apps.myrun.feature.signin._di.SignInFeatureModule
 import akio.apps.myrun.feature.splash._di.SplashFeatureModule
-import akio.apps.myrun.feature.strava._di.StravaDomainModule
 import akio.apps.myrun.feature.strava._di.StravaFeatureModule
-import akio.apps.myrun.feature.userprofile._di.UserProfileDomainModule
 import akio.apps.myrun.feature.userprofile._di.UserProfileFeatureModule
 import akio.apps.myrun.feature.usertimeline._di.UserTimelineFeatureModule
 import dagger.BindsInstance

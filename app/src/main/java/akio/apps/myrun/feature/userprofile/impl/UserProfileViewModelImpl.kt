@@ -1,18 +1,14 @@
 package akio.apps.myrun.feature.userprofile.impl
 
-import akio.apps.myrun.data._base.Resource
+import akio.apps._base.Resource
 import akio.apps._base.lifecycle.Event
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.ProviderToken
 import akio.apps.myrun.data.externalapp.model.RunningApp
 import akio.apps.myrun.data.userprofile.model.UserProfile
+import akio.apps.myrun.domain.userprofile.*
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
-import akio.apps.myrun.feature.userprofile.DeauthorizeStravaUsecase
-import akio.apps.myrun.feature.userprofile.GetProviderTokensUsecase
-import akio.apps.myrun.feature.userprofile.GetUserProfileUsecase
-import akio.apps.myrun.feature.userprofile.LogoutUsecase
-import akio.apps.myrun.feature.userprofile.RemoveStravaTokenUsecase
-import akio.apps.myrun.feature.userprofile.UserProfileViewModel
+import akio.apps.myrun.feature.userprofile.*
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -39,7 +35,9 @@ class UserProfileViewModelImpl @Inject constructor(
     private val liveUserProfileResource = getUserProfileUsecase.getUserProfileFlow()
         .asLiveData(timeoutInMs = 0)
 
-    private val liveProviders = getProviderTokensUsecase.getProviderTokens()
+    private val liveProviders = getProviderTokensUsecase.getProviderTokensFlow()
+        .asLiveData(timeoutInMs = 0)
+
     override fun getProvidersAlive() = liveProviders
 
     private val userProfileResourceObserver = Observer<Resource<UserProfile>> {

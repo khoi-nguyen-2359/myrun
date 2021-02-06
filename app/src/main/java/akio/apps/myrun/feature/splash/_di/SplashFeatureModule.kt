@@ -6,8 +6,6 @@ import akio.apps.myrun.data.authentication._di.AuthenticationDataModule
 import akio.apps.myrun.feature.splash.SplashViewModel
 import akio.apps.myrun.feature.splash.impl.SplashActivity
 import akio.apps.myrun.feature.splash.impl.SplashViewModelImpl
-import akio.apps.myrun.feature.strava.LinkStravaViewModel
-import akio.apps.myrun.feature.strava.impl.LinkStravaViewModelImpl
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module

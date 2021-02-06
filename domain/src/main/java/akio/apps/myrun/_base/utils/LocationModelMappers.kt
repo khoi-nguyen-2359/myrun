@@ -2,7 +2,7 @@ package akio.apps.myrun._base.utils
 
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
-import akio.apps.myrun.feature.routetracking.model.LatLng
+import akio.apps.myrun.data.routetracking.model.LatLng
 import android.location.Location
 
 typealias GmsLatLng = com.google.android.gms.maps.model.LatLng

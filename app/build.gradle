@@ -94,6 +94,10 @@ dependencies {
 
     implementation "com.google.maps.android:android-maps-utils:$Versions.androidMapUtils"
 
+    implementation platform("com.google.firebase:firebase-bom:$Versions.firebaseBom")
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$Versions.lifecycle"
     implementation "androidx.lifecycle:lifecycle-extensions:$Versions.lifecycle"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$Versions.lifecycle"
@@ -111,7 +115,6 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$Versions.coroutinesTest"
     testImplementation "androidx.arch.core:core-testing:$Versions.androidXCoreTesting"
     testImplementation "org.mockito:mockito-core:$Versions.mockitoCore"
-
     kaptAndroidTest "com.google.dagger:dagger-compiler:$Versions.dagger"
     androidTestImplementation "org.mockito:mockito-android:$Versions.mockitoAndroid"
     androidTestImplementation "androidx.test:runner:$Versions.androidXTestRunner"

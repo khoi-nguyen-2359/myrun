@@ -10,7 +10,7 @@ import akio.apps.myrun._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun._di.createViewModelInjectionDelegate
-import akio.apps.myrun.data.activity.ActivityType
+import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding

@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.activity.impl
 
-import akio.apps.myrun.data.activity.ActivityEntity
+import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.entity.FirestoreActivity
 import akio.apps.myrun.data.activity.entity.FirestoreActivityMapper
@@ -42,7 +42,7 @@ class ActivityRepositoryImpl @Inject constructor(
         userIds: List<String>,
         startAfterTime: Long,
         limit: Int
-    ): List<ActivityEntity> = withContext(Dispatchers.IO) {
+    ): List<ActivityModel> = withContext(Dispatchers.IO) {
         val query = userActivitiesCollectionGroup.whereIn("userId", userIds)
             .orderBy("startTime", Query.Direction.DESCENDING)
             .startAfter(startAfterTime)
@@ -60,7 +60,7 @@ class ActivityRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveActivity(
-        activity: ActivityEntity,
+        activity: ActivityModel,
         routeMapImage: Bitmap,
         speedDataPoints: List<SingleDataPoint<Float>>,
         stepCadenceDataPoints: List<SingleDataPoint<Int>>?,

@@ -1,13 +1,13 @@
 package akio.apps.myrun.feature.editprofile.impl
 
-import akio.apps.myrun.data._base.Resource
+import akio.apps._base.Resource
 import akio.apps._base.lifecycle.Event
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import akio.apps.myrun.data.userprofile.model.UserProfile
+import akio.apps.myrun.domain.editprofile.UpdateUserProfileUsecase
+import akio.apps.myrun.domain.userprofile.GetUserProfileUsecase
 import akio.apps.myrun.feature.editprofile.EditProfileViewModel
-import akio.apps.myrun.feature.editprofile.UpdateUserProfileUsecase
 import akio.apps.myrun.feature.editprofile.UserPhoneNumberDelegate
-import akio.apps.myrun.feature.userprofile.GetUserProfileUsecase
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
