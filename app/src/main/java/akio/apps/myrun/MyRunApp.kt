@@ -6,7 +6,7 @@ import akio.apps.myrun._di.DaggerAppComponent
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
-import akio.apps.myrun.feature.strava.InitializeStravaUploadWorkerUsecase
+import akio.apps.myrun.feature.strava.InitializeStravaUploadWorkerDelegate
 import android.app.Application
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -35,11 +35,10 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
     lateinit var routeTrackingState: RouteTrackingState
 
     @Inject
-    lateinit var initializeStravaUploadWorkerUsecase: InitializeStravaUploadWorkerUsecase
+    lateinit var initializeStravaUploadWorkerDelegate: InitializeStravaUploadWorkerDelegate
 
-    private lateinit var appComponent: AppComponent
-
-    override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
+    lateinit var appComponent: AppComponent
+    private set
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         Timber.e(exception)
@@ -63,9 +62,11 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
         mayEnqueueStravaUploadWorker()
     }
 
+    override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
+
     private fun mayEnqueueStravaUploadWorker() {
         ioScope.launch {
-            initializeStravaUploadWorkerUsecase.mayInitializeWorker()
+            initializeStravaUploadWorkerDelegate.mayInitializeWorker()
         }
     }
 

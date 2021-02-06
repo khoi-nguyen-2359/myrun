@@ -13,26 +13,30 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module(includes = [RouteTrackingDataModule.Bindings::class])
-class RouteTrackingDataModule {
-
-    @Provides
-    @Singleton
-    fun routeTrackingDatabase(application: Context): RouteTrackingDatabase =
-        Room.databaseBuilder(application, RouteTrackingDatabase::class.java, "route_tracking_db")
-            .build()
-
-    @Provides
-    fun routeTrackingLocationDao(database: RouteTrackingDatabase): RouteTrackingLocationDao =
-        database.trackingLocationDao()
+@Module(includes = [RouteTrackingDataModule.Providers::class])
+interface RouteTrackingDataModule {
 
     @Module
-    interface Bindings {
-        @Binds
-        fun routeTrackingLocationRepo(repositoryImpl: RouteTrackingLocationRepositoryImpl): RouteTrackingLocationRepository
-
-        @Binds
+    class Providers {
+        @Provides
         @Singleton
-        fun routeTrackingState(routeTrackingStateImpl: RouteTrackingStateImpl): RouteTrackingState
+        fun routeTrackingDatabase(application: Context): RouteTrackingDatabase =
+            Room.databaseBuilder(
+                application,
+                RouteTrackingDatabase::class.java,
+                "route_tracking_db"
+            )
+                .build()
+
+        @Provides
+        fun routeTrackingLocationDao(database: RouteTrackingDatabase): RouteTrackingLocationDao =
+            database.trackingLocationDao()
     }
+
+    @Binds
+    fun routeTrackingLocationRepo(repositoryImpl: RouteTrackingLocationRepositoryImpl): RouteTrackingLocationRepository
+
+    @Binds
+    @Singleton
+    fun routeTrackingState(routeTrackingStateImpl: RouteTrackingStateImpl): RouteTrackingState
 }

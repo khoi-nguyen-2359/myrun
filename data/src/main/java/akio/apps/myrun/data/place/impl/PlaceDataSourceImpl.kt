@@ -1,9 +1,9 @@
 package akio.apps.myrun.data.place.impl
 
-import akio.apps.myrun.data.location.LatLngEntity
-import akio.apps.myrun.data.place.PlaceAddressComponent
+import akio.apps.myrun.data.place.LatLngEntity
 import akio.apps.myrun.data.place.PlaceDataSource
 import akio.apps.myrun.data.place.PlaceEntity
+import akio.apps.myrun.data.place.entity.PlaceAddressComponent
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Address

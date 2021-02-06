@@ -1,13 +1,13 @@
 package akio.apps.myrun.feature.splash._di
 
+import akio.apps._base.di.ViewModelFactoryModule
 import akio.apps._base.di.ViewModelKey
-import akio.apps.myrun.feature.splash.SignInAnonymousUsecase
-import akio.apps.myrun.feature.splash.SignOutAnonymousUserUsecase
+import akio.apps.myrun.data.authentication._di.AuthenticationDataModule
 import akio.apps.myrun.feature.splash.SplashViewModel
 import akio.apps.myrun.feature.splash.impl.SplashActivity
 import akio.apps.myrun.feature.splash.impl.SplashViewModelImpl
-import akio.apps.myrun.feature.splash.usecase.SignInAnonymousUsecaseImpl
-import akio.apps.myrun.feature.splash.usecase.SignOutAnonymousUserUsecaseImpl
+import akio.apps.myrun.feature.strava.LinkStravaViewModel
+import akio.apps.myrun.feature.strava.impl.LinkStravaViewModelImpl
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
@@ -16,18 +16,18 @@ import dagger.multibindings.IntoMap
 
 @Module
 interface SplashFeatureModule {
-
-    @ContributesAndroidInjector
+    @ContributesAndroidInjector(modules = [
+        AuthenticationDataModule::class,
+        ViewModelFactoryModule::class,
+        Bindings::class
+    ])
     fun splashActivity(): SplashActivity
 
-    @Binds
-    @IntoMap
-    @ViewModelKey(SplashViewModel::class)
-    fun splashViewModel(splashViewModelImpl: SplashViewModelImpl): ViewModel
-
-    @Binds
-    fun signInAnonymousUsecase(usecaseImpl: SignInAnonymousUsecaseImpl): SignInAnonymousUsecase
-
-    @Binds
-    fun signOutAnonymousUsecase(usecaseImpl: SignOutAnonymousUserUsecaseImpl): SignOutAnonymousUserUsecase
+    @Module
+    interface Bindings {
+        @Binds
+        @IntoMap
+        @ViewModelKey(SplashViewModel::class)
+        fun linkStravaViewModel(viewModelImpl: SplashViewModelImpl): ViewModel
+    }
 }

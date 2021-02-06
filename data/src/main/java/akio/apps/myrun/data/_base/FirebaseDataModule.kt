@@ -6,13 +6,17 @@ import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 
-@Module
-object FirebaseDataModule {
-    @Provides
-    @JvmStatic
-    fun firebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+@Module(includes = [FirebaseDataModule.Providers::class])
+class FirebaseDataModule {
+    @Module
+    class Providers {
+        @Provides
+        fun firebaseFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    @Provides
-    @JvmStatic
-    fun firebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
+        @Provides
+        fun firebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
+
+        @Provides
+        fun firebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+    }
 }
