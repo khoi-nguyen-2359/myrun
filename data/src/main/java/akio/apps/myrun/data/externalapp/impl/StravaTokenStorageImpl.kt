@@ -1,8 +1,9 @@
 package akio.apps.myrun.data.externalapp.impl
 
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
-import akio.apps.myrun.data.externalapp.entity.StravaAthlete
+import akio.apps.myrun.data.externalapp.entity.StravaAthleteEntity
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
+import akio.apps.myrun.data.externalapp.model.StravaAthlete
 import android.content.Context
 import androidx.datastore.DataStore
 import androidx.datastore.preferences.Preferences

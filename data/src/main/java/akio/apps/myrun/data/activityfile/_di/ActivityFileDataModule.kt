@@ -10,21 +10,21 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 
-@Module(includes = [ActivityFileDataModule.Bindings::class])
-class ActivityFileDataModule {
-    @Provides
-    @Singleton
-    fun activityFileDatabase(application: Context): ActivityFileTrackingDatabase =
-        Room.databaseBuilder(
-            application,
-            ActivityFileTrackingDatabase::class.java,
-            "activity_file_tracking_db"
-        )
-            .build()
+@Module(includes = [ActivityFileDataModule.Providers::class])
+interface ActivityFileDataModule {
+    @Binds
+    fun activityFileTrackingRepo(repositoryImpl: ActivityFileTrackingRepositoryImpl): ActivityFileTrackingRepository
 
     @Module
-    interface Bindings {
-        @Binds
-        fun activityFileTrackingRepo(repositoryImpl: ActivityFileTrackingRepositoryImpl): ActivityFileTrackingRepository
+    class Providers {
+        @Provides
+        @Singleton
+        fun activityFileDatabase(application: Context): ActivityFileTrackingDatabase =
+            Room.databaseBuilder(
+                application,
+                ActivityFileTrackingDatabase::class.java,
+                "activity_file_tracking_db"
+            )
+                .build()
     }
 }

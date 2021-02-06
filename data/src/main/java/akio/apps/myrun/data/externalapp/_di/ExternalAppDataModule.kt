@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.externalapp._di
 
+import akio.apps.myrun.data._base.FirebaseDataModule
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.StravaAuthenticator
 import akio.apps.myrun.data.externalapp.StravaDataRepository
@@ -20,45 +21,45 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
 
-@Module(includes = [ExternalAppDataModule.Bindings::class])
-class ExternalAppDataModule {
+@Module(includes = [ExternalAppDataModule.Providers::class, FirebaseDataModule::class])
+interface ExternalAppDataModule {
+    @Binds
+    fun externalAppCredentialsRepo(repo: ExternalAppProvidersRepositoryImpl): ExternalAppProvidersRepository
+
+    @Binds
+    fun stravaTokenStorage(storageImpl: StravaTokenStorageImpl): StravaTokenStorage
+
+    @Binds
+    fun stravaTokenRepository(repositoryImpl: StravaTokenRepositoryImpl): StravaTokenRepository
+
+    @Binds
+    fun stravaDataRepository(repositoryImpl: StravaDataRepositoryImpl): StravaDataRepository
+
     @Module
-    interface Bindings {
-        @Binds
-        fun externalAppCredentialsRepo(repo: ExternalAppProvidersRepositoryImpl): ExternalAppProvidersRepository
+    class Providers {
+        @Provides
+        @Named(NAME_STRAVA_GSON)
+        fun stravaGson(): Gson = Gson()
 
-        @Binds
-        fun stravaTokenStorage(storageImpl: StravaTokenStorageImpl): StravaTokenStorage
+        @Provides
+        @Singleton
+        fun stravaApiService(
+            okHttpClientBuilder: OkHttpClient.Builder,
+            stravaAuthenticatorImpl: StravaAuthenticator,
+            @Named(NAME_STRAVA_GSON) gson: Gson
+        ): StravaApi {
+            okHttpClientBuilder.authenticator(stravaAuthenticatorImpl)
 
-        @Binds
-        fun stravaTokenRepository(repositoryImpl: StravaTokenRepositoryImpl): StravaTokenRepository
+            val okHttpClient = okHttpClientBuilder.build()
 
-        @Binds
-        fun stravaDataRepository(repositoryImpl: StravaDataRepositoryImpl): StravaDataRepository
-    }
+            val retrofit = Retrofit.Builder()
+                .client(okHttpClient)
+                .baseUrl(STRAVA_BASE_ENDPOINT)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build()
 
-    @Provides
-    @Named(NAME_STRAVA_GSON)
-    fun stravaGson(): Gson = Gson()
-
-    @Provides
-    @Singleton
-    fun stravaApiService(
-        okHttpClientBuilder: OkHttpClient.Builder,
-        stravaAuthenticatorImpl: StravaAuthenticator,
-        @Named(NAME_STRAVA_GSON) gson: Gson
-    ): StravaApi {
-        okHttpClientBuilder.authenticator(stravaAuthenticatorImpl)
-
-        val okHttpClient = okHttpClientBuilder.build()
-
-        val retrofit = Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(STRAVA_BASE_ENDPOINT)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-
-        return retrofit.create(StravaApi::class.java)
+            return retrofit.create(StravaApi::class.java)
+        }
     }
 
     companion object {

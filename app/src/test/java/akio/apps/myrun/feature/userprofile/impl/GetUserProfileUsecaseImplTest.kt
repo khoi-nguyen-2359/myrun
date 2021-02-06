@@ -11,7 +11,6 @@ import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.feature.userprofile.GetUserProfileUsecase
 import akio.apps.myrun.feature.userprofile.usecase.GetUserProfileUsecaseImpl
 import junit.framework.Assert.assertEquals
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before

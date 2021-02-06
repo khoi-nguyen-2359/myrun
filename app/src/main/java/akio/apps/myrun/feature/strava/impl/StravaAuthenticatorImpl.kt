@@ -3,6 +3,8 @@ package akio.apps.myrun.feature.strava.impl
 import akio.apps.myrun.data.externalapp.StravaAuthenticator
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntity
+import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntityMapper
+import akio.apps.myrun.data.externalapp.mapper.StravaTokenEntityMapper
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.feature.editprofile.UpdateStravaTokenUsecase
 import akio.apps.myrun.feature.userprofile.RemoveStravaTokenUsecase
@@ -21,6 +23,7 @@ class StravaAuthenticatorImpl(
     private val updateStravaTokenUsecase: UpdateStravaTokenUsecase,
     private val removeStravaTokenUsecase: RemoveStravaTokenUsecase,
     private val stravaTokenStorage: StravaTokenStorage,
+    private val stravaTokenRefreshEntityMapper: StravaTokenRefreshEntityMapper,
     private val baseStravaUrl: String,
     private val gson: Gson,
     private val clientId: String,
@@ -63,8 +66,9 @@ class StravaAuthenticatorImpl(
             .execute()
         if (refreshResponse.isSuccessful && refreshResponse.code == 200) {
             val stringResponse = refreshResponse.body?.string()
-            val refreshToken = gson.fromJson(stringResponse, StravaTokenRefreshEntity::class.java)
-            val newAccessToken = refreshToken.accessToken
+            val tokenRefreshEntity = gson.fromJson(stringResponse, StravaTokenRefreshEntity::class.java)
+            val newAccessToken = tokenRefreshEntity.accessToken
+            val refreshToken = stravaTokenRefreshEntityMapper.map(tokenRefreshEntity)
             val newToken = ExternalAppToken.StravaToken(refreshToken, originalToken.athlete)
 
             runBlocking { updateStravaTokenUsecase.updateStravaToken(newToken) }
