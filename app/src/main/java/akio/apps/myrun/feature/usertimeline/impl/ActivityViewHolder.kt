@@ -4,9 +4,9 @@ import akio.apps._base.ui.getResources
 import akio.apps._base.ui.getString
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.circleCenterCrop
-import akio.apps.myrun.data.activity.ActivityType
+import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.databinding.ItemUserTimelineActivityBinding
-import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
+import akio.apps.myrun.feature.routetracking.impl.RouteTrackingStats
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide

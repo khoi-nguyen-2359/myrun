@@ -7,7 +7,7 @@ import akio.apps.myrun._di.createViewModelInjectionDelegate
 import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
 import akio.apps.myrun.feature.home.impl.HomeActivity
 import akio.apps.myrun.feature.signin.impl.SignInActivity
-import akio.apps.myrun.feature.signin.impl.SignInSuccessResult
+import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import akio.apps.myrun.feature.splash.SplashViewModel
 import android.content.Context
 import android.content.Intent

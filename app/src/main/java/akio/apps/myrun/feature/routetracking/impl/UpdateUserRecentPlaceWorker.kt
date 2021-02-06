@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun._di.androidInjector
-import akio.apps.myrun.feature.recentplace.UpdateUserRecentPlaceUsecase
+import akio.apps.myrun.domain.recentplace.UpdateUserRecentPlaceUsecase
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters

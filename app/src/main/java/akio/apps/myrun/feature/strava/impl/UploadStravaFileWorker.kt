@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.strava.impl
 
 import akio.apps.myrun._di.androidInjector
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
-import akio.apps.myrun.feature.strava.UploadActivityFilesToStravaUsecase
+import akio.apps.myrun.domain.strava.UploadActivityFilesToStravaUsecase
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker

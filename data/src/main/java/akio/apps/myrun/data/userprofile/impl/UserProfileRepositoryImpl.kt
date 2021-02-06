@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.userprofile.impl
 
-import akio.apps.myrun.data._base.Resource
+import akio.apps._base.Resource
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.data.userprofile.entity.FirestoreUserEntity
 import akio.apps.myrun.data.userprofile.entity.FirestoreUserProfileUpdateMapEntity

@@ -1,15 +1,15 @@
 package akio.apps.myrun.data.activity.entity
 
-import akio.apps.myrun.data.activity.ActivityDataEntity
-import akio.apps.myrun.data.activity.ActivityEntity
-import akio.apps.myrun.data.activity.ActivityType
-import akio.apps.myrun.data.activity.CyclingActivityEntity
-import akio.apps.myrun.data.activity.RunningActivityEntity
+import akio.apps.myrun.data.activity.model.ActivityDataModel
+import akio.apps.myrun.data.activity.model.ActivityModel
+import akio.apps.myrun.data.activity.model.ActivityType
+import akio.apps.myrun.data.activity.model.CyclingActivityModel
+import akio.apps.myrun.data.activity.model.RunningActivityModel
 import android.net.Uri
 import javax.inject.Inject
 
 class FirestoreActivityMapper @Inject constructor() {
-    fun map(input: FirestoreActivity): ActivityEntity {
+    fun map(input: FirestoreActivity): ActivityModel {
         val activityType = when (input.activityType) {
             FirestoreActivityType.Running -> ActivityType.Running
             FirestoreActivityType.Cycling -> ActivityType.Cycling
@@ -17,7 +17,7 @@ class FirestoreActivityMapper @Inject constructor() {
         }
 
         val activityData = input.run {
-            ActivityDataEntity(
+            ActivityDataModel(
                 id,
                 userId,
                 userName,
@@ -35,19 +35,19 @@ class FirestoreActivityMapper @Inject constructor() {
 
         return input.run {
             runningData?.run {
-                RunningActivityEntity(activityData = activityData, pace = pace)
+                RunningActivityModel(activityData = activityData, pace = pace)
             } ?: cyclingData?.run {
-                CyclingActivityEntity(activityData = activityData, speed = speed)
+                CyclingActivityModel(activityData = activityData, speed = speed)
             }
         }
             ?: throw IllegalArgumentException("Got invalid activity type while parsing")
     }
 
-    fun mapRev(input: ActivityEntity, createdId: String, uploadedUri: Uri): FirestoreActivity {
-        val runData: FirestoreRunningData? = (input as? RunningActivityEntity)
+    fun mapRev(input: ActivityModel, createdId: String, uploadedUri: Uri): FirestoreActivity {
+        val runData: FirestoreRunningData? = (input as? RunningActivityModel)
             ?.run { FirestoreRunningData(pace) }
 
-        val cyclingData: FirestoreCyclingData? = (input as? CyclingActivityEntity)
+        val cyclingData: FirestoreCyclingData? = (input as? CyclingActivityModel)
             ?.run { FirestoreCyclingData(speed) }
 
         val activityType = when (input.activityType) {

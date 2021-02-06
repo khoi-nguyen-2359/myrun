@@ -12,7 +12,7 @@ import akio.apps.myrun.data.location.LocationRequestEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
-import akio.apps.myrun.feature.routetracking.ClearRouteTrackingStateUsecase
+import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.Notification

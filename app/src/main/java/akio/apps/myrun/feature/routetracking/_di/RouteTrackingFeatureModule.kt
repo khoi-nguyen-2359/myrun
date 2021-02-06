@@ -2,7 +2,6 @@ package akio.apps.myrun.feature.routetracking._di
 
 import akio.apps._base.di.ViewModelFactoryModule
 import akio.apps._base.di.ViewModelKey
-import akio.apps.myrun.data.routetracking._di.RouteTrackingDataModule
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingViewModelImpl
@@ -17,8 +16,7 @@ interface RouteTrackingFeatureModule {
     @ContributesAndroidInjector(
         modules = [
             Bindings::class,
-            ViewModelFactoryModule::class,
-            RouteTrackingDomainModule::class
+            ViewModelFactoryModule::class
         ]
     )
     fun routeTrackingActivity(): RouteTrackingActivity

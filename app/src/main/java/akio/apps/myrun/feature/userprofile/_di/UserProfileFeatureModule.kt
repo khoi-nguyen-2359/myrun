@@ -14,7 +14,6 @@ import dagger.multibindings.IntoMap
 @Module
 interface UserProfileFeatureModule {
     @ContributesAndroidInjector(modules = [
-        UserProfileDomainModule::class,
         ViewModelFactoryModule::class,
         Bindings::class
     ])

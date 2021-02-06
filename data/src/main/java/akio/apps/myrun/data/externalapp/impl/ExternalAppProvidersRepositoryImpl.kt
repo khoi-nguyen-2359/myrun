@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.externalapp.impl
 
-import akio.apps.myrun.data._base.Resource
+import akio.apps._base.Resource
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.entity.FirestoreProvidersEntity
 import akio.apps.myrun.data.externalapp.mapper.FirestoreProvidersMapper

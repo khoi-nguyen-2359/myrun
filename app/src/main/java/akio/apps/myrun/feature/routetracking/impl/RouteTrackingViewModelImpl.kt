@@ -2,22 +2,22 @@ package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps._base.lifecycle.Event
 import akio.apps.myrun._base.utils.flowTimer
-import akio.apps.myrun.data.activity.ActivityType
+import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
-import akio.apps.myrun.feature.routetracking.ClearRouteTrackingStateUsecase
-import akio.apps.myrun.feature.routetracking.GetMapInitialLocationUsecase
-import akio.apps.myrun.feature.routetracking.GetTrackedLocationsUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
-import akio.apps.myrun.feature.routetracking.SaveRouteTrackingActivityUsecase
-import akio.apps.myrun.feature.routetracking.model.LatLng
-import akio.apps.myrun.feature.routetracking.model.RouteTrackingStats
-import akio.apps.myrun.feature.strava.ExportTrackingActivityToStravaFileUsecase
+import akio.apps.myrun.data.routetracking.model.LatLng
+import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
+import akio.apps.myrun.domain.routetracking.GetMapInitialLocationUsecase
+import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
+import akio.apps.myrun.domain.routetracking.SaveRouteTrackingActivityUsecase
+import akio.apps.myrun.domain.strava.ExportTrackingActivityToStravaFileUsecase
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import akio.apps.myrun.feature.usertimeline.model.Activity
+import akio.apps.myrun.feature.usertimeline.model.ActivityEntityMapper
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
@@ -43,7 +43,8 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val saveRouteTrackingActivityUsecase: SaveRouteTrackingActivityUsecase,
     private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase,
     private val stravaTokenStorage: StravaTokenStorage,
-    private val exportActivityToStravaFileUsecase: ExportTrackingActivityToStravaFileUsecase
+    private val exportActivityToStravaFileUsecase: ExportTrackingActivityToStravaFileUsecase,
+    private val activityMapper: ActivityEntityMapper
 ) : RouteTrackingViewModel() {
 
     private val _mapInitialLocation = MutableLiveData<Event<LatLng>>()
@@ -105,9 +106,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
             val activity =
                 saveRouteTrackingActivityUsecase.saveCurrentActivity(activityType, routeMapImage)
             stravaTokenStorage.getToken()
-                ?.let { _ ->
-                    scheduleStravaActivityUpload(activity)
-                }
+                ?.let { _ -> scheduleStravaActivityUpload(activityMapper.map(activity)) }
             routeTrackingState.getStartLocation()
                 ?.let { startLocation ->
                     scheduleUserRecentPlaceUpdate(startLocation)
@@ -119,7 +118,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
     }
 
     private suspend fun scheduleStravaActivityUpload(activity: Activity) {
-        exportActivityToStravaFileUsecase.export(activity, false)
+        exportActivityToStravaFileUsecase.export(activityMapper.mapRev(activity), false)
         UploadStravaFileWorker.enqueueForFinishedActivity(appContext)
     }
 

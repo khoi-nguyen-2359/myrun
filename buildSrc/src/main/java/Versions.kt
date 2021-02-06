@@ -8,7 +8,7 @@ object Versions {
 
     const val androidGradlePlugin = "4.1.2"
     const val googleServices = "4.3.3"
-    const val kotlin = "1.4.21"
+    const val kotlin = "1.4.30"
     const val crashlyticsGradlePlugin = "2.3.0"
     const val playServicesGradlePlugin = "4.3.4"
 
@@ -28,6 +28,7 @@ object Versions {
     const val glide = "4.11.0"
     const val facebookSdk = "[5,6)"
     const val okhttp = "4.7.1"
+    const val gson = "2.8.6"
     const val retrofit = "2.9.0"
     const val tcxzPot = "0.2.0"
 
