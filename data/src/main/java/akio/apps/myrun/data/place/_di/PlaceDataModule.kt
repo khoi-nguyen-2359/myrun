@@ -9,15 +9,15 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 
-@Module(includes = [PlaceDataModule.Bindings::class])
-class PlaceDataModule {
+@Module(includes = [PlaceDataModule.Providers::class])
+interface PlaceDataModule {
 
-    @Provides
-    fun placesClient(appContext: Context): PlacesClient = Places.createClient(appContext)
+    @Binds
+    fun placeDataSource(placeDataSourceImpl: PlaceDataSourceImpl): PlaceDataSource
 
     @Module
-    interface Bindings {
-        @Binds
-        fun placeDataSource(placeDataSourceImpl: PlaceDataSourceImpl): PlaceDataSource
+    class Providers {
+        @Provides
+        fun placesClient(appContext: Context): PlacesClient = Places.createClient(appContext)
     }
 }

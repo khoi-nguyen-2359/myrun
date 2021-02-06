@@ -35,6 +35,8 @@ android {
 }
 
 dependencies {
+    implementation project(":domain")
+    
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}"
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
@@ -46,10 +48,8 @@ dependencies {
     api "com.squareup.retrofit2:retrofit:$Versions.retrofit"
     implementation "com.squareup.retrofit2:converter-gson:$Versions.retrofit"
 
-    implementation "com.google.dagger:dagger-android:$Versions.dagger"
-    implementation "com.google.dagger:dagger-android-support:$Versions.dagger"
+    implementation "com.google.dagger:dagger:$Versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$Versions.dagger"
-    kapt "com.google.dagger:dagger-android-processor:$Versions.dagger"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$Versions.coroutines"
