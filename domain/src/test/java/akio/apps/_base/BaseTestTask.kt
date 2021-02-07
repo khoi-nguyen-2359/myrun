@@ -8,10 +8,10 @@ import com.google.android.gms.tasks.Task
 import java.util.concurrent.Executor
 
 open class BaseTestTask<T>(
-    val mockResult: T? = null,
-    val mockException: Exception? = null,
-    val _isComplete: Boolean = false,
-    val _isSuccessful: Boolean = false
+    private val mockResult: T? = null,
+    private val mockException: Exception? = null,
+    private val _isComplete: Boolean = false,
+    private val _isSuccessful: Boolean = false
 ) : Task<T>() {
     override fun isComplete(): Boolean {
         return _isComplete

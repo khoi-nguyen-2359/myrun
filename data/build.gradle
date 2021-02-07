@@ -38,8 +38,6 @@ dependencies {
     implementation project(":domain")
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$Versions.kotlin"
-    testImplementation "junit:junit:$Versions.junit"
-    androidTestImplementation "androidx.test.ext:junit:$Versions.androidXJunit"
 
     api "com.squareup.okhttp3:okhttp:$Versions.okhttp"
     api "com.squareup.okhttp3:logging-interceptor:$Versions.okhttp"
@@ -76,4 +74,8 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$Versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$Versions.coroutines"
+
+    testImplementation "junit:junit:$Versions.junit"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$Versions.coroutinesTest"
+    androidTestImplementation "androidx.test.ext:junit:$Versions.androidXJunit"
 }
