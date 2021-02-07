@@ -3,16 +3,14 @@ package akio.apps.myrun.feature.editprofile.impl
 import akio.apps._base.error.LoginSessionExpiredError
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps._base.lifecycle.Event
-import akio.apps.myrun.data.userprofile.impl.UserProfileRepositoryImpl.Companion.FIRESTORE_USERS_DOCUMENT
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
-import akio.apps.myrun.domain.editprofile.UpdateUserProfileUsecase
+import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
 import akio.apps.myrun.feature.editprofile.UserPhoneNumberDelegate
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.firestore.DocumentReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

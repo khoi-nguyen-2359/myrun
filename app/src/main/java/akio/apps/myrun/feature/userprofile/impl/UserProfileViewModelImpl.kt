@@ -6,7 +6,10 @@ import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.ProviderToken
 import akio.apps.myrun.data.externalapp.model.RunningApp
 import akio.apps.myrun.data.userprofile.model.UserProfile
-import akio.apps.myrun.domain.userprofile.*
+import akio.apps.myrun.domain.authentication.LogoutUsecase
+import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
+import akio.apps.myrun.domain.strava.RemoveStravaTokenUsecase
+import akio.apps.myrun.domain.user.*
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import akio.apps.myrun.feature.userprofile.*
 import android.content.Context

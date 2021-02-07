@@ -2,9 +2,9 @@ package akio.apps.myrun.feature.signin.impl
 
 import akio.apps._base.lifecycle.Event
 import akio.apps.myrun.data.authentication.model.SignInSuccessResult
-import akio.apps.myrun.domain.signin.SignInWithFacebookUsecase
-import akio.apps.myrun.domain.signin.SignInWithGoogleUsecase
-import akio.apps.myrun.domain.signin.SyncUserProfileUsecase
+import akio.apps.myrun.domain.authentication.SignInWithFacebookUsecase
+import akio.apps.myrun.domain.authentication.SignInWithGoogleUsecase
+import akio.apps.myrun.domain.authentication.SyncUserProfileUsecase
 import akio.apps.myrun.feature.signin.SignInViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

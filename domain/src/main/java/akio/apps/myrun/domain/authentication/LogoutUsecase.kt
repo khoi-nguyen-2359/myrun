@@ -1,4 +1,4 @@
-package akio.apps.myrun.domain.userprofile
+package akio.apps.myrun.domain.authentication
 
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
