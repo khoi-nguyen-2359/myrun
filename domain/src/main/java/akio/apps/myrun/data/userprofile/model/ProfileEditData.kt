@@ -5,12 +5,12 @@ import android.net.Uri
 
 // Leave a field null in order not to send an update request for that field
 data class ProfileEditData(
-    var displayName: String = "",
-    var gender: Gender? = null,
-    var height: Float? = null,
-    var weight: Float? = null,
-    var avatarUri: Uri? = null,
-    var phoneNumber: String? = null
+    val displayName: String = "",
+    val gender: Gender? = null,
+    val height: Float? = null,
+    val weight: Float? = null,
+    val avatarUri: Uri? = null,
+    val phoneNumber: String? = null
 ) {
     companion object {
         fun createFromUserAccount(userAccount: UserAccount): ProfileEditData {

@@ -91,11 +91,11 @@ class UserProfileRepositoryImpl @Inject constructor(
             .apply {
                 uid(userId)
                 displayName(profileEditData.displayName)
-                avatarUploadedUri?.toString()
-                    ?.let { photoUrl(it) }
-                profileEditData.gender?.name?.let { gender(it) }
-                profileEditData.height?.let { height(it) }
-                profileEditData.weight?.let { weight(it) }
+                avatarUploadedUri?.toString()?.let(::photoUrl)
+                profileEditData.gender?.name?.let(::gender)
+                profileEditData.height?.let(::height)
+                profileEditData.weight?.let(::weight)
+                profileEditData.phoneNumber?.let(::phoneNumber)
             }
         getUserDocument(userId).set(updateMap, SetOptions.merge())
             .await()
