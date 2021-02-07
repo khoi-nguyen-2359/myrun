@@ -1,4 +1,4 @@
-package akio.apps.myrun.domain.signin
+package akio.apps.myrun.domain.authentication
 
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.userprofile.UserProfileRepository

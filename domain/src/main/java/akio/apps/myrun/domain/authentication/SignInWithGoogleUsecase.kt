@@ -1,4 +1,4 @@
-package akio.apps.myrun.domain.signin
+package akio.apps.myrun.domain.authentication
 
 import akio.apps.myrun.data.authentication.SignInManager
 import akio.apps.myrun.data.authentication.model.SignInSuccessResult

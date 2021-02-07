@@ -6,8 +6,8 @@ import akio.apps.myrun.data.externalapp.StravaAuthenticator
 import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
 import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntityMapper
-import akio.apps.myrun.domain.editprofile.UpdateStravaTokenUsecase
-import akio.apps.myrun.domain.userprofile.RemoveStravaTokenUsecase
+import akio.apps.myrun.domain.strava.UpdateStravaTokenUsecase
+import akio.apps.myrun.domain.strava.RemoveStravaTokenUsecase
 import akio.apps.myrun.feature.strava.LinkStravaViewModel
 import akio.apps.myrun.feature.strava.impl.LinkStravaActivity
 import akio.apps.myrun.feature.strava.impl.LinkStravaViewModelImpl
