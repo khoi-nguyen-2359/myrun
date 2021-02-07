@@ -1,4 +1,4 @@
-package akio.apps.myrun.domain.editprofile
+package akio.apps.myrun.domain.strava
 
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository

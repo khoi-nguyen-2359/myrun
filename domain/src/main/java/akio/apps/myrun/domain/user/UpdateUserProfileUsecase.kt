@@ -1,4 +1,4 @@
-package akio.apps.myrun.domain.editprofile
+package akio.apps.myrun.domain.user
 
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.authentication.UserAuthenticationState
