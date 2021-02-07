@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.editprofile.impl
+package akio.apps.myrun.domain.user
 
 import akio.apps._base.any
 import akio.apps._base.eq
@@ -8,7 +8,8 @@ import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import android.net.Uri
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -18,7 +19,8 @@ import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import org.mockito.Mockito.`when` as whenever
 
-class UpdateUserProfileUsecaseImplTest {
+@ExperimentalCoroutinesApi
+class UpdateUserProfileUsecaseTest {
 
     @Mock
     lateinit var userAuthenticationState: UserAuthenticationState
@@ -26,17 +28,17 @@ class UpdateUserProfileUsecaseImplTest {
     @Mock
     lateinit var userProfileRepository: UserProfileRepository
 
-    lateinit var testee: UpdateUserProfileUsecaseImpl
+    lateinit var testee: UpdateUserProfileUsecase
 
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
-        testee = UpdateUserProfileUsecaseImpl(userProfileRepository, userAuthenticationState)
+        testee = UpdateUserProfileUsecase(userProfileRepository, userAuthenticationState)
     }
 
     @Test
     fun `given user logged in, when update user profile, then update call success`() {
-        runBlocking {
+        runBlockingTest {
             // given
             val userId = "userId"
             whenever(userAuthenticationState.getUserAccountId()).thenReturn(userId)
@@ -54,7 +56,7 @@ class UpdateUserProfileUsecaseImplTest {
 
     @Test
     fun `given user not logged in, when update user profile, then update call return InvalidUserState error`() {
-        runBlocking {
+        runBlockingTest {
             // given
             whenever(userAuthenticationState.getUserAccountId()).thenReturn(null)
 

@@ -1,6 +1,5 @@
-package akio.apps.myrun.feature.userprofile.impl
+package akio.apps.myrun.domain.user
 
-import akio.apps.MockAsynchronousTest
 import akio.apps._base.Resource
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.authentication.UserAuthenticationState
@@ -8,10 +7,12 @@ import akio.apps.myrun.data.authentication.model.UserAccount
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.UserProfile
-import akio.apps.myrun.feature.userprofile.GetUserProfileUsecase
-import junit.framework.Assert.assertEquals
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyString
@@ -21,7 +22,9 @@ import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import org.mockito.Mockito.`when` as whenever
 
-class GetUserProfileUsecaseTest : MockAsynchronousTest() {
+@ExperimentalCoroutinesApi
+@InternalCoroutinesApi
+class GetUserProfileUsecaseTest {
 
     @Mock
     lateinit var userProfileRepository: UserProfileRepository
