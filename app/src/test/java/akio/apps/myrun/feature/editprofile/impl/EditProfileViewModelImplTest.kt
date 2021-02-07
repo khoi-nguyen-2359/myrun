@@ -1,14 +1,16 @@
 package akio.apps.myrun.feature.editprofile.impl
 
-import akio.apps.MockAsynchronousTest
+import akio.apps._base.MockAsynchronousTest
 import akio.apps._base.Resource
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import akio.apps.myrun.data.userprofile.model.UserProfile
+import akio.apps.myrun.domain.user.GetUserProfileUsecase
+import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
 import akio.apps.myrun.feature.editprofile.EditProfileViewModel
-import akio.apps.myrun.feature.editprofile.UpdateUserProfileUsecase
 import akio.apps.myrun.feature.editprofile.UserPhoneNumberDelegate
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
@@ -24,6 +26,7 @@ import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import org.mockito.Mockito.`when` as whenever
 
+@ExperimentalCoroutinesApi
 class EditProfileViewModelImplTest : MockAsynchronousTest() {
 
     private val originalPhoneNumber: String = "original phone number"
@@ -126,7 +129,7 @@ class EditProfileViewModelImplTest : MockAsynchronousTest() {
             val editData = createProfileEditData()
 
             whenever(updateUserProfileUsecase.updateUserProfile(editData))
-                .thenThrow(UnauthorizedUserError::class.java)
+                .thenAnswer { throw UnauthorizedUserError() }
 
             // when
             testee.updateProfile(editData)
