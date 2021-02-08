@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.signin._di
 
 import akio.apps._base.di.ViewModelFactoryModule
 import akio.apps._base.di.ViewModelKey
+import akio.apps.myrun.data.userprofile._di.UserProfileDataModule
 import akio.apps.myrun.feature.signin.SignInViewModel
 import akio.apps.myrun.feature.signin.impl.SignInActivity
 import akio.apps.myrun.feature.signin.impl.SignInViewModelImpl
@@ -16,7 +17,8 @@ interface SignInFeatureModule {
     @ContributesAndroidInjector(
         modules = [
             Bindings::class,
-            ViewModelFactoryModule::class
+            ViewModelFactoryModule::class,
+            UserProfileDataModule::class
         ]
     )
     fun signInActivity(): SignInActivity

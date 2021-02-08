@@ -78,7 +78,7 @@ dependencies {
     implementation "com.google.android.material:material:$Versions.androidMaterial"
     implementation "com.android.support:multidex:$Versions.multidex"
 
-    implementation "com.google.dagger:dagger-android:$Versions.dagger"
+//    implementation "com.google.dagger:dagger-android:$Versions.dagger"
     implementation "com.google.dagger:dagger-android-support:$Versions.dagger"
     kapt "com.google.dagger:dagger-android-processor:$Versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$Versions.dagger"

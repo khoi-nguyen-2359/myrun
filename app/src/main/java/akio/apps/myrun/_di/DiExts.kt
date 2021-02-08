@@ -1,21 +1,19 @@
 package akio.apps.myrun._di
 
 import android.content.Context
-import androidx.activity.ComponentActivity
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import dagger.android.AndroidInjector
 import dagger.android.HasAndroidInjector
 
 val Context.androidInjector: AndroidInjector<Any>
     get() = (this.applicationContext as HasAndroidInjector).androidInjector()
 
-val Fragment.androidInjector: AndroidInjector<Any>
-    get() = requireContext().androidInjector
-
-fun Fragment.createViewModelInjectionDelegate(): ViewModelInjectionDelegate {
-    return ViewModelInjectionDelegate(androidInjector, this)
-}
-
-fun ComponentActivity.createViewModelInjectionDelegate(): ViewModelInjectionDelegate {
-    return ViewModelInjectionDelegate(androidInjector, this)
+inline fun <reified T : ViewModel> getViewModel(
+    viewModelFactory: ViewModelProvider.Factory,
+    viewModelStoreOwner: ViewModelStoreOwner
+): T {
+    val viewModelProvider = ViewModelProvider(viewModelStoreOwner, viewModelFactory)
+    return viewModelProvider[T::class.java]
 }

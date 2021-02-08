@@ -45,10 +45,10 @@ interface ExternalAppDataModule {
         @Singleton
         fun stravaApiService(
             okHttpClientBuilder: OkHttpClient.Builder,
-            stravaAuthenticatorImpl: StravaAuthenticator,
+            stravaAuthenticator: StravaAuthenticator,
             @Named(NAME_STRAVA_GSON) gson: Gson
         ): StravaApi {
-            okHttpClientBuilder.authenticator(stravaAuthenticatorImpl)
+            okHttpClientBuilder.authenticator(stravaAuthenticator)
 
             val okHttpClient = okHttpClientBuilder.build()
 

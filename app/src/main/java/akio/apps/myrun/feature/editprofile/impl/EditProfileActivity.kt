@@ -8,7 +8,7 @@ import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.PhotoSelectionDelegate
 import akio.apps.myrun._base.utils.circleCenterCrop
-import akio.apps.myrun._di.createViewModelInjectionDelegate
+import akio.apps.myrun._di.getViewModel
 import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import akio.apps.myrun.data.userprofile.model.UserProfile
@@ -26,11 +26,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.PhoneAuthCredential
+import dagger.android.AndroidInjection
 import java.io.File
 import java.text.DecimalFormat
+import javax.inject.Inject
 
 class EditProfileActivity :
     AppCompatActivity(R.layout.activity_edit_profile),
@@ -54,15 +57,18 @@ class EditProfileActivity :
 
     private val bodyDimensFormat = DecimalFormat("#.#")
 
-    private val viewModelInjectionDelegate by lazy { createViewModelInjectionDelegate() }
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val editProfileVM by lazy { viewModelInjectionDelegate.getViewModel<EditProfileViewModel>() }
+    private val editProfileVM: EditProfileViewModel by lazy { getViewModel(viewModelFactory, this) }
 
     private val viewBinding by lazy { ActivityEditProfileBinding.inflate(layoutInflater) }
 
     private val dialogDelegate by lazy { DialogDelegate(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
+
         super.onCreate(savedInstanceState)
 
         initViews()
