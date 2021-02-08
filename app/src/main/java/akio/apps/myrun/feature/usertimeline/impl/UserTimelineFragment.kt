@@ -5,25 +5,30 @@ import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.ViewBindingDelegate
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
-import akio.apps.myrun._di.createViewModelInjectionDelegate
+import akio.apps.myrun._di.getViewModel
 import akio.apps.myrun.databinding.FragmentUserTimelineBinding
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class UserTimelineFragment : Fragment(R.layout.fragment_user_timeline) {
-
-    private val viewModelInjectionDelegate by lazy { createViewModelInjectionDelegate() }
 
     private val viewBindingDelegate = ViewBindingDelegate(FragmentUserTimelineBinding::bind)
     private val viewBinding by viewBindingDelegate
 
-    private val viewModel: UserTimelineViewModel by lazy { viewModelInjectionDelegate.getViewModel() }
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    private val viewModel: UserTimelineViewModel by lazy {
+        getViewModel(viewModelFactory, this)
+    }
 
     private val activityPagingAdapter: ActivityPagingAdapter = ActivityPagingAdapter()
 

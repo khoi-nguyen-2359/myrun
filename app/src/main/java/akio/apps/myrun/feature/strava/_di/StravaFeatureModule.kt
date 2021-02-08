@@ -22,11 +22,10 @@ import dagger.multibindings.IntoMap
 import okhttp3.OkHttpClient
 import javax.inject.Named
 
-@Module
+@Module(includes = [StravaFeatureModule.Providers::class])
 interface StravaFeatureModule {
     @ContributesAndroidInjector(
         modules = [
-            Providers::class,
             Bindings::class,
             ViewModelFactoryModule::class
         ]

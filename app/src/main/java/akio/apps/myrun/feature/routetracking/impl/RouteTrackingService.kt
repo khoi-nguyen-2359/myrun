@@ -78,9 +78,9 @@ class RouteTrackingService : Service() {
     private var wakeLock: PowerManager.WakeLock? = null
 
     override fun onCreate() {
-        super.onCreate()
-
         AndroidInjection.inject(this)
+
+        super.onCreate()
 
         createNotificationChannel()
 
