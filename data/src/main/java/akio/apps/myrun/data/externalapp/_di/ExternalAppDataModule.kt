@@ -5,12 +5,10 @@ import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.StravaAuthenticator
 import akio.apps.myrun.data.externalapp.StravaDataRepository
 import akio.apps.myrun.data.externalapp.StravaTokenRepository
-import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.externalapp.impl.ExternalAppProvidersRepositoryImpl
 import akio.apps.myrun.data.externalapp.impl.StravaApi
 import akio.apps.myrun.data.externalapp.impl.StravaDataRepositoryImpl
 import akio.apps.myrun.data.externalapp.impl.StravaTokenRepositoryImpl
-import akio.apps.myrun.data.externalapp.impl.StravaTokenStorageImpl
 import com.google.gson.Gson
 import dagger.Binds
 import dagger.Module
@@ -25,9 +23,6 @@ import javax.inject.Singleton
 interface ExternalAppDataModule {
     @Binds
     fun externalAppCredentialsRepo(repo: ExternalAppProvidersRepositoryImpl): ExternalAppProvidersRepository
-
-    @Binds
-    fun stravaTokenStorage(storageImpl: StravaTokenStorageImpl): StravaTokenStorage
 
     @Binds
     fun stravaTokenRepository(repositoryImpl: StravaTokenRepositoryImpl): StravaTokenRepository

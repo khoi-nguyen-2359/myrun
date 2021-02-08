@@ -1,17 +1,11 @@
 package akio.apps.myrun.feature.strava.impl
 
 import akio.apps.myrun._di.androidInjector
-import akio.apps.myrun.data.externalapp.StravaTokenStorage
+import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.domain.strava.UploadActivityFilesToStravaUsecase
 import android.content.Context
-import androidx.work.Constraints
-import androidx.work.CoroutineWorker
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.WorkerParameters
-import androidx.work.workDataOf
+import androidx.work.*
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -25,7 +19,10 @@ class UploadStravaFileWorker(
     lateinit var uploadActivityFilesToStravaUsecase: UploadActivityFilesToStravaUsecase
 
     @Inject
-    lateinit var stravaTokenStorage: StravaTokenStorage
+    lateinit var externalAppProvidersRepository: ExternalAppProvidersRepository
+
+    @Inject
+    lateinit var userAuthenticationState: UserAuthenticationState
 
     init {
         applicationContext.androidInjector.inject(this)
@@ -33,7 +30,10 @@ class UploadStravaFileWorker(
 
     override suspend fun doWork(): Result {
         Timber.d("worker start")
-        if (stravaTokenStorage.getToken() == null) {
+        val userAccountId = userAuthenticationState.getUserAccountId()
+        if (userAccountId == null ||
+            externalAppProvidersRepository.getStravaProviderToken(userAccountId) == null
+        ) {
             return Result.failure(
                 workDataOf(
                     OUTPUT_ERROR_MESSAGE to "Use has turned off strava sync"

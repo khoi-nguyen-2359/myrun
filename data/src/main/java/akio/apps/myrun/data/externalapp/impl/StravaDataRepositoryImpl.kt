@@ -1,8 +1,8 @@
 package akio.apps.myrun.data.externalapp.impl
 
 import akio.apps.myrun.data.externalapp.StravaDataRepository
-import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.externalapp.mapper.StravaRouteEntityMapper
+import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.StravaRoute
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
@@ -13,13 +13,9 @@ import javax.inject.Inject
 
 class StravaDataRepositoryImpl @Inject constructor(
     private val stravaApi: StravaApi,
-    private val stravaTokenStorage: StravaTokenStorage,
     private val stravaRouteEntityMapper: StravaRouteEntityMapper
 ) : StravaDataRepository {
-    override suspend fun saveActivity(activityTitle: String, activityFile: File) {
-        val stravaToken = stravaTokenStorage.getToken()
-            ?: return
-
+    override suspend fun saveActivity(stravaToken: ExternalAppToken.StravaToken, activityTitle: String, activityFile: File) {
         val uploadFile = activityFile.asRequestBody(TCX_MIME_TYPE.toMediaType())
         val uploadBody = MultipartBody.Part.createFormData("file", activityFile.name, uploadFile)
         val runNamePart = activityTitle.toRequestBody(MultipartBody.FORM)
@@ -33,10 +29,7 @@ class StravaDataRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getRoutes(athleteId: Long): List<StravaRoute> {
-        val stravaToken = stravaTokenStorage.getToken()
-            ?: return emptyList()
-
+    override suspend fun getRoutes(stravaToken: ExternalAppToken.StravaToken): List<StravaRoute> {
         return stravaApi.getAthleteRoutes(
             "Bearer ${stravaToken.accessToken}",
             stravaToken.athlete.id

@@ -1,18 +1,25 @@
 package akio.apps.myrun.domain.strava
 
+import akio.apps._base.error.UnauthorizedUserError
+import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.StravaDataRepository
-import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.externalapp.model.StravaRoute
 import javax.inject.Inject
 
 class GetStravaRoutesUsecase @Inject constructor(
-    private val stravaTokenStorage: StravaTokenStorage,
-    private val stravaDataRepository: StravaDataRepository
+    private val stravaDataRepository: StravaDataRepository,
+    private val externalAppProvidersRepository: ExternalAppProvidersRepository,
+    private val userAuthenticationState: UserAuthenticationState
 ) {
     suspend fun getStravaRoutes(): List<StravaRoute> {
-        val athleteId = stravaTokenStorage.getToken()?.athlete?.id
+        val userAccountId = userAuthenticationState.getUserAccountId()
+            ?: throw UnauthorizedUserError()
+
+        val stravaToken = externalAppProvidersRepository
+            .getStravaProviderToken(userAccountId)
             ?: return emptyList()
 
-        return stravaDataRepository.getRoutes(athleteId)
+        return stravaDataRepository.getRoutes(stravaToken)
     }
 }
