@@ -4,7 +4,7 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
-import akio.apps.myrun._di.createViewModelInjectionDelegate
+import akio.apps.myrun._di.getViewModel
 import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import akio.apps.myrun.databinding.ActivitySignInBinding
 import akio.apps.myrun.feature.signin.SignInViewModel
@@ -15,6 +15,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -25,20 +26,22 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.PhoneAuthCredential
+import dagger.android.AndroidInjection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
 
-    private val viewModelInjectionDelegate by lazy { createViewModelInjectionDelegate() }
-    private val signInVM: SignInViewModel by lazy { viewModelInjectionDelegate.getViewModel() }
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    private val signInVM: SignInViewModel by lazy { getViewModel(viewModelFactory, this) }
 
     private val viewBinding: ActivitySignInBinding by lazy {
-        ActivitySignInBinding.inflate(
-            layoutInflater
-        )
+        ActivitySignInBinding.inflate(layoutInflater)
     }
 
     private val facebookCallbackManager by lazy { CallbackManager.Factory.create() }
@@ -59,6 +62,8 @@ class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
+
         super.onCreate(savedInstanceState)
 
         initViews()

@@ -14,11 +14,13 @@ import dagger.multibindings.IntoMap
 
 @Module
 interface SplashFeatureModule {
-    @ContributesAndroidInjector(modules = [
-        AuthenticationDataModule::class,
-        ViewModelFactoryModule::class,
-        Bindings::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            AuthenticationDataModule::class,
+            ViewModelFactoryModule::class,
+            Bindings::class
+        ]
+    )
     fun splashActivity(): SplashActivity
 
     @Module
@@ -26,6 +28,6 @@ interface SplashFeatureModule {
         @Binds
         @IntoMap
         @ViewModelKey(SplashViewModel::class)
-        fun linkStravaViewModel(viewModelImpl: SplashViewModelImpl): ViewModel
+        fun splashViewModel(viewModelImpl: SplashViewModelImpl): ViewModel
     }
 }
