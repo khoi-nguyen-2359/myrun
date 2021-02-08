@@ -5,7 +5,6 @@ import akio.apps.myrun._di.AppComponent
 import akio.apps.myrun._di.DaggerAppComponent
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
-import akio.apps.myrun.domain.strava.SyncStravaTokenUsecase
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
 import akio.apps.myrun.feature.strava.RescheduleStravaUploadWorkerDelegate
 import android.app.Application
@@ -18,13 +17,7 @@ import com.google.android.libraries.places.api.Places
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
+import kotlinx.coroutines.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -39,11 +32,8 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
     @Inject
     lateinit var rescheduleStravaUploadWorkerDelegate: RescheduleStravaUploadWorkerDelegate
 
-    @Inject
-    lateinit var syncStravaTokenUsecase: SyncStravaTokenUsecase
-
     lateinit var appComponent: AppComponent
-    private set
+        private set
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         Timber.e(exception)
@@ -64,11 +54,10 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
 
         initPlacesSdk()
 
-        syncStravaTokenAndRescheduleStravaUploadWorker()
+        rescheduleStravaUploadWorker()
     }
 
-    private fun syncStravaTokenAndRescheduleStravaUploadWorker() = ioScope.launch {
-        syncStravaTokenUsecase.syncStravaToken()
+    private fun rescheduleStravaUploadWorker() = ioScope.launch {
         rescheduleStravaUploadWorkerDelegate.rescheduleWorker()
     }
 

@@ -1,12 +1,11 @@
 package akio.apps.myrun.feature.strava.impl
 
+import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.StravaAuthenticator
-import akio.apps.myrun.data.externalapp.StravaTokenStorage
 import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntity
 import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntityMapper
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
-import akio.apps.myrun.domain.strava.UpdateStravaTokenUsecase
-import akio.apps.myrun.domain.strava.RemoveStravaTokenUsecase
 import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
@@ -19,10 +18,9 @@ import timber.log.Timber
 
 class StravaAuthenticatorImpl(
     private val httpClient: OkHttpClient,
-    private val updateStravaTokenUsecase: UpdateStravaTokenUsecase,
-    private val removeStravaTokenUsecase: RemoveStravaTokenUsecase,
-    private val stravaTokenStorage: StravaTokenStorage,
+    private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val stravaTokenRefreshEntityMapper: StravaTokenRefreshEntityMapper,
+    private val userAuthenticationState: UserAuthenticationState,
     private val baseStravaUrl: String,
     private val gson: Gson,
     private val clientId: String,
@@ -30,11 +28,14 @@ class StravaAuthenticatorImpl(
 ) : StravaAuthenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        if (response.code != 401) {
+        val userAccountId = userAuthenticationState.getUserAccountId()
+        if (response.code != 401 || userAccountId == null) {
             return null
         }
 
-        val originalToken = runBlocking { stravaTokenStorage.getToken() }
+        val originalToken = runBlocking {
+            externalAppProvidersRepository.getStravaProviderToken(userAccountId)
+        }
         val originalRequest = response.request
         val originalAccessToken = originalRequest.header("Authorization")
             ?.removePrefix("Bearer ")
@@ -55,9 +56,9 @@ class StravaAuthenticatorImpl(
             .method("POST", "".toRequestBody("text/plain".toMediaType()))
             .url(
                 baseStravaUrl + "oauth/token?grant_type=refresh_token" +
-                    "&client_id=$clientId" +
-                    "&client_secret=$clientSecret" +
-                    "&refresh_token=$originalRefreshToken"
+                        "&client_id=$clientId" +
+                        "&client_secret=$clientSecret" +
+                        "&refresh_token=$originalRefreshToken"
             )
             .build()
 
@@ -65,12 +66,15 @@ class StravaAuthenticatorImpl(
             .execute()
         if (refreshResponse.isSuccessful && refreshResponse.code == 200) {
             val stringResponse = refreshResponse.body?.string()
-            val tokenRefreshEntity = gson.fromJson(stringResponse, StravaTokenRefreshEntity::class.java)
+            val tokenRefreshEntity =
+                gson.fromJson(stringResponse, StravaTokenRefreshEntity::class.java)
             val newAccessToken = tokenRefreshEntity.accessToken
             val refreshToken = stravaTokenRefreshEntityMapper.map(tokenRefreshEntity)
             val newToken = ExternalAppToken.StravaToken(refreshToken, originalToken.athlete)
 
-            runBlocking { updateStravaTokenUsecase.updateStravaToken(newToken) }
+            runBlocking {
+                externalAppProvidersRepository.updateStravaProvider(userAccountId, newToken)
+            }
 
             Timber.d("refresh Strava token request succeed")
             return response.request
@@ -80,9 +84,7 @@ class StravaAuthenticatorImpl(
         }
 
         Timber.e("refresh Strava token failed. code=${refreshResponse.code}, access_token=$originalAccessToken, refresh_token=$originalRefreshToken")
-        runBlocking {
-            removeStravaTokenUsecase.removeStravaToken()
-        }
+        runBlocking { externalAppProvidersRepository.removeStravaProvider(userAccountId) }
 
         return null
     }

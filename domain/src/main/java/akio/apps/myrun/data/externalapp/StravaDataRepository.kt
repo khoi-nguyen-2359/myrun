@@ -1,9 +1,15 @@
 package akio.apps.myrun.data.externalapp
 
+import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.StravaRoute
 import java.io.File
 
 interface StravaDataRepository {
-    suspend fun saveActivity(activityTitle: String, activityFile: File)
-    suspend fun getRoutes(athleteId: Long): List<StravaRoute>
+    suspend fun saveActivity(
+        stravaToken: ExternalAppToken.StravaToken,
+        activityTitle: String,
+        activityFile: File
+    )
+
+    suspend fun getRoutes(stravaToken: ExternalAppToken.StravaToken): List<StravaRoute>
 }

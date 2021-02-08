@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ExternalAppProvidersRepositoryImpl @Inject constructor(
@@ -72,8 +73,10 @@ class ExternalAppProvidersRepositoryImpl @Inject constructor(
         }
             .flowOn(Dispatchers.IO)
 
-    override suspend fun getExternalProviders(accountId: String): ExternalProviders {
-        return getProviderTokenDocument(accountId)
+    override suspend fun getExternalProviders(
+        accountId: String
+    ): ExternalProviders = withContext(Dispatchers.IO) {
+        getProviderTokenDocument(accountId)
             .get()
             .await()
             .toObject(FirestoreProvidersEntity::class.java)
@@ -81,7 +84,10 @@ class ExternalAppProvidersRepositoryImpl @Inject constructor(
             ?: ExternalProviders.createEmpty()
     }
 
-    override fun updateStravaProvider(accountId: String, token: ExternalAppToken.StravaToken) {
+    override suspend fun updateStravaProvider(
+        accountId: String,
+        token: ExternalAppToken.StravaToken
+    ): Unit = withContext(Dispatchers.IO) {
         val providerTokenDocument = getProviderTokenDocument(accountId)
         val providerToken = FirestoreProvidersEntity.FirestoreProviderToken(
             RunningApp.Strava.appName,
@@ -91,10 +97,26 @@ class ExternalAppProvidersRepositoryImpl @Inject constructor(
             mapOf(RunningApp.Strava.id to providerToken),
             SetOptions.merge()
         )
+            .await()
     }
 
-    override fun removeStravaProvider(accountId: String) {
+    override suspend fun removeStravaProvider(
+        accountId: String
+    ): Unit = withContext(Dispatchers.IO) {
         val providerTokenDocument = getProviderTokenDocument(accountId)
-        providerTokenDocument.set(mapOf(RunningApp.Strava.id to null), SetOptions.merge())
+        providerTokenDocument.set(mapOf(RunningApp.Strava.id to null), SetOptions.merge()).await()
+    }
+
+    override suspend fun getStravaProviderToken(
+        accountId: String
+    ): ExternalAppToken.StravaToken? = withContext(Dispatchers.IO) {
+        // TODO: add document path to get directly the strava token?
+        getProviderTokenDocument(accountId)
+            .get()
+            .await()
+            .toObject(FirestoreProvidersEntity::class.java)
+            ?.run(firestoreProvidersMapper::map)
+            ?.strava
+            ?.token
     }
 }
