@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,6 +36,8 @@ class UserTimelineFragment : Fragment(R.layout.fragment_user_timeline) {
     private val dialogDelegate by lazy { DialogDelegate(requireContext()) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        AndroidSupportInjection.inject(this)
+
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
