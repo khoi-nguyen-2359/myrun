@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.editprofile.impl
 
 import akio.apps._base.MockAsynchronousTest
-import akio.apps._base.Resource
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.ProfileEditData

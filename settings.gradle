@@ -1,5 +1,6 @@
-include ':domain'
 include ':data'
+include ':domain'
+include ':data-impl'
 include ':routeparser'
 include ':app'
 rootProject.name = "My Run"
