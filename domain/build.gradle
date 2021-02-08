@@ -2,7 +2,6 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'kotlin-parcelize'
 }
 
 android {
@@ -37,6 +36,8 @@ android {
 }
 
 dependencies {
+    implementation project(":data")
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$Versions.kotlin"
     testImplementation "junit:junit:$Versions.junit"
     androidTestImplementation "androidx.test.ext:junit:$Versions.androidXJunit"
@@ -51,7 +52,6 @@ dependencies {
     implementation "com.google.dagger:dagger:$Versions.dagger"
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$Versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$Versions.coroutines"
 
     testImplementation "org.mockito:mockito-core:$Versions.mockitoCore"

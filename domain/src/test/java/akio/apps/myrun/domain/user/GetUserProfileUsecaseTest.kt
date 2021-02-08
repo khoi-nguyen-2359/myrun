@@ -1,6 +1,5 @@
 package akio.apps.myrun.domain.user
 
-import akio.apps._base.Resource
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.authentication.model.UserAccount
@@ -9,7 +8,6 @@ import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
