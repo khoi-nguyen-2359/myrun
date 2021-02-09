@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.editprofile.impl
 
-import akio.apps._base.MockAsynchronousTest
+import akio.apps._base.InstantTaskExecutorTest
+import akio.apps._base.Resource
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
@@ -26,7 +27,7 @@ import org.mockito.MockitoAnnotations
 import org.mockito.Mockito.`when` as whenever
 
 @ExperimentalCoroutinesApi
-class EditProfileViewModelImplTest : MockAsynchronousTest() {
+class EditProfileViewModelImplTest : InstantTaskExecutorTest() {
 
     private val originalPhoneNumber: String = "original phone number"
 

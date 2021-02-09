@@ -11,7 +11,7 @@ import org.junit.Before
 import org.junit.Rule
 
 @ExperimentalCoroutinesApi
-abstract class MockAsynchronousTest {
+abstract class InstantTaskExecutorTest {
     private val mockMainDispatcher = TestCoroutineDispatcher()
 
     @Rule
