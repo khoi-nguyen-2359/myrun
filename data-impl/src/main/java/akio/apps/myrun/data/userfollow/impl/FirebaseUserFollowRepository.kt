@@ -4,7 +4,7 @@ import akio.apps.myrun.data.userfollow.UserFollowRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
-class UserFollowRepositoryImpl @Inject constructor(
+class FirebaseUserFollowRepository @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : UserFollowRepository {
     private val userFollowCollection

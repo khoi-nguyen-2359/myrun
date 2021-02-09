@@ -16,7 +16,7 @@ import kotlinx.coroutines.tasks.await
 import java.util.Locale
 import javax.inject.Inject
 
-class PlaceDataSourceImpl @Inject constructor(
+class GooglePlaceDataSource @Inject constructor(
     private val placesClient: PlacesClient,
     private val appContext: Context
 ) : PlaceDataSource {
