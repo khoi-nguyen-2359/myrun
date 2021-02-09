@@ -38,18 +38,18 @@ dependencies {
     api project(":data")
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$Versions.kotlin"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$Versions.coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$Versions.coroutines"
+
+    implementation "com.google.dagger:dagger:$Versions.dagger"
+    kapt "com.google.dagger:dagger-compiler:$Versions.dagger"
 
     api "com.squareup.okhttp3:okhttp:$Versions.okhttp"
     api "com.squareup.okhttp3:logging-interceptor:$Versions.okhttp"
 
     api "com.squareup.retrofit2:retrofit:$Versions.retrofit"
     api "com.squareup.retrofit2:converter-gson:$Versions.retrofit"
-
-    implementation "com.google.dagger:dagger:$Versions.dagger"
-    kapt "com.google.dagger:dagger-compiler:$Versions.dagger"
-
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$Versions.coroutines"
 
     implementation platform("com.google.firebase:firebase-bom:$Versions.firebaseBom")
     api 'com.google.firebase:firebase-auth-ktx'
@@ -69,10 +69,6 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$Versions.timber"
 
     api "com.google.android.libraries.places:places:$Versions.places"
-
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$Versions.coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$Versions.coroutines"
 
     testImplementation "junit:junit:$Versions.junit"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$Versions.coroutinesTest"

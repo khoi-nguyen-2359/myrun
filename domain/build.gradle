@@ -39,8 +39,9 @@ dependencies {
     implementation project(":data")
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$Versions.kotlin"
-    testImplementation "junit:junit:$Versions.junit"
-    androidTestImplementation "androidx.test.ext:junit:$Versions.androidXJunit"
+
+    // for dagger @Inject
+    implementation "javax.inject:javax.inject:1"
 
     implementation "com.google.maps.android:android-maps-utils:$Versions.androidMapUtils"
     implementation "com.google.android.gms:play-services-maps:$Versions.playServicesMap"
@@ -49,11 +50,10 @@ dependencies {
 
     implementation "com.sweetzpot.tcxzpot:lib:$Versions.tcxzPot"
 
-    implementation "com.google.dagger:dagger:$Versions.dagger"
-
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$Versions.coroutines"
 
+    testImplementation "junit:junit:$Versions.junit"
     testImplementation "org.mockito:mockito-core:$Versions.mockitoCore"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$Versions.coroutinesTest"
+    androidTestImplementation "androidx.test.ext:junit:$Versions.androidXJunit"
 }
