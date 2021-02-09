@@ -2,10 +2,10 @@ package akio.apps.myrun.data.routetracking._di
 
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
+import akio.apps.myrun.data.routetracking.impl.PreferencesRouteTrackingState
 import akio.apps.myrun.data.routetracking.impl.RouteTrackingDatabase
 import akio.apps.myrun.data.routetracking.impl.RouteTrackingLocationDao
 import akio.apps.myrun.data.routetracking.impl.RouteTrackingLocationRepositoryImpl
-import akio.apps.myrun.data.routetracking.impl.PreferencesRouteTrackingState
 import android.content.Context
 import androidx.room.Room
 import dagger.Binds
