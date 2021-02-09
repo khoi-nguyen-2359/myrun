@@ -4,7 +4,6 @@ import akio.apps._base.InstantTaskExecutorTest
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus.STOPPED
 import akio.apps.myrun.data.routetracking.model.LatLng
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
@@ -105,4 +104,3 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
         mockedAuthenticationState
     )
 }
-
