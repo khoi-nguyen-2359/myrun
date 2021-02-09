@@ -6,13 +6,12 @@ import akio.apps.myrun.data.activityfile.model.FileTarget
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
-import android.app.Application
 import android.content.Context
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.await
-import timber.log.Timber
 import javax.inject.Inject
+import timber.log.Timber
 
 class RescheduleStravaUploadWorkerDelegate @Inject constructor(
     private val activityFileTrackingRepository: ActivityFileTrackingRepository,

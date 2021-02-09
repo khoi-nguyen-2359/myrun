@@ -1,7 +1,6 @@
 package akio.apps.myrun._di
 
 import akio.apps.myrun.MyRunApp
-import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides

@@ -13,10 +13,12 @@ import dagger.multibindings.IntoMap
 
 @Module
 interface UserTimelineFeatureModule {
-    @ContributesAndroidInjector(modules = [
-        Bindings::class,
-        ViewModelFactoryModule::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            Bindings::class,
+            ViewModelFactoryModule::class
+        ]
+    )
     fun userTimelineFragment(): UserTimelineFragment
 
     @Module

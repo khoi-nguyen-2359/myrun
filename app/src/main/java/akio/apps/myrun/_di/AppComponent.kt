@@ -21,7 +21,6 @@ import akio.apps.myrun.feature.userprofile._di.UserProfileFeatureModule
 import akio.apps.myrun.feature.usertimeline._di.UserTimelineFeatureModule
 import dagger.BindsInstance
 import dagger.Component
-import dagger.android.AndroidInjection
 import dagger.android.AndroidInjectionModule
 import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton

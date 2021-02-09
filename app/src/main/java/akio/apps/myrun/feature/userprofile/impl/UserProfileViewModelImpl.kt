@@ -9,9 +9,10 @@ import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.domain.authentication.LogoutUsecase
 import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
 import akio.apps.myrun.domain.strava.RemoveStravaTokenUsecase
-import akio.apps.myrun.domain.user.*
+import akio.apps.myrun.domain.user.GetProviderTokensUsecase
+import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
-import akio.apps.myrun.feature.userprofile.*
+import akio.apps.myrun.feature.userprofile.UserProfileViewModel
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -26,7 +27,7 @@ class UserProfileViewModelImpl @Inject constructor(
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
     private val removeStravaTokenUsecase: RemoveStravaTokenUsecase,
     private val logoutUsecase: LogoutUsecase,
-    val appContext: Context
+    private val appContext: Context
 ) : UserProfileViewModel() {
 
     private val _isInlineLoading = MutableLiveData<Boolean>()

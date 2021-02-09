@@ -3,7 +3,11 @@ package akio.apps.myrun.domain.routetracking
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.ActivityRepository
-import akio.apps.myrun.data.activity.model.*
+import akio.apps.myrun.data.activity.model.ActivityDataModel
+import akio.apps.myrun.data.activity.model.ActivityModel
+import akio.apps.myrun.data.activity.model.ActivityType
+import akio.apps.myrun.data.activity.model.CyclingActivityModel
+import akio.apps.myrun.data.activity.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.fitness.SingleDataPoint
