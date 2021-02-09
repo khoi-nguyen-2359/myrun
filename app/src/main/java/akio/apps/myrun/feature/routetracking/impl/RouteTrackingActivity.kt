@@ -53,10 +53,9 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val routeTrackingViewModel: RouteTrackingViewModel by lazy { getViewModel(
-        viewModelFactory,
-        this
-    ) }
+    private val routeTrackingViewModel: RouteTrackingViewModel by lazy {
+        getViewModel(viewModelFactory, this)
+    }
 
     private val googleFitLinkingDelegate = GoogleFitLinkingDelegate()
 

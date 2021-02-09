@@ -15,10 +15,12 @@ import dagger.multibindings.IntoMap
 
 @Module
 interface EditProfileFeatureModule {
-    @ContributesAndroidInjector(modules = [
-        Bindings::class,
-        ViewModelFactoryModule::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            Bindings::class,
+            ViewModelFactoryModule::class
+        ]
+    )
     fun editProfileActivity(): EditProfileActivity
 
     @Module
@@ -26,7 +28,7 @@ interface EditProfileFeatureModule {
         @Binds
         @IntoMap
         @ViewModelKey(EditProfileViewModel::class)
-        fun editProfileVm(vm: EditProfileViewModelImpl): ViewModel
+        fun editProfileVm(viewModelImpl: EditProfileViewModelImpl): ViewModel
 
         @Binds
         fun getUpdatePhoneNumberDelegate(delegate: FirebaseUserPhoneNumberDelegate): UserPhoneNumberDelegate

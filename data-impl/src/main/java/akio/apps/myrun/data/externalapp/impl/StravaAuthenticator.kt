@@ -56,9 +56,9 @@ class StravaAuthenticator(
             .method("POST", "".toRequestBody("text/plain".toMediaType()))
             .url(
                 baseStravaUrl + "oauth/token?grant_type=refresh_token" +
-                        "&client_id=$clientId" +
-                        "&client_secret=$clientSecret" +
-                        "&refresh_token=$originalRefreshToken"
+                    "&client_id=$clientId" +
+                    "&client_secret=$clientSecret" +
+                    "&refresh_token=$originalRefreshToken"
             )
             .build()
 

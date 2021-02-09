@@ -13,10 +13,12 @@ import dagger.multibindings.IntoMap
 
 @Module
 interface UserProfileFeatureModule {
-    @ContributesAndroidInjector(modules = [
-        ViewModelFactoryModule::class,
-        Bindings::class
-    ])
+    @ContributesAndroidInjector(
+        modules = [
+            ViewModelFactoryModule::class,
+            Bindings::class
+        ]
+    )
     fun userProfileFragment(): UserProfileFragment
 
     @Module

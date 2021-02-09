@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.activity.impl
 
-import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.entity.FirestoreActivity
 import akio.apps.myrun.data.activity.entity.FirestoreActivityMapper
@@ -8,6 +7,7 @@ import akio.apps.myrun.data.activity.entity.FirestoreDataPointSerializer
 import akio.apps.myrun.data.activity.entity.FirestoreFloatDataPointParser
 import akio.apps.myrun.data.activity.entity.FirestoreIntegerDataPointParser
 import akio.apps.myrun.data.activity.entity.FirestoreLocationDataPointParser
+import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.fitness.SingleDataPoint
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.utils.FirebaseStorageUtils
@@ -17,10 +17,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class FirebaseActivityRepository @Inject constructor(
     private val firestore: FirebaseFirestore,

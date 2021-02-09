@@ -13,13 +13,20 @@ import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.domain.routetracking.SaveRouteTrackingActivityUsecase
 import com.google.maps.android.SphericalUtil
-import com.sweetzpot.tcxzpot.*
+import com.sweetzpot.tcxzpot.Activities
+import com.sweetzpot.tcxzpot.Cadence
+import com.sweetzpot.tcxzpot.Intensity
+import com.sweetzpot.tcxzpot.Position
+import com.sweetzpot.tcxzpot.Sport
+import com.sweetzpot.tcxzpot.TCXDate
+import com.sweetzpot.tcxzpot.Track
+import com.sweetzpot.tcxzpot.TriggerMethod
 import com.sweetzpot.tcxzpot.builders.ActivityBuilder
 import com.sweetzpot.tcxzpot.builders.LapBuilder
 import com.sweetzpot.tcxzpot.builders.TrackpointBuilder
 import com.sweetzpot.tcxzpot.builders.TrainingCenterDatabaseBuilder
 import java.io.File
-import java.util.*
+import java.util.Date
 import javax.inject.Inject
 
 class ExportTrackingActivityToStravaFileUsecase @Inject constructor(

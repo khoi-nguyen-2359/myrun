@@ -17,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
-
 class SplashActivity : AppCompatActivity() {
 
     @Inject
