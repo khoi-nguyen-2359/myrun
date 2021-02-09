@@ -19,8 +19,11 @@ package akio.apps._base
  * Helper functions that are workarounds to Runtime Exceptions when using kotlin.
  */
 
+import kotlinx.coroutines.runBlocking
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito
+import org.mockito.Mockito.`when`
+import org.mockito.stubbing.OngoingStubbing
 
 /**
  * Returns Mockito.eq() as nullable type to avoid java.lang.IllegalStateException when
@@ -48,4 +51,6 @@ fun <T> capture(argumentCaptor: ArgumentCaptor<T>): T = argumentCaptor.capture()
 inline fun <reified T : Any> argumentCaptor(): ArgumentCaptor<T> =
     ArgumentCaptor.forClass(T::class.java)
 
-inline fun <reified T : Any> mock(): T = Mockito.mock(T::class.java)!!
+fun <T, R> wheneverBlocking(r: R, block: suspend R.() -> T?): OngoingStubbing<T> = runBlocking {
+    `when`(block(r))
+}

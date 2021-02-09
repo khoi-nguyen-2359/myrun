@@ -11,6 +11,6 @@ class GetMapInitialLocationUsecase @Inject constructor(
     suspend fun getMapInitialLocation(): LatLng {
         return locationDataSource.getLastLocation()
             ?.toLatLng()
-            ?: LatLng(10.8231, 106.6297) // fallback to saigon's location
+            ?: LatLng(10.8231, 106.6297) // TODO: fallback to saigon's location?
     }
 }
