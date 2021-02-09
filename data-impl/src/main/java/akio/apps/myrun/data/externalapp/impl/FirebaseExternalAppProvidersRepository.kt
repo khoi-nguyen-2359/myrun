@@ -24,7 +24,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class ExternalAppProvidersRepositoryImpl @Inject constructor(
+class FirebaseExternalAppProvidersRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firestoreStravaTokenMapper: FirestoreStravaTokenMapper,
     private val firestoreProvidersMapper: FirestoreProvidersMapper

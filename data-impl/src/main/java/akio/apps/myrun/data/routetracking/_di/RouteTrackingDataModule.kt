@@ -5,7 +5,7 @@ import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.impl.RouteTrackingDatabase
 import akio.apps.myrun.data.routetracking.impl.RouteTrackingLocationDao
 import akio.apps.myrun.data.routetracking.impl.RouteTrackingLocationRepositoryImpl
-import akio.apps.myrun.data.routetracking.impl.RouteTrackingStateImpl
+import akio.apps.myrun.data.routetracking.impl.PreferencesRouteTrackingState
 import android.content.Context
 import androidx.room.Room
 import dagger.Binds
@@ -38,5 +38,5 @@ interface RouteTrackingDataModule {
 
     @Binds
     @Singleton
-    fun routeTrackingState(routeTrackingStateImpl: RouteTrackingStateImpl): RouteTrackingState
+    fun routeTrackingState(preferencesRouteTrackingState: PreferencesRouteTrackingState): RouteTrackingState
 }

@@ -1,13 +1,13 @@
-package akio.apps.myrun.feature.strava.impl
+package akio.apps.myrun.data.externalapp.impl
 
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
-import akio.apps.myrun.data.externalapp.StravaAuthenticator
 import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntity
 import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntityMapper
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking
+import okhttp3.Authenticator
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -16,7 +16,7 @@ import okhttp3.Response
 import okhttp3.Route
 import timber.log.Timber
 
-class StravaAuthenticatorImpl(
+class StravaAuthenticator(
     private val httpClient: OkHttpClient,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val stravaTokenRefreshEntityMapper: StravaTokenRefreshEntityMapper,
@@ -25,7 +25,7 @@ class StravaAuthenticatorImpl(
     private val gson: Gson,
     private val clientId: String,
     private val clientSecret: String
-) : StravaAuthenticator {
+) : Authenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
         val userAccountId = userAuthenticationState.getUserAccountId()

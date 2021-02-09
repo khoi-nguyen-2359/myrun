@@ -2,11 +2,11 @@ package akio.apps.myrun.data.externalapp._di
 
 import akio.apps.myrun.data._base.FirebaseDataModule
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
-import akio.apps.myrun.data.externalapp.StravaAuthenticator
 import akio.apps.myrun.data.externalapp.StravaDataRepository
 import akio.apps.myrun.data.externalapp.StravaTokenRepository
-import akio.apps.myrun.data.externalapp.impl.ExternalAppProvidersRepositoryImpl
+import akio.apps.myrun.data.externalapp.impl.FirebaseExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.impl.StravaApi
+import akio.apps.myrun.data.externalapp.impl.StravaAuthenticator
 import akio.apps.myrun.data.externalapp.impl.StravaDataRepositoryImpl
 import akio.apps.myrun.data.externalapp.impl.StravaTokenRepositoryImpl
 import com.google.gson.Gson
@@ -22,7 +22,7 @@ import javax.inject.Singleton
 @Module(includes = [ExternalAppDataModule.Providers::class, FirebaseDataModule::class])
 interface ExternalAppDataModule {
     @Binds
-    fun externalAppCredentialsRepo(repo: ExternalAppProvidersRepositoryImpl): ExternalAppProvidersRepository
+    fun externalAppCredentialsRepo(repo: FirebaseExternalAppProvidersRepository): ExternalAppProvidersRepository
 
     @Binds
     fun stravaTokenRepository(repositoryImpl: StravaTokenRepositoryImpl): StravaTokenRepository

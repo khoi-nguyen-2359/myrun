@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.place._di
 
 import akio.apps.myrun.data.place.PlaceDataSource
-import akio.apps.myrun.data.place.impl.PlaceDataSourceImpl
+import akio.apps.myrun.data.place.impl.GooglePlaceDataSource
 import android.content.Context
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -13,7 +13,7 @@ import dagger.Provides
 interface PlaceDataModule {
 
     @Binds
-    fun placeDataSource(placeDataSourceImpl: PlaceDataSourceImpl): PlaceDataSource
+    fun placeDataSource(googlePlaceDataSource: GooglePlaceDataSource): PlaceDataSource
 
     @Module
     class Providers {

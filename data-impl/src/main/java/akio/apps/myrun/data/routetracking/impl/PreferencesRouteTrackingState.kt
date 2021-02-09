@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class RouteTrackingStateImpl @Inject constructor(
+class PreferencesRouteTrackingState @Inject constructor(
     appContext: Context
 ) : RouteTrackingState {
 

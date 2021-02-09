@@ -18,7 +18,7 @@ import java.util.TreeSet
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class FitnessDataRepositoryImpl @Inject constructor(
+class GoogleFitnessDataRepository @Inject constructor(
     private val appContext: Context
 ) : FitnessDataRepository {
 
