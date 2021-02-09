@@ -52,8 +52,10 @@ dependencies {
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
 
+    testImplementation project(":data")
     testImplementation "junit:junit:$Versions.junit"
     testImplementation "org.mockito:mockito-core:$Versions.mockitoCore"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$Versions.mockitoKotlin"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$Versions.coroutinesTest"
     androidTestImplementation "androidx.test.ext:junit:$Versions.androidXJunit"
 }
