@@ -52,7 +52,8 @@ dependencies {
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
 
-    testImplementation project(":data")
+    testImplementation(testFixtures(project(':test')))
+
     testImplementation "junit:junit:$Versions.junit"
     testImplementation "org.mockito:mockito-core:$Versions.mockitoCore"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$Versions.mockitoKotlin"
