@@ -17,14 +17,16 @@ class UpdateUserRecentPlaceUsecase @Inject constructor(
 
         val sortingOrder = mutableMapOf<String, Int>()
         placeDataSource.getRecentPlaceAddressSortingOrder()
-            .forEachIndexed { index, item -> sortingOrder[item] = index }
+            .forEachIndexed { index, addressType -> sortingOrder[addressType] = index }
 
         val addressComponents = placeDataSource.getAddressFromLocation(lat, lng)
-            .filter { component -> component.types.any { type -> sortingOrder.containsKey(type) } }
+            .filter { addressComponent ->
+                addressComponent.types.any { addressType -> sortingOrder.containsKey(addressType) }
+            }
 
-        val sortedAddressTexts = addressComponents.sortedBy {
-            it.types.find { sortingOrder[it] != null }
-                ?.let { sortingType -> sortingOrder[sortingType] }
+        val sortedAddressTexts = addressComponents.sortedBy { addressComponent ->
+            addressComponent.types.find { addressType -> sortingOrder[addressType] != null }
+                ?.let { addressType -> sortingOrder[addressType] }
                 ?: Int.MAX_VALUE
         }
             .map { it.name }
