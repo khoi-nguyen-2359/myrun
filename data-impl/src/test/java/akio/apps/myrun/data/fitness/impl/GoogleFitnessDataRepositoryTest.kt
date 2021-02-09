@@ -4,7 +4,7 @@ import akio.apps.myrun.data.fitness.SingleDataPoint
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class FitnessDataRepositoryImplTest {
+class GoogleFitnessDataRepositoryTest {
 
     @Test
     fun testDataPointsMerger() {
@@ -25,7 +25,7 @@ class FitnessDataRepositoryImplTest {
             SingleDataPoint(10, 10.0),
             SingleDataPoint(11, 11.0)
         )
-        val merged = FitnessDataRepositoryImpl.mergeDataPoints(dp1, dp2)
+        val merged = GoogleFitnessDataRepository.mergeDataPoints(dp1, dp2)
         assertEquals(12, merged.size)
         assertEquals(0.0, merged[0].value, 0.0)
         assertEquals(1.0, merged[1].value, 0.0)

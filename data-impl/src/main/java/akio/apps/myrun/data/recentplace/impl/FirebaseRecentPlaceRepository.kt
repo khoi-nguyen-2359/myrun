@@ -7,7 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class RecentPlaceRepositoryImpl @Inject constructor(
+class FirebaseRecentPlaceRepository @Inject constructor(
     private val firestore: FirebaseFirestore
 ) : RecentPlaceRepository {
 
