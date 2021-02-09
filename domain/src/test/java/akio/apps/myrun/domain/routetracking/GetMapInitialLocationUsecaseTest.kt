@@ -1,8 +1,8 @@
 package akio.apps.myrun.domain.routetracking
 
-import akio.apps._base.wheneverBlocking
 import akio.apps.myrun.data.location.LocationDataSource
 import akio.apps.myrun.data.routetracking.model.LatLng
+import akio.apps.test.wheneverBlocking
 import android.location.Location
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verifyBlocking

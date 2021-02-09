@@ -110,11 +110,13 @@ dependencies {
 
     implementation "com.facebook.android:facebook-login:$Versions.facebookSdk"
 
+    testImplementation(testFixtures(project(':test')))
     testImplementation "junit:junit:$Versions.junit"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$Versions.coroutinesTest"
     testImplementation "androidx.arch.core:core-testing:$Versions.androidXCoreTesting"
     kaptAndroidTest "com.google.dagger:dagger-compiler:$Versions.dagger"
     testImplementation "org.mockito:mockito-core:$Versions.mockitoCore"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$Versions.mockitoKotlin"
     androidTestImplementation "org.mockito:mockito-android:$Versions.mockitoAndroid"
     androidTestImplementation "androidx.test:runner:$Versions.androidXTestRunner"
     androidTestImplementation "androidx.test.espresso:espresso-core:$Versions.espresso"
