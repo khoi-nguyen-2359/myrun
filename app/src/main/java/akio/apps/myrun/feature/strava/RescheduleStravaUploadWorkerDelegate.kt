@@ -10,8 +10,8 @@ import android.content.Context
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.await
-import javax.inject.Inject
 import timber.log.Timber
+import javax.inject.Inject
 
 class RescheduleStravaUploadWorkerDelegate @Inject constructor(
     private val activityFileTrackingRepository: ActivityFileTrackingRepository,
