@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.authentication.impl
 
-import akio.apps.myrun.data.authentication.model.UserAccount
 import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.data.authentication.model.UserAccount
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
