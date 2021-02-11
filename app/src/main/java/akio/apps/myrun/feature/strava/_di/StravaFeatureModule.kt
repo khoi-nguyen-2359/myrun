@@ -17,8 +17,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
-import javax.inject.Named
 import okhttp3.OkHttpClient
+import javax.inject.Named
 
 @Module(includes = [StravaFeatureModule.Providers::class])
 interface StravaFeatureModule {
