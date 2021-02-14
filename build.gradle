@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:$Versions.androidGradlePlugin"
+        classpath "com.android.tools.build:gradle:$Versions.agp"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$Versions.kotlin"
         classpath "com.google.gms:google-services:$Versions.playServicesGradlePlugin"
         classpath "com.google.firebase:firebase-crashlytics-gradle:$Versions.crashlyticsGradlePlugin"
