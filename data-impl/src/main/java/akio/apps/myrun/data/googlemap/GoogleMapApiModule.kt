@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.googlemap
 
-import akio.apps.myrun.data.R
+import akio.apps.myrun.data.impl.R
 import android.content.Context
 import dagger.Module
 import dagger.Provides
