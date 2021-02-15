@@ -4,9 +4,7 @@ interface ActivityModel {
     val id: String
 
     // user info
-    val userId: String
-    val userName: String?
-    val userAvatar: String?
+    val athleteInfo: AthleteInfo
 
     // info
     val activityType: ActivityType
@@ -21,4 +19,10 @@ interface ActivityModel {
 
     // data points
     val encodedPolyline: String
+
+    data class AthleteInfo(
+        val userId: String,
+        val userName: String?,
+        val userAvatar: String?
+    )
 }

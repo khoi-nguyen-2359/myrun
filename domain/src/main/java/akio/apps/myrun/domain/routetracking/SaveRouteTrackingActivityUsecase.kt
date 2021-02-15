@@ -45,18 +45,20 @@ class SaveRouteTrackingActivityUsecase @Inject constructor(
         val trackedLocations = routeTrackingLocationRepository.getAllLocations()
         val encodedPolyline = PolyUtil.encode(trackedLocations.map { it.toGmsLatLng() })
         val activityData = ActivityDataModel(
-            "",
-            userProfile.accountId,
-            userProfile.name,
-            userProfile.photo,
+            id = "",
             activityType,
-            "",
-            "",
+            name = "",
+            routeImage = "",
             startTime,
             endTime,
             duration,
             distance,
-            encodedPolyline
+            encodedPolyline,
+            athleteInfo = ActivityModel.AthleteInfo(
+                userProfile.accountId,
+                userProfile.name,
+                userProfile.photo,
+            )
         )
 
         val speedDataPoints =

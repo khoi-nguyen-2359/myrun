@@ -16,12 +16,9 @@ class FirestoreActivityMapper @Inject constructor() {
             else -> ActivityType.Unknown
         }
 
-        val activityData = input.run {
+        val activityData = with(input) {
             ActivityDataModel(
                 id,
-                userId,
-                userName,
-                userAvatar,
                 activityType,
                 name,
                 routeImage,
@@ -29,7 +26,12 @@ class FirestoreActivityMapper @Inject constructor() {
                 endTime,
                 duration,
                 distance,
-                encodedPolyline
+                encodedPolyline,
+                ActivityModel.AthleteInfo(
+                    athleteInfo.userId,
+                    athleteInfo.userName,
+                    athleteInfo.userAvatar
+                )
             )
         }
 
@@ -56,12 +58,9 @@ class FirestoreActivityMapper @Inject constructor() {
             else -> FirestoreActivityType.Unknown
         }
 
-        return input.run {
+        return with(input) {
             FirestoreActivity(
                 id = createdId,
-                userId = userId,
-                userName = userName,
-                userAvatar = userAvatar,
                 activityType = activityType,
                 name = name,
                 routeImage = uploadedUri.toString(),
@@ -71,7 +70,12 @@ class FirestoreActivityMapper @Inject constructor() {
                 distance = distance,
                 encodedPolyline = encodedPolyline,
                 runningData = runData,
-                cyclingData = cyclingData
+                cyclingData = cyclingData,
+                athleteInfo = FirestoreActivityAthleteInfo(
+                    athleteInfo.userId,
+                    athleteInfo.userName,
+                    athleteInfo.userAvatar
+                )
             )
         }
     }
