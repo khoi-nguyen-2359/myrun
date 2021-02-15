@@ -66,9 +66,9 @@ class FirebaseActivityRepository @Inject constructor(
         stepCadenceDataPoints: List<SingleDataPoint<Int>>?,
         locationDataPoints: List<SingleDataPoint<LocationEntity>>
     ): String = withContext(Dispatchers.IO) {
-        val docRef = getUserActivitiesCollection(activity.userId).document()
+        val docRef = getUserActivitiesCollection(activity.athleteInfo.userId).document()
 
-        val userActivityImageStorage = getActivityImageStorage(activity.userId)
+        val userActivityImageStorage = getActivityImageStorage(activity.athleteInfo.userId)
         val uploadedUri = FirebaseStorageUtils.uploadBitmap(
             userActivityImageStorage,
             docRef.id,

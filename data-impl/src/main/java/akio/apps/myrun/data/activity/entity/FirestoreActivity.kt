@@ -6,14 +6,6 @@ data class FirestoreActivity(
     @JvmField @PropertyName("id")
     val id: String = "",
 
-    // user info
-    @JvmField @PropertyName("userId")
-    val userId: String = "",
-    @JvmField @PropertyName("userName")
-    val userName: String? = null,
-    @JvmField @PropertyName("userAvatar")
-    val userAvatar: String? = null,
-
     // activity info
     @JvmField @PropertyName("activityType")
     val activityType: FirestoreActivityType = FirestoreActivityType.Unknown,
@@ -38,5 +30,9 @@ data class FirestoreActivity(
     @JvmField @PropertyName("runningData")
     val runningData: FirestoreRunningData? = null,
     @JvmField @PropertyName("cyclingData")
-    val cyclingData: FirestoreCyclingData? = null
+    val cyclingData: FirestoreCyclingData? = null,
+
+    // user info
+    @JvmField @PropertyName("athleteInfo")
+    val athleteInfo: FirestoreActivityAthleteInfo = FirestoreActivityAthleteInfo()
 )
