@@ -19,20 +19,19 @@ class ActivityViewHolder(
     private val viewBinding: ItemUserTimelineActivityBinding,
     private val timeFormatter: SimpleDateFormat,
     private val dateFormatter: SimpleDateFormat,
-    private val activityTypeNameMap: Map<ActivityType, Int>
+    private val activityTypeNameMap: Map<ActivityType, Int>,
+    private val selectItemAction: (Activity) -> Unit
 ) : RecyclerView.ViewHolder(viewBinding.root) {
 
     fun bind(activity: Activity) = viewBinding.apply {
         Glide.with(itemView)
-            .load(activity.userAvatar)
+            .load(activity.athleteInfo.userAvatar)
             .override(getResources().getDimensionPixelSize(R.dimen.user_timeline_avatar_size))
             .placeholder(R.drawable.common_avatar_placeholder_image)
             .circleCenterCrop()
-            .into(userAvatarImageView)
+            .into(athleteAvatarImageView)
 
-        activity.userName?.let { userName ->
-            userNameTextView.text = userName
-        }
+        athleteNameTextView.text = activity.athleteInfo.userName
 
         Glide.with(itemView)
             .load(activity.routeImage)
@@ -82,5 +81,7 @@ class ActivityViewHolder(
                 getString(activityTypeNameMap[activity.activityType] ?: 0)
             )
         }
+
+        root.setOnClickListener { selectItemAction(activity) }
     }
 }

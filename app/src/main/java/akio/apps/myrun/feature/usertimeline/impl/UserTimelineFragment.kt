@@ -7,7 +7,9 @@ import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._di.getViewModel
 import akio.apps.myrun.databinding.FragmentUserTimelineBinding
+import akio.apps.myrun.feature.activitydetail.ActivityDetailActivity
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
+import akio.apps.myrun.feature.usertimeline.model.Activity
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -31,7 +33,20 @@ class UserTimelineFragment : Fragment(R.layout.fragment_user_timeline) {
         getViewModel(viewModelFactory, this)
     }
 
-    private val activityPagingAdapter: ActivityPagingAdapter = ActivityPagingAdapter()
+    private val selectActivityAction: (Activity) -> Unit = { activity ->
+        openActivityDetail(activity)
+    }
+
+    private fun openActivityDetail(activity: Activity) {
+        ActivityDetailActivity.createIntent(
+            requireContext(),
+            activity.id
+        ).also(::startActivity)
+    }
+
+    private val activityPagingAdapter: ActivityPagingAdapter = ActivityPagingAdapter(
+        selectActivityAction
+    )
 
     private val dialogDelegate by lazy { DialogDelegate(requireContext()) }
 

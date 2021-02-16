@@ -90,6 +90,7 @@ dependencies {
     implementation "androidx.paging:paging-runtime-ktx:$Versions.paging"
     implementation "androidx.fragment:fragment-ktx:$Versions.fragment"
     implementation "androidx.activity:activity-ktx:$Versions.activity"
+    implementation "androidx.activity:activity-compose:$Versions.activity"
     implementation "androidx.work:work-runtime-ktx:$Versions.workManager"
     implementation "com.google.android.material:material:$Versions.androidMaterial"
 

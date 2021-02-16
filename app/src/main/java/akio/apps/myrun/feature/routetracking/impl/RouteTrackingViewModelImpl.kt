@@ -18,7 +18,7 @@ import akio.apps.myrun.domain.strava.ExportTrackingActivityToStravaFileUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import akio.apps.myrun.feature.usertimeline.model.Activity
-import akio.apps.myrun.feature.usertimeline.model.ActivityEntityMapper
+import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
@@ -44,7 +44,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val saveRouteTrackingActivityUsecase: SaveRouteTrackingActivityUsecase,
     private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase,
     private val exportActivityToStravaFileUsecase: ExportTrackingActivityToStravaFileUsecase,
-    private val activityMapper: ActivityEntityMapper,
+    private val activityMapper: ActivityModelMapper,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val authenticationState: UserAuthenticationState
 ) : RouteTrackingViewModel() {

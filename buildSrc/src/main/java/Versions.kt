@@ -11,7 +11,7 @@ object Versions {
     const val coroutines = "1.4.2"
 
     const val appCompat = "1.2.0"
-    const val activity = "1.2.0"
+    const val activity = "1.3.0-alpha02"
     const val fragment = "1.3.0"
     const val constraintLayout = "2.0.4"
     const val androidMaterial = "1.3.0"

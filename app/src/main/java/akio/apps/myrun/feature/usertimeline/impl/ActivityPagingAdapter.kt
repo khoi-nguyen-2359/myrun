@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.DiffUtil
 import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
 
-class ActivityPagingAdapter : PagingDataAdapter<Activity, ActivityViewHolder>(
+class ActivityPagingAdapter(
+    private val selectItemAction: (Activity) -> Unit
+) : PagingDataAdapter<Activity, ActivityViewHolder>(
     ACTIVITY_COMPARATOR,
     Dispatchers.Main,
     Dispatchers.Default
@@ -33,7 +35,8 @@ class ActivityPagingAdapter : PagingDataAdapter<Activity, ActivityViewHolder>(
             ),
             timeFormatter,
             dateFormatter,
-            activityNameMap
+            activityNameMap,
+            selectItemAction
         )
     }
 
