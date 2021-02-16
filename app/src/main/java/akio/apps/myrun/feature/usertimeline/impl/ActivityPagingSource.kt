@@ -3,13 +3,13 @@ package akio.apps.myrun.feature.usertimeline.impl
 import akio.apps._base.Resource
 import akio.apps.myrun.domain.usertimeline.GetUserTimelineActivitiesUsecase
 import akio.apps.myrun.feature.usertimeline.model.Activity
-import akio.apps.myrun.feature.usertimeline.model.ActivityEntityMapper
+import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import androidx.paging.PagingSource
 import javax.inject.Inject
 
 class ActivityPagingSource @Inject constructor(
     private val getUserTimelineActivitiesUsecase: GetUserTimelineActivitiesUsecase,
-    private val activityEntityMapper: ActivityEntityMapper,
+    private val activityModelMapper: ActivityModelMapper,
 ) : PagingSource<Long, Activity>() {
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Activity> {
         val startAfter = params.key ?: System.currentTimeMillis()
@@ -18,7 +18,7 @@ class ActivityPagingSource @Inject constructor(
         return when (resource) {
             is Resource.Success ->
                 LoadResult.Page(
-                    data = resource.data.map(activityEntityMapper::map),
+                    data = resource.data.map(activityModelMapper::map),
                     prevKey = null,
                     nextKey = resource.data.lastOrNull()?.startTime
                 )
