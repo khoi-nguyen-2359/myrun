@@ -5,11 +5,6 @@ import akio.apps.myrun.data.activity.model.ActivityType
 data class ActivityData(
     override val id: String,
 
-    // user info
-    override val userId: String,
-    override val userName: String?,
-    override val userAvatar: String?,
-
     // activity info
     override val activityType: ActivityType,
     override val name: String,
@@ -18,5 +13,8 @@ data class ActivityData(
     override val endTime: Long,
     override val duration: Long,
     override val distance: Double,
-    override val encodedPolyline: String
+    override val encodedPolyline: String,
+
+    // user info
+    override val athleteInfo: Activity.AthleteInfo
 ) : Activity

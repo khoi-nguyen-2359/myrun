@@ -6,14 +6,11 @@ import akio.apps.myrun.data.activity.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.model.RunningActivityModel
 import javax.inject.Inject
 
-class ActivityEntityMapper @Inject constructor() {
+class ActivityModelMapper @Inject constructor() {
     fun map(activityId: String, model: ActivityModel): Activity {
         val activityData = model.run {
             ActivityData(
                 activityId,
-                userId,
-                userName,
-                userAvatar,
                 activityType,
                 name,
                 routeImage,
@@ -21,7 +18,8 @@ class ActivityEntityMapper @Inject constructor() {
                 endTime,
                 duration,
                 distance,
-                encodedPolyline
+                encodedPolyline,
+                mapAthleteInfo(athleteInfo)
             )
         }
 
@@ -34,13 +32,18 @@ class ActivityEntityMapper @Inject constructor() {
 
     fun map(model: ActivityModel) = map(model.id, model)
 
+    private fun mapAthleteInfo(athleteInfoModel: ActivityModel.AthleteInfo) = with(athleteInfoModel) {
+        Activity.AthleteInfo(userId, userName, userAvatar)
+    }
+
+    private fun mapAthleteInfoRev(athleteInfo: Activity.AthleteInfo) = with(athleteInfo) {
+        ActivityModel.AthleteInfo(userId, userName, userAvatar)
+    }
+
     fun mapRev(activity: Activity): ActivityModel {
         val activityData = with(activity) {
             ActivityDataModel(
                 id,
-                userId,
-                userName,
-                userAvatar,
                 activityType,
                 name,
                 routeImage,
@@ -48,7 +51,8 @@ class ActivityEntityMapper @Inject constructor() {
                 endTime,
                 duration,
                 distance,
-                encodedPolyline
+                encodedPolyline,
+                mapAthleteInfoRev(athleteInfo)
             )
         }
 

@@ -114,6 +114,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".feature.activitydetail.ActivityDetailActivity" />
+
         <!--        Remove the default initializer of WorkManager -->
         <!--        https://developer.android.com/topic/libraries/architecture/workmanager/advanced/custom-configuration#remove-default-->
         <provider

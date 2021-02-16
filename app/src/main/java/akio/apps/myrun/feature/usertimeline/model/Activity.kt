@@ -5,11 +5,6 @@ import akio.apps.myrun.data.activity.model.ActivityType
 interface Activity {
     val id: String
 
-    // user info
-    val userId: String
-    val userName: String?
-    val userAvatar: String?
-
     // activity info
     val activityType: ActivityType
     val name: String
@@ -19,4 +14,13 @@ interface Activity {
     val duration: Long
     val distance: Double
     val encodedPolyline: String
+
+    // user info
+    val athleteInfo: AthleteInfo
+
+    data class AthleteInfo(
+        val userId: String,
+        val userName: String?,
+        val userAvatar: String?
+    )
 }

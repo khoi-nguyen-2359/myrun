@@ -12,7 +12,7 @@ import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.routetracking.SaveRouteTrackingActivityUsecase
 import akio.apps.myrun.domain.strava.ExportTrackingActivityToStravaFileUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
-import akio.apps.myrun.feature.usertimeline.model.ActivityEntityMapper
+import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import akio.apps.test.wheneverBlocking
 import android.content.Context
 import com.nhaarman.mockitokotlin2.verify
@@ -36,7 +36,7 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
     lateinit var mockedExternalAppProvidersRepository: ExternalAppProvidersRepository
 
     @Mock
-    lateinit var mockedActivityMapper: ActivityEntityMapper
+    lateinit var mockedActivityMapper: ActivityModelMapper
 
     @Mock
     lateinit var mockedExportActivityToStravaFileUsecase: ExportTrackingActivityToStravaFileUsecase
