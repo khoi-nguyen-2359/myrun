@@ -6,8 +6,8 @@ object Versions {
     const val targetSdk = 30
     const val minSdk = 21
 
-    const val agp = "7.0.0-alpha06"
-    const val kotlin = "1.4.30"
+    const val agp = "7.0.0-alpha08"
+    const val kotlin = "1.4.31"
     const val coroutines = "1.4.2"
 
     const val appCompat = "1.2.0"
@@ -15,7 +15,7 @@ object Versions {
     const val fragment = "1.3.0"
     const val constraintLayout = "2.0.4"
     const val androidMaterial = "1.3.0"
-    const val compose = "1.0.0-alpha12"
+    const val compose = "1.0.0-beta03"
 
     const val workManager = "2.5.0"
     const val paging = "3.0.0-alpha06"
