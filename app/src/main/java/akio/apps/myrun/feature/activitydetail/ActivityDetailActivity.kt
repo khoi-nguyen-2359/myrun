@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.activitydetail
 
+import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailCompose
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -17,7 +18,7 @@ class ActivityDetailActivity : AppCompatActivity() {
             ?: return
 
         setContent {
-            ActivityDetailContent()
+            ActivityDetailCompose()
         }
     }
 
