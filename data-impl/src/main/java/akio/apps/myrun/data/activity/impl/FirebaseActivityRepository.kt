@@ -111,6 +111,16 @@ class FirebaseActivityRepository @Inject constructor(
         docRef.id
     }
 
+    override suspend fun getActivity(
+        activityId: String
+    ): ActivityModel? = withContext(Dispatchers.IO) {
+        val snapshot = userActivitiesCollectionGroup.whereEqualTo("id", activityId).get().await()
+        snapshot.documents
+            .getOrNull(0)
+            ?.toObject(FirestoreActivity::class.java)
+            ?.let(firestoreActivityMapper::map)
+    }
+
     companion object {
         const val PATH_USER_ACTIVITIES_COLLECTION_GROUP = "userActivities"
         const val PATH_USERS = "users"

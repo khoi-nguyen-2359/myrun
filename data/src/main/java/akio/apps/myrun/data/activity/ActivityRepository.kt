@@ -19,4 +19,6 @@ interface ActivityRepository {
         stepCadenceDataPoints: List<SingleDataPoint<Int>>?,
         locationDataPoints: List<SingleDataPoint<LocationEntity>>
     ): String
+
+    suspend fun getActivity(activityId: String): ActivityModel?
 }

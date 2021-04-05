@@ -70,6 +70,6 @@ dependencies {
     api "com.google.android.libraries.places:places:$Versions.places"
 
     testImplementation "junit:junit:$Versions.junit"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$Versions.coroutinesTest"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$Versions.coroutines"
     androidTestImplementation "androidx.test.ext:junit:$Versions.androidXJunit"
 }

@@ -1,6 +1,8 @@
 package akio.apps.myrun.feature.activitydetail
 
-import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailCompose
+import akio.apps.myrun.MyRunApp
+import akio.apps.myrun.feature.activitydetail._di.ActivityDetailsModule
+import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailComposable
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -8,17 +10,19 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 
 class ActivityDetailActivity : AppCompatActivity() {
+    private val extActivityId: String by lazy { intent.getStringExtra(EXT_ACTIVITY_ID).orEmpty() }
 
-    private lateinit var extActivityId: String
+    private val activityDetailsViewModel: ActivityDetailsViewModel by lazy {
+        (application as MyRunApp).appComponent
+            .activityDetailsComponent(ActivityDetailsModule(extActivityId))
+            .activityDetailsViewModel()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        extActivityId = intent.getStringExtra(EXT_ACTIVITY_ID)
-            ?: return
-
         setContent {
-            ActivityDetailCompose()
+            ActivityDetailComposable(activityDetailsViewModel)
         }
     }
 
