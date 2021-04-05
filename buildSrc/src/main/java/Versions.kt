@@ -8,11 +8,11 @@ object Versions {
 
     const val agp = "7.0.0-alpha12"
     const val kotlin = "1.4.31"
-    const val coroutines = "1.4.2"
+    const val coroutines = "1.4.3"
 
-    const val appCompat = "1.2.0"
+    const val appCompat = "1.3.0-rc01"
     const val activity = "1.3.0-alpha02"
-    const val fragment = "1.3.0"
+    const val fragment = "1.3.2"
     const val constraintLayout = "2.0.4"
     const val androidMaterial = "1.3.0"
     const val compose = "1.0.0-beta03"
@@ -21,7 +21,7 @@ object Versions {
     const val workManager = "2.5.0"
     const val paging = "3.0.0-alpha06"
     const val room = "2.2.6"
-    const val lifecycle = "2.3.0"
+    const val lifecycle = "2.3.1"
     const val lifecycleExtension = "2.2.0"
     const val multidex = "1.0.3"
 
@@ -50,7 +50,6 @@ object Versions {
 
     // testing
     const val junit = "4.13.1"
-    const val coroutinesTest = "1.4.1"
     const val androidXCoreTesting = "2.1.0"
     const val mockitoCore = "3.6.28"
     const val mockitoKotlin = "2.2.0"
