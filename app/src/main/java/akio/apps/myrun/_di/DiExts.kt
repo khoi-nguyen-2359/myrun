@@ -17,3 +17,11 @@ inline fun <reified T : ViewModel> getViewModel(
     val viewModelProvider = ViewModelProvider(viewModelStoreOwner, viewModelFactory)
     return viewModelProvider[T::class.java]
 }
+
+inline fun <reified T : ViewModel> viewModel(
+    viewModelFactory: ViewModelProvider.Factory,
+    viewModelStoreOwner: ViewModelStoreOwner
+): Lazy<T> = lazy {
+    val viewModelProvider = ViewModelProvider(viewModelStoreOwner, viewModelFactory)
+    viewModelProvider[T::class.java]
+}

@@ -12,6 +12,8 @@ import akio.apps.myrun.data.location._di.LocationDataModule
 import akio.apps.myrun.data.routetracking._di.RouteTrackingDataModule
 import akio.apps.myrun.data.userfollow._di.UserFollowDataModule
 import akio.apps.myrun.data.userprofile._di.UserProfileDataModule
+import akio.apps.myrun.feature.activitydetail._di.ActivityDetailsComponent
+import akio.apps.myrun.feature.activitydetail._di.ActivityDetailsModule
 import akio.apps.myrun.feature.editprofile._di.EditProfileFeatureModule
 import akio.apps.myrun.feature.routetracking._di.RouteTrackingFeatureModule
 import akio.apps.myrun.feature.signin._di.SignInFeatureModule
@@ -59,6 +61,10 @@ import javax.inject.Singleton
 )
 interface AppComponent {
     fun inject(myRunApp: MyRunApp)
+
+    fun activityDetailsComponent(
+        activityDetailsModule: ActivityDetailsModule
+    ): ActivityDetailsComponent
 
     @Component.Factory
     interface Factory {
