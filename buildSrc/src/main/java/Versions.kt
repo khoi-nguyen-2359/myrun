@@ -38,7 +38,7 @@ object Versions {
     const val playServicesGradlePlugin = "4.3.4"
     const val playServicesMap = "17.0.0"
     const val playServicesLocation = "17.1.0"
-    const val playServicesAuth = "19.0.0"
+    const val playServicesAuth = "18.1.0"
     const val playServicesFitness = "20.0.0"
 
     const val places = "2.4.0"
