@@ -43,7 +43,7 @@ class FirebaseActivityRepository @Inject constructor(
         startAfterTime: Long,
         limit: Int
     ): List<ActivityModel> = withContext(Dispatchers.IO) {
-        val query = userActivitiesCollectionGroup.whereIn("userId", userIds)
+        val query = userActivitiesCollectionGroup.whereIn("athleteInfo.userId", userIds)
             .orderBy("startTime", Query.Direction.DESCENDING)
             .startAfter(startAfterTime)
             .limit(limit.toLong())

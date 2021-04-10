@@ -28,5 +28,8 @@ class ActivityPagingSource @Inject constructor(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Long, Activity>): Long? = null
+    override fun getRefreshKey(state: PagingState<Long, Activity>): Long? =
+        state.anchorPosition?.let { anchorPosition ->
+            state.closestItemToPosition(anchorPosition)?.startTime
+        }
 }
