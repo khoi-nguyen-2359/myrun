@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.splash.impl
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
-import akio.apps.myrun._di.getViewModel
+import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
 import akio.apps.myrun.feature.home.impl.HomeActivity
@@ -13,21 +13,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import dagger.android.AndroidInjection
-import javax.inject.Inject
 
 class SplashActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private val splashViewModel: SplashViewModel by lazy { getViewModel(viewModelFactory, this) }
+    private val splashViewModel: SplashViewModel by viewModel()
 
     private val dialogDelegate by lazy { DialogDelegate(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 

@@ -6,9 +6,7 @@ import android.content.Context
 import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
 
-class DialogDelegate(
-    private val context: Context
-) {
+class DialogDelegate(private val context: Context) {
 
     private var progressDialog: Dialog? = null
 

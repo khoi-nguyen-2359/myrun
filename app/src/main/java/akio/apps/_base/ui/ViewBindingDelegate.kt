@@ -3,6 +3,8 @@ package akio.apps._base.ui
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.viewbinding.ViewBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -12,12 +14,6 @@ class ViewBindingDelegate<T : ViewBinding>(
 ) : ReadOnlyProperty<Fragment, T> {
 
     private var _value: T? = null
-    val value: T
-        get() = _value!!
-
-    fun release() {
-        _value = null
-    }
 
     override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
         if (thisRef.lifecycle.currentState == Lifecycle.State.DESTROYED) {
@@ -26,6 +22,13 @@ class ViewBindingDelegate<T : ViewBinding>(
 
         if (_value == null) {
             _value = creator(thisRef.requireView())
+            thisRef.lifecycle.addObserver(object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun onDestroy() {
+                    _value = null
+                    thisRef.lifecycle.removeObserver(this)
+                }
+            })
         }
 
         return _value!!

@@ -4,7 +4,7 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
-import akio.apps.myrun._di.getViewModel
+import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import akio.apps.myrun.databinding.ActivitySignInBinding
 import akio.apps.myrun.feature.signin.SignInViewModel
@@ -15,7 +15,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -26,19 +25,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.PhoneAuthCredential
-import dagger.android.AndroidInjection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private val signInVM: SignInViewModel by lazy { getViewModel(viewModelFactory, this) }
+    private val signInVM: SignInViewModel by viewModel()
 
     private val viewBinding: ActivitySignInBinding by lazy {
         ActivitySignInBinding.inflate(layoutInflater)
@@ -62,8 +56,6 @@ class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
-
         super.onCreate(savedInstanceState)
 
         initViews()
