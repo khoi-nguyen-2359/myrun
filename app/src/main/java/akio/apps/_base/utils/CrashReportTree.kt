@@ -11,13 +11,11 @@ class CrashReportTree : Timber.Tree() {
         }
 
         if (t != null) {
-            FirebaseCrashlytics.getInstance()
-                .recordException(t)
+            FirebaseCrashlytics.getInstance().recordException(t)
         }
 
         if (priority == Log.ERROR && message.isNotEmpty()) {
-            FirebaseCrashlytics.getInstance()
-                .log(message)
+            FirebaseCrashlytics.getInstance().log(message)
         }
     }
 }

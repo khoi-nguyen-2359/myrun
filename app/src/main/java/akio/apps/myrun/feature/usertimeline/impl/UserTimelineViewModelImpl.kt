@@ -16,8 +16,7 @@ class UserTimelineViewModelImpl @Inject constructor(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
             prefetchDistance = PAGE_SIZE / 2
-        ),
-        initialKey = System.currentTimeMillis()
+        )
     ) { activityPagingSource }.liveData
 
     companion object {
