@@ -1,10 +1,10 @@
 package akio.apps.myrun.feature.routetracking._di
 
-import akio.apps._base.di.ViewModelFactoryModule
 import akio.apps._base.di.ViewModelKey
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
-import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
+import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingViewModelImpl
+import akio.apps.myrun.feature.routetracking.impl.UpdateUserRecentPlaceWorker
 import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
@@ -13,19 +13,14 @@ import dagger.multibindings.IntoMap
 
 @Module
 interface RouteTrackingFeatureModule {
-    @ContributesAndroidInjector(
-        modules = [
-            Bindings::class,
-            ViewModelFactoryModule::class
-        ]
-    )
-    fun routeTrackingActivity(): RouteTrackingActivity
+    @ContributesAndroidInjector
+    fun routeTrackingService(): RouteTrackingService
 
-    @Module
-    interface Bindings {
-        @Binds
-        @IntoMap
-        @ViewModelKey(RouteTrackingViewModel::class)
-        fun bindRouteTrackingViewModel(viewModelImpl: RouteTrackingViewModelImpl): ViewModel
-    }
+    @ContributesAndroidInjector
+    fun updateUserRecentPlaceWorker(): UpdateUserRecentPlaceWorker
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RouteTrackingViewModel::class)
+    fun bindRouteTrackingViewModel(viewModelImpl: RouteTrackingViewModelImpl): ViewModel
 }

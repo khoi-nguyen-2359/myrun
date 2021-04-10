@@ -1,6 +1,7 @@
 package akio.apps.myrun._di
 
 import akio.apps.myrun.MyRunApp
+import android.app.Activity
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -16,30 +17,33 @@ val Context.androidInjector: AndroidInjector<Any>
 val Context.appComponent: AppComponent
     get() = (applicationContext as MyRunApp).appComponent
 
-inline fun <reified T : ViewModel> getViewModel(
-    viewModelFactory: ViewModelProvider.Factory,
-    viewModelStoreOwner: ViewModelStoreOwner
-): T {
-    val viewModelProvider = ViewModelProvider(viewModelStoreOwner, viewModelFactory)
-    return viewModelProvider[T::class.java]
-}
+val Activity.appComponent: AppComponent
+    get() = (applicationContext as MyRunApp).appComponent
 
 inline fun <reified T : ViewModel> Fragment.viewModel(
-    noinline viewModelCreator: () -> ViewModel
-): Lazy<T> = viewModel(viewModelStoreOwner = this, viewModelCreator = viewModelCreator)
+    noinline viewModelCreator: (() -> ViewModel)? = null
+): Lazy<T> = lazy {
+    requireContext().getViewModel(this, viewModelCreator)
+}
 
 inline fun <reified T : ViewModel> AppCompatActivity.viewModel(
-    noinline viewModelCreator: () -> ViewModel
-): Lazy<T> = viewModel(viewModelStoreOwner = this, viewModelCreator = viewModelCreator)
-
-inline fun <reified T : ViewModel> viewModel(
-    viewModelStoreOwner: ViewModelStoreOwner,
-    noinline viewModelCreator: () -> ViewModel,
+    noinline viewModelCreator: (() -> ViewModel)? = null
 ): Lazy<T> = lazy {
-    val viewModelFactory = object : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T = viewModelCreator() as T
+    getViewModel(viewModelStoreOwner = this, viewModelCreator = viewModelCreator)
+}
+
+inline fun <reified T : ViewModel> Context.getViewModel(
+    viewModelStoreOwner: ViewModelStoreOwner,
+    noinline viewModelCreator: (() -> ViewModel)? = null
+): T {
+    val viewModelFactory = if (viewModelCreator == null) {
+        appComponent.viewModelFactory()
+    } else {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T = viewModelCreator() as T
+        }
     }
     val viewModelProvider = ViewModelProvider(viewModelStoreOwner, viewModelFactory)
-    viewModelProvider[T::class.java]
+    return viewModelProvider[T::class.java]
 }

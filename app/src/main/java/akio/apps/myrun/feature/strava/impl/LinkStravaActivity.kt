@@ -4,16 +4,13 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
-import akio.apps.myrun._di.getViewModel
+import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.feature.strava.LinkStravaViewModel
 import akio.apps.myrun.feature.userprofile.impl.LinkStravaDelegate
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import dagger.android.AndroidInjection
-import javax.inject.Inject
 
 /**
  * No UI activity to receive result from strava login.
@@ -24,16 +21,9 @@ class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.EventListener
     private val dialogDelegate = DialogDelegate(this)
     private val linkStravaDelegate by lazy { LinkStravaDelegate(this, this) }
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private val linkStravaViewModel: LinkStravaViewModel by lazy {
-        getViewModel(viewModelFactory, this)
-    }
+    private val linkStravaViewModel: LinkStravaViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
-
         super.onCreate(savedInstanceState)
 
         linkStravaDelegate.checkStravaLoginResult(intent)

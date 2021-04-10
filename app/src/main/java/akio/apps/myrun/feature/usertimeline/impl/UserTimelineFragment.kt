@@ -5,7 +5,7 @@ import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.ViewBindingDelegate
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
-import akio.apps.myrun._di.getViewModel
+import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.databinding.FragmentUserTimelineBinding
 import akio.apps.myrun.feature.activitydetail.ActivityDetailActivity
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
@@ -13,25 +13,16 @@ import akio.apps.myrun.feature.usertimeline.model.Activity
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import dagger.android.support.AndroidSupportInjection
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class UserTimelineFragment : Fragment(R.layout.fragment_user_timeline) {
 
-    private val viewBindingDelegate = ViewBindingDelegate(FragmentUserTimelineBinding::bind)
-    private val viewBinding by viewBindingDelegate
+    private val viewBinding by ViewBindingDelegate(FragmentUserTimelineBinding::bind)
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private val viewModel: UserTimelineViewModel by lazy {
-        getViewModel(viewModelFactory, this)
-    }
+    private val viewModel: UserTimelineViewModel by viewModel()
 
     private val selectActivityAction: (Activity) -> Unit = { activity ->
         openActivityDetail(activity)
@@ -51,8 +42,6 @@ class UserTimelineFragment : Fragment(R.layout.fragment_user_timeline) {
     private val dialogDelegate by lazy { DialogDelegate(requireContext()) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        AndroidSupportInjection.inject(this)
-
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
@@ -81,11 +70,6 @@ class UserTimelineFragment : Fragment(R.layout.fragment_user_timeline) {
                 }
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        viewBindingDelegate.release()
     }
 
     companion object {
