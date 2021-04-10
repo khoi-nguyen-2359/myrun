@@ -3,6 +3,8 @@
 buildscript {
     repositories {
         google()
+        mavenCentral()
+        //noinspection JcenterRepositoryObsolete
         jcenter()
     }
 
@@ -17,6 +19,8 @@ buildscript {
 allprojects {
     repositories {
         google()
+        mavenCentral()
+        //noinspection JcenterRepositoryObsolete
         jcenter()
     }
 }

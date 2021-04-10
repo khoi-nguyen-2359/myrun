@@ -5,6 +5,7 @@ import akio.apps.myrun.domain.usertimeline.GetUserTimelineActivitiesUsecase
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import javax.inject.Inject
 
 class ActivityPagingSource @Inject constructor(
@@ -26,4 +27,6 @@ class ActivityPagingSource @Inject constructor(
             else -> LoadResult.Error(Exception("Invalid timeline resource"))
         }
     }
+
+    override fun getRefreshKey(state: PagingState<Long, Activity>): Long? = null
 }

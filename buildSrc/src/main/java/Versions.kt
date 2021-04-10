@@ -6,20 +6,20 @@ object Versions {
     const val targetSdk = 30
     const val minSdk = 21
 
-    const val agp = "7.0.0-alpha12"
-    const val kotlin = "1.4.31"
+    const val agp = "7.0.0-alpha14"
+    const val kotlin = "1.4.32"
     const val coroutines = "1.4.3"
 
     const val appCompat = "1.3.0-rc01"
-    const val activity = "1.3.0-alpha02"
+    const val activity = "1.3.0-alpha05"
     const val fragment = "1.3.2"
     const val constraintLayout = "2.0.4"
     const val androidMaterial = "1.3.0"
-    const val compose = "1.0.0-beta03"
+    const val compose = "1.0.0-beta04"
     const val composeConstraintLayout = "1.0.0-alpha05"
 
     const val workManager = "2.5.0"
-    const val paging = "3.0.0-alpha06"
+    const val paging = "3.0.0-beta03"
     const val room = "2.2.6"
     const val lifecycle = "2.3.1"
     const val lifecycleExtension = "2.2.0"
@@ -28,6 +28,7 @@ object Versions {
     const val dagger = "2.28.3"
     const val timber = "4.7.1"
     const val glide = "4.11.0"
+    const val accompanist = "0.7.0"
     const val facebookSdk = "[5,6)"
     const val okhttp = "4.8.1"
     const val gson = "2.8.6"

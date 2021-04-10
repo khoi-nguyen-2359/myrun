@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -22,10 +24,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.google.accompanist.glide.GlideImage
 
 @Composable
 fun ActivityInfoHeaderComposable(
-    athleteInfo: Activity.AthleteInfo,
+    userInfo: Activity.AthleteInfo,
     activityFormattedStartTime: ActivityDateTimeFormatter.Result,
     activityName: String
 ) = ConstraintLayout(
@@ -42,15 +45,22 @@ fun ActivityInfoHeaderComposable(
         layoutRefActivityName
     ) = createRefs()
 
-    Image(
-        painter = painterResource(id = R.drawable.ic_person),
-        contentDescription = "",
+    val resources = LocalContext.current.resources
+    GlideImage(
+        data = userInfo.userAvatar.orEmpty(),
+        contentDescription = "Athlete avatar",
+        requestBuilder = {
+            override(resources.getDimensionPixelSize(R.dimen.user_timeline_avatar_size))
+        },
+        loading = { UserAvatarPlaceholderComposable() },
+        error = { UserAvatarPlaceholderComposable() },
         modifier = Modifier
             .constrainAs(layoutRefProfileImage) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
             }
             .size(dimensionResource(id = R.dimen.user_timeline_avatar_size))
+            .clip(CircleShape)
     )
     Spacer(
         modifier = Modifier
@@ -61,7 +71,7 @@ fun ActivityInfoHeaderComposable(
             }
     )
     Text(
-        text = athleteInfo.userName.orEmpty(),
+        text = userInfo.userName.orEmpty(),
         fontWeight = FontWeight.Bold,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
@@ -109,11 +119,24 @@ fun ActivityInfoHeaderComposable(
     )
 }
 
+@Composable
+fun UserAvatarPlaceholderComposable() {
+    Image(
+        painter = painterResource(R.drawable.common_avatar_placeholder_image),
+        contentDescription = "Athlete avatar placeholder",
+        modifier = Modifier.size(dimensionResource(id = R.dimen.user_timeline_avatar_size))
+    )
+}
+
 @Preview
 @Composable
 private fun ActivityInfoHeaderComposablePreview() {
     ActivityInfoHeaderComposable(
-        Activity.AthleteInfo("userId", "userName", "userAvatar"),
+        Activity.AthleteInfo(
+            "userId",
+            "userName",
+            "https://image.shutterstock.com/image-vector/sample-stamp-grunge-texture-vector-260nw-1389188336.jpg"
+        ),
         ActivityDateTimeFormatter.Result.FullDateTime("Blah"),
         "activityName"
     )
