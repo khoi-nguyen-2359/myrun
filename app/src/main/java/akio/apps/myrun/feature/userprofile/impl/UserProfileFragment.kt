@@ -6,7 +6,7 @@ import akio.apps._base.ui.SingleFragmentActivity
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.circleCenterCrop
-import akio.apps.myrun._di.getViewModel
+import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.ExternalProviders
 import akio.apps.myrun.data.externalapp.model.ProviderToken
@@ -25,30 +25,17 @@ import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import dagger.android.support.AndroidSupportInjection
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
     private val dialogDelegate by lazy { DialogDelegate(requireContext()) }
     private val viewBinding by lazy { FragmentUserProfileBinding.bind(requireView()) }
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val profileViewModel: UserProfileViewModel by viewModel()
 
-    private val profileViewModel: UserProfileViewModel by lazy {
-        getViewModel(viewModelFactory, this)
-    }
     private val googleFitLinkingDelegate = GoogleFitLinkingDelegate()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidSupportInjection.inject(this)
-
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

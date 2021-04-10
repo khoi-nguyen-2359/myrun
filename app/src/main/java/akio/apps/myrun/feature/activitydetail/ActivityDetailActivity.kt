@@ -14,7 +14,7 @@ class ActivityDetailActivity : AppCompatActivity() {
     private val extActivityId: String by lazy { intent.getStringExtra(EXT_ACTIVITY_ID).orEmpty() }
 
     private val activityDetailsViewModel: ActivityDetailsViewModel by viewModel {
-        application.appComponent
+        appComponent
             .activityDetailsComponent(ActivityDetailsModule(extActivityId))
             .activityDetailsViewModel()
     }

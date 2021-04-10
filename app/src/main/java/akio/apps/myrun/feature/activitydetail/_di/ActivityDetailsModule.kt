@@ -32,6 +32,6 @@ class ActivityDetailsModule(
         @Binds
         @IntoMap
         @ViewModelKey(ActivityDetailsViewModel::class)
-        fun editProfileVm(viewModelImpl: ActivityDetailsViewModel): ViewModel
+        fun viewModel(viewModelImpl: ActivityDetailsViewModel): ViewModel
     }
 }

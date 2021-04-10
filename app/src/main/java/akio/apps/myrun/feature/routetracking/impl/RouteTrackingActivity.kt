@@ -9,7 +9,7 @@ import akio.apps.myrun._base.permissions.RequiredPermissionsDelegate
 import akio.apps.myrun._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.toGmsLatLng
-import akio.apps.myrun._di.getViewModel
+import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
@@ -29,7 +29,6 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -41,8 +40,6 @@ import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.RoundCap
-import dagger.android.AndroidInjection
-import javax.inject.Inject
 
 class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventListener {
 
@@ -50,12 +47,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     private val viewBinding by lazy { ActivityRouteTrackingBinding.inflate(layoutInflater) }
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private val routeTrackingViewModel: RouteTrackingViewModel by lazy {
-        getViewModel(viewModelFactory, this)
-    }
+    private val routeTrackingViewModel: RouteTrackingViewModel by viewModel()
 
     private val googleFitLinkingDelegate = GoogleFitLinkingDelegate()
 
@@ -97,8 +89,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
-
         super.onCreate(savedInstanceState)
 
         initViews()

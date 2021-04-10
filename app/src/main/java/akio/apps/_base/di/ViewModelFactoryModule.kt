@@ -1,12 +1,11 @@
 package akio.apps._base.di
 
 import androidx.lifecycle.ViewModelProvider
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 
 @Module
-class ViewModelFactoryModule {
-    @Provides
-    fun viewModelFactory(viewModelFactory: ViewModelFactory): ViewModelProvider.Factory =
-        viewModelFactory
+interface ViewModelFactoryModule {
+    @Binds
+    fun viewModelFactory(viewModelFactory: ViewModelFactory): ViewModelProvider.Factory
 }
