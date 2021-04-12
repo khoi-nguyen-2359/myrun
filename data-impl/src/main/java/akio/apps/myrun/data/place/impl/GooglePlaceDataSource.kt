@@ -5,6 +5,7 @@ import akio.apps.myrun.data.place.PlaceDataSource
 import akio.apps.myrun.data.place.PlaceEntity
 import akio.apps.myrun.data.place.entity.PlaceAddressComponent
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
@@ -18,7 +19,7 @@ import javax.inject.Inject
 
 class GooglePlaceDataSource @Inject constructor(
     private val placesClient: PlacesClient,
-    private val appContext: Context
+    private val application: Application
 ) : PlaceDataSource {
     @SuppressLint("MissingPermission")
     override suspend fun getCurrentPlace(): PlaceEntity? {
@@ -54,7 +55,7 @@ class GooglePlaceDataSource @Inject constructor(
         lat: Double,
         lng: Double
     ): List<PlaceAddressComponent> {
-        val geoCoder = Geocoder(appContext, Locale.US)
+        val geoCoder = Geocoder(application, Locale.US)
         val addresses = geoCoder.getFromLocation(lat, lng, Int.MAX_VALUE)
         val addedAddressTypes = mutableSetOf<String>()
         val createAddressEntries: (Address) -> List<Pair<String?, String>> = {

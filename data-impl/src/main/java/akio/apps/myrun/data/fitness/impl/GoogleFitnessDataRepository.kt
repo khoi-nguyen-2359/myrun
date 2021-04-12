@@ -2,6 +2,7 @@ package akio.apps.myrun.data.fitness.impl
 
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.fitness.SingleDataPoint
+import android.app.Application
 import android.content.Context
 import androidx.annotation.VisibleForTesting
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -19,7 +20,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class GoogleFitnessDataRepository @Inject constructor(
-    private val appContext: Context
+    private val application: Application
 ) : FitnessDataRepository {
 
     private val fitnessOptions
@@ -30,12 +31,12 @@ class GoogleFitnessDataRepository @Inject constructor(
             .build()
 
     private val fitnessRecordingClient
-        get() = GoogleSignIn.getAccountForExtension(appContext, fitnessOptions)
-            .let { Fitness.getRecordingClient(appContext, it) }
+        get() = GoogleSignIn.getAccountForExtension(application, fitnessOptions)
+            .let { Fitness.getRecordingClient(application, it) }
 
     private val fitnessHistoryClient
-        get() = GoogleSignIn.getAccountForExtension(appContext, fitnessOptions)
-            .let { Fitness.getHistoryClient(appContext, it) }
+        get() = GoogleSignIn.getAccountForExtension(application, fitnessOptions)
+            .let { Fitness.getHistoryClient(application, it) }
 
     private val dataTypes = arrayOf(
         DataType.TYPE_SPEED,

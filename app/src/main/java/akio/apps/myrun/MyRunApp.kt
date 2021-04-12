@@ -14,9 +14,6 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration
 import com.google.android.libraries.places.api.Places
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasAndroidInjector
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,10 +23,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
-class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configuration.Provider {
-
-    @Inject
-    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
+class MyRunApp : Application(), LifecycleObserver, AppComponent.Holder, Configuration.Provider {
 
     @Inject
     lateinit var routeTrackingState: RouteTrackingState
@@ -37,8 +31,14 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
     @Inject
     lateinit var rescheduleStravaUploadWorkerDelegate: RescheduleStravaUploadWorkerDelegate
 
-    lateinit var appComponent: AppComponent
-        private set
+    private lateinit var appComponent: AppComponent
+    override fun getAppComponent(): AppComponent {
+        if (!::appComponent.isInitialized) {
+            appComponent = DaggerAppComponent.factory()
+                .create(this)
+        }
+        return appComponent
+    }
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         Timber.e(exception)
@@ -51,7 +51,7 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
 
         setupLogging()
 
-        createAppComponent().inject(this)
+        getAppComponent().inject(this)
 
         ProcessLifecycleOwner.get()
             .lifecycle
@@ -66,17 +66,9 @@ class MyRunApp : Application(), LifecycleObserver, HasAndroidInjector, Configura
         rescheduleStravaUploadWorkerDelegate.rescheduleWorker()
     }
 
-    override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
-
     private fun initPlacesSdk() {
         val apiKey = getString(R.string.google_maps_sdk_key)
         Places.initialize(applicationContext, apiKey)
-    }
-
-    private fun createAppComponent(): AppComponent {
-        appComponent = DaggerAppComponent.factory()
-            .create(this)
-        return appComponent
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)

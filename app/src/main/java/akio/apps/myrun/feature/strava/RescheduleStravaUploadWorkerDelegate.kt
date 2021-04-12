@@ -6,7 +6,7 @@ import akio.apps.myrun.data.activityfile.model.FileTarget
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
-import android.content.Context
+import android.app.Application
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.await
@@ -17,7 +17,7 @@ class RescheduleStravaUploadWorkerDelegate @Inject constructor(
     private val activityFileTrackingRepository: ActivityFileTrackingRepository,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val userAuthenticationState: UserAuthenticationState,
-    private val appContext: Context
+    private val application: Application
 ) {
     suspend fun rescheduleWorker() {
         val userAccountId = userAuthenticationState.getUserAccountId()
@@ -25,7 +25,7 @@ class RescheduleStravaUploadWorkerDelegate @Inject constructor(
             externalAppProvidersRepository.getStravaProviderToken(userAccountId) == null
         ) {
             Timber.d("No strava token. Cancelling file upload workers...")
-            val workManager = WorkManager.getInstance(appContext)
+            val workManager = WorkManager.getInstance(application)
             workManager.getWorkInfosForUniqueWork(UploadStravaFileWorker.UNIQUE_WORK_NAME)
                 .await()
                 .forEach {
@@ -45,7 +45,7 @@ class RescheduleStravaUploadWorkerDelegate @Inject constructor(
             .takeIf { pendingRecordCount -> pendingRecordCount > 0 }
             ?.let { recordCount ->
                 Timber.d("Records=$recordCount. Enqueue work.")
-                UploadStravaFileWorker.enqueueDaily(appContext)
+                UploadStravaFileWorker.enqueueDaily(application)
             }
     }
 }

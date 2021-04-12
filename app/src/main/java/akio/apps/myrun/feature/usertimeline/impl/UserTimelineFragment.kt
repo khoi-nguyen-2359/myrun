@@ -9,6 +9,7 @@ import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.databinding.FragmentUserTimelineBinding
 import akio.apps.myrun.feature.activitydetail.ActivityDetailActivity
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
+import akio.apps.myrun.feature.usertimeline._di.DaggerUserTimelineFeatureComponent
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import android.os.Bundle
 import android.view.View
@@ -22,7 +23,9 @@ class UserTimelineFragment : Fragment(R.layout.fragment_user_timeline) {
 
     private val viewBinding by ViewBindingDelegate(FragmentUserTimelineBinding::bind)
 
-    private val viewModel: UserTimelineViewModel by viewModel()
+    private val viewModel: UserTimelineViewModel by viewModel {
+        DaggerUserTimelineFeatureComponent.factory().create(requireActivity().application)
+    }
 
     private val selectActivityAction: (Activity) -> Unit = { activity ->
         openActivityDetail(activity)

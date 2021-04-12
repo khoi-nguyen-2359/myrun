@@ -9,6 +9,7 @@ import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
 import akio.apps.myrun.feature.home.impl.HomeActivity
 import akio.apps.myrun.feature.signin.impl.SignInActivity
 import akio.apps.myrun.feature.splash.SplashViewModel
+import akio.apps.myrun.feature.splash._di.DaggerSplashFeatureComponent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -16,7 +17,9 @@ import androidx.appcompat.app.AppCompatActivity
 
 class SplashActivity : AppCompatActivity() {
 
-    private val splashViewModel: SplashViewModel by viewModel()
+    private val splashViewModel: SplashViewModel by viewModel {
+        DaggerSplashFeatureComponent.create()
+    }
 
     private val dialogDelegate by lazy { DialogDelegate(this) }
 

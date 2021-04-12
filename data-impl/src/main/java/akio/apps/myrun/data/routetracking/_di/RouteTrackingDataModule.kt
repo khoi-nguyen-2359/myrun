@@ -6,6 +6,7 @@ import akio.apps.myrun.data.routetracking.impl.PreferencesRouteTrackingState
 import akio.apps.myrun.data.routetracking.impl.RouteTrackingDatabase
 import akio.apps.myrun.data.routetracking.impl.RouteTrackingLocationDao
 import akio.apps.myrun.data.routetracking.impl.RouteTrackingLocationRepositoryImpl
+import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import dagger.Binds
@@ -16,16 +17,19 @@ import javax.inject.Singleton
 @Module(includes = [RouteTrackingDataModule.Providers::class])
 interface RouteTrackingDataModule {
 
+    @Binds
+    fun routeTrackingLocationRepo(repositoryImpl: RouteTrackingLocationRepositoryImpl): RouteTrackingLocationRepository
+
     @Module
     class Providers {
         @Provides
-        @Singleton
-        fun routeTrackingDatabase(application: Context): RouteTrackingDatabase =
+        fun routeTrackingDatabase(application: Application): RouteTrackingDatabase =
             Room.databaseBuilder(
                 application,
                 RouteTrackingDatabase::class.java,
                 "route_tracking_db"
             )
+                .enableMultiInstanceInvalidation()
                 .build()
 
         @Provides
@@ -33,10 +37,10 @@ interface RouteTrackingDataModule {
             database.trackingLocationDao()
     }
 
-    @Binds
-    fun routeTrackingLocationRepo(repositoryImpl: RouteTrackingLocationRepositoryImpl): RouteTrackingLocationRepository
-
-    @Binds
-    @Singleton
-    fun routeTrackingState(preferencesRouteTrackingState: PreferencesRouteTrackingState): RouteTrackingState
+    @Module
+    interface RouteTrackingStateDataModule {
+        @Binds
+        @Singleton
+        fun routeTrackingState(preferencesRouteTrackingState: PreferencesRouteTrackingState): RouteTrackingState
+    }
 }

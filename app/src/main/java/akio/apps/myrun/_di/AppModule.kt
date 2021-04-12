@@ -1,6 +1,6 @@
 package akio.apps.myrun._di
 
-import akio.apps.myrun.MyRunApp
+import android.app.Application
 import android.content.Context
 import dagger.Module
 import dagger.Provides
@@ -10,6 +10,6 @@ interface AppModule {
     @Module
     class Providers {
         @Provides
-        fun applicationContext(application: MyRunApp): Context = application
+        fun applicationContext(application: Application): Context = application
     }
 }
