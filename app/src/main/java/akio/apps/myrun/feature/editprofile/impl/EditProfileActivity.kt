@@ -15,6 +15,7 @@ import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.databinding.ActivityEditProfileBinding
 import akio.apps.myrun.feature.cropavatar.CropAvatarActivity
 import akio.apps.myrun.feature.editprofile.EditProfileViewModel
+import akio.apps.myrun.feature.editprofile._di.DaggerEditProfileFeatureComponent
 import akio.apps.myrun.feature.signin.impl.OtpDialogFragment
 import akio.apps.myrun.feature.signin.impl.SignInActivity
 import android.app.Activity
@@ -54,7 +55,9 @@ class EditProfileActivity :
 
     private val bodyDimensFormat = DecimalFormat("#.#")
 
-    private val editProfileVM: EditProfileViewModel by viewModel()
+    private val editProfileVM: EditProfileViewModel by viewModel {
+        DaggerEditProfileFeatureComponent.create()
+    }
 
     private val viewBinding by lazy { ActivityEditProfileBinding.inflate(layoutInflater) }
 

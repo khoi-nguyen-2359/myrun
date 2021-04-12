@@ -6,6 +6,7 @@ import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.feature.strava.LinkStravaViewModel
+import akio.apps.myrun.feature.strava._di.DaggerStravaFeatureComponent
 import akio.apps.myrun.feature.userprofile.impl.LinkStravaDelegate
 import android.content.Intent
 import android.os.Bundle
@@ -21,7 +22,9 @@ class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.EventListener
     private val dialogDelegate = DialogDelegate(this)
     private val linkStravaDelegate by lazy { LinkStravaDelegate(this, this) }
 
-    private val linkStravaViewModel: LinkStravaViewModel by viewModel()
+    private val linkStravaViewModel: LinkStravaViewModel by viewModel {
+        DaggerStravaFeatureComponent.factory().create(application)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

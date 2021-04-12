@@ -2,6 +2,7 @@ package akio.apps.myrun.data.place._di
 
 import akio.apps.myrun.data.place.PlaceDataSource
 import akio.apps.myrun.data.place.impl.GooglePlaceDataSource
+import android.app.Application
 import android.content.Context
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -18,6 +19,6 @@ interface PlaceDataModule {
     @Module
     class Providers {
         @Provides
-        fun placesClient(appContext: Context): PlacesClient = Places.createClient(appContext)
+        fun placesClient(application: Application): PlacesClient = Places.createClient(application)
     }
 }

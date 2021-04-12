@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.googlemap
 
+import akio.apps.myrun.data._base.NetworkModule
 import akio.apps.myrun.data.impl.R
 import android.content.Context
 import dagger.Module
@@ -10,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
 
-@Module
+@Module(includes = [NetworkModule::class])
 class GoogleMapApiModule {
 
     @Provides

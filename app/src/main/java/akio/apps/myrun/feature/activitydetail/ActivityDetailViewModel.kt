@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class ActivityDetailsViewModel @Inject constructor(
-    private val activityId: String,
+class ActivityDetailViewModel @Inject constructor(
+    private val params: Params,
     private val activityRepository: ActivityRepository,
     private val activityModelMapper: ActivityModelMapper,
     private val activityDateTimeFormatter: ActivityDateTimeFormatter
@@ -19,7 +19,8 @@ class ActivityDetailsViewModel @Inject constructor(
 
     val activityDetails: Flow<Resource<Activity>> = flow {
         emit(Resource.Loading<Activity>())
-        val activity = activityRepository.getActivity(activityId)?.let(activityModelMapper::map)
+        val activity =
+            activityRepository.getActivity(params.activityId)?.let(activityModelMapper::map)
         if (activity == null) {
             emit(Resource.Error<Activity>(ActivityNotFoundException()))
         } else {
@@ -33,4 +34,6 @@ class ActivityDetailsViewModel @Inject constructor(
         }
 
     class ActivityNotFoundException : Exception()
+
+    data class Params(val activityId: String)
 }

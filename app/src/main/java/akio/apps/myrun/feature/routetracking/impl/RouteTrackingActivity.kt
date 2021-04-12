@@ -17,6 +17,7 @@ import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature.googlefit.GoogleFitLinkingDelegate
 import akio.apps.myrun.feature.home.impl.HomeActivity
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
+import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.feature.routetracking.view.ActivitySettingsView
 import android.annotation.SuppressLint
 import android.content.Context
@@ -47,7 +48,9 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     private val viewBinding by lazy { ActivityRouteTrackingBinding.inflate(layoutInflater) }
 
-    private val routeTrackingViewModel: RouteTrackingViewModel by viewModel()
+    private val routeTrackingViewModel: RouteTrackingViewModel by viewModel {
+        DaggerRouteTrackingFeatureComponent.factory().create(application)
+    }
 
     private val googleFitLinkingDelegate = GoogleFitLinkingDelegate()
 

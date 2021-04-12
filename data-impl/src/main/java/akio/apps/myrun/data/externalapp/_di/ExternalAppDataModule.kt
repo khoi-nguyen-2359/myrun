@@ -1,6 +1,7 @@
 package akio.apps.myrun.data.externalapp._di
 
 import akio.apps.myrun.data._base.FirebaseDataModule
+import akio.apps.myrun.data._base.NetworkModule
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.StravaDataRepository
 import akio.apps.myrun.data.externalapp.StravaTokenRepository
@@ -19,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
 
-@Module(includes = [ExternalAppDataModule.Providers::class, FirebaseDataModule::class])
+@Module(includes = [ExternalAppDataModule.Providers::class, FirebaseDataModule::class, NetworkModule::class])
 interface ExternalAppDataModule {
     @Binds
     fun externalAppCredentialsRepo(repo: FirebaseExternalAppProvidersRepository): ExternalAppProvidersRepository
@@ -35,13 +36,16 @@ interface ExternalAppDataModule {
         @Provides
         @Named(NAME_STRAVA_GSON)
         fun stravaGson(): Gson = Gson()
+    }
 
+    @Module
+    class StravaApiDataModule {
         @Provides
         @Singleton
         fun stravaApiService(
             okHttpClientBuilder: OkHttpClient.Builder,
             stravaAuthenticator: StravaAuthenticator,
-            @Named(NAME_STRAVA_GSON) gson: Gson
+            @Named(ExternalAppDataModule.NAME_STRAVA_GSON) gson: Gson
         ): StravaApi {
             okHttpClientBuilder.authenticator(stravaAuthenticator)
 
@@ -49,7 +53,7 @@ interface ExternalAppDataModule {
 
             val retrofit = Retrofit.Builder()
                 .client(okHttpClient)
-                .baseUrl(STRAVA_BASE_ENDPOINT)
+                .baseUrl(ExternalAppDataModule.STRAVA_BASE_ENDPOINT)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
 

@@ -13,7 +13,7 @@ import akio.apps.myrun.domain.user.GetProviderTokensUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import akio.apps.myrun.feature.userprofile.UserProfileViewModel
-import android.content.Context
+import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -22,12 +22,12 @@ import androidx.work.WorkManager
 import javax.inject.Inject
 
 class UserProfileViewModelImpl @Inject constructor(
+    private val application: Application,
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val getProviderTokensUsecase: GetProviderTokensUsecase,
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
     private val removeStravaTokenUsecase: RemoveStravaTokenUsecase,
-    private val logoutUsecase: LogoutUsecase,
-    private val appContext: Context
+    private val logoutUsecase: LogoutUsecase
 ) : UserProfileViewModel() {
 
     private val _isInlineLoading = MutableLiveData<Boolean>()
@@ -80,7 +80,7 @@ class UserProfileViewModelImpl @Inject constructor(
         deauthorizeStravaUsecase.deauthorizeStrava()
         removeStravaTokenUsecase.removeStravaToken()
 
-        WorkManager.getInstance(appContext)
+        WorkManager.getInstance(application)
             .cancelUniqueWork(UploadStravaFileWorker.UNIQUE_WORK_NAME)
     }
 }
