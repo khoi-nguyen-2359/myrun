@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.strava._di
 
 import akio.apps._base.di.ViewModelKey
+import akio.apps.myrun.data._base.NetworkModule
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
@@ -17,7 +18,7 @@ import dagger.multibindings.IntoMap
 import okhttp3.OkHttpClient
 import javax.inject.Named
 
-@Module(includes = [StravaFeatureModule.Providers::class])
+@Module(includes = [StravaFeatureModule.Providers::class, NetworkModule::class])
 interface StravaFeatureModule {
     @Binds
     @IntoMap

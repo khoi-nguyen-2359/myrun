@@ -16,6 +16,7 @@ import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
 import akio.apps.myrun.feature.googlefit.GoogleFitLinkingDelegate
 import akio.apps.myrun.feature.splash.impl.SplashActivity
 import akio.apps.myrun.feature.userprofile.UserProfileViewModel
+import akio.apps.myrun.feature.userprofile._di.DaggerUserProfileFeatureComponent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -33,7 +34,9 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     private val dialogDelegate by lazy { DialogDelegate(requireContext()) }
     private val viewBinding by lazy { FragmentUserProfileBinding.bind(requireView()) }
 
-    private val profileViewModel: UserProfileViewModel by viewModel()
+    private val profileViewModel: UserProfileViewModel by viewModel {
+        DaggerUserProfileFeatureComponent.factory().create(requireActivity().application)
+    }
 
     private val googleFitLinkingDelegate = GoogleFitLinkingDelegate()
 

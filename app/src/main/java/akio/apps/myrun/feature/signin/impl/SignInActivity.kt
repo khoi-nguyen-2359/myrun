@@ -8,6 +8,7 @@ import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import akio.apps.myrun.databinding.ActivitySignInBinding
 import akio.apps.myrun.feature.signin.SignInViewModel
+import akio.apps.myrun.feature.signin._di.DaggerSignInFeatureComponent
 import akio.apps.myrun.feature.signin.view.PhoneBox
 import android.app.Activity
 import android.content.Context
@@ -32,7 +33,9 @@ import kotlinx.coroutines.withContext
 
 class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
 
-    private val signInVM: SignInViewModel by viewModel()
+    private val signInVM: SignInViewModel by viewModel {
+        DaggerSignInFeatureComponent.create()
+    }
 
     private val viewBinding: ActivitySignInBinding by lazy {
         ActivitySignInBinding.inflate(layoutInflater)

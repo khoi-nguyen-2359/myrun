@@ -3,6 +3,7 @@ package akio.apps.myrun.data.activityfile._di
 import akio.apps.myrun.data.activityfile.ActivityFileTrackingRepository
 import akio.apps.myrun.data.activityfile.impl.ActivityFileTrackingDatabase
 import akio.apps.myrun.data.activityfile.impl.ActivityFileTrackingRepositoryImpl
+import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import dagger.Binds
@@ -18,13 +19,13 @@ interface ActivityFileDataModule {
     @Module
     class Providers {
         @Provides
-        @Singleton
-        fun activityFileDatabase(application: Context): ActivityFileTrackingDatabase =
+        fun activityFileDatabase(application: Application): ActivityFileTrackingDatabase =
             Room.databaseBuilder(
                 application,
                 ActivityFileTrackingDatabase::class.java,
                 "activity_file_tracking_db"
             )
+                .enableMultiInstanceInvalidation()
                 .build()
     }
 }

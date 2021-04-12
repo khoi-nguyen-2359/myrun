@@ -4,7 +4,7 @@ import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
-import android.content.Context
+import android.app.Application
 import androidx.datastore.DataStore
 import androidx.datastore.preferences.Preferences
 import androidx.datastore.preferences.clear
@@ -17,11 +17,11 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class PreferencesRouteTrackingState @Inject constructor(
-    appContext: Context
+    application: Application
 ) : RouteTrackingState {
 
     private val prefDataStore: DataStore<Preferences> =
-        appContext.createDataStore("route_tracking_state")
+        application.createDataStore("route_tracking_state")
 
     override suspend fun getTrackingStatus(): @RouteTrackingStatus Int = getTrackingStatusFlow()
         .first()

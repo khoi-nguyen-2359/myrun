@@ -1,6 +1,5 @@
 package akio.apps.myrun.feature.strava.impl
 
-import akio.apps.myrun._di.androidInjector
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.domain.strava.UploadActivityFilesToStravaUsecase
@@ -32,7 +31,7 @@ class UploadStravaFileWorker(
     lateinit var userAuthenticationState: UserAuthenticationState
 
     init {
-        applicationContext.androidInjector.inject(this)
+        TODO("applicationContext.androidInjector.inject(this)")
     }
 
     override suspend fun doWork(): Result {

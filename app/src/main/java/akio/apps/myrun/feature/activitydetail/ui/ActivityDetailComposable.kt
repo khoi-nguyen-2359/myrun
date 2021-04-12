@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.activitydetail.ui
 
 import akio.apps._base.Resource
 import akio.apps.myrun.feature.activitydetail.ActivityDateTimeFormatter
-import akio.apps.myrun.feature.activitydetail.ActivityDetailsViewModel
+import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,11 +14,11 @@ import androidx.compose.ui.layout.ContentScale
 import com.google.accompanist.glide.GlideImage
 
 @Composable
-fun ActivityDetailComposable(activityDetailsViewModel: ActivityDetailsViewModel) {
-    val activityResource by activityDetailsViewModel.activityDetails.collectAsState(
+fun ActivityDetailComposable(activityDetailViewModel: ActivityDetailViewModel) {
+    val activityResource by activityDetailViewModel.activityDetails.collectAsState(
         Resource.Loading()
     )
-    val activityFormattedStartTime by activityDetailsViewModel.activityDateTime.collectAsState(
+    val activityFormattedStartTime by activityDetailViewModel.activityDateTime.collectAsState(
         ActivityDateTimeFormatter.Result.FullDateTime("")
     )
 

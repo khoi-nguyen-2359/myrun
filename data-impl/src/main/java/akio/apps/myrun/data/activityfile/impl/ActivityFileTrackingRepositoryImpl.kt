@@ -5,16 +5,17 @@ import akio.apps.myrun.data.activityfile.entity.ActivityFileRecord
 import akio.apps.myrun.data.activityfile.model.FileStatus
 import akio.apps.myrun.data.activityfile.model.FileTarget
 import akio.apps.myrun.data.activityfile.model.TrackingRecord
+import android.app.Application
 import android.content.Context
 import java.io.File
 import javax.inject.Inject
 
 class ActivityFileTrackingRepositoryImpl @Inject constructor(
-    appContext: Context,
+    application: Application,
     activityFileTrackingDatabase: ActivityFileTrackingDatabase
 ) : ActivityFileTrackingRepository {
 
-    private val contentDir: File = File(appContext.filesDir, "activity/")
+    private val contentDir: File = File(application.filesDir, "activity/")
 
     private val activityFilePrefix = "activity_"
 

@@ -13,6 +13,7 @@ import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
+import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.Notification
@@ -30,7 +31,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationRequest
 import com.google.maps.android.SphericalUtil
-import dagger.android.AndroidInjection
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -78,8 +78,7 @@ class RouteTrackingService : Service() {
     private var wakeLock: PowerManager.WakeLock? = null
 
     override fun onCreate() {
-        AndroidInjection.inject(this)
-
+        DaggerRouteTrackingFeatureComponent.factory().create(application).inject(this)
         super.onCreate()
 
         createNotificationChannel()
@@ -139,7 +138,7 @@ class RouteTrackingService : Service() {
         }
     }
 
-    inner class InstantSpeedCalculator() {
+    inner class InstantSpeedCalculator {
         private var lastTimeComputingInstantSpeed = 0L
         private var lastDistanceComputingInstantSpeed = 0.0
 

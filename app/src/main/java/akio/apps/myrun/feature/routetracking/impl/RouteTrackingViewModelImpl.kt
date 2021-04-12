@@ -19,7 +19,7 @@ import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
-import android.content.Context
+import android.app.Application
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class RouteTrackingViewModelImpl @Inject constructor(
-    private val appContext: Context,
+    private val application: Application,
     private val getMapInitialLocationUsecase: GetMapInitialLocationUsecase,
     private val getTrackedLocationsUsecase: GetTrackedLocationsUsecase,
     private val routeTrackingState: RouteTrackingState,
@@ -126,7 +126,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
             return
 
         exportActivityToStravaFileUsecase.export(activityMapper.mapRev(activity), false)
-        UploadStravaFileWorker.enqueueForFinishedActivity(appContext)
+        UploadStravaFileWorker.enqueueForFinishedActivity(application)
     }
 
     private fun scheduleUserRecentPlaceUpdate(activityStartPoint: LocationEntity) {
@@ -144,7 +144,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
                 )
             )
             .build()
-        WorkManager.getInstance(appContext)
+        WorkManager.getInstance(application)
             .enqueue(workRequest)
     }
 
