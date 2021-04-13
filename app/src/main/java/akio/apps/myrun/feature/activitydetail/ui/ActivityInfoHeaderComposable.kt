@@ -1,8 +1,10 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
 import akio.apps.myrun.R
+import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.feature.activitydetail.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.usertimeline.model.Activity
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,18 +21,17 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.google.accompanist.glide.GlideImage
+import java.util.Calendar
 
 @Composable
 fun ActivityInfoHeaderComposable(
-    userInfo: Activity.AthleteInfo,
+    activityDetail: Activity,
     activityFormattedStartTime: ActivityDateTimeFormatter.Result,
-    activityName: String
 ) = ConstraintLayout(
     modifier = Modifier.padding(
         horizontal = dimensionResource(id = R.dimen.common_item_horizontal_padding),
@@ -47,7 +48,7 @@ fun ActivityInfoHeaderComposable(
 
     val resources = LocalContext.current.resources
     GlideImage(
-        data = userInfo.userAvatar.orEmpty(),
+        data = activityDetail.athleteInfo.userAvatar.orEmpty(),
         contentDescription = "Athlete avatar",
         requestBuilder = {
             override(resources.getDimensionPixelSize(R.dimen.user_timeline_avatar_size))
@@ -71,7 +72,7 @@ fun ActivityInfoHeaderComposable(
             }
     )
     Text(
-        text = userInfo.userName.orEmpty(),
+        text = activityDetail.athleteInfo.userName.orEmpty(),
         fontWeight = FontWeight.Bold,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
@@ -84,21 +85,8 @@ fun ActivityInfoHeaderComposable(
                 width = Dimension.fillToConstraints
             }
     )
-    val dateTimeDisplayValue = when (activityFormattedStartTime) {
-        is ActivityDateTimeFormatter.Result.WithinToday -> LocalContext.current.getString(
-            R.string.item_activity_time_today,
-            activityFormattedStartTime.formattedValue
-        )
-        is ActivityDateTimeFormatter.Result.WithinYesterday -> LocalContext.current.getString(
-            R.string.item_activity_time_yesterday,
-            activityFormattedStartTime.formattedValue
-        )
-        is ActivityDateTimeFormatter.Result.FullDateTime -> {
-            activityFormattedStartTime.formattedValue
-        }
-    }
     Text(
-        text = dateTimeDisplayValue,
+        text = createActivityStartTimeText(activityFormattedStartTime),
         fontSize = 12.sp,
         modifier = Modifier.constrainAs(layoutRefActivityDateTime) {
             top.linkTo(layoutRefUserNameText.bottom)
@@ -108,7 +96,7 @@ fun ActivityInfoHeaderComposable(
         }
     )
     Text(
-        text = activityName,
+        text = createActivityName(LocalContext.current, activityDetail),
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
         modifier = Modifier
@@ -119,25 +107,53 @@ fun ActivityInfoHeaderComposable(
     )
 }
 
-@Composable
-fun UserAvatarPlaceholderComposable() {
-    Image(
-        painter = painterResource(R.drawable.common_avatar_placeholder_image),
-        contentDescription = "Athlete avatar placeholder",
-        modifier = Modifier.size(dimensionResource(id = R.dimen.user_timeline_avatar_size))
-    )
+private fun createActivityName(
+    context: Context,
+    activityDetail: Activity
+): String = if (activityDetail.name.isEmpty()) {
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = activityDetail.startTime
+    when (calendar.get(Calendar.HOUR_OF_DAY)) {
+        in 5..11 -> context.getString(
+            R.string.item_activity_title_morning,
+            context.getString(activityTypeNameMap[activityDetail.activityType] ?: 0)
+        )
+        in 12..16 -> context.getString(
+            R.string.item_activity_title_afternoon,
+            context.getString(activityTypeNameMap[activityDetail.activityType] ?: 0)
+        )
+        else -> context.getString(
+            R.string.item_activity_title_evening,
+            context.getString(activityTypeNameMap[activityDetail.activityType] ?: 0)
+        )
+    }
+} else {
+    activityDetail.name
 }
 
-@Preview
 @Composable
-private fun ActivityInfoHeaderComposablePreview() {
-    ActivityInfoHeaderComposable(
-        Activity.AthleteInfo(
-            "userId",
-            "userName",
-            "https://image.shutterstock.com/image-vector/sample-stamp-grunge-texture-vector-260nw-1389188336.jpg"
-        ),
-        ActivityDateTimeFormatter.Result.FullDateTime("Blah"),
-        "activityName"
-    )
-}
+private fun createActivityStartTimeText(formatResult: ActivityDateTimeFormatter.Result) =
+    when (formatResult) {
+        is ActivityDateTimeFormatter.Result.WithinToday -> LocalContext.current.getString(
+            R.string.item_activity_time_today,
+            formatResult.formattedValue
+        )
+        is ActivityDateTimeFormatter.Result.WithinYesterday -> LocalContext.current.getString(
+            R.string.item_activity_time_yesterday,
+            formatResult.formattedValue
+        )
+        is ActivityDateTimeFormatter.Result.FullDateTime ->
+            formatResult.formattedValue
+    }
+
+@Composable
+fun UserAvatarPlaceholderComposable() = Image(
+    painter = painterResource(R.drawable.common_avatar_placeholder_image),
+    contentDescription = "Athlete avatar placeholder",
+    modifier = Modifier.size(dimensionResource(id = R.dimen.user_timeline_avatar_size))
+)
+
+private val activityTypeNameMap: Map<ActivityType, Int> = mapOf(
+    ActivityType.Running to R.string.activity_name_running,
+    ActivityType.Cycling to R.string.activity_name_cycling
+)
