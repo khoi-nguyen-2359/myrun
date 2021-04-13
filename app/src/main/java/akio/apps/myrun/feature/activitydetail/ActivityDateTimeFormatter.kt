@@ -17,12 +17,8 @@ class ActivityDateTimeFormatter @Inject constructor() {
         val activityDate = TimeUnit.MILLISECONDS.toDays(startTime)
         val formattedTime = timeFormatter.format(Date(startTime))
         return when {
-            activityDate == todayDate -> {
-                Result.WithinToday(formattedTime)
-            }
-            todayDate - activityDate == 1L -> {
-                Result.WithinYesterday(formattedTime)
-            }
+            activityDate == todayDate -> Result.WithinToday(formattedTime)
+            todayDate - activityDate == 1L -> Result.WithinYesterday(formattedTime)
             else -> {
                 val formattedDate = dateFormatter.format(Date(startTime))
                 Result.FullDateTime("$formattedDate $formattedTime")

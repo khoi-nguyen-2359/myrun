@@ -7,9 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 
-//val Context.appComponent: AppComponent
-//    get() = (applicationContext as AppComponent.Holder).getAppComponent()
-
 val Application.appComponent: AppComponent
     get() = (this as AppComponent.Holder).getAppComponent()
 

@@ -25,11 +25,7 @@ fun ActivityDetailComposable(activityDetailViewModel: ActivityDetailViewModel) {
     val activity = activityResource.data
     if (activity != null) {
         Column {
-            ActivityInfoHeaderComposable(
-                activity.athleteInfo,
-                activityFormattedStartTime,
-                activity.name
-            )
+            ActivityInfoHeaderComposable(activity, activityFormattedStartTime)
             GlideImage(
                 data = activity.routeImage,
                 contentDescription = "Activity route image",
@@ -38,6 +34,7 @@ fun ActivityDetailComposable(activityDetailViewModel: ActivityDetailViewModel) {
                     .fillMaxWidth()
                     .aspectRatio(ratio = 1.5f)
             )
+            //            PerformanceTableComposable(performedResults = )
         }
     }
 }
