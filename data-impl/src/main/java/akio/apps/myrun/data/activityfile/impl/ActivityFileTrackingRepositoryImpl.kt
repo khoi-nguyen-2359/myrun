@@ -6,7 +6,6 @@ import akio.apps.myrun.data.activityfile.model.FileStatus
 import akio.apps.myrun.data.activityfile.model.FileTarget
 import akio.apps.myrun.data.activityfile.model.TrackingRecord
 import android.app.Application
-import android.content.Context
 import java.io.File
 import javax.inject.Inject
 
