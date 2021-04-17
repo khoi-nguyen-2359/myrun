@@ -45,7 +45,7 @@ class RouteTrackingStatsView @JvmOverloads constructor(
         when (activityType) {
             ActivityType.Running -> {
                 viewBinding.speedLabelTextView.setText(R.string.route_tracking_pace_label)
-                viewBinding.speedUnitTextView.setText(R.string.common_pace_unit)
+                viewBinding.speedUnitTextView.setText(R.string.performance_unit_pace_min_per_km)
                 speedPresenter = { speed -> StatsPresentations.getDisplayPace(speed) }
             }
             ActivityType.Cycling -> {
