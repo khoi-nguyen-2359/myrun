@@ -76,7 +76,7 @@
         style="@style/RouteTrackingUnitLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/common_distance_unit"
+        android:text="@string/performance_unit_distance_km"
         app:layout_constraintTop_toBottomOf="@id/distance_text_view"
         app:layout_constraintEnd_toEndOf="@id/distance_label_text_view"
         app:layout_constraintHorizontal_bias="0.5"
