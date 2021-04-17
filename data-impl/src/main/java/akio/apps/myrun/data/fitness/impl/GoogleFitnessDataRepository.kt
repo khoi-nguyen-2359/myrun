@@ -3,7 +3,6 @@ package akio.apps.myrun.data.fitness.impl
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.fitness.SingleDataPoint
 import android.app.Application
-import android.content.Context
 import androidx.annotation.VisibleForTesting
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.fitness.Fitness
@@ -209,7 +208,9 @@ class GoogleFitnessDataRepository @Inject constructor(
                     ?.timestamp
                 val dp2StartTime = dp2.getOrNull(j)
                     ?.timestamp
-                if (dp2StartTime == null || (dp1StartTime != null && dp1StartTime <= dp2StartTime)) {
+                if (dp2StartTime == null ||
+                    (dp1StartTime != null && dp1StartTime <= dp2StartTime)
+                ) {
                     mergeDataPoints.add(dp1[i])
                     ++i
                     if (dp1StartTime == dp2StartTime) {
