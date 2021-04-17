@@ -88,6 +88,8 @@
     <string name="performance_speed_label">Speed</string>
     <string name="performance_unit_speed">km/h</string>
     <string name="performance_duration_label">Time</string>
+    <string name="performance_cadence_label">Avg. Cadence</string>
+    <string name="performance_cadence_unit">spm</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>

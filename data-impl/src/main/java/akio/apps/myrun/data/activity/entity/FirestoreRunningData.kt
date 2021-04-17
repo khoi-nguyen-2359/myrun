@@ -6,4 +6,6 @@ data class FirestoreRunningData(
     // stats
     @JvmField @PropertyName("pace")
     val pace: Double = 0.0,
+    @JvmField @PropertyName("cadence")
+    val cadence: Int = 0
 )
