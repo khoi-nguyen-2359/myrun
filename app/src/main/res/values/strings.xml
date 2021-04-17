@@ -3,9 +3,9 @@
     <string name="route_tracking_distance_label">Distance</string>
     <string name="route_tracking_time_label">Time</string>
     <string name="route_tracking_pace_label">Pace</string>
-    <string name="common_distance_unit">km</string>
+    <string name="performance_unit_distance_km">km</string>
     <string name="common_time_unit">minute</string>
-    <string name="common_pace_unit">min/km</string>
+    <string name="performance_unit_pace_min_per_km">/km</string>
     <string name="route_tracking_speed_label">Speed</string>
     <string name="common_speed_unit">km/h</string>
     <string name="error_permission_settings_disabled">Please grant permissions in app settings</string>
@@ -84,6 +84,10 @@
     <string name="user_profile_google_fit_description">Access to Google Fit fitness data</string>
     <string name="user_profile_error_app_disconnect">Can not disconnect app at the moment</string>
     <string name="user_profile_error_app_connect">Can not connect this app at the moment.</string>
+    <string name="performance_avg_pace_label">Avg. Pace</string>
+    <string name="performance_speed_label">Speed</string>
+    <string name="performance_unit_speed">km/h</string>
+    <string name="performance_duration_label">Time</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>
