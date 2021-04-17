@@ -1,12 +1,12 @@
 package akio.apps.myrun.data.routetracking;
 
-import androidx.annotation.IntDef;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.RetentionPolicy.SOURCE;
+import androidx.annotation.IntDef;
 
 @IntDef({RouteTrackingStatus.STOPPED, RouteTrackingStatus.RESUMED, RouteTrackingStatus.PAUSED})
 @Retention(SOURCE)
