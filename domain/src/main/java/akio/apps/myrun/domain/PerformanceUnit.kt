@@ -24,6 +24,14 @@ abstract class PerformanceUnit<T : Number>(val id: String) {
         override fun fromRawValue(rawValue: Number): Double = rawValue.toDouble() / 1000
     }
 
+    object TimeMinute : PerformanceUnit<Double>("TimeMinute") {
+        override fun fromRawValue(rawValue: Number): Double = rawValue.toDouble() / 60000
+    }
+
+    object TimeHour : PerformanceUnit<Double>("TimeHour") {
+        override fun fromRawValue(rawValue: Number): Double = rawValue.toDouble() / 3600000
+    }
+
     object PaceMinutePerKm : RawValueUnit<Double>("PaceMinutePerKm", Double::class)
     object SpeedKmPerHour : RawValueUnit<Double>("SpeedKmPerHour", Double::class)
     object TimeMillisecond : RawValueUnit<Long>("TimeMillisecond", Long::class)
