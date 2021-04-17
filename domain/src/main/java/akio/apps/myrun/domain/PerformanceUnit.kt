@@ -1,25 +1,31 @@
 package akio.apps.myrun.domain
 
-sealed class PerformanceUnit<T>(val id: String) {
-    abstract fun fromRawValue(rawValue: Double): T
+import kotlin.reflect.KClass
+
+abstract class PerformanceUnit<T : Number>(val id: String) {
+    abstract fun fromRawValue(rawValue: Number): T
+
+    abstract class RawValueUnit<T : Number>(id: String, private val outputClass: KClass<T>) :
+        PerformanceUnit<T>(id) {
+        @Suppress("UNCHECKED_CAST")
+        override fun fromRawValue(rawValue: Number): T = when (outputClass) {
+            Double::class -> rawValue.toDouble()
+            Long::class -> rawValue.toLong()
+            Int::class -> rawValue.toInt()
+            else -> throw Exception("Unit type not supported")
+        } as T
+    }
 
     object DistanceMile : PerformanceUnit<Double>("DistanceMile") {
-        override fun fromRawValue(rawValue: Double): Double = (rawValue / 1000) / 1.609
+        override fun fromRawValue(rawValue: Number): Double = (rawValue.toDouble() / 1000) / 1.609
     }
 
     object DistanceKm : PerformanceUnit<Double>("DistanceKm") {
-        override fun fromRawValue(rawValue: Double): Double = rawValue / 1000
+        override fun fromRawValue(rawValue: Number): Double = rawValue.toDouble() / 1000
     }
 
-    object PaceMinutePerKm : PerformanceUnit<Double>("PaceMinutePerKm") {
-        override fun fromRawValue(rawValue: Double): Double = rawValue
-    }
-
-    object SpeedKmPerHour : PerformanceUnit<Double>("SpeedKmPerHour") {
-        override fun fromRawValue(rawValue: Double): Double = rawValue
-    }
-
-    object TimeMillisecond : PerformanceUnit<Long>("TimeMillisecond") {
-        override fun fromRawValue(rawValue: Double): Long = rawValue.toLong()
-    }
+    object PaceMinutePerKm : RawValueUnit<Double>("PaceMinutePerKm", Double::class)
+    object SpeedKmPerHour : RawValueUnit<Double>("SpeedKmPerHour", Double::class)
+    object TimeMillisecond : RawValueUnit<Long>("TimeMillisecond", Long::class)
+    object CadenceStepPerMinute : RawValueUnit<Int>("CadenceStepPerMinute", Int::class)
 }

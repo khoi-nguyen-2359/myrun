@@ -14,7 +14,7 @@ import akio.apps.myrun.domain.strava.ExportTrackingActivityToStravaFileUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import akio.apps.test.wheneverBlocking
-import android.content.Context
+import android.app.Application
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyBlocking
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -57,7 +57,7 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
     lateinit var mockedGetMapInitialLocationUsecase: GetMapInitialLocationUsecase
 
     @Mock
-    lateinit var mockedAppContext: Context
+    lateinit var mockedAppContext: Application
 
     lateinit var testee: RouteTrackingViewModel
 

@@ -97,7 +97,7 @@ fun ActivityInfoHeaderComposable(
     )
     Text(
         text = createActivityName(LocalContext.current, activityDetail),
-        fontSize = 18.sp,
+        fontSize = 20.sp,
         fontWeight = FontWeight.Bold,
         modifier = Modifier
             .constrainAs(layoutRefActivityName) {

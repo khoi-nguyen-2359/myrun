@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun PerformanceTableComposable(vararg performedResults: PerformedResult) = Column(
+fun PerformanceTableComposable(performedResults: List<PerformedResult>) = Column(
     Modifier.padding(5.dp)
 ) {
     val iterator = performedResults.iterator()
@@ -58,9 +58,11 @@ private fun RowScope.PerformedResultCellComposable(performedResult: PerformedRes
 @Composable
 private fun PerformanceTableComposablePreview() {
     PerformanceTableComposable(
-        PerformedResult("Distance", "3.2 km"),
-        PerformedResult("Moving Time", "31:49"),
-        PerformedResult("HR", "151 bpm")
+        listOf(
+            PerformedResult("Distance", "3.2 km"),
+            PerformedResult("Moving Time", "31:49"),
+            PerformedResult("HR", "151 bpm")
+        )
     )
 }
 

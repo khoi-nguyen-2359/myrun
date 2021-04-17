@@ -24,7 +24,7 @@ class ActivityModelMapper @Inject constructor() {
         }
 
         return when (model) {
-            is RunningActivityModel -> RunningActivity(activityData, model.pace)
+            is RunningActivityModel -> RunningActivity(activityData, model.pace, model.cadence)
             is CyclingActivityModel -> CyclingActivity(activityData, model.speed)
             else -> throw IllegalArgumentException("Unknown activity type")
         }
@@ -58,7 +58,11 @@ class ActivityModelMapper @Inject constructor() {
         }
 
         return when (activity) {
-            is RunningActivity -> RunningActivityModel(activityData, activity.pace)
+            is RunningActivity -> RunningActivityModel(
+                activityData,
+                activity.pace,
+                activity.cadence
+            )
             is CyclingActivity -> CyclingActivityModel(activityData, activity.speed)
             else -> throw IllegalArgumentException("Unknown activity type")
         }
