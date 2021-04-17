@@ -6,7 +6,6 @@ import akio.apps.myrun.data.place.PlaceEntity
 import akio.apps.myrun.data.place.entity.PlaceAddressComponent
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import com.google.android.libraries.places.api.model.Place
@@ -73,7 +72,9 @@ class GooglePlaceDataSource @Inject constructor(
         return addresses?.flatMap { addr ->
             val addressComponents = mutableListOf<PlaceAddressComponent>()
             createAddressEntries(addr).forEach { (addressComponentName, addressComponentType) ->
-                if (addressComponentName != null && !addedAddressTypes.contains(addressComponentType)) {
+                if (addressComponentName != null &&
+                    !addedAddressTypes.contains(addressComponentType)
+                ) {
                     addressComponents.add(
                         PlaceAddressComponent(
                             addressComponentName,
