@@ -15,9 +15,9 @@ import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.userprofile.UserProfileRepository
+import akio.apps.myrun.domain.PerformanceUnit
 import android.graphics.Bitmap
 import com.google.maps.android.PolyUtil
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SaveRouteTrackingActivityUsecase @Inject constructor(
@@ -81,7 +81,9 @@ class SaveRouteTrackingActivityUsecase @Inject constructor(
         }
         val savingActivity: ActivityModel = when (activityType) {
             ActivityType.Running -> {
-                val pace = (duration / (1000 * 60)) / (distance / 1000)
+                val pace =
+                    PerformanceUnit.TimeMinute.fromRawValue(duration) /
+                        PerformanceUnit.DistanceKm.fromRawValue(distance)
                 val cadence = stepCadenceDataPoints
                     ?.takeIf { it.isNotEmpty() }
                     ?.run { sumOf { it.value } / size }
@@ -90,7 +92,9 @@ class SaveRouteTrackingActivityUsecase @Inject constructor(
             }
 
             ActivityType.Cycling -> {
-                val speed = (distance / 1000) / (TimeUnit.MILLISECONDS.toHours(duration))
+                val speed =
+                    PerformanceUnit.DistanceKm.fromRawValue(distance) /
+                        PerformanceUnit.TimeHour.fromRawValue(duration)
                 CyclingActivityModel(activityData, speed)
             }
 
