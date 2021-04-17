@@ -43,13 +43,29 @@ fun ActivityDetailComposable(activityDetailViewModel: ActivityDetailViewModel) {
                     .aspectRatio(ratio = 1.5f)
             )
             PerformanceTableComposable(
-                createDistancePerformedResult(LocalContext.current, activityDetail),
-                createSpeedOrPacePerformedResult(LocalContext.current, activityDetail),
-                createActivityDurationPerformedResult(LocalContext.current, activityDetail)
+                listOfNotNull(
+                    createDistancePerformedResult(LocalContext.current, activityDetail),
+                    createSpeedOrPacePerformedResult(LocalContext.current, activityDetail),
+                    createActivityDurationPerformedResult(LocalContext.current, activityDetail),
+                    createCadencePerformedResult(LocalContext.current, activityDetail)
+                )
             )
         }
     }
 }
+
+fun createCadencePerformedResult(context: Context, activityDetail: Activity): PerformedResult? =
+    if (activityDetail is RunningActivity && activityDetail.cadence > 0) {
+        PerformedResult(
+            label = context.getString(R.string.performance_cadence_label),
+            formattedValue = PerformedValueFormatter.CadenceStepPerMinute.formatRawValue(
+                context,
+                activityDetail.cadence
+            )
+        )
+    } else {
+        null
+    }
 
 fun createActivityDurationPerformedResult(
     context: Context,
@@ -58,7 +74,7 @@ fun createActivityDurationPerformedResult(
     label = context.getString(R.string.performance_duration_label),
     formattedValue = PerformedValueFormatter.DurationHourMinuteSecond.formatRawValue(
         context,
-        activityDetail.duration.toDouble()
+        activityDetail.duration
     )
 )
 
@@ -92,14 +108,14 @@ fun createDistancePerformedResult(context: Context, activityDetail: Activity): P
 
 enum class PerformedValueFormatter(val id: String, @StringRes val unitResId: Int) {
     DistanceKm("DistanceKm", R.string.performance_unit_distance_km) {
-        override fun formatRawValue(context: Context, rawValue: Double): String =
+        override fun formatRawValue(context: Context, rawValue: Number): String =
             String.format(
                 "%.2f ${getUnitName(context)}",
                 PerformanceUnit.DistanceKm.fromRawValue(rawValue)
             )
     },
     PaceMinutePerKm("PaceMinutePerKm", R.string.performance_unit_pace_min_per_km) {
-        override fun formatRawValue(context: Context, rawValue: Double): String {
+        override fun formatRawValue(context: Context, rawValue: Number): String {
             val minute = PerformanceUnit.PaceMinutePerKm.fromRawValue(rawValue)
             val intSecond = ((minute - minute.toInt()) * 60).toInt()
             val intMinute = minute.toInt()
@@ -107,11 +123,11 @@ enum class PerformedValueFormatter(val id: String, @StringRes val unitResId: Int
         }
     },
     SpeedKmPerHour("SpeedKmPerHour", R.string.performance_unit_speed) {
-        override fun formatRawValue(context: Context, rawValue: Double): String =
+        override fun formatRawValue(context: Context, rawValue: Number): String =
             "${PerformanceUnit.SpeedKmPerHour.fromRawValue(rawValue)} ${getUnitName(context)}"
     },
     DurationHourMinuteSecond("DurationHourMinuteSecond", 0) {
-        override fun formatRawValue(context: Context, rawValue: Double): String {
+        override fun formatRawValue(context: Context, rawValue: Number): String {
             val millisecond = PerformanceUnit.TimeMillisecond.fromRawValue(rawValue)
             val hour = millisecond / 3600000
             val min = (millisecond % 3600000) / 60000
@@ -122,9 +138,14 @@ enum class PerformedValueFormatter(val id: String, @StringRes val unitResId: Int
                 String.format("%d:%02d:%02d", hour, min, sec)
             }
         }
-    }
-    ;
+    },
+    CadenceStepPerMinute("CadenceStepPerMinute", R.string.performance_cadence_unit) {
+        override fun formatRawValue(context: Context, rawValue: Number): String {
+            val spm = PerformanceUnit.CadenceStepPerMinute.fromRawValue(rawValue)
+            return "$spm ${getUnitName(context)}"
+        }
+    };
 
-    abstract fun formatRawValue(context: Context, rawValue: Double): String
-    fun getUnitName(context: Context) = context.getString(unitResId)
+    abstract fun formatRawValue(context: Context, rawValue: Number): String
+    protected fun getUnitName(context: Context) = context.getString(unitResId)
 }

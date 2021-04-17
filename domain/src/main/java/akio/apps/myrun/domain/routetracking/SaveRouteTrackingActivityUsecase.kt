@@ -82,7 +82,11 @@ class SaveRouteTrackingActivityUsecase @Inject constructor(
         val savingActivity: ActivityModel = when (activityType) {
             ActivityType.Running -> {
                 val pace = (duration / (1000 * 60)) / (distance / 1000)
-                RunningActivityModel(activityData, pace)
+                val cadence = stepCadenceDataPoints
+                    ?.takeIf { it.isNotEmpty() }
+                    ?.run { sumOf { it.value } / size }
+                    ?: 0
+                RunningActivityModel(activityData, pace, cadence)
             }
 
             ActivityType.Cycling -> {
@@ -90,7 +94,9 @@ class SaveRouteTrackingActivityUsecase @Inject constructor(
                 CyclingActivityModel(activityData, speed)
             }
 
-            else -> throw UnsupportedOperationException("Saving unknown activity type $activityType")
+            else -> throw UnsupportedOperationException(
+                "Saving unknown activity type $activityType"
+            )
         }
 
         val activityId = activityRepository.saveActivity(
