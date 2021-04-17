@@ -3,7 +3,6 @@ package akio.apps.myrun.data.location._di
 import akio.apps.myrun.data.location.LocationDataSource
 import akio.apps.myrun.data.location.impl.LocationDataSourceImpl
 import android.app.Application
-import android.content.Context
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import dagger.Binds
