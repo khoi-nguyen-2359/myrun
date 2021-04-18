@@ -3,6 +3,7 @@ package akio.apps.myrun.feature.activitydetail
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.feature.activitydetail._di.DaggerActivityDetailFeatureComponent
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailComposable
+import akio.apps.myrun.feature.activityroutemap.ui.ActivityRouteMapActivity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -20,8 +21,11 @@ class ActivityDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent { ActivityDetailComposable(activityDetailViewModel) }
+        setContent { ActivityDetailComposable(activityDetailViewModel, ::openActivityRouteMap) }
     }
+
+    private fun openActivityRouteMap(encodedPolyline: String) =
+        startActivity(ActivityRouteMapActivity.createLaunchIntent(this, encodedPolyline))
 
     companion object {
         private const val EXT_ACTIVITY_ID = "EXT_ACTIVITY_ID"

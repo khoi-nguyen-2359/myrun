@@ -4,16 +4,12 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Rect
 import android.graphics.RectF
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 
 val Int.px2dp: Float
@@ -44,14 +40,6 @@ fun TextView.getNoneEmptyTextOrNull(): String? {
         null
     else
         text.toString()
-}
-
-fun Context.getColorCompat(@ColorRes color: Int): Int {
-    return ContextCompat.getColor(this, color)
-}
-
-fun Context.getDrawableCompat(@DrawableRes drawable: Int): Drawable? {
-    return ContextCompat.getDrawable(this, drawable)
 }
 
 fun View.setVisibleOrGone(visibleOrGone: Boolean) {
