@@ -10,6 +10,7 @@ import akio.apps.myrun.feature.usertimeline.model.CyclingActivity
 import akio.apps.myrun.feature.usertimeline.model.RunningActivity
 import android.content.Context
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +23,10 @@ import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.glide.GlideImage
 
 @Composable
-fun ActivityDetailComposable(activityDetailViewModel: ActivityDetailViewModel) {
+fun ActivityDetailComposable(
+    activityDetailViewModel: ActivityDetailViewModel,
+    onClickRouteImage: (encodedPolyline: String) -> Unit
+) {
     val activityResource by activityDetailViewModel.activityDetails.collectAsState(
         Resource.Loading()
     )
@@ -41,6 +45,7 @@ fun ActivityDetailComposable(activityDetailViewModel: ActivityDetailViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(ratio = 1.5f)
+                    .clickable { onClickRouteImage(activityDetail.encodedPolyline) }
             )
             PerformanceTableComposable(
                 listOfNotNull(
