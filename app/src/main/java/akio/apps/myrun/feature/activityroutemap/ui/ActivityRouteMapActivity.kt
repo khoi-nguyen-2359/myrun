@@ -9,9 +9,11 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.JointType
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.RoundCap
 import com.google.maps.android.PolyUtil
@@ -50,10 +52,23 @@ class ActivityRouteMapActivity : AppCompatActivity() {
             .color(getColorCompat(R.color.route_tracking_polyline))
             .width(3.dp2px)
         map.addPolyline(mapPolyline)
+
+        val routeBoundsBuilder = LatLngBounds.builder()
+        listLatLngs.forEach { routeBoundsBuilder.include(it) }
+        val cameraUpdate =
+            CameraUpdateFactory.newLatLngBounds(
+                routeBoundsBuilder.build(),
+                application.resources.displayMetrics.widthPixels,
+                application.resources.displayMetrics.heightPixels,
+                MAP_LATLNG_BOUND_PADDING
+            )
+        map.moveCamera(cameraUpdate)
     }
 
     companion object {
         private const val EXT_ENCODED_POLYLINE = "EXT_ENCODED_POLYLINE"
+
+        private val MAP_LATLNG_BOUND_PADDING = 30.dp2px.toInt()
 
         fun createLaunchIntent(context: Context, encodedPolyline: String): Intent =
             Intent(context, ActivityRouteMapActivity::class.java)
