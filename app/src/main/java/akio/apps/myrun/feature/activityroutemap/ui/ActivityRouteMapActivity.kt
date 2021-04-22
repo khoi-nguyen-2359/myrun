@@ -1,19 +1,28 @@
 package akio.apps.myrun.feature.activityroutemap.ui
 
 import akio.apps._base.ktext.getColorCompat
+import akio.apps._base.ktext.getDrawableCompat
 import akio.apps._base.ui.dp2px
 import akio.apps.myrun.R
 import akio.apps.myrun.databinding.ActivityActivityRouteMapBinding
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.JointType
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.RoundCap
 import com.google.maps.android.PolyUtil
@@ -33,19 +42,49 @@ class ActivityRouteMapActivity : AppCompatActivity() {
             ?: throw Exception("Missing data to display activity route")
     }
 
+    private val decodedPolyline: List<LatLng> by lazy { PolyUtil.decode(encodedPolyline) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
-        initMapView()
+        lifecycleScope.launch {
+            initMap()
+            drawRoutePolylineAndZoomToBounds()
+            addStartStopMarker()
+        }
     }
 
-    private fun initMapView() = lifecycleScope.launch {
+    private suspend fun initMap() {
         map = suspendCancellableCoroutine { continuation ->
             (supportFragmentManager.findFragmentById(R.id.route_map_view) as? SupportMapFragment)
                 ?.getMapAsync(continuation::resume)
         }
-        val listLatLngs = PolyUtil.decode(encodedPolyline)
-        val mapPolyline = PolylineOptions().addAll(listLatLngs)
+    }
+
+    private fun addStartStopMarker() {
+        val startMarkerBitmap = createDrawableBitmap(
+            context = this,
+            drawableResId = R.drawable.ic_play_circle,
+            tintColorResId = R.color.activity_route_map_start_marker_tint
+        )
+        val startMarker = MarkerOptions()
+            .position(decodedPolyline[0])
+            .icon(BitmapDescriptorFactory.fromBitmap(startMarkerBitmap))
+        map.addMarker(startMarker)
+
+        val stopMarkerBitmap = createDrawableBitmap(
+            context = this,
+            drawableResId = R.drawable.ic_stop_circle,
+            tintColorResId = R.color.activity_route_map_stop_marker_tint
+        )
+        val stopMarker = MarkerOptions()
+            .position(decodedPolyline.last())
+            .icon(BitmapDescriptorFactory.fromBitmap(stopMarkerBitmap))
+        map.addMarker(stopMarker)
+    }
+
+    private fun drawRoutePolylineAndZoomToBounds() {
+        val mapPolyline = PolylineOptions().addAll(decodedPolyline)
             .jointType(JointType.ROUND)
             .startCap(RoundCap())
             .endCap(RoundCap())
@@ -54,7 +93,7 @@ class ActivityRouteMapActivity : AppCompatActivity() {
         map.addPolyline(mapPolyline)
 
         val routeBoundsBuilder = LatLngBounds.builder()
-        listLatLngs.forEach { routeBoundsBuilder.include(it) }
+        decodedPolyline.forEach { routeBoundsBuilder.include(it) }
         val cameraUpdate =
             CameraUpdateFactory.newLatLngBounds(
                 routeBoundsBuilder.build(),
@@ -73,5 +112,23 @@ class ActivityRouteMapActivity : AppCompatActivity() {
         fun createLaunchIntent(context: Context, encodedPolyline: String): Intent =
             Intent(context, ActivityRouteMapActivity::class.java)
                 .putExtra(EXT_ENCODED_POLYLINE, encodedPolyline)
+
+        private fun createDrawableBitmap(
+            context: Context,
+            @DrawableRes drawableResId: Int,
+            @ColorRes tintColorResId: Int
+        ): Bitmap? {
+            val drawable = context.getDrawableCompat(drawableResId) ?: return null
+            drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+            val bitmap = Bitmap.createBitmap(
+                drawable.intrinsicWidth,
+                drawable.intrinsicHeight,
+                Bitmap.Config.ARGB_8888
+            )
+            DrawableCompat.setTint(drawable, context.getColorCompat(tintColorResId))
+            val canvas = Canvas(bitmap)
+            drawable.draw(canvas)
+            return bitmap
+        }
     }
 }
