@@ -17,4 +17,6 @@
   <color name="greyText">#4a4a4a</color>
   <color name="darkText">#e6222222</color>
   <color name="activity_detail_performance_table_divider">#ddd</color>
+  <color name="activity_route_map_start_marker_tint">#76ff03</color>
+  <color name="activity_route_map_stop_marker_tint">#d50000</color>
 </resources>
