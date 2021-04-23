@@ -36,7 +36,7 @@ android {
 dependencies {
     api project(":data")
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$Versions.kotlin"
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$Versions.kotlin"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$Versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$Versions.coroutines"
@@ -67,7 +67,11 @@ dependencies {
 
     implementation "com.jakewharton.timber:timber:$Versions.timber"
 
-    api "com.google.android.libraries.places:places:$Versions.places"
+    // Google Places SDK
+    api project(':places-sdk')
+    implementation "com.google.android.libraries.maps:maps:$Versions.androidGoogleMap"
+    implementation "com.google.android.gms:play-services-gcm:$Versions.playServicesGcm"
+    implementation "com.google.auto.value:auto-value-annotations:$Versions.autoValueAnnotation"
 
     testImplementation "junit:junit:$Versions.junit"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$Versions.coroutines"

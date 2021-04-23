@@ -58,3 +58,6 @@
 }
 
 ##---------------End: proguard configuration for Gson  ----------
+
+# Google Map v3 Beta
+-keep,allowoptimization class com.google.android.libraries.maps.** { *; }
