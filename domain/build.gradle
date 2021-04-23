@@ -42,8 +42,8 @@ dependencies {
     // for dagger @Inject
     implementation "javax.inject:javax.inject:1"
 
-    implementation "com.google.maps.android:android-maps-utils:$Versions.androidMapUtils"
-    implementation "com.google.android.gms:play-services-maps:$Versions.playServicesMap"
+    implementation "com.google.maps.android:android-maps-utils-v3:$Versions.androidMapUtils"
+    implementation "com.google.android.libraries.maps:maps:$Versions.androidGoogleMap"
 
     implementation "com.jakewharton.timber:timber:$Versions.timber"
 

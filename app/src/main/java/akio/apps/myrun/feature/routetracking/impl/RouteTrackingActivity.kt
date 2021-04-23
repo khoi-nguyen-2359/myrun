@@ -31,16 +31,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.JointType
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.gms.maps.model.RoundCap
+import com.google.android.libraries.maps.CameraUpdateFactory
+import com.google.android.libraries.maps.GoogleMap
+import com.google.android.libraries.maps.SupportMapFragment
+import com.google.android.libraries.maps.model.JointType
+import com.google.android.libraries.maps.model.LatLng
+import com.google.android.libraries.maps.model.LatLngBounds
+import com.google.android.libraries.maps.model.MapStyleOptions
+import com.google.android.libraries.maps.model.Polyline
+import com.google.android.libraries.maps.model.PolylineOptions
+import com.google.android.libraries.maps.model.RoundCap
 
 class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventListener {
 
@@ -344,12 +344,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     @SuppressLint("MissingPermission")
     private fun initMapView(map: GoogleMap) {
         this.mapView = map
-        map.setMapStyle(
-            MapStyleOptions.loadRawResourceStyle(
-                this,
-                R.raw.route_tracking_google_map_styles
-            )
-        )
         map.isMyLocationEnabled = true
         map.uiSettings.isMyLocationButtonEnabled = true
     }

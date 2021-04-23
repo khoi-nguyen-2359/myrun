@@ -36,18 +36,21 @@ object Versions {
     const val tcxzPot = "0.2.0"
 
     const val playServicesGradlePlugin = "4.3.4"
-    const val playServicesMap = "17.0.0"
+    const val playServicesGcm = "17.0.0"
     const val playServicesLocation = "18.0.0"
     const val playServicesAuth = "19.0.0"
     const val playServicesFitness = "20.0.0"
+    const val androidGoogleMap = "3.1.0-beta"
 
     const val places = "2.4.0"
-    const val androidMapUtils = "1.1.0"
+    const val androidMapUtils = "2.2.2"
 
     const val firebaseBom = "25.12.0"
     const val crashlyticsGradlePlugin = "2.3.0"
 
     const val dataStore = "1.0.0-alpha01"
+
+    const val autoValueAnnotation = "1.6.3"
 
     // testing
     const val junit = "4.13.2"
