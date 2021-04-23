@@ -104,12 +104,12 @@ dependencies {
 
     implementation "com.android.support:multidex:$Versions.multidex"
 
-    implementation "com.google.android.gms:play-services-maps:$Versions.playServicesMap"
     implementation "com.google.android.gms:play-services-location:$Versions.playServicesLocation"
     implementation "com.google.android.gms:play-services-auth:$Versions.playServicesAuth"
     implementation "com.google.android.gms:play-services-fitness:$Versions.playServicesFitness"
 
-    implementation "com.google.maps.android:android-maps-utils:$Versions.androidMapUtils"
+    implementation "com.google.maps.android:android-maps-utils-v3:$Versions.androidMapUtils"
+    implementation "com.google.android.libraries.maps:maps:$Versions.androidGoogleMap"
 
     implementation platform("com.google.firebase:firebase-bom:$Versions.firebaseBom")
     implementation 'com.google.firebase:firebase-crashlytics-ktx'

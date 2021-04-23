@@ -4,4 +4,5 @@ include ':domain'
 include ':data-impl'
 include ':routeparser'
 include ':app'
+include ':places-sdk'
 rootProject.name = "My Run"

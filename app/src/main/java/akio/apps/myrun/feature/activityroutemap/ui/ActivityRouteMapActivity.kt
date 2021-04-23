@@ -15,16 +15,17 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.JointType
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.gms.maps.model.RoundCap
+import com.google.android.libraries.maps.CameraUpdateFactory
+import com.google.android.libraries.maps.GoogleMap
+import com.google.android.libraries.maps.SupportMapFragment
+import com.google.android.libraries.maps.model.BitmapDescriptorFactory
+import com.google.android.libraries.maps.model.JointType
+import com.google.android.libraries.maps.model.LatLng
+import com.google.android.libraries.maps.model.LatLngBounds
+import com.google.android.libraries.maps.model.MapStyleOptions
+import com.google.android.libraries.maps.model.MarkerOptions
+import com.google.android.libraries.maps.model.PolylineOptions
+import com.google.android.libraries.maps.model.RoundCap
 import com.google.maps.android.PolyUtil
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -56,8 +57,15 @@ class ActivityRouteMapActivity : AppCompatActivity() {
 
     private suspend fun initMap() {
         map = suspendCancellableCoroutine { continuation ->
-            (supportFragmentManager.findFragmentById(R.id.route_map_view) as? SupportMapFragment)
+            (supportFragmentManager.findFragmentById(R.id.activity_map_view) as? SupportMapFragment)
                 ?.getMapAsync(continuation::resume)
+        }
+        with(map.uiSettings) {
+            isMyLocationButtonEnabled = false
+            isCompassEnabled = false
+            isZoomControlsEnabled = false
+            isIndoorLevelPickerEnabled = false
+            isMapToolbarEnabled = false
         }
     }
 

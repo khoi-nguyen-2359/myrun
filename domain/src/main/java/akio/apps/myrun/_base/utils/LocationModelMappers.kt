@@ -5,7 +5,7 @@ import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.data.routetracking.model.LatLng
 import android.location.Location
 
-typealias GmsLatLng = com.google.android.gms.maps.model.LatLng
+typealias GmsLatLng = com.google.android.libraries.maps.model.LatLng
 
 fun Location.toLatLng() = LatLng(latitude, longitude)
 fun Location.toGmsLatLng() = GmsLatLng(latitude, longitude)
