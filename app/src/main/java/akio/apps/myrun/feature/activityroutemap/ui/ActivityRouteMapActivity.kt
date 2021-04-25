@@ -51,7 +51,7 @@ class ActivityRouteMapActivity : AppCompatActivity() {
         lifecycleScope.launch {
             initMap()
             drawRoutePolylineAndZoomToBounds()
-            addStartStopMarker()
+            drawStartStopMarker()
         }
     }
 
@@ -60,6 +60,12 @@ class ActivityRouteMapActivity : AppCompatActivity() {
             (supportFragmentManager.findFragmentById(R.id.activity_map_view) as? SupportMapFragment)
                 ?.getMapAsync(continuation::resume)
         }
+        map.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(
+                this,
+                R.raw.google_map_styles
+            )
+        )
         with(map.uiSettings) {
             isMyLocationButtonEnabled = false
             isCompassEnabled = false
@@ -69,7 +75,7 @@ class ActivityRouteMapActivity : AppCompatActivity() {
         }
     }
 
-    private fun addStartStopMarker() {
+    private fun drawStartStopMarker() {
         val startMarkerBitmap = createDrawableBitmap(
             context = this,
             drawableResId = R.drawable.ic_play_circle,
