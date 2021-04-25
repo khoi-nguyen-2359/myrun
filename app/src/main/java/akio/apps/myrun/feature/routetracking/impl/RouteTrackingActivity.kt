@@ -346,6 +346,12 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         this.mapView = map
         map.isMyLocationEnabled = true
         map.uiSettings.isMyLocationButtonEnabled = true
+        map.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(
+                this,
+                R.raw.google_map_styles
+            )
+        )
     }
 
     override fun onActivityTypeSelected(activityType: ActivityType) {
