@@ -6,7 +6,7 @@ object Versions {
     const val targetSdk = 30
     const val minSdk = 21
 
-    const val agp = "7.0.0-alpha14"
+    const val agp = "7.0.0-alpha15"
     const val kotlin = "1.4.32"
     const val coroutines = "1.4.3"
 
