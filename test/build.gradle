@@ -10,10 +10,8 @@ java {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$Versions.kotlin"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
     implementation "org.mockito:mockito-core:$Versions.mockitoCore"
-    testFixturesImplementation "org.jetbrains.kotlin:kotlin-stdlib:$Versions.kotlin"
     testFixturesImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
     testFixturesImplementation "org.mockito:mockito-core:$Versions.mockitoCore"
 }
