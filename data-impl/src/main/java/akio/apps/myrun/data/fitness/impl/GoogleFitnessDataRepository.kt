@@ -7,6 +7,7 @@ import androidx.annotation.VisibleForTesting
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessOptions
+import com.google.android.gms.fitness.FitnessOptions.ACCESS_READ
 import com.google.android.gms.fitness.FitnessOptions.ACCESS_WRITE
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
@@ -24,9 +25,7 @@ class GoogleFitnessDataRepository @Inject constructor(
 
     private val fitnessOptions
         get() = FitnessOptions.builder()
-            .apply {
-                dataTypes.forEach { addDataType(it, ACCESS_WRITE) }
-            }
+            .apply { dataTypes.forEach(::addDataType) }
             .build()
 
     private val fitnessRecordingClient

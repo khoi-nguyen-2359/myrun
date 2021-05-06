@@ -30,13 +30,13 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+        useIR = true
     }
 }
 
 dependencies {
     api project(":data")
 
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$Versions.kotlin"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$Versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$Versions.coroutines"

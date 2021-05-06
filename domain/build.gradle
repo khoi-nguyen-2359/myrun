@@ -31,13 +31,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+        useIR = true
     }
 }
 
 dependencies {
     implementation project(":data")
-
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$Versions.kotlin"
 
     // for dagger @Inject
     implementation "javax.inject:javax.inject:1"

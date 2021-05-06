@@ -61,10 +61,7 @@ class ActivityRouteMapActivity : AppCompatActivity() {
                 ?.getMapAsync(continuation::resume)
         }
         map.setMapStyle(
-            MapStyleOptions.loadRawResourceStyle(
-                this,
-                R.raw.google_map_styles
-            )
+            MapStyleOptions.loadRawResourceStyle(this, R.raw.google_map_styles)
         )
         with(map.uiSettings) {
             isMyLocationButtonEnabled = false
