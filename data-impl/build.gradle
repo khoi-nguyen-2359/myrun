@@ -35,7 +35,7 @@ android {
 }
 
 dependencies {
-    api project(":data")
+    implementation project(":data")
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$Versions.coroutines"
@@ -44,18 +44,18 @@ dependencies {
     implementation "com.google.dagger:dagger:$Versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$Versions.dagger"
 
-    api "com.squareup.okhttp3:okhttp:$Versions.okhttp"
-    api "com.squareup.okhttp3:logging-interceptor:$Versions.okhttp"
+    implementation "com.squareup.okhttp3:okhttp:$Versions.okhttp"
+    implementation "com.squareup.okhttp3:logging-interceptor:$Versions.okhttp"
 
-    api "com.squareup.retrofit2:retrofit:$Versions.retrofit"
-    api "com.squareup.retrofit2:converter-gson:$Versions.retrofit"
+    implementation "com.squareup.retrofit2:retrofit:$Versions.retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$Versions.retrofit"
 
     implementation platform("com.google.firebase:firebase-bom:$Versions.firebaseBom")
-    api 'com.google.firebase:firebase-auth-ktx'
-    api 'com.google.firebase:firebase-firestore-ktx'
-    api 'com.google.firebase:firebase-storage-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-storage-ktx'
 
-    api "androidx.room:room-runtime:$Versions.room"
+    implementation "androidx.room:room-runtime:$Versions.room"
     kapt "androidx.room:room-compiler:$Versions.room"
     implementation "androidx.room:room-ktx:$Versions.room"
 
@@ -68,7 +68,7 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$Versions.timber"
 
     // Google Places SDK
-    api project(':places-sdk')
+    implementation project(':places-sdk')
     implementation "com.google.android.libraries.maps:maps:$Versions.androidGoogleMap"
     implementation "com.google.android.gms:play-services-gcm:$Versions.playServicesGcm"
     implementation "com.google.auto.value:auto-value-annotations:$Versions.autoValueAnnotation"

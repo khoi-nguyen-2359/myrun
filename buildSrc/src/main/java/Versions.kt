@@ -43,7 +43,7 @@ object Versions {
     const val androidGoogleMap = "3.1.0-beta"
 
     const val places = "2.4.0"
-    const val androidMapUtils = "2.2.2"
+    const val androidMapUtils = "2.2.3"
 
     const val firebaseBom = "25.12.0"
     const val crashlyticsGradlePlugin = "2.3.0"

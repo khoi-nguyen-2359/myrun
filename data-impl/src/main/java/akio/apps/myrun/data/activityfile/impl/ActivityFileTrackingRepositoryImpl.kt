@@ -1,17 +1,21 @@
 package akio.apps.myrun.data.activityfile.impl
 
+import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.activityfile.ActivityFileTrackingRepository
 import akio.apps.myrun.data.activityfile.entity.ActivityFileRecord
 import akio.apps.myrun.data.activityfile.model.FileStatus
 import akio.apps.myrun.data.activityfile.model.FileTarget
 import akio.apps.myrun.data.activityfile.model.TrackingRecord
 import android.app.Application
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
 class ActivityFileTrackingRepositoryImpl @Inject constructor(
     application: Application,
-    activityFileTrackingDatabase: ActivityFileTrackingDatabase
+    activityFileTrackingDatabase: ActivityFileTrackingDatabase,
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ActivityFileTrackingRepository {
 
     private val contentDir: File = File(application.filesDir, "activity/")
@@ -38,7 +42,7 @@ class ActivityFileTrackingRepositoryImpl @Inject constructor(
         activityName: String,
         activityFile: File,
         target: FileTarget
-    ) {
+    ) = withContext(ioDispatcher) {
         val record = ActivityFileRecord(
             id = 0,
             activityId = activityId,
@@ -50,31 +54,33 @@ class ActivityFileTrackingRepositoryImpl @Inject constructor(
         activityFileTrackingDao.insert(record)
     }
 
-    override suspend fun updateStatus(fileId: Int, status: FileStatus) {
+    override suspend fun updateStatus(fileId: Int, status: FileStatus) = withContext(ioDispatcher) {
         activityFileTrackingDao.updateRecord(fileId, status.name)
     }
 
-    override suspend fun delete(fileId: Int) {
+    override suspend fun delete(fileId: Int): Unit = withContext(ioDispatcher) {
         val filePath = activityFileTrackingDao.getFilePath(fileId)
         activityFileTrackingDao.delete(fileId)
         File(filePath).delete()
     }
 
-    override suspend fun countRecord(status: FileStatus, target: FileTarget): Int {
-        return activityFileTrackingDao.count(status.name, target.name)
-    }
+    override suspend fun countRecord(status: FileStatus, target: FileTarget): Int =
+        withContext(ioDispatcher) {
+            activityFileTrackingDao.count(status.name, target.name)
+        }
 
-    override suspend fun getRecords(status: FileStatus, target: FileTarget): List<TrackingRecord> {
-        return activityFileTrackingDao.getTrackingRecords(status.name, target.name)
-            .map {
-                TrackingRecord(
-                    it.id,
-                    it.activityId,
-                    it.activityName,
-                    File(it.filePath),
-                    FileStatus.valueOf(it.status),
-                    FileTarget.valueOf(it.target)
-                )
-            }
-    }
+    override suspend fun getRecords(status: FileStatus, target: FileTarget): List<TrackingRecord> =
+        withContext(ioDispatcher) {
+            activityFileTrackingDao.getTrackingRecords(status.name, target.name)
+                .map {
+                    TrackingRecord(
+                        it.id,
+                        it.activityId,
+                        it.activityName,
+                        File(it.filePath),
+                        FileStatus.valueOf(it.status),
+                        FileTarget.valueOf(it.target)
+                    )
+                }
+        }
 }
