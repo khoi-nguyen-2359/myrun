@@ -3,6 +3,8 @@ package akio.apps.myrun.feature.strava.impl
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.domain.strava.UploadActivityFilesToStravaUsecase
+import akio.apps.myrun.feature.strava._di.DaggerStravaFeatureComponent
+import android.app.Application
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -31,7 +33,7 @@ class UploadStravaFileWorker(
     lateinit var userAuthenticationState: UserAuthenticationState
 
     init {
-        TODO("applicationContext.androidInjector.inject(this)")
+        DaggerStravaFeatureComponent.factory().create(appContext as Application).inject(this)
     }
 
     override suspend fun doWork(): Result {

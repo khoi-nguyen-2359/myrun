@@ -3,6 +3,7 @@ package akio.apps.myrun.domain.strava
 import akio.apps.myrun._base.runfile.ClosableFileSerializer
 import akio.apps.myrun._base.runfile.ZipFileSerializer
 import akio.apps.myrun._base.utils.toGmsLatLng
+import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.activityfile.ActivityFileTrackingRepository
@@ -25,16 +26,25 @@ import com.sweetzpot.tcxzpot.builders.ActivityBuilder
 import com.sweetzpot.tcxzpot.builders.LapBuilder
 import com.sweetzpot.tcxzpot.builders.TrackpointBuilder
 import com.sweetzpot.tcxzpot.builders.TrainingCenterDatabaseBuilder
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Date
 import javax.inject.Inject
+import javax.inject.Named
 
 class ExportTrackingActivityToStravaFileUsecase @Inject constructor(
     private val routeTrackingLocationRepository: RouteTrackingLocationRepository,
     private val fitnessDataRepository: FitnessDataRepository,
-    private val activityFileTrackingRepository: ActivityFileTrackingRepository
+    private val activityFileTrackingRepository: ActivityFileTrackingRepository,
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
-    suspend fun export(activity: ActivityModel, zip: Boolean): File {
+    suspend fun export(
+        activity: ActivityModel,
+        zip: Boolean
+    ): File = coroutineScope {
         val outputFile = activityFileTrackingRepository.createEmptyFile(activity.id)
         val startDate = Date(activity.startTime)
         val serializer = if (zip)
@@ -141,6 +151,6 @@ class ExportTrackingActivityToStravaFileUsecase @Inject constructor(
             FileTarget.STRAVA_UPLOAD
         )
 
-        return outputFile
+        return@coroutineScope outputFile
     }
 }

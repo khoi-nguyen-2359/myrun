@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.fitness.impl
 
+import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.fitness.SingleDataPoint
 import android.app.Application
@@ -7,20 +8,21 @@ import androidx.annotation.VisibleForTesting
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessOptions
-import com.google.android.gms.fitness.FitnessOptions.ACCESS_READ
-import com.google.android.gms.fitness.FitnessOptions.ACCESS_WRITE
 import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.fitness.request.DataReadRequest
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.TreeSet
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class GoogleFitnessDataRepository @Inject constructor(
-    private val application: Application
+    private val application: Application,
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : FitnessDataRepository {
 
     private val fitnessOptions
@@ -65,7 +67,7 @@ class GoogleFitnessDataRepository @Inject constructor(
         bucketTimeInSec: Long,
         dataType: DataType,
         aggregateType: DataType? = dataType.aggregateType
-    ): List<DataPoint> {
+    ): List<DataPoint> = withContext(ioDispatcher) {
         try {
             val readRequest = DataReadRequest.Builder()
                 .apply {
@@ -79,7 +81,7 @@ class GoogleFitnessDataRepository @Inject constructor(
                 .setTimeRange(startTimeInSec, endTimeInSec, TimeUnit.SECONDS)
                 .build()
 
-            return fitnessHistoryClient.readData(readRequest)
+            return@withContext fitnessHistoryClient.readData(readRequest)
                 .await()
                 ?.run {
                     val dataPoints = TreeSet<DataPoint> { o1, o2 ->
@@ -109,7 +111,7 @@ class GoogleFitnessDataRepository @Inject constructor(
                 ?: emptyList()
         } catch (throwable: Throwable) {
             throwable.printStackTrace()
-            return emptyList()
+            return@withContext emptyList()
         }
     }
 
@@ -117,7 +119,7 @@ class GoogleFitnessDataRepository @Inject constructor(
         startTime: Long,
         endTime: Long,
         interval: Long
-    ): List<SingleDataPoint<Float>> {
+    ): List<SingleDataPoint<Float>> = withContext(ioDispatcher) {
         val speedDataPoints = readFitnessData(
             startTime,
             endTime,
@@ -125,7 +127,7 @@ class GoogleFitnessDataRepository @Inject constructor(
             DataType.TYPE_SPEED,
             DataType.AGGREGATE_SPEED_SUMMARY
         )
-        return speedDataPoints.map {
+        return@withContext speedDataPoints.map {
             SingleDataPoint(
                 it.getStartTime(TimeUnit.MILLISECONDS),
                 it.getValue(Field.FIELD_AVERAGE)
@@ -138,7 +140,7 @@ class GoogleFitnessDataRepository @Inject constructor(
         startTime: Long,
         endTime: Long,
         interval: Long
-    ): List<SingleDataPoint<Int>> {
+    ): List<SingleDataPoint<Int>> = withContext(ioDispatcher) {
         val cadenceDataPoints =
             readFitnessData(startTime, endTime, interval, DataType.TYPE_STEP_COUNT_CADENCE)
                 .map { cadenceDp ->
@@ -169,14 +171,14 @@ class GoogleFitnessDataRepository @Inject constructor(
                 )
             }
 
-        return mergeDataPoints(cadenceDataPoints, stepDeltaDataPoints)
+        return@withContext mergeDataPoints(cadenceDataPoints, stepDeltaDataPoints)
     }
 
     override suspend fun getHeartRateDataPoints(
         startTime: Long,
         endTime: Long,
         interval: Long
-    ): List<SingleDataPoint<Int>> {
+    ): List<SingleDataPoint<Int>> = withContext(ioDispatcher) {
         val heartRateDataPoints = readFitnessData(
             startTime,
             endTime,
@@ -184,7 +186,7 @@ class GoogleFitnessDataRepository @Inject constructor(
             DataType.TYPE_HEART_RATE_BPM,
             DataType.AGGREGATE_HEART_RATE_SUMMARY
         )
-        return heartRateDataPoints.map {
+        return@withContext heartRateDataPoints.map {
             SingleDataPoint(
                 it.getStartTime(TimeUnit.MILLISECONDS),
                 it.getValue(Field.FIELD_AVERAGE)

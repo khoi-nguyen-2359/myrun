@@ -4,6 +4,7 @@ import akio.apps._base.di.AppDependantComponentFactory
 import akio.apps._base.di.FeatureScope
 import akio.apps._base.di.ViewModelFactoryProvider
 import akio.apps.myrun._di.AppComponent
+import akio.apps.myrun._di.DispatchersModule
 import akio.apps.myrun.data.activity._di.ActivityDataModule
 import akio.apps.myrun.data.activityfile._di.ActivityFileDataModule
 import akio.apps.myrun.data.authentication._di.AuthenticationDataModule
@@ -31,7 +32,8 @@ import dagger.Component
         FitnessDataModule::class,
         ActivityFileDataModule::class,
         PlaceDataModule::class,
-        RecentPlaceDataModule::class
+        RecentPlaceDataModule::class,
+        DispatchersModule::class
     ],
     dependencies = [AppComponent::class]
 )

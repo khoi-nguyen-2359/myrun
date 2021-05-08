@@ -24,7 +24,8 @@ import javax.inject.Singleton
         ExternalAppDataModule::class,
         StravaFeatureModule::class,
         AuthenticationDataModule::class,
-        ActivityFileDataModule::class
+        ActivityFileDataModule::class,
+        DispatchersModule::class
     ]
 )
 interface AppComponent {

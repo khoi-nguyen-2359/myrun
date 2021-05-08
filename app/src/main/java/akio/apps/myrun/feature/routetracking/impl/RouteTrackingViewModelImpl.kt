@@ -5,7 +5,6 @@ import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
-import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
@@ -31,6 +30,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
@@ -108,28 +108,15 @@ class RouteTrackingViewModelImpl @Inject constructor(
             val activity =
                 saveRouteTrackingActivityUsecase.saveCurrentActivity(activityType, routeMapImage)
             mayScheduleStravaActivityUpload(activityMapper.map(activity))
-            routeTrackingState.getStartLocation()
-                ?.let { startLocation ->
-                    scheduleUserRecentPlaceUpdate(startLocation)
-                }
+            scheduleUserRecentLocationUpdate()
             clearRouteTrackingStateUsecase.clear()
 
             _saveActivitySuccess.value = Event(Unit)
         }
     }
 
-    private suspend fun mayScheduleStravaActivityUpload(activity: Activity) {
-        val userAccountId = authenticationState.getUserAccountId()
-        if (userAccountId == null ||
-            externalAppProvidersRepository.getStravaProviderToken(userAccountId) == null
-        )
-            return
-
-        exportActivityToStravaFileUsecase.export(activityMapper.mapRev(activity), false)
-        UploadStravaFileWorker.enqueueForFinishedActivity(application)
-    }
-
-    private fun scheduleUserRecentPlaceUpdate(activityStartPoint: LocationEntity) {
+    private fun scheduleUserRecentLocationUpdate() = viewModelScope.launch {
+        val startLocation = routeTrackingState.getStartLocation() ?: return@launch
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.UNMETERED)
             .setRequiresBatteryNotLow(true)
@@ -139,13 +126,24 @@ class RouteTrackingViewModelImpl @Inject constructor(
             .setBackoffCriteria(BackoffPolicy.LINEAR, 5, TimeUnit.MINUTES)
             .setInputData(
                 workDataOf(
-                    UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LAT to activityStartPoint.latitude,
-                    UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LNG to activityStartPoint.longitude
+                    UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LAT to startLocation.latitude,
+                    UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LNG to startLocation.longitude
                 )
             )
             .build()
         WorkManager.getInstance(application)
             .enqueue(workRequest)
+    }
+
+    private fun mayScheduleStravaActivityUpload(activity: Activity) = GlobalScope.launch {
+        val userAccountId = authenticationState.getUserAccountId()
+        if (userAccountId == null ||
+            externalAppProvidersRepository.getStravaProviderToken(userAccountId) == null
+        )
+            return@launch
+
+        exportActivityToStravaFileUsecase.export(activityMapper.mapRev(activity), false)
+        UploadStravaFileWorker.enqueueForFinishedActivity(application)
     }
 
     private suspend fun notifyLatestDataUpdate() {
@@ -154,8 +152,10 @@ class RouteTrackingViewModelImpl @Inject constructor(
         }
 
         val batch = getTrackedLocationsUsecase.getTrackedLocations(processedLocationCount)
-        _trackingLocationBatch.value = batch
-        processedLocationCount += batch.size
+        if (batch.isNotEmpty()) {
+            _trackingLocationBatch.value = batch
+            processedLocationCount += batch.size
+        }
     }
 
     override fun requestDataUpdates() {
