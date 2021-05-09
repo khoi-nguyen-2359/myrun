@@ -1,11 +1,11 @@
-package akio.apps.myrun.data.activityfile.impl
+package akio.apps.myrun.data.activityexport.impl
 
 import akio.apps.myrun._di.NamedIoDispatcher
-import akio.apps.myrun.data.activityfile.ActivityFileTrackingRepository
-import akio.apps.myrun.data.activityfile.entity.ActivityFileRecord
-import akio.apps.myrun.data.activityfile.model.FileStatus
-import akio.apps.myrun.data.activityfile.model.FileTarget
-import akio.apps.myrun.data.activityfile.model.TrackingRecord
+import akio.apps.myrun.data.activityexport.ActivityFileTrackingRepository
+import akio.apps.myrun.data.activityexport.entity.RoomActivityFileRecord
+import akio.apps.myrun.data.activityexport.model.FileStatus
+import akio.apps.myrun.data.activityexport.model.FileTarget
+import akio.apps.myrun.data.activityexport.model.TrackingRecord
 import android.app.Application
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class ActivityFileTrackingRepositoryImpl @Inject constructor(
     application: Application,
-    activityFileDatabase: ActivityFileDatabase,
+    activityExportDatabase: ActivityExportDatabase,
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ActivityFileTrackingRepository {
 
@@ -22,7 +22,7 @@ class ActivityFileTrackingRepositoryImpl @Inject constructor(
 
     private val activityFilePrefix = "activity_"
 
-    private val activityFileTrackingDao = activityFileDatabase.activityFileDao()
+    private val activityFileTrackingDao = activityExportDatabase.activityFileDao()
 
     init {
         initContentDir()
@@ -43,7 +43,7 @@ class ActivityFileTrackingRepositoryImpl @Inject constructor(
         activityFile: File,
         target: FileTarget
     ) = withContext(ioDispatcher) {
-        val record = ActivityFileRecord(
+        val record = RoomActivityFileRecord(
             id = 0,
             activityId = activityId,
             activityName = activityName,

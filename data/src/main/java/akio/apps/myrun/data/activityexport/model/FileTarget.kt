@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.activityfile.model
+package akio.apps.myrun.data.activityexport.model
 
 /**
  * Telling the purpose of a file

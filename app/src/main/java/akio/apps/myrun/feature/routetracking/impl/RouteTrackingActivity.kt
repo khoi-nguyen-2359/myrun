@@ -8,7 +8,8 @@ import akio.apps.myrun._base.permissions.AppPermissions.locationPermissions
 import akio.apps.myrun._base.permissions.RequiredPermissionsDelegate
 import akio.apps.myrun._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun._base.utils.DialogDelegate
-import akio.apps.myrun._base.utils.toGmsLatLng
+import akio.apps.myrun._base.utils.trackingLocationToGmsLatLng
+import akio.apps.myrun._base.utils.latLngToGmsLatLng
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
@@ -123,7 +124,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         observeEvent(routeTrackingViewModel.mapInitialLocation) { initLocation ->
             mapView.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
-                    initLocation.toGmsLatLng(),
+                    initLocation.latLngToGmsLatLng(),
                     MAP_DEFAULT_ZOOM_LEVEL
                 )
             )
@@ -158,7 +159,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     private fun moveMapCameraOnTrackingLocationUpdate(batch: List<TrackingLocationEntity>) {
         batch.forEach {
-            trackingRouteLatLngBounds.include(it.toGmsLatLng())
+            trackingRouteLatLngBounds.include(it.trackingLocationToGmsLatLng())
         }
 
         // LatLngBounds doesn't have method to check empty!

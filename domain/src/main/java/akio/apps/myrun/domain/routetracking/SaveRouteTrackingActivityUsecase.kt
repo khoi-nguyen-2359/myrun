@@ -1,7 +1,7 @@
 package akio.apps.myrun.domain.routetracking
 
 import akio.apps._base.error.UnauthorizedUserError
-import akio.apps.myrun._base.utils.toGmsLatLng
+import akio.apps.myrun._base.utils.trackingLocationToGmsLatLng
 import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.model.ActivityDataModel
 import akio.apps.myrun.data.activity.model.ActivityModel
@@ -43,7 +43,7 @@ class SaveRouteTrackingActivityUsecase @Inject constructor(
         val duration = routeTrackingState.getTrackingDuration()
         val distance = routeTrackingState.getRouteDistance()
         val trackedLocations = routeTrackingLocationRepository.getAllLocations()
-        val encodedPolyline = PolyUtil.encode(trackedLocations.map { it.toGmsLatLng() })
+        val encodedPolyline = PolyUtil.encode(trackedLocations.map { it.trackingLocationToGmsLatLng() })
         val activityData = ActivityDataModel(
             id = "",
             activityType,

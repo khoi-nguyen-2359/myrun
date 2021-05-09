@@ -1,6 +1,6 @@
-package akio.apps.myrun.data.activityfile.impl
+package akio.apps.myrun.data.activityexport.impl
 
-import akio.apps.myrun.data.activityfile.entity.ActivityFileRecord
+import akio.apps.myrun.data.activityexport.entity.RoomActivityFileRecord
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -8,10 +8,10 @@ import androidx.room.Query
 @Dao
 interface ActivityFileDao {
     @Insert
-    suspend fun insert(record: ActivityFileRecord)
+    suspend fun insert(record: RoomActivityFileRecord)
 
     @Query("SELECT * FROM activity_file WHERE status = :status AND target = :target")
-    suspend fun getTrackingRecords(status: String, target: String): List<ActivityFileRecord>
+    suspend fun getTrackingRecords(status: String, target: String): List<RoomActivityFileRecord>
 
     @Query("UPDATE activity_file SET status = :status WHERE id = :recordId")
     suspend fun updateRecord(recordId: Int, status: String)
