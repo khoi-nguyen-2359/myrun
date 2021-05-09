@@ -43,4 +43,8 @@ class RouteTrackingLocationRepositoryImpl @Inject constructor(
 
     private fun RoomTrackingLocation.toTrackingLocationEntity() =
         TrackingLocationEntity(time, latitude, longitude, altitude)
+
+    companion object {
+
+    }
 }

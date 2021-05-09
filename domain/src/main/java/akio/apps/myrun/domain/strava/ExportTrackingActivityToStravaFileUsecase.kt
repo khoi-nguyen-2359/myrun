@@ -3,15 +3,15 @@ package akio.apps.myrun.domain.strava
 import akio.apps.myrun._base.runfile.ClosableFileSerializer
 import akio.apps.myrun._base.runfile.ZipFileSerializer
 import akio.apps.myrun._base.utils.toGmsLatLng
-import akio.apps.myrun._di.NamedIoDispatcher
+import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.activityfile.ActivityFileTrackingRepository
+import akio.apps.myrun.data.activityfile.ExportActivityLocationRepository
+import akio.apps.myrun.data.activityfile.model.ActivityLocation
 import akio.apps.myrun.data.activityfile.model.FileTarget
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.fitness.SingleDataPoint
-import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
-import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.domain.routetracking.SaveRouteTrackingActivityUsecase
 import com.google.maps.android.SphericalUtil
 import com.sweetzpot.tcxzpot.Activities
@@ -26,25 +26,20 @@ import com.sweetzpot.tcxzpot.builders.ActivityBuilder
 import com.sweetzpot.tcxzpot.builders.LapBuilder
 import com.sweetzpot.tcxzpot.builders.TrackpointBuilder
 import com.sweetzpot.tcxzpot.builders.TrainingCenterDatabaseBuilder
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Date
 import javax.inject.Inject
-import javax.inject.Named
 
 class ExportTrackingActivityToStravaFileUsecase @Inject constructor(
-    private val routeTrackingLocationRepository: RouteTrackingLocationRepository,
     private val fitnessDataRepository: FitnessDataRepository,
     private val activityFileTrackingRepository: ActivityFileTrackingRepository,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    private val exportActivityLocationRepository: ExportActivityLocationRepository,
+    private val activityRepository: ActivityRepository
 ) {
-    suspend fun export(
+    suspend operator fun invoke(
         activity: ActivityModel,
         zip: Boolean
-    ): File = coroutineScope {
+    ): File {
         val outputFile = activityFileTrackingRepository.createEmptyFile(activity.id)
         val startDate = Date(activity.startTime)
         val serializer = if (zip)
@@ -67,7 +62,24 @@ class ExportTrackingActivityToStravaFileUsecase @Inject constructor(
         else
             stepCadenceDataPoints.sumOf { it.value } / stepCadenceDataPoints.size
 
-        val trackedLocations = routeTrackingLocationRepository.getAllLocations()
+        // first try getting from export data
+        val savedTrackingLocations =
+            exportActivityLocationRepository.getActivityLocations(activity.id)
+        val trackedLocations = if (savedTrackingLocations.isEmpty()) {
+            // then may fetch from activity data source
+            activityRepository.getActivityLocationDataPoints(activity.id)
+                .map { locationDataPoint ->
+                    ActivityLocation(
+                        activity.id,
+                        locationDataPoint.timestamp,
+                        locationDataPoint.value.latitude,
+                        locationDataPoint.value.longitude,
+                        locationDataPoint.value.altitude
+                    )
+                }
+        } else {
+            savedTrackingLocations
+        }
 
         val flattenCadences = mutableListOf<Int>()
         if (stepCadenceDataPoints != null) {
@@ -75,9 +87,15 @@ class ExportTrackingActivityToStravaFileUsecase @Inject constructor(
             trackedLocations.forEach { location ->
                 val firstCadence = stepCadenceDataPoints.firstOrNull()
                 val lastCadence = stepCadenceDataPoints.lastOrNull()
-                if (firstCadence != null && location.time >= firstCadence.timestamp && lastCadence != null && location.time <= lastCadence.timestamp) {
+                if (firstCadence != null &&
+                    location.time >= firstCadence.timestamp &&
+                    lastCadence != null &&
+                    location.time <= lastCadence.timestamp
+                ) {
                     for (i in lastCadenceSearchIndex until stepCadenceDataPoints.size - 1) {
-                        if (location.time >= stepCadenceDataPoints[i].timestamp && location.time <= stepCadenceDataPoints[i + 1].timestamp) {
+                        if (location.time >= stepCadenceDataPoints[i].timestamp &&
+                            location.time <= stepCadenceDataPoints[i + 1].timestamp
+                        ) {
                             flattenCadences.add((stepCadenceDataPoints[i].value + stepCadenceDataPoints[i + 1].value) / 2)
                             lastCadenceSearchIndex = i + 1
                             return@forEach
@@ -90,7 +108,7 @@ class ExportTrackingActivityToStravaFileUsecase @Inject constructor(
         }
 
         var currentDistance = 0.0
-        var lastLocation: TrackingLocationEntity? = trackedLocations.firstOrNull()
+        var lastLocation: ActivityLocation? = trackedLocations.firstOrNull()
         val sportType = when (activity.activityType) {
             ActivityType.Running -> Sport.RUNNING
             else -> Sport.BIKING
@@ -151,6 +169,6 @@ class ExportTrackingActivityToStravaFileUsecase @Inject constructor(
             FileTarget.STRAVA_UPLOAD
         )
 
-        return@coroutineScope outputFile
+        return outputFile
     }
 }

@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.activitydetail._di
 
 import akio.apps._base.di.ViewModelFactoryProvider
+import akio.apps.myrun._di.DispatchersModule
 import akio.apps.myrun.data.activity._di.ActivityDataModule
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import dagger.BindsInstance
@@ -10,6 +11,7 @@ import dagger.Component
     modules = [
         ActivityDetailFeatureModule::class,
         ActivityDataModule::class,
+        DispatchersModule::class
     ]
 )
 interface ActivityDetailFeatureComponent : ViewModelFactoryProvider {
