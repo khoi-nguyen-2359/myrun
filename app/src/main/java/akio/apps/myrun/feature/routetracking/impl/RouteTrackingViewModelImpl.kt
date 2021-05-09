@@ -13,9 +13,9 @@ import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetMapInitialLocationUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.routetracking.SaveRouteTrackingActivityUsecase
-import akio.apps.myrun.domain.strava.ClearExportActivityLocationUsecase
+import akio.apps.myrun.domain.activityexport.ClearExportActivityLocationUsecase
 import akio.apps.myrun.domain.strava.ExportTrackingActivityToStravaFileUsecase
-import akio.apps.myrun.domain.strava.SaveExportActivityLocationsUsecase
+import akio.apps.myrun.domain.activityexport.SaveExportActivityLocationsUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import akio.apps.myrun.feature.usertimeline.model.Activity

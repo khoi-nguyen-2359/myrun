@@ -1,6 +1,6 @@
-package akio.apps.myrun.domain.strava
+package akio.apps.myrun.domain.activityexport
 
-import akio.apps.myrun.data.activityfile.ExportActivityLocationRepository
+import akio.apps.myrun.data.activityexport.ExportActivityLocationRepository
 import javax.inject.Inject
 
 class ClearExportActivityLocationUsecase @Inject constructor(

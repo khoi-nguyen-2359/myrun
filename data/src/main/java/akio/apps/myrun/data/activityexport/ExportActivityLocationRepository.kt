@@ -1,6 +1,6 @@
-package akio.apps.myrun.data.activityfile
+package akio.apps.myrun.data.activityexport
 
-import akio.apps.myrun.data.activityfile.model.ActivityLocation
+import akio.apps.myrun.data.activityexport.model.ActivityLocation
 
 interface ExportActivityLocationRepository {
     suspend fun saveActivityLocations(activityLocations: List<ActivityLocation>)

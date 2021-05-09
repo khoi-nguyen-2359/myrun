@@ -1,10 +1,10 @@
-package akio.apps.myrun.data.activityfile._di
+package akio.apps.myrun.data.activityexport._di
 
-import akio.apps.myrun.data.activityfile.ActivityFileTrackingRepository
-import akio.apps.myrun.data.activityfile.ExportActivityLocationRepository
-import akio.apps.myrun.data.activityfile.impl.ActivityFileDatabase
-import akio.apps.myrun.data.activityfile.impl.ActivityFileTrackingRepositoryImpl
-import akio.apps.myrun.data.activityfile.impl.ExportActivityLocationRepositoryImpl
+import akio.apps.myrun.data.activityexport.ActivityFileTrackingRepository
+import akio.apps.myrun.data.activityexport.ExportActivityLocationRepository
+import akio.apps.myrun.data.activityexport.impl.ActivityExportDatabase
+import akio.apps.myrun.data.activityexport.impl.ActivityFileTrackingRepositoryImpl
+import akio.apps.myrun.data.activityexport.impl.ExportActivityLocationRepositoryImpl
 import android.app.Application
 import androidx.room.Room
 import dagger.Binds
@@ -24,11 +24,11 @@ interface ActivityFileDataModule {
     @Module
     class Providers {
         @Provides
-        fun activityFileDatabase(application: Application): ActivityFileDatabase =
+        fun activityFileDatabase(application: Application): ActivityExportDatabase =
             Room.databaseBuilder(
                 application,
-                ActivityFileDatabase::class.java,
-                "activity_file_db"
+                ActivityExportDatabase::class.java,
+                "activity_export_db"
             )
                 .enableMultiInstanceInvalidation()
                 .build()

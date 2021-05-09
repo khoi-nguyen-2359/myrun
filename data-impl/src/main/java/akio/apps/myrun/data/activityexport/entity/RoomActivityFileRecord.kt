@@ -1,11 +1,11 @@
-package akio.apps.myrun.data.activityfile.entity
+package akio.apps.myrun.data.activityexport.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "activity_file")
-class ActivityFileRecord(
+class RoomActivityFileRecord(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
 
