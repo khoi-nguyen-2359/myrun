@@ -9,13 +9,13 @@ import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.data.routetracking.model.LatLng
+import akio.apps.myrun.domain.activityexport.ClearExportActivityLocationUsecase
+import akio.apps.myrun.domain.activityexport.SaveExportActivityLocationsUsecase
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetMapInitialLocationUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.routetracking.SaveRouteTrackingActivityUsecase
-import akio.apps.myrun.domain.activityexport.ClearExportActivityLocationUsecase
 import akio.apps.myrun.domain.strava.ExportTrackingActivityToStravaFileUsecase
-import akio.apps.myrun.domain.activityexport.SaveExportActivityLocationsUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import akio.apps.myrun.feature.usertimeline.model.Activity
@@ -32,11 +32,11 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 class RouteTrackingViewModelImpl @Inject constructor(
     private val application: Application,
@@ -77,7 +77,9 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private var processedLocationCount = 0
 
     override fun resumeDataUpdates() {
-        if (_mapInitialLocation.value != null && trackingStatus.value == RouteTrackingStatus.RESUMED) {
+        if (_mapInitialLocation.value != null &&
+            trackingStatus.value == RouteTrackingStatus.RESUMED
+        ) {
             requestDataUpdates()
         }
     }
