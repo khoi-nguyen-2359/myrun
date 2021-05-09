@@ -8,8 +8,8 @@ import akio.apps.myrun._base.permissions.AppPermissions.locationPermissions
 import akio.apps.myrun._base.permissions.RequiredPermissionsDelegate
 import akio.apps.myrun._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun._base.utils.DialogDelegate
-import akio.apps.myrun._base.utils.trackingLocationToGmsLatLng
 import akio.apps.myrun._base.utils.latLngToGmsLatLng
+import akio.apps.myrun._base.utils.trackingLocationToGmsLatLng
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
@@ -320,7 +320,8 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         requiredPermissionsDelegate.verifyPermissionsResult(this, locationPermissions)
 
         when (requestCode) {
-            RC_ACTIVITY_REGCONITION_PERMISSION -> googleFitLinkingDelegate.verifyActivityRecognitionPermission()
+            RC_ACTIVITY_REGCONITION_PERMISSION ->
+                googleFitLinkingDelegate.verifyActivityRecognitionPermission()
         }
     }
 
@@ -328,18 +329,18 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             RC_FITNESS_DATA_PERMISSIONS -> googleFitLinkingDelegate.verifyFitnessDataPermission()
-            RC_LOCATION_SERVICE -> checkLocationServiceDelegate.verifyLocationServiceResolutionResult(
-                resultCode
-            )
+            RC_LOCATION_SERVICE ->
+                checkLocationServiceDelegate.verifyLocationServiceResolutionResult(resultCode)
         }
     }
 
     private fun initMap() {
-        (supportFragmentManager.findFragmentById(R.id.tracking_map_view) as SupportMapFragment).getMapAsync { map ->
-            initMapView(map)
-            initObservers()
-            routeTrackingViewModel.requestInitialData()
-        }
+        (supportFragmentManager.findFragmentById(R.id.tracking_map_view) as SupportMapFragment)
+            .getMapAsync { map ->
+                initMapView(map)
+                initObservers()
+                routeTrackingViewModel.requestInitialData()
+            }
     }
 
     @SuppressLint("MissingPermission")
