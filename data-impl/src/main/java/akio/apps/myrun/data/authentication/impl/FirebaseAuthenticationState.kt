@@ -46,7 +46,8 @@ class FirebaseAuthenticationState @Inject constructor(
     override fun getUserAccountId(): String? = firebaseAuth.currentUser?.uid
 
     override fun isLinkedWithFacebook(): Boolean =
-        firebaseAuth.currentUser?.providerData?.any { it.providerId == FacebookAuthProvider.PROVIDER_ID }
+        firebaseAuth.currentUser?.providerData
+            ?.any { it.providerId == FacebookAuthProvider.PROVIDER_ID }
             ?: false
 
     override fun isSignedIn(): Boolean = firebaseAuth.currentUser?.uid != null

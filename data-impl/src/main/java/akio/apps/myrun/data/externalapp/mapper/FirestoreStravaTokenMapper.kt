@@ -14,7 +14,9 @@ class FirestoreStravaTokenMapper @Inject constructor() {
         )
     }
 
-    fun mapReversed(input: ExternalAppToken.StravaToken): FirestoreProvidersEntity.FirestoreStravaToken {
+    fun mapReversed(
+        input: ExternalAppToken.StravaToken
+    ): FirestoreProvidersEntity.FirestoreStravaToken {
         return FirestoreProvidersEntity.FirestoreStravaToken(
             input.accessToken,
             input.refreshToken,

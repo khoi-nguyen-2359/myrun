@@ -37,7 +37,7 @@ class UpdateUserProfileUsecaseTest {
     }
 
     @Test
-    fun `given user logged in, when update user profile, then update call success`() {
+    fun testUpdateProfileSuccess() {
         runBlockingTest {
             // given
             val userId = "userId"
@@ -55,7 +55,7 @@ class UpdateUserProfileUsecaseTest {
     }
 
     @Test
-    fun `given user not logged in, when update user profile, then update call return InvalidUserState error`() {
+    fun testUpdateProfileWhenUserIsNotLoggedIn() {
         runBlockingTest {
             // given
             whenever(userAuthenticationState.getUserAccountId()).thenReturn(null)

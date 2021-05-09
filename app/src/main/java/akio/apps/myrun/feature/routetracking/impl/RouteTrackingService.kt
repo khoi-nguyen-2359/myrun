@@ -147,7 +147,9 @@ class RouteTrackingService : Service() {
             val currentTime = System.currentTimeMillis()
             val deltaTime = currentTime - lastTimeComputingInstantSpeed
             // compute instant speed for a period equals to location update interval
-            if (lastTimeComputingInstantSpeed == 0L || (lastTimeComputingInstantSpeed > 0 && deltaTime >= LOCATION_UPDATE_INTERVAL)) {
+            if (lastTimeComputingInstantSpeed == 0L ||
+                (lastTimeComputingInstantSpeed > 0 && deltaTime >= LOCATION_UPDATE_INTERVAL)
+            ) {
                 val instantSpeed = (routeDistance - lastDistanceComputingInstantSpeed) / deltaTime
                 routeTrackingState.setInstantSpeed(instantSpeed)
 
@@ -384,7 +386,9 @@ class RouteTrackingService : Service() {
         fun isTrackingServiceRunning(context: Context): Boolean {
             val activityMan = ContextCompat.getSystemService(context, ActivityManager::class.java)
             val infos = activityMan?.getRunningServices(Int.MAX_VALUE)
-            return infos?.any { RouteTrackingService::class.java.name == it.service.className } == true
+            return infos?.any {
+                RouteTrackingService::class.java.name == it.service.className
+            } == true
         }
     }
 }

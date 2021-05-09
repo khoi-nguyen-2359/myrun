@@ -132,7 +132,9 @@ class FirebaseActivityRepository @Inject constructor(
         val firestoreLocationDataPointDeserializer =
             FirestoreDataPointDeserializer(FirestoreLocationDataPointParser())
 
-        return@withContext firestoreLocationDataPointDeserializer.deserialize(firestoreLocationDataPoints)
+        return@withContext firestoreLocationDataPointDeserializer.deserialize(
+            firestoreLocationDataPoints
+        )
     }
 
     override suspend fun getActivity(

@@ -6,7 +6,6 @@ import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntity
 import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntityMapper
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import com.google.gson.Gson
-import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -15,6 +14,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.Route
 import timber.log.Timber
+import kotlinx.coroutines.runBlocking
 
 class StravaAuthenticator(
     private val httpClient: OkHttpClient,
@@ -50,7 +50,10 @@ class StravaAuthenticator(
         }
 
         val originalRefreshToken = originalToken.refreshToken
-        Timber.d("refresh Strava token access_token=$originalAccessToken refresh_token=$originalRefreshToken")
+        Timber.d(
+            "refresh Strava token access_token=$originalAccessToken " +
+                "refresh_token=$originalRefreshToken"
+        )
 
         val refreshRequest = Request.Builder()
             .method("POST", "".toRequestBody("text/plain".toMediaType()))
@@ -83,7 +86,11 @@ class StravaAuthenticator(
                 .build()
         }
 
-        Timber.e("refresh Strava token failed. code=${refreshResponse.code}, access_token=$originalAccessToken, refresh_token=$originalRefreshToken")
+        Timber.e(
+            "refresh Strava token failed. code=${refreshResponse.code}, " +
+                "access_token=$originalAccessToken, " +
+                "refresh_token=$originalRefreshToken"
+        )
         runBlocking { externalAppProvidersRepository.removeStravaProvider(userAccountId) }
 
         return null
