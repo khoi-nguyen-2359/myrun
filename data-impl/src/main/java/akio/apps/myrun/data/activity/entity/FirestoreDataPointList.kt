@@ -2,8 +2,12 @@ package akio.apps.myrun.data.activity.entity
 
 import akio.apps.myrun.data.fitness.SingleDataPoint
 import akio.apps.myrun.data.location.LocationEntity
+import com.google.firebase.firestore.PropertyName
 
-class FirestoreDataPointList(val data: List<Double>)
+data class FirestoreDataPointList(
+    @JvmField @PropertyName("data")
+    val data: List<Double> = emptyList()
+)
 
 class FirestoreDataPointSerializer<T>(
     private val firestoreDataPointParser: FirestoreDataPointParser<T>

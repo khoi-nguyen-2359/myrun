@@ -1,11 +1,14 @@
 package akio.apps.myrun.domain.strava
 
+import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.activityfile.ActivityFileTrackingRepository
 import akio.apps.myrun.data.activityfile.model.FileStatus
 import akio.apps.myrun.data.activityfile.model.FileTarget
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.StravaDataRepository
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -13,9 +16,10 @@ class UploadActivityFilesToStravaUsecase @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val stravaDataRepository: StravaDataRepository,
-    private val activityFileTrackingRepository: ActivityFileTrackingRepository
+    private val activityFileTrackingRepository: ActivityFileTrackingRepository,
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
-    suspend fun upload(): Int {
+    suspend fun upload(): Int = withContext(ioDispatcher) {
         val userAccountId = userAuthenticationState.getUserAccountId()
         val stravaToken = if (userAccountId == null)
             null
@@ -53,7 +57,7 @@ class UploadActivityFilesToStravaUsecase @Inject constructor(
             }
         }
 
-        return activityFileTrackingRepository.countRecord(
+        return@withContext activityFileTrackingRepository.countRecord(
             FileStatus.PENDING,
             FileTarget.STRAVA_UPLOAD
         )
