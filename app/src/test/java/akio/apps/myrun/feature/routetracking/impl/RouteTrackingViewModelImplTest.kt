@@ -6,6 +6,8 @@ import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus.STOPPED
 import akio.apps.myrun.data.routetracking.model.LatLng
+import akio.apps.myrun.domain.activityexport.ClearExportActivityLocationUsecase
+import akio.apps.myrun.domain.activityexport.SaveExportActivityLocationsUsecase
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetMapInitialLocationUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
@@ -57,6 +59,12 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
     lateinit var mockedGetMapInitialLocationUsecase: GetMapInitialLocationUsecase
 
     @Mock
+    lateinit var mockedSaveExportActivityLocationsUsecase: SaveExportActivityLocationsUsecase
+
+    @Mock
+    lateinit var mockedClearExportActivityLocationUsecase: ClearExportActivityLocationUsecase
+
+    @Mock
     lateinit var mockedAppContext: Application
 
     lateinit var testee: RouteTrackingViewModel
@@ -98,7 +106,9 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
         mockedRouteTrackingState,
         mockedSaveRouteTrackingActivityUsecase,
         mockedClearRouteTrackingStateUsecase,
+        mockedSaveExportActivityLocationsUsecase,
         mockedExportActivityToStravaFileUsecase,
+        mockedClearExportActivityLocationUsecase,
         mockedActivityMapper,
         mockedExternalAppProvidersRepository,
         mockedAuthenticationState
