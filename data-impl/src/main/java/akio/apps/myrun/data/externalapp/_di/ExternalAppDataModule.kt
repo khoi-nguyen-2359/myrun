@@ -20,10 +20,17 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
 import javax.inject.Singleton
 
-@Module(includes = [ExternalAppDataModule.Providers::class, FirebaseDataModule::class, NetworkModule::class])
+@Module(
+    includes = [
+        ExternalAppDataModule.Providers::class,
+        FirebaseDataModule::class,
+        NetworkModule::class
+    ]
+)
 interface ExternalAppDataModule {
     @Binds
-    fun externalAppCredentialsRepo(repo: FirebaseExternalAppProvidersRepository): ExternalAppProvidersRepository
+    fun externalAppCredentialsRepo(repo: FirebaseExternalAppProvidersRepository):
+        ExternalAppProvidersRepository
 
     @Binds
     fun stravaTokenRepository(repositoryImpl: StravaTokenRepositoryImpl): StravaTokenRepository
@@ -45,7 +52,7 @@ interface ExternalAppDataModule {
         fun stravaApiService(
             okHttpClientBuilder: OkHttpClient.Builder,
             stravaAuthenticator: StravaAuthenticator,
-            @Named(ExternalAppDataModule.NAME_STRAVA_GSON) gson: Gson
+            @Named(NAME_STRAVA_GSON) gson: Gson
         ): StravaApi {
             okHttpClientBuilder.authenticator(stravaAuthenticator)
 
@@ -53,7 +60,7 @@ interface ExternalAppDataModule {
 
             val retrofit = Retrofit.Builder()
                 .client(okHttpClient)
-                .baseUrl(ExternalAppDataModule.STRAVA_BASE_ENDPOINT)
+                .baseUrl(STRAVA_BASE_ENDPOINT)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
 

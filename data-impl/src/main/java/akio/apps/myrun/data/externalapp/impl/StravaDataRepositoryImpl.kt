@@ -15,7 +15,11 @@ class StravaDataRepositoryImpl @Inject constructor(
     private val stravaApi: StravaApi,
     private val stravaRouteEntityMapper: StravaRouteEntityMapper
 ) : StravaDataRepository {
-    override suspend fun saveActivity(stravaToken: ExternalAppToken.StravaToken, activityTitle: String, activityFile: File) {
+    override suspend fun saveActivity(
+        stravaToken: ExternalAppToken.StravaToken,
+        activityTitle: String,
+        activityFile: File
+    ) {
         val uploadFile = activityFile.asRequestBody(TCX_MIME_TYPE.toMediaType())
         val uploadBody = MultipartBody.Part.createFormData("file", activityFile.name, uploadFile)
         val runNamePart = activityTitle.toRequestBody(MultipartBody.FORM)

@@ -211,7 +211,8 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            RC_ACTIVITY_RECOGNITION_PERMISSION -> googleFitLinkingDelegate.verifyActivityRecognitionPermission()
+            RC_ACTIVITY_RECOGNITION_PERMISSION ->
+                googleFitLinkingDelegate.verifyActivityRecognitionPermission()
         }
     }
 

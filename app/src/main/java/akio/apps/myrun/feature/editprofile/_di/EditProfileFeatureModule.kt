@@ -18,5 +18,6 @@ interface EditProfileFeatureModule {
     fun editProfileVm(viewModelImpl: EditProfileViewModelImpl): ViewModel
 
     @Binds
-    fun getUpdatePhoneNumberDelegate(delegate: FirebaseUserPhoneNumberDelegate): UserPhoneNumberDelegate
+    fun getUpdatePhoneNumberDelegate(delegate: FirebaseUserPhoneNumberDelegate):
+        UserPhoneNumberDelegate
 }

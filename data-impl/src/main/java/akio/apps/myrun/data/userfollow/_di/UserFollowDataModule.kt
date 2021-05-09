@@ -8,5 +8,6 @@ import dagger.Module
 @Module
 interface UserFollowDataModule {
     @Binds
-    fun userFollowRepository(firebaseUserFollowRepository: FirebaseUserFollowRepository): UserFollowRepository
+    fun userFollowRepository(firebaseUserFollowRepository: FirebaseUserFollowRepository):
+        UserFollowRepository
 }

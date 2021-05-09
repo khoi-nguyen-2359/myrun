@@ -17,7 +17,8 @@ import javax.inject.Singleton
 interface RouteTrackingDataModule {
 
     @Binds
-    fun routeTrackingLocationRepo(repositoryImpl: RouteTrackingLocationRepositoryImpl): RouteTrackingLocationRepository
+    fun routeTrackingLocationRepo(repositoryImpl: RouteTrackingLocationRepositoryImpl):
+        RouteTrackingLocationRepository
 
     @Module
     class Providers {
@@ -40,6 +41,7 @@ interface RouteTrackingDataModule {
     interface RouteTrackingStateDataModule {
         @Binds
         @Singleton
-        fun routeTrackingState(preferencesRouteTrackingState: PreferencesRouteTrackingState): RouteTrackingState
+        fun routeTrackingState(preferencesRouteTrackingState: PreferencesRouteTrackingState):
+            RouteTrackingState
     }
 }

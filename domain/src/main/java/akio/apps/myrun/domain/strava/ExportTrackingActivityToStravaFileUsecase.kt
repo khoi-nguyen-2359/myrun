@@ -127,7 +127,9 @@ class ExportTrackingActivityToStravaFileUsecase @Inject constructor(
                         if (location.time >= stepCadenceDataPoints[i].timestamp &&
                             location.time <= stepCadenceDataPoints[i + 1].timestamp
                         ) {
-                            flattenCadences.add((stepCadenceDataPoints[i].value + stepCadenceDataPoints[i + 1].value) / 2)
+                            val combinedCadence =
+                                stepCadenceDataPoints[i].value + stepCadenceDataPoints[i + 1].value
+                            flattenCadences.add(combinedCadence / 2)
                             lastCadenceSearchIndex = i + 1
                             return@forEach
                         }
@@ -194,10 +196,11 @@ class ExportTrackingActivityToStravaFileUsecase @Inject constructor(
                                                 .withCadence(Cadence.cadence(cadences[index]))
                                                 .apply {
                                                     lastLocation?.let {
-                                                        currentDistance += SphericalUtil.computeDistanceBetween(
-                                                            it.toGmsLatLng(),
-                                                            waypoint.toGmsLatLng()
-                                                        )
+                                                        currentDistance +=
+                                                            SphericalUtil.computeDistanceBetween(
+                                                                it.toGmsLatLng(),
+                                                                waypoint.toGmsLatLng()
+                                                            )
                                                         lastLocation = waypoint
                                                         withDistance(currentDistance)
                                                     }
