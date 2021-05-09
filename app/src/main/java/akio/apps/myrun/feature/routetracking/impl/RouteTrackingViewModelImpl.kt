@@ -13,7 +13,9 @@ import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetMapInitialLocationUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.routetracking.SaveRouteTrackingActivityUsecase
+import akio.apps.myrun.domain.strava.ClearExportActivityLocationUsecase
 import akio.apps.myrun.domain.strava.ExportTrackingActivityToStravaFileUsecase
+import akio.apps.myrun.domain.strava.SaveExportActivityLocationsUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import akio.apps.myrun.feature.usertimeline.model.Activity
@@ -43,7 +45,9 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val routeTrackingState: RouteTrackingState,
     private val saveRouteTrackingActivityUsecase: SaveRouteTrackingActivityUsecase,
     private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase,
+    private val saveExportActivityLocationsUsecase: SaveExportActivityLocationsUsecase,
     private val exportActivityToStravaFileUsecase: ExportTrackingActivityToStravaFileUsecase,
+    private val clearExportActivityLocationUsecase: ClearExportActivityLocationUsecase,
     private val activityMapper: ActivityModelMapper,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val authenticationState: UserAuthenticationState
@@ -135,15 +139,20 @@ class RouteTrackingViewModelImpl @Inject constructor(
             .enqueue(workRequest)
     }
 
-    private fun mayScheduleStravaActivityUpload(activity: Activity) = GlobalScope.launch {
+    private suspend fun mayScheduleStravaActivityUpload(activity: Activity) {
         val userAccountId = authenticationState.getUserAccountId()
         if (userAccountId == null ||
             externalAppProvidersRepository.getStravaProviderToken(userAccountId) == null
-        )
-            return@launch
+        ) {
+            return
+        }
 
-        exportActivityToStravaFileUsecase.export(activityMapper.mapRev(activity), false)
-        UploadStravaFileWorker.enqueueForFinishedActivity(application)
+        saveExportActivityLocationsUsecase(activity.id)
+        GlobalScope.launch {
+            exportActivityToStravaFileUsecase(activityMapper.mapRev(activity), false)
+            clearExportActivityLocationUsecase(activity.id)
+            UploadStravaFileWorker.enqueueForFinishedActivity(application)
+        }
     }
 
     private suspend fun notifyLatestDataUpdate() {

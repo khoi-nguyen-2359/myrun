@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class ActivityFileTrackingRepositoryImpl @Inject constructor(
     application: Application,
-    activityFileTrackingDatabase: ActivityFileTrackingDatabase,
+    activityFileDatabase: ActivityFileDatabase,
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ActivityFileTrackingRepository {
 
@@ -22,7 +22,7 @@ class ActivityFileTrackingRepositoryImpl @Inject constructor(
 
     private val activityFilePrefix = "activity_"
 
-    private val activityFileTrackingDao = activityFileTrackingDatabase.activityFileDao()
+    private val activityFileTrackingDao = activityFileDatabase.activityFileDao()
 
     init {
         initContentDir()

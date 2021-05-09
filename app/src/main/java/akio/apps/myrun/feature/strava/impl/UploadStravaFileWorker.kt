@@ -51,8 +51,7 @@ class UploadStravaFileWorker(
 
         val remaining = uploadActivityFilesToStravaUsecase.upload()
         if (remaining == 0) {
-            WorkManager.getInstance(applicationContext)
-                .cancelWorkById(this.id)
+            WorkManager.getInstance(applicationContext).cancelWorkById(this.id)
         }
 
         return Result.success()
