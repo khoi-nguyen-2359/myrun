@@ -1,6 +1,6 @@
-package akio.apps.myrun.data.activityfile.impl
+package akio.apps.myrun.data.activityexport.impl
 
-import akio.apps.myrun.data.activityfile.entity.RoomExportActivityLocation
+import akio.apps.myrun.data.activityexport.entity.RoomExportActivityLocation
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query

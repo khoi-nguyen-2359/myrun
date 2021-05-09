@@ -1,20 +1,20 @@
-package akio.apps.myrun.data.activityfile.impl
+package akio.apps.myrun.data.activityexport.impl
 
 import akio.apps.myrun._di.NamedIoDispatcher
-import akio.apps.myrun.data.activityfile.ExportActivityLocationRepository
-import akio.apps.myrun.data.activityfile.entity.RoomExportActivityLocation
-import akio.apps.myrun.data.activityfile.model.ActivityLocation
+import akio.apps.myrun.data.activityexport.ExportActivityLocationRepository
+import akio.apps.myrun.data.activityexport.entity.RoomExportActivityLocation
+import akio.apps.myrun.data.activityexport.model.ActivityLocation
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ExportActivityLocationRepositoryImpl @Inject constructor(
-    activityFileDatabase: ActivityFileDatabase,
+    activityExportDatabase: ActivityExportDatabase,
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ExportActivityLocationRepository {
 
     private val exportActivityLocationDao: ExportActivityLocationDao =
-        activityFileDatabase.activityLocationDao()
+        activityExportDatabase.activityLocationDao()
 
     override suspend fun saveActivityLocations(
         activityLocations: List<ActivityLocation>

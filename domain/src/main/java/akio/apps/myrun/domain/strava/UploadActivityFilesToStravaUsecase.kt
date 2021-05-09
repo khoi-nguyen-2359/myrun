@@ -1,9 +1,9 @@
 package akio.apps.myrun.domain.strava
 
 import akio.apps.myrun._di.NamedIoDispatcher
-import akio.apps.myrun.data.activityfile.ActivityFileTrackingRepository
-import akio.apps.myrun.data.activityfile.model.FileStatus
-import akio.apps.myrun.data.activityfile.model.FileTarget
+import akio.apps.myrun.data.activityexport.ActivityFileTrackingRepository
+import akio.apps.myrun.data.activityexport.model.FileStatus
+import akio.apps.myrun.data.activityexport.model.FileTarget
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.StravaDataRepository

@@ -7,10 +7,10 @@ import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.ActivityType
-import akio.apps.myrun.data.activityfile.ActivityFileTrackingRepository
-import akio.apps.myrun.data.activityfile.ExportActivityLocationRepository
-import akio.apps.myrun.data.activityfile.model.ActivityLocation
-import akio.apps.myrun.data.activityfile.model.FileTarget
+import akio.apps.myrun.data.activityexport.ActivityFileTrackingRepository
+import akio.apps.myrun.data.activityexport.ExportActivityLocationRepository
+import akio.apps.myrun.data.activityexport.model.ActivityLocation
+import akio.apps.myrun.data.activityexport.model.FileTarget
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.fitness.SingleDataPoint
 import akio.apps.myrun.domain.routetracking.SaveRouteTrackingActivityUsecase

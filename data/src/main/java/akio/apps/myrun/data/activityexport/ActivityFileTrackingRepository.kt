@@ -1,8 +1,8 @@
-package akio.apps.myrun.data.activityfile
+package akio.apps.myrun.data.activityexport
 
-import akio.apps.myrun.data.activityfile.model.FileStatus
-import akio.apps.myrun.data.activityfile.model.FileTarget
-import akio.apps.myrun.data.activityfile.model.TrackingRecord
+import akio.apps.myrun.data.activityexport.model.FileStatus
+import akio.apps.myrun.data.activityexport.model.FileTarget
+import akio.apps.myrun.data.activityexport.model.TrackingRecord
 import java.io.File
 
 interface ActivityFileTrackingRepository {

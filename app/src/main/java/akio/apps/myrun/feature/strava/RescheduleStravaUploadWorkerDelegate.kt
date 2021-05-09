@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.strava
 
-import akio.apps.myrun.data.activityfile.ActivityFileTrackingRepository
-import akio.apps.myrun.data.activityfile.model.FileStatus
-import akio.apps.myrun.data.activityfile.model.FileTarget
+import akio.apps.myrun.data.activityexport.ActivityFileTrackingRepository
+import akio.apps.myrun.data.activityexport.model.FileStatus
+import akio.apps.myrun.data.activityexport.model.FileTarget
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker

@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.activityfile.entity
+package akio.apps.myrun.data.activityexport.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
