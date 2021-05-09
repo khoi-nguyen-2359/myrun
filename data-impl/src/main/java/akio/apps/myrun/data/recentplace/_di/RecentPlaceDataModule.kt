@@ -9,5 +9,6 @@ import dagger.Module
 @Module(includes = [FirebaseDataModule::class])
 interface RecentPlaceDataModule {
     @Binds
-    fun recentPlaceRepo(firebaseRecentPlaceRepository: FirebaseRecentPlaceRepository): RecentPlaceRepository
+    fun recentPlaceRepo(firebaseRecentPlaceRepository: FirebaseRecentPlaceRepository):
+        RecentPlaceRepository
 }

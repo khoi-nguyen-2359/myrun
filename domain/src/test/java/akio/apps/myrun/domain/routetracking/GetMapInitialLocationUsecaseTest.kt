@@ -29,7 +29,7 @@ class GetMapInitialLocationUsecaseTest {
     }
 
     @Test
-    fun `given last known location, when get initial location for map, then return correct value`() {
+    fun testGetMapInitialLocationSuccess() {
         val mockedLocation = mock<Location> {
             on { latitude }.thenReturn(10.0)
             on { longitude }.thenReturn(20.0)
@@ -49,7 +49,7 @@ class GetMapInitialLocationUsecaseTest {
     }
 
     @Test
-    fun `given null last known location, when get initial location for map, then return default`() {
+    fun testGetInitialLocationWhenLastKnownLocationIsNull() {
         val mockedLatLng = LatLng(10.8231, 106.6297)
 
         wheneverBlocking(mockedLocationDataSource) { getLastLocation() }.thenReturn(null)

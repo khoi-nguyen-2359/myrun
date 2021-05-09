@@ -110,8 +110,12 @@ class PhotoSelectionDelegate(
     }
 
     private fun handlePickedPhoto(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode != requestCodes.rcPickPhoto || resultCode != Activity.RESULT_OK || data == null)
+        if (requestCode != requestCodes.rcPickPhoto ||
+            resultCode != Activity.RESULT_OK ||
+            data == null
+        ) {
             return
+        }
 
         data.data?.let {
             eventListener?.onPhotoSelectionReady(it)
@@ -119,8 +123,12 @@ class PhotoSelectionDelegate(
     }
 
     private fun handleCapturedPhoto(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode != requestCodes.rcTakePhoto || resultCode != Activity.RESULT_OK || data == null)
+        if (requestCode != requestCodes.rcTakePhoto ||
+            resultCode != Activity.RESULT_OK ||
+            data == null
+        ) {
             return
+        }
 
         capturedPhotoContentUri
             ?.let {

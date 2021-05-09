@@ -49,7 +49,8 @@ class LinkStravaDelegate(
 
     companion object {
         fun createRedirectUri(context: Context) =
-            "${context.getString(R.string.app_scheme)}://${context.getString(R.string.strava_callback_host)}"
+            "${context.getString(R.string.app_scheme)}://" +
+                "${context.getString(R.string.strava_callback_host)}"
 
         fun buildStravaLoginIntent(context: Context): Intent {
             val intentUri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")

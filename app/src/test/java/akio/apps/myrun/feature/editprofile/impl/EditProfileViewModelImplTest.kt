@@ -48,7 +48,7 @@ class EditProfileViewModelImplTest : InstantTaskExecutorTest() {
     }
 
     @Test
-    fun `given user profile, when create view model, user profile live data has correct value`() {
+    fun testInitUserProfileViewModel() {
         // given
         val userProfile = createUserProfile()
         val liveDataUserProfile = flowOf(Resource.Success(userProfile))
@@ -65,9 +65,9 @@ class EditProfileViewModelImplTest : InstantTaskExecutorTest() {
     }
 
     @Test
-    fun `given view model created, when select update profile with same phone number, then profile update as expected`() {
+    fun testUpdateProfileWithSamePhoneNumber() {
         // given
-        `given user profile, when create view model, user profile live data has correct value`()
+        testInitUserProfileViewModel()
 
         runBlocking {
             val editData = createProfileEditData(phoneNumber = originalPhoneNumber)
@@ -83,9 +83,9 @@ class EditProfileViewModelImplTest : InstantTaskExecutorTest() {
     }
 
     @Test
-    fun `given view model created, when select update profile with different phone number, then otp event triggered`() {
+    fun testUpdateProfileWithDifferentPhoneNumber() {
         // given
-        `given user profile, when create view model, user profile live data has correct value`()
+        testInitUserProfileViewModel()
 
         runBlocking {
             val editData = createProfileEditData(phoneNumber = originalPhoneNumber + "999")
@@ -102,9 +102,9 @@ class EditProfileViewModelImplTest : InstantTaskExecutorTest() {
     }
 
     @Test
-    fun `given view model created, when select update profile with blank user name, then blank user name error triggered`() {
+    fun testUpdateProfileWithBlankUsername() {
         // given
-        `given user profile, when create view model, user profile live data has correct value`()
+        testInitUserProfileViewModel()
 
         runBlocking {
             val editData =
@@ -121,9 +121,9 @@ class EditProfileViewModelImplTest : InstantTaskExecutorTest() {
     }
 
     @Test
-    fun `given view model created and user login state is invalid, when select update profile, then login required error triggered`() {
+    fun testUpdateProfileWhenUserIsNotLoggedIn() {
         // given
-        `given user profile, when create view model, user profile live data has correct value`()
+        testInitUserProfileViewModel()
 
         runBlockingTest {
             val editData = createProfileEditData()
