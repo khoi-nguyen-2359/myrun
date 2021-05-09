@@ -15,11 +15,11 @@ import dagger.Provides
 interface ActivityFileDataModule {
     @Binds
     fun activityFileTrackingRepo(repositoryImpl: ActivityFileTrackingRepositoryImpl):
-            ActivityFileTrackingRepository
+        ActivityFileTrackingRepository
 
     @Binds
     fun activityLocationRepo(repositoryImpl: ExportActivityLocationRepositoryImpl):
-            ExportActivityLocationRepository
+        ExportActivityLocationRepository
 
     @Module
     class Providers {

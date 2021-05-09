@@ -4,10 +4,10 @@ import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import android.location.Location
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import javax.inject.Inject
 
 class RouteTrackingLocationRepositoryImpl @Inject constructor(
     private val routeTrackingLocationDao: RouteTrackingLocationDao,
@@ -43,8 +43,4 @@ class RouteTrackingLocationRepositoryImpl @Inject constructor(
 
     private fun RoomTrackingLocation.toTrackingLocationEntity() =
         TrackingLocationEntity(time, latitude, longitude, altitude)
-
-    companion object {
-
-    }
 }
