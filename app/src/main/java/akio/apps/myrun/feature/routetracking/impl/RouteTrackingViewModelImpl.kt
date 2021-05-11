@@ -5,6 +5,7 @@ import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
@@ -114,15 +115,17 @@ class RouteTrackingViewModelImpl @Inject constructor(
             val activity =
                 saveRouteTrackingActivityUsecase.saveCurrentActivity(activityType, routeMapImage)
             mayScheduleStravaActivityUpload(activityMapper.map(activity))
-            scheduleUserRecentLocationUpdate()
+            routeTrackingState.getStartLocation()?.let { startLocation ->
+                scheduleUserRecentLocationUpdate(startLocation)
+            }
+
             clearRouteTrackingStateUsecase.clear()
 
             _saveActivitySuccess.value = Event(Unit)
         }
     }
 
-    private fun scheduleUserRecentLocationUpdate() = viewModelScope.launch {
-        val startLocation = routeTrackingState.getStartLocation() ?: return@launch
+    private fun scheduleUserRecentLocationUpdate(startLocation: LocationEntity) {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.UNMETERED)
             .setRequiresBatteryNotLow(true)
@@ -137,8 +140,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
                 )
             )
             .build()
-        WorkManager.getInstance(application)
-            .enqueue(workRequest)
+        WorkManager.getInstance(application).enqueue(workRequest)
     }
 
     private suspend fun mayScheduleStravaActivityUpload(activity: Activity) {

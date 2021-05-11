@@ -11,6 +11,7 @@ import androidx.datastore.preferences.clear
 import androidx.datastore.preferences.createDataStore
 import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.preferencesKey
+import timber.log.Timber
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -98,14 +99,16 @@ class PreferencesRouteTrackingState @Inject constructor(
     }
 
     override suspend fun setStartLocation(location: LocationEntity) {
+        Timber.d("setStartLocation(location: $location)")
         prefDataStore.edit { data ->
             data[KEY_START_LOCATION_LAT] = location.latitude.toFloat()
             data[KEY_START_LOCATION_LNG] = location.longitude.toFloat()
+            data[KEY_START_LOCATION_ALT] = location.altitude.toFloat()
         }
     }
 
     override suspend fun getStartLocation(): LocationEntity? {
-        return prefDataStore.data.map { data ->
+        val startLocation = prefDataStore.data.map { data ->
             val lat = data[KEY_START_LOCATION_LAT]
             val lng = data[KEY_START_LOCATION_LNG]
             val alt = data[KEY_START_LOCATION_ALT]
@@ -115,6 +118,8 @@ class PreferencesRouteTrackingState @Inject constructor(
                 LocationEntity(lat.toDouble(), lng.toDouble(), alt.toDouble())
         }
             .first()
+        Timber.d("getStartLocation: $startLocation")
+        return startLocation
     }
 
     companion object {
