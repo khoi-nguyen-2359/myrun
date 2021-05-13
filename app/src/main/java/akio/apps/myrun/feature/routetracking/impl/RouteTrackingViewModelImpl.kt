@@ -5,7 +5,6 @@ import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
-import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
@@ -27,13 +26,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.work.BackoffPolicy
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -115,32 +107,11 @@ class RouteTrackingViewModelImpl @Inject constructor(
             val activity =
                 saveRouteTrackingActivityUsecase.saveCurrentActivity(activityType, routeMapImage)
             mayScheduleStravaActivityUpload(activityMapper.map(activity))
-            routeTrackingState.getStartLocation()?.let { startLocation ->
-                scheduleUserRecentLocationUpdate(startLocation)
-            }
 
             clearRouteTrackingStateUsecase.clear()
 
             _saveActivitySuccess.value = Event(Unit)
         }
-    }
-
-    private fun scheduleUserRecentLocationUpdate(startLocation: LocationEntity) {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.UNMETERED)
-            .setRequiresBatteryNotLow(true)
-            .build()
-        val workRequest = OneTimeWorkRequestBuilder<UpdateUserRecentPlaceWorker>()
-            .setConstraints(constraints)
-            .setBackoffCriteria(BackoffPolicy.LINEAR, 5, TimeUnit.MINUTES)
-            .setInputData(
-                workDataOf(
-                    UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LAT to startLocation.latitude,
-                    UpdateUserRecentPlaceWorker.INPUT_START_LOCATION_LNG to startLocation.longitude
-                )
-            )
-            .build()
-        WorkManager.getInstance(application).enqueue(workRequest)
     }
 
     private suspend fun mayScheduleStravaActivityUpload(activity: Activity) {
