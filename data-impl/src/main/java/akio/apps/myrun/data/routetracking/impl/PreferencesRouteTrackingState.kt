@@ -12,10 +12,10 @@ import androidx.datastore.preferences.createDataStore
 import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.preferencesKey
 import timber.log.Timber
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 class PreferencesRouteTrackingState @Inject constructor(
     application: Application
@@ -122,6 +122,18 @@ class PreferencesRouteTrackingState @Inject constructor(
         return startLocation
     }
 
+    override suspend fun setPlaceIdentifier(placeName: String) {
+        prefDataStore.edit { data ->
+            data[KEY_PLACE_IDENTIFIER] = placeName
+        }
+    }
+
+    override suspend fun getPlaceIdentifier(): String? =
+        prefDataStore.data.map { data ->
+            data[KEY_PLACE_IDENTIFIER]
+        }
+            .first()
+
     companion object {
         private val KEY_TRACKING_STATUS = preferencesKey<Int>("KEY_TRACKING_STATUS")
         private val KEY_ACTIVITY_TYPE = preferencesKey<String>("KEY_ACTIVITY_TYPE")
@@ -133,5 +145,6 @@ class PreferencesRouteTrackingState @Inject constructor(
         private val KEY_START_LOCATION_LAT = preferencesKey<Float>("KEY_START_LOCATION_LAT")
         private val KEY_START_LOCATION_LNG = preferencesKey<Float>("KEY_START_LOCATION_LNG")
         private val KEY_START_LOCATION_ALT = preferencesKey<Float>("KEY_START_LOCATION_ALT")
+        private val KEY_PLACE_IDENTIFIER = preferencesKey<String>("KEY_PLACE_IDENTIFIER")
     }
 }

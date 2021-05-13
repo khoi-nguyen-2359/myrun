@@ -9,6 +9,8 @@ data class ActivityData(
     override val activityType: ActivityType,
     override val name: String,
     override val routeImage: String,
+    override val placeName: String?,
+
     override val startTime: Long,
     override val endTime: Long,
     override val duration: Long,
