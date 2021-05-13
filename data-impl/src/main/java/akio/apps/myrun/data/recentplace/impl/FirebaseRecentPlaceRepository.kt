@@ -14,11 +14,8 @@ class FirebaseRecentPlaceRepository @Inject constructor(
     private val recentPlaceCollection: CollectionReference
         get() = firestore.collection("recent_place")
 
-    override suspend fun saveRecentPlace(userId: String, addressComponents: List<String>) {
-        val areaIdentifier = StringBuilder()
-        addressComponents.forEach { areaIdentifier.append("$it-") }
-        areaIdentifier.deleteCharAt(areaIdentifier.length - 1) // remove the last hyphen
-        val firestoreRecentPlace = FirestoreRecentPlace(areaIdentifier.toString())
+    override suspend fun saveRecentPlace(userId: String, areaIdentifier: String) {
+        val firestoreRecentPlace = FirestoreRecentPlace(areaIdentifier)
         recentPlaceCollection.document(userId)
             .set(firestoreRecentPlace)
             .await()

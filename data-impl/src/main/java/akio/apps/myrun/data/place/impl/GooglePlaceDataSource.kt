@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.place.impl
 
+import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.place.LatLngEntity
 import akio.apps.myrun.data.place.PlaceDataSource
 import akio.apps.myrun.data.place.PlaceEntity
@@ -12,33 +13,34 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
-import kotlinx.coroutines.tasks.await
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class GooglePlaceDataSource @Inject constructor(
     private val placesClient: PlacesClient,
-    private val application: Application
+    private val application: Application,
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : PlaceDataSource {
     @SuppressLint("MissingPermission")
-    override suspend fun getCurrentPlace(): PlaceEntity? {
+    override suspend fun getCurrentPlace(): PlaceEntity? = withContext(ioDispatcher) {
         val request: FindCurrentPlaceRequest =
             FindCurrentPlaceRequest.newInstance(listOf(Place.Field.ID, Place.Field.NAME))
 
-        val placeResponse = placesClient.findCurrentPlace(request)
-            .await()
+        val placeResponse = placesClient.findCurrentPlace(request).await()
         placeResponse.placeLikelihoods
             .maxByOrNull { it.likelihood }
             ?.let { placeLikelihood ->
                 val placeId = placeLikelihood.place.id
-                    ?: return null
+                    ?: return@withContext null
 
                 val fetchPlaceRequest =
                     FetchPlaceRequest.newInstance(placeId, listOf(Place.Field.ADDRESS_COMPONENTS))
-                val fetchPlaceResponse = placesClient.fetchPlace(fetchPlaceRequest)
-                    .await()
+                val fetchPlaceResponse = placesClient.fetchPlace(fetchPlaceRequest).await()
                 val latLng = fetchPlaceResponse.place.latLng
-                return PlaceEntity(
+                return@withContext PlaceEntity(
                     placeId,
                     placeLikelihood.place.name ?: "",
                     fetchPlaceResponse.place.addressComponents?.asList()
@@ -47,7 +49,7 @@ class GooglePlaceDataSource @Inject constructor(
                 )
             }
 
-        return null
+        return@withContext null
     }
 
     override suspend fun getAddressFromLocation(
@@ -61,8 +63,8 @@ class GooglePlaceDataSource @Inject constructor(
             listOf(
                 it.countryCode to GEOCODER_ADDRESS_TYPE_COUNTRY,
                 it.adminArea to GEOCODER_ADDRESS_ADMIN,
-                it.locality to GEOCODER_ADDRESS_LOCALITY,
                 it.subAdminArea to GEOCODER_ADDRESS_SUB_ADMIN,
+                it.locality to GEOCODER_ADDRESS_LOCALITY,
                 it.subLocality to GEOCODER_ADDRESS_SUB_LOCALITY,
                 it.thoroughfare to GEOCODER_ADDRESS_THOROUGHFARE,
                 it.subThoroughfare to GEOCODER_ADDRESS_SUB_THOROUGHFARE,
@@ -90,14 +92,34 @@ class GooglePlaceDataSource @Inject constructor(
             ?: emptyList()
     }
 
-    override fun getRecentPlaceAddressSortingOrder(): List<String> {
+    private fun getRecentPlaceAddressSortingOrder(): List<String> {
         return listOf(
             GEOCODER_ADDRESS_TYPE_COUNTRY,
             GEOCODER_ADDRESS_ADMIN,
-            GEOCODER_ADDRESS_LOCALITY,
             GEOCODER_ADDRESS_SUB_ADMIN,
+            GEOCODER_ADDRESS_LOCALITY,
             GEOCODER_ADDRESS_SUB_LOCALITY
         )
+    }
+
+    override suspend fun getRecentPlaceAddressFromLocation(
+        lat: Double,
+        lng: Double
+    ): List<PlaceAddressComponent> {
+        val sortingOrder = mutableMapOf<String, Int>()
+        getRecentPlaceAddressSortingOrder()
+            .forEachIndexed { index, addressType -> sortingOrder[addressType] = index }
+
+        val addressComponents = getAddressFromLocation(lat, lng)
+            .filter { addressComponent ->
+                addressComponent.types.any { addressType -> sortingOrder.containsKey(addressType) }
+            }
+
+        return addressComponents.sortedBy { addressComponent ->
+            addressComponent.types.find { addressType -> sortingOrder[addressType] != null }
+                ?.let { addressType -> sortingOrder[addressType] }
+                ?: Int.MAX_VALUE
+        }
     }
 
     companion object {

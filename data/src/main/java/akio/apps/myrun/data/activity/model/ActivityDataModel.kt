@@ -7,6 +7,7 @@ data class ActivityDataModel(
     override val activityType: ActivityType,
     override val name: String,
     override val routeImage: String,
+    override val placeName: String?,
 
     // stats
     override val startTime: Long,

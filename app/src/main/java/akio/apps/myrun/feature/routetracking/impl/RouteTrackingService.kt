@@ -12,6 +12,7 @@ import akio.apps.myrun.data.location.LocationRequestEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
+import akio.apps.myrun.domain.recentplace.UpdateUserRecentPlaceUsecase
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import android.annotation.SuppressLint
@@ -31,6 +32,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationRequest
 import com.google.maps.android.SphericalUtil
+import timber.log.Timber
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,8 +42,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import javax.inject.Inject
 
 class RouteTrackingService : Service() {
 
@@ -62,6 +63,9 @@ class RouteTrackingService : Service() {
     @Inject
     lateinit var fitnessDataRepository: FitnessDataRepository
 
+    @Inject
+    lateinit var updateUserRecentPlaceUsecase: UpdateUserRecentPlaceUsecase
+
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         Timber.e(exception)
     }
@@ -80,9 +84,7 @@ class RouteTrackingService : Service() {
     override fun onCreate() {
         DaggerRouteTrackingFeatureComponent.factory().create(application).inject(this)
         super.onCreate()
-
         createNotificationChannel()
-
         trackUserAuthenticationState()
     }
 
@@ -125,17 +127,24 @@ class RouteTrackingService : Service() {
         instantSpeedCalculator.calculateInstantSpeed()
 
         if (startLocation == null) {
-            startLocation = locations.firstOrNull()
-                ?.also {
-                    routeTrackingState.setStartLocation(
-                        LocationEntity(
-                            it.latitude,
-                            it.longitude,
-                            it.altitude
-                        )
-                    )
-                }
+            val firstLocation = locations.firstOrNull()
+            if (firstLocation != null) {
+                onFirstLocationUpdate(firstLocation)
+                startLocation = firstLocation
+            }
         }
+    }
+
+    private suspend fun onFirstLocationUpdate(firstLocation: Location) {
+        routeTrackingState.setStartLocation(
+            LocationEntity(
+                firstLocation.latitude,
+                firstLocation.longitude,
+                firstLocation.altitude
+            )
+        )
+
+        updateUserRecentPlaceUsecase(firstLocation.latitude, firstLocation.longitude)
     }
 
     inner class InstantSpeedCalculator {
@@ -236,18 +245,19 @@ class RouteTrackingService : Service() {
 
     private fun onActionStart() {
         Timber.d("onActionStart")
-        mainScope.launch {
-            val startTime = System.currentTimeMillis()
-            routeTrackingState.setTrackingStatus(RouteTrackingStatus.RESUMED)
-            routeTrackingState.setTrackingStartTime(startTime)
-            routeTrackingState.setLastResumeTime(startTime)
-        }
-
+        setRouteTrackingStartState()
+        startTrackingTimer()
         notifyTrackingNotification()
         requestLocationUpdates()
         fitnessDataRepository.subscribeFitnessData()
-        startTrackingTimer()
         acquireWakeLock()
+    }
+
+    private fun setRouteTrackingStartState() = mainScope.launch {
+        val startTime = System.currentTimeMillis()
+        routeTrackingState.setTrackingStatus(RouteTrackingStatus.RESUMED)
+        routeTrackingState.setTrackingStartTime(startTime)
+        routeTrackingState.setLastResumeTime(startTime)
     }
 
     private fun startTrackingTimer() {

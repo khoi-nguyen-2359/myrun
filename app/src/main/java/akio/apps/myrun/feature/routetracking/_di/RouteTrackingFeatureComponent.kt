@@ -16,7 +16,6 @@ import akio.apps.myrun.data.recentplace._di.RecentPlaceDataModule
 import akio.apps.myrun.data.routetracking._di.RouteTrackingDataModule
 import akio.apps.myrun.data.userprofile._di.UserProfileDataModule
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
-import akio.apps.myrun.feature.routetracking.impl.UpdateUserRecentPlaceWorker
 import dagger.Component
 
 @FeatureScope
@@ -39,7 +38,6 @@ import dagger.Component
 )
 interface RouteTrackingFeatureComponent : ViewModelFactoryProvider {
     fun inject(service: RouteTrackingService)
-    fun inject(worker: UpdateUserRecentPlaceWorker)
 
     @Component.Factory
     interface Factory : AppDependantComponentFactory<RouteTrackingFeatureComponent>
