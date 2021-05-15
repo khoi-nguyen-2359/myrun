@@ -193,7 +193,7 @@ class ActivityDetailViewModelImplTest {
             verify(mockedUserAuthenticationState).getUserAccountId()
             verify(mockedUserRecentPlaceRepository).getRecentPlaceIdentifier(defaultUserId)
         }
-    
+
     @Test
     fun testGetActivityPlaceDisplayName_ShortActivityPlaceAddressList() =
         testCoroutineDispatcher.runBlockingTest {
