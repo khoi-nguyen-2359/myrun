@@ -32,6 +32,7 @@ import java.util.Calendar
 fun ActivityInfoHeaderComposable(
     activityDetail: Activity,
     activityFormattedStartTime: ActivityDateTimeFormatter.Result,
+    activityPlaceDisplayName: String?
 ) = ConstraintLayout(
     modifier = Modifier.padding(
         horizontal = dimensionResource(id = R.dimen.common_item_horizontal_padding),
@@ -85,8 +86,14 @@ fun ActivityInfoHeaderComposable(
                 width = Dimension.fillToConstraints
             }
     )
+    val startTimeText = createActivityStartTimeText(activityFormattedStartTime)
+    val timeAndPlaceText = if (activityPlaceDisplayName == null) {
+        startTimeText
+    } else {
+        "$startTimeText \u00b7 $activityPlaceDisplayName"
+    }
     Text(
-        text = createActivityStartTimeText(activityFormattedStartTime),
+        text = timeAndPlaceText,
         fontSize = 12.sp,
         modifier = Modifier.constrainAs(layoutRefActivityDateTime) {
             top.linkTo(layoutRefUserNameText.bottom)

@@ -15,7 +15,7 @@ object Versions {
     const val fragment = "1.3.2"
     const val constraintLayout = "2.0.4"
     const val androidMaterial = "1.3.0"
-    const val compose = "1.0.0-beta04"
+    const val compose = "1.0.0-beta06"
     const val composeConstraintLayout = "1.0.0-alpha05"
 
     const val workManager = "2.5.0"
@@ -25,7 +25,7 @@ object Versions {
     const val lifecycleExtension = "2.2.0"
     const val multidex = "1.0.3"
 
-    const val dagger = "2.28.3"
+    const val dagger = "2.35.1"
     const val timber = "4.7.1"
     const val glide = "4.11.0"
     const val accompanist = "0.7.0"
@@ -63,4 +63,5 @@ object Versions {
     const val androidXJunit = "1.1.2"
     const val uiAutomator = "2.2.0"
     const val espresso = "3.3.0"
+    const val turbine = "0.4.1"
 }

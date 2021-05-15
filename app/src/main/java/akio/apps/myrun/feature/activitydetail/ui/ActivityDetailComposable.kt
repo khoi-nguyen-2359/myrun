@@ -3,7 +3,6 @@ package akio.apps.myrun.feature.activitydetail.ui
 import akio.apps._base.Resource
 import akio.apps.myrun.R
 import akio.apps.myrun.domain.PerformanceUnit
-import akio.apps.myrun.feature.activitydetail.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.CyclingActivity
@@ -17,10 +16,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.glide.GlideImage
+import timber.log.Timber
 
 @Composable
 fun ActivityDetailComposable(
@@ -30,14 +31,19 @@ fun ActivityDetailComposable(
     val activityResource by activityDetailViewModel.activityDetails.collectAsState(
         Resource.Loading()
     )
-    val activityFormattedStartTime by activityDetailViewModel.activityDateTime.collectAsState(
-        ActivityDateTimeFormatter.Result.FullDateTime("")
-    )
-
     val activityDetail = activityResource.data
+    Timber.d("activityResource=$activityResource")
     if (activityDetail != null) {
+        val activityFormattedStartTime = activityDetailViewModel.getActivityFormattedDateTime()
+        val activityPlaceDisplayName by produceState<String?>(initialValue = null) {
+            value = activityDetailViewModel.getActivityPlaceDisplayName()
+        }
         Column {
-            ActivityInfoHeaderComposable(activityDetail, activityFormattedStartTime)
+            ActivityInfoHeaderComposable(
+                activityDetail,
+                activityFormattedStartTime,
+                activityPlaceDisplayName
+            )
             GlideImage(
                 data = activityDetail.routeImage,
                 contentDescription = "Activity route image",

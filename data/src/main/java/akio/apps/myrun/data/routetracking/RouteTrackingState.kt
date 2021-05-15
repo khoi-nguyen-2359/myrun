@@ -23,6 +23,6 @@ interface RouteTrackingState {
     suspend fun setActivityType(activityType: ActivityType)
     suspend fun setStartLocation(location: LocationEntity)
     suspend fun getStartLocation(): LocationEntity?
-    suspend fun setPlaceIdentifier(placeName: String)
+    suspend fun setPlaceIdentifier(placeIdentifier: String)
     suspend fun getPlaceIdentifier(): String?
 }

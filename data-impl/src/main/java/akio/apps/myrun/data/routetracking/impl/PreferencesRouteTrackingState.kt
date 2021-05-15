@@ -122,9 +122,9 @@ class PreferencesRouteTrackingState @Inject constructor(
         return startLocation
     }
 
-    override suspend fun setPlaceIdentifier(placeName: String) {
+    override suspend fun setPlaceIdentifier(placeIdentifier: String) {
         prefDataStore.edit { data ->
-            data[KEY_PLACE_IDENTIFIER] = placeName
+            data[KEY_PLACE_IDENTIFIER] = placeIdentifier
         }
     }
 
