@@ -24,9 +24,12 @@ class LocationDataSourceImpl @Inject constructor(
     private val locationClient: FusedLocationProviderClient
 ) : LocationDataSource {
 
-    @SuppressLint("MissingPermission")
     override suspend fun getLastLocation(): Location? = withContext(Dispatchers.IO) {
-        locationClient.lastLocation.await()
+        try {
+            locationClient.lastLocation.await()
+        } catch (ex: SecurityException) {
+            null
+        }
     }
 
     @ExperimentalCoroutinesApi

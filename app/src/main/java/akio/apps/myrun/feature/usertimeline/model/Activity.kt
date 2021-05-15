@@ -9,7 +9,7 @@ interface Activity {
     val activityType: ActivityType
     val name: String
     val routeImage: String
-    val placeName: String?
+    val placeIdentifier: String?
 
     val startTime: Long
     val endTime: Long

@@ -10,7 +10,7 @@ interface ActivityModel {
     val activityType: ActivityType
     val name: String
     val routeImage: String
-    val placeName: String?
+    val placeIdentifier: String?
 
     // stats
     val startTime: Long

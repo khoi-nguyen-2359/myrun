@@ -21,7 +21,11 @@ class ActivityDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent { ActivityDetailComposable(activityDetailViewModel, ::openActivityRouteMap) }
+        setContent {
+            ActivityDetailComposable(activityDetailViewModel, ::openActivityRouteMap)
+        }
+
+        activityDetailViewModel.loadActivityDetails()
     }
 
     private fun openActivityRouteMap(encodedPolyline: String) =

@@ -46,13 +46,13 @@ class SaveRouteTrackingActivityUsecase @Inject constructor(
         val encodedPolyline = PolyUtil.encode(
             trackedLocations.map { it.trackingLocationToGmsLatLng() }
         )
-        val placeName = routeTrackingState.getPlaceIdentifier()
+        val placeIdentifier = routeTrackingState.getPlaceIdentifier()
         val activityData = ActivityDataModel(
             id = "",
             activityType,
             name = "",
             routeImage = "",
-            placeName = placeName,
+            placeIdentifier = placeIdentifier,
             startTime,
             endTime,
             duration,

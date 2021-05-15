@@ -6,6 +6,7 @@ import akio.apps.myrun._di.DaggerAppComponent
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
+import akio.apps.myrun.feature.routetracking.impl.UpdateUserRecentPlaceWorker
 import akio.apps.myrun.feature.strava.RescheduleStravaUploadWorkerDelegate
 import android.app.Application
 import androidx.lifecycle.Lifecycle
@@ -60,6 +61,7 @@ class MyRunApp : Application(), LifecycleObserver, AppComponent.Holder, Configur
         initPlacesSdk()
 
         rescheduleStravaUploadWorker()
+        UpdateUserRecentPlaceWorker.enqueueDaily(this)
     }
 
     private fun rescheduleStravaUploadWorker() = ioScope.launch {

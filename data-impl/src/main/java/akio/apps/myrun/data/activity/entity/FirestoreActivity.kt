@@ -13,8 +13,8 @@ data class FirestoreActivity(
     val name: String = "",
     @JvmField @PropertyName("routeImage")
     val routeImage: String = "",
-    @JvmField @PropertyName("placeName")
-    val placeName: String? = null,
+    @JvmField @PropertyName("placeIdentifier")
+    val placeIdentifier: String? = null,
 
     // stats
     @JvmField @PropertyName("startTime")
