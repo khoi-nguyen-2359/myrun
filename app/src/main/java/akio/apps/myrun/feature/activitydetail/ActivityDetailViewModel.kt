@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 abstract class ActivityDetailViewModel : ViewModel() {
     abstract val activityDetails: Flow<Resource<Activity>>
-    abstract fun getActivityFormattedDateTime(): ActivityDateTimeFormatter.Result
     abstract suspend fun getActivityPlaceDisplayName(): String?
     abstract fun loadActivityDetails()
 
