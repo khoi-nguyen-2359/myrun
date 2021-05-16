@@ -3,15 +3,11 @@ package akio.apps.myrun.feature.activitydetail
 import akio.apps._base.Resource
 import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.model.ActivityModel
-import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.recentplace.UserRecentPlaceRepository
-import akio.apps.myrun.data.recentplace.entity.PlaceIdentifier
 import akio.apps.myrun.feature.activitydetail.impl.ActivityDetailViewModelImpl
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import akio.apps.test.wheneverBlocking
 import app.cash.turbine.test
-import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
@@ -35,13 +31,9 @@ class ActivityDetailViewModelImplTest {
     private lateinit var viewModel: ActivityDetailViewModelImpl
     private lateinit var mockedActivityRepository: ActivityRepository
     private lateinit var mockedActivityModelMapper: ActivityModelMapper
-    private lateinit var mockedActivityDateTimeFormatter: ActivityDateTimeFormatter
-    private lateinit var mockedUserRecentPlaceRepository: UserRecentPlaceRepository
-    private lateinit var mockedUserAuthenticationState: UserAuthenticationState
 
     private val testCoroutineDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
 
-    private val defaultUserId = "defaultUserId"
     private val defaultActivityId = "defaultActivityId"
 
     @Before
@@ -49,18 +41,16 @@ class ActivityDetailViewModelImplTest {
         Dispatchers.setMain(testCoroutineDispatcher)
         mockedActivityRepository = mock()
         mockedActivityModelMapper = mock()
-        mockedActivityDateTimeFormatter = mock()
-        mockedUserRecentPlaceRepository = mock()
-        mockedUserAuthenticationState = mock()
 
         val viewModelParams = ActivityDetailViewModel.Params(defaultActivityId)
         viewModel = ActivityDetailViewModelImpl(
             viewModelParams,
             mockedActivityRepository,
             mockedActivityModelMapper,
-            mockedActivityDateTimeFormatter,
-            mockedUserRecentPlaceRepository,
-            mockedUserAuthenticationState
+            mock(),
+            mock(),
+            mock(),
+            mock()
         )
     }
 
@@ -107,111 +97,4 @@ class ActivityDetailViewModelImplTest {
             verify(mockedActivityRepository).getActivity(defaultActivityId)
         }
     }
-
-    @Test
-    fun testGetActivityPlaceDisplayName_DifferentCountry() =
-        testCoroutineDispatcher.runBlockingTest {
-            val activity = mock<Activity> {
-                on { placeIdentifier }.thenReturn("USA-CA-SJ")
-            }
-            wheneverBlocking(mockedActivityRepository) { getActivity(defaultActivityId) }
-                .thenReturn(mock())
-            whenever(mockedActivityModelMapper.map(any())).thenReturn(activity)
-            viewModel.loadActivityDetails()
-
-            val userPlaceIdentifier = PlaceIdentifier("VN-HCM-D10-W9")
-            whenever(mockedUserRecentPlaceRepository.getRecentPlaceIdentifier(defaultUserId))
-                .thenReturn(userPlaceIdentifier)
-            whenever(mockedUserAuthenticationState.getUserAccountId()).thenReturn(defaultUserId)
-
-            val placeName = viewModel.getActivityPlaceDisplayName()
-            assertEquals("USA, CA", placeName)
-            verify(mockedUserAuthenticationState).getUserAccountId()
-            verify(mockedUserRecentPlaceRepository).getRecentPlaceIdentifier(defaultUserId)
-        }
-
-    @Test
-    fun testGetActivityPlaceDisplayName_DifferentCity() = testCoroutineDispatcher.runBlockingTest {
-        val activity = mock<Activity> {
-            on { placeIdentifier }.thenReturn("VN-HN-CG")
-        }
-        wheneverBlocking(mockedActivityRepository) { getActivity(defaultActivityId) }
-            .thenReturn(mock())
-        whenever(mockedActivityModelMapper.map(any())).thenReturn(activity)
-        viewModel.loadActivityDetails()
-
-        val userPlaceIdentifier = PlaceIdentifier("VN-HCM-D10-W9")
-        whenever(mockedUserRecentPlaceRepository.getRecentPlaceIdentifier(defaultUserId))
-            .thenReturn(userPlaceIdentifier)
-        whenever(mockedUserAuthenticationState.getUserAccountId()).thenReturn(defaultUserId)
-
-        val placeName = viewModel.getActivityPlaceDisplayName()
-        assertEquals("HN, CG", placeName)
-        verify(mockedUserAuthenticationState).getUserAccountId()
-        verify(mockedUserRecentPlaceRepository).getRecentPlaceIdentifier(defaultUserId)
-    }
-
-    @Test
-    fun testGetActivityPlaceDisplayName_DifferentLastAddress() =
-        testCoroutineDispatcher.runBlockingTest {
-            val activity = mock<Activity> {
-                on { placeIdentifier }.thenReturn("VN-HCM-D10-W10")
-            }
-            wheneverBlocking(mockedActivityRepository) { getActivity(defaultActivityId) }
-                .thenReturn(mock())
-            whenever(mockedActivityModelMapper.map(any())).thenReturn(activity)
-            viewModel.loadActivityDetails()
-
-            val userPlaceIdentifier = PlaceIdentifier("VN-HCM-D10-W9")
-            whenever(mockedUserRecentPlaceRepository.getRecentPlaceIdentifier(defaultUserId))
-                .thenReturn(userPlaceIdentifier)
-            whenever(mockedUserAuthenticationState.getUserAccountId()).thenReturn(defaultUserId)
-
-            val placeName = viewModel.getActivityPlaceDisplayName()
-            assertEquals("D10, W10", placeName)
-            verify(mockedUserAuthenticationState).getUserAccountId()
-            verify(mockedUserRecentPlaceRepository).getRecentPlaceIdentifier(defaultUserId)
-        }
-
-    @Test
-    fun testGetActivityPlaceDisplayName_NoUserRecentPlace() =
-        testCoroutineDispatcher.runBlockingTest {
-            val activity = mock<Activity> {
-                on { placeIdentifier }.thenReturn("VN-HCM-D10-W10")
-            }
-            wheneverBlocking(mockedActivityRepository) { getActivity(defaultActivityId) }
-                .thenReturn(mock())
-            whenever(mockedActivityModelMapper.map(any())).thenReturn(activity)
-            viewModel.loadActivityDetails()
-
-            whenever(mockedUserRecentPlaceRepository.getRecentPlaceIdentifier(defaultUserId))
-                .thenReturn(null)
-            whenever(mockedUserAuthenticationState.getUserAccountId()).thenReturn(defaultUserId)
-
-            val placeName = viewModel.getActivityPlaceDisplayName()
-            assertEquals("VN, HCM", placeName)
-            verify(mockedUserAuthenticationState).getUserAccountId()
-            verify(mockedUserRecentPlaceRepository).getRecentPlaceIdentifier(defaultUserId)
-        }
-
-    @Test
-    fun testGetActivityPlaceDisplayName_ShortActivityPlaceAddressList() =
-        testCoroutineDispatcher.runBlockingTest {
-            val activity = mock<Activity> {
-                on { placeIdentifier }.thenReturn("HCM-D10")
-            }
-            wheneverBlocking(mockedActivityRepository) { getActivity(defaultActivityId) }
-                .thenReturn(mock())
-            whenever(mockedActivityModelMapper.map(any())).thenReturn(activity)
-            viewModel.loadActivityDetails()
-
-            whenever(mockedUserRecentPlaceRepository.getRecentPlaceIdentifier(defaultUserId))
-                .thenReturn(null)
-            whenever(mockedUserAuthenticationState.getUserAccountId()).thenReturn(defaultUserId)
-
-            val placeName = viewModel.getActivityPlaceDisplayName()
-            assertEquals("HCM, D10", placeName)
-            verify(mockedUserAuthenticationState).getUserAccountId()
-            verify(mockedUserRecentPlaceRepository).getRecentPlaceIdentifier(defaultUserId)
-        }
 }

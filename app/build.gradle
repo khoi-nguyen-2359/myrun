@@ -87,6 +87,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$Versions.appCompat"
     implementation "androidx.constraintlayout:constraintlayout:$Versions.constraintLayout"
     implementation "androidx.paging:paging-runtime-ktx:$Versions.paging"
+    implementation "androidx.paging:paging-compose:$Versions.pagingCompose"
     implementation "androidx.fragment:fragment-ktx:$Versions.fragment"
     implementation "androidx.activity:activity-ktx:$Versions.activity"
     implementation "androidx.activity:activity-compose:$Versions.activity"
@@ -142,6 +143,7 @@ dependencies {
     kapt "com.github.bumptech.glide:compiler:$Versions.glide"
 
     implementation "com.google.accompanist:accompanist-glide:$Versions.accompanist"
+    implementation "com.google.accompanist:accompanist-flowlayout:$Versions.accompanist"
 
     implementation "com.facebook.android:facebook-login:$Versions.facebookSdk"
 
