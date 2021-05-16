@@ -6,7 +6,7 @@ import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
-import akio.apps.myrun.feature.home.impl.HomeActivity
+import akio.apps.myrun.feature.home.HomeActivity
 import akio.apps.myrun.feature.signin.impl.SignInActivity
 import akio.apps.myrun.feature.splash.SplashViewModel
 import akio.apps.myrun.feature.splash._di.DaggerSplashFeatureComponent

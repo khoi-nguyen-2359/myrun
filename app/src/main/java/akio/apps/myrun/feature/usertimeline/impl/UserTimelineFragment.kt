@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.usertimeline.impl
 
 import akio.apps._base.lifecycle.observe
-import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.ViewBindingDelegate
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
@@ -46,34 +45,29 @@ class UserTimelineFragment : Fragment(R.layout.fragment_user_timeline) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        initViews()
-        initObservers()
     }
 
-    private fun initObservers() {
-        observe(viewModel.myActivityList) {
-            activityPagingAdapter.submitData(lifecycle, it)
-        }
-
-        observeEvent(viewModel.error, dialogDelegate::showExceptionAlert)
-    }
-
-    private fun initViews() = viewBinding.apply {
-        activityRecyclerView.adapter = activityPagingAdapter.withLoadStateFooter(
-            footer = ActivityLoadStateAdapter(activityPagingAdapter::retry)
-        )
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            activityPagingAdapter.loadStateFlow.collectLatest {
-                if (it.refresh is LoadState.NotLoading && activityPagingAdapter.itemCount == 0) {
-                    welcomeTextView.visibility = View.VISIBLE
-                } else {
-                    welcomeTextView.visibility = View.GONE
-                }
-            }
-        }
-    }
+//    private fun initObservers() {
+//        observe(viewModel.myActivityList) {
+//            activityPagingAdapter.submitData(lifecycle, it)
+//        }
+//    }
+//
+//    private fun initViews() = viewBinding.apply {
+//        activityRecyclerView.adapter = activityPagingAdapter.withLoadStateFooter(
+//            footer = ActivityLoadStateAdapter(activityPagingAdapter::retry)
+//        )
+//
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            activityPagingAdapter.loadStateFlow.collectLatest {
+//                if (it.refresh is LoadState.NotLoading && activityPagingAdapter.itemCount == 0) {
+//                    welcomeTextView.visibility = View.VISIBLE
+//                } else {
+//                    welcomeTextView.visibility = View.GONE
+//                }
+//            }
+//        }
+//    }
 
     companion object {
         fun instantiate(): UserTimelineFragment = UserTimelineFragment()

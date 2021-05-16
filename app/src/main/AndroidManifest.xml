@@ -45,7 +45,7 @@
     </activity>
 
     <activity
-      android:name=".feature.home.impl.HomeActivity"
+      android:name=".feature.home.HomeActivity"
       android:screenOrientation="portrait" />
 
     <activity

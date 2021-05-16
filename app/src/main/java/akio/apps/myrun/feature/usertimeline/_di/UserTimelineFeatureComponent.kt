@@ -5,6 +5,7 @@ import akio.apps.myrun._di.DispatchersModule
 import akio.apps.myrun.data.activity._di.ActivityDataModule
 import akio.apps.myrun.data.activityexport._di.ActivityFileDataModule
 import akio.apps.myrun.data.authentication._di.AuthenticationDataModule
+import akio.apps.myrun.data.recentplace._di.RecentPlaceDataModule
 import akio.apps.myrun.data.userfollow._di.UserFollowDataModule
 import android.app.Application
 import dagger.BindsInstance
@@ -17,7 +18,8 @@ import dagger.Component
         AuthenticationDataModule::class,
         UserFollowDataModule::class,
         ActivityFileDataModule::class,
-        DispatchersModule::class
+        DispatchersModule::class,
+        RecentPlaceDataModule::class
     ]
 )
 interface UserTimelineFeatureComponent : ViewModelFactoryProvider {

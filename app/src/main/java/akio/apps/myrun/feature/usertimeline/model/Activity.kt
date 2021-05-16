@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.usertimeline.model
 
 import akio.apps.myrun.data.activity.model.ActivityType
+import akio.apps.myrun.data.recentplace.PlaceIdentifier
 
 interface Activity {
     val id: String
@@ -9,7 +10,7 @@ interface Activity {
     val activityType: ActivityType
     val name: String
     val routeImage: String
-    val placeIdentifier: String?
+    val placeIdentifier: PlaceIdentifier?
 
     val startTime: Long
     val endTime: Long

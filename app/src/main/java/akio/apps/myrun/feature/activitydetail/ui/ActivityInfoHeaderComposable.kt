@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -31,8 +32,7 @@ import java.util.Calendar
 @Composable
 fun ActivityInfoHeaderComposable(
     activityDetail: Activity,
-    activityFormattedStartTime: ActivityDateTimeFormatter.Result,
-    activityPlaceDisplayName: String?
+    activityDisplayPlaceName: String?
 ) = ConstraintLayout(
     modifier = Modifier.padding(
         horizontal = dimensionResource(id = R.dimen.common_item_horizontal_padding),
@@ -46,6 +46,10 @@ fun ActivityInfoHeaderComposable(
         layoutRefActivityDateTime,
         layoutRefActivityName
     ) = createRefs()
+
+    val activityDateTimeFormatter = remember(::ActivityDateTimeFormatter)
+    val activityFormattedStartTime =
+        activityDateTimeFormatter.formatActivityDateTime(activityDetail.startTime)
 
     val resources = LocalContext.current.resources
     GlideImage(
@@ -87,10 +91,10 @@ fun ActivityInfoHeaderComposable(
             }
     )
     val startTimeText = createActivityStartTimeText(activityFormattedStartTime)
-    val timeAndPlaceText = if (activityPlaceDisplayName == null) {
+    val timeAndPlaceText = if (activityDisplayPlaceName == null) {
         startTimeText
     } else {
-        "$startTimeText \u00b7 $activityPlaceDisplayName"
+        "$startTimeText \u00b7 $activityDisplayPlaceName"
     }
     Text(
         text = timeAndPlaceText,
@@ -154,7 +158,7 @@ private fun createActivityStartTimeText(formatResult: ActivityDateTimeFormatter.
     }
 
 @Composable
-fun UserAvatarPlaceholderComposable() = Image(
+private fun UserAvatarPlaceholderComposable() = Image(
     painter = painterResource(R.drawable.common_avatar_placeholder_image),
     contentDescription = "Athlete avatar placeholder",
     modifier = Modifier.size(dimensionResource(id = R.dimen.user_timeline_avatar_size))

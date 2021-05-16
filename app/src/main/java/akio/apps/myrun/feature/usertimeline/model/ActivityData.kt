@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.usertimeline.model
 
 import akio.apps.myrun.data.activity.model.ActivityType
+import akio.apps.myrun.data.recentplace.PlaceIdentifier
 
 data class ActivityData(
     override val id: String,
@@ -9,7 +10,7 @@ data class ActivityData(
     override val activityType: ActivityType,
     override val name: String,
     override val routeImage: String,
-    override val placeIdentifier: String?,
+    override val placeIdentifier: PlaceIdentifier?,
 
     override val startTime: Long,
     override val endTime: Long,

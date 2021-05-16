@@ -16,7 +16,7 @@ class ActivityPagingAdapter(
 ) : PagingDataAdapter<Activity, ActivityViewHolder>(
     ACTIVITY_COMPARATOR,
     Dispatchers.Main,
-    Dispatchers.Default
+    Dispatchers.IO
 ) {
 
     private val activityNameMap: Map<ActivityType, Int> = mapOf(
