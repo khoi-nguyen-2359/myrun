@@ -20,8 +20,7 @@ class GetUserTimelineActivitiesUsecase @Inject constructor(
         val userAccountId = userAuthenticationState.getUserAccountId()
             ?: return Resource.Error(UnauthorizedUserError())
 
-        val userIds = userFollowRepository.getUserFollowings(userAccountId)
-            .toMutableList()
+        val userIds = userFollowRepository.getUserFollowings(userAccountId).toMutableList()
         userIds.add(userAccountId)
 
         val activities = activityRepository.getActivitiesByStartTime(userIds, startAfter, count)
