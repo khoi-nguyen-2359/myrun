@@ -4,6 +4,7 @@ import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.recentplace.PlaceIdentifier
 import akio.apps.myrun.data.recentplace.UserRecentPlaceRepository
 import akio.apps.myrun.domain.recentplace.CreateActivityDisplayPlaceNameUsecase
+import akio.apps.myrun.domain.usertimeline.CheckUserTimelineEmptyUsecase
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import androidx.paging.Pager
@@ -16,7 +17,8 @@ class UserTimelineViewModelImpl @Inject constructor(
     private val activityPagingSource: ActivityPagingSource,
     private val createActivityDisplayPlaceNameUsecase: CreateActivityDisplayPlaceNameUsecase,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
-    private val userAuthenticationState: UserAuthenticationState
+    private val userAuthenticationState: UserAuthenticationState,
+    private val checkUserTimelineEmptyUsecase: CheckUserTimelineEmptyUsecase
 ) : UserTimelineViewModel() {
     override val myActivityList: Flow<PagingData<Activity>> = Pager(
         config = PagingConfig(
@@ -25,6 +27,9 @@ class UserTimelineViewModelImpl @Inject constructor(
             prefetchDistance = PAGE_SIZE / 2
         )
     ) { activityPagingSource }.flow
+
+    override suspend fun isUserTimelineEmpty(): Boolean =
+        checkUserTimelineEmptyUsecase.isUserTimelineEmpty()
 
     private lateinit var currentUserPlaceIdentifier: CurrentUserPlaceIdentifier
     private suspend fun initUserRecentPlaceIdentifier(): CurrentUserPlaceIdentifier {
