@@ -1,15 +1,8 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
 import akio.apps._base.Resource
-import akio.apps.myrun.R
-import akio.apps.myrun.domain.PerformanceUnit
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityPerformedResultFormatter
-import akio.apps.myrun.feature.usertimeline.model.Activity
-import akio.apps.myrun.feature.usertimeline.model.CyclingActivity
-import akio.apps.myrun.feature.usertimeline.model.RunningActivity
-import android.content.Context
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
