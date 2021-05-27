@@ -3,13 +3,13 @@ package akio.apps.myrun.feature.home.ui
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.ui.UserTimelineList
+import akio.apps.myrun.ui.theme.MyRunAppTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.BottomAppBar
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -24,7 +24,7 @@ fun HomeScreen(
     onClickUserProfileButton: () -> Unit,
     onClickFloatingActionButton: () -> Unit,
     onClickActivityItemAction: (Activity) -> Unit
-) = MaterialTheme {
+) = MyRunAppTheme {
     Scaffold(
         bottomBar = { HomeBottomBar(onClickUserProfileButton) },
         floatingActionButton = { HomeFloatingActionButton(onClickFloatingActionButton) },
