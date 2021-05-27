@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.activitydetail;
+package akio.apps.myrun.feature.activitydetail
 
 import akio.apps.myrun.R
 import akio.apps.myrun.domain.PerformanceUnit

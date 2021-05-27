@@ -29,9 +29,11 @@ fun PerformanceTableComposable(
 ) {
     val iterator = performedResultFormatters.iterator()
     while (iterator.hasNext()) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(5.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(5.dp)
+        ) {
             this.PerformedResultCellComposable(activity, iterator.next())
             if (iterator.hasNext()) {
                 this.PerformedResultCellComposable(activity, iterator.next())
