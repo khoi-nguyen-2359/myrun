@@ -3,7 +3,6 @@ package akio.apps.myrun.domain.recentplace
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.place.PlaceDataSource
 import akio.apps.myrun.data.recentplace.UserRecentPlaceRepository
-import akio.apps.myrun.domain.recentplace.PlaceIdentifierConverter
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import javax.inject.Inject
