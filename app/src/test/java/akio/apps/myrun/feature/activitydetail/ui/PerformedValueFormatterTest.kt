@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
+import akio.apps.myrun.feature.activitydetail.PerformedValueFormatter
 import org.junit.Assert.assertNull
 import org.junit.Test
 
