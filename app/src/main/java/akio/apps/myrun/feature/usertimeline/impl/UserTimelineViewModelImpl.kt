@@ -21,12 +21,13 @@ class UserTimelineViewModelImpl @Inject constructor(
     override val myActivityList: Flow<PagingData<Activity>> = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
+            enablePlaceholders = true,
             prefetchDistance = PAGE_SIZE / 2
         )
     ) { activityPagingSource }.flow
 
     private lateinit var currentUserPlaceIdentifier: CurrentUserPlaceIdentifier
-    private suspend fun initUserRecentPlaceIdentifier(): CurrentUserPlaceIdentifier? {
+    private suspend fun initUserRecentPlaceIdentifier(): CurrentUserPlaceIdentifier {
         if (!::currentUserPlaceIdentifier.isInitialized) {
             val userId = userAuthenticationState.getUserAccountId()
             val identifier = if (userId != null) {
@@ -39,12 +40,12 @@ class UserTimelineViewModelImpl @Inject constructor(
         return currentUserPlaceIdentifier
     }
 
-    override suspend fun mapActivityToActivityDisplayPlaceName(activity: Activity): String? {
+    override suspend fun getActivityDisplayPlaceName(activity: Activity): String? {
         val activityPlaceIdentifier = activity.placeIdentifier
         val userRecentPlaceIdentifier = initUserRecentPlaceIdentifier()
         return createActivityDisplayPlaceNameUsecase(
             activityPlaceIdentifier,
-            userRecentPlaceIdentifier?.identifier
+            userRecentPlaceIdentifier.identifier
         )
     }
 
