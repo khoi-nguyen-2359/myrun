@@ -9,7 +9,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Surface
@@ -21,13 +23,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.flowlayout.FlowRow
-import com.google.accompanist.glide.rememberGlidePainter
+import timber.log.Timber
 
 @Composable
 fun UserTimelineList(
@@ -36,19 +40,40 @@ fun UserTimelineList(
 ) {
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
 
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+    ) {
         items(lazyPagingItems) { activity ->
             if (activity != null) {
                 val activityDisplayPlaceName by produceState<String?>(
                     initialValue = null,
                     key1 = activity.id
                 ) {
-                    value = userTimelineViewModel.mapActivityToActivityDisplayPlaceName(activity)
+                    value = userTimelineViewModel.getActivityDisplayPlaceName(activity)
                 }
+                Timber.d("activyt!=null")
                 TimelineActivityItem(activity, activityDisplayPlaceName, onClickActivityAction)
+            } else {
+                Timber.d("activyt==null")
+                TimelineActivityPlaceholderItem()
             }
         }
     }
+}
+
+@Composable
+fun TimelineActivityPlaceholderItem() = Surface(
+    elevation = 2.dp,
+    modifier = Modifier
+        .fillMaxWidth()
+        .aspectRatio(1.5f)
+) {
+    Image(
+        painter = painterResource(id = R.drawable.common_avatar_placeholder_image),
+        contentDescription = "Activity placeholder"
+    )
 }
 
 @Composable
@@ -65,14 +90,15 @@ private fun TimelineActivityItem(
     Column {
         ActivityInfoHeaderComposable(activity, activityDisplayPlaceName)
         Image(
-            painter = rememberGlidePainter(
+            painter = rememberCoilPainter(
                 request = activity.routeImage,
                 shouldRefetchOnSizeChange = { _, _ -> false },
+                previewPlaceholder = R.drawable.ic_run_circle
             ),
             contentDescription = "Activity route image",
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(ratio = 1.5f),
+                .aspectRatio(1.5f),
             contentScale = ContentScale.Crop,
         )
         TimelineActivityPerformanceRow(
