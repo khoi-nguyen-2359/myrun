@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.google.accompanist.glide.GlideImage
+import com.google.accompanist.coil.rememberCoilPainter
 import java.util.Calendar
 
 @Composable
@@ -52,14 +52,16 @@ fun ActivityInfoHeaderComposable(
         activityDateTimeFormatter.formatActivityDateTime(activityDetail.startTime)
 
     val resources = LocalContext.current.resources
-    GlideImage(
-        data = activityDetail.athleteInfo.userAvatar.orEmpty(),
+    Image(
+        painter = rememberCoilPainter(
+            request = activityDetail.athleteInfo.userAvatar.orEmpty(),
+            requestBuilder = {
+                size(resources.getDimensionPixelSize(R.dimen.user_timeline_avatar_size))
+                placeholder(R.drawable.common_avatar_placeholder_image)
+                error(R.drawable.common_avatar_placeholder_image)
+            }
+        ),
         contentDescription = "Athlete avatar",
-        requestBuilder = {
-            override(resources.getDimensionPixelSize(R.dimen.user_timeline_avatar_size))
-        },
-        loading = { UserAvatarPlaceholderComposable() },
-        error = { UserAvatarPlaceholderComposable() },
         modifier = Modifier
             .constrainAs(layoutRefProfileImage) {
                 top.linkTo(parent.top)
