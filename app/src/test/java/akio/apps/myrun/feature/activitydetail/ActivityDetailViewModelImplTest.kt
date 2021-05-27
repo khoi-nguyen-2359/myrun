@@ -49,7 +49,6 @@ class ActivityDetailViewModelImplTest {
             mockedActivityModelMapper,
             mock(),
             mock(),
-            mock(),
             mock()
         )
     }
