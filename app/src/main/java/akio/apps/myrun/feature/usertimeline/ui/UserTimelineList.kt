@@ -7,25 +7,36 @@ import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.google.accompanist.coil.rememberCoilPainter
@@ -34,6 +45,7 @@ import timber.log.Timber
 
 @Composable
 fun UserTimelineList(
+    contentPadding: PaddingValues,
     userTimelineViewModel: UserTimelineViewModel,
     onClickActivityAction: (Activity) -> Unit
 ) {
@@ -42,7 +54,8 @@ fun UserTimelineList(
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight()
+            .fillMaxHeight(),
+        contentPadding = contentPadding
     ) {
         items(lazyPagingItems) { activity ->
             if (activity != null) {
@@ -59,8 +72,34 @@ fun UserTimelineList(
                 TimelineActivityPlaceholderItem()
             }
         }
+
+        if (lazyPagingItems.loadState.refresh == LoadState.Loading ||
+            lazyPagingItems.loadState.append == LoadState.Loading
+        ) {
+            item { LoadingItem() }
+        }
     }
 }
+
+@Composable
+private fun LoadingItem() = Column(
+    modifier = Modifier
+        .padding(20.dp)
+        .fillMaxWidth(),
+    horizontalAlignment = Alignment.CenterHorizontally
+) {
+    CircularProgressIndicator()
+    Spacer(modifier = Modifier.height(10.dp))
+    Text(
+        text = stringResource(id = R.string.user_timeline_loading_item_message),
+        color = colorResource(id = R.color.user_timeline_instruction_text),
+        fontSize = 15.sp
+    )
+}
+
+@Preview
+@Composable
+private fun LoadingItemPreview() = LoadingItem()
 
 @Composable
 fun TimelineActivityPlaceholderItem() = Surface(
