@@ -6,6 +6,7 @@ import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.ui.UserTimelineList
 import akio.apps.myrun.ui.theme.MyRunAppTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +33,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+private val BottomAppBarHeight = 56.dp
 
 @Composable
 fun HomeScreen(
@@ -53,7 +57,11 @@ fun HomeScreen(
         if (isUserTimelineEmpty) {
             UserTimelineEmptyMessage()
         } else {
-            UserTimelineList(userTimelineViewModel, onClickActivityItemAction)
+            UserTimelineList(
+                PaddingValues(bottom = BottomAppBarHeight * 1.5f),
+                userTimelineViewModel,
+                onClickActivityItemAction
+            )
         }
     }
 }
@@ -72,7 +80,7 @@ private fun UserTimelineEmptyMessage() = Box(
                 horizontal = dimensionResource(R.dimen.common_page_horizontal_padding),
                 vertical = dimensionResource(R.dimen.user_timeline_listing_padding_bottom)
             ),
-        color = colorResource(R.color.user_timeline_welcome_text),
+        color = colorResource(R.color.user_timeline_instruction_text),
         fontSize = 30.sp,
         fontStyle = FontStyle.Italic,
         fontWeight = FontWeight.Bold,
