@@ -60,5 +60,3 @@ fun ActivityDetailComposable(
         }
     }
 }
-
-
