@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.activitydetail
 
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.feature.activitydetail._di.DaggerActivityDetailFeatureComponent
-import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailComposable
+import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.activityroutemap.ui.ActivityRouteMapActivity
 import android.content.Context
 import android.content.Intent
@@ -22,7 +22,7 @@ class ActivityDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ActivityDetailComposable(activityDetailViewModel, ::openActivityRouteMap)
+            ActivityDetailScreen(activityDetailViewModel, ::openActivityRouteMap)
         }
 
         activityDetailViewModel.loadActivityDetails()

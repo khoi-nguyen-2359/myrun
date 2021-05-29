@@ -3,25 +3,30 @@ package akio.apps.myrun.feature.activitydetail.ui
 import akio.apps._base.Resource
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityPerformedResultFormatter
+import akio.apps.myrun.ui.theme.MyRunAppTheme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import com.google.accompanist.glide.rememberGlidePainter
 import timber.log.Timber
 
 @Composable
-fun ActivityDetailComposable(
+fun ActivityDetailScreen(
     activityDetailViewModel: ActivityDetailViewModel,
     onClickRouteImage: (encodedPolyline: String) -> Unit
-) {
+) = MyRunAppTheme {
     val activityResource by activityDetailViewModel.activityDetails.collectAsState(
         Resource.Loading()
     )
@@ -58,5 +63,17 @@ fun ActivityDetailComposable(
                 )
             )
         }
+    } else if (activityResource is Resource.Loading) {
+        FullscreenLoadingView()
     }
+}
+
+@Composable
+private fun FullscreenLoadingView() = Box(
+    modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight(),
+    contentAlignment = Alignment.Center
+) {
+    CircularProgressIndicator()
 }
