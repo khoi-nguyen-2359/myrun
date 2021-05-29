@@ -70,6 +70,7 @@ class ActivityDetailViewModelImplTest {
         viewModel.activityDetails.test {
             viewModel.loadActivityDetails()
             assertTrue(expectItem() is Resource.Loading)
+            assertTrue(expectItem() is Resource.Loading)
             val successItem = expectItem()
             assertTrue(successItem is Resource.Success)
             assertEquals(activity, successItem.data)
@@ -86,7 +87,7 @@ class ActivityDetailViewModelImplTest {
 
         viewModel.activityDetails.test {
             viewModel.loadActivityDetails()
-
+            assertTrue(expectItem() is Resource.Loading)
             assertTrue(expectItem() is Resource.Loading)
             val failureItem = expectItem()
             assertTrue(failureItem is Resource.Error)
