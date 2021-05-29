@@ -27,7 +27,7 @@ class ActivityTcxFileWriter @Inject constructor() {
     fun writeTcxFile(
         activity: ActivityModel,
         locations: List<ActivityLocation>,
-        cadences: MutableList<Int>,
+        cadences: List<Int>,
         outputFile: File,
         zip: Boolean
     ) {
