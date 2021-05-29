@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
 import akio.apps.myrun.R
+import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.feature.activitydetail.ActivityPerformedResultFormatter
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import androidx.compose.foundation.layout.Column
@@ -21,12 +22,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun PerformanceTableComposable(
-    activity: Activity,
-    performedResultFormatters: List<ActivityPerformedResultFormatter>
-) = Column(
-    Modifier.padding(5.dp)
-) {
+fun PerformanceTableComposable(activity: Activity) = Column(Modifier.padding(5.dp)) {
+    val performedResultFormatters = when (activity.activityType) {
+        ActivityType.Running -> listOf(
+            ActivityPerformedResultFormatter.Distance,
+            ActivityPerformedResultFormatter.Pace,
+            ActivityPerformedResultFormatter.Duration
+        )
+        ActivityType.Cycling -> listOf(
+            ActivityPerformedResultFormatter.Distance,
+            ActivityPerformedResultFormatter.Speed,
+            ActivityPerformedResultFormatter.Duration
+        )
+        else -> emptyList()
+    }
+
     val iterator = performedResultFormatters.iterator()
     while (iterator.hasNext()) {
         Row(
