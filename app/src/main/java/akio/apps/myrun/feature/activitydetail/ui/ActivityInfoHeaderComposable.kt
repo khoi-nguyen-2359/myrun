@@ -77,23 +77,22 @@ fun ActivityInfoHeaderView(
 @Composable
 private fun ActivityShareMenu() = Box {
     var isExpanded by remember { mutableStateOf(false) }
-    val toggleExpansion = { isExpanded = !isExpanded }
-    IconButton(onClick = toggleExpansion) {
+    IconButton(
+        onClick = { isExpanded = !isExpanded }
+    ) {
         Icon(
             imageVector = Icons.Outlined.Share,
             contentDescription = "Share icon"
         )
     }
-    DropdownMenu(expanded = isExpanded, onDismissRequest = toggleExpansion) {
+    DropdownMenu(
+        expanded = isExpanded,
+        onDismissRequest = { isExpanded = false }
+    ) {
         DropdownMenuItem(
             onClick = { }
         ) {
-            Text(text = "Upload to Strava")
-        }
-        DropdownMenuItem(
-            onClick = { }
-        ) {
-            Text(text = "Share as tracklog file")
+            Text(text = "Export tracklog")
         }
     }
 }
