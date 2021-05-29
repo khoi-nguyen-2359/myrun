@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.glide.rememberGlidePainter
 import kotlinx.coroutines.launch
+import akio.apps.myrun.feature.activitydetail.ui.ActivityInfoHeaderView as ActivityInfoHeaderView1
 
 @Composable
 fun ActivityDetailScreen(
@@ -67,7 +68,7 @@ fun ActivityDetailScreen(
                 value = activityDetailViewModel.getActivityPlaceDisplayName()
             }
             Column {
-                ActivityInfoHeaderComposable(activityDetail, activityDisplayPlaceName)
+                ActivityInfoHeaderView1(activityDetail, activityDisplayPlaceName)
                 RouteImageView(activityDetail, onClickRouteImage)
                 PerformanceTableComposable(activityDetail)
                 if (activityResource is Resource.Loading) {

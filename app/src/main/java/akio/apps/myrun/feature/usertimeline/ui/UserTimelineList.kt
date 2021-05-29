@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.usertimeline.ui
 
 import akio.apps.myrun.R
 import akio.apps.myrun.feature.activitydetail.ActivityPerformedResultFormatter
-import akio.apps.myrun.feature.activitydetail.ui.ActivityInfoHeaderComposable
+import akio.apps.myrun.feature.activitydetail.ui.ActivityInfoHeaderView
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import androidx.compose.foundation.Image
@@ -124,7 +124,7 @@ private fun TimelineActivityItem(
         .clickable { onClickActivityAction(activity) }
 ) {
     Column {
-        ActivityInfoHeaderComposable(activity, activityDisplayPlaceName)
+        ActivityInfoHeaderView(activity, activityDisplayPlaceName)
         Image(
             painter = rememberCoilPainter(
                 request = activity.routeImage,
