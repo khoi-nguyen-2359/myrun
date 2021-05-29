@@ -92,6 +92,8 @@
     <string name="performance_cadence_unit">spm</string>
     <string name="user_timeline_loading_item_message">Loading your activities…</string>
     <string name="activity_details_loading_message">Loading your activity…</string>
+    <string name="activity_details_loading_error">Loading error.</string>
+    <string name="action_retry">Retry</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>

@@ -41,11 +41,11 @@ class ActivityDetailViewModelImpl @Inject constructor(
 
     override fun loadActivityDetails() {
         viewModelScope.launch {
+            activityDetailsMutableStateFlow.value = Resource.Loading()
             val activity = activityRepository.getActivity(params.activityId)
                 ?.let(activityModelMapper::map)
             if (activity == null) {
-                activityDetailsMutableStateFlow.value =
-                    Resource.Error(ActivityNotFoundException())
+                activityDetailsMutableStateFlow.value = Resource.Error(ActivityNotFoundException())
             } else {
                 activityDetailsMutableStateFlow.value = Resource.Success(activity)
             }
