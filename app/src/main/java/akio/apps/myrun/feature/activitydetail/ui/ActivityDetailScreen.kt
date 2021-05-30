@@ -47,7 +47,8 @@ import akio.apps.myrun.feature.activitydetail.ui.ActivityInfoHeaderView as Activ
 @Composable
 fun ActivityDetailScreen(
     activityDetailViewModel: ActivityDetailViewModel,
-    onClickRouteImage: (encodedPolyline: String) -> Unit
+    onClickRouteImage: (encodedPolyline: String) -> Unit,
+    onClickExportFile: (Activity) -> Unit
 ) = MyRunAppTheme {
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
@@ -68,7 +69,9 @@ fun ActivityDetailScreen(
                 value = activityDetailViewModel.getActivityPlaceDisplayName()
             }
             Column {
-                ActivityInfoHeaderView1(activityDetail, activityDisplayPlaceName)
+                ActivityInfoHeaderView1(activityDetail, activityDisplayPlaceName) {
+                    onClickExportFile(activityDetail)
+                }
                 RouteImageView(activityDetail, onClickRouteImage)
                 PerformanceTableComposable(activityDetail)
                 if (activityResource is Resource.Loading) {

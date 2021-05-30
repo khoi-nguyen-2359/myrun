@@ -1,10 +1,10 @@
 package akio.apps.myrun.data.activityexport._di
 
 import akio.apps.myrun.data.activityexport.ActivityFileTrackingRepository
-import akio.apps.myrun.data.activityexport.ExportActivityLocationRepository
+import akio.apps.myrun.data.activityexport.ExportActivityLocationCache
 import akio.apps.myrun.data.activityexport.impl.ActivityExportDatabase
 import akio.apps.myrun.data.activityexport.impl.ActivityFileTrackingRepositoryImpl
-import akio.apps.myrun.data.activityexport.impl.ExportActivityLocationRepositoryImpl
+import akio.apps.myrun.data.activityexport.impl.ExportActivityLocationCacheImpl
 import android.app.Application
 import androidx.room.Room
 import dagger.Binds
@@ -18,8 +18,8 @@ interface ActivityFileDataModule {
         ActivityFileTrackingRepository
 
     @Binds
-    fun activityLocationRepo(repositoryImpl: ExportActivityLocationRepositoryImpl):
-        ExportActivityLocationRepository
+    fun activityLocationRepo(repositoryImpl: ExportActivityLocationCacheImpl):
+        ExportActivityLocationCache
 
     @Module
     class Providers {

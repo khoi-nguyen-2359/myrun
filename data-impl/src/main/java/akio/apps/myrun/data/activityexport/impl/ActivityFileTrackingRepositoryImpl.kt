@@ -7,10 +7,10 @@ import akio.apps.myrun.data.activityexport.model.FileStatus
 import akio.apps.myrun.data.activityexport.model.FileTarget
 import akio.apps.myrun.data.activityexport.model.TrackingRecord
 import android.app.Application
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
 class ActivityFileTrackingRepositoryImpl @Inject constructor(
     application: Application,
@@ -40,18 +40,21 @@ class ActivityFileTrackingRepositoryImpl @Inject constructor(
     override suspend fun track(
         activityId: String,
         activityName: String,
+        activityStartTime: Long,
         activityFile: File,
         target: FileTarget
-    ) = withContext(ioDispatcher) {
+    ): TrackingRecord = withContext(ioDispatcher) {
         val record = RoomActivityFileRecord(
             id = 0,
             activityId = activityId,
             activityName = activityName,
+            activityStartTime = activityStartTime,
             filePath = activityFile.absolutePath,
             status = FileStatus.PENDING.name,
             target = target.name
         )
         activityFileTrackingDao.insert(record)
+        record.toTrackingRecord()
     }
 
     override suspend fun updateStatus(fileId: Int, status: FileStatus) = withContext(ioDispatcher) {
@@ -72,15 +75,16 @@ class ActivityFileTrackingRepositoryImpl @Inject constructor(
     override suspend fun getRecords(status: FileStatus, target: FileTarget): List<TrackingRecord> =
         withContext(ioDispatcher) {
             activityFileTrackingDao.getTrackingRecords(status.name, target.name)
-                .map {
-                    TrackingRecord(
-                        it.id,
-                        it.activityId,
-                        it.activityName,
-                        File(it.filePath),
-                        FileStatus.valueOf(it.status),
-                        FileTarget.valueOf(it.target)
-                    )
-                }
+                .map { it.toTrackingRecord() }
         }
+
+    private fun RoomActivityFileRecord.toTrackingRecord() = TrackingRecord(
+        id,
+        activityId,
+        activityName,
+        activityStartTime,
+        File(filePath),
+        FileStatus.valueOf(status),
+        FileTarget.valueOf(target)
+    )
 }
