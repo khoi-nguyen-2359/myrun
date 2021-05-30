@@ -43,7 +43,8 @@ fun HomeScreen(
     userTimelineViewModel: UserTimelineViewModel,
     onClickUserProfileButton: () -> Unit,
     onClickFloatingActionButton: () -> Unit,
-    onClickActivityItemAction: (Activity) -> Unit
+    onClickActivityItemAction: (Activity) -> Unit,
+    onClickActivityFileAction: (Activity) -> Unit
 ) = MyRunAppTheme {
     Scaffold(
         bottomBar = { HomeBottomBar(onClickUserProfileButton) },
@@ -60,7 +61,8 @@ fun HomeScreen(
             UserTimelineList(
                 PaddingValues(bottom = BottomAppBarHeight * 1.5f),
                 userTimelineViewModel,
-                onClickActivityItemAction
+                onClickActivityItemAction,
+                onClickActivityFileAction
             )
         }
     }

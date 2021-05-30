@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.home
 
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.feature.activitydetail.ActivityDetailActivity
+import akio.apps.myrun.feature.activityexport.ActivityExportService
 import akio.apps.myrun.feature.home.ui.HomeScreen
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
 import akio.apps.myrun.feature.userprofile.impl.UserProfileFragment
@@ -13,6 +14,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 
 class HomeActivity : AppCompatActivity() {
 
@@ -28,9 +30,22 @@ class HomeActivity : AppCompatActivity() {
                 userTimelineViewModel,
                 onClickUserProfileButton = ::openUserProfile,
                 onClickFloatingActionButton = ::openRouteTrackingScreen,
-                onClickActivityItemAction = ::openActivityDetail
+                onClickActivityItemAction = ::openActivityDetail,
+                onClickActivityFileAction = ::startActivityExportService
             )
         }
+    }
+
+    private fun startActivityExportService(activity: Activity) {
+        val intent = ActivityExportService.createAddActivityIntent(
+            this,
+            ActivityExportService.ActivityInfo(
+                activity.id,
+                activity.name,
+                activity.startTime
+            )
+        )
+        ContextCompat.startForegroundService(this, intent)
     }
 
     private fun openActivityDetail(activity: Activity) {

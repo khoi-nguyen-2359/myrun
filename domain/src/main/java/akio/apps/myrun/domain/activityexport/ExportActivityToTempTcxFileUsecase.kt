@@ -2,48 +2,60 @@ package akio.apps.myrun.domain.activityexport
 
 import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.ActivityRepository
-import akio.apps.myrun.data.activity.model.ActivityModel
+import akio.apps.myrun.data.activityexport.ActivityFileTrackingRepository
+import akio.apps.myrun.data.activityexport.ExportActivityLocationCache
 import akio.apps.myrun.data.activityexport.model.ActivityLocation
-import android.app.Application
-import java.io.File
+import akio.apps.myrun.data.activityexport.model.FileTarget
+import akio.apps.myrun.data.activityexport.model.TrackingRecord
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
 class ExportActivityToTempTcxFileUsecase @Inject constructor(
-    private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
     private val activityRepository: ActivityRepository,
+    private val activityFileTrackingRepository: ActivityFileTrackingRepository,
+    private val exportActivityLocationCache: ExportActivityLocationCache,
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
-    suspend operator fun invoke(activityModel: ActivityModel): File = withContext(ioDispatcher) {
-        val tempExportFileDir = File("${application.cacheDir.absolutePath}/$PATH_TEMP_EXPORT_DIR")
-        tempExportFileDir.mkdirs()
-        val tempFile =
-            File.createTempFile("exported_activity_${activityModel.id}", ".tcx", tempExportFileDir)
-
-        val locations = activityRepository.getActivityLocationDataPoints(activityModel.id)
-
+    /**
+     * Exports content the of activity with given [activityId] to a TCX file. Returns null if error
+     * happened.
+     */
+    suspend operator fun invoke(activityId: String): TrackingRecord? = withContext(ioDispatcher) {
+        val tempFile = activityFileTrackingRepository.createEmptyFile(activityId)
+        val activityModel = activityRepository.getActivity(activityId) ?: return@withContext null
+        val activityLocations = getActivityLocations(activityId)
         activityTcxFileWriter.writeTcxFile(
             activity = activityModel,
-            locations = locations.map {
+            locations = activityLocations,
+            cadences = emptyList(),
+            outputFile = tempFile,
+            zip = false
+        )
+        return@withContext activityFileTrackingRepository.track(
+            activityId,
+            activityModel.name,
+            activityModel.startTime,
+            tempFile,
+            FileTarget.TRACKLOG
+        )
+    }
+
+    private suspend fun getActivityLocations(activityId: String): List<ActivityLocation> {
+        val cachedActivityLocations = exportActivityLocationCache.getActivityLocations(activityId)
+        if (cachedActivityLocations.isNotEmpty()) {
+            return cachedActivityLocations
+        }
+        return activityRepository.getActivityLocationDataPoints(activityId)
+            .map {
                 ActivityLocation(
-                    activityModel.id,
+                    activityId,
                     it.timestamp,
                     it.value.latitude,
                     it.value.longitude,
                     it.value.altitude
                 )
-            },
-            cadences = emptyList(),
-            outputFile = tempFile,
-            zip = false
-        )
-
-        return@withContext tempFile
-    }
-
-    companion object {
-        private const val PATH_TEMP_EXPORT_DIR = "temp_export_file"
+            }
     }
 }

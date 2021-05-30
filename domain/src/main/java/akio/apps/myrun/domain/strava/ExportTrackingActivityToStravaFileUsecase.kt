@@ -5,7 +5,7 @@ import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.activityexport.ActivityFileTrackingRepository
-import akio.apps.myrun.data.activityexport.ExportActivityLocationRepository
+import akio.apps.myrun.data.activityexport.ExportActivityLocationCache
 import akio.apps.myrun.data.activityexport.model.ActivityLocation
 import akio.apps.myrun.data.activityexport.model.FileTarget
 import akio.apps.myrun.data.fitness.FitnessDataRepository
@@ -21,7 +21,7 @@ import kotlinx.coroutines.coroutineScope
 class ExportTrackingActivityToStravaFileUsecase @Inject constructor(
     private val fitnessDataRepository: FitnessDataRepository,
     private val activityFileTrackingRepository: ActivityFileTrackingRepository,
-    private val exportActivityLocationRepository: ExportActivityLocationRepository,
+    private val exportActivityLocationCache: ExportActivityLocationCache,
     private val activityRepository: ActivityRepository,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
@@ -63,6 +63,7 @@ class ExportTrackingActivityToStravaFileUsecase @Inject constructor(
         activityFileTrackingRepository.track(
             activity.id,
             activity.name,
+            activity.startTime,
             outputFile,
             FileTarget.STRAVA_UPLOAD
         )
@@ -75,7 +76,7 @@ class ExportTrackingActivityToStravaFileUsecase @Inject constructor(
     ): List<ActivityLocation> {
         // first try getting from export data
         val savedTrackingLocations =
-            exportActivityLocationRepository.getActivityLocations(activity.id)
+            exportActivityLocationCache.getActivityLocations(activity.id)
         return if (savedTrackingLocations.isEmpty()) {
             // then may fetch from activity data source
             activityRepository.getActivityLocationDataPoints(activity.id)
