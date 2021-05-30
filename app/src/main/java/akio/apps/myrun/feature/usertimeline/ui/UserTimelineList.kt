@@ -45,7 +45,8 @@ import timber.log.Timber
 fun UserTimelineList(
     contentPadding: PaddingValues,
     userTimelineViewModel: UserTimelineViewModel,
-    onClickActivityAction: (Activity) -> Unit
+    onClickActivityAction: (Activity) -> Unit,
+    onClickExportActivityFile: (Activity) -> Unit
 ) {
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
 
@@ -64,7 +65,9 @@ fun UserTimelineList(
                     value = userTimelineViewModel.getActivityDisplayPlaceName(activity)
                 }
                 Timber.d("activyt!=null")
-                TimelineActivityItem(activity, activityDisplayPlaceName, onClickActivityAction)
+                TimelineActivityItem(activity, activityDisplayPlaceName, onClickActivityAction) {
+                    onClickExportActivityFile(activity)
+                }
             } else {
                 Timber.d("activyt==null")
                 TimelineActivityPlaceholderItem()
@@ -116,7 +119,8 @@ fun TimelineActivityPlaceholderItem() = Surface(
 private fun TimelineActivityItem(
     activity: Activity,
     activityDisplayPlaceName: String?,
-    onClickActivityAction: (Activity) -> Unit
+    onClickActivityAction: (Activity) -> Unit,
+    onClickExportFile: () -> Unit
 ) = Surface(
     elevation = 2.dp,
     modifier = Modifier
@@ -124,7 +128,7 @@ private fun TimelineActivityItem(
         .clickable { onClickActivityAction(activity) }
 ) {
     Column {
-        ActivityInfoHeaderView(activity, activityDisplayPlaceName)
+        ActivityInfoHeaderView(activity, activityDisplayPlaceName, onClickExportFile)
         Image(
             painter = rememberCoilPainter(
                 request = activity.routeImage,

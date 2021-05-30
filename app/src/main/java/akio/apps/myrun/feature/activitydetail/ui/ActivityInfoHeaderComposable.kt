@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,7 +45,8 @@ import java.util.Calendar
 @Composable
 fun ActivityInfoHeaderView(
     activityDetail: Activity,
-    activityDisplayPlaceName: String?
+    activityDisplayPlaceName: String?,
+    onClickExportFile: () -> Unit
 ) = Column(
     modifier = Modifier.padding(
         horizontal = dimensionResource(id = R.dimen.common_item_horizontal_padding),
@@ -63,7 +65,7 @@ fun ActivityInfoHeaderView(
             )
             ActivityTimeAndPlaceText(activityDetail, activityDisplayPlaceName)
         }
-        ActivityShareMenu()
+        ActivityShareMenu(onClickExportFile)
     }
     Spacer(modifier = Modifier.size(6.dp))
     Text(
@@ -75,7 +77,9 @@ fun ActivityInfoHeaderView(
 }
 
 @Composable
-private fun ActivityShareMenu() = Box {
+private fun ActivityShareMenu(
+    onClickExportFile: () -> Unit
+) = Box {
     var isExpanded by remember { mutableStateOf(false) }
     IconButton(
         onClick = { isExpanded = !isExpanded }
@@ -90,9 +94,9 @@ private fun ActivityShareMenu() = Box {
         onDismissRequest = { isExpanded = false }
     ) {
         DropdownMenuItem(
-            onClick = { }
+            onClick = onClickExportFile
         ) {
-            Text(text = "Export tracklog")
+            Text(text = stringResource(id = R.string.activity_details_share_menu_item_export_file))
         }
     }
 }
@@ -199,4 +203,4 @@ private fun PreviewActivityInfoHeader() = ActivityInfoHeaderView(
         cadence = 160
     ),
     activityDisplayPlaceName = "D8 W16"
-)
+) { }

@@ -1,17 +1,17 @@
 package akio.apps.myrun.data.activityexport.impl
 
 import akio.apps.myrun._di.NamedIoDispatcher
-import akio.apps.myrun.data.activityexport.ExportActivityLocationRepository
+import akio.apps.myrun.data.activityexport.ExportActivityLocationCache
 import akio.apps.myrun.data.activityexport.entity.RoomExportActivityLocation
 import akio.apps.myrun.data.activityexport.model.ActivityLocation
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class ExportActivityLocationRepositoryImpl @Inject constructor(
+class ExportActivityLocationCacheImpl @Inject constructor(
     activityExportDatabase: ActivityExportDatabase,
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : ExportActivityLocationRepository {
+) : ExportActivityLocationCache {
 
     private val exportActivityLocationDao: ExportActivityLocationDao =
         activityExportDatabase.activityLocationDao()

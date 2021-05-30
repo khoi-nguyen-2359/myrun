@@ -10,9 +10,10 @@ interface ActivityFileTrackingRepository {
     suspend fun track(
         activityId: String,
         activityName: String,
+        activityStartTime: Long,
         activityFile: File,
         target: FileTarget
-    )
+    ): TrackingRecord
 
     suspend fun updateStatus(fileId: Int, status: FileStatus)
     suspend fun delete(fileId: Int)

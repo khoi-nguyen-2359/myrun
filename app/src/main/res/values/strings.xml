@@ -94,6 +94,11 @@
     <string name="activity_details_loading_message">Loading your activity…</string>
     <string name="activity_details_loading_error">Loading error.</string>
     <string name="action_retry">Retry</string>
+    <string name="activity_export_error_notification_title">Activity export error</string>
+    <string name="activity_export_progress_notification_title">Exporting activities</string>
+    <string name="activity_export_progress_notification_remaining">%1$d remaining</string>
+    <string name="activity_export_success_notification_title">Activity exported</string>
+    <string name="activity_details_share_menu_item_export_file">Export tracklog file</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>
