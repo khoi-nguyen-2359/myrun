@@ -94,7 +94,10 @@ private fun ActivityShareMenu(
         onDismissRequest = { isExpanded = false }
     ) {
         DropdownMenuItem(
-            onClick = onClickExportFile
+            onClick = {
+                onClickExportFile()
+                isExpanded = false
+            }
         ) {
             Text(text = stringResource(id = R.string.activity_details_share_menu_item_export_file))
         }
