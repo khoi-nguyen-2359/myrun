@@ -6,7 +6,6 @@ data class TrackingRecord(
     val recordId: Int,
     val activityId: String,
     val activityName: String,
-    val activityStartTime: Long,
     val activityFile: File,
     val status: FileStatus,
     val target: FileTarget

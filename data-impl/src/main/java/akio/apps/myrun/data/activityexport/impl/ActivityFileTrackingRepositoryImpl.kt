@@ -40,7 +40,6 @@ class ActivityFileTrackingRepositoryImpl @Inject constructor(
     override suspend fun track(
         activityId: String,
         activityName: String,
-        activityStartTime: Long,
         activityFile: File,
         target: FileTarget,
         initStatus: FileStatus
@@ -49,7 +48,6 @@ class ActivityFileTrackingRepositoryImpl @Inject constructor(
             id = 0,
             activityId = activityId,
             activityName = activityName,
-            activityStartTime = activityStartTime,
             filePath = activityFile.absolutePath,
             status = FileStatus.PENDING.name,
             target = target.name
@@ -83,7 +81,6 @@ class ActivityFileTrackingRepositoryImpl @Inject constructor(
         id,
         activityId,
         activityName,
-        activityStartTime,
         File(filePath),
         FileStatus.valueOf(status),
         FileTarget.valueOf(target)
