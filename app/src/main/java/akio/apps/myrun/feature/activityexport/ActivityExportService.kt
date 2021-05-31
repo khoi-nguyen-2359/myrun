@@ -8,6 +8,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -15,6 +16,7 @@ import android.os.IBinder
 import android.os.Parcelable
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.FileProvider
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -77,28 +79,30 @@ class ActivityExportService : Service() {
 
     private fun updateProgressNotification() {
         val processingCount = activityInfoQueue.size
-        if (processingCount == 0) {
-            NotificationManagerCompat.from(this).cancel(NOTIFICATION_ID_PROGRESS)
-        } else {
-            val notificationContentText = getString(
+        val notificationContentText = if (processingCount > 0) {
+            getString(
                 R.string.activity_export_progress_notification_remaining,
                 processingCount
             )
-            val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_run_circle)
-                .setContentTitle(getString(R.string.activity_export_progress_notification_title))
-                .setContentText(notificationContentText)
-                .setProgress(/*max = */0, /*progress = */0, /*indeterminate = */true)
-                .build()
-            startForeground(NOTIFICATION_ID_PROGRESS, notification)
+        } else {
+            getString(R.string.activity_export_progress_notification_finishing)
         }
+        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_run_circle)
+            .setContentTitle(getString(R.string.activity_export_progress_notification_title))
+            .setContentText(notificationContentText)
+            .setProgress(/*max = */0, /*progress = */0, /*indeterminate = */true)
+            .build()
+        startForeground(NOTIFICATION_ID_PROGRESS, notification)
     }
 
     private suspend fun exportActivityList() = withContext(Dispatchers.IO) {
         while (true) {
             val activityInfo = activityInfoQueue.peek() ?: break
             val trackingRecord = exportActivityToTempTcxFileUsecase(activityInfo.id)
-            activityInfoQueue.poll()    // reduce the queue at this place for correct counter on the progress notification message
+            // reduce the queue at this place for correct counter on the progress notification
+            // message
+            activityInfoQueue.poll()
             updateProgressNotification()
             if (trackingRecord != null) {
                 notifyExportSuccess(trackingRecord)
@@ -144,10 +148,35 @@ class ActivityExportService : Service() {
         val activityFormattedStartTime =
             activityStartTimeFormatter.format(Date(trackingRecord.activityStartTime))
         val activityDescription = "${trackingRecord.activityName} on $activityFormattedStartTime"
+        val shareFileContentUri = FileProvider.getUriForFile(
+            this,
+            getString(R.string.file_provider_authorities),
+            trackingRecord.activityFile
+        )
+        val pendingIntentFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_ONE_SHOT
+        }
+        val sendIntent = Intent(this, SendActionBroadcastReceiver::class.java)
+        sendIntent.data = shareFileContentUri
+        sendIntent.putExtra(EXTRA_NOTIFICATION_ID, trackingRecord.activityStartTime.toInt())
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            REQUEST_CODE_SEND_ACTION,
+            sendIntent,
+            pendingIntentFlag
+        )
+        val sendAction = NotificationCompat.Action(
+            /* icon = */ null,
+            /* title = */ getString(R.string.action_send),
+            /* intent = */ pendingIntent
+        )
         val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_run_circle)
             .setContentTitle(getString(R.string.activity_export_success_notification_title))
             .setContentText(activityDescription)
+            .addAction(sendAction)
             .build()
         NotificationManagerCompat.from(this)
             .notify(trackingRecord.activityStartTime.toInt(), notification)
@@ -176,15 +205,36 @@ class ActivityExportService : Service() {
         val startTime: Long
     ) : Parcelable
 
+    class SendActionBroadcastReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent?) {
+            val notificationId = intent?.getIntExtra(EXTRA_NOTIFICATION_ID, 0) ?: 0
+            NotificationManagerCompat.from(context).cancel(notificationId)
+            val shareFileContentUri = intent?.data
+            val sendIntent = Intent(Intent.ACTION_SEND)
+            sendIntent.putExtra(Intent.EXTRA_STREAM, shareFileContentUri)
+            sendIntent.type = "application/vnd.garmin.tcx+xml"
+            val chooserIntent = Intent.createChooser(
+                sendIntent,
+                context.getString(R.string.activity_export_send_tracklog_title)
+            )
+            chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(chooserIntent)
+        }
+    }
+
     companion object {
         private const val NOTIFICATION_CHANNEL_ID =
             "akio.apps.myrun.feature.activityexport.ExportActivityService.NOTIFICATION_CHANNEL_ID"
+        private const val NOTIFICATION_ID_PROGRESS = 201
+
         private const val EXTRA_ACTIVITY_INFO = "EXTRA_ACTIVITY_INFO"
+        private const val EXTRA_NOTIFICATION_ID = "EXTRA_NOTIFICATION_ID"
+
         private const val ACTION_ADD_ACTIVITY =
             "akio.apps.myrun.feature.activityexport.ExportActivityService.ACTION_ADD_ACTIVITY_ID"
 
         private const val REQUEST_CODE_ADD_ACTIVITY = 1
-        private const val NOTIFICATION_ID_PROGRESS = 201
+        private const val REQUEST_CODE_SEND_ACTION = 2
 
         fun createAddActivityIntent(context: Context, activityInfo: ActivityInfo): Intent =
             Intent(context, ActivityExportService::class.java)
