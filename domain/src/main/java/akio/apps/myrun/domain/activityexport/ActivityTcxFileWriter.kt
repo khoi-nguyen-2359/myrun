@@ -77,7 +77,9 @@ class ActivityTcxFileWriter @Inject constructor() {
                                                 .withAltitude(waypoint.altitude)
                                                 .apply {
                                                     if (cadences.isNotEmpty()) {
-                                                        withCadence(Cadence.cadence(cadences[index]))
+                                                        withCadence(
+                                                            Cadence.cadence(cadences[index])
+                                                        )
                                                     }
                                                 }
                                                 .apply {
