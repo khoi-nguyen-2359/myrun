@@ -5,6 +5,7 @@ import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activityexport.ActivityFileTrackingRepository
 import akio.apps.myrun.data.activityexport.ExportActivityLocationCache
 import akio.apps.myrun.data.activityexport.model.ActivityLocation
+import akio.apps.myrun.data.activityexport.model.FileStatus
 import akio.apps.myrun.data.activityexport.model.FileTarget
 import akio.apps.myrun.data.activityexport.model.TrackingRecord
 import javax.inject.Inject
@@ -38,7 +39,8 @@ class ExportActivityToTempTcxFileUsecase @Inject constructor(
             activityModel.name,
             activityModel.startTime,
             tempFile,
-            FileTarget.TRACKLOG
+            FileTarget.TRACKLOG,
+            FileStatus.PROCESSING
         )
     }
 
