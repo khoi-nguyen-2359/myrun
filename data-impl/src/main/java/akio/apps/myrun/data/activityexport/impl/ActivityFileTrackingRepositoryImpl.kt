@@ -42,7 +42,8 @@ class ActivityFileTrackingRepositoryImpl @Inject constructor(
         activityName: String,
         activityStartTime: Long,
         activityFile: File,
-        target: FileTarget
+        target: FileTarget,
+        initStatus: FileStatus
     ): TrackingRecord = withContext(ioDispatcher) {
         val record = RoomActivityFileRecord(
             id = 0,
