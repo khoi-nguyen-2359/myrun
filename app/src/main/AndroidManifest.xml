@@ -1,115 +1,126 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  package="akio.apps.myrun">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="akio.apps.myrun">
 
-  <!-- Networking -->
-  <uses-permission android:name="android.permission.INTERNET" />
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Networking -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-  <uses-permission android:name="android.permission.CAMERA" />
-  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-  <!--    Tracking service    -->
-  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-  <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!--    Tracking service    -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-  <!-- Activity tracking -->
-  <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
-  <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+    <!-- Activity tracking -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
-  <application
-    android:name=".MyRunApp"
-    android:allowBackup="true"
-    android:icon="@mipmap/ic_launcher"
-    android:label="@string/app_name"
-    android:roundIcon="@mipmap/ic_launcher_round"
-    android:supportsRtl="true"
-    android:theme="@style/AppTheme"
-    android:networkSecurityConfig="@xml/network_security_config">
+    <application
+        android:name=".MyRunApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:networkSecurityConfig="@xml/network_security_config">
 
-    <activity
-      android:name=".feature.routetracking.impl.RouteTrackingActivity"
-      android:screenOrientation="portrait" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="@string/file_provider_authorities"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
-    <activity
-      android:name=".feature.splash.impl.SplashActivity"
-      android:screenOrientation="portrait">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
-    </activity>
+        <activity
+            android:name=".feature.routetracking.impl.RouteTrackingActivity"
+            android:screenOrientation="portrait" />
 
-    <activity
-      android:name=".feature.home.HomeActivity"
-      android:screenOrientation="portrait" />
+        <activity
+            android:name=".feature.splash.impl.SplashActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-    <activity
-      android:windowSoftInputMode="adjustPan"
-      android:name=".feature.signin.impl.SignInActivity"
-      android:screenOrientation="portrait" />
+        <activity
+            android:name=".feature.home.HomeActivity"
+            android:screenOrientation="portrait" />
 
-    <activity
-      android:name="akio.apps._base.ui.SingleFragmentActivity"
-      android:screenOrientation="portrait" />
+        <activity
+            android:windowSoftInputMode="adjustPan"
+            android:name=".feature.signin.impl.SignInActivity"
+            android:screenOrientation="portrait" />
 
-    <activity
-      android:name=".feature.cropavatar.CropAvatarActivity"
-      android:screenOrientation="portrait" />
+        <activity
+            android:name="akio.apps._base.ui.SingleFragmentActivity"
+            android:screenOrientation="portrait" />
 
-    <activity android:name=".feature.editprofile.impl.EditProfileActivity" />
+        <activity
+            android:name=".feature.cropavatar.CropAvatarActivity"
+            android:screenOrientation="portrait" />
 
-    <meta-data
-      android:name="com.google.android.geo.API_KEY"
-      android:value="@string/google_maps_sdk_key" />
+        <activity android:name=".feature.editprofile.impl.EditProfileActivity" />
 
-    <service
-      android:name=".feature.routetracking.impl.RouteTrackingService"
-      android:enabled="true"
-      android:exported="false"
-      android:foregroundServiceType="location" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_sdk_key" />
 
-      <service android:name=".feature.activityexport.ActivityExportService"
-          android:enabled="true"
-          android:exported="false"
-          />
+        <service
+            android:name=".feature.routetracking.impl.RouteTrackingService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location" />
 
-      <!--        Facebook Login -->
-    <meta-data
-      android:name="com.facebook.sdk.ApplicationId"
-      android:value="@string/facebook_app_id" />
-    <!--        Facebook Login -->
+        <service
+            android:name=".feature.activityexport.ActivityExportService"
+            android:enabled="true"
+            android:exported="false" />
 
-    <activity
-      android:name=".feature.strava.impl.LinkStravaActivity"
-      android:theme="@style/TransparentAppCompat"
-      android:launchMode="singleTask">
-      <!-- for Strava callback intent -->
-      <intent-filter>
-        <data
-          android:host="@string/strava_callback_host"
-          android:scheme="@string/app_scheme" />
-        <action android:name="android.intent.action.VIEW" />
+        <!--        Facebook Login -->
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+        <!--        Facebook Login -->
 
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-      </intent-filter>
-    </activity>
+        <activity
+            android:name=".feature.strava.impl.LinkStravaActivity"
+            android:theme="@style/TransparentAppCompat"
+            android:launchMode="singleTask">
+            <!-- for Strava callback intent -->
+            <intent-filter>
+                <data
+                    android:host="@string/strava_callback_host"
+                    android:scheme="@string/app_scheme" />
+                <action android:name="android.intent.action.VIEW" />
 
-    <activity android:name=".feature.activitydetail.ActivityDetailActivity" />
-    <activity android:name=".feature.activityroutemap.ui.ActivityRouteMapActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
 
-    <!--        Remove the default initializer of WorkManager -->
-    <!--        https://developer.android.com/topic/libraries/architecture/workmanager/advanced/custom-configuration#remove-default-->
-    <provider
-      android:name="androidx.work.impl.WorkManagerInitializer"
-      android:authorities="${applicationId}.workmanager-init"
-      tools:node="remove" />
+        <activity android:name=".feature.activitydetail.ActivityDetailActivity" />
+        <activity android:name=".feature.activityroutemap.ui.ActivityRouteMapActivity" />
 
-  </application>
+        <!--        Remove the default initializer of WorkManager -->
+        <!--        https://developer.android.com/topic/libraries/architecture/workmanager/advanced/custom-configuration#remove-default-->
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            tools:node="remove" />
+
+        <receiver android:name=".feature.activityexport.ActivityExportService$SendActionBroadcastReceiver" />
+    </application>
 
 </manifest>
