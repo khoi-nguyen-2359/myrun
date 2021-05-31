@@ -64,6 +64,8 @@ class ActivityExportService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     private fun onAddActivity(activityInfo: ActivityInfo) {
+        // this maybe a retrying so cancel the previous error notification
+        NotificationManagerCompat.from(this).cancel(activityInfo.startTime.toInt())
         activityInfoQueue.add(activityInfo)
         updateProgressNotification()
         if (processingJob?.isActive != true) {
@@ -94,8 +96,9 @@ class ActivityExportService : Service() {
 
     private suspend fun exportActivityList() = withContext(Dispatchers.IO) {
         while (true) {
-            val activityInfo = activityInfoQueue.poll() ?: break
+            val activityInfo = activityInfoQueue.peek() ?: break
             val trackingRecord = exportActivityToTempTcxFileUsecase(activityInfo.id)
+            activityInfoQueue.poll()    // reduce the queue at this place for correct counter on the progress notification message
             updateProgressNotification()
             if (trackingRecord != null) {
                 notifyExportSuccess(trackingRecord)
@@ -103,6 +106,7 @@ class ActivityExportService : Service() {
                 notifyExportError(activityInfo)
             }
         }
+        stopSelf()
     }
 
     private fun notifyExportError(activityInfo: ActivityInfo) {
