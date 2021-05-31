@@ -17,6 +17,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
 import timber.log.Timber
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -28,6 +29,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 class ActivityExportService : Service() {
@@ -43,8 +45,6 @@ class ActivityExportService : Service() {
     }
 
     private val mainScope = CoroutineScope(SupervisorJob() + Dispatchers.Main + exceptionHandler)
-
-    private val activityStartTimeFormatter = SimpleDateFormat("MMM dd, yyyy")
 
     override fun onCreate() {
         super.onCreate()
@@ -66,7 +66,7 @@ class ActivityExportService : Service() {
 
     private fun onAddActivity(activityInfo: ActivityInfo) {
         // this maybe a retrying so cancel the previous error notification
-        NotificationManagerCompat.from(this).cancel(activityInfo.startTime.toInt())
+        NotificationManagerCompat.from(this).cancel(activityInfo.notificationId)
         activityInfoQueue.add(activityInfo)
         updateProgressNotification()
         if (processingJob?.isActive != true) {
@@ -98,13 +98,13 @@ class ActivityExportService : Service() {
     private suspend fun exportActivityList() = withContext(Dispatchers.IO) {
         while (true) {
             val activityInfo = activityInfoQueue.peek() ?: break
-            val exportResult = exportActivityToTempTcxFileUsecase(activityInfo.id)
+            val exportedFile = exportActivityToTempTcxFileUsecase(activityInfo.id)
             // reduce the queue at this place for correct counter on the progress notification
             // message
             activityInfoQueue.poll()
             updateProgressNotification()
-            if (exportResult != null) {
-                notifyExportSuccess(exportResult)
+            if (exportedFile != null) {
+                notifyExportSuccess(activityInfo, exportedFile)
             } else {
                 notifyExportError(activityInfo)
             }
@@ -113,9 +113,8 @@ class ActivityExportService : Service() {
     }
 
     private fun notifyExportError(activityInfo: ActivityInfo) {
-        val activityFormattedStartTime =
-            activityStartTimeFormatter.format(Date(activityInfo.startTime))
-        val activityDescription = "${activityInfo.name} on $activityFormattedStartTime"
+        val activityDescription =
+            createActivityDescription(activityInfo)
         val intent = createAddActivityIntent(this, activityInfo)
         val pendingIntentFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
@@ -140,19 +139,16 @@ class ActivityExportService : Service() {
             .addAction(action)
             .build()
         NotificationManagerCompat.from(this)
-            .notify(activityInfo.startTime.toInt(), notification)
+            .notify(activityInfo.notificationId, notification)
     }
 
-    private fun notifyExportSuccess(
-        exportResult: ExportActivityToTempTcxFileUsecase.ActivityExportResult
-    ) {
-        val activityFormattedStartTime =
-            activityStartTimeFormatter.format(Date(exportResult.activityStartTime))
-        val activityDescription = "${exportResult.activityName} on $activityFormattedStartTime"
+    private fun notifyExportSuccess(activityInfo: ActivityInfo, exportedFile: File) {
+        val activityDescription =
+            createActivityDescription(activityInfo)
         val shareFileContentUri = FileProvider.getUriForFile(
             this,
             getString(R.string.file_provider_authorities),
-            exportResult.exportedFile
+            exportedFile
         )
         val pendingIntentFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
@@ -161,7 +157,7 @@ class ActivityExportService : Service() {
         }
         val sendIntent = Intent(this, SendActionBroadcastReceiver::class.java)
         sendIntent.data = shareFileContentUri
-        sendIntent.putExtra(EXTRA_NOTIFICATION_ID, exportResult.activityStartTime.toInt())
+        sendIntent.putExtra(EXTRA_ACTIVITY_INFO, activityInfo)
         val pendingIntent = PendingIntent.getBroadcast(
             this,
             REQUEST_CODE_SEND_ACTION,
@@ -180,7 +176,7 @@ class ActivityExportService : Service() {
             .addAction(sendAction)
             .build()
         NotificationManagerCompat.from(this)
-            .notify(exportResult.activityStartTime.toInt(), notification)
+            .notify(activityInfo.notificationId, notification)
     }
 
     private fun createNotificationChannel() {
@@ -204,19 +200,29 @@ class ActivityExportService : Service() {
         val id: String,
         val name: String,
         val startTime: Long
-    ) : Parcelable
+    ) : Parcelable {
+
+        /**
+         * Generates notification id from this activity's start time.
+         */
+        @IgnoredOnParcel
+        val notificationId: Int = startTime.toInt()
+    }
 
     class SendActionBroadcastReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent?) {
-            val notificationId = intent?.getIntExtra(EXTRA_NOTIFICATION_ID, 0) ?: 0
-            NotificationManagerCompat.from(context).cancel(notificationId)
-            val shareFileContentUri = intent?.data
+        override fun onReceive(context: Context, intent: Intent) {
+            val activityInfo = intent.getParcelableExtra<ActivityInfo>(EXTRA_ACTIVITY_INFO)
+                ?: return
+            NotificationManagerCompat.from(context).cancel(activityInfo.notificationId)
+            val shareFileContentUri = intent.data
             val sendIntent = Intent(Intent.ACTION_SEND)
             sendIntent.putExtra(Intent.EXTRA_STREAM, shareFileContentUri)
             sendIntent.type = "application/vnd.garmin.tcx+xml"
+
+            val activityDescription = createActivityDescription(activityInfo)
             val chooserIntent = Intent.createChooser(
                 sendIntent,
-                context.getString(R.string.activity_export_send_tracklog_title)
+                context.getString(R.string.activity_export_send_tracklog_title, activityDescription)
             )
             chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(chooserIntent)
@@ -229,7 +235,6 @@ class ActivityExportService : Service() {
         private const val NOTIFICATION_ID_PROGRESS = 201
 
         private const val EXTRA_ACTIVITY_INFO = "EXTRA_ACTIVITY_INFO"
-        private const val EXTRA_NOTIFICATION_ID = "EXTRA_NOTIFICATION_ID"
 
         private const val ACTION_ADD_ACTIVITY =
             "akio.apps.myrun.feature.activityexport.ExportActivityService.ACTION_ADD_ACTIVITY_ID"
@@ -241,5 +246,12 @@ class ActivityExportService : Service() {
             Intent(context, ActivityExportService::class.java)
                 .setAction(ACTION_ADD_ACTIVITY)
                 .putExtra(EXTRA_ACTIVITY_INFO, activityInfo)
+
+        private fun createActivityDescription(activityInfo: ActivityInfo): String {
+            val activityStartTimeFormatter = SimpleDateFormat("MMM dd, yyyy")
+            val activityFormattedStartTime =
+                activityStartTimeFormatter.format(Date(activityInfo.startTime))
+            return "${activityInfo.name} on $activityFormattedStartTime"
+        }
     }
 }

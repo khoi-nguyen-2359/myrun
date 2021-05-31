@@ -21,7 +21,7 @@ class ExportActivityToTempTcxFileUsecase @Inject constructor(
      * Exports content the of activity with given [activityId] to a TCX file. Returns null if error
      * happened.
      */
-    suspend operator fun invoke(activityId: String): ActivityExportResult? =
+    suspend operator fun invoke(activityId: String): File? =
         withContext(ioDispatcher) {
             val tempFile = File.createTempFile("activity_$activityId", ".tcx", application.cacheDir)
             tempFile.deleteOnExit()
@@ -35,12 +35,7 @@ class ExportActivityToTempTcxFileUsecase @Inject constructor(
                 outputFile = tempFile,
                 zip = false
             )
-            ActivityExportResult(
-                activityModel.id,
-                activityModel.name,
-                activityModel.startTime,
-                tempFile
-            )
+            tempFile
         }
 
     private suspend fun getActivityLocations(activityId: String): List<ActivityLocation> {
@@ -59,11 +54,4 @@ class ExportActivityToTempTcxFileUsecase @Inject constructor(
                 )
             }
     }
-
-    data class ActivityExportResult(
-        val activityId: String,
-        val activityName: String,
-        val activityStartTime: Long,
-        val exportedFile: File
-    )
 }
