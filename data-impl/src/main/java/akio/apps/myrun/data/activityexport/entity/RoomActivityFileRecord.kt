@@ -15,9 +15,6 @@ class RoomActivityFileRecord(
     @ColumnInfo(name = "activity_name")
     val activityName: String,
 
-    @ColumnInfo(name = "activity_start_time")
-    val activityStartTime: Long,
-
     @ColumnInfo(name = "file_path")
     val filePath: String,
 

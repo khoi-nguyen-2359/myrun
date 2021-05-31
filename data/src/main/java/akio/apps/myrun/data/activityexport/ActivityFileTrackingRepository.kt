@@ -10,7 +10,6 @@ interface ActivityFileTrackingRepository {
     suspend fun track(
         activityId: String,
         activityName: String,
-        activityStartTime: Long,
         activityFile: File,
         target: FileTarget,
         initStatus: FileStatus = FileStatus.PENDING
