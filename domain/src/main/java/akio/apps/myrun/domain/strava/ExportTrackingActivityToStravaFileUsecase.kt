@@ -63,7 +63,6 @@ class ExportTrackingActivityToStravaFileUsecase @Inject constructor(
         activityFileTrackingRepository.track(
             activity.id,
             activity.name,
-            activity.startTime,
             outputFile,
             FileTarget.STRAVA_UPLOAD
         )

@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.activityexport
 
 import akio.apps.myrun.R
-import akio.apps.myrun.data.activityexport.model.TrackingRecord
 import akio.apps.myrun.domain.activityexport.ExportActivityToTempTcxFileUsecase
 import akio.apps.myrun.feature.strava._di.DaggerStravaFeatureComponent
 import android.app.NotificationChannel
@@ -99,13 +98,13 @@ class ActivityExportService : Service() {
     private suspend fun exportActivityList() = withContext(Dispatchers.IO) {
         while (true) {
             val activityInfo = activityInfoQueue.peek() ?: break
-            val trackingRecord = exportActivityToTempTcxFileUsecase(activityInfo.id)
+            val exportResult = exportActivityToTempTcxFileUsecase(activityInfo.id)
             // reduce the queue at this place for correct counter on the progress notification
             // message
             activityInfoQueue.poll()
             updateProgressNotification()
-            if (trackingRecord != null) {
-                notifyExportSuccess(trackingRecord)
+            if (exportResult != null) {
+                notifyExportSuccess(exportResult)
             } else {
                 notifyExportError(activityInfo)
             }
@@ -144,14 +143,16 @@ class ActivityExportService : Service() {
             .notify(activityInfo.startTime.toInt(), notification)
     }
 
-    private fun notifyExportSuccess(trackingRecord: TrackingRecord) {
+    private fun notifyExportSuccess(
+        exportResult: ExportActivityToTempTcxFileUsecase.ActivityExportResult
+    ) {
         val activityFormattedStartTime =
-            activityStartTimeFormatter.format(Date(trackingRecord.activityStartTime))
-        val activityDescription = "${trackingRecord.activityName} on $activityFormattedStartTime"
+            activityStartTimeFormatter.format(Date(exportResult.activityStartTime))
+        val activityDescription = "${exportResult.activityName} on $activityFormattedStartTime"
         val shareFileContentUri = FileProvider.getUriForFile(
             this,
             getString(R.string.file_provider_authorities),
-            trackingRecord.activityFile
+            exportResult.exportedFile
         )
         val pendingIntentFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
@@ -160,7 +161,7 @@ class ActivityExportService : Service() {
         }
         val sendIntent = Intent(this, SendActionBroadcastReceiver::class.java)
         sendIntent.data = shareFileContentUri
-        sendIntent.putExtra(EXTRA_NOTIFICATION_ID, trackingRecord.activityStartTime.toInt())
+        sendIntent.putExtra(EXTRA_NOTIFICATION_ID, exportResult.activityStartTime.toInt())
         val pendingIntent = PendingIntent.getBroadcast(
             this,
             REQUEST_CODE_SEND_ACTION,
@@ -179,7 +180,7 @@ class ActivityExportService : Service() {
             .addAction(sendAction)
             .build()
         NotificationManagerCompat.from(this)
-            .notify(trackingRecord.activityStartTime.toInt(), notification)
+            .notify(exportResult.activityStartTime.toInt(), notification)
     }
 
     private fun createNotificationChannel() {
