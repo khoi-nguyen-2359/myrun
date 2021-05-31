@@ -12,7 +12,8 @@ interface ActivityFileTrackingRepository {
         activityName: String,
         activityStartTime: Long,
         activityFile: File,
-        target: FileTarget
+        target: FileTarget,
+        initStatus: FileStatus = FileStatus.PENDING
     ): TrackingRecord
 
     suspend fun updateStatus(fileId: Int, status: FileStatus)
