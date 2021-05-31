@@ -99,7 +99,7 @@
     <string name="activity_export_progress_notification_remaining">%1$d remaining</string>
     <string name="activity_export_success_notification_title">Activity exported</string>
     <string name="activity_details_share_menu_item_export_file">Export tracklog file</string>
-    <string name="activity_export_send_tracklog_title">Send your tracklog</string>
+    <string name="activity_export_send_tracklog_title">Send tracklog of %1$s</string>
     <string name="action_send">Send</string>
     <string name="activity_export_progress_notification_finishing">Finishing</string>
     <string-array name="user_timeline_activity_selection_items">
