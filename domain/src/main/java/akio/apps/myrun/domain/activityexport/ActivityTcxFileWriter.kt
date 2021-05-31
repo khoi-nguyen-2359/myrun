@@ -75,7 +75,11 @@ class ActivityTcxFileWriter @Inject constructor() {
                                                     )
                                                 )
                                                 .withAltitude(waypoint.altitude)
-                                                .withCadence(Cadence.cadence(cadences[index]))
+                                                .apply {
+                                                    if (cadences.isNotEmpty()) {
+                                                        withCadence(Cadence.cadence(cadences[index]))
+                                                    }
+                                                }
                                                 .apply {
                                                     lastLocation?.let {
                                                         currentDistance +=
