@@ -2,8 +2,8 @@ package akio.apps.myrun.domain.activityexport
 
 import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.ActivityRepository
-import akio.apps.myrun.data.activityexport.ExportActivityLocationCache
-import akio.apps.myrun.data.activityexport.model.ActivityLocation
+import akio.apps.myrun.data.activitysharing.ActivityLocationCache
+import akio.apps.myrun.data.activitysharing.model.ActivityLocation
 import android.app.Application
 import java.io.File
 import javax.inject.Inject
@@ -14,7 +14,7 @@ class ExportActivityToTempTcxFileUsecase @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
     private val activityRepository: ActivityRepository,
-    private val exportActivityLocationCache: ExportActivityLocationCache,
+    private val activityLocationCache: ActivityLocationCache,
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
     /**
@@ -39,7 +39,7 @@ class ExportActivityToTempTcxFileUsecase @Inject constructor(
         }
 
     private suspend fun getActivityLocations(activityId: String): List<ActivityLocation> {
-        val cachedActivityLocations = exportActivityLocationCache.getActivityLocations(activityId)
+        val cachedActivityLocations = activityLocationCache.getActivityLocations(activityId)
         if (cachedActivityLocations.isNotEmpty()) {
             return cachedActivityLocations
         }

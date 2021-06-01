@@ -6,7 +6,7 @@ import akio.apps._base.di.ViewModelFactoryProvider
 import akio.apps.myrun._di.AppComponent
 import akio.apps.myrun._di.DispatchersModule
 import akio.apps.myrun.data.activity._di.ActivityDataModule
-import akio.apps.myrun.data.activityexport._di.ActivityFileDataModule
+import akio.apps.myrun.data.activitysharing._di.ActivitySharingDataModule
 import akio.apps.myrun.data.authentication._di.AuthenticationDataModule
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
 import akio.apps.myrun.data.fitness._di.FitnessDataModule
@@ -30,7 +30,7 @@ import dagger.Component
         ActivityDataModule::class,
         UserProfileDataModule::class,
         FitnessDataModule::class,
-        ActivityFileDataModule::class,
+        ActivitySharingDataModule::class,
         PlaceDataModule::class,
         RecentPlaceDataModule::class,
         DispatchersModule::class

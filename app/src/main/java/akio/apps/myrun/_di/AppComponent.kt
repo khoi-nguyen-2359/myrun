@@ -1,7 +1,7 @@
 package akio.apps.myrun._di
 
 import akio.apps.myrun.MyRunApp
-import akio.apps.myrun.data.activityexport._di.ActivityFileDataModule
+import akio.apps.myrun.data.activitysharing._di.ActivitySharingDataModule
 import akio.apps.myrun.data.authentication._di.AuthenticationDataModule
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
 import akio.apps.myrun.data.externalapp.impl.StravaApi
@@ -24,7 +24,7 @@ import javax.inject.Singleton
         ExternalAppDataModule::class,
         StravaFeatureModule::class,
         AuthenticationDataModule::class,
-        ActivityFileDataModule::class,
+        ActivitySharingDataModule::class,
         DispatchersModule::class
     ]
 )

@@ -1,8 +1,8 @@
-package akio.apps.myrun.data.activityexport
+package akio.apps.myrun.data.activitysharing
 
-import akio.apps.myrun.data.activityexport.model.ActivityLocation
+import akio.apps.myrun.data.activitysharing.model.ActivityLocation
 
-interface ExportActivityLocationCache {
+interface ActivityLocationCache {
     suspend fun saveActivityLocations(activityLocations: List<ActivityLocation>)
 
     /**
