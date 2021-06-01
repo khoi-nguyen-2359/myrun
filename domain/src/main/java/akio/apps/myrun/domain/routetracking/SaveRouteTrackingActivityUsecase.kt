@@ -31,6 +31,7 @@ class SaveRouteTrackingActivityUsecase @Inject constructor(
 
     suspend fun saveCurrentActivity(
         activityType: ActivityType,
+        activityName: String,
         routeMapImage: Bitmap
     ): ActivityModel {
         val userAccountId = userAuthenticationState.getUserAccountId()
@@ -50,7 +51,7 @@ class SaveRouteTrackingActivityUsecase @Inject constructor(
         val activityData = ActivityDataModel(
             id = "",
             activityType,
-            name = "",
+            name = activityName,
             routeImage = "",
             placeIdentifier = placeIdentifier,
             startTime,
