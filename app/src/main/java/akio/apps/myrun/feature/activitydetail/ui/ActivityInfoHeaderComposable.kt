@@ -6,7 +6,6 @@ import akio.apps.myrun.feature.activitydetail.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityData
 import akio.apps.myrun.feature.usertimeline.model.RunningActivity
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,7 +39,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.coil.rememberCoilPainter
-import java.util.Calendar
 
 @Composable
 fun ActivityInfoHeaderView(
@@ -69,7 +67,7 @@ fun ActivityInfoHeaderView(
     }
     Spacer(modifier = Modifier.size(6.dp))
     Text(
-        text = createActivityName(LocalContext.current, activityDetail),
+        text = activityDetail.name,
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold,
         modifier = Modifier.fillMaxWidth()
@@ -126,7 +124,12 @@ private fun ActivityTimeAndPlaceText(activityDetail: Activity, activityDisplayPl
     } else {
         "$startTimeText \u00b7 $activityDisplayPlaceName"
     }
-    Text(text = timeAndPlaceText, fontSize = 12.sp, overflow = TextOverflow.Ellipsis)
+    Text(
+        text = timeAndPlaceText,
+        fontSize = 12.sp,
+        overflow = TextOverflow.Ellipsis,
+        lineHeight = 15.sp
+    )
 }
 
 @Composable
@@ -152,37 +155,8 @@ private fun UserAvatarImage(
     )
 }
 
-private fun createActivityName(
-    context: Context,
-    activityDetail: Activity
-): String = if (activityDetail.name.isEmpty()) {
-    val calendar = Calendar.getInstance()
-    calendar.timeInMillis = activityDetail.startTime
-    when (calendar.get(Calendar.HOUR_OF_DAY)) {
-        in 5..11 -> context.getString(
-            R.string.item_activity_title_morning,
-            context.getString(activityTypeNameMap[activityDetail.activityType] ?: 0)
-        )
-        in 12..16 -> context.getString(
-            R.string.item_activity_title_afternoon,
-            context.getString(activityTypeNameMap[activityDetail.activityType] ?: 0)
-        )
-        else -> context.getString(
-            R.string.item_activity_title_evening,
-            context.getString(activityTypeNameMap[activityDetail.activityType] ?: 0)
-        )
-    }
-} else {
-    activityDetail.name
-}
-
-private val activityTypeNameMap: Map<ActivityType, Int> = mapOf(
-    ActivityType.Running to R.string.activity_name_running,
-    ActivityType.Cycling to R.string.activity_name_cycling
-)
-
 @Composable
-@Preview
+@Preview(showBackground = true, showSystemUi = true)
 private fun PreviewActivityInfoHeader() = ActivityInfoHeaderView(
     activityDetail = RunningActivity(
         activityData = ActivityData(
@@ -205,5 +179,6 @@ private fun PreviewActivityInfoHeader() = ActivityInfoHeaderView(
         pace = 1.0,
         cadence = 160
     ),
-    activityDisplayPlaceName = "D8 W16"
+    activityDisplayPlaceName = "D8 W16 Do you know where is this place? Lorem ipsum it is a " +
+        "beautiful place oh yeah"
 ) { }
