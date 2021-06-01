@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.activityexport.model
+package akio.apps.myrun.data.activitysharing.model
 
 enum class FileStatus {
     PENDING,

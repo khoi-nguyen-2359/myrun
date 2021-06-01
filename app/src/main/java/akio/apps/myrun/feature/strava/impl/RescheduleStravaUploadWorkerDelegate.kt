@@ -1,11 +1,10 @@
-package akio.apps.myrun.feature.strava
+package akio.apps.myrun.feature.strava.impl
 
-import akio.apps.myrun.data.activityexport.ActivityFileTrackingRepository
-import akio.apps.myrun.data.activityexport.model.FileStatus
-import akio.apps.myrun.data.activityexport.model.FileTarget
+import akio.apps.myrun.data.activitysharing.ActivityFileTrackingRepository
+import akio.apps.myrun.data.activitysharing.model.FileStatus
+import akio.apps.myrun.data.activitysharing.model.FileTarget
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
-import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import android.app.Application
 import androidx.work.WorkInfo
 import androidx.work.WorkManager

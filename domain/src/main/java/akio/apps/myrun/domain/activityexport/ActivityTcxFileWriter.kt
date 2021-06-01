@@ -5,7 +5,7 @@ import akio.apps.myrun._base.runfile.ZipFileSerializer
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.ActivityType
-import akio.apps.myrun.data.activityexport.model.ActivityLocation
+import akio.apps.myrun.data.activitysharing.model.ActivityLocation
 import com.google.maps.android.SphericalUtil
 import com.sweetzpot.tcxzpot.Activities
 import com.sweetzpot.tcxzpot.Cadence

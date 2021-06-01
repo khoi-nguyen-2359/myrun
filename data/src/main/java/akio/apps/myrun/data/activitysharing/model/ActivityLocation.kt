@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.activityexport.model
+package akio.apps.myrun.data.activitysharing.model
 
 data class ActivityLocation(
     val activityId: String,

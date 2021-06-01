@@ -1,6 +1,6 @@
 package akio.apps.myrun._base.utils
 
-import akio.apps.myrun.data.activityexport.model.ActivityLocation
+import akio.apps.myrun.data.activitysharing.model.ActivityLocation
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.data.routetracking.model.LatLng
 import android.location.Location
