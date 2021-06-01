@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps._base.lifecycle.Event
+import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.authentication.UserAuthenticationState
@@ -26,6 +27,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import java.util.Calendar
 import javax.inject.Inject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -69,6 +71,11 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private var trackingTimerJob: Job? = null
     private var processedLocationCount = 0
 
+    private val activityTypeNameMap: Map<ActivityType, Int> = mapOf(
+        ActivityType.Running to R.string.activity_name_running,
+        ActivityType.Cycling to R.string.activity_name_cycling
+    )
+
     override fun resumeDataUpdates() {
         if (_mapInitialLocation.value != null &&
             trackingStatus.value == RouteTrackingStatus.RESUMED
@@ -104,13 +111,36 @@ class RouteTrackingViewModelImpl @Inject constructor(
             val activityType = activityType.value
                 ?: return@launchCatching
 
+            val activityName = makeActivityName(activityType)
             val activity =
-                saveRouteTrackingActivityUsecase.saveCurrentActivity(activityType, routeMapImage)
+                saveRouteTrackingActivityUsecase.saveCurrentActivity(
+                    activityType,
+                    activityName,
+                    routeMapImage
+                )
             mayScheduleStravaActivityUpload(activityMapper.map(activity))
 
             clearRouteTrackingStateUsecase.clear()
 
             _saveActivitySuccess.value = Event(Unit)
+        }
+    }
+
+    private fun makeActivityName(activityType: ActivityType): String {
+        val calendar = Calendar.getInstance()
+        return when (calendar.get(Calendar.HOUR_OF_DAY)) {
+            in 5..11 -> application.getString(
+                R.string.item_activity_title_morning,
+                application.getString(activityTypeNameMap[activityType] ?: 0)
+            )
+            in 12..16 -> application.getString(
+                R.string.item_activity_title_afternoon,
+                application.getString(activityTypeNameMap[activityType] ?: 0)
+            )
+            else -> application.getString(
+                R.string.item_activity_title_evening,
+                application.getString(activityTypeNameMap[activityType] ?: 0)
+            )
         }
     }
 
