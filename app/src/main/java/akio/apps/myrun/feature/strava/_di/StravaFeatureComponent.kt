@@ -6,10 +6,9 @@ import akio.apps._base.di.ViewModelFactoryProvider
 import akio.apps.myrun._di.AppComponent
 import akio.apps.myrun._di.DispatchersModule
 import akio.apps.myrun.data.activity._di.ActivityDataModule
-import akio.apps.myrun.data.activityexport._di.ActivityFileDataModule
+import akio.apps.myrun.data.activitysharing._di.ActivitySharingDataModule
 import akio.apps.myrun.data.authentication._di.AuthenticationDataModule
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
-import akio.apps.myrun.feature.activityexport.ActivityExportService
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import dagger.Component
 
@@ -19,7 +18,7 @@ import dagger.Component
         StravaFeatureModule::class,
         ExternalAppDataModule::class,
         AuthenticationDataModule::class,
-        ActivityFileDataModule::class,
+        ActivitySharingDataModule::class,
         ActivityDataModule::class,
         DispatchersModule::class
     ],
@@ -27,7 +26,6 @@ import dagger.Component
 )
 interface StravaFeatureComponent : ViewModelFactoryProvider {
     fun inject(uploadStravaFileWorker: UploadStravaFileWorker)
-    fun inject(activityExportService: ActivityExportService)
 
     @Component.Factory
     interface Factory : AppDependantComponentFactory<StravaFeatureComponent>

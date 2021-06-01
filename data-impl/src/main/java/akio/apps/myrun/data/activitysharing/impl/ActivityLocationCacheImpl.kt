@@ -1,20 +1,20 @@
-package akio.apps.myrun.data.activityexport.impl
+package akio.apps.myrun.data.activitysharing.impl
 
 import akio.apps.myrun._di.NamedIoDispatcher
-import akio.apps.myrun.data.activityexport.ExportActivityLocationCache
-import akio.apps.myrun.data.activityexport.entity.RoomExportActivityLocation
-import akio.apps.myrun.data.activityexport.model.ActivityLocation
+import akio.apps.myrun.data.activitysharing.ActivityLocationCache
+import akio.apps.myrun.data.activitysharing.entity.RoomExportActivityLocation
+import akio.apps.myrun.data.activitysharing.model.ActivityLocation
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class ExportActivityLocationCacheImpl @Inject constructor(
-    activityExportDatabase: ActivityExportDatabase,
+class ActivityLocationCacheImpl @Inject constructor(
+    activitySharingDatabase: ActivitySharingDatabase,
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
-) : ExportActivityLocationCache {
+) : ActivityLocationCache {
 
-    private val exportActivityLocationDao: ExportActivityLocationDao =
-        activityExportDatabase.activityLocationDao()
+    private val activityLocationCacheDao: ActivityLocationCacheDao =
+        activitySharingDatabase.activityLocationDao()
 
     override suspend fun saveActivityLocations(
         activityLocations: List<ActivityLocation>
@@ -29,13 +29,13 @@ class ExportActivityLocationCacheImpl @Inject constructor(
                 altitude = activityLocation.altitude
             )
         }
-        exportActivityLocationDao.insert(entities)
+        activityLocationCacheDao.insert(entities)
     }
 
     override suspend fun getActivityLocations(
         activityId: String
     ): List<ActivityLocation> = withContext(ioDispatcher) {
-        exportActivityLocationDao.getActivityLocations(activityId).map { roomEntities ->
+        activityLocationCacheDao.getActivityLocations(activityId).map { roomEntities ->
             ActivityLocation(
                 activityId,
                 roomEntities.time,
@@ -47,6 +47,6 @@ class ExportActivityLocationCacheImpl @Inject constructor(
     }
 
     override suspend fun clearActivityLocations(activityId: String) = withContext(ioDispatcher) {
-        exportActivityLocationDao.delete(activityId)
+        activityLocationCacheDao.delete(activityId)
     }
 }

@@ -1,7 +1,7 @@
 package akio.apps.myrun.domain.activityexport
 
-import akio.apps.myrun.data.activityexport.ExportActivityLocationCache
-import akio.apps.myrun.data.activityexport.model.ActivityLocation
+import akio.apps.myrun.data.activitysharing.ActivityLocationCache
+import akio.apps.myrun.data.activitysharing.model.ActivityLocation
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import com.nhaarman.mockitokotlin2.mock
@@ -15,16 +15,16 @@ import kotlinx.coroutines.test.runBlockingTest
 @ExperimentalCoroutinesApi
 class SaveExportActivityLocationsUsecaseTest {
     private lateinit var usecase: SaveExportActivityLocationsUsecase
-    private lateinit var mockedExportActivityLocationCache: ExportActivityLocationCache
+    private lateinit var mockedActivityLocationCache: ActivityLocationCache
     private lateinit var mockedRouteTrackingLocationRepository: RouteTrackingLocationRepository
 
     @Before
     fun setup() {
         mockedRouteTrackingLocationRepository = mock()
-        mockedExportActivityLocationCache = mock()
+        mockedActivityLocationCache = mock()
         usecase = SaveExportActivityLocationsUsecase(
             mockedRouteTrackingLocationRepository,
-            mockedExportActivityLocationCache
+            mockedActivityLocationCache
         )
     }
 
@@ -48,6 +48,6 @@ class SaveExportActivityLocationsUsecaseTest {
             ),
             ActivityLocation(activityId, time = 1L, latitude = 2.0, longitude = 3.0, altitude = 4.0)
         )
-        verify(mockedExportActivityLocationCache).saveActivityLocations(activityLocationList)
+        verify(mockedActivityLocationCache).saveActivityLocations(activityLocationList)
     }
 }

@@ -1,11 +1,11 @@
 package akio.apps.myrun.domain.activityexport
 
-import akio.apps.myrun.data.activityexport.ExportActivityLocationCache
+import akio.apps.myrun.data.activitysharing.ActivityLocationCache
 import javax.inject.Inject
 
 class ClearExportActivityLocationUsecase @Inject constructor(
-    private val exportActivityLocationCache: ExportActivityLocationCache
+    private val activityLocationCache: ActivityLocationCache
 ) {
     suspend operator fun invoke(activityId: String) =
-        exportActivityLocationCache.clearActivityLocations(activityId)
+        activityLocationCache.clearActivityLocations(activityId)
 }

@@ -1,12 +1,12 @@
-package akio.apps.myrun.data.activityexport.impl
+package akio.apps.myrun.data.activitysharing.impl
 
-import akio.apps.myrun.data.activityexport.entity.RoomExportActivityLocation
+import akio.apps.myrun.data.activitysharing.entity.RoomExportActivityLocation
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 
 @Dao
-interface ExportActivityLocationDao {
+interface ActivityLocationCacheDao {
     @Insert
     suspend fun insert(entities: List<RoomExportActivityLocation>)
 
