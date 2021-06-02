@@ -20,12 +20,14 @@ class UserTimelineViewModelImpl @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
     private val checkUserTimelineEmptyUsecase: CheckUserTimelineEmptyUsecase
 ) : UserTimelineViewModel() {
+
     override val myActivityList: Flow<PagingData<Activity>> = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
-            enablePlaceholders = true,
-            prefetchDistance = PAGE_SIZE / 2
-        )
+            enablePlaceholders = false,
+            prefetchDistance = 10
+        ),
+        initialKey = System.currentTimeMillis()
     ) { activityPagingSource }.flow
 
     override suspend fun isUserTimelineEmpty(): Boolean =

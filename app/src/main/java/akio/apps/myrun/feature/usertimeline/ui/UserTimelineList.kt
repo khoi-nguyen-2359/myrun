@@ -7,11 +7,13 @@ import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -39,7 +41,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.flowlayout.FlowRow
-import timber.log.Timber
 
 @Composable
 fun UserTimelineList(
@@ -49,37 +50,48 @@ fun UserTimelineList(
     onClickExportActivityFile: (Activity) -> Unit
 ) {
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
+    if (lazyPagingItems.loadState.refresh == LoadState.Loading) {
+        FullscreenLoadingView()
+    } else {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            contentPadding = contentPadding
+        ) {
+            items(lazyPagingItems) { activity ->
+                if (activity != null) {
+                    val activityDisplayPlaceName by produceState<String?>(
+                        initialValue = null,
+                        key1 = activity.id
+                    ) {
+                        value = userTimelineViewModel.getActivityDisplayPlaceName(activity)
+                    }
+                    TimelineActivityItem(
+                        activity,
+                        activityDisplayPlaceName,
+                        onClickActivityAction
+                    ) {
+                        onClickExportActivityFile(activity)
+                    }
+                } else {
+                    TimelineActivityPlaceholderItem()
+                }
+            }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
-        contentPadding = contentPadding
-    ) {
-        items(lazyPagingItems) { activity ->
-            if (activity != null) {
-                val activityDisplayPlaceName by produceState<String?>(
-                    initialValue = null,
-                    key1 = activity.id
-                ) {
-                    value = userTimelineViewModel.getActivityDisplayPlaceName(activity)
-                }
-                Timber.d("activyt!=null")
-                TimelineActivityItem(activity, activityDisplayPlaceName, onClickActivityAction) {
-                    onClickExportActivityFile(activity)
-                }
-            } else {
-                Timber.d("activyt==null")
-                TimelineActivityPlaceholderItem()
+            if (lazyPagingItems.loadState.append == LoadState.Loading) {
+                item { LoadingItem() }
             }
         }
-
-        if (lazyPagingItems.loadState.refresh == LoadState.Loading ||
-            lazyPagingItems.loadState.append == LoadState.Loading
-        ) {
-            item { LoadingItem() }
-        }
     }
+}
+
+@Composable
+private fun FullscreenLoadingView() = Box(
+    modifier = Modifier.fillMaxSize(),
+    contentAlignment = Alignment.Center
+) {
+    LoadingItem()
 }
 
 @Composable
