@@ -67,17 +67,14 @@ class PhotoSelectionDelegate(
 
     private fun launchCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        intent.resolveActivity(activity.packageManager)
-            ?.also {
-                val values = ContentValues(1)
-                values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg")
-                capturedPhotoContentUri = activity.contentResolver.insert(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    values
-                )
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, capturedPhotoContentUri)
-                startActivityForResult(intent, requestCodes.rcTakePhoto)
-            }
+        val values = ContentValues(1)
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        capturedPhotoContentUri = activity.contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            values
+        )
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, capturedPhotoContentUri)
+        startActivityForResult(intent, requestCodes.rcTakePhoto)
     }
 
     fun onRequestPermissionsResult(requestCode: Int) {
