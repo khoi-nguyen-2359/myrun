@@ -19,6 +19,7 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Share
@@ -27,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -37,7 +39,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.google.accompanist.coil.rememberCoilPainter
 
 @Composable
@@ -46,38 +47,47 @@ fun ActivityInfoHeaderView(
     activityDisplayPlaceName: String?,
     onClickExportFile: () -> Unit
 ) = Column(
-    modifier = Modifier.padding(
-        horizontal = dimensionResource(id = R.dimen.common_item_horizontal_padding),
-        vertical = dimensionResource(id = R.dimen.common_item_vertical_padding)
-    )
+    modifier = Modifier
+        .padding(
+            vertical = dimensionResource(id = R.dimen.common_item_vertical_padding)
+        )
+        .padding(start = dimensionResource(id = R.dimen.common_item_horizontal_padding))
 ) {
-    Row {
-        UserAvatarImage(activityDetail = activityDetail, modifier = Modifier)
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        UserAvatarImage(activityDetail = activityDetail)
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1.0f)) {
             Text(
                 text = activityDetail.athleteInfo.userName.orEmpty(),
-                fontWeight = FontWeight.Bold,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.subtitle2,
+                fontWeight = FontWeight.Bold
             )
             ActivityTimeAndPlaceText(activityDetail, activityDisplayPlaceName)
         }
         ActivityShareMenu(onClickExportFile)
     }
     Spacer(modifier = Modifier.size(6.dp))
-    Text(
-        text = activityDetail.name,
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.fillMaxWidth()
-    )
+    ActivityNameText(activityDetail)
 }
+
+@Composable
+private fun ActivityNameText(activityDetail: Activity) = Text(
+    text = activityDetail.name,
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 8.dp, end = dimensionResource(id = R.dimen.common_item_horizontal_padding)),
+    style = MaterialTheme.typography.h6,
+    fontWeight = FontWeight.Bold
+)
 
 @Composable
 private fun ActivityShareMenu(
     onClickExportFile: () -> Unit
-) = Box {
+) = Box(
+    modifier = Modifier.padding(horizontal = 4.dp)
+) {
     var isExpanded by remember { mutableStateOf(false) }
     IconButton(
         onClick = { isExpanded = !isExpanded }
@@ -126,16 +136,15 @@ private fun ActivityTimeAndPlaceText(activityDetail: Activity, activityDisplayPl
     }
     Text(
         text = timeAndPlaceText,
-        fontSize = 12.sp,
         overflow = TextOverflow.Ellipsis,
-        lineHeight = 15.sp
+        maxLines = 2,
+        style = MaterialTheme.typography.caption
     )
 }
 
 @Composable
 private fun UserAvatarImage(
-    activityDetail: Activity,
-    modifier: Modifier
+    activityDetail: Activity
 ) {
     val avatarDimension = dimensionResource(id = R.dimen.user_timeline_avatar_size)
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
@@ -149,7 +158,7 @@ private fun UserAvatarImage(
             }
         ),
         contentDescription = "Athlete avatar",
-        modifier = modifier
+        modifier = Modifier
             .size(avatarDimension)
             .clip(CircleShape)
     )
@@ -162,23 +171,22 @@ private fun PreviewActivityInfoHeader() = ActivityInfoHeaderView(
         activityData = ActivityData(
             id = "id",
             activityType = ActivityType.Running,
-            name = "activity name",
+            name = "Evening Run",
             routeImage = "http://example.com",
             placeIdentifier = null,
-            startTime = 1000L,
+            startTime = System.currentTimeMillis(),
             endTime = 2000L,
             duration = 1000L,
             distance = 100.0,
             encodedPolyline = "",
             athleteInfo = Activity.AthleteInfo(
                 userId = "id",
-                userName = "userName userName userName userName userName userName userName",
+                userName = "Khoi Nguyen",
                 userAvatar = "userAvatar"
             )
         ),
         pace = 1.0,
         cadence = 160
     ),
-    activityDisplayPlaceName = "D8 W16 Do you know where is this place? Lorem ipsum it is a " +
-        "beautiful place oh yeah"
+    activityDisplayPlaceName = "California San Jose"
 ) { }
