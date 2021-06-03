@@ -3,7 +3,6 @@ package akio.apps.myrun.feature.activityexport
 import akio.apps.myrun.R
 import akio.apps.myrun.domain.activityexport.ExportActivityToTempTcxFileUsecase
 import akio.apps.myrun.feature.activityexport._di.DaggerActivityExportFeatureComponent
-import akio.apps.myrun.feature.strava._di.DaggerStravaFeatureComponent
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
