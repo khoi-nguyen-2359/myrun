@@ -345,21 +345,20 @@ class RouteTrackingService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     companion object {
-        const val NOTIF_ID_TRACKING = 101
+        private const val NOTIF_ID_TRACKING = 101
 
-        const val NOTIF_CHANNEL_ID =
+        private const val NOTIF_CHANNEL_ID =
             "akio.apps.myrun.feature.routetracking.impl.RouteTrackingService.NOTIF_CHANNEL_ID"
 
-        const val LOCATION_UPDATE_INTERVAL = 2000L
-        const val LOCATION_MAX_WAIT_TIME = 8000L
-        const val SMALLEST_DISPLACEMENT = 1f
+        private const val LOCATION_UPDATE_INTERVAL = 2000L
+        private const val SMALLEST_DISPLACEMENT = 1f
 
-        const val TRACKING_TIMER_PERIOD = 1000L
+        private const val TRACKING_TIMER_PERIOD = 1000L
 
-        const val ACTION_START = "ACTION_START"
-        const val ACTION_STOP = "ACTION_STOP"
-        const val ACTION_RESUME = "ACTION_RESUME"
-        const val ACTION_PAUSE = "ACTION_PAUSE"
+        private const val ACTION_START = "ACTION_START"
+        private const val ACTION_STOP = "ACTION_STOP"
+        private const val ACTION_RESUME = "ACTION_RESUME"
+        private const val ACTION_PAUSE = "ACTION_PAUSE"
 
         fun startIntent(
             context: Context
@@ -385,10 +384,9 @@ class RouteTrackingService : Service() {
                 action = ACTION_RESUME
             }
 
-        fun createLocationTrackingRequest() = LocationRequest().apply {
-            fastestInterval = LOCATION_UPDATE_INTERVAL
+        fun createLocationTrackingRequest(): LocationRequest = LocationRequest.create().apply {
             interval = LOCATION_UPDATE_INTERVAL
-            maxWaitTime = LOCATION_MAX_WAIT_TIME
+            fastestInterval = LOCATION_UPDATE_INTERVAL / 2
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             smallestDisplacement = SMALLEST_DISPLACEMENT
         }
