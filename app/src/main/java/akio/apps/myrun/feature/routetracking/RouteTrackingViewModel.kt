@@ -9,8 +9,10 @@ import akio.apps.myrun.data.routetracking.model.LatLng
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingStats
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.MutableStateFlow
 
 abstract class RouteTrackingViewModel : BaseViewModel() {
+    abstract val isStopOptionDialogShowing: MutableStateFlow<Boolean>
     abstract val mapInitialLocation: LiveData<Event<LatLng>>
     abstract val trackingLocationBatch: LiveData<List<TrackingLocationEntity>>
     abstract val trackingStats: LiveData<RouteTrackingStats>
