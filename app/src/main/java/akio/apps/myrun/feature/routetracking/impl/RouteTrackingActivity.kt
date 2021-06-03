@@ -19,6 +19,8 @@ import akio.apps.myrun.feature.googlefit.GoogleFitLinkingDelegate
 import akio.apps.myrun.feature.home.HomeActivity
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
+import akio.apps.myrun.feature.routetracking.ui.StopDialogOptionId
+import akio.apps.myrun.feature.routetracking.ui.StopOptionsDialog
 import akio.apps.myrun.feature.routetracking.view.ActivitySettingsView
 import android.annotation.SuppressLint
 import android.content.Context
@@ -28,8 +30,8 @@ import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.libraries.maps.CameraUpdateFactory
@@ -213,6 +215,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         drawnLocationCount += batch.size
     }
 
+    @OptIn(ExperimentalMaterialApi::class)
     private fun initViews() {
         viewBinding.apply {
             setContentView(root)
@@ -220,9 +223,22 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             pauseButton.setOnClickListener { onPauseRouteTracking() }
             resumeButton.setOnClickListener { onResumeRouteTracking() }
             stopButton.setOnClickListener { onStopRouteTracking() }
-            viewBinding.activitySettingsView.eventListener = this@RouteTrackingActivity
+            activitySettingsView.eventListener = this@RouteTrackingActivity
+            viewBinding.composableStopOptionsView.setContent {
+                StopOptionsDialog(routeTrackingViewModel, ::selectStopOptionItem)
+            }
         }
     }
+
+    private fun selectStopOptionItem(selectedOptionId: StopDialogOptionId) =
+        when (selectedOptionId) {
+            StopDialogOptionId.Save -> saveActivity()
+            StopDialogOptionId.Discard -> {
+                TODO("not implemented yet")
+            }
+            StopDialogOptionId.Cancel -> {
+            }
+        }
 
     private fun updateViewsOnTrackingStopped() {
         viewBinding.apply {
@@ -275,14 +291,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     private fun onStopRouteTracking() {
-        // we are currently paused, do saving:
-        AlertDialog.Builder(this)
-            .setTitle(R.string.route_tracking_stop_confirmation_title)
-            .setPositiveButton(R.string.action_just_do_it) { _, _ ->
-                saveActivity()
-            }
-            .setNegativeButton(R.string.action_cancel) { _, _ -> }
-            .show()
+        routeTrackingViewModel.isStopOptionDialogShowing.value = true
     }
 
     @SuppressLint("MissingPermission")

@@ -31,6 +31,7 @@ import java.util.Calendar
 import javax.inject.Inject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class RouteTrackingViewModelImpl @Inject constructor(
@@ -50,6 +51,9 @@ class RouteTrackingViewModelImpl @Inject constructor(
 
     private val _mapInitialLocation = MutableLiveData<Event<LatLng>>()
     override val mapInitialLocation: LiveData<Event<LatLng>> = _mapInitialLocation
+
+    // TODO: Will refactor this screen to Composable
+    override val isStopOptionDialogShowing: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     private val _trackingLocationBatch = MutableLiveData<List<TrackingLocationEntity>>()
     override val trackingLocationBatch: LiveData<List<TrackingLocationEntity>> =

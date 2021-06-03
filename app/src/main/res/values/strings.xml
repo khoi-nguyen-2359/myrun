@@ -16,7 +16,7 @@
     <string name="error_location_service_unavailable">Please turn on location service to use this feature.</string>
     <string name="route_tracking_notification_title">Your route tracking is in progress</string>
     <string name="error_unknown">Unknown Error</string>
-    <string name="route_tracking_stop_confirmation_title">Stop and save your activity?</string>
+    <string name="route_tracking_stop_confirmation_title">You are stopped.</string>
     <string name="action_just_do_it">Just do it</string>
     <string name="route_tracking_activity_settings_activity_selection">"Activity type: %1$s"</string>
     <string name="activity_type_name_running">Running</string>
@@ -102,6 +102,8 @@
     <string name="activity_export_send_tracklog_title">Send tracklog of %1$s</string>
     <string name="action_send">Send</string>
     <string name="activity_export_progress_notification_finishing">Finishing</string>
+    <string name="route_tracking_save_activity">Finish and save activity</string>
+    <string name="route_tracking_discard_activity">Discard activity</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>
@@ -109,5 +111,10 @@
     <string-array name="photo_selection_options">
         <item>Camera</item>
         <item>Photo Gallery</item>
+    </string-array>
+    <string-array name="route_tracking_stop_options" >
+        <item>Finish and save activity</item>
+        <item>Discard activity</item>
+        <item>Cancel</item>
     </string-array>
 </resources>
