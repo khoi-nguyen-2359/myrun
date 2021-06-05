@@ -5,6 +5,11 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
 
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/composable_stop_options_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/tracking_map_view"
         android:name="com.google.android.libraries.maps.SupportMapFragment"
@@ -91,10 +96,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/resume_button" />
-
-    <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/composable_stop_options_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
