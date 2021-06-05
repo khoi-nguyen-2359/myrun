@@ -3,13 +3,12 @@ package akio.apps.myrun.feature.routetracking.impl
 import akio.apps._base.InstantTaskExecutorTest
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
+import akio.apps.myrun.data.location.LocationDataSource
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus.STOPPED
-import akio.apps.myrun.data.routetracking.model.LatLng
 import akio.apps.myrun.domain.activityexport.ClearExportActivityLocationUsecase
 import akio.apps.myrun.domain.activityexport.SaveExportActivityLocationsUsecase
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
-import akio.apps.myrun.domain.routetracking.GetMapInitialLocationUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.routetracking.SaveRouteTrackingActivityUsecase
 import akio.apps.myrun.domain.strava.ExportTrackingActivityToStravaFileUsecase
@@ -21,7 +20,6 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.verifyBlocking
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
@@ -30,7 +28,6 @@ import org.mockito.MockitoAnnotations
 
 @ExperimentalCoroutinesApi
 class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
-
     @Mock
     lateinit var mockedAuthenticationState: UserAuthenticationState
 
@@ -56,9 +53,6 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
     lateinit var mockedGetTrackedLocationsUsecase: GetTrackedLocationsUsecase
 
     @Mock
-    lateinit var mockedGetMapInitialLocationUsecase: GetMapInitialLocationUsecase
-
-    @Mock
     lateinit var mockedSaveExportActivityLocationsUsecase: SaveExportActivityLocationsUsecase
 
     @Mock
@@ -66,6 +60,9 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
 
     @Mock
     lateinit var mockedAppContext: Application
+
+    @Mock
+    lateinit var mockedLocationDataSource: LocationDataSource
 
     lateinit var testee: RouteTrackingViewModel
 
@@ -82,26 +79,20 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
 
         testee = createViewModel()
 
-        val mockedLatLng = LatLng(10.0, 20.0)
-        wheneverBlocking(mockedGetMapInitialLocationUsecase) { getMapInitialLocation() }
-            .thenReturn(mockedLatLng)
         wheneverBlocking(mockedRouteTrackingState) { getTrackingStatus() }
             .thenReturn(STOPPED)
 
         testee.requestInitialData()
 
-        assertEquals(mockedLatLng, testee.mapInitialLocation.value?.peekContent())
         assertNull(testee.trackingStats.value)
         assertNull(testee.trackingLocationBatch.value)
 
         verify(mockedRouteTrackingState).getTrackingStatusFlow()
-        verifyBlocking(mockedGetMapInitialLocationUsecase) { getMapInitialLocation() }
         verifyBlocking(mockedRouteTrackingState) { getTrackingStatus() }
     }
 
     private fun createViewModel() = RouteTrackingViewModelImpl(
         mockedAppContext,
-        mockedGetMapInitialLocationUsecase,
         mockedGetTrackedLocationsUsecase,
         mockedRouteTrackingState,
         mockedSaveRouteTrackingActivityUsecase,
@@ -111,6 +102,7 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
         mockedClearExportActivityLocationUsecase,
         mockedActivityMapper,
         mockedExternalAppProvidersRepository,
-        mockedAuthenticationState
+        mockedAuthenticationState,
+        mockedLocationDataSource
     )
 }

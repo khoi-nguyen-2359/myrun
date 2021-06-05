@@ -59,12 +59,11 @@ class LocationDataSourceImpl @Inject constructor(
             .flowOn(Dispatchers.Main) // need Main to request updates from location client
 
     private fun LocationRequestEntity.toGmsLocationRequest(): LocationRequest {
-        return LocationRequest().also {
-            it.fastestInterval = fastestInterval
-            it.interval = interval
-            it.maxWaitTime = maxWaitTime
-            it.priority = priority
-            it.smallestDisplacement = smallestDisplacement
-        }
+        val locationRequest = LocationRequest.create()
+        locationRequest.fastestInterval = fastestInterval
+        locationRequest.interval = interval
+        locationRequest.priority = priority
+        locationRequest.smallestDisplacement = smallestDisplacement
+        return locationRequest
     }
 }
