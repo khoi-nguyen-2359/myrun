@@ -28,7 +28,6 @@ import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
-import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationRequest
 import com.google.maps.android.SphericalUtil
@@ -199,26 +198,40 @@ class RouteTrackingService : Service() {
 
     private fun notifyTrackingNotification() = mainScope.launch {
         val notificationIntent = RouteTrackingActivity.launchIntent(this@RouteTrackingService)
+        val intentFlag = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        }
         val pendingIntent = PendingIntent.getActivity(
             this@RouteTrackingService,
             0,
             notificationIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            intentFlag
         )
 
         val durationDisplay =
             StatsPresentations.getDisplayDuration(routeTrackingState.getTrackingDuration())
         val distanceDisplay =
             StatsPresentations.getDisplayTrackingDistance(routeTrackingState.getRouteDistance())
-        val notification: Notification =
-            NotificationCompat.Builder(this@RouteTrackingService, NOTIF_CHANNEL_ID)
-                .setContentTitle(getString(R.string.route_tracking_notification_title))
-                .setContentText("$durationDisplay - $distanceDisplay Km")
-                .setSmallIcon(R.drawable.ic_run_circle)
-                .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setOnlyAlertOnce(true)
-                .build()
+        val notificationBuilder: Notification.Builder =
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                Notification.Builder(this@RouteTrackingService)
+            } else {
+                Notification.Builder(this@RouteTrackingService, NOTIF_CHANNEL_ID)
+            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            notificationBuilder.setForegroundServiceBehavior(
+                Notification.FOREGROUND_SERVICE_IMMEDIATE
+            )
+        }
+        val notification: Notification = notificationBuilder
+            .setContentTitle(getString(R.string.route_tracking_notification_title))
+            .setContentText("$durationDisplay - $distanceDisplay Km")
+            .setSmallIcon(R.drawable.ic_run_circle)
+            .setContentIntent(pendingIntent)
+            .setOnlyAlertOnce(true)
+            .build()
 
         startForeground(NOTIF_ID_TRACKING, notification)
     }
@@ -351,7 +364,7 @@ class RouteTrackingService : Service() {
             "akio.apps.myrun.feature.routetracking.impl.RouteTrackingService.NOTIF_CHANNEL_ID"
 
         private const val LOCATION_UPDATE_INTERVAL = 2000L
-        private const val SMALLEST_DISPLACEMENT = 1f
+        private const val SMALLEST_DISPLACEMENT = 3f
 
         private const val TRACKING_TIMER_PERIOD = 1000L
 

@@ -1,24 +1,25 @@
 object Versions {
-    const val versionName = "1.2.2" // x.yy.zz
-    const val versionCode = 1_02_02 // x_yy_zz
+    const val versionName = "1.3.0" // x.yy.zz
+    const val versionCode = 1_03_00 // x_yy_zz
 
-    const val compileSdk = 30
-    const val targetSdk = 30
     const val minSdk = 21
+    const val targetSdk = "S"
+    const val compileSdk = "android-S"
 
     const val agp = "7.0.0-beta03"
-    const val kotlin = "1.4.32"
-    const val coroutines = "1.4.3"
+    const val kotlin = "1.5.10"
+    const val coroutines = "1.5.0"
 
-    const val appCompat = "1.3.0-rc01"
+    const val androidxCore = "1.6.0-beta02"
+    const val appCompat = "1.3.0"
     const val activity = "1.3.0-alpha08"
     const val fragment = "1.3.3"
     const val constraintLayout = "2.0.4"
     const val androidMaterial = "1.3.0"
-    const val compose = "1.0.0-beta07"
+    const val compose = "1.0.0-beta08"
     const val composeConstraintLayout = "1.0.0-alpha07"
 
-    const val workManager = "2.5.0"
+    const val workManager = "2.7.0-alpha04"
     const val paging = "3.0.0"
     const val pagingCompose = "1.0.0-alpha09"
     const val room = "2.2.6"
