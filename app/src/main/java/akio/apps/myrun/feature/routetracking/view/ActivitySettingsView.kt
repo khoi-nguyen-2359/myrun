@@ -39,7 +39,6 @@ class ActivitySettingsView @JvmOverloads constructor(
     )
 
     init {
-        setBackgroundColor(Color.TRANSPARENT)
         viewBinding.activityTypeSelectionChip.setOnClickListener {
             showActivityTypeSelectionDialog()
         }
