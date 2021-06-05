@@ -6,14 +6,14 @@ import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
+import akio.apps.myrun.data.location.LocationDataSource
+import akio.apps.myrun.data.location.LocationRequestEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
-import akio.apps.myrun.data.routetracking.model.LatLng
 import akio.apps.myrun.domain.activityexport.ClearExportActivityLocationUsecase
 import akio.apps.myrun.domain.activityexport.SaveExportActivityLocationsUsecase
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
-import akio.apps.myrun.domain.routetracking.GetMapInitialLocationUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.routetracking.SaveRouteTrackingActivityUsecase
 import akio.apps.myrun.domain.strava.ExportTrackingActivityToStravaFileUsecase
@@ -23,6 +23,7 @@ import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import android.app.Application
 import android.graphics.Bitmap
+import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
@@ -31,12 +32,12 @@ import java.util.Calendar
 import javax.inject.Inject
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class RouteTrackingViewModelImpl @Inject constructor(
     private val application: Application,
-    private val getMapInitialLocationUsecase: GetMapInitialLocationUsecase,
     private val getTrackedLocationsUsecase: GetTrackedLocationsUsecase,
     private val routeTrackingState: RouteTrackingState,
     private val saveRouteTrackingActivityUsecase: SaveRouteTrackingActivityUsecase,
@@ -46,11 +47,9 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val clearExportActivityLocationUsecase: ClearExportActivityLocationUsecase,
     private val activityMapper: ActivityModelMapper,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
-    private val authenticationState: UserAuthenticationState
+    private val authenticationState: UserAuthenticationState,
+    private val locationDataSource: LocationDataSource
 ) : RouteTrackingViewModel() {
-
-    private val _mapInitialLocation = MutableLiveData<Event<LatLng>>()
-    override val mapInitialLocation: LiveData<Event<LatLng>> = _mapInitialLocation
 
     // TODO: Will refactor this screen to Composable
     override val isStopOptionDialogShowing: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -81,9 +80,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
     )
 
     override fun resumeDataUpdates() {
-        if (_mapInitialLocation.value != null &&
-            trackingStatus.value == RouteTrackingStatus.RESUMED
-        ) {
+        if (trackingStatus.value == RouteTrackingStatus.RESUMED) {
             requestDataUpdates()
         }
     }
@@ -97,9 +94,6 @@ class RouteTrackingViewModelImpl @Inject constructor(
 
     override fun requestInitialData() {
         launchCatching {
-            val initialLocation = getMapInitialLocationUsecase.getMapInitialLocation()
-            _mapInitialLocation.value = Event(initialLocation)
-
             _activityType.value = routeTrackingState.getActivityType()
 
             processedLocationCount = 0
@@ -128,6 +122,10 @@ class RouteTrackingViewModelImpl @Inject constructor(
 
             _saveActivitySuccess.value = Event(Unit)
         }
+    }
+
+    override fun getLocationUpdate(locationRequest: LocationRequestEntity): Flow<List<Location>> {
+        return locationDataSource.getLocationUpdate(locationRequest)
     }
 
     private fun makeActivityName(activityType: ActivityType): String {

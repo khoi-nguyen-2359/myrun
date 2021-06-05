@@ -1,6 +1,7 @@
 package akio.apps.myrun._base.utils
 
 import akio.apps.myrun.R
+import akio.apps.myrun.data.location.LocationRequestEntity
 import android.app.Activity
 import androidx.appcompat.app.AlertDialog
 import com.google.android.gms.common.api.ApiException
@@ -17,7 +18,7 @@ import kotlinx.coroutines.withContext
 
 class CheckLocationServiceDelegate(
     activity: Activity,
-    private val locationSampleRequests: List<LocationRequest>
+    private val sampleRequestEntity: LocationRequestEntity
 ) {
 
     private val locationSettingsClient: SettingsClient =
@@ -30,8 +31,14 @@ class CheckLocationServiceDelegate(
         activity: Activity,
         rcLocationService: Int
     ): Boolean = withContext(Dispatchers.IO) {
+        val sampleRequest = LocationRequest.create().apply {
+            interval = sampleRequestEntity.interval
+            fastestInterval = sampleRequestEntity.fastestInterval
+            priority = sampleRequestEntity.priority
+            smallestDisplacement = sampleRequestEntity.smallestDisplacement
+        }
         val settingsReq = LocationSettingsRequest.Builder()
-            .addAllLocationRequests(locationSampleRequests)
+            .addAllLocationRequests(listOf(sampleRequest))
             .build()
 
         return@withContext try {
