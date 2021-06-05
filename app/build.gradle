@@ -84,6 +84,7 @@ dependencies {
     implementation "com.google.dagger:dagger-android:$Versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$Versions.dagger"
 
+    implementation "androidx.core:core:$Versions.androidxCore"
     implementation "androidx.appcompat:appcompat:$Versions.appCompat"
     implementation "androidx.constraintlayout:constraintlayout:$Versions.constraintLayout"
     implementation "androidx.paging:paging-runtime-ktx:$Versions.paging"
