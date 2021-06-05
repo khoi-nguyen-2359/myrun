@@ -106,15 +106,7 @@ class RouteTrackingService : Service() {
         val locationRequest = createLocationTrackingRequest()
 
         locationUpdateJob?.cancel()
-        locationUpdateJob = locationDataSource.getLocationUpdate(
-            LocationRequestEntity(
-                locationRequest.fastestInterval,
-                locationRequest.interval,
-                locationRequest.maxWaitTime,
-                locationRequest.priority,
-                locationRequest.smallestDisplacement
-            )
-        )
+        locationUpdateJob = locationDataSource.getLocationUpdate(locationRequest)
             .onEach(::onLocationUpdate)
             .launchIn(mainScope)
     }
@@ -397,12 +389,12 @@ class RouteTrackingService : Service() {
                 action = ACTION_RESUME
             }
 
-        fun createLocationTrackingRequest(): LocationRequest = LocationRequest.create().apply {
-            interval = LOCATION_UPDATE_INTERVAL
-            fastestInterval = LOCATION_UPDATE_INTERVAL / 2
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        fun createLocationTrackingRequest(): LocationRequestEntity = LocationRequestEntity(
+            interval = LOCATION_UPDATE_INTERVAL,
+            fastestInterval = LOCATION_UPDATE_INTERVAL / 2,
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY,
             smallestDisplacement = SMALLEST_DISPLACEMENT
-        }
+        )
 
         @Suppress("DEPRECATION")
         fun isTrackingServiceRunning(context: Context): Boolean {
