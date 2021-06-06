@@ -4,7 +4,6 @@ import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.databinding.MergeActivitySettingsViewBinding
 import android.content.Context
-import android.graphics.Color
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ImageSpan
