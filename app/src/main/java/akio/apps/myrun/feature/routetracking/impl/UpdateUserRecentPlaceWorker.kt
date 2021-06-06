@@ -3,16 +3,18 @@ package akio.apps.myrun.feature.routetracking.impl
 import akio.apps.myrun.data.location.LocationDataSource
 import akio.apps.myrun.domain.recentplace.UpdateUserRecentPlaceUsecase
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
-import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import android.app.Application
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -43,6 +45,7 @@ class UpdateUserRecentPlaceWorker(
             updateUserRecentPlaceUsecase(lat, lng)
             Result.success()
         } catch (throwable: Throwable) {
+            Timber.e(throwable)
             Result.retry()
         }
     }
@@ -55,7 +58,7 @@ class UpdateUserRecentPlaceWorker(
                 .setRequiredNetworkType(NetworkType.UNMETERED)
                 .build()
 
-            val workRequest = PeriodicWorkRequestBuilder<UploadStravaFileWorker>(
+            val workRequest = PeriodicWorkRequestBuilder<UpdateUserRecentPlaceWorker>(
                 repeatInterval = 1,
                 TimeUnit.DAYS
             )
@@ -65,6 +68,23 @@ class UpdateUserRecentPlaceWorker(
                 .enqueueUniquePeriodicWork(
                     UNIQUE_WORK_NAME,
                     ExistingPeriodicWorkPolicy.KEEP,
+                    workRequest
+                )
+        }
+
+        fun enqueueImmediately(context: Context) {
+            val constraints = Constraints.Builder()
+                .setRequiresBatteryNotLow(true)
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+
+            val workRequest = OneTimeWorkRequestBuilder<UpdateUserRecentPlaceWorker>()
+                .setConstraints(constraints)
+                .build()
+            WorkManager.getInstance(context)
+                .enqueueUniqueWork(
+                    UNIQUE_WORK_NAME,
+                    ExistingWorkPolicy.REPLACE,
                     workRequest
                 )
         }
