@@ -48,22 +48,14 @@ fun ActivityInfoHeaderView(
     onClickExportFile: () -> Unit
 ) = Column(
     modifier = Modifier
-        .padding(
-            vertical = dimensionResource(id = R.dimen.common_item_vertical_padding)
-        )
+        .padding(vertical = dimensionResource(id = R.dimen.common_item_vertical_padding))
         .padding(start = dimensionResource(id = R.dimen.common_item_horizontal_padding))
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         UserAvatarImage(activityDetail = activityDetail)
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1.0f)) {
-            Text(
-                text = activityDetail.athleteInfo.userName.orEmpty(),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.subtitle2,
-                fontWeight = FontWeight.Bold
-            )
+            AthleteNameText(activityDetail)
             ActivityTimeAndPlaceText(activityDetail, activityDisplayPlaceName)
         }
         ActivityShareMenu(onClickExportFile)
@@ -71,6 +63,15 @@ fun ActivityInfoHeaderView(
     Spacer(modifier = Modifier.size(6.dp))
     ActivityNameText(activityDetail)
 }
+
+@Composable
+private fun AthleteNameText(activityDetail: Activity) = Text(
+    text = activityDetail.athleteInfo.userName.orEmpty(),
+    maxLines = 1,
+    overflow = TextOverflow.Ellipsis,
+    style = MaterialTheme.typography.subtitle2,
+    fontWeight = FontWeight.Bold
+)
 
 @Composable
 private fun ActivityNameText(activityDetail: Activity) = Text(
@@ -188,5 +189,5 @@ private fun PreviewActivityInfoHeader() = ActivityInfoHeaderView(
         pace = 1.0,
         cadence = 160
     ),
-    activityDisplayPlaceName = "California San Jose"
+    activityDisplayPlaceName = "California, Santa Clara County, San Jose"
 ) { }
