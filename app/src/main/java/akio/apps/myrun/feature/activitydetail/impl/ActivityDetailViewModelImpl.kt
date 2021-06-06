@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class ActivityDetailViewModelImpl @Inject constructor(
@@ -27,17 +28,18 @@ class ActivityDetailViewModelImpl @Inject constructor(
         MutableStateFlow(Resource.Loading())
     override val activityDetails: Flow<Resource<Activity>> = activityDetailsMutableStateFlow
 
-    override suspend fun getActivityPlaceDisplayName(): String? {
-        val userId = userAuthenticationState.getUserAccountId() ?: return null
-        val activityPlaceIdentifier =
-            activityDetailsMutableStateFlow.value.data?.placeIdentifier ?: return null
-        val currentUserPlaceIdentifier =
-            userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
-        return createActivityDisplayPlaceNameUsecase(
-            activityPlaceIdentifier,
-            currentUserPlaceIdentifier
-        )
-    }
+    override val activityPlaceName: Flow<String?> =
+        activityDetailsMutableStateFlow.map { resource ->
+            val userId = userAuthenticationState.getUserAccountId() ?: return@map null
+            val activityPlaceIdentifier = resource.data?.placeIdentifier ?: return@map null
+            val currentUserPlaceIdentifier =
+                userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
+            val placeName = createActivityDisplayPlaceNameUsecase(
+                activityPlaceIdentifier,
+                currentUserPlaceIdentifier
+            )
+            placeName
+        }
 
     override fun loadActivityDetails() {
         viewModelScope.launch {

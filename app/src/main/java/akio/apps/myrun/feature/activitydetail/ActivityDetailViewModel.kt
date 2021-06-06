@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 abstract class ActivityDetailViewModel : ViewModel() {
     abstract val activityDetails: Flow<Resource<Activity>>
-    abstract suspend fun getActivityPlaceDisplayName(): String?
+    abstract val activityPlaceName: Flow<String?>
     abstract fun loadActivityDetails()
 
     class ActivityNotFoundException : Exception()

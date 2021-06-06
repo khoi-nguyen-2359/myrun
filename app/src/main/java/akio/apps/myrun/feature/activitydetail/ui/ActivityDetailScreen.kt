@@ -31,7 +31,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,9 +51,10 @@ fun ActivityDetailScreen(
 ) = MyRunAppTheme {
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
-    val activityResource by activityDetailViewModel.activityDetails.collectAsState(
-        Resource.Loading()
-    )
+    val activityResource by activityDetailViewModel.activityDetails
+        .collectAsState(Resource.Loading())
+    val activityDisplayPlaceName by activityDetailViewModel.activityPlaceName
+        .collectAsState(initial = null)
     Scaffold(
         scaffoldState = scaffoldState,
         snackbarHost = { hostState ->
@@ -65,9 +65,6 @@ fun ActivityDetailScreen(
     ) {
         val activityDetail = activityResource.data
         if (activityDetail != null) {
-            val activityDisplayPlaceName by produceState<String?>(initialValue = null) {
-                value = activityDetailViewModel.getActivityPlaceDisplayName()
-            }
             Column {
                 ActivityInfoHeaderView1(activityDetail, activityDisplayPlaceName) {
                     onClickExportFile(activityDetail)
