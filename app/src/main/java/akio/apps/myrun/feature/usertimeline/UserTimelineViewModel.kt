@@ -6,7 +6,6 @@ import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 
 abstract class UserTimelineViewModel : ViewModel() {
-    abstract suspend fun isUserTimelineEmpty(): Boolean
     abstract val myActivityList: Flow<PagingData<Activity>>
 
     /**

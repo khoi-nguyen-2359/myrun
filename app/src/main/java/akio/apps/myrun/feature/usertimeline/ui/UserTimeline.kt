@@ -32,58 +32,100 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
-fun UserTimelineList(
+fun UserTimeline(
     contentPadding: PaddingValues,
     userTimelineViewModel: UserTimelineViewModel,
     onClickActivityAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit
 ) {
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
-    if (lazyPagingItems.loadState.refresh == LoadState.Loading) {
-        FullscreenLoadingView()
-    } else {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            contentPadding = contentPadding
-        ) {
-            items(lazyPagingItems) { activity ->
-                if (activity != null) {
-                    val activityDisplayPlaceName by produceState<String?>(
-                        initialValue = null,
-                        key1 = activity.id
-                    ) {
-                        value = userTimelineViewModel.getActivityDisplayPlaceName(activity)
-                    }
-                    TimelineActivityItem(
-                        activity,
-                        activityDisplayPlaceName,
-                        onClickActivityAction
-                    ) {
-                        onClickExportActivityFile(activity)
-                    }
-                } else {
-                    TimelineActivityPlaceholderItem()
-                }
-            }
+    when {
+        lazyPagingItems.loadState.refresh == LoadState.Loading ->
+            FullscreenLoadingView()
+        lazyPagingItems.loadState.append.endOfPaginationReached && lazyPagingItems.itemCount == 0 ->
+            UserTimelineEmptyMessage()
+        else -> UserTimelineActivityList(
+            contentPadding,
+            lazyPagingItems,
+            userTimelineViewModel,
+            onClickActivityAction,
+            onClickExportActivityFile
+        )
+    }
+}
 
-            if (lazyPagingItems.loadState.append == LoadState.Loading) {
-                item { LoadingItem() }
+@Composable
+private fun UserTimelineActivityList(
+    contentPadding: PaddingValues,
+    lazyPagingItems: LazyPagingItems<Activity>,
+    userTimelineViewModel: UserTimelineViewModel,
+    onClickActivityAction: (Activity) -> Unit,
+    onClickExportActivityFile: (Activity) -> Unit
+) = LazyColumn(
+    modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight(),
+    contentPadding = contentPadding
+) {
+    items(lazyPagingItems) { activity ->
+        if (activity != null) {
+            val activityDisplayPlaceName by produceState<String?>(
+                initialValue = null,
+                key1 = activity.id
+            ) {
+                value = userTimelineViewModel.getActivityDisplayPlaceName(activity)
             }
+            TimelineActivityItem(
+                activity,
+                activityDisplayPlaceName,
+                onClickActivityAction
+            ) {
+                onClickExportActivityFile(activity)
+            }
+        } else {
+            TimelineActivityPlaceholderItem()
         }
     }
+
+    if (lazyPagingItems.loadState.append == LoadState.Loading) {
+        item { LoadingItem() }
+    }
+}
+
+@Composable
+private fun UserTimelineEmptyMessage() = Box(
+    modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight()
+) {
+    Text(
+        text = stringResource(R.string.splash_welcome_text),
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(
+                horizontal = dimensionResource(R.dimen.common_page_horizontal_padding),
+                vertical = dimensionResource(R.dimen.user_timeline_listing_padding_bottom)
+            ),
+        color = colorResource(R.color.user_timeline_instruction_text),
+        fontSize = 30.sp,
+        fontStyle = FontStyle.Italic,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Center,
+    )
 }
 
 @Composable

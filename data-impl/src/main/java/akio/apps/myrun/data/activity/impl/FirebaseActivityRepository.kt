@@ -20,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import timber.log.Timber
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -70,8 +71,11 @@ class FirebaseActivityRepository @Inject constructor(
         stepCadenceDataPoints: List<SingleDataPoint<Int>>?,
         locationDataPoints: List<SingleDataPoint<LocationEntity>>
     ): String = withContext(ioDispatcher) {
+        Timber.d("=== SAVING ACTIVITY ===")
         val docRef = getUserActivityCollection(activity.athleteInfo.userId).document()
+        Timber.d("created activity document id=${docRef.id}")
 
+        Timber.d("uploading activity route image ...")
         val userActivityImageStorage = getActivityImageStorage(activity.athleteInfo.userId)
         val uploadedUri = FirebaseStorageUtils.uploadBitmap(
             userActivityImageStorage,
@@ -79,6 +83,7 @@ class FirebaseActivityRepository @Inject constructor(
             routeMapImage,
             THUMBNAIL_SCALED_SIZE
         )
+        Timber.d("[DONE] uploading activity route image url=$uploadedUri")
 
         val firestoreActivity = firestoreActivityMapper.mapRev(activity, docRef.id, uploadedUri)
 
@@ -86,6 +91,7 @@ class FirebaseActivityRepository @Inject constructor(
         val speedDocRef = dataPointCollections.document(PATH_DATA_POINTS_SPEED)
         val stepCadenceDocRef = dataPointCollections.document(PATH_DATA_POINTS_STEP_CADENCE)
         val locationDocRef = dataPointCollections.document(PATH_DATA_POINTS_LOCATIONS)
+        Timber.d("writing activity and data points to firebase ...")
         firestore.runBatch { batch ->
             batch.set(docRef, firestoreActivity)
             batch.set(
@@ -111,6 +117,7 @@ class FirebaseActivityRepository @Inject constructor(
             }
         }
             .await()
+        Timber.d("=== [DONE] SAVING ACTIVITY ===")
 
         docRef.id
     }
