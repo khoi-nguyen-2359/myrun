@@ -173,9 +173,8 @@ private fun TimelineActivityItem(
     elevation = 2.dp,
     modifier = Modifier
         .padding(top = 24.dp, bottom = 12.dp)
-        .clickable { onClickActivityAction(activity) }
 ) {
-    Column {
+    Column(modifier = Modifier.clickable { onClickActivityAction(activity) }) {
         ActivityInfoHeaderView(activity, activityDisplayPlaceName, onClickExportFile)
         Image(
             painter = rememberCoilPainter(
