@@ -28,7 +28,8 @@ fun StopOptionsDialog(
     routeTrackingViewModel: RouteTrackingViewModel,
     itemSelectAction: (StopDialogOptionId) -> Unit
 ) = MyRunAppTheme {
-    val isShowingState by routeTrackingViewModel.isStopOptionDialogShowing.collectAsState(initial = false)
+    val isShowingState by routeTrackingViewModel.isStopOptionDialogShowing
+        .collectAsState(initial = false)
     if (!isShowingState) {
         return@MyRunAppTheme
     }
@@ -42,23 +43,24 @@ fun StopOptionsDialog(
         ),
         Triple(StopDialogOptionId.Cancel, Icons.Rounded.TransitEnterexit, R.string.action_close)
     )
-    Dialog(onDismissRequest = {
-        routeTrackingViewModel.isStopOptionDialogShowing.value = false
-    }) {
+    Dialog(
+        onDismissRequest = { routeTrackingViewModel.isStopOptionDialogShowing.value = false }
+    ) {
         Surface(shape = MaterialTheme.shapes.medium) {
             Column {
                 items.forEach { item ->
+                    val (itemId, icon, label) = item
                     ListItem(
                         icon = {
                             Icon(
-                                imageVector = item.second,
-                                contentDescription = stringResource(id = item.third)
+                                imageVector = icon,
+                                contentDescription = stringResource(id = label)
                             )
                         },
-                        text = { Text(text = stringResource(id = item.third)) },
+                        text = { Text(text = stringResource(id = label)) },
                         modifier = Modifier.clickable {
                             routeTrackingViewModel.isStopOptionDialogShowing.value = false
-                            itemSelectAction(item.first)
+                            itemSelectAction(itemId)
                         }
                     )
                 }
