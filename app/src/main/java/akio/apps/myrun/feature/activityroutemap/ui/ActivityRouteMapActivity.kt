@@ -58,7 +58,11 @@ class ActivityRouteMapActivity : AppCompatActivity() {
     private suspend fun initMap() {
         map = suspendCancellableCoroutine { continuation ->
             (supportFragmentManager.findFragmentById(R.id.activity_map_view) as? SupportMapFragment)
-                ?.getMapAsync(continuation::resume)
+                ?.getMapAsync { googleMap ->
+                    runOnUiThread {
+                        continuation.resume(googleMap)
+                    }
+                }
         }
         map.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(this, R.raw.google_map_styles)
