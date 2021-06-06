@@ -11,6 +11,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class UserTimelineViewModelImpl @Inject constructor(
     private val activityPagingSource: ActivityPagingSource,
@@ -28,30 +29,30 @@ class UserTimelineViewModelImpl @Inject constructor(
         initialKey = System.currentTimeMillis()
     ) { activityPagingSource }.flow
 
-    private lateinit var currentUserPlaceIdentifier: CurrentUserPlaceIdentifier
-    private suspend fun initUserRecentPlaceIdentifier(): CurrentUserPlaceIdentifier {
-        if (!::currentUserPlaceIdentifier.isInitialized) {
-            val userId = userAuthenticationState.getUserAccountId()
-            val identifier = if (userId != null) {
-                userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
-            } else {
-                null
-            }
-            currentUserPlaceIdentifier = CurrentUserPlaceIdentifier(identifier)
+    private val mapActivityIdToPlaceName: MutableMap<String, String?> = mutableMapOf()
+
+    override val userRecentPlaceIdentifier: Flow<PlaceIdentifier?> = flow {
+        val userId = userAuthenticationState.getUserAccountId() ?: return@flow
+        val identifier = userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
+        emit(identifier)
+    }
+
+    override fun getActivityDisplayPlaceName(
+        currentUserPlaceIdentifier: PlaceIdentifier?,
+        activityId: String,
+        activityPlaceIdentifier: PlaceIdentifier?
+    ): String? {
+        var placeName = mapActivityIdToPlaceName[activityId]
+        if (placeName == null) {
+            placeName = createActivityDisplayPlaceNameUsecase(
+                activityPlaceIdentifier,
+                currentUserPlaceIdentifier
+            )
+            mapActivityIdToPlaceName[activityId] = placeName
         }
-        return currentUserPlaceIdentifier
-    }
 
-    override suspend fun getActivityDisplayPlaceName(activity: Activity): String? {
-        val activityPlaceIdentifier = activity.placeIdentifier
-        val userRecentPlaceIdentifier = initUserRecentPlaceIdentifier()
-        return createActivityDisplayPlaceNameUsecase(
-            activityPlaceIdentifier,
-            userRecentPlaceIdentifier.identifier
-        )
+        return placeName
     }
-
-    private class CurrentUserPlaceIdentifier(val identifier: PlaceIdentifier?)
 
     companion object {
         const val PAGE_SIZE = 4
