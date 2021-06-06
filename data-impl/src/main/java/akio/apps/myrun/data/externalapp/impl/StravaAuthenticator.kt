@@ -87,9 +87,11 @@ class StravaAuthenticator(
         }
 
         Timber.e(
-            "refresh Strava token failed. code=${refreshResponse.code}, " +
-                "access_token=$originalAccessToken, " +
-                "refresh_token=$originalRefreshToken"
+            Exception(
+                "refresh Strava token failed. code=${refreshResponse.code}, " +
+                    "access_token=$originalAccessToken, " +
+                    "refresh_token=$originalRefreshToken"
+            )
         )
         runBlocking { externalAppProvidersRepository.removeStravaProvider(userAccountId) }
 

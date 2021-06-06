@@ -9,7 +9,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
-import timber.log.Timber
 
 class RouteTrackingStatsView @JvmOverloads constructor(
     context: Context,
@@ -57,7 +56,6 @@ class RouteTrackingStatsView @JvmOverloads constructor(
     }
 
     fun update(stats: RouteTrackingStats) = viewBinding.apply {
-        Timber.d(stats.toString())
         distanceTextView.text = StatsPresentations.getDisplayTrackingDistance(stats.distance)
         timeTextView.text = StatsPresentations.getDisplayDuration(stats.duration)
         speedTextView.text = speedPresenter?.invoke(stats.speed)

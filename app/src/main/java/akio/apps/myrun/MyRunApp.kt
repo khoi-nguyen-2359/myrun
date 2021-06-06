@@ -1,6 +1,7 @@
 package akio.apps.myrun
 
 import akio.apps._base.utils.CrashReportTree
+import akio.apps._base.utils.MyDebugTree
 import akio.apps.myrun._di.AppComponent
 import akio.apps.myrun._di.DaggerAppComponent
 import akio.apps.myrun.data.routetracking.RouteTrackingState
@@ -88,7 +89,7 @@ class MyRunApp : Application(), LifecycleObserver, AppComponent.Holder, Configur
 
     private fun setupLogging() {
         if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
+            Timber.plant(MyDebugTree(application = this))
         } else {
             Timber.plant(CrashReportTree())
         }
