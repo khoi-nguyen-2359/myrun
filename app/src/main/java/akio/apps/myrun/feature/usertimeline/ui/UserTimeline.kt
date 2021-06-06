@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -39,8 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -82,7 +79,9 @@ private fun UserTimelineActivityList(
     val userRecentPlaceIdentifier by userTimelineViewModel.userRecentPlaceIdentifier
         .collectAsState(initial = null)
     LazyColumn(
-        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
         contentPadding = contentPadding
     ) {
         items(lazyPagingItems) { activity ->
@@ -108,7 +107,9 @@ private fun UserTimelineActivityList(
 
 @Composable
 private fun UserTimelineEmptyMessage() = Box(
-    modifier = Modifier.fillMaxWidth().fillMaxHeight()
+    modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight()
 ) {
     Text(
         text = stringResource(R.string.splash_welcome_text),
@@ -136,7 +137,9 @@ private fun FullscreenLoadingView() = Box(
 
 @Composable
 private fun LoadingItem() = Column(
-    modifier = Modifier.padding(20.dp).fillMaxWidth(),
+    modifier = Modifier
+        .padding(20.dp)
+        .fillMaxWidth(),
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
     CircularProgressIndicator()
@@ -155,7 +158,9 @@ private fun LoadingItemPreview() = LoadingItem()
 @Composable
 fun TimelineActivityPlaceholderItem() = Surface(
     elevation = 2.dp,
-    modifier = Modifier.fillMaxWidth().aspectRatio(1.5f)
+    modifier = Modifier
+        .fillMaxWidth()
+        .aspectRatio(1.5f)
 ) {
     Image(
         painter = painterResource(id = R.drawable.common_avatar_placeholder_image),
@@ -171,8 +176,7 @@ private fun TimelineActivityItem(
     onClickExportFile: () -> Unit
 ) = Surface(
     elevation = 2.dp,
-    modifier = Modifier
-        .padding(top = 24.dp, bottom = 12.dp)
+    modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
 ) {
     Column(modifier = Modifier.clickable { onClickActivityAction(activity) }) {
         ActivityInfoHeaderView(activity, activityDisplayPlaceName, onClickExportFile)
@@ -183,7 +187,9 @@ private fun TimelineActivityItem(
                 previewPlaceholder = R.drawable.ic_run_circle
             ),
             contentDescription = "Activity route image",
-            modifier = Modifier.fillMaxWidth().aspectRatio(1.5f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1.5f),
             contentScale = ContentScale.Crop,
         )
         TimelineActivityPerformanceRow(

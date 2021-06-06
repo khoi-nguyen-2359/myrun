@@ -4,15 +4,14 @@ import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun._base.utils.toGmsLatLng
+import akio.apps.myrun._base.utils.toLocationEntity
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.location.LocationDataSource
-import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.location.LocationRequestEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
-import akio.apps.myrun.domain.recentplace.UpdateUserRecentPlaceUsecase
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import android.annotation.SuppressLint
@@ -61,9 +60,6 @@ class RouteTrackingService : Service() {
 
     @Inject
     lateinit var fitnessDataRepository: FitnessDataRepository
-
-    @Inject
-    lateinit var updateUserRecentPlaceUsecase: UpdateUserRecentPlaceUsecase
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         Timber.e(exception)
@@ -120,22 +116,10 @@ class RouteTrackingService : Service() {
         if (startLocation == null) {
             val firstLocation = locations.firstOrNull()
             if (firstLocation != null) {
-                onFirstLocationUpdate(firstLocation)
+                routeTrackingState.setStartLocation(firstLocation.toLocationEntity())
                 startLocation = firstLocation
             }
         }
-    }
-
-    private suspend fun onFirstLocationUpdate(firstLocation: Location) {
-        routeTrackingState.setStartLocation(
-            LocationEntity(
-                firstLocation.latitude,
-                firstLocation.longitude,
-                firstLocation.altitude
-            )
-        )
-
-        updateUserRecentPlaceUsecase(firstLocation.latitude, firstLocation.longitude)
     }
 
     inner class InstantSpeedCalculator {
@@ -250,6 +234,7 @@ class RouteTrackingService : Service() {
 
     private fun onActionStart() {
         Timber.d("onActionStart")
+        UpdateUserRecentPlaceWorker.enqueueImmediately(this)
         setRouteTrackingStartState()
         startTrackingTimer()
         notifyTrackingNotification()
