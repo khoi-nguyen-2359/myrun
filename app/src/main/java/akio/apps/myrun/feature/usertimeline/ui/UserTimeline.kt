@@ -22,12 +22,13 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -38,6 +39,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -75,42 +78,37 @@ private fun UserTimelineActivityList(
     userTimelineViewModel: UserTimelineViewModel,
     onClickActivityAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit
-) = LazyColumn(
-    modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight(),
-    contentPadding = contentPadding
 ) {
-    items(lazyPagingItems) { activity ->
-        if (activity != null) {
-            val activityDisplayPlaceName by produceState<String?>(
-                initialValue = null,
-                key1 = activity.id
-            ) {
-                value = userTimelineViewModel.getActivityDisplayPlaceName(activity)
+    val userRecentPlaceIdentifier by userTimelineViewModel.userRecentPlaceIdentifier
+        .collectAsState(initial = null)
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+        contentPadding = contentPadding
+    ) {
+        items(lazyPagingItems) { activity ->
+            if (activity != null) {
+                val activityDisplayPlaceName = userTimelineViewModel.getActivityDisplayPlaceName(
+                    userRecentPlaceIdentifier,
+                    activity.id,
+                    activity.placeIdentifier
+                )
+                TimelineActivityItem(activity, activityDisplayPlaceName, onClickActivityAction) {
+                    onClickExportActivityFile(activity)
+                }
+            } else {
+                TimelineActivityPlaceholderItem()
             }
-            TimelineActivityItem(
-                activity,
-                activityDisplayPlaceName,
-                onClickActivityAction
-            ) {
-                onClickExportActivityFile(activity)
-            }
-        } else {
-            TimelineActivityPlaceholderItem()
         }
-    }
 
-    if (lazyPagingItems.loadState.append == LoadState.Loading) {
-        item { LoadingItem() }
+        if (lazyPagingItems.loadState.append == LoadState.Loading) {
+            item { LoadingItem() }
+        }
     }
 }
 
 @Composable
 private fun UserTimelineEmptyMessage() = Box(
-    modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight()
+    modifier = Modifier.fillMaxWidth().fillMaxHeight()
 ) {
     Text(
         text = stringResource(R.string.splash_welcome_text),
@@ -138,9 +136,7 @@ private fun FullscreenLoadingView() = Box(
 
 @Composable
 private fun LoadingItem() = Column(
-    modifier = Modifier
-        .padding(20.dp)
-        .fillMaxWidth(),
+    modifier = Modifier.padding(20.dp).fillMaxWidth(),
     horizontalAlignment = Alignment.CenterHorizontally
 ) {
     CircularProgressIndicator()
@@ -159,9 +155,7 @@ private fun LoadingItemPreview() = LoadingItem()
 @Composable
 fun TimelineActivityPlaceholderItem() = Surface(
     elevation = 2.dp,
-    modifier = Modifier
-        .fillMaxWidth()
-        .aspectRatio(1.5f)
+    modifier = Modifier.fillMaxWidth().aspectRatio(1.5f)
 ) {
     Image(
         painter = painterResource(id = R.drawable.common_avatar_placeholder_image),
@@ -190,9 +184,7 @@ private fun TimelineActivityItem(
                 previewPlaceholder = R.drawable.ic_run_circle
             ),
             contentDescription = "Activity route image",
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1.5f),
+            modifier = Modifier.fillMaxWidth().aspectRatio(1.5f),
             contentScale = ContentScale.Crop,
         )
         TimelineActivityPerformanceRow(
