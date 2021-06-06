@@ -65,5 +65,5 @@ object Versions {
     const val androidXJunit = "1.1.2"
     const val uiAutomator = "2.2.0"
     const val espresso = "3.3.0"
-    const val turbine = "0.4.1"
+    const val turbine = "0.5.2"
 }
