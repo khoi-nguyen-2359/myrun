@@ -5,8 +5,10 @@ import akio.apps.myrun.R
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import timber.log.Timber
 
 class MyDebugTree(private val application: MyRunApp) : Timber.DebugTree() {
@@ -19,13 +21,20 @@ class MyDebugTree(private val application: MyRunApp) : Timber.DebugTree() {
         val customizedTag = "MyRun/$tag"
         super.log(priority, customizedTag, message, t)
 
-        val cause = CrashReportTree.reportErrorCause(priority, message, t)
-        if (cause != null) {
-            notifyErrorReport(cause)
+        if (priority == Log.ERROR && t != null) {
+            recordException(message, t)
+            notifyExceptionReport(t)
         }
     }
 
-    private fun notifyErrorReport(cause: Throwable) {
+    private fun recordException(message: String, t: Throwable) {
+        if (message.isNotEmpty()) {
+            FirebaseCrashlytics.getInstance().log(message)
+        }
+        FirebaseCrashlytics.getInstance().recordException(t)
+    }
+
+    private fun notifyExceptionReport(cause: Throwable) {
         val notification = NotificationCompat.Builder(application, CHANNEL_ID)
             .setContentText("A ${cause::class.simpleName} has just been reported by Crashlytics.")
             .setSmallIcon(R.drawable.ic_run_circle)
