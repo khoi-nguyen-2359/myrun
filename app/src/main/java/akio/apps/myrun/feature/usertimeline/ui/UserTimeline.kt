@@ -54,8 +54,7 @@ fun UserTimeline(
 ) {
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
     when {
-        lazyPagingItems.loadState.refresh == LoadState.Loading ->
-            FullscreenLoadingView()
+        lazyPagingItems.loadState.refresh == LoadState.Loading -> FullscreenLoadingView()
         lazyPagingItems.loadState.append.endOfPaginationReached && lazyPagingItems.itemCount == 0 ->
             UserTimelineEmptyMessage()
         else -> UserTimelineActivityList(
