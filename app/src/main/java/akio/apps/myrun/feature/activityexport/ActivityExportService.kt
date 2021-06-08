@@ -15,6 +15,7 @@ import android.os.IBinder
 import android.os.Parcelable
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import timber.log.Timber
 import java.io.File
@@ -45,6 +46,8 @@ class ActivityExportService : Service() {
     }
 
     private val mainScope = CoroutineScope(SupervisorJob() + Dispatchers.Main + exceptionHandler)
+
+    private val activityStartTimeFormatter = SimpleDateFormat("MMM dd, yyyy")
 
     override fun onCreate() {
         super.onCreate()
@@ -155,28 +158,36 @@ class ActivityExportService : Service() {
         } else {
             PendingIntent.FLAG_ONE_SHOT
         }
-        val sendIntent = Intent(this, SendActionBroadcastReceiver::class.java)
-        sendIntent.data = shareFileContentUri
-        sendIntent.putExtra(EXTRA_ACTIVITY_INFO, activityInfo)
-        val pendingIntent = PendingIntent.getBroadcast(
-            this,
-            REQUEST_CODE_SEND_ACTION,
+        val sendIntent = Intent(Intent.ACTION_SEND)
+        sendIntent.putExtra(Intent.EXTRA_STREAM, shareFileContentUri)
+        sendIntent.type = "application/vnd.garmin.tcx+xml"
+        sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        val chooserIntent = Intent.createChooser(
             sendIntent,
-            pendingIntentFlag
+            getString(R.string.activity_export_send_tracklog_title, activityDescription)
         )
-        val sendAction = NotificationCompat.Action(
-            /* icon = */ null,
-            /* title = */ getString(R.string.action_send),
-            /* intent = */ pendingIntent
+        chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            chooserIntent,
+            pendingIntentFlag
         )
         val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_run_circle)
-            .setContentTitle(getString(R.string.activity_export_success_notification_title))
-            .setContentText(activityDescription)
-            .addAction(sendAction)
+            .setContentTitle(activityDescription)
+            .setContentText(getString(R.string.activity_export_success_notification_title))
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
             .build()
         NotificationManagerCompat.from(this)
             .notify(activityInfo.notificationId, notification)
+    }
+
+    private fun createActivityDescription(activityInfo: ActivityInfo): String {
+        val activityFormattedStartTime =
+            activityStartTimeFormatter.format(Date(activityInfo.startTime))
+        return "${activityInfo.name} on $activityFormattedStartTime"
     }
 
     private fun createNotificationChannel() {
@@ -209,26 +220,6 @@ class ActivityExportService : Service() {
         val notificationId: Int = startTime.toInt()
     }
 
-    class SendActionBroadcastReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val activityInfo = intent.getParcelableExtra<ActivityInfo>(EXTRA_ACTIVITY_INFO)
-                ?: return
-            NotificationManagerCompat.from(context).cancel(activityInfo.notificationId)
-            val shareFileContentUri = intent.data
-            val sendIntent = Intent(Intent.ACTION_SEND)
-            sendIntent.putExtra(Intent.EXTRA_STREAM, shareFileContentUri)
-            sendIntent.type = "application/vnd.garmin.tcx+xml"
-
-            val activityDescription = createActivityDescription(activityInfo)
-            val chooserIntent = Intent.createChooser(
-                sendIntent,
-                context.getString(R.string.activity_export_send_tracklog_title, activityDescription)
-            )
-            chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(chooserIntent)
-        }
-    }
-
     companion object {
         private const val NOTIFICATION_CHANNEL_ID =
             "akio.apps.myrun.feature.activityexport.ExportActivityService.NOTIFICATION_CHANNEL_ID"
@@ -240,18 +231,10 @@ class ActivityExportService : Service() {
             "akio.apps.myrun.feature.activityexport.ExportActivityService.ACTION_ADD_ACTIVITY_ID"
 
         private const val REQUEST_CODE_ADD_ACTIVITY = 1
-        private const val REQUEST_CODE_SEND_ACTION = 2
 
         fun createAddActivityIntent(context: Context, activityInfo: ActivityInfo): Intent =
             Intent(context, ActivityExportService::class.java)
                 .setAction(ACTION_ADD_ACTIVITY)
                 .putExtra(EXTRA_ACTIVITY_INFO, activityInfo)
-
-        private fun createActivityDescription(activityInfo: ActivityInfo): String {
-            val activityStartTimeFormatter = SimpleDateFormat("MMM dd, yyyy")
-            val activityFormattedStartTime =
-                activityStartTimeFormatter.format(Date(activityInfo.startTime))
-            return "${activityInfo.name} on $activityFormattedStartTime"
-        }
     }
 }
