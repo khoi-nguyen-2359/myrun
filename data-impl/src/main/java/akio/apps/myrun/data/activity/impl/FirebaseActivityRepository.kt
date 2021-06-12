@@ -73,7 +73,11 @@ class FirebaseActivityRepository @Inject constructor(
         locationDataPoints: List<SingleDataPoint<LocationEntity>>
     ): String = withContext(ioDispatcher) {
         Timber.d("=== SAVING ACTIVITY ===")
-        val docRef = getUserActivityCollection(activity.athleteInfo.userId).document()
+        val docRef = if (activity.id.isNotEmpty()) {
+            getUserActivityCollection(activity.athleteInfo.userId).document(activity.id)
+        } else {
+            getUserActivityCollection(activity.athleteInfo.userId).document()
+        }
         Timber.d("created activity document id=${docRef.id}")
 
         Timber.d("uploading activity route image ...")
