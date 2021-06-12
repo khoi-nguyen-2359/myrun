@@ -1,11 +1,10 @@
-package akio.apps.myrun.domain.activityexport
+package akio.apps.myrun.data.activity.impl
 
-import akio.apps.myrun._base.runfile.ClosableFileSerializer
-import akio.apps.myrun._base.runfile.ZipFileSerializer
-import akio.apps.myrun._base.utils.toGmsLatLng
+import akio.apps.myrun.data.activity.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.activitysharing.model.ActivityLocation
+import com.google.android.libraries.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import com.sweetzpot.tcxzpot.Activities
 import com.sweetzpot.tcxzpot.Cadence
@@ -23,8 +22,8 @@ import java.io.File
 import java.util.Date
 import javax.inject.Inject
 
-class ActivityTcxFileWriter @Inject constructor() {
-    fun writeTcxFile(
+class ActivityTcxFileWriterImpl @Inject constructor() : ActivityTcxFileWriter {
+    override suspend fun writeTcxFile(
         activity: ActivityModel,
         locations: List<ActivityLocation>,
         cadences: List<Int>,
@@ -86,8 +85,8 @@ class ActivityTcxFileWriter @Inject constructor() {
                                                     lastLocation?.let {
                                                         currentDistance +=
                                                             SphericalUtil.computeDistanceBetween(
-                                                                it.toGmsLatLng(),
-                                                                waypoint.toGmsLatLng()
+                                                                LatLng(it.latitude, it.longitude),
+                                                                LatLng(waypoint.latitude, waypoint.longitude)
                                                             )
                                                         lastLocation = waypoint
                                                         withDistance(currentDistance)

@@ -44,8 +44,6 @@ dependencies {
 
     implementation "com.jakewharton.timber:timber:$Versions.timber"
 
-    implementation "com.sweetzpot.tcxzpot:lib:$Versions.tcxzPot"
-
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
 
     testImplementation(testFixtures(project(':test')))

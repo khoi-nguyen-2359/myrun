@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'kotlinx-serialization'
 }
 
 android {
@@ -38,6 +39,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$Versions.coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$Versions.coroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$Versions.kotlinSerialization"
 
     implementation "com.google.dagger:dagger:$Versions.dagger"
     kapt "com.google.dagger:dagger-compiler:$Versions.dagger"
@@ -65,9 +67,12 @@ dependencies {
 
     implementation "com.jakewharton.timber:timber:$Versions.timber"
 
+    implementation "com.sweetzpot.tcxzpot:lib:$Versions.tcxzPot"
+
     // Google Places SDK
     implementation project(':places-sdk')
     implementation "com.google.android.libraries.maps:maps:$Versions.androidGoogleMap"
+    implementation "com.google.maps.android:android-maps-utils-v3:$Versions.androidMapUtils"
     implementation "com.google.android.gms:play-services-gcm:$Versions.playServicesGcm"
     implementation "com.google.auto.value:auto-value-annotations:$Versions.autoValueAnnotation"
 

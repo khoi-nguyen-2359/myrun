@@ -96,7 +96,12 @@
             android:enabled="true"
             android:exported="false" />
 
-        <!--        Facebook Login -->
+        <service android:name=".feature.routetracking.impl.ActivityUploadService"
+            android:exported="false"
+            android:enabled="true"
+            />
+
+      <!--        Facebook Login -->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />

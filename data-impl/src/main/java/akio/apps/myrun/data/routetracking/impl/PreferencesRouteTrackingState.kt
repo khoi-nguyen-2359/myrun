@@ -88,7 +88,7 @@ class PreferencesRouteTrackingState @Inject constructor(
     override suspend fun getActivityType(): ActivityType = prefDataStore.data
         .map { data ->
             data[KEY_ACTIVITY_TYPE]
-                ?.let { ActivityType.valueOf(it) }
+                ?.let { ActivityType.from(it) }
                 ?: ActivityType.Running
         }
         .first()

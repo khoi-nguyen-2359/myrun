@@ -104,7 +104,8 @@
     <string name="activity_export_progress_notification_finishing">Finishing</string>
     <string name="route_tracking_save_activity">Finish and save activity</string>
     <string name="route_tracking_discard_activity">Discard activity</string>
-    <string-array name="user_timeline_activity_selection_items">
+  <string name="activity_upload_notification_title">Uploading your activity</string>
+  <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>
     </string-array>
