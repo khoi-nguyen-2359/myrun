@@ -15,11 +15,10 @@ import akio.apps.myrun.domain.activityexport.ClearExportActivityLocationUsecase
 import akio.apps.myrun.domain.activityexport.SaveExportActivityLocationsUsecase
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
-import akio.apps.myrun.domain.routetracking.SaveRouteTrackingActivityUsecase
+import akio.apps.myrun.domain.routetracking.StoreTrackingActivityDataUsecase
 import akio.apps.myrun.domain.strava.ExportTrackingActivityToStravaFileUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
-import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import android.app.Application
 import android.graphics.Bitmap
@@ -30,7 +29,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import java.util.Calendar
 import javax.inject.Inject
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,11 +38,11 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val application: Application,
     private val getTrackedLocationsUsecase: GetTrackedLocationsUsecase,
     private val routeTrackingState: RouteTrackingState,
-    private val saveRouteTrackingActivityUsecase: SaveRouteTrackingActivityUsecase,
     private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase,
     private val saveExportActivityLocationsUsecase: SaveExportActivityLocationsUsecase,
     private val exportActivityToStravaFileUsecase: ExportTrackingActivityToStravaFileUsecase,
     private val clearExportActivityLocationUsecase: ClearExportActivityLocationUsecase,
+    private val storeTrackingActivityDataUsecase: StoreTrackingActivityDataUsecase,
     private val activityMapper: ActivityModelMapper,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val authenticationState: UserAuthenticationState,
@@ -110,14 +108,8 @@ class RouteTrackingViewModelImpl @Inject constructor(
                 ?: return@launchCatching
 
             val activityName = makeActivityName(activityType)
-            val activity =
-                saveRouteTrackingActivityUsecase.saveCurrentActivity(
-                    activityType,
-                    activityName,
-                    routeMapImage
-                )
-            mayScheduleStravaActivityUpload(activityMapper.map(activity))
-
+            storeTrackingActivityDataUsecase(activityName, routeMapImage)
+            scheduleActivitySyncIfAvailable()
             clearRouteTrackingStateUsecase.clear()
 
             _saveActivitySuccess.value = Event(Unit)
@@ -146,18 +138,11 @@ class RouteTrackingViewModelImpl @Inject constructor(
         }
     }
 
-    private suspend fun mayScheduleStravaActivityUpload(activity: Activity) {
+    private suspend fun scheduleActivitySyncIfAvailable() {
         val userAccountId = authenticationState.getUserAccountId()
-        if (userAccountId == null ||
-            externalAppProvidersRepository.getStravaProviderToken(userAccountId) == null
+        if (userAccountId != null &&
+            externalAppProvidersRepository.getStravaProviderToken(userAccountId) != null
         ) {
-            return
-        }
-
-        saveExportActivityLocationsUsecase(activity.id)
-        GlobalScope.launch {
-            exportActivityToStravaFileUsecase(activityMapper.mapRev(activity), false)
-            clearExportActivityLocationUsecase(activity.id)
             UploadStravaFileWorker.enqueueForFinishedActivity(application)
         }
     }

@@ -1,5 +1,12 @@
 package akio.apps.myrun.data.activity.model
 
-enum class ActivityType {
-    Running, Cycling, Unknown
+enum class ActivityType(val identity: String) {
+    Running("ActivityType1"),
+    Cycling("ActivityType2"),
+    Unknown("ActivityType3");
+
+    companion object {
+        fun from(identity: String): ActivityType = values().find { it.identity == identity }
+            ?: Unknown
+    }
 }

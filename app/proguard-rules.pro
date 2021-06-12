@@ -61,3 +61,26 @@
 
 # Google Map v3 Beta
 -keep,allowoptimization class com.google.android.libraries.maps.** { *; }
+
+-keepattributes *Annotation*, InnerClasses
+
+##---------------Begin: proguard configuration for Kotlin Serialization  ----------
+-dontnote kotlinx.serialization.AnnotationsKt # core serialization annotations
+
+# kotlinx-serialization-json specific. Add this if you have java.lang.NoClassDefFoundError kotlinx.serialization.json.JsonObjectSerializer
+-keepclassmembers class kotlinx.serialization.json.** {
+    *** Companion;
+}
+-keepclasseswithmembers class kotlinx.serialization.json.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+-keep,includedescriptorclasses class akio.apps.myrun.**$$serializer { *; }
+-keepclassmembers class akio.apps.myrun.** {
+    *** Companion;
+}
+-keepclasseswithmembers class akio.apps.myrun.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+##---------------End: proguard configuration for Kotlin Serialization  ----------
