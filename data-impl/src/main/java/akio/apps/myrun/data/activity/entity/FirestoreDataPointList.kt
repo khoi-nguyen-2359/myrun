@@ -25,10 +25,8 @@ class FirestoreDataPointDeserializer<T>(
         val dataPointIterator = dataPointList.iterator()
         val result = mutableListOf<SingleDataPoint<T>>()
         while (dataPointIterator.hasNext()) {
-            val time = dataPointIterator.next()
-                .toLong()
+            val time = dataPointIterator.next().toLong()
             val value = dataPointParser.build(dataPointIterator)
-
             result.add(SingleDataPoint(time, value))
         }
 

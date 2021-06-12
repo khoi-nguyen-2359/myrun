@@ -35,7 +35,7 @@ object FirebaseStorageUtils {
         storeName: String,
         filePath: String,
         scaledSize: Int
-    ): Uri? {
+    ): Uri {
         val imageBitmap = BitmapUtils.decodeSampledFile(filePath, scaledSize, scaledSize)
         val downloadUrl = uploadBitmap(storage, storeName, imageBitmap, 1)
         imageBitmap.recycle()

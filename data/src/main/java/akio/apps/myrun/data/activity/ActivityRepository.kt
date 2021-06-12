@@ -4,6 +4,7 @@ import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.fitness.SingleDataPoint
 import akio.apps.myrun.data.location.LocationEntity
 import android.graphics.Bitmap
+import java.io.File
 
 interface ActivityRepository {
     suspend fun getActivitiesByStartTime(
@@ -14,7 +15,7 @@ interface ActivityRepository {
 
     suspend fun saveActivity(
         activity: ActivityModel,
-        routeMapImage: Bitmap,
+        routeBitmapFile: File,
         speedDataPoints: List<SingleDataPoint<Float>>,
         stepCadenceDataPoints: List<SingleDataPoint<Int>>?,
         locationDataPoints: List<SingleDataPoint<LocationEntity>>
@@ -23,4 +24,6 @@ interface ActivityRepository {
     suspend fun getActivity(activityId: String): ActivityModel?
     suspend fun getActivityLocationDataPoints(activityId: String):
         List<SingleDataPoint<LocationEntity>>
+
+    fun generateActivityId(userId: String): String
 }

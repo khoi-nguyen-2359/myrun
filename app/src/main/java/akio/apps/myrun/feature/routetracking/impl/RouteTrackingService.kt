@@ -337,7 +337,7 @@ class RouteTrackingService : Service() {
     companion object {
         private const val NOTIF_ID_TRACKING = 101
 
-        private const val NOTIF_CHANNEL_ID =
+        const val NOTIF_CHANNEL_ID =
             "akio.apps.myrun.feature.routetracking.impl.RouteTrackingService.NOTIF_CHANNEL_ID"
 
         private const val LOCATION_UPDATE_INTERVAL = 2000L

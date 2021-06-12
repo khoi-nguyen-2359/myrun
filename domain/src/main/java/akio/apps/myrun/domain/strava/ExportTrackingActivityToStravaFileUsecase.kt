@@ -2,6 +2,7 @@ package akio.apps.myrun.domain.strava
 
 import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.ActivityRepository
+import akio.apps.myrun.data.activity.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.activitysharing.ActivityFileTrackingRepository
@@ -10,8 +11,6 @@ import akio.apps.myrun.data.activitysharing.model.ActivityLocation
 import akio.apps.myrun.data.activitysharing.model.FileTarget
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.fitness.SingleDataPoint
-import akio.apps.myrun.domain.activityexport.ActivityTcxFileWriter
-import akio.apps.myrun.domain.routetracking.SaveRouteTrackingActivityUsecase
 import java.io.File
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -35,7 +34,7 @@ class ExportTrackingActivityToStravaFileUsecase @Inject constructor(
                 fitnessDataRepository.getSteppingCadenceDataPoints(
                     activity.startTime,
                     activity.endTime,
-                    SaveRouteTrackingActivityUsecase.FITNESS_DATA_INTERVAL
+                    3000L
                 )
             } else {
                 null

@@ -10,7 +10,7 @@ import akio.apps.myrun.domain.activityexport.ClearExportActivityLocationUsecase
 import akio.apps.myrun.domain.activityexport.SaveExportActivityLocationsUsecase
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
-import akio.apps.myrun.domain.routetracking.SaveRouteTrackingActivityUsecase
+import akio.apps.myrun.domain.routetracking.UploadActivityUsecase
 import akio.apps.myrun.domain.strava.ExportTrackingActivityToStravaFileUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
@@ -44,7 +44,7 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
     lateinit var mockedClearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
 
     @Mock
-    lateinit var mockedSaveRouteTrackingActivityUsecase: SaveRouteTrackingActivityUsecase
+    lateinit var mockedUploadActivityUsecase: UploadActivityUsecase
 
     @Mock
     lateinit var mockedRouteTrackingState: RouteTrackingState
@@ -95,7 +95,7 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
         mockedAppContext,
         mockedGetTrackedLocationsUsecase,
         mockedRouteTrackingState,
-        mockedSaveRouteTrackingActivityUsecase,
+        mockedUploadActivityUsecase,
         mockedClearRouteTrackingStateUsecase,
         mockedSaveExportActivityLocationsUsecase,
         mockedExportActivityToStravaFileUsecase,

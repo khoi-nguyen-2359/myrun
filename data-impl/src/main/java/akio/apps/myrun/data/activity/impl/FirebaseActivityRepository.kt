@@ -21,6 +21,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import timber.log.Timber
+import java.io.File
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -66,7 +67,7 @@ class FirebaseActivityRepository @Inject constructor(
 
     override suspend fun saveActivity(
         activity: ActivityModel,
-        routeMapImage: Bitmap,
+        routeBitmapFile: File,
         speedDataPoints: List<SingleDataPoint<Float>>,
         stepCadenceDataPoints: List<SingleDataPoint<Int>>?,
         locationDataPoints: List<SingleDataPoint<LocationEntity>>
@@ -77,10 +78,10 @@ class FirebaseActivityRepository @Inject constructor(
 
         Timber.d("uploading activity route image ...")
         val userActivityImageStorage = getActivityImageStorage(activity.athleteInfo.userId)
-        val uploadedUri = FirebaseStorageUtils.uploadBitmap(
+        val uploadedUri = FirebaseStorageUtils.uploadLocalBitmap(
             userActivityImageStorage,
             docRef.id,
-            routeMapImage,
+            routeBitmapFile.absolutePath,
             THUMBNAIL_SCALED_SIZE
         )
         Timber.d("[DONE] uploading activity route image url=$uploadedUri")
@@ -143,6 +144,9 @@ class FirebaseActivityRepository @Inject constructor(
             firestoreLocationDataPoints
         )
     }
+
+    override fun generateActivityId(userId: String): String =
+        getUserActivityCollection(userId).document().id
 
     override suspend fun getActivity(
         activityId: String
