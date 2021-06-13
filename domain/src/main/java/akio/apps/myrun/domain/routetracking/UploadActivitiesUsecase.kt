@@ -2,7 +2,7 @@ package akio.apps.myrun.domain.routetracking
 
 import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.model.ActivityModel
-import akio.apps.myrun.data.activitysharing.ActivityLocalStorage
+import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.fitness.DataPoint
 import akio.apps.myrun.data.location.LocationEntity
 import javax.inject.Inject

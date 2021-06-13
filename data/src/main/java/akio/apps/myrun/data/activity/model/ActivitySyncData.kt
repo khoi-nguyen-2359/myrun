@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.activitysharing.model
+package akio.apps.myrun.data.activity.model
 
 import akio.apps.myrun.data.activity.model.ActivityModel
 import java.io.File

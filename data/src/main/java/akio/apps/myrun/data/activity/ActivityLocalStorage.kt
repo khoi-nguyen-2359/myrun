@@ -1,9 +1,9 @@
-package akio.apps.myrun.data.activitysharing
+package akio.apps.myrun.data.activity
 
 import akio.apps.myrun.data.activity.model.ActivityModel
-import akio.apps.myrun.data.activitysharing.model.ActivityLocation
-import akio.apps.myrun.data.activitysharing.model.ActivityStorageData
-import akio.apps.myrun.data.activitysharing.model.ActivitySyncData
+import akio.apps.myrun.data.activity.model.ActivityLocation
+import akio.apps.myrun.data.activity.model.ActivityStorageData
+import akio.apps.myrun.data.activity.model.ActivitySyncData
 import android.graphics.Bitmap
 import kotlinx.coroutines.flow.Flow
 

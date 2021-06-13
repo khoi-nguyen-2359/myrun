@@ -1,6 +1,6 @@
 package akio.apps.myrun.domain.activityexport
 
-import akio.apps.myrun.data.activitysharing.model.ActivityLocation
+import akio.apps.myrun.data.activity.model.ActivityLocation
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import com.nhaarman.mockitokotlin2.mock

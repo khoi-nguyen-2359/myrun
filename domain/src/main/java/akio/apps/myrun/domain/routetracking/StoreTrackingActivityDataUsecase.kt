@@ -8,8 +8,8 @@ import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.activity.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.model.RunningActivityModel
-import akio.apps.myrun.data.activitysharing.ActivityLocalStorage
-import akio.apps.myrun.data.activitysharing.model.ActivityLocation
+import akio.apps.myrun.data.activity.ActivityLocalStorage
+import akio.apps.myrun.data.activity.model.ActivityLocation
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
