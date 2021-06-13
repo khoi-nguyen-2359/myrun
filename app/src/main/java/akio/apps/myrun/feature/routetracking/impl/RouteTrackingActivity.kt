@@ -9,7 +9,6 @@ import akio.apps.myrun._base.permissions.RequiredPermissionsDelegate
 import akio.apps.myrun._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.toGmsLatLng
-import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
@@ -130,7 +129,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         observe(routeTrackingViewModel.trackingStats, viewBinding.trackingStatsView::update)
         observe(routeTrackingViewModel.trackingStatus, ::onTrackingStatusChanged)
         observeEvent(routeTrackingViewModel.error, dialogDelegate::showExceptionAlert)
-        observeEvent(routeTrackingViewModel.saveActivitySuccess) { onSaveActivitySuccess() }
+        observeEvent(routeTrackingViewModel.isStoreActivityDone) { onStoreActivitySuccess() }
         observe(
             routeTrackingViewModel.activityType,
             viewBinding.activitySettingsView::setActivityType
@@ -160,10 +159,10 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         recenterMap(bounds, animation = true)
     }
 
-    private fun onSaveActivitySuccess() {
+    private fun onStoreActivitySuccess() {
         startService(RouteTrackingService.stopIntent(this))
         startActivity(HomeActivity.clearTaskIntent(this))
-        ContextCompat.startForegroundService(this, ActivityUploadService.createStartIntent(this))
+        ActivityUploadWorker.enqueue(this)
     }
 
     private fun onTrackingStatusChanged(@RouteTrackingStatus trackingStatus: Int) {
@@ -349,7 +348,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
                 cameraViewSize.width,
                 cameraViewSize.height
             )
-            routeTrackingViewModel.saveActivity(cropped)
+            routeTrackingViewModel.storeActivityData(cropped)
         }
     }
 

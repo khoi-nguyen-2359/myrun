@@ -44,6 +44,8 @@ class FirebaseAuthenticationState @Inject constructor(
         firebaseAuth.currentUser?.let { firebaseUserMapper.map(it) }
 
     override fun getUserAccountId(): String? = firebaseAuth.currentUser?.uid
+    override fun requireUserAccountId(): String = getUserAccountId()
+        ?: throw IllegalStateException("User id is required but null.")
 
     override fun isLinkedWithFacebook(): Boolean =
         firebaseAuth.currentUser?.providerData

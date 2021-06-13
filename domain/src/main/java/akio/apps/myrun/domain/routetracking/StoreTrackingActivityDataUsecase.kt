@@ -36,7 +36,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
 ) {
     suspend operator fun invoke(activityName: String, routeImageBitmap: Bitmap) =
         withContext(ioDispatcher) {
-            val userId = userAuthenticationState.getUserAccountId() ?: return@withContext
+            val userId = userAuthenticationState.requireUserAccountId()
             val activityId = activityRepository.generateActivityId(userId)
             val trackedLocations = routeTrackingLocationRepository.getAllLocations()
             val activityModel =
