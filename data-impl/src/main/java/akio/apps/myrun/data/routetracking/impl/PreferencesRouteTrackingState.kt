@@ -5,23 +5,27 @@ import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import android.app.Application
-import androidx.datastore.DataStore
-import androidx.datastore.preferences.Preferences
-import androidx.datastore.preferences.clear
-import androidx.datastore.preferences.createDataStore
-import androidx.datastore.preferences.edit
-import androidx.datastore.preferences.preferencesKey
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
+private val Context.prefDataStore: DataStore<Preferences> by preferencesDataStore("route_tracking_state")
+
 class PreferencesRouteTrackingState @Inject constructor(
     application: Application
 ) : RouteTrackingState {
 
-    private val prefDataStore: DataStore<Preferences> =
-        application.createDataStore("route_tracking_state")
+    private val prefDataStore: DataStore<Preferences> = application.prefDataStore
 
     override suspend fun getTrackingStatus(): @RouteTrackingStatus Int = getTrackingStatusFlow()
         .first()
@@ -129,16 +133,16 @@ class PreferencesRouteTrackingState @Inject constructor(
             .first()
 
     companion object {
-        private val KEY_TRACKING_STATUS = preferencesKey<Int>("KEY_TRACKING_STATUS")
-        private val KEY_ACTIVITY_TYPE = preferencesKey<String>("KEY_ACTIVITY_TYPE")
-        private val KEY_ROUTE_DISTANCE = preferencesKey<Float>("KEY_ROUTE_DISTANCE")
-        private val KEY_TRACKING_START_TIME = preferencesKey<Long>("KEY_TRACKING_START_TIME")
-        private val KEY_CURRENT_SPEED = preferencesKey<Float>("KEY_CURRENT_SPEED")
-        private val KEY_TRACKING_DURATION = preferencesKey<Long>("KEY_TRACKING_DURATION")
-        private val KEY_LAST_RESUME_TIME = preferencesKey<Long>("KEY_LAST_RESUME_TIME")
-        private val KEY_START_LOCATION_LAT = preferencesKey<Float>("KEY_START_LOCATION_LAT")
-        private val KEY_START_LOCATION_LNG = preferencesKey<Float>("KEY_START_LOCATION_LNG")
-        private val KEY_START_LOCATION_ALT = preferencesKey<Float>("KEY_START_LOCATION_ALT")
-        private val KEY_PLACE_IDENTIFIER = preferencesKey<String>("KEY_PLACE_IDENTIFIER")
+        private val KEY_TRACKING_STATUS = intPreferencesKey("KEY_TRACKING_STATUS")
+        private val KEY_ACTIVITY_TYPE = stringPreferencesKey("KEY_ACTIVITY_TYPE")
+        private val KEY_ROUTE_DISTANCE = floatPreferencesKey("KEY_ROUTE_DISTANCE")
+        private val KEY_TRACKING_START_TIME = longPreferencesKey("KEY_TRACKING_START_TIME")
+        private val KEY_CURRENT_SPEED = floatPreferencesKey("KEY_CURRENT_SPEED")
+        private val KEY_TRACKING_DURATION = longPreferencesKey("KEY_TRACKING_DURATION")
+        private val KEY_LAST_RESUME_TIME = longPreferencesKey("KEY_LAST_RESUME_TIME")
+        private val KEY_START_LOCATION_LAT = floatPreferencesKey("KEY_START_LOCATION_LAT")
+        private val KEY_START_LOCATION_LNG = floatPreferencesKey("KEY_START_LOCATION_LNG")
+        private val KEY_START_LOCATION_ALT = floatPreferencesKey("KEY_START_LOCATION_ALT")
+        private val KEY_PLACE_IDENTIFIER = stringPreferencesKey("KEY_PLACE_IDENTIFIER")
     }
 }

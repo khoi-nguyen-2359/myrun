@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 abstract class UserTimelineViewModel : ViewModel() {
     abstract val myActivityList: Flow<PagingData<Activity>>
     abstract val userRecentPlaceIdentifier: Flow<PlaceIdentifier?>
+    abstract val activityStorageCount: Flow<Int>
 
     /**
      * Returns display text for activity place name, base on user's current place. Returns null if
@@ -19,4 +20,6 @@ abstract class UserTimelineViewModel : ViewModel() {
         activityId: String,
         activityPlaceIdentifier: PlaceIdentifier?
     ): String?
+
+    abstract fun invalidate()
 }

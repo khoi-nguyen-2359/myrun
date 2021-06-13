@@ -16,7 +16,13 @@ import akio.apps.myrun.data.activitysharing.entity.TrackingActivityInfoData
 import akio.apps.myrun.data.activitysharing.model.ActivityLocation
 import akio.apps.myrun.data.activitysharing.model.ActivityStorageDataOutput
 import android.app.Application
+import android.content.Context
 import android.graphics.Bitmap
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import timber.log.Timber
 import java.io.BufferedOutputStream
 import java.io.File
@@ -25,6 +31,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -34,12 +41,16 @@ import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.protobuf.ProtoBuf
 
+private val Context.prefDataStore: DataStore<Preferences> by preferencesDataStore("ActivityLocalStorageImpl")
+
 @ExperimentalSerializationApi
 class ActivityLocalStorageImpl @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ActivityLocalStorage {
+
+    private val prefDataStore: DataStore<Preferences> = application.prefDataStore
 
     private val protoBuf = ProtoBuf {
         val module = SerializersModule {
@@ -108,6 +119,8 @@ class ActivityLocalStorageImpl @Inject constructor(
     override suspend fun deleteActivityData(activityId: String) {
         val storageRootDir = createActivityStorageRootDir()
         File("${storageRootDir.absolutePath}/$activityId").deleteRecursively()
+        val count = getActivityStorageDataCount().first()
+        setActivityStorageDataCount(count - 1)
     }
 
     private suspend fun loadActivityStorageData(
@@ -132,11 +145,27 @@ class ActivityLocalStorageImpl @Inject constructor(
         )
     }
 
-    override suspend fun loadAllActivityStorageDataFlow(): Flow<ActivityStorageDataOutput> =
-        createActivityStorageRootDir().list().orEmpty()
+    override fun getActivityStorageDataCount(): Flow<Int> {
+        return prefDataStore.data.map { data ->
+            val count = data[KEY_ACTIVITY_STORAGE_DATA_COUNT] ?: 0
+            return@map count
+        }
+    }
+
+    override suspend fun setActivityStorageDataCount(count: Int) {
+        prefDataStore.edit { data -> data[KEY_ACTIVITY_STORAGE_DATA_COUNT] = count }
+    }
+
+    override suspend fun loadAllActivityStorageDataFlow(): Flow<ActivityStorageDataOutput> {
+        val storageRootDir = createActivityStorageRootDir()
+        val listSize = storageRootDir.list()?.size ?: 0
+        setActivityStorageDataCount(listSize)
+        Timber.d("loadAllActivityStorageDataFlow = $listSize")
+        return storageRootDir.list().orEmpty()
             .asFlow()
             .map(::loadActivityStorageData)
             .flowOn(ioDispatcher)
+    }
 
     private fun serializeActivityLocations(locations: List<ActivityLocation>): List<Double> =
         locations.flatMap { listOf(it.time.toDouble(), it.latitude, it.longitude, it.latitude) }
@@ -257,5 +286,8 @@ class ActivityLocalStorageImpl @Inject constructor(
 
     companion object {
         private const val PATH_STORAGE_DIR = "activity/storage/"
+
+        private val KEY_ACTIVITY_STORAGE_DATA_COUNT =
+            intPreferencesKey("KEY_ACTIVITY_STORAGE_DATA_COUNT")
     }
 }
