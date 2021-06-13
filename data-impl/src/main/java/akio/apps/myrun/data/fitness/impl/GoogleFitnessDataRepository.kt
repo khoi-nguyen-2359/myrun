@@ -2,7 +2,6 @@ package akio.apps.myrun.data.fitness.impl
 
 import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.fitness.FitnessDataRepository
-import akio.apps.myrun.data.fitness.SingleDataPoint
 import android.app.Application
 import androidx.annotation.VisibleForTesting
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -119,7 +118,7 @@ class GoogleFitnessDataRepository @Inject constructor(
         startTime: Long,
         endTime: Long,
         interval: Long
-    ): List<SingleDataPoint<Float>> = withContext(ioDispatcher) {
+    ): List<akio.apps.myrun.data.fitness.DataPoint<Float>> = withContext(ioDispatcher) {
         val speedDataPoints = readFitnessData(
             startTime,
             endTime,
@@ -128,7 +127,7 @@ class GoogleFitnessDataRepository @Inject constructor(
             DataType.AGGREGATE_SPEED_SUMMARY
         )
         return@withContext speedDataPoints.map {
-            SingleDataPoint(
+            akio.apps.myrun.data.fitness.DataPoint(
                 it.getStartTime(TimeUnit.MILLISECONDS),
                 it.getValue(Field.FIELD_AVERAGE)
                     .asFloat()
@@ -140,11 +139,11 @@ class GoogleFitnessDataRepository @Inject constructor(
         startTime: Long,
         endTime: Long,
         interval: Long
-    ): List<SingleDataPoint<Int>> = withContext(ioDispatcher) {
+    ): List<akio.apps.myrun.data.fitness.DataPoint<Int>> = withContext(ioDispatcher) {
         val cadenceDataPoints =
             readFitnessData(startTime, endTime, interval, DataType.TYPE_STEP_COUNT_CADENCE)
                 .map { cadenceDp ->
-                    SingleDataPoint(
+                    akio.apps.myrun.data.fitness.DataPoint(
                         cadenceDp.getStartTime(TimeUnit.MILLISECONDS),
                         cadenceDp.getValue(Field.FIELD_RPM)
                             .asInt()
@@ -165,7 +164,7 @@ class GoogleFitnessDataRepository @Inject constructor(
                 val valueEndTime = stepDeltaDp.getEndTime(TimeUnit.MILLISECONDS)
                 val avgRpm: Int = ((60000f * value) / (valueEndTime - valueStartTime)).toInt()
 
-                SingleDataPoint(
+                akio.apps.myrun.data.fitness.DataPoint(
                     stepDeltaDp.getStartTime(TimeUnit.MILLISECONDS),
                     avgRpm
                 )
@@ -178,7 +177,7 @@ class GoogleFitnessDataRepository @Inject constructor(
         startTime: Long,
         endTime: Long,
         interval: Long
-    ): List<SingleDataPoint<Int>> = withContext(ioDispatcher) {
+    ): List<akio.apps.myrun.data.fitness.DataPoint<Int>> = withContext(ioDispatcher) {
         val heartRateDataPoints = readFitnessData(
             startTime,
             endTime,
@@ -187,7 +186,7 @@ class GoogleFitnessDataRepository @Inject constructor(
             DataType.AGGREGATE_HEART_RATE_SUMMARY
         )
         return@withContext heartRateDataPoints.map {
-            SingleDataPoint(
+            akio.apps.myrun.data.fitness.DataPoint(
                 it.getStartTime(TimeUnit.MILLISECONDS),
                 it.getValue(Field.FIELD_AVERAGE)
                     .asInt()
@@ -198,12 +197,12 @@ class GoogleFitnessDataRepository @Inject constructor(
     companion object {
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         fun <V> mergeDataPoints(
-            dp1: List<SingleDataPoint<V>>,
-            dp2: List<SingleDataPoint<V>>,
-        ): List<SingleDataPoint<V>> {
+            dp1: List<akio.apps.myrun.data.fitness.DataPoint<V>>,
+            dp2: List<akio.apps.myrun.data.fitness.DataPoint<V>>,
+        ): List<akio.apps.myrun.data.fitness.DataPoint<V>> {
             var i = 0
             var j = 0
-            val mergeDataPoints = mutableListOf<SingleDataPoint<V>>()
+            val mergeDataPoints = mutableListOf<akio.apps.myrun.data.fitness.DataPoint<V>>()
             while (i < dp1.size || j < dp2.size) {
                 val dp1StartTime = dp1.getOrNull(i)
                     ?.timestamp

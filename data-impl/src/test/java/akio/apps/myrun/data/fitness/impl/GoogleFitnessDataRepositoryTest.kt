@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.fitness.impl
 
-import akio.apps.myrun.data.fitness.SingleDataPoint
+import akio.apps.myrun.data.fitness.DataPoint
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -9,21 +9,21 @@ class GoogleFitnessDataRepositoryTest {
     @Test
     fun testDataPointsMerger() {
         val dp1 = listOf(
-            SingleDataPoint(0, 0.0),
-            SingleDataPoint(1, 1.0),
-            SingleDataPoint(2, 2.0),
-            SingleDataPoint(4, 4.0),
-            SingleDataPoint(7, 7.1),
-            SingleDataPoint(8, 8.0),
-            SingleDataPoint(9, 9.0),
-            SingleDataPoint(12, 12.0)
+            DataPoint(0, 0.0),
+            DataPoint(1, 1.0),
+            DataPoint(2, 2.0),
+            DataPoint(4, 4.0),
+            DataPoint(7, 7.1),
+            DataPoint(8, 8.0),
+            DataPoint(9, 9.0),
+            DataPoint(12, 12.0)
         )
         val dp2 = listOf(
-            SingleDataPoint(3, 3.0),
-            SingleDataPoint(5, 5.0),
-            SingleDataPoint(7, 7.2),
-            SingleDataPoint(10, 10.0),
-            SingleDataPoint(11, 11.0)
+            DataPoint(3, 3.0),
+            DataPoint(5, 5.0),
+            DataPoint(7, 7.2),
+            DataPoint(10, 10.0),
+            DataPoint(11, 11.0)
         )
         val merged = GoogleFitnessDataRepository.mergeDataPoints(dp1, dp2)
         assertEquals(12, merged.size)

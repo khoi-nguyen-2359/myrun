@@ -4,7 +4,6 @@ import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.model.ActivityModel
-import akio.apps.myrun.data.activitysharing.ActivityLocationCache
 import akio.apps.myrun.data.activitysharing.model.ActivityLocation
 import android.app.Application
 import java.io.File
@@ -19,7 +18,6 @@ class ExportActivityToTempTcxFileUsecase @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
     private val activityRepository: ActivityRepository,
-    private val activityLocationCache: ActivityLocationCache,
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
     private val timeFormatter = SimpleDateFormat("ddMMyyyy_HHmm", Locale.US)
@@ -64,10 +62,6 @@ class ExportActivityToTempTcxFileUsecase @Inject constructor(
         "${activity.activityType.name}_${timeFormatter.format(Date(activity.startTime))}.tcx"
 
     private suspend fun getActivityLocations(activityId: String): List<ActivityLocation> {
-        val cachedActivityLocations = activityLocationCache.getActivityLocations(activityId)
-        if (cachedActivityLocations.isNotEmpty()) {
-            return cachedActivityLocations
-        }
         return activityRepository.getActivityLocationDataPoints(activityId)
             .map {
                 ActivityLocation(

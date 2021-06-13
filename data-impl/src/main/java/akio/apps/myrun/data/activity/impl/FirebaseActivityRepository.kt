@@ -11,10 +11,9 @@ import akio.apps.myrun.data.activity.entity.FirestoreFloatDataPointParser
 import akio.apps.myrun.data.activity.entity.FirestoreIntegerDataPointParser
 import akio.apps.myrun.data.activity.entity.FirestoreLocationDataPointParser
 import akio.apps.myrun.data.activity.model.ActivityModel
-import akio.apps.myrun.data.fitness.SingleDataPoint
+import akio.apps.myrun.data.fitness.DataPoint
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.utils.FirebaseStorageUtils
-import android.graphics.Bitmap
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -68,9 +67,9 @@ class FirebaseActivityRepository @Inject constructor(
     override suspend fun saveActivity(
         activity: ActivityModel,
         routeBitmapFile: File,
-        speedDataPoints: List<SingleDataPoint<Float>>,
-        stepCadenceDataPoints: List<SingleDataPoint<Int>>?,
-        locationDataPoints: List<SingleDataPoint<LocationEntity>>
+        speedDataPoints: List<DataPoint<Float>>,
+        stepCadenceDataPoints: List<DataPoint<Int>>?,
+        locationDataPoints: List<DataPoint<LocationEntity>>
     ): String = withContext(ioDispatcher) {
         Timber.d("=== SAVING ACTIVITY ===")
         val docRef = if (activity.id.isNotEmpty()) {
@@ -129,7 +128,7 @@ class FirebaseActivityRepository @Inject constructor(
 
     override suspend fun getActivityLocationDataPoints(
         activityId: String
-    ): List<SingleDataPoint<LocationEntity>> = withContext(ioDispatcher) {
+    ): List<DataPoint<LocationEntity>> = withContext(ioDispatcher) {
         val firebaseActivity =
             userActivityCollectionGroup.whereEqualTo(FIELD_ACTIVITY_ID, activityId).get().await()
         val firestoreLocationDataPoints = firebaseActivity.documents.getOrNull(0)

@@ -5,14 +5,12 @@ import akio.apps._base.di.FeatureScope
 import akio.apps.myrun._di.AppComponent
 import akio.apps.myrun._di.DispatchersModule
 import akio.apps.myrun.data.activity._di.ActivityDataModule
-import akio.apps.myrun.data.activitysharing._di.ActivitySharingDataModule
 import akio.apps.myrun.feature.activityexport.ActivityExportService
 import dagger.Component
 
 @FeatureScope
 @Component(
     modules = [
-        ActivitySharingDataModule::class,
         ActivityDataModule::class,
         DispatchersModule::class
     ],

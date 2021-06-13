@@ -22,7 +22,6 @@ import akio.apps.myrun.feature.routetracking.ui.StopDialogOptionId
 import akio.apps.myrun.feature.routetracking.ui.StopOptionsDialog
 import akio.apps.myrun.feature.routetracking.view.ActivitySettingsView
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -36,7 +35,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.addRepeatingJob
 import androidx.lifecycle.lifecycleScope
-import androidx.work.impl.utils.ForceStopRunnable
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment

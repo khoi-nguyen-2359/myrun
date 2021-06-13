@@ -11,15 +11,11 @@ import akio.apps.myrun.data.location.LocationRequestEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
-import akio.apps.myrun.domain.activityexport.ClearExportActivityLocationUsecase
-import akio.apps.myrun.domain.activityexport.SaveExportActivityLocationsUsecase
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.routetracking.StoreTrackingActivityDataUsecase
-import akio.apps.myrun.domain.strava.ExportTrackingActivityToStravaFileUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
-import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import android.app.Application
 import android.graphics.Bitmap
 import android.location.Location
@@ -39,11 +35,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val getTrackedLocationsUsecase: GetTrackedLocationsUsecase,
     private val routeTrackingState: RouteTrackingState,
     private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase,
-    private val saveExportActivityLocationsUsecase: SaveExportActivityLocationsUsecase,
-    private val exportActivityToStravaFileUsecase: ExportTrackingActivityToStravaFileUsecase,
-    private val clearExportActivityLocationUsecase: ClearExportActivityLocationUsecase,
     private val storeTrackingActivityDataUsecase: StoreTrackingActivityDataUsecase,
-    private val activityMapper: ActivityModelMapper,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val authenticationState: UserAuthenticationState,
     private val locationDataSource: LocationDataSource
@@ -143,7 +135,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
         if (userAccountId != null &&
             externalAppProvidersRepository.getStravaProviderToken(userAccountId) != null
         ) {
-            UploadStravaFileWorker.enqueueForFinishedActivity(application)
+            UploadStravaFileWorker.enqueue(application)
         }
     }
 
