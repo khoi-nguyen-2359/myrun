@@ -7,17 +7,17 @@ interface FitnessDataRepository {
         startTime: Long,
         endTime: Long,
         interval: Long
-    ): List<SingleDataPoint<Float>>
+    ): List<DataPoint<Float>>
 
     suspend fun getSteppingCadenceDataPoints(
         startTime: Long,
         endTime: Long,
         interval: Long
-    ): List<SingleDataPoint<Int>>
+    ): List<DataPoint<Int>>
 
     suspend fun getHeartRateDataPoints(
         startTime: Long,
         endTime: Long,
         interval: Long
-    ): List<SingleDataPoint<Int>>
+    ): List<DataPoint<Int>>
 }

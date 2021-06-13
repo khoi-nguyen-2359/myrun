@@ -6,6 +6,7 @@ import akio.apps.myrun.feature.activitydetail.ui.ActivityInfoHeaderView
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -45,7 +47,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.flowlayout.FlowRow
-import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
 fun UserTimeline(
@@ -55,26 +56,34 @@ fun UserTimeline(
     onClickExportActivityFile: (Activity) -> Unit
 ) {
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
-    when {
-        lazyPagingItems.loadState.refresh == LoadState.Loading && lazyPagingItems.itemCount == 0 ->
-            FullscreenLoadingView()
-        lazyPagingItems.loadState.append.endOfPaginationReached && lazyPagingItems.itemCount == 0 ->
-            UserTimelineEmptyMessage()
-        else -> UserTimelineActivityList(
-            contentPadding,
-            lazyPagingItems,
-            userTimelineViewModel,
-            onClickActivityAction,
-            onClickExportActivityFile
-        )
+    val activityStorageCount by userTimelineViewModel.activityStorageCount
+        .collectAsState(initial = 0)
+    Box {
+        when {
+            lazyPagingItems.loadState.refresh == LoadState.Loading && lazyPagingItems.itemCount == 0 ->
+                FullscreenLoadingView()
+            lazyPagingItems.loadState.append.endOfPaginationReached && lazyPagingItems.itemCount == 0 ->
+                UserTimelineEmptyMessage()
+            else -> UserTimelineActivityList(
+                userTimelineViewModel,
+                contentPadding,
+                lazyPagingItems,
+                onClickActivityAction,
+                onClickExportActivityFile
+            )
+        }
+
+        if (activityStorageCount > 0) {
+            UploadingNotifierItem(activityStorageCount)
+        }
     }
 }
 
 @Composable
 private fun UserTimelineActivityList(
+    userTimelineViewModel: UserTimelineViewModel,
     contentPadding: PaddingValues,
     lazyPagingItems: LazyPagingItems<Activity>,
-    userTimelineViewModel: UserTimelineViewModel,
     onClickActivityAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit
 ) {
@@ -109,13 +118,15 @@ private fun UserTimelineActivityList(
 
 @Composable
 private fun UploadingNotifierItem(activityStorageCount: Int) = Column(
-    modifier = Modifier.fillMaxWidth()
+    modifier = Modifier.fillMaxWidth().background(Color.White)
 ) {
     Text(
-        text = "You have $activityStorageCount uploading activities.",
-        modifier = Modifier.padding(10.dp)
+        text = "Uploading $activityStorageCount activities.",
+        modifier = Modifier.fillMaxWidth().padding(3.dp),
+        fontSize = 12.sp,
+        textAlign = TextAlign.Center
     )
-    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+    LinearProgressIndicator(modifier = Modifier.fillMaxWidth().height(2.dp))
 }
 
 @Preview(showSystemUi = true)

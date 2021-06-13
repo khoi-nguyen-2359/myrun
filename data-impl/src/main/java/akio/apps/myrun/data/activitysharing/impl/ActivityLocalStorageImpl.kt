@@ -14,7 +14,8 @@ import akio.apps.myrun.data.activitysharing.entity.RunningTrackingActivityInfo
 import akio.apps.myrun.data.activitysharing.entity.TrackingActivityInfo
 import akio.apps.myrun.data.activitysharing.entity.TrackingActivityInfoData
 import akio.apps.myrun.data.activitysharing.model.ActivityLocation
-import akio.apps.myrun.data.activitysharing.model.ActivityStorageDataOutput
+import akio.apps.myrun.data.activitysharing.model.ActivityStorageData
+import akio.apps.myrun.data.activitysharing.model.ActivitySyncData
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
@@ -80,21 +81,21 @@ class ActivityLocalStorageImpl @Inject constructor(
             val activityInfo = activity.toActivityInfo()
             val activityInfoBytes = protoBuf.encodeToByteArray(activityInfo)
             activityDirectory.infoFile.bufferedWriteByteArray(activityInfoBytes)
-            Timber.d("Stored info at ${activityDirectory.infoFile.absolutePath}")
+            Timber.d("Stored info at ${activityDirectory.infoFile}")
         }
 
         val writeLocationsAsync = async {
             val serializedLocations = serializeActivityLocations(locations)
             val locationsBytes = protoBuf.encodeToByteArray(serializedLocations)
             activityDirectory.locationsFile.bufferedWriteByteArray(locationsBytes)
-            Timber.d("Stored locations at ${activityDirectory.locationsFile.absolutePath}")
+            Timber.d("Stored locations at ${activityDirectory.locationsFile}")
         }
 
         val writeRouteImageAsync = async {
             BufferedOutputStream(activityDirectory.routeBitmapFile.outputStream()).use { os ->
                 routeBitmap.compress(Bitmap.CompressFormat.JPEG, 100, os)
             }
-            Timber.d("Stored route image at ${activityDirectory.routeBitmapFile.absolutePath}")
+            Timber.d("Stored route image at ${activityDirectory.routeBitmapFile}")
         }
         writeInfoAsync.join()
         writeLocationsAsync.join()
@@ -105,27 +106,39 @@ class ActivityLocalStorageImpl @Inject constructor(
     override suspend fun storeActivitySyncData(
         activityModel: ActivityModel,
         activityLocations: List<ActivityLocation>
-    ) {
+    ) = withContext(ioDispatcher) {
+        Timber.d("==== [START] STORE ACTIVITY SYNC DATA =====")
         val activitySyncDirectory = createActivitySyncDirectory(activityModel.id)
-        activityTcxFileWriter.writeTcxFile(
-            activityModel,
-            activityLocations,
-            emptyList(),
-            activitySyncDirectory.tcxFile,
-            false
-        )
-    }
+        val tcxWriterAsync = async {
+            activityTcxFileWriter.writeTcxFile(
+                activityModel,
+                activityLocations,
+                emptyList(),
+                activitySyncDirectory.tcxFile,
+                false
+            )
+            Timber.d("Stored tcx file at ${activitySyncDirectory.tcxFile}")
+        }
+        val infoWriteAsync = async {
+            val trackingInfo = activityModel.toActivityInfo()
+            val infoBytes = protoBuf.encodeToByteArray(trackingInfo)
+            activitySyncDirectory.infoFile.bufferedWriteByteArray(infoBytes)
+            Timber.d("Stored info file at ${activitySyncDirectory.infoFile}")
+        }
+        tcxWriterAsync.join()
+        infoWriteAsync.join()
+        Timber.d("==== [DONE] STORE ACTIVITY SYNC DATA =====")
+     }
 
     override suspend fun deleteActivityData(activityId: String) {
-        val storageRootDir = createActivityStorageRootDir()
-        File("${storageRootDir.absolutePath}/$activityId").deleteRecursively()
+        createActivityStorageDirectory(activityId).storageDir.deleteRecursively()
         val count = getActivityStorageDataCount().first()
         setActivityStorageDataCount(count - 1)
     }
 
     private suspend fun loadActivityStorageData(
         activityId: String
-    ): ActivityStorageDataOutput = withContext(ioDispatcher) {
+    ): ActivityStorageData = withContext(ioDispatcher) {
         val activityDirectory = createActivityStorageDirectory(activityId)
         val activityModelDeferred = async {
             val activityInfoBytes = activityDirectory.infoFile.bufferedReadByteArray()
@@ -138,7 +151,7 @@ class ActivityLocalStorageImpl @Inject constructor(
             deserializeActivityLocation(activityId, flattenLocations)
         }
 
-        ActivityStorageDataOutput(
+        ActivityStorageData(
             activityModelDeferred.await(),
             locationsDeferred.await(),
             activityDirectory.routeBitmapFile
@@ -156,7 +169,7 @@ class ActivityLocalStorageImpl @Inject constructor(
         prefDataStore.edit { data -> data[KEY_ACTIVITY_STORAGE_DATA_COUNT] = count }
     }
 
-    override suspend fun loadAllActivityStorageDataFlow(): Flow<ActivityStorageDataOutput> {
+    override suspend fun loadAllActivityStorageDataFlow(): Flow<ActivityStorageData> {
         val storageRootDir = createActivityStorageRootDir()
         val listSize = storageRootDir.list()?.size ?: 0
         setActivityStorageDataCount(listSize)
@@ -198,23 +211,45 @@ class ActivityLocalStorageImpl @Inject constructor(
     private fun createActivityStorageRootDir(): File =
         File("${application.filesDir}/$PATH_STORAGE_DIR")
 
+    override fun loadAllActivitySyncDataFlow(): Flow<ActivitySyncData> =
+        createActivitySyncRootDir().list().orEmpty()
+            .asFlow()
+            .map(::loadActivitySyncData)
+            .flowOn(ioDispatcher)
+
+    override fun deleteActivitySyncData(activityId: String) {
+        createActivitySyncDirectory(activityId).syncDir.deleteRecursively()
+    }
+
+    private fun loadActivitySyncData(activityId: String): ActivitySyncData {
+        val activitySyncDirectory = createActivitySyncDirectory(activityId)
+        val infoBytes = activitySyncDirectory.infoFile.bufferedReadByteArray()
+        val activityInfo = protoBuf.decodeFromByteArray<TrackingActivityInfo>(infoBytes)
+        val activityModel = activityInfo.toActivity()
+        return ActivitySyncData(activityModel, activitySyncDirectory.tcxFile)
+    }
+
     private fun createActivityStorageDirectory(activityId: String): ActivityStorageDirectory {
         val activityStorageRoot = createActivityStorageRootDir()
         val activityDir =
-            File("${activityStorageRoot.absolutePath}/$activityId/").apply { mkdirs() }
-        val infoFile = File("${activityDir.absolutePath}/info")
-        val locationsFile = File("${activityDir.absolutePath}/locations")
-        val routeImageFile = File("${activityDir.absolutePath}/route_image")
+            File("$activityStorageRoot/$activityId/").apply { mkdirs() }
+        val infoFile = File("$activityDir/info")
+        val locationsFile = File("$activityDir/locations")
+        val routeImageFile = File("$activityDir/route_image")
         return ActivityStorageDirectory(activityDir, infoFile, locationsFile, routeImageFile)
     }
 
     private fun createActivitySyncDirectory(activityId: String): ActivitySyncDirectory {
-        val syncDir = File("${application.filesDir}/activity/sync/$activityId/").apply { mkdirs() }
+        val syncDir = File("${createActivitySyncRootDir()}/$activityId/").apply { mkdirs() }
         return ActivitySyncDirectory(
             syncDir = syncDir,
-            tcxFile = File("${syncDir.absolutePath}/$activityId.tcx")
+            infoFile = File("$syncDir/info"),
+            tcxFile = File("$syncDir/strava.tcx")
         )
     }
+
+    private fun createActivitySyncRootDir(): File =
+        File("${application.filesDir}/$PATH_SYNC_DIR")
 
     private fun ActivityModel.toActivityInfo(): TrackingActivityInfo {
         val trackingInfoData = TrackingActivityInfoData(
@@ -281,11 +316,13 @@ class ActivityLocalStorageImpl @Inject constructor(
 
     data class ActivitySyncDirectory(
         val syncDir: File,
+        val infoFile: File,
         val tcxFile: File
     )
 
     companion object {
         private const val PATH_STORAGE_DIR = "activity/storage/"
+        private const val PATH_SYNC_DIR = "activity/sync/"
 
         private val KEY_ACTIVITY_STORAGE_DATA_COUNT =
             intPreferencesKey("KEY_ACTIVITY_STORAGE_DATA_COUNT")

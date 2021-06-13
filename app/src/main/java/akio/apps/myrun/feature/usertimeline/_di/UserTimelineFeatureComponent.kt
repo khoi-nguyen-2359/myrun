@@ -3,7 +3,6 @@ package akio.apps.myrun.feature.usertimeline._di
 import akio.apps._base.di.ViewModelFactoryProvider
 import akio.apps.myrun._di.DispatchersModule
 import akio.apps.myrun.data.activity._di.ActivityDataModule
-import akio.apps.myrun.data.activitysharing._di.ActivitySharingDataModule
 import akio.apps.myrun.data.authentication._di.AuthenticationDataModule
 import akio.apps.myrun.data.recentplace._di.RecentPlaceDataModule
 import akio.apps.myrun.data.userfollow._di.UserFollowDataModule
@@ -17,7 +16,6 @@ import dagger.Component
         ActivityDataModule::class,
         AuthenticationDataModule::class,
         UserFollowDataModule::class,
-        ActivitySharingDataModule::class,
         DispatchersModule::class,
         RecentPlaceDataModule::class
     ]

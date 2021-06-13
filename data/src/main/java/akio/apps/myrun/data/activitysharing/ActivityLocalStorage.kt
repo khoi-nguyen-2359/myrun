@@ -2,7 +2,8 @@ package akio.apps.myrun.data.activitysharing
 
 import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activitysharing.model.ActivityLocation
-import akio.apps.myrun.data.activitysharing.model.ActivityStorageDataOutput
+import akio.apps.myrun.data.activitysharing.model.ActivityStorageData
+import akio.apps.myrun.data.activitysharing.model.ActivitySyncData
 import android.graphics.Bitmap
 import kotlinx.coroutines.flow.Flow
 
@@ -18,10 +19,16 @@ interface ActivityLocalStorage {
         activityLocations: List<ActivityLocation>
     )
 
-    suspend fun loadAllActivityStorageDataFlow(): Flow<ActivityStorageDataOutput>
+    suspend fun loadAllActivityStorageDataFlow(): Flow<ActivityStorageData>
 
     suspend fun deleteActivityData(activityId: String)
 
     fun getActivityStorageDataCount(): Flow<Int>
     suspend fun setActivityStorageDataCount(count: Int)
+
+    /**
+     * Returns all data that are pending to be synced to Strava.
+     */
+    fun loadAllActivitySyncDataFlow(): Flow<ActivitySyncData>
+    fun deleteActivitySyncData(activityId: String)
 }
