@@ -3,10 +3,10 @@ object Versions {
     const val versionCode = 1_03_00 // x_yy_zz
 
     const val minSdk = 21
-    const val targetSdk = "S"
+    const val targetSdk = 30
     const val compileSdk = "android-S"
 
-    const val agp = "7.0.0-beta03"
+    const val agp = "7.1.0-alpha02"
     const val kotlin = "1.5.10"
     const val coroutines = "1.5.0"
     const val kotlinSerialization = "1.2.1"
