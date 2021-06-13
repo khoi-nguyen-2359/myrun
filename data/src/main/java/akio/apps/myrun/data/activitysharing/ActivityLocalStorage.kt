@@ -21,4 +21,7 @@ interface ActivityLocalStorage {
     suspend fun loadAllActivityStorageDataFlow(): Flow<ActivityStorageDataOutput>
 
     suspend fun deleteActivityData(activityId: String)
+
+    fun getActivityStorageDataCount(): Flow<Int>
+    suspend fun setActivityStorageDataCount(count: Int)
 }

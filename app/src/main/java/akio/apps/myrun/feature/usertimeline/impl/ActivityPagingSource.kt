@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class ActivityPagingSource @Inject constructor(
     private val getUserTimelineActivitiesUsecase: GetUserTimelineActivitiesUsecase,
-    private val activityModelMapper: ActivityModelMapper,
+    private val activityModelMapper: ActivityModelMapper
 ) : PagingSource<Long, Activity>() {
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Activity> {
         val startAfter = params.key ?: System.currentTimeMillis()
@@ -28,8 +28,13 @@ class ActivityPagingSource @Inject constructor(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Long, Activity>): Long? =
-        state.anchorPosition?.let { anchorPosition ->
-            state.closestItemToPosition(anchorPosition)?.startTime
-        }
+    override fun getRefreshKey(state: PagingState<Long, Activity>): Long? = null
+}
+
+class ActivityPagingSourceFactory @Inject constructor(
+    private val getUserTimelineActivitiesUsecase: GetUserTimelineActivitiesUsecase,
+    private val activityModelMapper: ActivityModelMapper
+) {
+    operator fun invoke(): ActivityPagingSource =
+        ActivityPagingSource(getUserTimelineActivitiesUsecase, activityModelMapper)
 }

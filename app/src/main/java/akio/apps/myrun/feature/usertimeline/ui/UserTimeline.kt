@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -44,17 +45,19 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.flowlayout.FlowRow
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
 fun UserTimeline(
-    contentPadding: PaddingValues,
     userTimelineViewModel: UserTimelineViewModel,
+    contentPadding: PaddingValues,
     onClickActivityAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit
 ) {
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
     when {
-        lazyPagingItems.loadState.refresh == LoadState.Loading -> FullscreenLoadingView()
+        lazyPagingItems.loadState.refresh == LoadState.Loading && lazyPagingItems.itemCount == 0 ->
+            FullscreenLoadingView()
         lazyPagingItems.loadState.append.endOfPaginationReached && lazyPagingItems.itemCount == 0 ->
             UserTimelineEmptyMessage()
         else -> UserTimelineActivityList(
@@ -102,6 +105,23 @@ private fun UserTimelineActivityList(
             item { LoadingItem() }
         }
     }
+}
+
+@Composable
+private fun UploadingNotifierItem(activityStorageCount: Int) = Column(
+    modifier = Modifier.fillMaxWidth()
+) {
+    Text(
+        text = "You have $activityStorageCount uploading activities.",
+        modifier = Modifier.padding(10.dp)
+    )
+    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+}
+
+@Preview(showSystemUi = true)
+@Composable
+private fun PreviewUploadingNotifierItem() {
+    UploadingNotifierItem(activityStorageCount = 3)
 }
 
 @Composable
