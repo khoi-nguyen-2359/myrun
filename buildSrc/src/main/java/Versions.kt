@@ -51,7 +51,7 @@ object Versions {
     const val firebaseBom = "25.12.0"
     const val crashlyticsGradlePlugin = "2.3.0"
 
-    const val dataStore = "1.0.0-alpha01"
+    const val dataStore = "1.0.0-beta01"
 
     const val autoValueAnnotation = "1.6.3"
 

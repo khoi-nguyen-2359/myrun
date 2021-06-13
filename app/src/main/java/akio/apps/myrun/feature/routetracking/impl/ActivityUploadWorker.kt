@@ -37,8 +37,6 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
         val isCompleted = uploadActivitiesUsecase.unloadAll { activity ->
             setForegroundAsync(createForegroundInfo(activity.name, activity.startTime))
         }
-        val uploadDoneIntent = Intent(ACTION_UPLOAD_DONE)
-        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(uploadDoneIntent)
         return if (isCompleted) {
             Result.success()
         } else {
@@ -78,8 +76,6 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
     }
 
     companion object {
-        const val ACTION_UPLOAD_DONE = "ActivityUploadWorker.ACTION_UPLOAD_DONE"
-
         private const val NOTIFICATION_ID = 201
         private const val UNIQUE_WORK_NAME = "ActivityUploadWorker"
 
