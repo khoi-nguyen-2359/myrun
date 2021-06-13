@@ -6,7 +6,6 @@ import akio.apps._base.di.ViewModelFactoryProvider
 import akio.apps.myrun._di.AppComponent
 import akio.apps.myrun._di.DispatchersModule
 import akio.apps.myrun.data.activity._di.ActivityDataModule
-import akio.apps.myrun.data.activitysharing._di.ActivitySharingDataModule
 import akio.apps.myrun.data.authentication._di.AuthenticationDataModule
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
@@ -18,7 +17,6 @@ import dagger.Component
         StravaFeatureModule::class,
         ExternalAppDataModule::class,
         AuthenticationDataModule::class,
-        ActivitySharingDataModule::class,
         ActivityDataModule::class,
         DispatchersModule::class
     ],

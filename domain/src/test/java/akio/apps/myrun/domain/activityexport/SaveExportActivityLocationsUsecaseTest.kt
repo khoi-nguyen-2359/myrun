@@ -1,6 +1,5 @@
 package akio.apps.myrun.domain.activityexport
 
-import akio.apps.myrun.data.activitysharing.ActivityLocationCache
 import akio.apps.myrun.data.activitysharing.model.ActivityLocation
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity

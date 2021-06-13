@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.activity.entity
 
-import akio.apps.myrun.data.fitness.SingleDataPoint
+import akio.apps.myrun.data.fitness.DataPoint
 import akio.apps.myrun.data.location.LocationEntity
 import com.google.firebase.firestore.PropertyName
 
@@ -12,7 +12,7 @@ data class FirestoreDataPointList(
 class FirestoreDataPointSerializer<T>(
     private val firestoreDataPointParser: FirestoreDataPointParser<T>
 ) {
-    fun serialize(dataPoints: List<SingleDataPoint<T>>): FirestoreDataPointList {
+    fun serialize(dataPoints: List<DataPoint<T>>): FirestoreDataPointList {
         return FirestoreDataPointList(dataPoints.flatMap { firestoreDataPointParser.flatten(it) })
     }
 }
@@ -20,14 +20,14 @@ class FirestoreDataPointSerializer<T>(
 class FirestoreDataPointDeserializer<T>(
     private val dataPointParser: FirestoreDataPointParser<T>
 ) {
-    fun deserialize(firestoreData: FirestoreDataPointList): List<SingleDataPoint<T>> {
+    fun deserialize(firestoreData: FirestoreDataPointList): List<DataPoint<T>> {
         val dataPointList = firestoreData.data
         val dataPointIterator = dataPointList.iterator()
-        val result = mutableListOf<SingleDataPoint<T>>()
+        val result = mutableListOf<DataPoint<T>>()
         while (dataPointIterator.hasNext()) {
             val time = dataPointIterator.next().toLong()
             val value = dataPointParser.build(dataPointIterator)
-            result.add(SingleDataPoint(time, value))
+            result.add(DataPoint(time, value))
         }
 
         return result
@@ -35,12 +35,12 @@ class FirestoreDataPointDeserializer<T>(
 }
 
 interface FirestoreDataPointParser<T> {
-    fun flatten(dataPoint: SingleDataPoint<T>): List<Double>
+    fun flatten(dataPoint: DataPoint<T>): List<Double>
     fun build(firestoreDataIterator: Iterator<Double>): T
 }
 
 class FirestoreFloatDataPointParser : FirestoreDataPointParser<Float> {
-    override fun flatten(dataPoint: SingleDataPoint<Float>): List<Double> =
+    override fun flatten(dataPoint: DataPoint<Float>): List<Double> =
         listOf(dataPoint.timestamp.toDouble(), dataPoint.value.toDouble())
 
     override fun build(firestoreDataIterator: Iterator<Double>): Float =
@@ -49,7 +49,7 @@ class FirestoreFloatDataPointParser : FirestoreDataPointParser<Float> {
 }
 
 class FirestoreIntegerDataPointParser : FirestoreDataPointParser<Int> {
-    override fun flatten(dataPoint: SingleDataPoint<Int>): List<Double> =
+    override fun flatten(dataPoint: DataPoint<Int>): List<Double> =
         listOf(dataPoint.timestamp.toDouble(), dataPoint.value.toDouble())
 
     override fun build(firestoreDataIterator: Iterator<Double>): Int = firestoreDataIterator.next()
@@ -57,7 +57,7 @@ class FirestoreIntegerDataPointParser : FirestoreDataPointParser<Int> {
 }
 
 class FirestoreLocationDataPointParser : FirestoreDataPointParser<LocationEntity> {
-    override fun flatten(dataPoint: SingleDataPoint<LocationEntity>): List<Double> = listOf(
+    override fun flatten(dataPoint: DataPoint<LocationEntity>): List<Double> = listOf(
         dataPoint.timestamp.toDouble(),
         dataPoint.value.latitude,
         dataPoint.value.longitude,

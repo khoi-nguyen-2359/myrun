@@ -1,9 +1,8 @@
 package akio.apps.myrun.data.activity
 
 import akio.apps.myrun.data.activity.model.ActivityModel
-import akio.apps.myrun.data.fitness.SingleDataPoint
+import akio.apps.myrun.data.fitness.DataPoint
 import akio.apps.myrun.data.location.LocationEntity
-import android.graphics.Bitmap
 import java.io.File
 
 interface ActivityRepository {
@@ -16,14 +15,14 @@ interface ActivityRepository {
     suspend fun saveActivity(
         activity: ActivityModel,
         routeBitmapFile: File,
-        speedDataPoints: List<SingleDataPoint<Float>>,
-        stepCadenceDataPoints: List<SingleDataPoint<Int>>?,
-        locationDataPoints: List<SingleDataPoint<LocationEntity>>
+        speedDataPoints: List<DataPoint<Float>>,
+        stepCadenceDataPoints: List<DataPoint<Int>>?,
+        locationDataPoints: List<DataPoint<LocationEntity>>
     ): String
 
     suspend fun getActivity(activityId: String): ActivityModel?
     suspend fun getActivityLocationDataPoints(activityId: String):
-        List<SingleDataPoint<LocationEntity>>
+        List<DataPoint<LocationEntity>>
 
     fun generateActivityId(userId: String): String
 }

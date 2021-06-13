@@ -6,14 +6,10 @@ import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.LocationDataSource
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus.STOPPED
-import akio.apps.myrun.domain.activityexport.ClearExportActivityLocationUsecase
-import akio.apps.myrun.domain.activityexport.SaveExportActivityLocationsUsecase
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
-import akio.apps.myrun.domain.routetracking.UploadActivityUsecase
-import akio.apps.myrun.domain.strava.ExportTrackingActivityToStravaFileUsecase
+import akio.apps.myrun.domain.routetracking.StoreTrackingActivityDataUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
-import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import akio.apps.test.wheneverBlocking
 import android.app.Application
 import com.nhaarman.mockitokotlin2.verify
@@ -35,16 +31,7 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
     lateinit var mockedExternalAppProvidersRepository: ExternalAppProvidersRepository
 
     @Mock
-    lateinit var mockedActivityMapper: ActivityModelMapper
-
-    @Mock
-    lateinit var mockedExportActivityToStravaFileUsecase: ExportTrackingActivityToStravaFileUsecase
-
-    @Mock
     lateinit var mockedClearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
-
-    @Mock
-    lateinit var mockedUploadActivityUsecase: UploadActivityUsecase
 
     @Mock
     lateinit var mockedRouteTrackingState: RouteTrackingState
@@ -53,10 +40,7 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
     lateinit var mockedGetTrackedLocationsUsecase: GetTrackedLocationsUsecase
 
     @Mock
-    lateinit var mockedSaveExportActivityLocationsUsecase: SaveExportActivityLocationsUsecase
-
-    @Mock
-    lateinit var mockedClearExportActivityLocationUsecase: ClearExportActivityLocationUsecase
+    lateinit var mockedStoreTrackingActivityDataUsecase: StoreTrackingActivityDataUsecase
 
     @Mock
     lateinit var mockedAppContext: Application
@@ -95,12 +79,8 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
         mockedAppContext,
         mockedGetTrackedLocationsUsecase,
         mockedRouteTrackingState,
-        mockedUploadActivityUsecase,
         mockedClearRouteTrackingStateUsecase,
-        mockedSaveExportActivityLocationsUsecase,
-        mockedExportActivityToStravaFileUsecase,
-        mockedClearExportActivityLocationUsecase,
-        mockedActivityMapper,
+        mockedStoreTrackingActivityDataUsecase,
         mockedExternalAppProvidersRepository,
         mockedAuthenticationState,
         mockedLocationDataSource
