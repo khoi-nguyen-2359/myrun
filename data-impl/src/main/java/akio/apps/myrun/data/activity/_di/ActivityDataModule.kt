@@ -5,8 +5,8 @@ import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.impl.ActivityTcxFileWriterImpl
 import akio.apps.myrun.data.activity.impl.FirebaseActivityRepository
-import akio.apps.myrun.data.activitysharing.ActivityLocalStorage
-import akio.apps.myrun.data.activitysharing.impl.ActivityLocalStorageImpl
+import akio.apps.myrun.data.activity.ActivityLocalStorage
+import akio.apps.myrun.data.activity.impl.ActivityLocalStorageImpl
 import dagger.Binds
 import dagger.Module
 

@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.usertimeline.impl
 
-import akio.apps.myrun.data.activitysharing.ActivityLocalStorage
+import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.recentplace.PlaceIdentifier
 import akio.apps.myrun.data.recentplace.UserRecentPlaceRepository
@@ -14,7 +14,6 @@ import timber.log.Timber
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 
