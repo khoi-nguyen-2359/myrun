@@ -23,6 +23,10 @@ import java.io.File
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
@@ -101,15 +105,12 @@ class ActivityLocalStorageImpl @Inject constructor(
         )
     }
 
-    override suspend fun getStoredActivityIds(): List<String> =
-        createActivityStorageRootDir().list().orEmpty().toList()
-
     override suspend fun deleteActivityData(activityId: String) {
         val storageRootDir = createActivityStorageRootDir()
         File("${storageRootDir.absolutePath}/$activityId").deleteRecursively()
     }
 
-    override suspend fun loadActivityData(
+    private suspend fun loadActivityStorageData(
         activityId: String
     ): ActivityStorageDataOutput = withContext(ioDispatcher) {
         val activityDirectory = createActivityStorageDirectory(activityId)
@@ -130,6 +131,12 @@ class ActivityLocalStorageImpl @Inject constructor(
             activityDirectory.routeBitmapFile
         )
     }
+
+    override suspend fun loadAllActivityStorageDataFlow(): Flow<ActivityStorageDataOutput> =
+        createActivityStorageRootDir().list().orEmpty()
+            .asFlow()
+            .map(::loadActivityStorageData)
+            .flowOn(ioDispatcher)
 
     private fun serializeActivityLocations(locations: List<ActivityLocation>): List<Double> =
         locations.flatMap { listOf(it.time.toDouble(), it.latitude, it.longitude, it.latitude) }

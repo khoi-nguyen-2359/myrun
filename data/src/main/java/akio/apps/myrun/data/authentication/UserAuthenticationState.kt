@@ -7,6 +7,7 @@ interface UserAuthenticationState {
     fun getUserAccountFlow(): Flow<UserAccount?>
     fun getUserAccount(): UserAccount?
     fun getUserAccountId(): String?
+    fun requireUserAccountId(): String
     fun isLinkedWithFacebook(): Boolean
     fun isSignedIn(): Boolean
     fun isAnonymousUser(): Boolean
