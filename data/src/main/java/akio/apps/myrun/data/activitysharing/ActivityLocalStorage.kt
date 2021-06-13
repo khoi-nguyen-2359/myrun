@@ -4,6 +4,7 @@ import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activitysharing.model.ActivityLocation
 import akio.apps.myrun.data.activitysharing.model.ActivityStorageDataOutput
 import android.graphics.Bitmap
+import kotlinx.coroutines.flow.Flow
 
 interface ActivityLocalStorage {
     suspend fun storeActivityData(
@@ -17,9 +18,7 @@ interface ActivityLocalStorage {
         activityLocations: List<ActivityLocation>
     )
 
-    suspend fun loadActivityData(activityId: String): ActivityStorageDataOutput
-
-    suspend fun getStoredActivityIds(): List<String>
+    suspend fun loadAllActivityStorageDataFlow(): Flow<ActivityStorageDataOutput>
 
     suspend fun deleteActivityData(activityId: String)
 }

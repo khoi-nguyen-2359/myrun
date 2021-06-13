@@ -63,8 +63,8 @@ class RouteTrackingViewModelImpl @Inject constructor(
         routeTrackingState.getTrackingStatusFlow()
             .asLiveData()
 
-    private val _saveActivitySuccess = MutableLiveData<Event<Unit>>()
-    override val saveActivitySuccess: LiveData<Event<Unit>> = _saveActivitySuccess
+    private val _isStoreActivityDone = MutableLiveData<Event<Unit>>()
+    override val isStoreActivityDone: LiveData<Event<Unit>> = _isStoreActivityDone
 
     private val _activityType = MutableLiveData<ActivityType>()
     override val activityType: LiveData<ActivityType> = _activityType
@@ -102,7 +102,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
         }
     }
 
-    override fun saveActivity(routeMapImage: Bitmap) {
+    override fun storeActivityData(routeMapImage: Bitmap) {
         launchCatching {
             val activityType = activityType.value
                 ?: return@launchCatching
@@ -112,7 +112,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
             scheduleActivitySyncIfAvailable()
             clearRouteTrackingStateUsecase.clear()
 
-            _saveActivitySuccess.value = Event(Unit)
+            _isStoreActivityDone.value = Event(Unit)
         }
     }
 

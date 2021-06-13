@@ -18,7 +18,7 @@ abstract class RouteTrackingViewModel : BaseViewModel() {
     abstract val trackingLocationBatch: LiveData<List<TrackingLocationEntity>>
     abstract val trackingStats: LiveData<RouteTrackingStats>
     abstract val trackingStatus: LiveData<@RouteTrackingStatus Int>
-    abstract val saveActivitySuccess: LiveData<Event<Unit>>
+    abstract val isStoreActivityDone: LiveData<Event<Unit>>
     abstract val activityType: LiveData<ActivityType>
 
     abstract fun getLocationUpdate(locationRequest: LocationRequestEntity): Flow<List<Location>>
@@ -26,7 +26,7 @@ abstract class RouteTrackingViewModel : BaseViewModel() {
     abstract fun requestDataUpdates()
     abstract fun cancelDataUpdates()
     abstract fun requestInitialData()
-    abstract fun saveActivity(routeMapImage: Bitmap)
+    abstract fun storeActivityData(routeMapImage: Bitmap)
     abstract fun resumeDataUpdates()
 
     abstract fun onSelectActivityType(activityType: ActivityType)
