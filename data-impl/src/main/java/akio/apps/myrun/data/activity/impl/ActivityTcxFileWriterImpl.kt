@@ -3,7 +3,7 @@ package akio.apps.myrun.data.activity.impl
 import akio.apps.myrun.data.activity.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.ActivityType
-import akio.apps.myrun.data.activitysharing.model.ActivityLocation
+import akio.apps.myrun.data.activity.model.ActivityLocation
 import com.google.android.libraries.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import com.sweetzpot.tcxzpot.Activities

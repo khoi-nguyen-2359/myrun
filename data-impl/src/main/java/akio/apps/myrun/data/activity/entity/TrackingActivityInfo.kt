@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.activitysharing.entity
+package akio.apps.myrun.data.activity.entity
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

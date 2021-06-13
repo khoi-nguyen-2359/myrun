@@ -1,5 +1,8 @@
 package akio.apps.myrun.data.activitysharing.entity
 
+import akio.apps.myrun.data.activity.entity.AthleteInfo
+import akio.apps.myrun.data.activity.entity.RunningTrackingActivityInfo
+import akio.apps.myrun.data.activity.entity.TrackingActivityInfoData
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import kotlinx.serialization.ExperimentalSerializationApi

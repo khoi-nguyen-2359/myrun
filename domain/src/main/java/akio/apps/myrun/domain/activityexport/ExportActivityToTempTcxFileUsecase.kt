@@ -4,7 +4,7 @@ import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.model.ActivityModel
-import akio.apps.myrun.data.activitysharing.model.ActivityLocation
+import akio.apps.myrun.data.activity.model.ActivityLocation
 import android.app.Application
 import java.io.File
 import java.text.SimpleDateFormat
