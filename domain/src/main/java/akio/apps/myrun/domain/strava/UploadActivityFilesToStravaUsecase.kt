@@ -26,18 +26,17 @@ class UploadActivityFilesToStravaUsecase @Inject constructor(
         var isComplete = true
         if (stravaToken != null) {
             activityLocalStorage.loadAllActivitySyncDataFlow()
-                .catch { isComplete = false }
+                .catch { exception ->
+                    isComplete = false
+                    Timber.e(exception)
+                }
                 .collect { syncData ->
-                    try {
-                        stravaDataRepository.saveActivity(
-                            stravaToken,
-                            syncData.activityModel.name,
-                            syncData.tcxFile
-                        )
-                        activityLocalStorage.deleteActivitySyncData(syncData.activityModel.id)
-                    } catch (ex: Exception) {
-                        Timber.e(ex)
-                    }
+                    stravaDataRepository.saveActivity(
+                        stravaToken,
+                        syncData.activityModel.name,
+                        syncData.tcxFile
+                    )
+                    activityLocalStorage.deleteActivitySyncData(syncData.activityModel.id)
                 }
         }
 
