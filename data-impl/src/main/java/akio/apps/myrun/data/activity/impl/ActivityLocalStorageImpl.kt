@@ -1,21 +1,21 @@
 package akio.apps.myrun.data.activity.impl
 
 import akio.apps.myrun._di.NamedIoDispatcher
-import akio.apps.myrun.data.activity.ActivityTcxFileWriter
-import akio.apps.myrun.data.activity.model.ActivityDataModel
-import akio.apps.myrun.data.activity.model.ActivityModel
-import akio.apps.myrun.data.activity.model.ActivityType
-import akio.apps.myrun.data.activity.model.CyclingActivityModel
-import akio.apps.myrun.data.activity.model.RunningActivityModel
 import akio.apps.myrun.data.activity.ActivityLocalStorage
+import akio.apps.myrun.data.activity.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.entity.AthleteInfo
 import akio.apps.myrun.data.activity.entity.CyclingTrackingActivityInfo
 import akio.apps.myrun.data.activity.entity.RunningTrackingActivityInfo
 import akio.apps.myrun.data.activity.entity.TrackingActivityInfo
 import akio.apps.myrun.data.activity.entity.TrackingActivityInfoData
+import akio.apps.myrun.data.activity.model.ActivityDataModel
 import akio.apps.myrun.data.activity.model.ActivityLocation
+import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.ActivityStorageData
 import akio.apps.myrun.data.activity.model.ActivitySyncData
+import akio.apps.myrun.data.activity.model.ActivityType
+import akio.apps.myrun.data.activity.model.CyclingActivityModel
+import akio.apps.myrun.data.activity.model.RunningActivityModel
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
@@ -42,7 +42,8 @@ import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.protobuf.ProtoBuf
 
-private val Context.prefDataStore: DataStore<Preferences> by preferencesDataStore("ActivityLocalStorageImpl")
+private val Context.prefDataStore: DataStore<Preferences> by
+preferencesDataStore("ActivityLocalStorageImpl")
 
 @ExperimentalSerializationApi
 class ActivityLocalStorageImpl @Inject constructor(
@@ -128,7 +129,7 @@ class ActivityLocalStorageImpl @Inject constructor(
         tcxWriterAsync.join()
         infoWriteAsync.join()
         Timber.d("==== [DONE] STORE ACTIVITY SYNC DATA =====")
-     }
+    }
 
     override suspend fun deleteActivityData(activityId: String) {
         createActivityStorageDirectory(activityId).storageDir.deleteRecursively()

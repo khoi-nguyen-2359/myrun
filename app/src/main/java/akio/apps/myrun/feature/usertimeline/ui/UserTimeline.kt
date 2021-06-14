@@ -60,10 +60,10 @@ fun UserTimeline(
         .collectAsState(initial = 0)
     Box {
         when {
-            lazyPagingItems.loadState.refresh == LoadState.Loading && lazyPagingItems.itemCount == 0 ->
-                FullscreenLoadingView()
-            lazyPagingItems.loadState.append.endOfPaginationReached && lazyPagingItems.itemCount == 0 ->
-                UserTimelineEmptyMessage()
+            lazyPagingItems.loadState.refresh == LoadState.Loading &&
+                lazyPagingItems.itemCount == 0 -> FullscreenLoadingView()
+            lazyPagingItems.loadState.append.endOfPaginationReached &&
+                lazyPagingItems.itemCount == 0 -> UserTimelineEmptyMessage()
             else -> UserTimelineActivityList(
                 userTimelineViewModel,
                 contentPadding,
