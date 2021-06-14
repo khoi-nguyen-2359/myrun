@@ -6,9 +6,7 @@ import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureCompo
 import android.app.Application
 import android.app.Notification
 import android.content.Context
-import android.content.Intent
 import android.os.Build
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
@@ -64,8 +62,9 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
                 Notification.FOREGROUND_SERVICE_IMMEDIATE
             )
         }
+        val contentTitle = applicationContext.getString(R.string.activity_upload_notification_title)
         val notification: Notification = notificationBuilder
-            .setContentTitle(applicationContext.getString(R.string.activity_upload_notification_title))
+            .setContentTitle(contentTitle)
             .setProgress(0, 0, true)
             .setContentText(notificationContent)
             .setSmallIcon(R.drawable.ic_run_circle)
