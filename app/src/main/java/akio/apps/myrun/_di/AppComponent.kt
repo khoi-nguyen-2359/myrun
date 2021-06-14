@@ -17,9 +17,9 @@ import javax.inject.Singleton
     modules = [
         // singleton modules
         ExternalAppDataModule.StravaApiDataModule::class,
-        RouteTrackingDataModule.RouteTrackingStateDataModule::class,
 
         // application injection modules
+        RouteTrackingDataModule.RouteTrackingStateDataModule::class,
         ExternalAppDataModule::class,
         StravaFeatureModule::class,
         AuthenticationDataModule::class,

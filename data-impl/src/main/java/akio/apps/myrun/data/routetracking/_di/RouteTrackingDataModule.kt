@@ -40,7 +40,6 @@ interface RouteTrackingDataModule {
     @Module
     interface RouteTrackingStateDataModule {
         @Binds
-        @Singleton
         fun routeTrackingState(preferencesRouteTrackingState: PreferencesRouteTrackingState):
             RouteTrackingState
     }
