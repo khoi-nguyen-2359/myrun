@@ -341,7 +341,7 @@ class RouteTrackingService : Service() {
             "akio.apps.myrun.feature.routetracking.impl.RouteTrackingService.NOTIF_CHANNEL_ID"
 
         private const val LOCATION_UPDATE_INTERVAL = 2000L
-        private const val SMALLEST_DISPLACEMENT = 3f
+        private const val SMALLEST_DISPLACEMENT = 5f
 
         private const val TRACKING_TIMER_PERIOD = 1000L
 
