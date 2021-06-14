@@ -19,7 +19,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-private val Context.prefDataStore: DataStore<Preferences> by preferencesDataStore("route_tracking_state")
+private val Context.prefDataStore:
+    DataStore<Preferences> by preferencesDataStore("route_tracking_state")
 
 class PreferencesRouteTrackingState @Inject constructor(
     application: Application

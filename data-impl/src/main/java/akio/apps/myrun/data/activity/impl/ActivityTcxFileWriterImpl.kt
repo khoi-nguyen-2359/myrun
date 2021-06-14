@@ -86,7 +86,10 @@ class ActivityTcxFileWriterImpl @Inject constructor() : ActivityTcxFileWriter {
                                                         currentDistance +=
                                                             SphericalUtil.computeDistanceBetween(
                                                                 LatLng(it.latitude, it.longitude),
-                                                                LatLng(waypoint.latitude, waypoint.longitude)
+                                                                LatLng(
+                                                                    waypoint.latitude,
+                                                                    waypoint.longitude
+                                                                )
                                                             )
                                                         lastLocation = waypoint
                                                         withDistance(currentDistance)
