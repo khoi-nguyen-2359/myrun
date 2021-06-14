@@ -11,7 +11,6 @@ import androidx.room.Room
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module(includes = [RouteTrackingDataModule.Providers::class])
 interface RouteTrackingDataModule {
