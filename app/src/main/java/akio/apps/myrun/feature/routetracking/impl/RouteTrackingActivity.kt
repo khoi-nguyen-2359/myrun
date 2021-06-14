@@ -4,10 +4,8 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.dp2px
 import akio.apps.myrun.R
-import akio.apps.myrun._base.permissions.AppPermissions.locationPermissions
-import akio.apps.myrun._base.permissions.RequiredPermissionsDelegate
-import akio.apps.myrun._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun._base.utils.DialogDelegate
+import akio.apps.myrun._base.utils.LocationServiceChecker
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.activity.model.ActivityType
@@ -62,9 +60,10 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     private lateinit var mapView: GoogleMap
 
-    private val checkLocationServiceDelegate by lazy {
-        CheckLocationServiceDelegate(
-            this,
+    private val locationServiceChecker by lazy {
+        LocationServiceChecker(
+            activity = this,
+            RC_LOCATION_SERVICE,
             RouteTrackingService.createLocationTrackingRequest()
         )
     }
@@ -73,19 +72,16 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private var drawnLocationCount: Int = 0
     private val trackingRouteLatLngBounds = LatLngBounds.builder()
 
-    private val requiredPermissionsDelegate = RequiredPermissionsDelegate()
+    private val locationPermissionChecker: LocationPermissionChecker =
+        LocationPermissionChecker(activity = this)
+
     private val requisiteJobs = lifecycleScope.launchWhenCreated {
         // onCreate: check location permissions -> check location service availability -> allow user to use this screen
-        val missingRequiredPermission = !requiredPermissionsDelegate.requestPermissions(
-            locationPermissions,
-            RC_LOCATION_PERMISSIONS,
-            this@RouteTrackingActivity
-        ) || !checkLocationServiceDelegate.checkLocationServiceAvailability(
-            this@RouteTrackingActivity,
-            RC_LOCATION_SERVICE
-        )
+        val missingRequiredPermission =
+            !locationPermissionChecker.check() || !locationServiceChecker.check()
         if (missingRequiredPermission) {
             finish()
+            return@launchWhenCreated
         }
 
         googleFitLinkingDelegate.requestGoogleFitPermissions(
@@ -358,7 +354,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        requiredPermissionsDelegate.verifyPermissionsResult(this, locationPermissions)
 
         when (requestCode) {
             RC_ACTIVITY_REGCONITION_PERMISSION ->
@@ -371,7 +366,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         when (requestCode) {
             RC_FITNESS_DATA_PERMISSIONS -> googleFitLinkingDelegate.verifyFitnessDataPermission()
             RC_LOCATION_SERVICE ->
-                checkLocationServiceDelegate.verifyLocationServiceResolutionResult(resultCode)
+                locationServiceChecker.verifyLocationServiceResolutionResult(resultCode)
         }
     }
 
