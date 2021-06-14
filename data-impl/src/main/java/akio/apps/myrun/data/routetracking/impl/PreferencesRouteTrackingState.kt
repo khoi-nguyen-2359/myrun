@@ -98,7 +98,7 @@ class PreferencesRouteTrackingState @Inject constructor(
         .first()
 
     override suspend fun setActivityType(activityType: ActivityType) {
-        prefDataStore.edit { data -> data[KEY_ACTIVITY_TYPE] = activityType.name }
+        prefDataStore.edit { data -> data[KEY_ACTIVITY_TYPE] = activityType.identity }
     }
 
     override suspend fun setStartLocation(location: LocationEntity) {
