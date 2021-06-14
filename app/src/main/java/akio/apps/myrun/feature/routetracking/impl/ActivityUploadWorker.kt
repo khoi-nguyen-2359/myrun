@@ -32,7 +32,7 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
     }
 
     override suspend fun doWork(): Result {
-        val isCompleted = uploadActivitiesUsecase.unloadAll { activity ->
+        val isCompleted = uploadActivitiesUsecase.uploadAll { activity ->
             setForegroundAsync(createForegroundInfo(activity.name, activity.startTime))
         }
         return if (isCompleted) {

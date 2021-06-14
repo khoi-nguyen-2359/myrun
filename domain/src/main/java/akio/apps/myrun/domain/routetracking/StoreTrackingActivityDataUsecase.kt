@@ -81,7 +81,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
             activityId,
             activityType,
             activityName,
-            routeImage = "",    // not yet stored
+            routeImage = "", // not yet stored
             placeIdentifier,
             startTime,
             endTime,

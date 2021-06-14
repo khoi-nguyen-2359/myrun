@@ -4,13 +4,11 @@ import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.feature.activitydetail.ActivityDetailActivity
 import akio.apps.myrun.feature.activityexport.ActivityExportService
 import akio.apps.myrun.feature.home.ui.HomeScreen
-import akio.apps.myrun.feature.routetracking.impl.ActivityUploadWorker
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
 import akio.apps.myrun.feature.userprofile.impl.UserProfileFragment
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline._di.DaggerUserTimelineFeatureComponent
 import akio.apps.myrun.feature.usertimeline.model.Activity
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
