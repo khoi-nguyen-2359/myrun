@@ -32,11 +32,14 @@ class MyDebugTree(private val application: MyRunApp) : Timber.DebugTree() {
             FirebaseCrashlytics.getInstance().log(message)
         }
         FirebaseCrashlytics.getInstance().recordException(t)
+        FirebaseCrashlytics.getInstance().sendUnsentReports()
     }
 
     private fun notifyExceptionReport(cause: Throwable) {
+        val stackTrace = cause.stackTraceToString()
         val notification = NotificationCompat.Builder(application, CHANNEL_ID)
-            .setContentText("A ${cause::class.simpleName} has just been reported by Crashlytics.")
+            .setContentTitle("A ${cause::class.simpleName} was recorded.")
+            .setContentText(stackTrace)
             .setSmallIcon(R.drawable.ic_run_circle)
             .build()
         NotificationManagerCompat.from(application)
