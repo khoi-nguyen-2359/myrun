@@ -1,9 +1,7 @@
 package akio.apps.myrun._base.utils
 
-import akio.apps.myrun.R
 import akio.apps.myrun.data.location.LocationRequestEntity
 import android.app.Activity
-import androidx.appcompat.app.AlertDialog
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
@@ -11,26 +9,26 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.google.android.gms.location.SettingsClient
+import kotlin.coroutines.resume
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class CheckLocationServiceDelegate(
-    activity: Activity,
+class LocationServiceChecker(
+    private val activity: Activity,
+    private val rcResolution: Int,
     private val sampleRequestEntity: LocationRequestEntity
 ) {
 
     private val locationSettingsClient: SettingsClient =
         LocationServices.getSettingsClient(activity)
-    private val resolveForResultJob = Job()
-    private val showLocationUnavailableDialogJob = Job()
+
+    private var resolutionContinuation: CancellableContinuation<Boolean>? = null
 
     // work with activity only!!
-    suspend fun checkLocationServiceAvailability(
-        activity: Activity,
-        rcLocationService: Int
-    ): Boolean = withContext(Dispatchers.IO) {
+    suspend fun check(): Boolean = withContext(Dispatchers.IO) {
         val sampleRequest = LocationRequest.create().apply {
             interval = sampleRequestEntity.interval
             fastestInterval = sampleRequestEntity.fastestInterval
@@ -42,50 +40,32 @@ class CheckLocationServiceDelegate(
             .build()
 
         return@withContext try {
-            locationSettingsClient.checkLocationSettings(settingsReq)
-                .await()
+            locationSettingsClient.checkLocationSettings(settingsReq).await()
             true
         } catch (apiEx: ApiException) {
             when (apiEx.statusCode) {
                 LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
-                    (apiEx as? ResolvableApiException)?.startResolutionForResult(
-                        activity,
-                        rcLocationService
-                    )
-                    try {
-                        resolveForResultJob.join()
-                        true
-                    } catch (ex: ResolutionNotFound) {
-                        showLocationServiceUnavailableDialog(activity)
-                    }
+                    (apiEx as? ResolvableApiException)?.let { resolveError(it) } ?: false
                 }
-
-                else -> {
-                    showLocationServiceUnavailableDialog(activity)
-                }
+                else -> false
             }
         }
     }
+
+    private suspend fun resolveError(apiEx: ResolvableApiException): Boolean =
+        suspendCancellableCoroutine { continuation ->
+            resolutionContinuation = continuation
+            apiEx.startResolutionForResult(
+                activity,
+                rcResolution
+            )
+        }
 
     fun verifyLocationServiceResolutionResult(resultCode: Int) {
         if (resultCode == Activity.RESULT_OK) {
-            resolveForResultJob.complete()
+            resolutionContinuation?.resume(true)
         } else {
-            resolveForResultJob.completeExceptionally(ResolutionNotFound())
+            resolutionContinuation?.resume(false)
         }
     }
-
-    private suspend fun showLocationServiceUnavailableDialog(activity: Activity): Boolean {
-        AlertDialog.Builder(activity)
-            .setMessage(R.string.error_location_service_unavailable)
-            .setPositiveButton(R.string.action_close) { _, _ ->
-                showLocationUnavailableDialogJob.complete()
-            }
-            .setCancelable(false)
-            .show()
-        showLocationUnavailableDialogJob.join()
-        return false
-    }
-
-    internal class ResolutionNotFound : Throwable()
 }
