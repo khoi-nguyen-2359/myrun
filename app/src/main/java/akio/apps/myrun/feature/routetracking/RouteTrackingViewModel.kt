@@ -20,6 +20,7 @@ abstract class RouteTrackingViewModel : BaseViewModel() {
     abstract val trackingStatus: LiveData<@RouteTrackingStatus Int>
     abstract val isStoreActivityDone: LiveData<Event<Unit>>
     abstract val activityType: LiveData<ActivityType>
+    abstract suspend fun getInitialLocation(): Location?
 
     abstract fun getLocationUpdate(locationRequest: LocationRequestEntity): Flow<List<Location>>
 

@@ -43,6 +43,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
 
     // TODO: Will refactor this screen to Composable
     override val isStopOptionDialogShowing: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    override suspend fun getInitialLocation(): Location? = locationDataSource.getLastLocation()
 
     private val _trackingLocationBatch = MutableLiveData<List<TrackingLocationEntity>>()
     override val trackingLocationBatch: LiveData<List<TrackingLocationEntity>> =
@@ -52,8 +53,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
     override val trackingStats: LiveData<RouteTrackingStats> = _trackingStats
 
     override val trackingStatus: LiveData<@RouteTrackingStatus Int> =
-        routeTrackingState.getTrackingStatusFlow()
-            .asLiveData()
+        routeTrackingState.getTrackingStatusFlow().asLiveData()
 
     private val _isStoreActivityDone = MutableLiveData<Event<Unit>>()
     override val isStoreActivityDone: LiveData<Event<Unit>> = _isStoreActivityDone

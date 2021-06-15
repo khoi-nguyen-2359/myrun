@@ -17,6 +17,8 @@ import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.feature.routetracking.ui.StopDialogOptionId
 import akio.apps.myrun.feature.routetracking.ui.StopOptionsDialog
+import akio.apps.myrun.feature.routetracking.ui.TrackingControlButtonPanel
+import akio.apps.myrun.feature.routetracking.ui.TrackingControlButtonType
 import akio.apps.myrun.feature.routetracking.view.ActivitySettingsView
 import android.annotation.SuppressLint
 import android.content.Context
@@ -80,8 +82,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             finish()
             return@launchWhenCreated
         }
-
-        initMap()
     }
 
     private var trackMapCameraOnLocationUpdateJob: Job? = null
@@ -89,7 +89,9 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        routeTrackingViewModel.requestInitialData()
         initViews()
+        initMap()
     }
 
     override fun onStart() {
@@ -178,7 +180,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         when (trackingStatus) {
             RouteTrackingStatus.RESUMED -> updateViewsOnTrackingResumed()
             RouteTrackingStatus.PAUSED -> updateViewsOnTrackingPaused()
-            RouteTrackingStatus.STOPPED -> updateViewsOnTrackingStopped()
         }
     }
 
@@ -243,18 +244,20 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     @OptIn(ExperimentalMaterialApi::class)
-    private fun initViews() {
-        viewBinding.apply {
-            setContentView(root)
-            recordButton.setOnClickListener { startRouteTracking() }
-            pauseButton.setOnClickListener { pauseRouteTracking() }
-            resumeButton.setOnClickListener { resumeRouteTracking() }
-            stopButton.setOnClickListener { stopRouteTracking() }
-            activitySettingsView.eventListener = this@RouteTrackingActivity
-            viewBinding.composableStopOptionsView.setContent {
-                StopOptionsDialog(routeTrackingViewModel, ::selectStopOptionItem)
-            }
+    private fun initViews() = viewBinding.apply {
+        setContentView(root)
+        activitySettingsView.eventListener = this@RouteTrackingActivity
+        composableView.setContent {
+            TrackingControlButtonPanel(routeTrackingViewModel, ::onClickControlButton)
+            StopOptionsDialog(routeTrackingViewModel, ::selectStopOptionItem)
         }
+    }
+
+    private fun onClickControlButton(buttonType: TrackingControlButtonType) = when (buttonType) {
+        TrackingControlButtonType.Start -> startRouteTracking()
+        TrackingControlButtonType.Pause -> pauseRouteTracking()
+        TrackingControlButtonType.Resume -> resumeRouteTracking()
+        TrackingControlButtonType.Stop -> stopRouteTracking()
     }
 
     private fun selectStopOptionItem(selectedOptionId: StopDialogOptionId) =
@@ -267,22 +270,8 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             }
         }
 
-    private fun updateViewsOnTrackingStopped() {
-        viewBinding.apply {
-            recordButton.visibility = View.VISIBLE
-            resumeButton.visibility = View.GONE
-            stopButton.visibility = View.GONE
-            pauseButton.visibility = View.GONE
-        }
-    }
-
     private fun updateViewsOnTrackingPaused() {
         viewBinding.apply {
-            recordButton.visibility = View.GONE
-            resumeButton.visibility = View.VISIBLE
-            stopButton.visibility = View.VISIBLE
-            pauseButton.visibility = View.GONE
-
             viewBinding.activitySettingsView.visibility = View.GONE
             viewBinding.trackingStatsView.visibility = View.VISIBLE
             viewBinding.semiTransparentBackdropView.visibility = View.VISIBLE
@@ -291,11 +280,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     private fun updateViewsOnTrackingResumed() {
         viewBinding.apply {
-            recordButton.visibility = View.GONE
-            resumeButton.visibility = View.GONE
-            stopButton.visibility = View.GONE
-            pauseButton.visibility = View.VISIBLE
-
             viewBinding.activitySettingsView.visibility = View.GONE
             viewBinding.trackingStatsView.visibility = View.VISIBLE
             viewBinding.semiTransparentBackdropView.visibility = View.VISIBLE
@@ -352,7 +336,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             .getMapAsync { map ->
                 initMapView(map)
                 initObservers()
-                routeTrackingViewModel.requestInitialData()
             }
     }
 
@@ -376,14 +359,9 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     companion object {
         val MAP_LATLNG_BOUND_PADDING = 30.dp2px.toInt()
-        const val MAP_DEFAULT_ZOOM_LEVEL = 18f
         const val ROUTE_IMAGE_RATIO = 1.7f
 
         const val RC_LOCATION_SERVICE = 1
-        const val RC_LOCATION_PERMISSIONS = 2
-        const val RC_FITNESS_DATA_PERMISSIONS = 3
-
-        const val RC_ACTIVITY_REGCONITION_PERMISSION = 4
 
         fun launchIntent(context: Context): Intent {
             val intent = Intent(context, RouteTrackingActivity::class.java)
