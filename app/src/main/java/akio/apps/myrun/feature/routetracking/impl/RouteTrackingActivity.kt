@@ -12,7 +12,6 @@ import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
-import akio.apps.myrun.feature.googlefit.GoogleFitLinkingDelegate
 import akio.apps.myrun.feature.home.HomeActivity
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
@@ -56,8 +55,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         DaggerRouteTrackingFeatureComponent.factory().create(application)
     }
 
-    private val googleFitLinkingDelegate = GoogleFitLinkingDelegate()
-
     private lateinit var mapView: GoogleMap
 
     private val locationServiceChecker by lazy {
@@ -83,12 +80,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             finish()
             return@launchWhenCreated
         }
-
-        googleFitLinkingDelegate.requestGoogleFitPermissions(
-            this@RouteTrackingActivity,
-            RC_ACTIVITY_REGCONITION_PERMISSION,
-            RC_FITNESS_DATA_PERMISSIONS
-        )
 
         initMap()
     }
@@ -348,23 +339,9 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        when (requestCode) {
-            RC_ACTIVITY_REGCONITION_PERMISSION ->
-                googleFitLinkingDelegate.verifyActivityRecognitionPermission()
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            RC_FITNESS_DATA_PERMISSIONS -> googleFitLinkingDelegate.verifyFitnessDataPermission()
             RC_LOCATION_SERVICE ->
                 locationServiceChecker.verifyLocationServiceResolutionResult(resultCode)
         }
