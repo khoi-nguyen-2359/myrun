@@ -27,7 +27,6 @@ class LocationServiceChecker(
 
     private var resolutionContinuation: CancellableContinuation<Boolean>? = null
 
-    // work with activity only!!
     suspend fun check(): Boolean = withContext(Dispatchers.IO) {
         val sampleRequest = LocationRequest.create().apply {
             interval = sampleRequestEntity.interval
