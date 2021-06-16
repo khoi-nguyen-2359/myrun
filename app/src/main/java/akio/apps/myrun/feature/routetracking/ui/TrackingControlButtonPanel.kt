@@ -6,6 +6,12 @@ import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.ui.theme.MyRunAppTheme
 import android.location.Location
 import androidx.annotation.StringRes
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -19,7 +25,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.GpsNotFixed
+import androidx.compose.material.icons.rounded.GpsOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -27,7 +33,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -45,27 +51,33 @@ fun TrackingControlButtonPanel(
         initialValue = null,
         producer = { value = routeTrackingViewModel.getInitialLocation() }
     )
-    Row(
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp),
-        horizontalArrangement = Arrangement.Center
+            .padding(bottom = 16.dp)
     ) {
-        if (initialLocation == null) {
-            TrackingGpsSignalIcon()
-        } else {
-            val controlButtonType = mapTrackingStatusToControlButtonType[trackingStatus]
-            val items = if (trackingStatus == RouteTrackingStatus.PAUSED) {
-                listOfNotNull(controlButtonType, TrackingControlButtonType.Stop)
+        Row(
+            modifier = Modifier.animateContentSize(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            if (initialLocation == null) {
+                TrackingGpsSignalIcon()
             } else {
-                listOfNotNull(controlButtonType)
-            }
-            items.forEach { buttonType ->
-                TrackingControlButton(
-                    label = stringResource(id = buttonType.label),
-                    color = buttonType.color,
-                    onClickAction = { onClickControlButton(buttonType) }
-                )
+
+                val controlButtonType = mapTrackingStatusToControlButtonType[trackingStatus]
+                val items = if (trackingStatus == RouteTrackingStatus.PAUSED) {
+                    listOfNotNull(controlButtonType, TrackingControlButtonType.Stop)
+                } else {
+                    listOfNotNull(controlButtonType)
+                }
+                items.forEach { buttonType ->
+                    TrackingControlButton(
+                        label = stringResource(id = buttonType.label),
+                        color = buttonType.color,
+                        onClickAction = { onClickControlButton(buttonType) }
+                    )
+                }
             }
         }
     }
@@ -111,7 +123,7 @@ private fun CircularControlButton(
     elevation = 4.dp,
     modifier = Modifier
         .size(80.dp)
-        .padding(4.dp),
+        .padding(6.dp),
     shape = RoundedCornerShape(CornerSize(40.dp)),
     color = color,
     onClick = { onClickAction?.invoke() },
@@ -119,13 +131,27 @@ private fun CircularControlButton(
     content = content
 )
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun TrackingGpsSignalIcon() = CircularControlButton(
     color = Color(0xfff57f17)
 ) {
-    Box(contentAlignment = Alignment.Center) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val animatedAlpha by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 0.3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1500)
+        )
+    )
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.graphicsLayer {
+            alpha = animatedAlpha
+        }
+    ) {
         Icon(
-            imageVector = Icons.Rounded.GpsNotFixed,
+            imageVector = Icons.Rounded.GpsOff,
             tint = Color.White,
             contentDescription = "GPS signal icon"
         )
