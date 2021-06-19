@@ -24,8 +24,6 @@ class RouteTrackingStatsView @JvmOverloads constructor(
     private val activityTypes = listOf(ActivityType.Running, ActivityType.Cycling)
 
     init {
-        val verticalPadding = resources.getDimensionPixelSize(R.dimen.common_page_vertical_padding)
-        setPadding(paddingLeft, verticalPadding, paddingRight, verticalPadding)
         readAttrs(attrs)
     }
 
