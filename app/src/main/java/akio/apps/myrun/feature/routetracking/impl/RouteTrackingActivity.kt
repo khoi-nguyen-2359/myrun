@@ -44,8 +44,14 @@ import com.google.android.libraries.maps.model.MapStyleOptions
 import com.google.android.libraries.maps.model.Polyline
 import com.google.android.libraries.maps.model.PolylineOptions
 import com.google.android.libraries.maps.model.RoundCap
+import timber.log.Timber
+import kotlin.coroutines.resume
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 
 class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventListener {
 
@@ -118,7 +124,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         observe(routeTrackingViewModel.trackingStats, viewBinding.trackingStatsView::update)
         observe(routeTrackingViewModel.trackingStatus, ::onTrackingStatusChanged)
         observeEvent(routeTrackingViewModel.error, dialogDelegate::showExceptionAlert)
-        observeEvent(routeTrackingViewModel.isStoreActivityDone) { onStoreActivitySuccess() }
         observe(
             routeTrackingViewModel.activityType,
             viewBinding.activitySettingsView::setActivityType
@@ -305,21 +310,49 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         routeTrackingViewModel.isStopOptionDialogShowing.value = true
     }
 
+    /**
+     * Captures current snapshot of map view, then crops to the part that contains the route.
+     * Returns null when map snapshot is failed to be captured.
+     */
     @SuppressLint("MissingPermission")
-    private fun saveActivity() {
+    private suspend fun getRouteImageBitmap(): Bitmap? {
+        // hide the my location button
         mapView.isMyLocationEnabled = false
         val cameraViewSize = recenterMap(trackingRouteLatLngBounds.build(), false)
-        mapView.snapshot { mapSnapshot ->
-            mapView.isMyLocationEnabled = true
-            // TODO: do this in background?
-            val cropped = Bitmap.createBitmap(
-                mapSnapshot,
-                (mapSnapshot.width - cameraViewSize.width) / 2,
-                (mapSnapshot.height - cameraViewSize.height) / 2,
+        Timber.d(Thread.currentThread().name)
+        val mapImageSnapShot: Bitmap? = suspendCancellableCoroutine { continuation ->
+            mapView.snapshot { mapSnapshot ->
+                Timber.d(Thread.currentThread().name)
+                continuation.resume(mapSnapshot)
+            }
+        }
+        mapView.isMyLocationEnabled = true
+        if (mapImageSnapShot == null) {
+            // null when snapshot can not be taken
+            Timber.e(Exception("Map snapshot can not be taken."))
+            return null
+        }
+
+        return withContext(Dispatchers.IO) {
+            Bitmap.createBitmap(
+                mapImageSnapShot,
+                (mapImageSnapShot.width - cameraViewSize.width) / 2,
+                (mapImageSnapShot.height - cameraViewSize.height) / 2,
                 cameraViewSize.width,
                 cameraViewSize.height
             )
-            routeTrackingViewModel.storeActivityData(cropped)
+        }
+    }
+
+    private fun saveActivity() {
+        lifecycleScope.launch {
+            val routeImageBitmap = getRouteImageBitmap()
+            if (routeImageBitmap != null) {
+                dialogDelegate.showProgressDialog()
+                routeTrackingViewModel.storeActivityData(routeImageBitmap)
+                dialogDelegate.dismissProgressDialog()
+                onStoreActivitySuccess()
+            }
         }
     }
 

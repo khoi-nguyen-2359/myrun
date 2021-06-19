@@ -94,18 +94,12 @@ class RouteTrackingViewModelImpl @Inject constructor(
         }
     }
 
-    override fun storeActivityData(routeMapImage: Bitmap) {
-        launchCatching {
-            val activityType = activityType.value
-                ?: return@launchCatching
-
-            val activityName = makeActivityName(activityType)
-            storeTrackingActivityDataUsecase(activityName, routeMapImage)
-            scheduleActivitySyncIfAvailable()
-            clearRouteTrackingStateUsecase.clear()
-
-            _isStoreActivityDone.value = Event(Unit)
-        }
+    override suspend fun storeActivityData(routeMapImage: Bitmap) {
+        val activityType = activityType.value ?: return
+        val activityName = makeActivityName(activityType)
+        storeTrackingActivityDataUsecase(activityName, routeMapImage)
+        scheduleActivitySyncIfAvailable()
+        clearRouteTrackingStateUsecase.clear()
     }
 
     override fun getLocationUpdate(locationRequest: LocationRequestEntity): Flow<List<Location>> {

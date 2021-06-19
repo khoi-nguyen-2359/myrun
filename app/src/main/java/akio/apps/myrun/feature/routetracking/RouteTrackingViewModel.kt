@@ -27,7 +27,7 @@ abstract class RouteTrackingViewModel : BaseViewModel() {
     abstract fun requestDataUpdates()
     abstract fun cancelDataUpdates()
     abstract fun requestInitialData()
-    abstract fun storeActivityData(routeMapImage: Bitmap)
+    abstract suspend fun storeActivityData(routeMapImage: Bitmap)
     abstract fun resumeDataUpdates()
 
     abstract fun onSelectActivityType(activityType: ActivityType)
