@@ -1,6 +1,5 @@
 package akio.apps.myrun.feature.routetracking.impl
 
-import akio.apps._base.lifecycle.Event
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun.data.activity.model.ActivityType
@@ -54,9 +53,6 @@ class RouteTrackingViewModelImpl @Inject constructor(
 
     override val trackingStatus: LiveData<@RouteTrackingStatus Int> =
         routeTrackingState.getTrackingStatusFlow().asLiveData()
-
-    private val _isStoreActivityDone = MutableLiveData<Event<Unit>>()
-    override val isStoreActivityDone: LiveData<Event<Unit>> = _isStoreActivityDone
 
     private val _activityType = MutableLiveData<ActivityType>()
     override val activityType: LiveData<ActivityType> = _activityType
@@ -160,6 +156,12 @@ class RouteTrackingViewModelImpl @Inject constructor(
         _activityType.value = activityType
         viewModelScope.launch {
             routeTrackingState.setActivityType(activityType)
+        }
+    }
+
+    override fun discardActivity() {
+        launchCatching {
+            clearRouteTrackingStateUsecase.clear()
         }
     }
 
