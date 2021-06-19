@@ -37,9 +37,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+private val CIRCULAR_CONTROL_BUTTON_SIZE = 90.dp
 
 @Composable
 fun TrackingControlButtonPanel(
@@ -64,7 +67,6 @@ fun TrackingControlButtonPanel(
             if (initialLocation == null) {
                 TrackingGpsSignalIcon()
             } else {
-
                 val controlButtonType = mapTrackingStatusToControlButtonType[trackingStatus]
                 val items = if (trackingStatus == RouteTrackingStatus.PAUSED) {
                     listOfNotNull(controlButtonType, TrackingControlButtonType.Stop)
@@ -120,11 +122,11 @@ private fun CircularControlButton(
     isClickable: Boolean = false,
     content: @Composable () -> Unit
 ) = Surface(
-    elevation = 4.dp,
+    elevation = 2.dp,
     modifier = Modifier
-        .size(80.dp)
-        .padding(6.dp),
-    shape = RoundedCornerShape(CornerSize(40.dp)),
+        .size(CIRCULAR_CONTROL_BUTTON_SIZE)
+        .padding(8.dp),
+    shape = RoundedCornerShape(CornerSize(CIRCULAR_CONTROL_BUTTON_SIZE / 2)),
     color = color,
     onClick = { onClickAction?.invoke() },
     enabled = isClickable,
@@ -171,16 +173,17 @@ private fun TrackingControlButton(
 ) {
     Box(contentAlignment = Alignment.Center) {
         Text(
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             text = label.uppercase(),
             color = Color.White,
             fontSize = 15.sp,
             fontStyle = FontStyle.Italic,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold
         )
     }
 }
 
-//@Composable
-//@Preview
-//private fun PreviewControlButton() = TrackingControlButton("Control Button", Color.Black) {}
+@Composable
+@Preview
+private fun PreviewControlButton() = TrackingControlButton("Resume", Color.Black) {}
