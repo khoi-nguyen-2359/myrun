@@ -28,6 +28,7 @@ import android.location.Location
 import android.os.Bundle
 import android.util.Size
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.content.ContextCompat
@@ -153,10 +154,9 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         recenterMap(bounds, animation = true)
     }
 
-    private fun onStoreActivitySuccess() {
+    private fun stopTrackingServiceAndFinish() {
         startService(RouteTrackingService.stopIntent(this))
         startActivity(HomeActivity.clearTaskIntent(this))
-        ActivityUploadWorker.enqueue(this)
     }
 
     private fun onTrackingStatusChanged(@RouteTrackingStatus trackingStatus: Int) {
@@ -268,12 +268,22 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private fun selectStopOptionItem(selectedOptionId: StopDialogOptionId) =
         when (selectedOptionId) {
             StopDialogOptionId.Save -> saveActivity()
-            StopDialogOptionId.Discard -> {
-                TODO("not implemented yet")
-            }
+            StopDialogOptionId.Discard -> discardActivity()
             StopDialogOptionId.Cancel -> {
+                // dialog closed, no action.
             }
         }
+
+    private fun discardActivity() {
+        AlertDialog.Builder(this)
+            .setMessage(R.string.route_tracking_discard_activity_confirm_message)
+            .setPositiveButton(R.string.action_yes) { _, _ ->
+                routeTrackingViewModel.discardActivity()
+                stopTrackingServiceAndFinish()
+            }
+            .setNegativeButton(R.string.action_no) { _, _ -> }
+            .show()
+    }
 
     private fun updateViewsOnTrackingPaused() {
         viewBinding.apply {
@@ -351,7 +361,8 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
                 dialogDelegate.showProgressDialog()
                 routeTrackingViewModel.storeActivityData(routeImageBitmap)
                 dialogDelegate.dismissProgressDialog()
-                onStoreActivitySuccess()
+                ActivityUploadWorker.enqueue(this@RouteTrackingActivity)
+                stopTrackingServiceAndFinish()
             }
         }
     }
