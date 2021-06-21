@@ -77,7 +77,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     private var routePolyline: Polyline? = null
     private var drawnLocationCount: Int = 0
-    private val trackingRouteLatLngBounds = LatLngBounds.builder()
+    private val trackingRouteLatLngBounds: LatLngBounds.Builder = LatLngBounds.builder()
 
     private val locationPermissionChecker: LocationPermissionChecker =
         LocationPermissionChecker(activity = this)
@@ -93,6 +93,8 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     private var trackMapCameraOnLocationUpdateJob: Job? = null
+
+    private var lastPausedLocation: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -148,8 +150,9 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
                     }
                 }
                 .collect {
-                    if (it.isNotEmpty()) {
-                        recenterMap(it.last())
+                    it.lastOrNull()?.let { lastItem ->
+                        lastPausedLocation = lastItem
+                        recenterMap(lastItem)
                     }
                 }
         }
@@ -198,12 +201,14 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     private fun onTrackingLocationUpdate(batch: List<TrackingLocationEntity>) {
+        Timber.d("onTrackingLocationUpdate ${batch.size}")
         drawTrackingLocationUpdate(batch)
         moveMapCameraOnTrackingLocationUpdate(batch)
     }
 
     private fun moveMapCameraOnTrackingLocationUpdate(batch: List<TrackingLocationEntity>) {
         batch.forEach {
+            Timber.d("tracking route latlng bounds include ${batch.size}")
             trackingRouteLatLngBounds.include(it.toGmsLatLng())
         }
 
@@ -313,6 +318,11 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private fun startRouteTracking() {
         ContextCompat.startForegroundService(this, RouteTrackingService.startIntent(this))
         routeTrackingViewModel.requestDataUpdates()
+        makeSureTrackingRouteBoundsNotEmpty()
+    }
+
+    private fun makeSureTrackingRouteBoundsNotEmpty() = lastPausedLocation?.let {
+        trackingRouteLatLngBounds.include(it.toGmsLatLng())
     }
 
     private fun pauseRouteTracking() {

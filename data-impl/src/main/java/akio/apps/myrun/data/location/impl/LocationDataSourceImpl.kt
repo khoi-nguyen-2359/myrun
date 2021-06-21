@@ -11,7 +11,6 @@ import com.google.android.gms.location.LocationResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
@@ -36,15 +35,16 @@ class LocationDataSourceImpl @Inject constructor(
     @SuppressLint("MissingPermission")
     override fun getLocationUpdate(locationRequest: LocationRequestEntity): Flow<List<Location>> =
         callbackFlow<List<Location>> {
+            getLastLocation()?.let { lastLocation ->
+                trySend(listOf(lastLocation))
+            }
 
             val callback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
-                    Timber.d("location result on thread ${Thread.currentThread().name}")
-                    sendBlocking(locationResult.locations)
+                    trySend(locationResult.locations)
                 }
             }
 
-            Timber.d("request location result on thread ${Thread.currentThread().name}")
             locationClient.requestLocationUpdates(
                 locationRequest.toGmsLocationRequest(),
                 callback,
