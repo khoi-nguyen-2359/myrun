@@ -104,8 +104,12 @@
     <string name="activity_export_progress_notification_finishing">Finishing</string>
     <string name="route_tracking_save_activity">Finish and save activity</string>
     <string name="route_tracking_discard_activity">Discard activity</string>
-  <string name="activity_upload_notification_title">Uploading your activity</string>
-  <string-array name="user_timeline_activity_selection_items">
+    <string name="activity_upload_notification_title">Uploading your activity</string>
+    <string name="location_permission_rationale_message">Your activity route is tracked in <b>precise locations</b>. Please grant the permission first.</string>
+    <string name="action_proceed">Proceed</string>
+    <string name="location_permission_is_missing_error">Feature is not available without required permissions.</string>
+    <string name="route_tracking_discard_activity_confirm_message">Your tracked route will be lost after discarded. Do you want to proceed?</string>
+    <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>
     </string-array>
@@ -113,7 +117,7 @@
         <item>Camera</item>
         <item>Photo Gallery</item>
     </string-array>
-    <string-array name="route_tracking_stop_options" >
+    <string-array name="route_tracking_stop_options">
         <item>Finish and save activity</item>
         <item>Discard activity</item>
         <item>Cancel</item>

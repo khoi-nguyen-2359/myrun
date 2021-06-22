@@ -4,22 +4,21 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.dp2px
 import akio.apps.myrun.R
-import akio.apps.myrun._base.permissions.AppPermissions.locationPermissions
-import akio.apps.myrun._base.permissions.RequiredPermissionsDelegate
-import akio.apps.myrun._base.utils.CheckLocationServiceDelegate
 import akio.apps.myrun._base.utils.DialogDelegate
+import akio.apps.myrun._base.utils.LocationServiceChecker
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
-import akio.apps.myrun.feature.googlefit.GoogleFitLinkingDelegate
 import akio.apps.myrun.feature.home.HomeActivity
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.feature.routetracking.ui.StopDialogOptionId
 import akio.apps.myrun.feature.routetracking.ui.StopOptionsDialog
+import akio.apps.myrun.feature.routetracking.ui.TrackingControlButtonPanel
+import akio.apps.myrun.feature.routetracking.ui.TrackingControlButtonType
 import akio.apps.myrun.feature.routetracking.view.ActivitySettingsView
 import android.annotation.SuppressLint
 import android.content.Context
@@ -29,6 +28,7 @@ import android.location.Location
 import android.os.Bundle
 import android.util.Size
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.content.ContextCompat
@@ -45,8 +45,15 @@ import com.google.android.libraries.maps.model.MapStyleOptions
 import com.google.android.libraries.maps.model.Polyline
 import com.google.android.libraries.maps.model.PolylineOptions
 import com.google.android.libraries.maps.model.RoundCap
+import timber.log.Timber
+import kotlin.coroutines.resume
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 
 class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventListener {
 
@@ -58,51 +65,43 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         DaggerRouteTrackingFeatureComponent.factory().create(application)
     }
 
-    private val googleFitLinkingDelegate = GoogleFitLinkingDelegate()
-
     private lateinit var mapView: GoogleMap
 
-    private val checkLocationServiceDelegate by lazy {
-        CheckLocationServiceDelegate(
-            this,
+    private val locationServiceChecker by lazy {
+        LocationServiceChecker(
+            activity = this,
+            RC_LOCATION_SERVICE,
             RouteTrackingService.createLocationTrackingRequest()
         )
     }
 
     private var routePolyline: Polyline? = null
     private var drawnLocationCount: Int = 0
-    private val trackingRouteLatLngBounds = LatLngBounds.builder()
+    private val trackingRouteLatLngBounds: LatLngBounds.Builder = LatLngBounds.builder()
 
-    private val requiredPermissionsDelegate = RequiredPermissionsDelegate()
+    private val locationPermissionChecker: LocationPermissionChecker =
+        LocationPermissionChecker(activity = this)
+
     private val requisiteJobs = lifecycleScope.launchWhenCreated {
         // onCreate: check location permissions -> check location service availability -> allow user to use this screen
-        val missingRequiredPermission = !requiredPermissionsDelegate.requestPermissions(
-            locationPermissions,
-            RC_LOCATION_PERMISSIONS,
-            this@RouteTrackingActivity
-        ) || !checkLocationServiceDelegate.checkLocationServiceAvailability(
-            this@RouteTrackingActivity,
-            RC_LOCATION_SERVICE
-        )
+        val missingRequiredPermission =
+            !locationPermissionChecker.check() || !locationServiceChecker.check()
         if (missingRequiredPermission) {
             finish()
+            return@launchWhenCreated
         }
-
-        googleFitLinkingDelegate.requestGoogleFitPermissions(
-            this@RouteTrackingActivity,
-            RC_ACTIVITY_REGCONITION_PERMISSION,
-            RC_FITNESS_DATA_PERMISSIONS
-        )
-
-        initMap()
     }
 
     private var trackMapCameraOnLocationUpdateJob: Job? = null
 
+    private var lastPausedLocation: Location? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        routeTrackingViewModel.requestInitialData()
         initViews()
+        initMap()
     }
 
     override fun onStart() {
@@ -129,7 +128,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         observe(routeTrackingViewModel.trackingStats, viewBinding.trackingStatsView::update)
         observe(routeTrackingViewModel.trackingStatus, ::onTrackingStatusChanged)
         observeEvent(routeTrackingViewModel.error, dialogDelegate::showExceptionAlert)
-        observeEvent(routeTrackingViewModel.isStoreActivityDone) { onStoreActivitySuccess() }
         observe(
             routeTrackingViewModel.activityType,
             viewBinding.activitySettingsView::setActivityType
@@ -143,9 +141,18 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         trackMapCameraOnLocationUpdateJob = addRepeatingJob(Lifecycle.State.STARTED) {
             val locationRequest = RouteTrackingService.createLocationTrackingRequest()
             routeTrackingViewModel.getLocationUpdate(locationRequest)
+                .run {
+                    val initLocation = routeTrackingViewModel.getInitialLocation()
+                    if (initLocation != null) {
+                        onStart { emit(listOf(initLocation)) }
+                    } else {
+                        this
+                    }
+                }
                 .collect {
-                    if (it.isNotEmpty()) {
-                        recenterMap(it.last())
+                    it.lastOrNull()?.let { lastItem ->
+                        lastPausedLocation = lastItem
+                        recenterMap(lastItem)
                     }
                 }
         }
@@ -159,10 +166,9 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         recenterMap(bounds, animation = true)
     }
 
-    private fun onStoreActivitySuccess() {
+    private fun stopTrackingServiceAndFinish() {
         startService(RouteTrackingService.stopIntent(this))
         startActivity(HomeActivity.clearTaskIntent(this))
-        ActivityUploadWorker.enqueue(this)
     }
 
     private fun onTrackingStatusChanged(@RouteTrackingStatus trackingStatus: Int) {
@@ -191,17 +197,18 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         when (trackingStatus) {
             RouteTrackingStatus.RESUMED -> updateViewsOnTrackingResumed()
             RouteTrackingStatus.PAUSED -> updateViewsOnTrackingPaused()
-            RouteTrackingStatus.STOPPED -> updateViewsOnTrackingStopped()
         }
     }
 
     private fun onTrackingLocationUpdate(batch: List<TrackingLocationEntity>) {
+        Timber.d("onTrackingLocationUpdate ${batch.size}")
         drawTrackingLocationUpdate(batch)
         moveMapCameraOnTrackingLocationUpdate(batch)
     }
 
     private fun moveMapCameraOnTrackingLocationUpdate(batch: List<TrackingLocationEntity>) {
         batch.forEach {
+            Timber.d("tracking route latlng bounds include ${batch.size}")
             trackingRouteLatLngBounds.include(it.toGmsLatLng())
         }
 
@@ -256,46 +263,44 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     @OptIn(ExperimentalMaterialApi::class)
-    private fun initViews() {
-        viewBinding.apply {
-            setContentView(root)
-            recordButton.setOnClickListener { startRouteTracking() }
-            pauseButton.setOnClickListener { pauseRouteTracking() }
-            resumeButton.setOnClickListener { resumeRouteTracking() }
-            stopButton.setOnClickListener { stopRouteTracking() }
-            activitySettingsView.eventListener = this@RouteTrackingActivity
-            viewBinding.composableStopOptionsView.setContent {
-                StopOptionsDialog(routeTrackingViewModel, ::selectStopOptionItem)
-            }
+    private fun initViews() = viewBinding.apply {
+        setContentView(root)
+        activitySettingsView.eventListener = this@RouteTrackingActivity
+        composableView.setContent {
+            TrackingControlButtonPanel(routeTrackingViewModel, ::onClickControlButton)
+            StopOptionsDialog(routeTrackingViewModel, ::selectStopOptionItem)
         }
+    }
+
+    private fun onClickControlButton(buttonType: TrackingControlButtonType) = when (buttonType) {
+        TrackingControlButtonType.Start -> startRouteTracking()
+        TrackingControlButtonType.Pause -> pauseRouteTracking()
+        TrackingControlButtonType.Resume -> resumeRouteTracking()
+        TrackingControlButtonType.Stop -> stopRouteTracking()
     }
 
     private fun selectStopOptionItem(selectedOptionId: StopDialogOptionId) =
         when (selectedOptionId) {
             StopDialogOptionId.Save -> saveActivity()
-            StopDialogOptionId.Discard -> {
-                TODO("not implemented yet")
-            }
+            StopDialogOptionId.Discard -> discardActivity()
             StopDialogOptionId.Cancel -> {
+                // dialog closed, no action.
             }
         }
 
-    private fun updateViewsOnTrackingStopped() {
-        viewBinding.apply {
-            recordButton.visibility = View.VISIBLE
-            resumeButton.visibility = View.GONE
-            stopButton.visibility = View.GONE
-            pauseButton.visibility = View.GONE
-        }
+    private fun discardActivity() {
+        AlertDialog.Builder(this)
+            .setMessage(R.string.route_tracking_discard_activity_confirm_message)
+            .setPositiveButton(R.string.action_yes) { _, _ ->
+                routeTrackingViewModel.discardActivity()
+                stopTrackingServiceAndFinish()
+            }
+            .setNegativeButton(R.string.action_no) { _, _ -> }
+            .show()
     }
 
     private fun updateViewsOnTrackingPaused() {
         viewBinding.apply {
-            recordButton.visibility = View.GONE
-            resumeButton.visibility = View.VISIBLE
-            stopButton.visibility = View.VISIBLE
-            pauseButton.visibility = View.GONE
-
             viewBinding.activitySettingsView.visibility = View.GONE
             viewBinding.trackingStatsView.visibility = View.VISIBLE
             viewBinding.semiTransparentBackdropView.visibility = View.VISIBLE
@@ -304,11 +309,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     private fun updateViewsOnTrackingResumed() {
         viewBinding.apply {
-            recordButton.visibility = View.GONE
-            resumeButton.visibility = View.GONE
-            stopButton.visibility = View.GONE
-            pauseButton.visibility = View.VISIBLE
-
             viewBinding.activitySettingsView.visibility = View.GONE
             viewBinding.trackingStatsView.visibility = View.VISIBLE
             viewBinding.semiTransparentBackdropView.visibility = View.VISIBLE
@@ -318,6 +318,11 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private fun startRouteTracking() {
         ContextCompat.startForegroundService(this, RouteTrackingService.startIntent(this))
         routeTrackingViewModel.requestDataUpdates()
+        makeSureTrackingRouteBoundsNotEmpty()
+    }
+
+    private fun makeSureTrackingRouteBoundsNotEmpty() = lastPausedLocation?.let {
+        trackingRouteLatLngBounds.include(it.toGmsLatLng())
     }
 
     private fun pauseRouteTracking() {
@@ -334,44 +339,58 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         routeTrackingViewModel.isStopOptionDialogShowing.value = true
     }
 
+    /**
+     * Captures current snapshot of map view, then crops to the part that contains the route.
+     * Returns null when map snapshot is failed to be captured.
+     */
     @SuppressLint("MissingPermission")
-    private fun saveActivity() {
+    private suspend fun getRouteImageBitmap(): Bitmap? {
+        // hide the my location button
         mapView.isMyLocationEnabled = false
         val cameraViewSize = recenterMap(trackingRouteLatLngBounds.build(), false)
-        mapView.snapshot { mapSnapshot ->
-            mapView.isMyLocationEnabled = true
-            // TODO: do this in background?
-            val cropped = Bitmap.createBitmap(
-                mapSnapshot,
-                (mapSnapshot.width - cameraViewSize.width) / 2,
-                (mapSnapshot.height - cameraViewSize.height) / 2,
+        Timber.d(Thread.currentThread().name)
+        val mapImageSnapShot: Bitmap? = suspendCancellableCoroutine { continuation ->
+            mapView.snapshot { mapSnapshot ->
+                Timber.d(Thread.currentThread().name)
+                continuation.resume(mapSnapshot)
+            }
+        }
+        mapView.isMyLocationEnabled = true
+        if (mapImageSnapShot == null) {
+            // null when snapshot can not be taken
+            Timber.e(Exception("Map snapshot can not be taken."))
+            return null
+        }
+
+        return withContext(Dispatchers.IO) {
+            Bitmap.createBitmap(
+                mapImageSnapShot,
+                (mapImageSnapShot.width - cameraViewSize.width) / 2,
+                (mapImageSnapShot.height - cameraViewSize.height) / 2,
                 cameraViewSize.width,
                 cameraViewSize.height
             )
-            routeTrackingViewModel.storeActivityData(cropped)
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        requiredPermissionsDelegate.verifyPermissionsResult(this, locationPermissions)
-
-        when (requestCode) {
-            RC_ACTIVITY_REGCONITION_PERMISSION ->
-                googleFitLinkingDelegate.verifyActivityRecognitionPermission()
+    private fun saveActivity() {
+        lifecycleScope.launch {
+            val routeImageBitmap = getRouteImageBitmap()
+            if (routeImageBitmap != null) {
+                dialogDelegate.showProgressDialog()
+                routeTrackingViewModel.storeActivityData(routeImageBitmap)
+                dialogDelegate.dismissProgressDialog()
+                ActivityUploadWorker.enqueue(this@RouteTrackingActivity)
+                stopTrackingServiceAndFinish()
+            }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            RC_FITNESS_DATA_PERMISSIONS -> googleFitLinkingDelegate.verifyFitnessDataPermission()
             RC_LOCATION_SERVICE ->
-                checkLocationServiceDelegate.verifyLocationServiceResolutionResult(resultCode)
+                locationServiceChecker.verifyLocationServiceResolutionResult(resultCode)
         }
     }
 
@@ -380,7 +399,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             .getMapAsync { map ->
                 initMapView(map)
                 initObservers()
-                routeTrackingViewModel.requestInitialData()
             }
     }
 
@@ -404,14 +422,9 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     companion object {
         val MAP_LATLNG_BOUND_PADDING = 30.dp2px.toInt()
-        const val MAP_DEFAULT_ZOOM_LEVEL = 18f
         const val ROUTE_IMAGE_RATIO = 1.7f
 
         const val RC_LOCATION_SERVICE = 1
-        const val RC_LOCATION_PERMISSIONS = 2
-        const val RC_FITNESS_DATA_PERMISSIONS = 3
-
-        const val RC_ACTIVITY_REGCONITION_PERMISSION = 4
 
         fun launchIntent(context: Context): Intent {
             val intent = Intent(context, RouteTrackingActivity::class.java)
