@@ -1,6 +1,5 @@
 package akio.apps.myrun.feature.routetracking.impl
 
-import akio.apps._base.lifecycle.Event
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun.data.activity.model.ActivityType
@@ -43,6 +42,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
 
     // TODO: Will refactor this screen to Composable
     override val isStopOptionDialogShowing: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    override suspend fun getInitialLocation(): Location? = locationDataSource.getLastLocation()
 
     private val _trackingLocationBatch = MutableLiveData<List<TrackingLocationEntity>>()
     override val trackingLocationBatch: LiveData<List<TrackingLocationEntity>> =
@@ -52,11 +52,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
     override val trackingStats: LiveData<RouteTrackingStats> = _trackingStats
 
     override val trackingStatus: LiveData<@RouteTrackingStatus Int> =
-        routeTrackingState.getTrackingStatusFlow()
-            .asLiveData()
-
-    private val _isStoreActivityDone = MutableLiveData<Event<Unit>>()
-    override val isStoreActivityDone: LiveData<Event<Unit>> = _isStoreActivityDone
+        routeTrackingState.getTrackingStatusFlow().asLiveData()
 
     private val _activityType = MutableLiveData<ActivityType>()
     override val activityType: LiveData<ActivityType> = _activityType
@@ -94,18 +90,12 @@ class RouteTrackingViewModelImpl @Inject constructor(
         }
     }
 
-    override fun storeActivityData(routeMapImage: Bitmap) {
-        launchCatching {
-            val activityType = activityType.value
-                ?: return@launchCatching
-
-            val activityName = makeActivityName(activityType)
-            storeTrackingActivityDataUsecase(activityName, routeMapImage)
-            scheduleActivitySyncIfAvailable()
-            clearRouteTrackingStateUsecase.clear()
-
-            _isStoreActivityDone.value = Event(Unit)
-        }
+    override suspend fun storeActivityData(routeMapImage: Bitmap) {
+        val activityType = activityType.value ?: return
+        val activityName = makeActivityName(activityType)
+        storeTrackingActivityDataUsecase(activityName, routeMapImage)
+        scheduleActivitySyncIfAvailable()
+        clearRouteTrackingStateUsecase.clear()
     }
 
     override fun getLocationUpdate(locationRequest: LocationRequestEntity): Flow<List<Location>> {
@@ -166,6 +156,12 @@ class RouteTrackingViewModelImpl @Inject constructor(
         _activityType.value = activityType
         viewModelScope.launch {
             routeTrackingState.setActivityType(activityType)
+        }
+    }
+
+    override fun discardActivity() {
+        launchCatching {
+            clearRouteTrackingStateUsecase.clear()
         }
     }
 

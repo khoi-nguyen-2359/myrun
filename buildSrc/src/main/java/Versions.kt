@@ -13,16 +13,18 @@ object Versions {
 
     const val androidxCore = "1.6.0-beta02"
     const val appCompat = "1.3.0"
-    const val activity = "1.3.0-alpha08"
+    const val activity = "1.3.0-beta01"
     const val fragment = "1.3.3"
     const val constraintLayout = "2.0.4"
     const val androidMaterial = "1.3.0"
-    const val compose = "1.0.0-beta08"
+
+    // compose
+    const val compose = "1.0.0-beta09"
     const val composeConstraintLayout = "1.0.0-alpha07"
+    const val pagingCompose = "1.0.0-alpha09"
 
     const val workManager = "2.7.0-alpha04"
     const val paging = "3.0.0"
-    const val pagingCompose = "1.0.0-alpha09"
     const val room = "2.2.6"
     const val lifecycle = "2.4.0-alpha01"
     const val lifecycleExtension = "2.2.0"

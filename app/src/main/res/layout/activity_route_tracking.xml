@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
-
-    <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/composable_stop_options_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/tracking_map_view"
@@ -40,61 +36,22 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:padding="4dp"
-        app:layout_constraintBottom_toTopOf="@id/control_buttons_barrier" />
+        app:layout_constraintBottom_toTopOf="@id/composable_view" />
 
     <akio.apps.myrun.feature.routetracking.view.RouteTrackingStatsView
         android:id="@+id/tracking_stats_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/control_buttons_barrier" />
+        app:layout_constraintBottom_toTopOf="@id/composable_view"
+        android:paddingTop="10dp"
+        android:paddingBottom="5dp"
+        tools:visibility="visible" />
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/control_buttons_barrier"
-        android:layout_width="wrap_content"
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/composable_view"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:barrierDirection="top"
-        app:constraint_referenced_ids="record_button,resume_button,pause_button" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/record_button"
-        style="@style/RouteTrackingControlButton"
-        android:text="@string/action_start"
-        app:backgroundTint="@color/route_tracking_start_button_background_tint"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/pause_button"
-        style="@style/RouteTrackingControlButton"
-        android:text="@string/action_pause"
-        android:visibility="gone"
-        app:backgroundTint="@color/route_tracking_pause_button_background_tint"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/resume_button"
-        style="@style/RouteTrackingControlButton"
-        android:text="@string/action_resume"
-        android:visibility="gone"
-        app:backgroundTint="@color/route_tracking_resume_button_background_tint"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/stop_button"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/stop_button"
-        style="@style/RouteTrackingControlButton"
-        android:text="@string/action_stop"
-        android:visibility="gone"
-        app:backgroundTint="@color/route_tracking_pause_button_background_tint"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toEndOf="@id/resume_button" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
