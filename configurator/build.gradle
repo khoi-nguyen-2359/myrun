@@ -1,0 +1,58 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdkVersion Versions.compileSdk
+
+    defaultConfig {
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion Versions.compose
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+        useIR = true
+    }
+}
+
+dependencies {
+    implementation "androidx.core:core-ktx:$Versions.androidxCore"
+    implementation "androidx.appcompat:appcompat:$Versions.appCompat"
+    implementation "com.google.android.material:material:$Versions.androidMaterial"
+
+    implementation "androidx.compose.ui:ui:$Versions.compose"
+    implementation "androidx.compose.ui:ui-tooling:$Versions.compose"
+    implementation "androidx.compose.foundation:foundation:$Versions.compose"
+    implementation "androidx.compose.material:material:$Versions.compose"
+    implementation "androidx.compose.material:material-icons-core:$Versions.compose"
+    implementation "androidx.compose.material:material-icons-extended:$Versions.compose"
+    implementation "androidx.compose.runtime:runtime-livedata:$Versions.compose"
+    implementation "androidx.compose.runtime:runtime-rxjava2:$Versions.compose"
+    implementation "androidx.activity:activity-compose:$Versions.activity"
+    implementation "androidx.paging:paging-compose:$Versions.pagingCompose"
+
+    // test
+    testImplementation "junit:junit:$Versions.junit"
+}

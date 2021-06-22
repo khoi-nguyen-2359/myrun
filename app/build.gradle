@@ -55,7 +55,6 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion Versions.kotlin
         kotlinCompilerExtensionVersion Versions.compose
     }
 
@@ -88,22 +87,21 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$Versions.appCompat"
     implementation "androidx.constraintlayout:constraintlayout:$Versions.constraintLayout"
     implementation "androidx.paging:paging-runtime-ktx:$Versions.paging"
-    implementation "androidx.paging:paging-compose:$Versions.pagingCompose"
     implementation "androidx.fragment:fragment-ktx:$Versions.fragment"
     implementation "androidx.activity:activity-ktx:$Versions.activity"
-    implementation "androidx.activity:activity-compose:$Versions.activity"
     implementation "androidx.work:work-runtime-ktx:$Versions.workManager"
     implementation "com.google.android.material:material:$Versions.androidMaterial"
 
     implementation "androidx.compose.ui:ui:$Versions.compose"
     implementation "androidx.compose.ui:ui-tooling:$Versions.compose"
     implementation "androidx.compose.foundation:foundation:$Versions.compose"
-    implementation "androidx.constraintlayout:constraintlayout-compose:$Versions.composeConstraintLayout"
     implementation "androidx.compose.material:material:$Versions.compose"
     implementation "androidx.compose.material:material-icons-core:$Versions.compose"
     implementation "androidx.compose.material:material-icons-extended:$Versions.compose"
     implementation "androidx.compose.runtime:runtime-livedata:$Versions.compose"
     implementation "androidx.compose.runtime:runtime-rxjava2:$Versions.compose"
+    implementation "androidx.activity:activity-compose:$Versions.activity"
+    implementation "androidx.paging:paging-compose:$Versions.pagingCompose"
 
     implementation "com.android.support:multidex:$Versions.multidex"
 
@@ -148,6 +146,8 @@ dependencies {
     implementation "com.google.accompanist:accompanist-flowlayout:$Versions.accompanist"
 
     implementation "com.facebook.android:facebook-login:$Versions.facebookSdk"
+
+    debugImplementation project(":configurator")
 
     testImplementation(testFixtures(project(':test')))
     testImplementation "junit:junit:$Versions.junit"
