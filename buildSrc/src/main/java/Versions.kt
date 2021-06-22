@@ -11,7 +11,7 @@ object Versions {
     const val coroutines = "1.5.0"
     const val kotlinSerialization = "1.2.1"
 
-    const val androidxCore = "1.6.0-beta02"
+    const val androidxCore = "1.6.0-rc01"
     const val appCompat = "1.3.0"
     const val activity = "1.3.0-beta01"
     const val fragment = "1.3.3"
@@ -21,7 +21,7 @@ object Versions {
     // compose
     const val compose = "1.0.0-beta09"
     const val composeConstraintLayout = "1.0.0-alpha07"
-    const val pagingCompose = "1.0.0-alpha09"
+    const val pagingCompose = "1.0.0-alpha10"
 
     const val workManager = "2.7.0-alpha04"
     const val paging = "3.0.0"
