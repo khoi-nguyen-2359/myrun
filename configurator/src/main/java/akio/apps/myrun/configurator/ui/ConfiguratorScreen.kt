@@ -1,6 +1,7 @@
 package akio.apps.myrun.configurator.ui
 
 import akio.apps.myrun.configurator.ui.SectionSpacing.elementVerticalPadding
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -72,7 +74,7 @@ private fun LocationRequestConfiguration() {
     var updateInterval by remember { mutableStateOf("2000") }
     var fastestUpdateInterval by remember { mutableStateOf("1000") }
     var smallestDisplacement by remember { mutableStateOf("5") }
-    Text(text = "Location Request:")
+    Text(text = "Location Request:", modifier = Modifier.padding(vertical = elementVerticalPadding))
     TextField(
         label = { Text("Update interval") },
         value = updateInterval,
@@ -94,8 +96,19 @@ private fun LocationRequestConfiguration() {
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         maxLines = 1
     )
+    ApplyButton {
+        Log.d("MyRun", "Click!")
+    }
 }
 
-@Preview(showSystemUi = true)
+@Composable
+private fun ApplyButton(onClick: () -> Unit) = Button(
+    onClick = onClick,
+    modifier = Modifier.padding(vertical = elementVerticalPadding)
+) {
+    Text(text = "Apply")
+}
+
+@Preview
 @Composable
 private fun Preview() = ConfiguratorScreen()
