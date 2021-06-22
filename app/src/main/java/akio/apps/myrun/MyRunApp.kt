@@ -2,6 +2,7 @@ package akio.apps.myrun
 
 import akio.apps._base.utils.CrashReportTree
 import akio.apps._base.utils.MyDebugTree
+import akio.apps.myrun._base.configurator.ConfiguratorGate
 import akio.apps.myrun._di.AppComponent
 import akio.apps.myrun._di.DaggerAppComponent
 import akio.apps.myrun.data.routetracking.RouteTrackingState
@@ -32,8 +33,7 @@ class MyRunApp : Application(), LifecycleObserver, AppComponent.Holder, Configur
     private lateinit var appComponent: AppComponent
     override fun getAppComponent(): AppComponent {
         if (!::appComponent.isInitialized) {
-            appComponent = DaggerAppComponent.factory()
-                .create(this)
+            appComponent = DaggerAppComponent.factory().create(this)
         }
         return appComponent
     }
@@ -51,13 +51,13 @@ class MyRunApp : Application(), LifecycleObserver, AppComponent.Holder, Configur
 
         getAppComponent().inject(this)
 
-        ProcessLifecycleOwner.get()
-            .lifecycle
-            .addObserver(this)
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
         initPlacesSdk()
 
         UpdateUserRecentPlaceWorker.enqueueDaily(this)
+
+        ConfiguratorGate.notifyInDebugMode(this)
     }
 
     private fun initPlacesSdk() {
