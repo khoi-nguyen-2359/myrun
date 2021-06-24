@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.location.impl
 
 import akio.apps.myrun.data.location.LocationDataSource
-import akio.apps.myrun.data.location.LocationRequestEntity
+import akio.apps.myrun.data.routetracking.model.LocationRequestConfig
 import android.annotation.SuppressLint
 import android.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -33,8 +33,9 @@ class LocationDataSourceImpl @Inject constructor(
 
     @ExperimentalCoroutinesApi
     @SuppressLint("MissingPermission")
-    override fun getLocationUpdate(locationRequest: LocationRequestEntity): Flow<List<Location>> =
+    override fun getLocationUpdate(locationRequest: LocationRequestConfig): Flow<List<Location>> =
         callbackFlow<List<Location>> {
+            Timber.d("=== [START] Get location update config=$locationRequest")
             getLastLocation()?.let { lastLocation ->
                 trySend(listOf(lastLocation))
             }
@@ -52,17 +53,17 @@ class LocationDataSourceImpl @Inject constructor(
             )
 
             awaitClose {
-                Timber.d("close location update flow")
+                Timber.d("=== [STOP] close location update flow")
                 locationClient.removeLocationUpdates(callback)
             }
         }
             .flowOn(Dispatchers.Main) // need Main to request updates from location client
 
-    private fun LocationRequestEntity.toGmsLocationRequest(): LocationRequest {
+    private fun LocationRequestConfig.toGmsLocationRequest(): LocationRequest {
         val locationRequest = LocationRequest.create()
-        locationRequest.fastestInterval = fastestInterval
-        locationRequest.interval = interval
-        locationRequest.priority = priority
+        locationRequest.fastestInterval = fastestUpdateInterval
+        locationRequest.interval = updateInterval
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.smallestDisplacement = smallestDisplacement
         return locationRequest
     }

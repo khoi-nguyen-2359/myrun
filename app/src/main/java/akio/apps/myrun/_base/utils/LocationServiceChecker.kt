@@ -1,6 +1,6 @@
 package akio.apps.myrun._base.utils
 
-import akio.apps.myrun.data.location.LocationRequestEntity
+import akio.apps.myrun.data.routetracking.model.LocationRequestConfig
 import android.app.Activity
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
@@ -19,7 +19,6 @@ import kotlinx.coroutines.withContext
 class LocationServiceChecker(
     private val activity: Activity,
     private val rcResolution: Int,
-    private val sampleRequestEntity: LocationRequestEntity
 ) {
 
     private val locationSettingsClient: SettingsClient =
@@ -27,12 +26,12 @@ class LocationServiceChecker(
 
     private var resolutionContinuation: CancellableContinuation<Boolean>? = null
 
-    suspend fun check(): Boolean = withContext(Dispatchers.IO) {
+    suspend fun check(requestEntity: LocationRequestConfig): Boolean = withContext(Dispatchers.IO) {
         val sampleRequest = LocationRequest.create().apply {
-            interval = sampleRequestEntity.interval
-            fastestInterval = sampleRequestEntity.fastestInterval
-            priority = sampleRequestEntity.priority
-            smallestDisplacement = sampleRequestEntity.smallestDisplacement
+            interval = requestEntity.updateInterval
+            fastestInterval = requestEntity.fastestUpdateInterval
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            smallestDisplacement = requestEntity.smallestDisplacement
         }
         val settingsReq = LocationSettingsRequest.Builder()
             .addAllLocationRequests(listOf(sampleRequest))

@@ -68,11 +68,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private lateinit var mapView: GoogleMap
 
     private val locationServiceChecker by lazy {
-        LocationServiceChecker(
-            activity = this,
-            RC_LOCATION_SERVICE,
-            RouteTrackingService.createLocationTrackingRequest()
-        )
+        LocationServiceChecker(activity = this, RC_LOCATION_SERVICE)
     }
 
     private var routePolyline: Polyline? = null
@@ -84,8 +80,9 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     private val requisiteJobs = lifecycleScope.launchWhenCreated {
         // onCreate: check location permissions -> check location service availability -> allow user to use this screen
+        val requestConfig = routeTrackingViewModel.getLocationRequestConfig()
         val missingRequiredPermission =
-            !locationPermissionChecker.check() || !locationServiceChecker.check()
+            !locationPermissionChecker.check() || !locationServiceChecker.check(requestConfig)
         if (missingRequiredPermission) {
             finish()
             return@launchWhenCreated
@@ -139,8 +136,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private fun trackMapCameraOnLocationUpdate() {
         trackMapCameraOnLocationUpdateJob?.cancel()
         trackMapCameraOnLocationUpdateJob = addRepeatingJob(Lifecycle.State.STARTED) {
-            val locationRequest = RouteTrackingService.createLocationTrackingRequest()
-            routeTrackingViewModel.getLocationUpdate(locationRequest)
+            routeTrackingViewModel.getLocationUpdate()
                 .run {
                     val initLocation = routeTrackingViewModel.getInitialLocation()
                     if (initLocation != null) {

@@ -6,10 +6,11 @@ import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.LocationDataSource
-import akio.apps.myrun.data.location.LocationRequestEntity
+import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
+import akio.apps.myrun.data.routetracking.model.LocationRequestConfig
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.routetracking.StoreTrackingActivityDataUsecase
@@ -37,7 +38,8 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val storeTrackingActivityDataUsecase: StoreTrackingActivityDataUsecase,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val authenticationState: UserAuthenticationState,
-    private val locationDataSource: LocationDataSource
+    private val locationDataSource: LocationDataSource,
+    private val routeTrackingConfiguration: RouteTrackingConfiguration
 ) : RouteTrackingViewModel() {
 
     // TODO: Will refactor this screen to Composable
@@ -98,9 +100,13 @@ class RouteTrackingViewModelImpl @Inject constructor(
         clearRouteTrackingStateUsecase.clear()
     }
 
-    override fun getLocationUpdate(locationRequest: LocationRequestEntity): Flow<List<Location>> {
+    override suspend fun getLocationUpdate(): Flow<List<Location>> {
+        val locationRequest = routeTrackingConfiguration.getLocationRequestConfig()
         return locationDataSource.getLocationUpdate(locationRequest)
     }
+
+    override suspend fun getLocationRequestConfig(): LocationRequestConfig =
+        routeTrackingConfiguration.getLocationRequestConfig()
 
     private fun makeActivityName(activityType: ActivityType): String {
         val calendar = Calendar.getInstance()
