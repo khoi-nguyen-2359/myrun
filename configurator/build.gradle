@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -52,6 +53,12 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-rxjava2:$Versions.compose"
     implementation "androidx.activity:activity-compose:$Versions.activity"
     implementation "androidx.paging:paging-compose:$Versions.pagingCompose"
+
+    implementation "com.google.dagger:dagger-android:$Versions.dagger"
+    kapt "com.google.dagger:dagger-compiler:$Versions.dagger"
+
+    implementation project(":data")
+    implementation project(":data-impl")
 
     // test
     testImplementation "junit:junit:$Versions.junit"

@@ -1,8 +1,10 @@
 package akio.apps.myrun.data.routetracking._di
 
+import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.impl.PreferencesRouteTrackingState
+import akio.apps.myrun.data.routetracking.impl.RouteTrackingConfigurationImpl
 import akio.apps.myrun.data.routetracking.impl.RouteTrackingDatabase
 import akio.apps.myrun.data.routetracking.impl.RouteTrackingLocationDao
 import akio.apps.myrun.data.routetracking.impl.RouteTrackingLocationRepositoryImpl
@@ -18,6 +20,9 @@ interface RouteTrackingDataModule {
     @Binds
     fun routeTrackingLocationRepo(repositoryImpl: RouteTrackingLocationRepositoryImpl):
         RouteTrackingLocationRepository
+
+    @Binds
+    fun routeTrackingConfiguration(impl: RouteTrackingConfigurationImpl): RouteTrackingConfiguration
 
     @Module
     class Providers {

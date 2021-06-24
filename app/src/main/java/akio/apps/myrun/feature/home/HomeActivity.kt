@@ -5,13 +5,13 @@ import akio.apps.myrun._base.utils.LocationServiceChecker
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.feature.activitydetail.ActivityDetailActivity
 import akio.apps.myrun.feature.activityexport.ActivityExportService
+import akio.apps.myrun.feature.home._di.DaggerHomeFeatureComponent
+import akio.apps.myrun.feature.home._di.HomeFeatureComponent
 import akio.apps.myrun.feature.home.ui.HomeScreen
 import akio.apps.myrun.feature.routetracking.impl.LocationPermissionChecker
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
-import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
 import akio.apps.myrun.feature.userprofile.impl.UserProfileFragment
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
-import akio.apps.myrun.feature.usertimeline._di.DaggerUserTimelineFeatureComponent
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import android.content.Context
 import android.content.Intent
@@ -24,19 +24,18 @@ import androidx.lifecycle.lifecycleScope
 
 class HomeActivity : AppCompatActivity() {
 
-    private val userTimelineViewModel: UserTimelineViewModel by viewModel {
-        DaggerUserTimelineFeatureComponent.factory().create(application)
+    private val homeFeatureComponent: HomeFeatureComponent by lazy {
+        DaggerHomeFeatureComponent.factory().create(application)
     }
+
+    private val userTimelineViewModel: UserTimelineViewModel by viewModel { homeFeatureComponent }
+    private val homeViewModel: HomeViewModel by viewModel { homeFeatureComponent }
 
     private val locationPermissionChecker: LocationPermissionChecker =
         LocationPermissionChecker(activity = this)
 
     private val locationServiceChecker by lazy {
-        LocationServiceChecker(
-            activity = this,
-            RC_LOCATION_SERVICE,
-            RouteTrackingService.createLocationTrackingRequest()
-        )
+        LocationServiceChecker(activity = this, RC_LOCATION_SERVICE)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,8 +83,9 @@ class HomeActivity : AppCompatActivity() {
 
     private fun openRouteTrackingScreen() = lifecycleScope.launchWhenCreated {
         // onCreate: check location permissions -> check location service availability -> allow user to use this screen
+        val locationRequest = homeViewModel.getLocationRequest()
         val missingRequiredPermission =
-            !locationPermissionChecker.check() || !locationServiceChecker.check()
+            !locationPermissionChecker.check() || !locationServiceChecker.check(locationRequest)
         if (missingRequiredPermission) {
             Toast.makeText(
                 this@HomeActivity,
