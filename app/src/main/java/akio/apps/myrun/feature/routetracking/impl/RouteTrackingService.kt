@@ -8,7 +8,7 @@ import akio.apps.myrun._base.utils.toLocationEntity
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.location.LocationDataSource
-import akio.apps.myrun.data.location.LocationRequestEntity
+import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
@@ -28,7 +28,6 @@ import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.LocationRequest
 import com.google.maps.android.SphericalUtil
 import timber.log.Timber
 import javax.inject.Inject
@@ -60,6 +59,9 @@ class RouteTrackingService : Service() {
 
     @Inject
     lateinit var fitnessDataRepository: FitnessDataRepository
+
+    @Inject
+    lateinit var routeTrackingConfiguration: RouteTrackingConfiguration
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         Timber.e(exception)
@@ -98,8 +100,8 @@ class RouteTrackingService : Service() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun requestLocationUpdates() {
-        val locationRequest = createLocationTrackingRequest()
+    private fun requestLocationUpdates() = mainScope.launch {
+        val locationRequest = routeTrackingConfiguration.getLocationRequestConfig()
 
         locationUpdateJob?.cancel()
         locationUpdateJob = locationDataSource.getLocationUpdate(locationRequest)
@@ -373,13 +375,6 @@ class RouteTrackingService : Service() {
             Intent(context, RouteTrackingService::class.java).apply {
                 action = ACTION_RESUME
             }
-
-        fun createLocationTrackingRequest(): LocationRequestEntity = LocationRequestEntity(
-            interval = LOCATION_UPDATE_INTERVAL,
-            fastestInterval = LOCATION_UPDATE_INTERVAL / 2,
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY,
-            smallestDisplacement = SMALLEST_DISPLACEMENT
-        )
 
         @Suppress("DEPRECATION")
         fun isTrackingServiceRunning(context: Context): Boolean {
