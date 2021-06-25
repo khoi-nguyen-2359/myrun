@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class RouteTrackingConfigurationViewModel @Inject constructor(
@@ -15,7 +14,6 @@ class RouteTrackingConfigurationViewModel @Inject constructor(
 
     private val locationRequestConfigMutableState: MutableStateFlow<LocationRequestConfig> =
         MutableStateFlow(LocationRequestConfig.foo())
-    val locationRequestConfig: StateFlow<LocationRequestConfig> = locationRequestConfigMutableState
 
     init {
         initData()
@@ -33,5 +31,4 @@ class RouteTrackingConfigurationViewModel @Inject constructor(
         routeTrackingConfiguration.setLocationRequestInfo(requestConfig)
         initData()
     }
-
 }
