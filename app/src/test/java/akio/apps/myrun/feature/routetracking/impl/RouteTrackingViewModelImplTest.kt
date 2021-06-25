@@ -4,6 +4,7 @@ import akio.apps._base.InstantTaskExecutorTest
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.LocationDataSource
+import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus.STOPPED
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
@@ -48,6 +49,9 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
     @Mock
     lateinit var mockedLocationDataSource: LocationDataSource
 
+    @Mock
+    lateinit var mockedRouteTrackingConfiguration: RouteTrackingConfiguration
+
     lateinit var testee: RouteTrackingViewModel
 
     @Before
@@ -83,6 +87,7 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
         mockedStoreTrackingActivityDataUsecase,
         mockedExternalAppProvidersRepository,
         mockedAuthenticationState,
-        mockedLocationDataSource
+        mockedLocationDataSource,
+        mockedRouteTrackingConfiguration
     )
 }
