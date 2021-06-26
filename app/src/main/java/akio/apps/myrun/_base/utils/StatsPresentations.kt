@@ -1,5 +1,6 @@
 package akio.apps.myrun._base.utils
 
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 object StatsPresentations {
@@ -29,10 +30,16 @@ object StatsPresentations {
      * @param speed of unit meter/milisec
      */
     fun getDisplayPace(speed: Double): String {
-        val pace = if (speed == 0.0)
+        var pace = if (speed == 0.0)
             0.0
         else
             1 / ((TimeUnit.MINUTES.toMillis(1) / 1000) * speed)
+
+        // try to correct too large pace due to too small speed
+        if (pace > 50) {
+            Timber.e(Exception("Too large pace $pace. Corrected to zero."))
+            pace = 0.0
+        }
         return String.format("%d:%02d", pace.toInt(), ((pace % 1) * 60).toInt())
     }
 }
