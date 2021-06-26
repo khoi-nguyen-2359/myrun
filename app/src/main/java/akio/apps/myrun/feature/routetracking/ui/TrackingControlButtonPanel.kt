@@ -1,10 +1,10 @@
 package akio.apps.myrun.feature.routetracking.ui
 
 import akio.apps.myrun.R
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.ui.theme.MyRunAppTheme
-import android.location.Location
 import androidx.annotation.StringRes
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
@@ -50,7 +50,7 @@ fun TrackingControlButtonPanel(
     onClickControlButton: (TrackingControlButtonType) -> Unit
 ) = MyRunAppTheme {
     val trackingStatus by routeTrackingViewModel.trackingStatus.observeAsState()
-    val initialLocation by produceState<Location?>(
+    val initialLocation by produceState<LocationEntity?>(
         initialValue = null,
         producer = { value = routeTrackingViewModel.getInitialLocation() }
     )

@@ -3,8 +3,6 @@ package akio.apps.myrun.domain.routetracking
 import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.model.ActivityModel
-import akio.apps.myrun.data.fitness.DataPoint
-import akio.apps.myrun.data.location.LocationEntity
 import timber.log.Timber
 import javax.inject.Inject
 import kotlinx.coroutines.flow.catch
@@ -29,12 +27,7 @@ class UploadActivitiesUsecase @Inject constructor(
                     storageData.routeBitmapFile,
                     speedDataPoints = emptyList(),
                     stepCadenceDataPoints = emptyList(),
-                    storageData.locationDataPoints.map {
-                        DataPoint(
-                            it.time,
-                            LocationEntity(it.latitude, it.longitude, it.altitude)
-                        )
-                    }
+                    storageData.locationDataPoints
                 )
                 activityLocalStorage.deleteActivityData(activityModel.id)
             }

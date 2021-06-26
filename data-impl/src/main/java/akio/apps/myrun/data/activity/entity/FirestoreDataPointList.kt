@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.activity.entity
 
+import akio.apps.myrun.data.activity.model.ActivityLocation
 import akio.apps.myrun.data.fitness.DataPoint
-import akio.apps.myrun.data.location.LocationEntity
 import com.google.firebase.firestore.PropertyName
 
 data class FirestoreDataPointList(
@@ -56,19 +56,25 @@ class FirestoreIntegerDataPointParser : FirestoreDataPointParser<Int> {
         .toInt()
 }
 
-class FirestoreLocationDataPointParser : FirestoreDataPointParser<LocationEntity> {
-    override fun flatten(dataPoint: DataPoint<LocationEntity>): List<Double> = listOf(
-        dataPoint.timestamp.toDouble(),
-        dataPoint.value.latitude,
-        dataPoint.value.longitude,
-        dataPoint.value.altitude
-    )
+class FirestoreLocationDataPointParser {
+    fun flatten(dataPoint: List<ActivityLocation>): List<Double> =
+        dataPoint.fold(mutableListOf()) { accum, item ->
+            accum.add(item.time.toDouble())
+            accum.add(item.latitude)
+            accum.add(item.longitude)
+            accum.add(item.altitude)
+            accum
+        }
 
-    override fun build(firestoreDataIterator: Iterator<Double>): LocationEntity {
-        val latitude = firestoreDataIterator.next()
-        val longitude = firestoreDataIterator.next()
-        val altitude = firestoreDataIterator.next()
-
-        return LocationEntity(latitude, longitude, altitude)
+    fun build(activityId: String, firestoreDataPoints: List<Double>): List<ActivityLocation> {
+        return firestoreDataPoints.chunked(4) {
+            ActivityLocation(
+                activityId,
+                it[0].toLong(),
+                it[1],
+                it[2],
+                it[3]
+            )
+        }
     }
 }
