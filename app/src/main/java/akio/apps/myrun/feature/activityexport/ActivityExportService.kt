@@ -1,10 +1,9 @@
 package akio.apps.myrun.feature.activityexport
 
 import akio.apps.myrun.R
+import akio.apps.myrun._base.notification.AppNotificationChannel
 import akio.apps.myrun.domain.activityexport.ExportActivityToTempTcxFileUsecase
 import akio.apps.myrun.feature.activityexport._di.DaggerActivityExportFeatureComponent
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
@@ -50,7 +49,6 @@ class ActivityExportService : Service() {
     override fun onCreate() {
         super.onCreate()
         DaggerActivityExportFeatureComponent.factory().create(this.application).inject(this)
-        createNotificationChannel()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -87,7 +85,7 @@ class ActivityExportService : Service() {
         } else {
             getString(R.string.activity_export_progress_notification_finishing)
         }
-        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+        val notification = NotificationCompat.Builder(this, AppNotificationChannel.General.id)
             .setSmallIcon(R.drawable.ic_run_circle)
             .setContentTitle(getString(R.string.activity_export_progress_notification_title))
             .setContentText(notificationContentText)
@@ -133,7 +131,7 @@ class ActivityExportService : Service() {
             /*title = */ getString(R.string.action_retry),
             /*intent = */ pendingIntent
         )
-        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+        val notification = NotificationCompat.Builder(this, AppNotificationChannel.General.id)
             .setSmallIcon(R.drawable.ic_run_circle)
             .setContentTitle(getString(R.string.activity_export_error_notification_title))
             .setContentText(activityDescription)
@@ -171,7 +169,7 @@ class ActivityExportService : Service() {
             chooserIntent,
             pendingIntentFlag
         )
-        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+        val notification = NotificationCompat.Builder(this, AppNotificationChannel.General.id)
             .setSmallIcon(R.drawable.ic_run_circle)
             .setContentTitle(activityDescription)
             .setContentText(getString(R.string.activity_export_success_notification_title))
@@ -186,19 +184,6 @@ class ActivityExportService : Service() {
         val activityFormattedStartTime =
             activityStartTimeFormatter.format(Date(activityInfo.startTime))
         return "${activityInfo.name} on $activityFormattedStartTime"
-    }
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                "Export user activity",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            channel.description = "User activity exporting notifications."
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(channel)
-        }
     }
 
     /**
@@ -219,9 +204,8 @@ class ActivityExportService : Service() {
     }
 
     companion object {
-        private const val NOTIFICATION_CHANNEL_ID =
-            "akio.apps.myrun.feature.activityexport.ExportActivityService.NOTIFICATION_CHANNEL_ID"
-        private const val NOTIFICATION_ID_PROGRESS = 201
+        private val NOTIFICATION_ID_PROGRESS =
+            AppNotificationChannel.General.nextNotificationStaticId()
 
         private const val EXTRA_ACTIVITY_INFO = "EXTRA_ACTIVITY_INFO"
 

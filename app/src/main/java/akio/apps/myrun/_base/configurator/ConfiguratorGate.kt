@@ -2,9 +2,8 @@ package akio.apps.myrun._base.configurator
 
 import akio.apps.myrun.BuildConfig
 import akio.apps.myrun.R
+import akio.apps.myrun._base.notification.AppNotificationChannel
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -13,10 +12,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
 object ConfiguratorGate {
-    private const val CHANNEL_ID = "akio.apps.myrun._base.configurator.ConfiguratorGate"
     private const val CONFIGURATOR_ACTIVITY_NAME =
         "akio.apps.myrun.configurator.ConfiguratorActivity"
-    private const val NOTIFICATION_ID = 301
+    private val NOTIFICATION_ID = AppNotificationChannel.Debug.nextNotificationStaticId()
 
     fun notifyInDebugMode(context: Context) {
         if (!BuildConfig.DEBUG) {
@@ -24,16 +22,6 @@ object ConfiguratorGate {
         }
 
         val notMan = NotificationManagerCompat.from(context)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                "Configurator",
-                NotificationManager.IMPORTANCE_MIN
-            )
-            channel.description = "Shortcut notification to open Configurator"
-            notMan.createNotificationChannel(channel)
-        }
-
         val activityClass = Class.forName(CONFIGURATOR_ACTIVITY_NAME)
         val intent = Intent(context, activityClass)
         val pendingIntentFlag = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -42,7 +30,7 @@ object ConfiguratorGate {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         }
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, pendingIntentFlag)
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+        val notification = NotificationCompat.Builder(context, AppNotificationChannel.Debug.id)
             .setContentTitle("My Run Configurator")
             .setAutoCancel(false)
             .setDefaults(Notification.DEFAULT_ALL)
