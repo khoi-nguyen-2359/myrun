@@ -35,6 +35,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -103,8 +104,8 @@ class RouteTrackingService : Service() {
 
     @SuppressLint("MissingPermission")
     private fun requestLocationUpdates() = mainScope.launch {
-        val locationRequest = routeTrackingConfiguration.getLocationRequestConfig()
-        if (routeTrackingConfiguration.isLocationAccumulationEnabled()) {
+        val locationRequest = routeTrackingConfiguration.getLocationRequestConfig().first()
+        if (routeTrackingConfiguration.isLocationAccumulationEnabled().first()) {
             Timber.d("requestLocationUpdates with accumulation")
             locationAccumulator =
                 LocationAccumulator(locationRequest.updateInterval, System.currentTimeMillis())

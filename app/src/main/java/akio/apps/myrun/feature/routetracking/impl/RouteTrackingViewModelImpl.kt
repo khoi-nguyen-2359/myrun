@@ -27,6 +27,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class RouteTrackingViewModelImpl @Inject constructor(
@@ -101,12 +102,12 @@ class RouteTrackingViewModelImpl @Inject constructor(
     }
 
     override suspend fun getLocationUpdate(): Flow<List<LocationEntity>> {
-        val locationRequest = routeTrackingConfiguration.getLocationRequestConfig()
+        val locationRequest = getLocationRequestConfig()
         return locationDataSource.getLocationUpdate(locationRequest)
     }
 
     override suspend fun getLocationRequestConfig(): LocationRequestConfig =
-        routeTrackingConfiguration.getLocationRequestConfig()
+        routeTrackingConfiguration.getLocationRequestConfig().first()
 
     private fun makeActivityName(activityType: ActivityType): String {
         val calendar = Calendar.getInstance()
