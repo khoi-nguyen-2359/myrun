@@ -50,6 +50,7 @@ class RouteTrackingStatsView @JvmOverloads constructor(
                 viewBinding.speedUnitTextView.setText(R.string.common_speed_unit)
                 speedPresenter = { speed -> StatsPresentations.getDisplaySpeed(speed) }
             }
+            else -> throw Exception("INvalid activity type")
         }
     }
 

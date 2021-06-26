@@ -29,7 +29,6 @@ import android.util.Size
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.addRepeatingJob
@@ -255,7 +254,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         drawnLocationCount += batch.size
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
     private fun initViews() = viewBinding.apply {
         setContentView(root)
         activitySettingsView.eventListener = this@RouteTrackingActivity
@@ -379,6 +377,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {

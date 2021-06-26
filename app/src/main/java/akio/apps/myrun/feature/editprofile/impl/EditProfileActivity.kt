@@ -32,6 +32,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.PhoneAuthCredential
 import java.io.File
 import java.text.DecimalFormat
+import java.util.Locale
 
 class EditProfileActivity :
     AppCompatActivity(R.layout.activity_edit_profile),
@@ -115,6 +116,7 @@ class EditProfileActivity :
             .show()
     }
 
+    @Suppress("DEPRECATION")
     override fun onAttachFragment(fragment: Fragment) {
         super.onAttachFragment(fragment)
 
@@ -132,7 +134,11 @@ class EditProfileActivity :
     private fun fillCurrentUserProfile(userProfile: UserProfile) = viewBinding.apply {
         nameEditText.setText(userProfile.name)
         phoneBox.setFullNumber(userProfile.phone)
-        genderTextView.text = userProfile.gender?.name?.capitalize()
+        genderTextView.text = userProfile.gender?.name?.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(
+                Locale.getDefault()
+            ) else it.toString()
+        }
         weightEditText.setText(userProfile.weight?.let { bodyDimensFormat.format(it) })
         heightEditText.setText(userProfile.height?.let { bodyDimensFormat.format(it) })
 
@@ -174,6 +180,7 @@ class EditProfileActivity :
         )
             .show()
         val signInIntent = SignInActivity.launchIntent(this)
+        @Suppress("DEPRECATION")
         startActivityForResult(signInIntent, requestCode)
     }
 
@@ -223,6 +230,7 @@ class EditProfileActivity :
         photoSelectionDelegate.onRequestPermissionsResult(requestCode)
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         photoSelectionDelegate.onActivityResult(requestCode, resultCode, data)
@@ -266,6 +274,7 @@ class EditProfileActivity :
     }
 
     override fun onPhotoSelectionReady(photoContentUri: Uri) {
+        @Suppress("DEPRECATION")
         startActivityForResult(
             CropAvatarActivity.launchIntent(this, photoContentUri),
             RC_CROP_AVATAR

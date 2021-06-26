@@ -58,6 +58,7 @@ class RequiredPermissionsDelegate {
             fragment: Fragment? = null
         ) {
             if (fragment != null) {
+                @Suppress("DEPRECATION")
                 fragment.requestPermissions(permissions, rcPermissions)
             } else {
                 ActivityCompat.requestPermissions(activity, permissions, rcPermissions)

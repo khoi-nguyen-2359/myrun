@@ -104,9 +104,11 @@ class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
 
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
         val signInIntent = googleSignInClient.signInIntent
+        @Suppress("DEPRECATION")
         startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN)
     }
 
+    @Suppress("DEPRECATION")
     override fun onAttachFragment(fragment: Fragment) {
         super.onAttachFragment(fragment)
 
@@ -132,6 +134,7 @@ class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
         finish()
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         facebookCallbackManager.onActivityResult(requestCode, resultCode, data)
         super.onActivityResult(requestCode, resultCode, data)

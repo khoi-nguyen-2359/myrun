@@ -51,6 +51,7 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
             "$activityName on ${activityStartTimeFormatter.format(Date(activityStartTime))}"
         val notificationBuilder: Notification.Builder =
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                @Suppress("DEPRECATION")
                 Notification.Builder(applicationContext)
             } else {
                 Notification.Builder(
