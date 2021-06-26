@@ -4,10 +4,10 @@ import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun._base.utils.toGmsLatLng
-import akio.apps.myrun._base.utils.toLocationEntity
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.location.LocationDataSource
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
@@ -23,7 +23,6 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
@@ -63,6 +62,9 @@ class RouteTrackingService : Service() {
     @Inject
     lateinit var routeTrackingConfiguration: RouteTrackingConfiguration
 
+    // null means location accumulator is not applicable
+    private var locationAccumulator: LocationAccumulator? = null
+
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         Timber.e(exception)
     }
@@ -71,7 +73,7 @@ class RouteTrackingService : Service() {
 
     private var locationUpdateJob: Job? = null
     private var trackingTimerJob: Job? = null
-    private var startLocation: Location? = null
+    private var startLocation: LocationEntity? = null
 
     private val instantSpeedCalculator = InstantSpeedCalculator()
     private val routeDistanceCalculator = RouteDistanceCalculator()
@@ -102,6 +104,11 @@ class RouteTrackingService : Service() {
     @SuppressLint("MissingPermission")
     private fun requestLocationUpdates() = mainScope.launch {
         val locationRequest = routeTrackingConfiguration.getLocationRequestConfig()
+        if (routeTrackingConfiguration.isLocationAccumulationEnabled()) {
+            Timber.d("requestLocationUpdates with accumulation")
+            locationAccumulator =
+                LocationAccumulator(locationRequest.updateInterval, System.currentTimeMillis())
+        }
 
         locationUpdateJob?.cancel()
         locationUpdateJob = locationDataSource.getLocationUpdate(locationRequest)
@@ -109,7 +116,19 @@ class RouteTrackingService : Service() {
             .launchIn(mainScope)
     }
 
-    private suspend fun onLocationUpdate(locations: List<Location>) {
+    private suspend fun onLocationUpdate(locations: List<LocationEntity>) {
+        Timber.d("onLocationUpdate ${locations.size}")
+        val batch: List<LocationEntity> = if (locationAccumulator != null) {
+            val accumulatedLocation =
+                locationAccumulator?.accumulate(locations, System.currentTimeMillis())
+            listOfNotNull(accumulatedLocation)
+        } else {
+            locations
+        }
+        if (batch.isEmpty()) {
+            return
+        }
+        Timber.d("onLocationUpdate to be processed ${batch.size}")
         routeTrackingLocationRepository.insert(locations)
 
         routeDistanceCalculator.calculateRouteDistance(locations)
@@ -118,7 +137,7 @@ class RouteTrackingService : Service() {
         if (startLocation == null) {
             val firstLocation = locations.firstOrNull()
             if (firstLocation != null) {
-                routeTrackingState.setStartLocation(firstLocation.toLocationEntity())
+                routeTrackingState.setStartLocation(firstLocation)
                 startLocation = firstLocation
             }
         }
@@ -146,10 +165,10 @@ class RouteTrackingService : Service() {
     }
 
     inner class RouteDistanceCalculator {
-        private var lastComputeLengthLocation: Location? = null
+        private var lastComputeLengthLocation: LocationEntity? = null
 
-        suspend fun calculateRouteDistance(locations: List<Location>): Double {
-            val computeLengthLocations = mutableListOf<Location>()
+        suspend fun calculateRouteDistance(locations: List<LocationEntity>): Double {
+            val computeLengthLocations = mutableListOf<LocationEntity>()
 
             // add last location of previous batch to compute distance to first location of this batch
             lastComputeLengthLocation?.let {

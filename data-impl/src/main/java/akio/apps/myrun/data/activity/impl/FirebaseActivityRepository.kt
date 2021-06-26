@@ -4,15 +4,14 @@ import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.entity.FirestoreActivity
 import akio.apps.myrun.data.activity.entity.FirestoreActivityMapper
-import akio.apps.myrun.data.activity.entity.FirestoreDataPointDeserializer
 import akio.apps.myrun.data.activity.entity.FirestoreDataPointList
 import akio.apps.myrun.data.activity.entity.FirestoreDataPointSerializer
 import akio.apps.myrun.data.activity.entity.FirestoreFloatDataPointParser
 import akio.apps.myrun.data.activity.entity.FirestoreIntegerDataPointParser
 import akio.apps.myrun.data.activity.entity.FirestoreLocationDataPointParser
+import akio.apps.myrun.data.activity.model.ActivityLocation
 import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.fitness.DataPoint
-import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.utils.FirebaseStorageUtils
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,10 +20,10 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import timber.log.Timber
 import java.io.File
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class FirebaseActivityRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
@@ -69,7 +68,7 @@ class FirebaseActivityRepository @Inject constructor(
         routeBitmapFile: File,
         speedDataPoints: List<DataPoint<Float>>,
         stepCadenceDataPoints: List<DataPoint<Int>>?,
-        locationDataPoints: List<DataPoint<LocationEntity>>
+        locationDataPoints: List<ActivityLocation>
     ): String = withContext(ioDispatcher) {
         Timber.d("=== SAVING ACTIVITY ===")
         val docRef = if (activity.id.isNotEmpty()) {
@@ -106,8 +105,8 @@ class FirebaseActivityRepository @Inject constructor(
             )
             batch.set(
                 locationDocRef,
-                FirestoreDataPointSerializer(FirestoreLocationDataPointParser()).serialize(
-                    locationDataPoints
+                FirestoreDataPointList(
+                    data = FirestoreLocationDataPointParser().flatten(locationDataPoints)
                 )
             )
 
@@ -128,7 +127,7 @@ class FirebaseActivityRepository @Inject constructor(
 
     override suspend fun getActivityLocationDataPoints(
         activityId: String
-    ): List<DataPoint<LocationEntity>> = withContext(ioDispatcher) {
+    ): List<ActivityLocation> = withContext(ioDispatcher) {
         val firebaseActivity =
             userActivityCollectionGroup.whereEqualTo(FIELD_ACTIVITY_ID, activityId).get().await()
         val firestoreLocationDataPoints = firebaseActivity.documents.getOrNull(0)
@@ -140,12 +139,7 @@ class FirebaseActivityRepository @Inject constructor(
             ?.toObject(FirestoreDataPointList::class.java)
             ?: return@withContext emptyList()
 
-        val firestoreLocationDataPointDeserializer =
-            FirestoreDataPointDeserializer(FirestoreLocationDataPointParser())
-
-        return@withContext firestoreLocationDataPointDeserializer.deserialize(
-            firestoreLocationDataPoints
-        )
+        FirestoreLocationDataPointParser().build(activityId, firestoreLocationDataPoints.data)
     }
 
     override fun generateActivityId(userId: String): String =
