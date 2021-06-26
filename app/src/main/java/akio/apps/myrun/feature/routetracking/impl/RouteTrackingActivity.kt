@@ -9,6 +9,7 @@ import akio.apps.myrun._base.utils.LocationServiceChecker
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.activity.model.ActivityType
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
@@ -24,7 +25,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.location.Location
 import android.os.Bundle
 import android.util.Size
 import android.view.View
@@ -91,7 +91,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     private var trackMapCameraOnLocationUpdateJob: Job? = null
 
-    private var lastPausedLocation: Location? = null
+    private var lastPausedLocation: LocationEntity? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,7 +154,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         }
     }
 
-    private fun recenterMap(location: Location) {
+    private fun recenterMap(location: LocationEntity) {
         if (!::mapView.isInitialized) {
             return
         }
@@ -173,7 +173,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     /**
-     * There are 2 types of camera movements: camera tracking on drawn route and on current location
+     * There are 2 types of cameLocationDataSourceImpl.ktra movements: camera tracking on drawn route and on current location
      * If route tracking is in progress, camera tracks the route, otherwise, camera tracks on
      * location update.
      */
@@ -197,14 +197,12 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     private fun onTrackingLocationUpdate(batch: List<TrackingLocationEntity>) {
-        Timber.d("onTrackingLocationUpdate ${batch.size}")
         drawTrackingLocationUpdate(batch)
         moveMapCameraOnTrackingLocationUpdate(batch)
     }
 
     private fun moveMapCameraOnTrackingLocationUpdate(batch: List<TrackingLocationEntity>) {
         batch.forEach {
-            Timber.d("tracking route latlng bounds include ${batch.size}")
             trackingRouteLatLngBounds.include(it.toGmsLatLng())
         }
 

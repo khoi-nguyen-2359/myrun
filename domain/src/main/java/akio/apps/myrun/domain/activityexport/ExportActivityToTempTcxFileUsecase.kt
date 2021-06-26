@@ -63,15 +63,6 @@ class ExportActivityToTempTcxFileUsecase @Inject constructor(
 
     private suspend fun getActivityLocations(activityId: String): List<ActivityLocation> {
         return activityRepository.getActivityLocationDataPoints(activityId)
-            .map {
-                ActivityLocation(
-                    activityId,
-                    it.timestamp,
-                    it.value.latitude,
-                    it.value.longitude,
-                    it.value.altitude
-                )
-            }
     }
 
     companion object {

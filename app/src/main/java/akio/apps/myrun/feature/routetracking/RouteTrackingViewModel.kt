@@ -2,12 +2,12 @@ package akio.apps.myrun.feature.routetracking
 
 import akio.apps._base.viewmodel.BaseViewModel
 import akio.apps.myrun.data.activity.model.ActivityType
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.data.routetracking.model.LocationRequestConfig
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingStats
 import android.graphics.Bitmap
-import android.location.Location
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,9 +18,9 @@ abstract class RouteTrackingViewModel : BaseViewModel() {
     abstract val trackingStats: LiveData<RouteTrackingStats>
     abstract val trackingStatus: LiveData<@RouteTrackingStatus Int>
     abstract val activityType: LiveData<ActivityType>
-    abstract suspend fun getInitialLocation(): Location?
+    abstract suspend fun getInitialLocation(): LocationEntity?
 
-    abstract suspend fun getLocationUpdate(): Flow<List<Location>>
+    abstract suspend fun getLocationUpdate(): Flow<List<LocationEntity>>
 
     abstract fun requestDataUpdates()
     abstract fun cancelDataUpdates()

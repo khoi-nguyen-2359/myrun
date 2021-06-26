@@ -1,10 +1,9 @@
 package akio.apps.myrun.data.routetracking.impl
 
 import akio.apps.myrun._di.NamedIoDispatcher
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.TrackingLocationEntity
-import android.location.Location
-import timber.log.Timber
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -14,9 +13,8 @@ class RouteTrackingLocationRepositoryImpl @Inject constructor(
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : RouteTrackingLocationRepository {
 
-    override suspend fun insert(trackingLocations: List<Location>): Unit =
+    override suspend fun insert(trackingLocations: List<LocationEntity>): Unit =
         withContext(ioDispatcher) {
-            Timber.d("insert tracking location ${trackingLocations.size}")
             routeTrackingLocationDao.insert(trackingLocations.map { it.toRoomEntity(0) })
         }
 
@@ -38,7 +36,7 @@ class RouteTrackingLocationRepositoryImpl @Inject constructor(
         routeTrackingLocationDao.getLatestLocationTime()
     }
 
-    private fun Location.toRoomEntity(id: Int) =
+    private fun LocationEntity.toRoomEntity(id: Int) =
         RoomTrackingLocation(id, time, latitude, longitude, altitude)
 
     private fun RoomTrackingLocation.toTrackingLocationEntity() =

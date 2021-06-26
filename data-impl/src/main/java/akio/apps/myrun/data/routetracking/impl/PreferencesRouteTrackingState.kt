@@ -104,6 +104,7 @@ class PreferencesRouteTrackingState @Inject constructor(
 
     override suspend fun setStartLocation(location: LocationEntity) {
         prefDataStore.edit { data ->
+            data[KEY_START_LOCATION_TIME] = location.time
             data[KEY_START_LOCATION_LAT] = location.latitude.toFloat()
             data[KEY_START_LOCATION_LNG] = location.longitude.toFloat()
             data[KEY_START_LOCATION_ALT] = location.altitude.toFloat()
@@ -111,13 +112,14 @@ class PreferencesRouteTrackingState @Inject constructor(
     }
 
     override suspend fun getStartLocation(): LocationEntity? = prefDataStore.data.map { data ->
+        val time = data[KEY_START_LOCATION_TIME]
         val lat = data[KEY_START_LOCATION_LAT]
         val lng = data[KEY_START_LOCATION_LNG]
         val alt = data[KEY_START_LOCATION_ALT]
-        if (lat == null || lng == null || alt == null)
+        if (time == null || lat == null || lng == null || alt == null)
             null
         else
-            LocationEntity(lat.toDouble(), lng.toDouble(), alt.toDouble())
+            LocationEntity(time, lat.toDouble(), lng.toDouble(), alt.toDouble())
     }
         .first()
 
@@ -141,6 +143,7 @@ class PreferencesRouteTrackingState @Inject constructor(
         private val KEY_CURRENT_SPEED = floatPreferencesKey("KEY_CURRENT_SPEED")
         private val KEY_TRACKING_DURATION = longPreferencesKey("KEY_TRACKING_DURATION")
         private val KEY_LAST_RESUME_TIME = longPreferencesKey("KEY_LAST_RESUME_TIME")
+        private val KEY_START_LOCATION_TIME = longPreferencesKey("KEY_START_LOCATION_TIME")
         private val KEY_START_LOCATION_LAT = floatPreferencesKey("KEY_START_LOCATION_LAT")
         private val KEY_START_LOCATION_LNG = floatPreferencesKey("KEY_START_LOCATION_LNG")
         private val KEY_START_LOCATION_ALT = floatPreferencesKey("KEY_START_LOCATION_ALT")
