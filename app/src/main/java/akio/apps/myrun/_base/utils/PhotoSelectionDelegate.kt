@@ -42,6 +42,7 @@ class PhotoSelectionDelegate(
 
     private fun requestPermissions(permissions: Array<String>, requestCode: Int) {
         if (fragment != null) {
+            @Suppress("DEPRECATION")
             fragment.requestPermissions(permissions, requestCode)
         } else {
             ActivityCompat.requestPermissions(activity, permissions, requestCode)
@@ -59,6 +60,7 @@ class PhotoSelectionDelegate(
 
     private fun startActivityForResult(intent: Intent, rc: Int) {
         if (fragment != null) {
+            @Suppress("DEPRECATION")
             fragment.startActivityForResult(intent, rc)
         } else {
             activity.startActivityForResult(intent, rc)

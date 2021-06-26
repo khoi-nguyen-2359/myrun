@@ -5,7 +5,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.observe
 import kotlinx.coroutines.CoroutineScope
 
 fun <T> LifecycleOwner.observe(liveData: LiveData<T>, block: (T) -> Unit) {

@@ -144,7 +144,7 @@ class RouteTrackingService : Service() {
     }
 
     inner class InstantSpeedCalculator {
-        private var lastTimeComputingInstantSpeed = 0L
+        private var lastTimeComputingInstantSpeed = System.currentTimeMillis()
         private var lastDistanceComputingInstantSpeed = 0.0
 
         suspend fun calculateInstantSpeed() {
@@ -152,7 +152,7 @@ class RouteTrackingService : Service() {
             val currentTime = System.currentTimeMillis()
             val deltaTime = currentTime - lastTimeComputingInstantSpeed
             // compute instant speed in a period of 2 secs
-            if (lastTimeComputingInstantSpeed == 0L || deltaTime >= 2000L) {
+            if (deltaTime >= 2000L) {
                 val instantSpeed = (routeDistance - lastDistanceComputingInstantSpeed) / deltaTime
                 routeTrackingState.setInstantSpeed(instantSpeed)
 
@@ -211,6 +211,7 @@ class RouteTrackingService : Service() {
             StatsPresentations.getDisplayTrackingDistance(routeTrackingState.getRouteDistance())
         val notificationBuilder: Notification.Builder =
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                @Suppress("DEPRECATION")
                 Notification.Builder(this@RouteTrackingService)
             } else {
                 Notification.Builder(

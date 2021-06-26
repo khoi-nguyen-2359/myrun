@@ -39,10 +39,12 @@ class SplashActivity : AppCompatActivity() {
         if (isSignedIn) {
             goHome()
         } else {
+            @Suppress("DEPRECATION")
             startActivityForResult(SignInActivity.launchIntent(this), RC_SIGN_IN)
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
@@ -66,6 +68,7 @@ class SplashActivity : AppCompatActivity() {
                 ?: return
 
         if (signInResult.isNewUser) {
+            @Suppress("DEPRECATION")
             startActivityForResult(
                 EditProfileActivity.launchIntentForOnboarding(this),
                 RC_ON_BOARDING

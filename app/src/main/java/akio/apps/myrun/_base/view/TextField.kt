@@ -10,6 +10,7 @@ import android.text.style.StyleSpan
 import android.text.style.TextAppearanceSpan
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
+import java.util.Locale
 
 class TextField @JvmOverloads constructor(
     context: Context,
@@ -31,7 +32,8 @@ class TextField @JvmOverloads constructor(
 
     fun setValue(value: String?) {
         this.value = value
-        val spannedValue = SpannableString("${label.toUpperCase()}\n${value ?: ""}")
+        val spannedValue =
+            SpannableString("${label.uppercase(Locale.getDefault())}\n${value ?: ""}")
         val labelTfSpan = StyleSpan(BOLD)
         spannedValue.setSpan(labelTfSpan, 0, label.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         val labelTextSpan = TextAppearanceSpan(context, R.style.TextFieldLabel)

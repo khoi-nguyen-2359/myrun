@@ -27,6 +27,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
+import java.util.Locale
 import kotlinx.coroutines.launch
 
 class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
@@ -141,8 +142,8 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                     }
                 } else {
                     itemViewContainer.setOnClickListener {
-                        when (viewIds) {
-                            ExternalAppItemViewIds.Strava -> openStravaLinking()
+                        if (viewIds == ExternalAppItemViewIds.Strava) {
+                            openStravaLinking()
                         }
                     }
                 }
@@ -193,7 +194,15 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
             userNameTextField.setValue(updatedUserProfile.name)
             phoneTextField.setValue(updatedUserProfile.phone)
-            genderTextField.setValue(updatedUserProfile.gender?.name?.capitalize())
+            genderTextField.setValue(
+                updatedUserProfile.gender?.name?.replaceFirstChar {
+                    if (it.isLowerCase()) {
+                        it.titlecase(Locale.getDefault())
+                    } else {
+                        it.toString()
+                    }
+                }
+            )
             heightTextField.setValue(updatedUserProfile.getHeightText())
             weightTextField.setValue(updatedUserProfile.getWeightText())
         }
@@ -204,6 +213,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         startActivity(intent)
     }
 
+    @Suppress("DEPRECATION")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -216,6 +226,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
