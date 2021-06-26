@@ -4,7 +4,6 @@ import akio.apps._base.viewmodel.BaseViewModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
-import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.data.routetracking.model.LocationRequestConfig
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingStats
 import android.graphics.Bitmap
@@ -14,7 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 abstract class RouteTrackingViewModel : BaseViewModel() {
     abstract val isStopOptionDialogShowing: MutableStateFlow<Boolean>
-    abstract val trackingLocationBatch: LiveData<List<TrackingLocationEntity>>
+    abstract val trackingLocationBatch: LiveData<List<LocationEntity>>
     abstract val trackingStats: LiveData<RouteTrackingStats>
     abstract val trackingStatus: LiveData<@RouteTrackingStatus Int>
     abstract val activityType: LiveData<ActivityType>

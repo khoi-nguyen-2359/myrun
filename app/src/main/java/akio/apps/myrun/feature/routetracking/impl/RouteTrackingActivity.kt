@@ -11,7 +11,6 @@ import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
-import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature.home.HomeActivity
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
@@ -196,12 +195,12 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         }
     }
 
-    private fun onTrackingLocationUpdate(batch: List<TrackingLocationEntity>) {
+    private fun onTrackingLocationUpdate(batch: List<LocationEntity>) {
         drawTrackingLocationUpdate(batch)
         moveMapCameraOnTrackingLocationUpdate(batch)
     }
 
-    private fun moveMapCameraOnTrackingLocationUpdate(batch: List<TrackingLocationEntity>) {
+    private fun moveMapCameraOnTrackingLocationUpdate(batch: List<LocationEntity>) {
         batch.forEach {
             trackingRouteLatLngBounds.include(it.toGmsLatLng())
         }
@@ -237,7 +236,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         return cameraViewPortSize
     }
 
-    private fun drawTrackingLocationUpdate(batch: List<TrackingLocationEntity>) {
+    private fun drawTrackingLocationUpdate(batch: List<LocationEntity>) {
         routePolyline?.let { currentPolyline ->
             val appendedPolypoints = currentPolyline.points
             appendedPolypoints.addAll(batch.map { LatLng(it.latitude, it.longitude) })

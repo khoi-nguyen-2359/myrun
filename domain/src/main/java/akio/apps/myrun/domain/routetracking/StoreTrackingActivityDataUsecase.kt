@@ -12,9 +12,9 @@ import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.activity.model.ActivityLocation
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.domain.PerformanceUnit
 import android.graphics.Bitmap
@@ -67,7 +67,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         userId: String,
         activityId: String,
         activityName: String,
-        trackedLocations: List<TrackingLocationEntity>
+        trackedLocations: List<LocationEntity>
     ): ActivityModel {
         val userProfile = userProfileRepository.getUserProfile(userId)
         val endTime = System.currentTimeMillis()

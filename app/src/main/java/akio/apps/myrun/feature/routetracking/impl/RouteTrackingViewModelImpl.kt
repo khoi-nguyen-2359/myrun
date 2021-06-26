@@ -10,7 +10,6 @@ import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
-import akio.apps.myrun.data.routetracking.TrackingLocationEntity
 import akio.apps.myrun.data.routetracking.model.LocationRequestConfig
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
@@ -47,8 +46,8 @@ class RouteTrackingViewModelImpl @Inject constructor(
     override suspend fun getInitialLocation(): LocationEntity? =
         locationDataSource.getLastLocation()
 
-    private val _trackingLocationBatch = MutableLiveData<List<TrackingLocationEntity>>()
-    override val trackingLocationBatch: LiveData<List<TrackingLocationEntity>> =
+    private val _trackingLocationBatch = MutableLiveData<List<LocationEntity>>()
+    override val trackingLocationBatch: LiveData<List<LocationEntity>> =
         _trackingLocationBatch
 
     private val _trackingStats = MutableLiveData<RouteTrackingStats>()
