@@ -3,6 +3,7 @@ package akio.apps.myrun
 import akio.apps._base.utils.CrashReportTree
 import akio.apps._base.utils.MyDebugTree
 import akio.apps.myrun._base.configurator.ConfiguratorGate
+import akio.apps.myrun._base.notification.AppNotificationChannel
 import akio.apps.myrun._di.AppComponent
 import akio.apps.myrun._di.DaggerAppComponent
 import akio.apps.myrun.data.routetracking.RouteTrackingState
@@ -46,6 +47,9 @@ class MyRunApp : Application(), LifecycleObserver, AppComponent.Holder, Configur
 
     override fun onCreate() {
         super.onCreate()
+
+        // create all notification channels at app startup.
+        AppNotificationChannel.values().forEach { it.createChannelCompat(this) }
 
         setupLogging()
 

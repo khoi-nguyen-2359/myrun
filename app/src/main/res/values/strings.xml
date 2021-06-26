@@ -109,6 +109,12 @@
     <string name="action_proceed">Proceed</string>
     <string name="location_permission_is_missing_error">Feature is not available without required permissions.</string>
     <string name="route_tracking_discard_activity_confirm_message">Your tracked route will be lost after discarded. Do you want to proceed?</string>
+    <string name="notification_channel_name_tracking_service">Route tracking</string>
+    <string name="notification_channel_description_tracking_service">Notification that shows progress of your activity.</string>
+    <string name="notification_channel_name_general">General</string>
+    <string name="notification_channel_description_general">App general notifications</string>
+    <string name="notification_channel_name_debug">Debug</string>
+    <string name="notification_channel_description_debug">Available for debug only</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>

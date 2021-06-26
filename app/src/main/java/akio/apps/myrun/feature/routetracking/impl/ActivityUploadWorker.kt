@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun.R
+import akio.apps.myrun._base.notification.AppNotificationChannel
 import akio.apps.myrun.domain.routetracking.UploadActivitiesUsecase
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import android.app.Application
@@ -54,7 +55,7 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
             } else {
                 Notification.Builder(
                     applicationContext,
-                    RouteTrackingService.NOTIF_CHANNEL_ID
+                    AppNotificationChannel.General.id
                 )
             }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -75,7 +76,7 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
     }
 
     companion object {
-        private const val NOTIFICATION_ID = 201
+        private val NOTIFICATION_ID = AppNotificationChannel.General.nextNotificationStaticId()
         private const val UNIQUE_WORK_NAME = "ActivityUploadWorker"
 
         fun enqueue(context: Context) {
