@@ -12,7 +12,7 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import javax.inject.Inject
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 private val Context.prefDataStore: DataStore<Preferences> by
@@ -23,7 +23,7 @@ class RouteTrackingConfigurationImpl @Inject constructor(application: Applicatio
 
     private val prefDataStore = application.prefDataStore
 
-    override suspend fun getLocationRequestConfig(): LocationRequestConfig =
+    override fun getLocationRequestConfig(): Flow<LocationRequestConfig> =
         prefDataStore.data.map { data ->
             LocationRequestConfig(
                 updateInterval = data[LOCATION_UPDATE_INTERVAL_KEY] ?: LOCATION_UPDATE_INTERVAL,
@@ -32,9 +32,8 @@ class RouteTrackingConfigurationImpl @Inject constructor(application: Applicatio
                 smallestDisplacement = data[LOCATION_SMALLEST_DISPLACEMENT] ?: SMALLEST_DISPLACEMENT
             )
         }
-            .first()
 
-    override suspend fun setLocationRequestInfo(config: LocationRequestConfig) {
+    override suspend fun setLocationRequestConfiguration(config: LocationRequestConfig) {
         prefDataStore.edit { data ->
             data[LOCATION_UPDATE_INTERVAL_KEY] = config.updateInterval
             data[LOCATION_FASTEST_UPDATE_INTERVAL_KEY] = config.fastestUpdateInterval
@@ -46,8 +45,8 @@ class RouteTrackingConfigurationImpl @Inject constructor(application: Applicatio
         prefDataStore.edit { data -> data[LOCATION_ACCUMULATION_ENABLED] = isEnabled }
     }
 
-    override suspend fun isLocationAccumulationEnabled(): Boolean =
-        prefDataStore.data.map { data -> data[LOCATION_ACCUMULATION_ENABLED] ?: false }.first()
+    override fun isLocationAccumulationEnabled(): Flow<Boolean> =
+        prefDataStore.data.map { data -> data[LOCATION_ACCUMULATION_ENABLED] ?: false }
 
     companion object {
         private const val LOCATION_UPDATE_INTERVAL = 2000L

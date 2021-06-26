@@ -1,18 +1,20 @@
 package akio.apps.myrun.configurator.ui
 
 import akio.apps.myrun.configurator.RouteTrackingConfigurationViewModel
+import akio.apps.myrun.configurator.ui.SectionSpacing.elementHorizontalPadding
 import akio.apps.myrun.configurator.ui.SectionSpacing.elementVerticalPadding
-import akio.apps.myrun.data.routetracking.model.LocationRequestConfig
-import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -20,14 +22,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -44,6 +48,7 @@ fun ConfiguratorScreen(routeTrackingViewModel: RouteTrackingConfigurationViewMod
 
 object SectionSpacing {
     val elementVerticalPadding = 8.dp
+    val elementHorizontalPadding = 8.dp
 }
 
 @Composable
@@ -73,69 +78,57 @@ private fun RouteTrackingSection(routeTrackingViewModel: RouteTrackingConfigurat
             )
         }
         if (isExpanded) {
-            val requestInfo by produceState<LocationRequestConfig?>(
-                initialValue = null,
-                producer = {
-                    value = routeTrackingViewModel.getLocationRequestConfig()
+            val locationUpdateConfig by routeTrackingViewModel.locationUpdateConfigFlow
+                .collectAsState(RouteTrackingConfigurationViewModel.LocationUpdateConfiguration())
+            LocationUpdateConfiguration(
+                locationUpdateConfig,
+                onValueChanged = { value ->
+                    routeTrackingViewModel.onLocationUpdateConfigurationChanged(value)
                 }
             )
-            requestInfo?.let {
-                LocationRequestConfiguration(
-                    requestConfig = it,
-                    onValueChanged = {
-                        routeTrackingViewModel.setLocationRequestInfo(it)
-                    }
-                )
-            }
+            ApplyButton { routeTrackingViewModel.applyChanges() }
         }
     }
 
 @Composable
-private fun LocationRequestConfiguration(
-    requestConfig: LocationRequestConfig,
-    onValueChanged: (LocationRequestConfig) -> Unit
+private fun LocationUpdateConfiguration(
+    config: RouteTrackingConfigurationViewModel.LocationUpdateConfiguration,
+    onValueChanged: (RouteTrackingConfigurationViewModel.LocationUpdateConfiguration) -> Unit
 ) {
-    var updateInterval by remember { mutableStateOf(requestConfig.updateInterval.toString()) }
-    var fastestUpdateInterval by remember {
-        mutableStateOf(requestConfig.fastestUpdateInterval.toString())
-    }
-    var smallestDisplacement by remember {
-        mutableStateOf(requestConfig.smallestDisplacement.toString())
-    }
-    Log.d("khoi", "location config = $updateInterval $fastestUpdateInterval $smallestDisplacement")
-    Text(text = "Location Request:", modifier = Modifier.padding(vertical = elementVerticalPadding))
+    Text(text = "Location Update:", modifier = Modifier.padding(vertical = elementVerticalPadding))
     TextField(
         label = { Text("Update interval") },
-        value = updateInterval,
-        onValueChange = { value -> updateInterval = value },
+        value = config.updateInterval,
+        onValueChange = { value -> onValueChanged(config.copy(updateInterval = value)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         maxLines = 1
     )
     TextField(
         label = { Text("Fastest update interval") },
-        value = fastestUpdateInterval,
-        onValueChange = { value -> fastestUpdateInterval = value },
+        value = config.fastestUpdateInterval,
+        onValueChange = { value -> onValueChanged(config.copy(fastestUpdateInterval = value)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         maxLines = 1
     )
     TextField(
         label = { Text("Smallest displacement") },
-        value = smallestDisplacement,
-        onValueChange = { value -> smallestDisplacement = value },
+        value = config.smallestDisplacement,
+        onValueChange = { value -> onValueChanged(config.copy(smallestDisplacement = value)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         maxLines = 1
     )
-
-    ApplyButton {
-        val updateValue = LocationRequestConfig(
-            updateInterval.toLongOrNull() ?: requestConfig.updateInterval,
-            fastestUpdateInterval.toLongOrNull() ?: requestConfig.fastestUpdateInterval,
-            smallestDisplacement.toFloatOrNull() ?: requestConfig.smallestDisplacement
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = elementVerticalPadding)
+    ) {
+        Checkbox(
+            checked = config.isAccumulationEnabled,
+            onCheckedChange = { value ->
+                onValueChanged(config.copy(isAccumulationEnabled = value))
+            }
         )
-        onValueChanged(updateValue)
-        updateInterval = updateValue.updateInterval.toString()
-        fastestUpdateInterval = updateValue.fastestUpdateInterval.toString()
-        smallestDisplacement = updateValue.smallestDisplacement.toString()
+        Spacer(modifier = Modifier.size(elementHorizontalPadding))
+        Text(text = "Use location accumulation")
     }
 }
 
@@ -145,4 +138,13 @@ private fun ApplyButton(onClick: () -> Unit) = Button(
     modifier = Modifier.padding(vertical = elementVerticalPadding)
 ) {
     Text(text = "Apply")
+}
+
+@Preview
+@Composable
+private fun PreviewLocationRequestConfiguration() = Column(modifier = Modifier.fillMaxWidth()) {
+    LocationUpdateConfiguration(
+        RouteTrackingConfigurationViewModel.LocationUpdateConfiguration(),
+        onValueChanged = { }
+    )
 }
