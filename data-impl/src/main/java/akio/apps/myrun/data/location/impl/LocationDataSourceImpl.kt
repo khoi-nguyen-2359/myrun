@@ -26,7 +26,8 @@ class LocationDataSourceImpl @Inject constructor(
 
     override suspend fun getLastLocation(): LocationEntity? = withContext(Dispatchers.IO) {
         try {
-            locationClient.lastLocation.await()?.toLocationEntity()
+            val androidLocation = locationClient.lastLocation.await()
+            androidLocation?.toLocationEntity()
         } catch (ex: SecurityException) {
             null
         }

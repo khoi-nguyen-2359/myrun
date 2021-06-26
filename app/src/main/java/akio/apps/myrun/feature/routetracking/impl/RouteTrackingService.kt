@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun.R
+import akio.apps.myrun._base.notification.AppNotificationChannel
 import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun._base.utils.toGmsLatLng
@@ -17,8 +18,6 @@ import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureCompo
 import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
@@ -84,7 +83,7 @@ class RouteTrackingService : Service() {
     override fun onCreate() {
         DaggerRouteTrackingFeatureComponent.factory().create(application).inject(this)
         super.onCreate()
-        createNotificationChannel()
+        AppNotificationChannel.TrackingService.createChannelCompat(this)
         trackUserAuthenticationState()
     }
 
@@ -152,10 +151,8 @@ class RouteTrackingService : Service() {
             val routeDistance: Double = routeTrackingState.getRouteDistance()
             val currentTime = System.currentTimeMillis()
             val deltaTime = currentTime - lastTimeComputingInstantSpeed
-            // compute instant speed for a period equals to location update interval
-            if (lastTimeComputingInstantSpeed == 0L ||
-                (lastTimeComputingInstantSpeed > 0 && deltaTime >= LOCATION_UPDATE_INTERVAL)
-            ) {
+            // compute instant speed in a period of 2 secs
+            if (lastTimeComputingInstantSpeed == 0L || deltaTime >= 2000L) {
                 val instantSpeed = (routeDistance - lastDistanceComputingInstantSpeed) / deltaTime
                 routeTrackingState.setInstantSpeed(instantSpeed)
 
@@ -216,7 +213,10 @@ class RouteTrackingService : Service() {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 Notification.Builder(this@RouteTrackingService)
             } else {
-                Notification.Builder(this@RouteTrackingService, NOTIF_CHANNEL_ID)
+                Notification.Builder(
+                    this@RouteTrackingService,
+                    AppNotificationChannel.TrackingService.id
+                )
             }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             notificationBuilder.setForegroundServiceBehavior(
@@ -324,19 +324,6 @@ class RouteTrackingService : Service() {
         stopSelf()
     }
 
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                NOTIF_CHANNEL_ID,
-                "Route Tracking",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            channel.description = "While app is tracking your route"
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
-
     private fun acquireWakeLock() {
         wakeLock =
             (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
@@ -357,13 +344,8 @@ class RouteTrackingService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     companion object {
-        private const val NOTIF_ID_TRACKING = 101
-
-        const val NOTIF_CHANNEL_ID =
-            "akio.apps.myrun.feature.routetracking.impl.RouteTrackingService.NOTIF_CHANNEL_ID"
-
-        private const val LOCATION_UPDATE_INTERVAL = 2000L
-        private const val SMALLEST_DISPLACEMENT = 5f
+        private val NOTIF_ID_TRACKING =
+            AppNotificationChannel.TrackingService.nextNotificationStaticId()
 
         private const val TRACKING_TIMER_PERIOD = 1000L
 
