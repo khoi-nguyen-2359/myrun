@@ -151,8 +151,8 @@ class RouteTrackingService : Service() {
             val routeDistance: Double = routeTrackingState.getRouteDistance()
             val currentTime = System.currentTimeMillis()
             val deltaTime = currentTime - lastTimeComputingInstantSpeed
-            // compute instant speed in a period of 2 secs
-            if (deltaTime >= 2000L) {
+            // compute instant speed in a period of 5 secs
+            if (deltaTime >= INSTANT_SPEED_PERIOD) {
                 val instantSpeed = (routeDistance - lastDistanceComputingInstantSpeed) / deltaTime
                 routeTrackingState.setInstantSpeed(instantSpeed)
 
@@ -354,6 +354,8 @@ class RouteTrackingService : Service() {
         private const val ACTION_STOP = "ACTION_STOP"
         private const val ACTION_RESUME = "ACTION_RESUME"
         private const val ACTION_PAUSE = "ACTION_PAUSE"
+
+        private const val INSTANT_SPEED_PERIOD = 5000L
 
         fun startIntent(
             context: Context
