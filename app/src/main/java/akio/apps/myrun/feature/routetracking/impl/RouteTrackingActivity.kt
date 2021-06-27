@@ -49,6 +49,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -135,14 +136,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         trackMapCameraOnLocationUpdateJob?.cancel()
         trackMapCameraOnLocationUpdateJob = addRepeatingJob(Lifecycle.State.STARTED) {
             routeTrackingViewModel.getLocationUpdate()
-                .run {
-                    val initLocation = routeTrackingViewModel.getInitialLocation()
-                    if (initLocation != null) {
-                        onStart { emit(listOf(initLocation)) }
-                    } else {
-                        this
-                    }
-                }
+                .onStart { emit(routeTrackingViewModel.getInitialLocationFlow().toList()) }
                 .collect {
                     it.lastOrNull()?.let { lastItem ->
                         lastPausedLocation = lastItem
