@@ -79,22 +79,22 @@ class ActivityRouteMapActivity : AppCompatActivity() {
     private fun drawStartStopMarker() {
         val startMarkerBitmap = createDrawableBitmap(
             context = this,
-            drawableResId = R.drawable.ic_play_circle,
-            tintColorResId = R.color.activity_route_map_start_marker_tint
+            drawableResId = R.drawable.ic_start_marker
         )
         val startMarker = MarkerOptions()
             .position(decodedPolyline[0])
             .icon(BitmapDescriptorFactory.fromBitmap(startMarkerBitmap))
+            .anchor(0.5f, 0.5f)
         map.addMarker(startMarker)
 
         val stopMarkerBitmap = createDrawableBitmap(
             context = this,
-            drawableResId = R.drawable.ic_stop_circle,
-            tintColorResId = R.color.activity_route_map_stop_marker_tint
+            drawableResId = R.drawable.ic_stop_marker
         )
         val stopMarker = MarkerOptions()
             .position(decodedPolyline.last())
             .icon(BitmapDescriptorFactory.fromBitmap(stopMarkerBitmap))
+            .anchor(0.5f, 0.5f)
         map.addMarker(stopMarker)
     }
 
@@ -130,8 +130,7 @@ class ActivityRouteMapActivity : AppCompatActivity() {
 
         private fun createDrawableBitmap(
             context: Context,
-            @DrawableRes drawableResId: Int,
-            @ColorRes tintColorResId: Int
+            @DrawableRes drawableResId: Int
         ): Bitmap? {
             val drawable = context.getDrawableCompat(drawableResId) ?: return null
             drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
@@ -140,7 +139,6 @@ class ActivityRouteMapActivity : AppCompatActivity() {
                 drawable.intrinsicHeight,
                 Bitmap.Config.ARGB_8888
             )
-            DrawableCompat.setTint(drawable, context.getColorCompat(tintColorResId))
             val canvas = Canvas(bitmap)
             drawable.draw(canvas)
             return bitmap
