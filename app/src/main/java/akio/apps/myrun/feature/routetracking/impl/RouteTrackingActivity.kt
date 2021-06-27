@@ -5,6 +5,7 @@ import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.dp2px
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
+import akio.apps.myrun._base.utils.LatLngBoundsBuilder
 import akio.apps.myrun._base.utils.LocationServiceChecker
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun._di.viewModel
@@ -72,7 +73,8 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     private var routePolyline: Polyline? = null
     private var drawnLocationCount: Int = 0
-    private val trackingRouteLatLngBounds: LatLngBounds.Builder = LatLngBounds.builder()
+
+    private val trackingRouteLatLngBounds: LatLngBoundsBuilder = LatLngBoundsBuilder()
 
     private val locationPermissionChecker: LocationPermissionChecker =
         LocationPermissionChecker(activity = this)
@@ -89,8 +91,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     private var trackMapCameraOnLocationUpdateJob: Job? = null
-
-    private var lastPausedLocation: LocationEntity? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,10 +136,9 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         trackMapCameraOnLocationUpdateJob?.cancel()
         trackMapCameraOnLocationUpdateJob = addRepeatingJob(Lifecycle.State.STARTED) {
             routeTrackingViewModel.getLocationUpdate()
-                .onStart { emit(routeTrackingViewModel.getInitialLocationFlow().toList()) }
+                .onStart { emit(routeTrackingViewModel.getLastLocationFlow().toList()) }
                 .collect {
                     it.lastOrNull()?.let { lastItem ->
-                        lastPausedLocation = lastItem
                         recenterMap(lastItem)
                     }
                 }
@@ -151,7 +150,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             return
         }
         val bounds = LatLngBounds.builder().include(location.toGmsLatLng()).build()
-        recenterMap(bounds, animation = true)
+        recenterMap(bounds, animation = true, getCameraViewPortSize())
     }
 
     private fun stopTrackingServiceAndFinish() {
@@ -200,19 +199,18 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
         // LatLngBounds doesn't have method to check empty!
         if (batch.isNotEmpty()) {
-            recenterMap(trackingRouteLatLngBounds.build(), true)
+            val latLngBounds = trackingRouteLatLngBounds.build()
+            if (latLngBounds != null) {
+                recenterMap(latLngBounds, true, getCameraViewPortSize())
+            }
         }
     }
 
-    private fun recenterMap(latLngBounds: LatLngBounds, animation: Boolean): Size {
-        val mapWidth =
-            supportFragmentManager.findFragmentById(R.id.tracking_map_view)?.view?.measuredWidth
-                ?: application.resources.displayMetrics.widthPixels
-        val routeImageRatio = resources.getString(R.string.route_tracking_captured_image_ratio)
-            .toFloatOrNull()
-            ?: ROUTE_IMAGE_RATIO
-
-        val cameraViewPortSize = Size(mapWidth, (mapWidth / routeImageRatio).toInt())
+    private fun recenterMap(
+        latLngBounds: LatLngBounds,
+        animation: Boolean,
+        cameraViewPortSize: Size
+    ) {
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(
             latLngBounds,
             cameraViewPortSize.width,
@@ -225,8 +223,17 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         } else {
             mapView.moveCamera(cameraUpdate)
         }
+    }
 
-        return cameraViewPortSize
+    private fun getCameraViewPortSize(): Size {
+        val mapWidth =
+            supportFragmentManager.findFragmentById(R.id.tracking_map_view)?.view?.measuredWidth
+                ?: application.resources.displayMetrics.widthPixels
+        val routeImageRatio = resources.getString(R.string.route_tracking_captured_image_ratio)
+            .toFloatOrNull()
+            ?: ROUTE_IMAGE_RATIO
+
+        return Size(mapWidth, (mapWidth / routeImageRatio).toInt())
     }
 
     private fun drawTrackingLocationUpdate(batch: List<LocationEntity>) {
@@ -303,11 +310,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private fun startRouteTracking() {
         ContextCompat.startForegroundService(this, RouteTrackingService.startIntent(this))
         routeTrackingViewModel.requestDataUpdates()
-        makeSureTrackingRouteBoundsNotEmpty()
-    }
-
-    private fun makeSureTrackingRouteBoundsNotEmpty() = lastPausedLocation?.let {
-        trackingRouteLatLngBounds.include(it.toGmsLatLng())
     }
 
     private fun pauseRouteTracking() {
@@ -332,8 +334,15 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private suspend fun getRouteImageBitmap(): Bitmap? {
         // hide the my location button
         mapView.isMyLocationEnabled = false
-        val cameraViewSize = recenterMap(trackingRouteLatLngBounds.build(), false)
-        Timber.d(Thread.currentThread().name)
+        val cameraViewPortSize = getCameraViewPortSize()
+        val bounds = trackingRouteLatLngBounds.build()
+        if (bounds != null) {
+            recenterMap(
+                bounds,
+                animation = false,
+                cameraViewPortSize
+            )
+        }
         val mapImageSnapShot: Bitmap? = suspendCancellableCoroutine { continuation ->
             mapView.snapshot { mapSnapshot ->
                 Timber.d(Thread.currentThread().name)
@@ -350,10 +359,10 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         return withContext(Dispatchers.IO) {
             Bitmap.createBitmap(
                 mapImageSnapShot,
-                (mapImageSnapShot.width - cameraViewSize.width) / 2,
-                (mapImageSnapShot.height - cameraViewSize.height) / 2,
-                cameraViewSize.width,
-                cameraViewSize.height
+                (mapImageSnapShot.width - cameraViewPortSize.width) / 2,
+                (mapImageSnapShot.height - cameraViewPortSize.height) / 2,
+                cameraViewPortSize.width,
+                cameraViewPortSize.height
             )
         }
     }

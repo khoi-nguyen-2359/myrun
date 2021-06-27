@@ -51,7 +51,7 @@ fun TrackingControlButtonPanel(
     val trackingStatus by routeTrackingViewModel.trackingStatus.observeAsState()
     // when entering the screen, initial location may not be available if location is not ready yet,
     // so use flow to get the location when it is ready.
-    val initialLocation by routeTrackingViewModel.getInitialLocationFlow()
+    val initialLocation by routeTrackingViewModel.getLastLocationFlow()
         .collectAsState(initial = null)
     Box(
         contentAlignment = Alignment.Center,
