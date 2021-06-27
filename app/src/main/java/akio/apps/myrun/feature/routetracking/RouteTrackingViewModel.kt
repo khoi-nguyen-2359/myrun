@@ -29,5 +29,5 @@ abstract class RouteTrackingViewModel : BaseViewModel() {
     abstract fun onSelectActivityType(activityType: ActivityType)
     abstract fun discardActivity()
     abstract suspend fun getLocationRequestConfig(): LocationRequestConfig
-    abstract fun getInitialLocationFlow(): Flow<LocationEntity>
+    abstract fun getLastLocationFlow(): Flow<LocationEntity>
 }
