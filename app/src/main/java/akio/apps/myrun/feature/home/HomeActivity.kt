@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.home
 
 import akio.apps.myrun.R
-import akio.apps.myrun._base.utils.LocationServiceChecker
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.feature.activitydetail.ActivityDetailActivity
 import akio.apps.myrun.feature.activityexport.ActivityExportService
@@ -21,6 +20,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
 
@@ -29,14 +29,9 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private val userTimelineViewModel: UserTimelineViewModel by viewModel { homeFeatureComponent }
-    private val homeViewModel: HomeViewModel by viewModel { homeFeatureComponent }
 
     private val locationPermissionChecker: LocationPermissionChecker =
         LocationPermissionChecker(activity = this)
-
-    private val locationServiceChecker by lazy {
-        LocationServiceChecker(activity = this, RC_LOCATION_SERVICE)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,18 +40,10 @@ class HomeActivity : AppCompatActivity() {
             HomeScreen(
                 userTimelineViewModel,
                 onClickUserProfileButton = ::openUserProfile,
-                onClickFloatingActionButton = ::openRouteTrackingScreen,
+                onClickFloatingActionButton = ::openRouteTrackingOrCheckRequiredPermission,
                 onClickActivityItemAction = ::openActivityDetail,
                 onClickActivityFileAction = ::startActivityExportService
             )
-        }
-    }
-
-    @Suppress("DEPRECATION")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_LOCATION_SERVICE) {
-            locationServiceChecker.verifyLocationServiceResolutionResult(resultCode)
         }
     }
 
@@ -82,26 +69,31 @@ class HomeActivity : AppCompatActivity() {
         startActivity(launchIntent)
     }
 
-    private fun openRouteTrackingScreen() = lifecycleScope.launchWhenCreated {
+    private fun openRouteTrackingOrCheckRequiredPermission() {
         // onCreate: check location permissions -> check location service availability -> allow user to use this screen
-        val locationRequest = homeViewModel.getLocationRequest()
-        val missingRequiredPermission =
-            !locationPermissionChecker.check() || !locationServiceChecker.check(locationRequest)
-        if (missingRequiredPermission) {
-            Toast.makeText(
-                this@HomeActivity,
-                R.string.location_permission_is_missing_error,
-                Toast.LENGTH_SHORT
-            ).show()
-            return@launchWhenCreated
+        if (locationPermissionChecker.isGranted()) {
+            openRouteTracking()
+            return
         }
 
-        startActivity(RouteTrackingActivity.launchIntent(this@HomeActivity))
+        lifecycleScope.launch {
+            val missingRequiredPermission = !locationPermissionChecker.check()
+            if (missingRequiredPermission) {
+                Toast.makeText(
+                    this@HomeActivity,
+                    R.string.location_permission_is_missing_error,
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@launch
+            }
+
+            openRouteTracking()
+        }
     }
 
-    companion object {
-        private const val RC_LOCATION_SERVICE = 1
+    private fun openRouteTracking() = startActivity(RouteTrackingActivity.launchIntent(this))
 
+    companion object {
         fun clearTaskIntent(context: Context) = Intent(context, HomeActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         }
