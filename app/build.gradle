@@ -146,6 +146,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-coil:$Versions.accompanist"
     implementation "com.google.accompanist:accompanist-glide:$Versions.accompanist"
     implementation "com.google.accompanist:accompanist-flowlayout:$Versions.accompanist"
+    implementation "com.google.accompanist:accompanist-placeholder-material:$Versions.accompanist"
 
     implementation "com.facebook.android:facebook-login:$Versions.facebookSdk"
 
