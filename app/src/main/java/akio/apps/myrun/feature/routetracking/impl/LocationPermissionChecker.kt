@@ -24,15 +24,13 @@ class LocationPermissionChecker(
 
     private var continuation: CancellableContinuation<Boolean>? = null
 
+    fun isGranted(): Boolean =
+        ContextCompat.checkSelfPermission(activity, AppPermissions.preciseLocationPermission) ==
+            PackageManager.PERMISSION_GRANTED
+
     suspend fun check(): Boolean = suspendCancellableCoroutine { continuation ->
         this.continuation = continuation
         when {
-            ContextCompat.checkSelfPermission(
-                activity,
-                AppPermissions.preciseLocationPermission
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                continuation.resume(true)
-            }
             ActivityCompat.shouldShowRequestPermissionRationale(
                 activity,
                 AppPermissions.preciseLocationPermission
