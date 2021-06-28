@@ -16,6 +16,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -33,7 +35,18 @@ class LocationDataSourceImpl @Inject constructor(
         }
     }
 
-    @ExperimentalCoroutinesApi
+    override fun getLastLocationFlow(): Flow<LocationEntity> = flow {
+        val lastLocation = getLastLocation()
+        if (lastLocation != null) {
+            emit(lastLocation)
+        } else {
+            val request = LocationRequestConfig(0, 0, 0f)
+            val result = getLocationUpdate(request).first { it.isNotEmpty() }
+            emit(result.last())
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     @SuppressLint("MissingPermission")
     override fun getLocationUpdate(request: LocationRequestConfig): Flow<List<LocationEntity>> =
         callbackFlow {
@@ -44,6 +57,7 @@ class LocationDataSourceImpl @Inject constructor(
 
             val callback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
+//                    Timber.d("=== onLocationResult on request=$request count=${locationResult.locations.size}")
                     trySend(locationResult.locations.map { it.toLocationEntity() })
                 }
             }

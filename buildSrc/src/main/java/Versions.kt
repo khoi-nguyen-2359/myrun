@@ -33,7 +33,7 @@ object Versions {
     const val dagger = "2.35.1"
     const val timber = "4.7.1"
     const val glide = "4.11.0"
-    const val accompanist = "0.10.0"
+    const val accompanist = "0.12.0"
     const val facebookSdk = "8.2.0"
     const val okhttp = "4.8.1"
     const val gson = "2.8.6"
