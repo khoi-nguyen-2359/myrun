@@ -126,7 +126,7 @@ class ActivityRouteMapActivity : AppCompatActivity() {
             Intent(context, ActivityRouteMapActivity::class.java)
                 .putExtra(EXT_ENCODED_POLYLINE, encodedPolyline)
 
-        private fun createDrawableBitmap(
+        fun createDrawableBitmap(
             context: Context,
             @DrawableRes drawableResId: Int
         ): Bitmap? {

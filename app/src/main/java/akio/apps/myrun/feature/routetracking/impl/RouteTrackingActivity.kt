@@ -13,6 +13,7 @@ import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
+import akio.apps.myrun.feature.activityroutemap.ui.ActivityRouteMapActivity
 import akio.apps.myrun.feature.home.HomeActivity
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
@@ -37,10 +38,13 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
+import com.google.android.libraries.maps.model.BitmapDescriptorFactory
 import com.google.android.libraries.maps.model.JointType
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.LatLngBounds
 import com.google.android.libraries.maps.model.MapStyleOptions
+import com.google.android.libraries.maps.model.Marker
+import com.google.android.libraries.maps.model.MarkerOptions
 import com.google.android.libraries.maps.model.Polyline
 import com.google.android.libraries.maps.model.PolylineOptions
 import com.google.android.libraries.maps.model.RoundCap
@@ -174,9 +178,27 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         }
     }
 
+    private var startPointMarker: Marker? = null
     private fun onTrackingLocationUpdate(batch: List<LocationEntity>) {
+        addStartPointMarkerIfNotAdded(batch)
         drawTrackingLocationUpdate(batch)
         moveMapCameraOnTrackingLocationUpdate(batch)
+    }
+
+    private fun addStartPointMarkerIfNotAdded(batch: List<LocationEntity>) {
+        if (startPointMarker != null || batch.isEmpty()) {
+            return
+        }
+        val startPointLocation = batch.first()
+        val startMarkerBitmap = ActivityRouteMapActivity.createDrawableBitmap(
+            context = this,
+            drawableResId = R.drawable.ic_start_marker
+        )
+        val startMarker = MarkerOptions()
+            .position(startPointLocation.toGmsLatLng())
+            .icon(BitmapDescriptorFactory.fromBitmap(startMarkerBitmap))
+            .anchor(0.5f, 0.5f)
+        startPointMarker = mapView.addMarker(startMarker)
     }
 
     private fun moveMapCameraOnTrackingLocationUpdate(batch: List<LocationEntity>) {
