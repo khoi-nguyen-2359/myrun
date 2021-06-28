@@ -15,7 +15,6 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 
-
 @Composable
 fun ActivityRouteImage(
     activity: Activity,
