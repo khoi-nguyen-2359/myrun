@@ -10,10 +10,8 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
-import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
@@ -27,9 +25,9 @@ import com.google.android.libraries.maps.model.MarkerOptions
 import com.google.android.libraries.maps.model.PolylineOptions
 import com.google.android.libraries.maps.model.RoundCap
 import com.google.maps.android.PolyUtil
+import kotlin.coroutines.resume
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
 
 class ActivityRouteMapActivity : AppCompatActivity() {
     val viewBinding: ActivityActivityRouteMapBinding by lazy {
@@ -79,22 +77,22 @@ class ActivityRouteMapActivity : AppCompatActivity() {
     private fun drawStartStopMarker() {
         val startMarkerBitmap = createDrawableBitmap(
             context = this,
-            drawableResId = R.drawable.ic_play_circle,
-            tintColorResId = R.color.activity_route_map_start_marker_tint
+            drawableResId = R.drawable.ic_start_marker
         )
         val startMarker = MarkerOptions()
             .position(decodedPolyline[0])
             .icon(BitmapDescriptorFactory.fromBitmap(startMarkerBitmap))
+            .anchor(0.5f, 0.5f)
         map.addMarker(startMarker)
 
         val stopMarkerBitmap = createDrawableBitmap(
             context = this,
-            drawableResId = R.drawable.ic_stop_circle,
-            tintColorResId = R.color.activity_route_map_stop_marker_tint
+            drawableResId = R.drawable.ic_stop_marker
         )
         val stopMarker = MarkerOptions()
             .position(decodedPolyline.last())
             .icon(BitmapDescriptorFactory.fromBitmap(stopMarkerBitmap))
+            .anchor(0.5f, 0.5f)
         map.addMarker(stopMarker)
     }
 
@@ -128,10 +126,9 @@ class ActivityRouteMapActivity : AppCompatActivity() {
             Intent(context, ActivityRouteMapActivity::class.java)
                 .putExtra(EXT_ENCODED_POLYLINE, encodedPolyline)
 
-        private fun createDrawableBitmap(
+        fun createDrawableBitmap(
             context: Context,
-            @DrawableRes drawableResId: Int,
-            @ColorRes tintColorResId: Int
+            @DrawableRes drawableResId: Int
         ): Bitmap? {
             val drawable = context.getDrawableCompat(drawableResId) ?: return null
             drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
@@ -140,7 +137,6 @@ class ActivityRouteMapActivity : AppCompatActivity() {
                 drawable.intrinsicHeight,
                 Bitmap.Config.ARGB_8888
             )
-            DrawableCompat.setTint(drawable, context.getColorCompat(tintColorResId))
             val canvas = Canvas(bitmap)
             drawable.draw(canvas)
             return bitmap

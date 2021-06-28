@@ -5,6 +5,7 @@ import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.dp2px
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
+import akio.apps.myrun._base.utils.LatLngBoundsBuilder
 import akio.apps.myrun._base.utils.LocationServiceChecker
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun._di.viewModel
@@ -12,6 +13,7 @@ import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
+import akio.apps.myrun.feature.activityroutemap.ui.ActivityRouteMapActivity
 import akio.apps.myrun.feature.home.HomeActivity
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
@@ -36,10 +38,13 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
+import com.google.android.libraries.maps.model.BitmapDescriptorFactory
 import com.google.android.libraries.maps.model.JointType
 import com.google.android.libraries.maps.model.LatLng
 import com.google.android.libraries.maps.model.LatLngBounds
 import com.google.android.libraries.maps.model.MapStyleOptions
+import com.google.android.libraries.maps.model.Marker
+import com.google.android.libraries.maps.model.MarkerOptions
 import com.google.android.libraries.maps.model.Polyline
 import com.google.android.libraries.maps.model.PolylineOptions
 import com.google.android.libraries.maps.model.RoundCap
@@ -49,6 +54,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -71,7 +77,8 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     private var routePolyline: Polyline? = null
     private var drawnLocationCount: Int = 0
-    private val trackingRouteLatLngBounds: LatLngBounds.Builder = LatLngBounds.builder()
+
+    private val trackingRouteLatLngBounds: LatLngBoundsBuilder = LatLngBoundsBuilder()
 
     private val locationPermissionChecker: LocationPermissionChecker =
         LocationPermissionChecker(activity = this)
@@ -88,8 +95,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     private var trackMapCameraOnLocationUpdateJob: Job? = null
-
-    private var lastPausedLocation: LocationEntity? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -128,28 +133,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             viewBinding.activitySettingsView::setActivityType
         )
         observe(routeTrackingViewModel.activityType, viewBinding.trackingStatsView::setActivityType)
-        trackMapCameraOnLocationUpdate()
-    }
-
-    private fun trackMapCameraOnLocationUpdate() {
-        trackMapCameraOnLocationUpdateJob?.cancel()
-        trackMapCameraOnLocationUpdateJob = addRepeatingJob(Lifecycle.State.STARTED) {
-            routeTrackingViewModel.getLocationUpdate()
-                .run {
-                    val initLocation = routeTrackingViewModel.getInitialLocation()
-                    if (initLocation != null) {
-                        onStart { emit(listOf(initLocation)) }
-                    } else {
-                        this
-                    }
-                }
-                .collect {
-                    it.lastOrNull()?.let { lastItem ->
-                        lastPausedLocation = lastItem
-                        recenterMap(lastItem)
-                    }
-                }
-        }
+        setAutoCameraEnabled(true)
     }
 
     private fun recenterMap(location: LocationEntity) {
@@ -157,7 +141,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             return
         }
         val bounds = LatLngBounds.builder().include(location.toGmsLatLng()).build()
-        recenterMap(bounds, animation = true)
+        recenterMap(bounds, animation = true, getCameraViewPortSize())
     }
 
     private fun stopTrackingServiceAndFinish() {
@@ -178,11 +162,10 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private fun changeMapCameraLocationUpdateTracking(@RouteTrackingStatus trackingStatus: Int) {
         when (trackingStatus) {
             RouteTrackingStatus.RESUMED -> {
-                trackMapCameraOnLocationUpdateJob?.cancel()
-                trackMapCameraOnLocationUpdateJob = null
+                setAutoCameraEnabled(false)
             }
             RouteTrackingStatus.PAUSED -> {
-                trackMapCameraOnLocationUpdate()
+                setAutoCameraEnabled(true)
             }
         }
     }
@@ -194,9 +177,27 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         }
     }
 
+    private var startPointMarker: Marker? = null
     private fun onTrackingLocationUpdate(batch: List<LocationEntity>) {
+        addStartPointMarkerIfNotAdded(batch)
         drawTrackingLocationUpdate(batch)
         moveMapCameraOnTrackingLocationUpdate(batch)
+    }
+
+    private fun addStartPointMarkerIfNotAdded(batch: List<LocationEntity>) {
+        if (startPointMarker != null || batch.isEmpty()) {
+            return
+        }
+        val startPointLocation = batch.first()
+        val startMarkerBitmap = ActivityRouteMapActivity.createDrawableBitmap(
+            context = this,
+            drawableResId = R.drawable.ic_start_marker
+        )
+        val startMarker = MarkerOptions()
+            .position(startPointLocation.toGmsLatLng())
+            .icon(BitmapDescriptorFactory.fromBitmap(startMarkerBitmap))
+            .anchor(0.5f, 0.5f)
+        startPointMarker = mapView.addMarker(startMarker)
     }
 
     private fun moveMapCameraOnTrackingLocationUpdate(batch: List<LocationEntity>) {
@@ -204,21 +205,19 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             trackingRouteLatLngBounds.include(it.toGmsLatLng())
         }
 
-        // LatLngBounds doesn't have method to check empty!
-        if (batch.isNotEmpty()) {
-            recenterMap(trackingRouteLatLngBounds.build(), true)
+        if (isStickyCamera) {
+            val latLngBounds = trackingRouteLatLngBounds.build()
+            if (latLngBounds != null) {
+                recenterMap(latLngBounds, true, getCameraViewPortSize())
+            }
         }
     }
 
-    private fun recenterMap(latLngBounds: LatLngBounds, animation: Boolean): Size {
-        val mapWidth =
-            supportFragmentManager.findFragmentById(R.id.tracking_map_view)?.view?.measuredWidth
-                ?: application.resources.displayMetrics.widthPixels
-        val routeImageRatio = resources.getString(R.string.route_tracking_captured_image_ratio)
-            .toFloatOrNull()
-            ?: ROUTE_IMAGE_RATIO
-
-        val cameraViewPortSize = Size(mapWidth, (mapWidth / routeImageRatio).toInt())
+    private fun recenterMap(
+        latLngBounds: LatLngBounds,
+        animation: Boolean,
+        cameraViewPortSize: Size
+    ) {
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(
             latLngBounds,
             cameraViewPortSize.width,
@@ -231,8 +230,17 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         } else {
             mapView.moveCamera(cameraUpdate)
         }
+    }
 
-        return cameraViewPortSize
+    private fun getCameraViewPortSize(): Size {
+        val mapWidth =
+            supportFragmentManager.findFragmentById(R.id.tracking_map_view)?.view?.measuredWidth
+                ?: application.resources.displayMetrics.widthPixels
+        val routeImageRatio = resources.getString(R.string.route_tracking_captured_image_ratio)
+            .toFloatOrNull()
+            ?: ROUTE_IMAGE_RATIO
+
+        return Size(mapWidth, (mapWidth / routeImageRatio).toInt())
     }
 
     private fun drawTrackingLocationUpdate(batch: List<LocationEntity>) {
@@ -309,11 +317,6 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private fun startRouteTracking() {
         ContextCompat.startForegroundService(this, RouteTrackingService.startIntent(this))
         routeTrackingViewModel.requestDataUpdates()
-        makeSureTrackingRouteBoundsNotEmpty()
-    }
-
-    private fun makeSureTrackingRouteBoundsNotEmpty() = lastPausedLocation?.let {
-        trackingRouteLatLngBounds.include(it.toGmsLatLng())
     }
 
     private fun pauseRouteTracking() {
@@ -338,8 +341,17 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private suspend fun getRouteImageBitmap(): Bitmap? {
         // hide the my location button
         mapView.isMyLocationEnabled = false
-        val cameraViewSize = recenterMap(trackingRouteLatLngBounds.build(), false)
-        Timber.d(Thread.currentThread().name)
+        // hide the start point marker
+        startPointMarker?.isVisible = false
+        val cameraViewPortSize = getCameraViewPortSize()
+        val bounds = trackingRouteLatLngBounds.build()
+        if (bounds != null) {
+            recenterMap(
+                bounds,
+                animation = false,
+                cameraViewPortSize
+            )
+        }
         val mapImageSnapShot: Bitmap? = suspendCancellableCoroutine { continuation ->
             mapView.snapshot { mapSnapshot ->
                 Timber.d(Thread.currentThread().name)
@@ -347,6 +359,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             }
         }
         mapView.isMyLocationEnabled = true
+        startPointMarker?.isVisible = true
         if (mapImageSnapShot == null) {
             // null when snapshot can not be taken
             Timber.e(Exception("Map snapshot can not be taken."))
@@ -356,10 +369,10 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         return withContext(Dispatchers.IO) {
             Bitmap.createBitmap(
                 mapImageSnapShot,
-                (mapImageSnapShot.width - cameraViewSize.width) / 2,
-                (mapImageSnapShot.height - cameraViewSize.height) / 2,
-                cameraViewSize.width,
-                cameraViewSize.height
+                (mapImageSnapShot.width - cameraViewPortSize.width) / 2,
+                (mapImageSnapShot.height - cameraViewPortSize.height) / 2,
+                cameraViewPortSize.width,
+                cameraViewPortSize.height
             )
         }
     }
@@ -394,18 +407,45 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             }
     }
 
+    private var isStickyCamera: Boolean = true
     @SuppressLint("MissingPermission")
     private fun initMapView(map: GoogleMap) {
         this.mapView = map
+        map.setOnMyLocationButtonClickListener {
+            isStickyCamera = true
+            false
+        }
+        map.setOnCameraMoveStartedListener { reason ->
+            if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+                isStickyCamera = false
+            }
+        }
         map.isMyLocationEnabled = true
-        map.uiSettings.isMyLocationButtonEnabled = false
-        map.uiSettings.setAllGesturesEnabled(false)
+        map.uiSettings.isMyLocationButtonEnabled = true
+        map.uiSettings.setAllGesturesEnabled(true)
         map.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(
                 this,
                 R.raw.google_map_styles
             )
         )
+    }
+
+    private fun setAutoCameraEnabled(isEnabled: Boolean) {
+        trackMapCameraOnLocationUpdateJob?.cancel()
+        if (isEnabled) {
+            trackMapCameraOnLocationUpdateJob = addRepeatingJob(Lifecycle.State.STARTED) {
+                routeTrackingViewModel.getLocationUpdate()
+                    .onStart { emit(routeTrackingViewModel.getLastLocationFlow().toList()) }
+                    .collect {
+                        if (isStickyCamera) {
+                            it.lastOrNull()?.let { lastItem ->
+                                recenterMap(lastItem)
+                            }
+                        }
+                    }
+            }
+        }
     }
 
     override fun onActivityTypeSelected(activityType: ActivityType) {

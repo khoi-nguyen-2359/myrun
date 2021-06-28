@@ -17,7 +17,6 @@ abstract class RouteTrackingViewModel : BaseViewModel() {
     abstract val trackingStats: LiveData<RouteTrackingStats>
     abstract val trackingStatus: LiveData<@RouteTrackingStatus Int>
     abstract val activityType: LiveData<ActivityType>
-    abstract suspend fun getInitialLocation(): LocationEntity?
 
     abstract suspend fun getLocationUpdate(): Flow<List<LocationEntity>>
 
@@ -30,4 +29,5 @@ abstract class RouteTrackingViewModel : BaseViewModel() {
     abstract fun onSelectActivityType(activityType: ActivityType)
     abstract fun discardActivity()
     abstract suspend fun getLocationRequestConfig(): LocationRequestConfig
+    abstract fun getLastLocationFlow(): Flow<LocationEntity>
 }

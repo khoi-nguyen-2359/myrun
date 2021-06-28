@@ -156,7 +156,7 @@ class ActivityExportService : Service() {
         }
         val sendIntent = Intent(Intent.ACTION_SEND)
         sendIntent.putExtra(Intent.EXTRA_STREAM, shareFileContentUri)
-        sendIntent.type = "application/vnd.garmin.tcx+xml"
+        sendIntent.type = "*/*"
         sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         val chooserIntent = Intent.createChooser(
             sendIntent,

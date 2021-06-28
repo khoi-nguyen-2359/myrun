@@ -1,10 +1,14 @@
 package akio.apps.myrun.feature.usertimeline.ui
 
 import akio.apps.myrun.R
+import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.feature.activitydetail.ActivityPerformedResultFormatter
 import akio.apps.myrun.feature.activitydetail.ui.ActivityInfoHeaderView
+import akio.apps.myrun.feature.activitydetail.ui.ActivityRouteImage
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
+import akio.apps.myrun.feature.usertimeline.model.ActivityData
+import akio.apps.myrun.feature.usertimeline.model.RunningActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,7 +33,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -45,7 +48,6 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
@@ -118,15 +120,23 @@ private fun UserTimelineActivityList(
 
 @Composable
 private fun UploadingNotifierItem(activityStorageCount: Int) = Column(
-    modifier = Modifier.fillMaxWidth().background(Color.White)
+    modifier = Modifier
+        .fillMaxWidth()
+        .background(Color.White)
 ) {
     Text(
         text = "Uploading $activityStorageCount activities.",
-        modifier = Modifier.fillMaxWidth().padding(3.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(3.dp),
         fontSize = 12.sp,
         textAlign = TextAlign.Center
     )
-    LinearProgressIndicator(modifier = Modifier.fillMaxWidth().height(2.dp))
+    LinearProgressIndicator(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(2.dp)
+    )
 }
 
 @Preview(showSystemUi = true)
@@ -210,18 +220,7 @@ private fun TimelineActivityItem(
 ) {
     Column(modifier = Modifier.clickable { onClickActivityAction(activity) }) {
         ActivityInfoHeaderView(activity, activityDisplayPlaceName, onClickExportFile)
-        Image(
-            painter = rememberCoilPainter(
-                request = activity.routeImage,
-                shouldRefetchOnSizeChange = { _, _ -> false },
-                previewPlaceholder = R.drawable.ic_run_circle
-            ),
-            contentDescription = "Activity route image",
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1.5f),
-            contentScale = ContentScale.Crop,
-        )
+        ActivityRouteImage(activity)
         TimelineActivityPerformanceRow(
             activity,
             listOf(
@@ -267,5 +266,36 @@ private fun PerformedResultItem(
         text = "$formattedValue $unit",
         fontSize = 20.sp,
         textAlign = TextAlign.Center
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewTimelineActivityItem() {
+    TimelineActivityItem(
+        activity = RunningActivity(
+            activityData = ActivityData(
+                id = "id",
+                activityType = ActivityType.Running,
+                name = "Evening Run",
+                routeImage = "http://example.com",
+                placeIdentifier = null,
+                startTime = System.currentTimeMillis(),
+                endTime = 2000L,
+                duration = 1000L,
+                distance = 100.0,
+                encodedPolyline = "",
+                athleteInfo = Activity.AthleteInfo(
+                    userId = "id",
+                    userName = "Khoi Nguyen",
+                    userAvatar = "userAvatar"
+                )
+            ),
+            pace = 1.0,
+            cadence = 160
+        ),
+        activityDisplayPlaceName = "activityDisplayPlaceName",
+        onClickActivityAction = { },
+        onClickExportFile = { }
     )
 }
