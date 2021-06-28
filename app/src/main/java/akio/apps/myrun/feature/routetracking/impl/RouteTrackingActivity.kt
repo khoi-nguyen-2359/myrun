@@ -129,20 +129,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             viewBinding.activitySettingsView::setActivityType
         )
         observe(routeTrackingViewModel.activityType, viewBinding.trackingStatsView::setActivityType)
-        trackMapCameraOnLocationUpdate()
-    }
-
-    private fun trackMapCameraOnLocationUpdate() {
-        trackMapCameraOnLocationUpdateJob?.cancel()
-        trackMapCameraOnLocationUpdateJob = addRepeatingJob(Lifecycle.State.STARTED) {
-            routeTrackingViewModel.getLocationUpdate()
-                .onStart { emit(routeTrackingViewModel.getLastLocationFlow().toList()) }
-                .collect {
-                    it.lastOrNull()?.let { lastItem ->
-                        recenterMap(lastItem)
-                    }
-                }
-        }
+        setAutoCameraEnabled(true)
     }
 
     private fun recenterMap(location: LocationEntity) {
@@ -175,7 +162,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
                 trackMapCameraOnLocationUpdateJob = null
             }
             RouteTrackingStatus.PAUSED -> {
-                trackMapCameraOnLocationUpdate()
+                setAutoCameraEnabled(true)
             }
         }
     }
@@ -400,15 +387,39 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     @SuppressLint("MissingPermission")
     private fun initMapView(map: GoogleMap) {
         this.mapView = map
+        map.setOnMyLocationButtonClickListener {
+            setAutoCameraEnabled(true)
+            true
+        }
+        map.setOnCameraMoveStartedListener { reason ->
+            if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+                setAutoCameraEnabled(false)
+            }
+        }
         map.isMyLocationEnabled = true
-        map.uiSettings.isMyLocationButtonEnabled = false
-        map.uiSettings.setAllGesturesEnabled(false)
+        map.uiSettings.isMyLocationButtonEnabled = true
+        map.uiSettings.setAllGesturesEnabled(true)
         map.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(
                 this,
                 R.raw.google_map_styles
             )
         )
+    }
+
+    private fun setAutoCameraEnabled(isEnabled: Boolean) {
+        trackMapCameraOnLocationUpdateJob?.cancel()
+        if (isEnabled) {
+            trackMapCameraOnLocationUpdateJob = addRepeatingJob(Lifecycle.State.STARTED) {
+                routeTrackingViewModel.getLocationUpdate()
+                    .onStart { emit(routeTrackingViewModel.getLastLocationFlow().toList()) }
+                    .collect {
+                        it.lastOrNull()?.let { lastItem ->
+                            recenterMap(lastItem)
+                        }
+                    }
+            }
+        }
     }
 
     override fun onActivityTypeSelected(activityType: ActivityType) {
