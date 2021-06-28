@@ -4,8 +4,7 @@ import com.google.android.libraries.maps.model.LatLngBounds
 
 class LatLngBoundsBuilder() {
     private val internalBuilder: LatLngBounds.Builder = LatLngBounds.builder()
-    var isEmpty: Boolean = true
-        private set
+    private var isEmpty: Boolean = true
 
     fun include(latLng: GmsLatLng) {
         internalBuilder.include(latLng)

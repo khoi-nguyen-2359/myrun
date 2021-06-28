@@ -162,8 +162,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private fun changeMapCameraLocationUpdateTracking(@RouteTrackingStatus trackingStatus: Int) {
         when (trackingStatus) {
             RouteTrackingStatus.RESUMED -> {
-                trackMapCameraOnLocationUpdateJob?.cancel()
-                trackMapCameraOnLocationUpdateJob = null
+                setAutoCameraEnabled(false)
             }
             RouteTrackingStatus.PAUSED -> {
                 setAutoCameraEnabled(true)
@@ -206,8 +205,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             trackingRouteLatLngBounds.include(it.toGmsLatLng())
         }
 
-        // LatLngBounds doesn't have method to check empty!
-        if (batch.isNotEmpty()) {
+        if (isStickyCamera) {
             val latLngBounds = trackingRouteLatLngBounds.build()
             if (latLngBounds != null) {
                 recenterMap(latLngBounds, true, getCameraViewPortSize())
@@ -343,6 +341,8 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private suspend fun getRouteImageBitmap(): Bitmap? {
         // hide the my location button
         mapView.isMyLocationEnabled = false
+        // hide the start point marker
+        startPointMarker?.isVisible = false
         val cameraViewPortSize = getCameraViewPortSize()
         val bounds = trackingRouteLatLngBounds.build()
         if (bounds != null) {
@@ -359,6 +359,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             }
         }
         mapView.isMyLocationEnabled = true
+        startPointMarker?.isVisible = true
         if (mapImageSnapShot == null) {
             // null when snapshot can not be taken
             Timber.e(Exception("Map snapshot can not be taken."))
@@ -406,16 +407,17 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             }
     }
 
+    private var isStickyCamera: Boolean = true
     @SuppressLint("MissingPermission")
     private fun initMapView(map: GoogleMap) {
         this.mapView = map
         map.setOnMyLocationButtonClickListener {
-            setAutoCameraEnabled(true)
-            true
+            isStickyCamera = true
+            false
         }
         map.setOnCameraMoveStartedListener { reason ->
             if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-                setAutoCameraEnabled(false)
+                isStickyCamera = false
             }
         }
         map.isMyLocationEnabled = true
@@ -436,8 +438,10 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
                 routeTrackingViewModel.getLocationUpdate()
                     .onStart { emit(routeTrackingViewModel.getLastLocationFlow().toList()) }
                     .collect {
-                        it.lastOrNull()?.let { lastItem ->
-                            recenterMap(lastItem)
+                        if (isStickyCamera) {
+                            it.lastOrNull()?.let { lastItem ->
+                                recenterMap(lastItem)
+                            }
                         }
                     }
             }
