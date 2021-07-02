@@ -10,7 +10,7 @@ gpg --quiet --batch --yes --decrypt --passphrase="$RELEASE_SECRET_PASSPHRASE" \
 --output data/src/release/res/values/secrets.xml data/src/release/res/values/secrets.xml.gpg
 
 gpg --quiet --batch --yes --decrypt --passphrase="$RELEASE_SECRET_PASSPHRASE" \
---output app/src/internal/google-services.json app/src/internal/google-services.json.gpg
+--output app/src/rc/google-services.json app/src/rc/google-services.json.gpg
 
 gpg --quiet --batch --yes --decrypt --passphrase="$RELEASE_SECRET_PASSPHRASE" \
---output data/src/internal/res/values/secrets.xml data/src/internal/res/values/secrets.xml.gpg
+--output data/src/rc/res/values/secrets.xml data/src/rc/res/values/secrets.xml.gpg
