@@ -19,9 +19,10 @@ object Versions {
     const val androidMaterial = "1.3.0"
 
     // compose
-    const val compose = "1.0.0-beta09"
+    const val compose = "1.0.0-rc01"
     const val composeConstraintLayout = "1.0.0-alpha07"
-    const val pagingCompose = "1.0.0-alpha10"
+    const val pagingCompose = "1.0.0-alpha11"
+    const val accompanist = "0.13.0"
 
     const val workManager = "2.7.0-alpha04"
     const val paging = "3.0.0"
@@ -33,7 +34,6 @@ object Versions {
     const val dagger = "2.37"
     const val timber = "4.7.1"
     const val glide = "4.11.0"
-    const val accompanist = "0.12.0"
     const val facebookSdk = "8.2.0"
     const val okhttp = "4.9.1"
     const val gson = "2.8.6"
