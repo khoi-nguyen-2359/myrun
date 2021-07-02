@@ -1,5 +1,7 @@
 package akio.apps.myrun.data.userprofile.model
 
+import java.util.Locale
+
 enum class Gender {
     male, female, others;
 
@@ -8,7 +10,7 @@ enum class Gender {
             return if (value.isNullOrEmpty()) {
                 null
             } else {
-                valueOf(value.toLowerCase())
+                valueOf(value.lowercase(Locale.getDefault()))
             }
         }
     }

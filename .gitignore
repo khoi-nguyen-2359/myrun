@@ -2,7 +2,7 @@
 .gradle
 /local.properties
 /app/release
-/app/internal
+/app/rc
 .idea
 .DS_Store
 build
@@ -11,5 +11,5 @@ build
 .cxx
 app/src/release/google-services.json
 app/src/release/res/values/secrets.xml
-app/src/internal/google-services.json
-app/src/internal/res/values/secrets.xml
+app/src/rc/google-services.json
+app/src/rc/res/values/secrets.xml
