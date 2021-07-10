@@ -2,6 +2,4 @@
 <resources>
     <string name="app_scheme">myrun</string>
     <string name="strava_callback_host">localhost</string>
-    <string name="activity_map_id">a4d7bb10c3ae2179</string>
-    <string name="file_provider_authorities">akio.apps.myrun</string>
 </resources>

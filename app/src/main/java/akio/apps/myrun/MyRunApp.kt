@@ -65,8 +65,7 @@ class MyRunApp : Application(), LifecycleObserver, AppComponent.Holder, Configur
     }
 
     private fun initPlacesSdk() {
-        val apiKey = getString(R.string.google_maps_sdk_key)
-        Places.initialize(applicationContext, apiKey)
+        Places.initialize(applicationContext, getString(R.string.google_api_key))
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)

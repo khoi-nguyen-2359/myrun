@@ -17,12 +17,16 @@ object ConfiguratorGate {
     private val NOTIFICATION_ID = AppNotificationChannel.Debug.nextNotificationStaticId()
 
     fun notifyInDebugMode(context: Context) {
-        if (!BuildConfig.DEBUG) {
+        if (BuildConfig.BUILD_TYPE != "debug") {
             return
         }
 
         val notMan = NotificationManagerCompat.from(context)
-        val activityClass = Class.forName(CONFIGURATOR_ACTIVITY_NAME)
+        val activityClass = try {
+            Class.forName(CONFIGURATOR_ACTIVITY_NAME)
+        } catch (ex: ClassNotFoundException) {
+            return
+        }
         val intent = Intent(context, activityClass)
         val pendingIntentFlag = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             PendingIntent.FLAG_UPDATE_CURRENT
