@@ -57,7 +57,6 @@ class LocationDataSourceImpl @Inject constructor(
 
             val callback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
-//                    Timber.d("=== onLocationResult on request=$request count=${locationResult.locations.size}")
                     trySend(locationResult.locations.map { it.toLocationEntity() })
                 }
             }
@@ -85,6 +84,6 @@ class LocationDataSourceImpl @Inject constructor(
     }
 
     private fun Location.toLocationEntity(): LocationEntity = LocationEntity(
-        time, latitude, longitude, altitude
+        time, latitude, longitude, altitude, speed.toDouble()
     )
 }

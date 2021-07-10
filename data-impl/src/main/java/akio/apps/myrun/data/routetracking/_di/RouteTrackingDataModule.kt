@@ -34,6 +34,7 @@ interface RouteTrackingDataModule {
                 "route_tracking_db"
             )
                 .enableMultiInstanceInvalidation()
+                .fallbackToDestructiveMigrationFrom(1)
                 .build()
 
         @Provides

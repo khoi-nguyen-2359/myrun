@@ -5,6 +5,7 @@ import akio.apps.myrun._base.notification.AppNotificationChannel
 import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun._base.utils.toGmsLatLng
+import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.location.LocationDataSource
@@ -13,7 +14,13 @@ import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
+import akio.apps.myrun.data.routetracking.model.LocationProcessingConfig
+import akio.apps.myrun.data.routetracking.model.LocationRequestConfig
+import akio.apps.myrun.data.time.Now
+import akio.apps.myrun.domain.routetracking.AverageLocationAccumulator
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
+import akio.apps.myrun.domain.routetracking.LocationProcessorContainer
+import akio.apps.myrun.domain.routetracking.LocationSpeedFilter
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import android.annotation.SuppressLint
 import android.app.ActivityManager
@@ -62,8 +69,7 @@ class RouteTrackingService : Service() {
     @Inject
     lateinit var routeTrackingConfiguration: RouteTrackingConfiguration
 
-    // null means location accumulator is not applicable
-    private var locationAccumulator: LocationAccumulator? = null
+    private var locationProcessors: LocationProcessorContainer = LocationProcessorContainer()
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         Timber.e(exception)
@@ -75,7 +81,6 @@ class RouteTrackingService : Service() {
     private var trackingTimerJob: Job? = null
     private var startLocation: LocationEntity? = null
 
-    private val instantSpeedCalculator = InstantSpeedCalculator()
     private val routeDistanceCalculator = RouteDistanceCalculator()
 
     private var wakeLock: PowerManager.WakeLock? = null
@@ -104,11 +109,9 @@ class RouteTrackingService : Service() {
     @SuppressLint("MissingPermission")
     private fun requestLocationUpdates() = mainScope.launch {
         val locationRequest = routeTrackingConfiguration.getLocationRequestConfig().first()
-        if (routeTrackingConfiguration.isLocationAccumulationEnabled().first()) {
-            Timber.d("requestLocationUpdates with accumulation")
-            locationAccumulator =
-                LocationAccumulator(locationRequest.updateInterval, System.currentTimeMillis())
-        }
+        val locationProcessingConfig =
+            routeTrackingConfiguration.getLocationProcessingConfig().first()
+        configureLocationProcessors(locationRequest, locationProcessingConfig)
 
         locationUpdateJob?.cancel()
         locationUpdateJob = locationDataSource.getLocationUpdate(locationRequest)
@@ -116,15 +119,32 @@ class RouteTrackingService : Service() {
             .launchIn(mainScope)
     }
 
+    private suspend fun configureLocationProcessors(
+        locationRequest: LocationRequestConfig,
+        locationProcessingConfig: LocationProcessingConfig
+    ) {
+        Timber.d("requestLocationUpdates with processors")
+        if (locationProcessingConfig.isSpeedFilterEnabled) {
+            val maxValidSpeed = when (routeTrackingState.getActivityType()) {
+                ActivityType.Running -> LocationSpeedFilter.RUNNING_MAX_SPEED
+                ActivityType.Cycling -> LocationSpeedFilter.CYCLING_MAX_SPEED
+                else -> Double.MAX_VALUE
+            }
+            Timber.d("add speed filter, maxValidSpeed=$maxValidSpeed")
+            locationProcessors.addProcessor(LocationSpeedFilter(maxValidSpeed))
+        }
+
+        if (locationProcessingConfig.isAvgAccumulatorEnabled) {
+            Timber.d("avg location accumulator, interval=${locationRequest.updateInterval}")
+            locationProcessors.addProcessor(
+                AverageLocationAccumulator(locationRequest.updateInterval, Now())
+            )
+        }
+    }
+
     private suspend fun onLocationUpdate(locations: List<LocationEntity>) {
         Timber.d("onLocationUpdate ${locations.size}")
-        val batch: List<LocationEntity> = if (locationAccumulator != null) {
-            val accumulatedLocation =
-                locationAccumulator?.accumulate(locations, System.currentTimeMillis())
-            listOfNotNull(accumulatedLocation)
-        } else {
-            locations
-        }
+        val batch: List<LocationEntity> = locationProcessors.process(locations)
         if (batch.isEmpty()) {
             return
         }
@@ -132,32 +152,13 @@ class RouteTrackingService : Service() {
         routeTrackingLocationRepository.insert(locations)
 
         routeDistanceCalculator.calculateRouteDistance(locations)
-        instantSpeedCalculator.calculateInstantSpeed()
+        routeTrackingState.setInstantSpeed(locations.last().speed)
 
         if (startLocation == null) {
             val firstLocation = locations.firstOrNull()
             if (firstLocation != null) {
                 routeTrackingState.setStartLocation(firstLocation)
                 startLocation = firstLocation
-            }
-        }
-    }
-
-    inner class InstantSpeedCalculator {
-        private var lastTimeComputingInstantSpeed = System.currentTimeMillis()
-        private var lastDistanceComputingInstantSpeed = 0.0
-
-        suspend fun calculateInstantSpeed() {
-            val routeDistance: Double = routeTrackingState.getRouteDistance()
-            val currentTime = System.currentTimeMillis()
-            val deltaTime = currentTime - lastTimeComputingInstantSpeed
-            // compute instant speed in a period of 5 secs
-            if (deltaTime >= INSTANT_SPEED_PERIOD) {
-                val instantSpeed = (routeDistance - lastDistanceComputingInstantSpeed) / deltaTime
-                routeTrackingState.setInstantSpeed(instantSpeed)
-
-                lastTimeComputingInstantSpeed = currentTime
-                lastDistanceComputingInstantSpeed = routeDistance
             }
         }
     }

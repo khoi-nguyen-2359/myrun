@@ -1,6 +1,7 @@
 package akio.apps.myrun.data.routetracking.impl
 
 import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
+import akio.apps.myrun.data.routetracking.model.LocationProcessingConfig
 import akio.apps.myrun.data.routetracking.model.LocationRequestConfig
 import android.app.Application
 import android.content.Context
@@ -41,12 +42,19 @@ class RouteTrackingConfigurationImpl @Inject constructor(application: Applicatio
         }
     }
 
-    override suspend fun setLocationAccumulationEnabled(isEnabled: Boolean) {
-        prefDataStore.edit { data -> data[LOCATION_ACCUMULATION_ENABLED] = isEnabled }
+    override suspend fun setLocationProcessingConfig(config: LocationProcessingConfig) {
+        prefDataStore.edit { data ->
+            data[LOCATION_AVG_ACCUMULATION_ENABLED] = config.isAvgAccumulatorEnabled
+            data[LOCATION_SPEED_FILTER_ENABLED] = config.isSpeedFilterEnabled
+        }
     }
 
-    override fun isLocationAccumulationEnabled(): Flow<Boolean> =
-        prefDataStore.data.map { data -> data[LOCATION_ACCUMULATION_ENABLED] ?: false }
+    override fun getLocationProcessingConfig(): Flow<LocationProcessingConfig> =
+        prefDataStore.data.map { data ->
+            val isAvgAccumEnabled = data[LOCATION_AVG_ACCUMULATION_ENABLED] ?: false
+            val isSpeedFilterEnabled = data[LOCATION_SPEED_FILTER_ENABLED] ?: false
+            LocationProcessingConfig(isAvgAccumEnabled, isSpeedFilterEnabled)
+        }
 
     companion object {
         private const val LOCATION_UPDATE_INTERVAL = 2000L
@@ -59,7 +67,9 @@ class RouteTrackingConfigurationImpl @Inject constructor(application: Applicatio
             longPreferencesKey("LOCATION_FASTEST_UPDATE_INTERVAL_KEY")
         private val LOCATION_SMALLEST_DISPLACEMENT =
             floatPreferencesKey("LOCATION_SMALLEST_DISPLACEMENT")
-        private val LOCATION_ACCUMULATION_ENABLED =
-            booleanPreferencesKey("LOCATION_ACCUMULATION_ENABLED")
+        private val LOCATION_SPEED_FILTER_ENABLED =
+            booleanPreferencesKey("LOCATION_SPEED_FILTER_ENABLED")
+        private val LOCATION_AVG_ACCUMULATION_ENABLED =
+            booleanPreferencesKey("LOCATION_AVG_ACCUMULATION_ENABLED")
     }
 }

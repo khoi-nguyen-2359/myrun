@@ -108,6 +108,7 @@ class PreferencesRouteTrackingState @Inject constructor(
             data[KEY_START_LOCATION_LAT] = location.latitude.toFloat()
             data[KEY_START_LOCATION_LNG] = location.longitude.toFloat()
             data[KEY_START_LOCATION_ALT] = location.altitude.toFloat()
+            data[KEY_START_LOCATION_SPEED] = location.speed.toFloat()
         }
     }
 
@@ -116,10 +117,11 @@ class PreferencesRouteTrackingState @Inject constructor(
         val lat = data[KEY_START_LOCATION_LAT]
         val lng = data[KEY_START_LOCATION_LNG]
         val alt = data[KEY_START_LOCATION_ALT]
+        val speed = data[KEY_START_LOCATION_SPEED] ?: 0
         if (time == null || lat == null || lng == null || alt == null)
             null
         else
-            LocationEntity(time, lat.toDouble(), lng.toDouble(), alt.toDouble())
+            LocationEntity(time, lat.toDouble(), lng.toDouble(), alt.toDouble(), speed.toDouble())
     }
         .first()
 
@@ -147,6 +149,7 @@ class PreferencesRouteTrackingState @Inject constructor(
         private val KEY_START_LOCATION_LAT = floatPreferencesKey("KEY_START_LOCATION_LAT")
         private val KEY_START_LOCATION_LNG = floatPreferencesKey("KEY_START_LOCATION_LNG")
         private val KEY_START_LOCATION_ALT = floatPreferencesKey("KEY_START_LOCATION_ALT")
+        private val KEY_START_LOCATION_SPEED = floatPreferencesKey("KEY_START_LOCATION_SPEED")
         private val KEY_PLACE_IDENTIFIER = stringPreferencesKey("KEY_PLACE_IDENTIFIER")
     }
 }
