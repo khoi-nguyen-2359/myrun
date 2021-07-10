@@ -69,7 +69,6 @@ class RouteTrackingService : Service() {
     @Inject
     lateinit var routeTrackingConfiguration: RouteTrackingConfiguration
 
-    // null means location accumulator is not applicable
     private var locationProcessors: LocationProcessorContainer = LocationProcessorContainer()
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
@@ -82,7 +81,6 @@ class RouteTrackingService : Service() {
     private var trackingTimerJob: Job? = null
     private var startLocation: LocationEntity? = null
 
-    private val instantSpeedCalculator = InstantSpeedCalculator()
     private val routeDistanceCalculator = RouteDistanceCalculator()
 
     private var wakeLock: PowerManager.WakeLock? = null
@@ -127,17 +125,17 @@ class RouteTrackingService : Service() {
     ) {
         Timber.d("requestLocationUpdates with processors")
         if (locationProcessingConfig.isSpeedFilterEnabled) {
-            Timber.d("add speed filter")
             val maxValidSpeed = when (routeTrackingState.getActivityType()) {
                 ActivityType.Running -> LocationSpeedFilter.RUNNING_MAX_SPEED
                 ActivityType.Cycling -> LocationSpeedFilter.CYCLING_MAX_SPEED
                 else -> Double.MAX_VALUE
             }
+            Timber.d("add speed filter, maxValidSpeed=$maxValidSpeed")
             locationProcessors.addProcessor(LocationSpeedFilter(maxValidSpeed))
         }
 
         if (locationProcessingConfig.isAvgAccumulatorEnabled) {
-            Timber.d("add avg location accumulator")
+            Timber.d("avg location accumulator, interval=${locationRequest.updateInterval}")
             locationProcessors.addProcessor(
                 AverageLocationAccumulator(locationRequest.updateInterval, Now())
             )
@@ -154,32 +152,13 @@ class RouteTrackingService : Service() {
         routeTrackingLocationRepository.insert(locations)
 
         routeDistanceCalculator.calculateRouteDistance(locations)
-        instantSpeedCalculator.calculateInstantSpeed()
+        routeTrackingState.setInstantSpeed(locations.last().speed)
 
         if (startLocation == null) {
             val firstLocation = locations.firstOrNull()
             if (firstLocation != null) {
                 routeTrackingState.setStartLocation(firstLocation)
                 startLocation = firstLocation
-            }
-        }
-    }
-
-    inner class InstantSpeedCalculator {
-        private var lastTimeComputingInstantSpeed = System.currentTimeMillis()
-        private var lastDistanceComputingInstantSpeed = 0.0
-
-        suspend fun calculateInstantSpeed() {
-            val routeDistance: Double = routeTrackingState.getRouteDistance()
-            val currentTime = System.currentTimeMillis()
-            val deltaTime = currentTime - lastTimeComputingInstantSpeed
-            // compute instant speed in a period of 5 secs
-            if (deltaTime >= INSTANT_SPEED_PERIOD) {
-                val instantSpeed = (routeDistance - lastDistanceComputingInstantSpeed) / deltaTime
-                routeTrackingState.setInstantSpeed(instantSpeed)
-
-                lastTimeComputingInstantSpeed = currentTime
-                lastDistanceComputingInstantSpeed = routeDistance
             }
         }
     }
