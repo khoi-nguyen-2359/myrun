@@ -160,6 +160,7 @@ dependencies {
     testImplementation "org.mockito:mockito-core:$Versions.mockitoCore"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$Versions.mockitoKotlin"
     testImplementation "app.cash.turbine:turbine:$Versions.turbine"
+    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$Versions.kotlin"
     kaptAndroidTest "com.google.dagger:dagger-compiler:$Versions.dagger"
     androidTestImplementation "org.mockito:mockito-android:$Versions.mockitoAndroid"
     androidTestImplementation "androidx.test:runner:$Versions.androidXTestRunner"

@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.usertimeline.ui
 
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.model.ActivityType
-import akio.apps.myrun.feature.activitydetail.ActivityPerformedResultFormatter
+import akio.apps.myrun.feature.activitydetail.TrackingValueFormatter
 import akio.apps.myrun.feature.activitydetail.ui.ActivityInfoHeaderView
 import akio.apps.myrun.feature.activitydetail.ui.ActivityRouteImage
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
@@ -221,35 +221,43 @@ private fun TimelineActivityItem(
     Column(modifier = Modifier.clickable { onClickActivityAction(activity) }) {
         ActivityInfoHeaderView(activity, activityDisplayPlaceName, onClickExportFile)
         ActivityRouteImage(activity)
-        TimelineActivityPerformanceRow(
-            activity,
-            listOf(
-                ActivityPerformedResultFormatter.Distance,
-                ActivityPerformedResultFormatter.Pace,
-                ActivityPerformedResultFormatter.Duration
-            )
-        )
+        TimelineActivityPerformanceRow(activity)
     }
 }
 
+private fun createActivityFormatterList(activity: Activity): List<TrackingValueFormatter> =
+    when (activity.activityType) {
+        ActivityType.Running -> listOf(
+            TrackingValueFormatter.DistanceKm,
+            TrackingValueFormatter.PaceMinutePerKm,
+            TrackingValueFormatter.DurationHourMinuteSecond
+        )
+        ActivityType.Cycling -> listOf(
+            TrackingValueFormatter.DistanceKm,
+            TrackingValueFormatter.SpeedKmPerHour,
+            TrackingValueFormatter.DurationHourMinuteSecond
+        )
+        else -> emptyList()
+    }
+
 @Composable
-private fun TimelineActivityPerformanceRow(
-    activity: Activity,
-    performedResultFormatters: List<ActivityPerformedResultFormatter>
-) = FlowRow(
-    modifier = Modifier.padding(
-        vertical = dimensionResource(id = R.dimen.common_item_vertical_padding)
-    )
-) {
-    performedResultFormatters.forEach { performedResultFormatter ->
-        PerformedResultItem(activity, performedResultFormatter)
+private fun TimelineActivityPerformanceRow(activity: Activity) {
+    val valueFormatterList = createActivityFormatterList(activity)
+    FlowRow(
+        modifier = Modifier.padding(
+            vertical = dimensionResource(id = R.dimen.common_item_vertical_padding)
+        )
+    ) {
+        valueFormatterList.forEach { performedResultFormatter ->
+            PerformedResultItem(activity, performedResultFormatter)
+        }
     }
 }
 
 @Composable
 private fun PerformedResultItem(
     activity: Activity,
-    performedResultFormatter: ActivityPerformedResultFormatter
+    performedResultFormatter: TrackingValueFormatter
 ) = Column(
     modifier = Modifier.padding(
         horizontal = dimensionResource(id = R.dimen.common_item_horizontal_padding)
@@ -260,7 +268,7 @@ private fun PerformedResultItem(
         fontSize = 10.sp,
         textAlign = TextAlign.Center
     )
-    val formattedValue = performedResultFormatter.getFormattedPerformedResultValue(activity)
+    val formattedValue = performedResultFormatter.getFormattedValue(activity)
     val unit = performedResultFormatter.getUnit(LocalContext.current)
     Text(
         text = "$formattedValue $unit",
