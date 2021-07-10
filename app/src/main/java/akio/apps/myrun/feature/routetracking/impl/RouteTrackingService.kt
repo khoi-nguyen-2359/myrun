@@ -16,6 +16,7 @@ import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.data.routetracking.model.LocationProcessingConfig
 import akio.apps.myrun.data.routetracking.model.LocationRequestConfig
+import akio.apps.myrun.data.time.Now
 import akio.apps.myrun.domain.routetracking.AverageLocationAccumulator
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.LocationProcessorContainer
@@ -138,7 +139,7 @@ class RouteTrackingService : Service() {
         if (locationProcessingConfig.isAvgAccumulatorEnabled) {
             Timber.d("add avg location accumulator")
             locationProcessors.addProcessor(
-                AverageLocationAccumulator(locationRequest.updateInterval)
+                AverageLocationAccumulator(locationRequest.updateInterval, Now())
             )
         }
     }
