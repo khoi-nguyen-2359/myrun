@@ -1,7 +1,6 @@
 package akio.apps.myrun._base.utils
 
-import timber.log.Timber
-import java.util.concurrent.TimeUnit
+import akio.apps.myrun.domain.TrackingValueConverter
 
 object StatsPresentations {
     fun getDisplayTrackingDistance(distance: Double): String =
@@ -19,27 +18,21 @@ object StatsPresentations {
     }
 
     /**
-     * @param speed of unit meter/milisec
+     * @param speed of unit meter/sec
      */
     fun getDisplaySpeed(speed: Double): String {
-        val speedInKmPerHour = speed * (TimeUnit.HOURS.toMillis(1) / 1000)
-        return String.format("%.2f", speedInKmPerHour)
+        return String.format("%.2f", TrackingValueConverter.SpeedKmPerHour.fromRawValue(speed))
     }
 
     /**
-     * @param speed of unit meter/milisec
+     * @param speed of unit meter/sec
      */
     fun getDisplayPace(speed: Double): String {
-        var pace = if (speed == 0.0)
+        val pace = if (speed == 0.0)
             0.0
         else
-            1 / ((TimeUnit.MINUTES.toMillis(1) / 1000) * speed)
+            1 / TrackingValueConverter.SpeedKmPerMinute.fromRawValue(speed)
 
-        // try to correct too large pace due to too small speed
-        if (pace > 50) {
-            Timber.e(Exception("Too large pace $pace. Corrected to zero."))
-            pace = 0.0
-        }
         return String.format("%d:%02d", pace.toInt(), ((pace % 1) * 60).toInt())
     }
 }
