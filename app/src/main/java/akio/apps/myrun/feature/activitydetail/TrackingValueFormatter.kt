@@ -63,10 +63,10 @@ sealed class TrackingValueFormatter(
         TrackingValueFormatter("DurationHourMinuteSecond", R.string.performance_duration_label) {
         override fun getFormattedValue(activity: Activity): String {
             val millisecond = activity.duration
-            val hour = TrackingValueConverter.TimeHour.fromRawValue(millisecond)
-            val min = TrackingValueConverter.TimeMinute.fromRawValue(millisecond)
-            val sec = TrackingValueConverter.TimeSecond.fromRawValue(millisecond)
-            return if (hour == 0.0) {
+            val hour = TrackingValueConverter.TimeHour.fromRawValue(millisecond).toInt()
+            val min = TrackingValueConverter.TimeMinute.fromRawValue(millisecond).toInt()
+            val sec = TrackingValueConverter.TimeSecond.fromRawValue(millisecond).toInt()
+            return if (hour == 0) {
                 String.format("%d:%02d", min, sec)
             } else {
                 String.format("%d:%02d:%02d", hour, min, sec)

@@ -122,13 +122,26 @@ private fun LocationUpdateConfiguration(
         modifier = Modifier.padding(vertical = elementVerticalPadding)
     ) {
         Checkbox(
-            checked = config.isAccumulationEnabled,
+            checked = config.isAvgAccumulationEnabled,
             onCheckedChange = { value ->
-                onValueChanged(config.copy(isAccumulationEnabled = value))
+                onValueChanged(config.copy(isAvgAccumulationEnabled = value))
             }
         )
         Spacer(modifier = Modifier.size(elementHorizontalPadding))
-        Text(text = "Use location accumulation")
+        Text(text = "Use average location accumulator")
+    }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = elementVerticalPadding)
+    ) {
+        Checkbox(
+            checked = config.isSpeedFilterEnabled,
+            onCheckedChange = { value ->
+                onValueChanged(config.copy(isSpeedFilterEnabled = value))
+            }
+        )
+        Spacer(modifier = Modifier.size(elementHorizontalPadding))
+        Text(text = "Use location speed filter")
     }
 }
 
