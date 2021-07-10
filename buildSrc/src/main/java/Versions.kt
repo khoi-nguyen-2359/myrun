@@ -6,7 +6,7 @@ object Versions {
     const val targetSdk = "S"
     const val compileSdk = "android-S"
 
-    const val agp = "7.1.0-alpha02"
+    const val agp = "7.1.0-alpha03"
     const val kotlin = "1.5.10"
     const val coroutines = "1.5.0"
     const val kotlinSerialization = "1.2.1"
@@ -60,7 +60,7 @@ object Versions {
     // testing
     const val junit = "4.13.2"
     const val androidXCoreTesting = "2.1.0"
-    const val mockitoCore = "3.6.28"
+    const val mockitoCore = "3.11.2"
     const val mockitoKotlin = "2.2.0"
     const val mockitoAndroid = "3.5.10"
     const val androidXTestRunner = "1.3.0"

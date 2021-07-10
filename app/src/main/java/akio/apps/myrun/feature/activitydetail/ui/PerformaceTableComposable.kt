@@ -2,8 +2,10 @@ package akio.apps.myrun.feature.activitydetail.ui
 
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.model.ActivityType
-import akio.apps.myrun.feature.activitydetail.ActivityPerformedResultFormatter
+import akio.apps.myrun.feature.activitydetail.TrackingValueFormatter
 import akio.apps.myrun.feature.usertimeline.model.Activity
+import akio.apps.myrun.feature.usertimeline.model.ActivityData
+import akio.apps.myrun.feature.usertimeline.model.RunningActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -18,26 +20,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
 fun PerformanceTableComposable(activity: Activity) = Column(Modifier.padding(5.dp)) {
-    val performedResultFormatters = when (activity.activityType) {
-        ActivityType.Running -> listOf(
-            ActivityPerformedResultFormatter.Distance,
-            ActivityPerformedResultFormatter.Pace,
-            ActivityPerformedResultFormatter.Duration
-        )
-        ActivityType.Cycling -> listOf(
-            ActivityPerformedResultFormatter.Distance,
-            ActivityPerformedResultFormatter.Speed,
-            ActivityPerformedResultFormatter.Duration
-        )
-        else -> emptyList()
-    }
+    val trackingValueFormatterList = createActivityFormatterList(activity)
 
-    val iterator = performedResultFormatters.iterator()
+    val iterator = trackingValueFormatterList.iterator()
     while (iterator.hasNext()) {
         Row(
             modifier = Modifier
@@ -58,24 +49,67 @@ fun PerformanceTableComposable(activity: Activity) = Column(Modifier.padding(5.d
     }
 }
 
+private fun createActivityFormatterList(activity: Activity): List<TrackingValueFormatter> =
+    when (activity.activityType) {
+        ActivityType.Running -> listOf(
+            TrackingValueFormatter.DistanceKm,
+            TrackingValueFormatter.PaceMinutePerKm,
+            TrackingValueFormatter.DurationHourMinuteSecond
+        )
+        ActivityType.Cycling -> listOf(
+            TrackingValueFormatter.DistanceKm,
+            TrackingValueFormatter.SpeedKmPerHour,
+            TrackingValueFormatter.DurationHourMinuteSecond
+        )
+        else -> emptyList()
+    }
+
 @Composable
 private fun RowScope.PerformedResultCellComposable(
     activity: Activity,
-    performedResultFormatter: ActivityPerformedResultFormatter
+    valueFormatter: TrackingValueFormatter
 ) = Column(
     horizontalAlignment = Alignment.CenterHorizontally,
     modifier = Modifier.weight(weight = 1f)
 ) {
     Text(
-        text = performedResultFormatter.getLabel(LocalContext.current),
+        text = valueFormatter.getLabel(LocalContext.current),
         fontSize = 10.sp,
         textAlign = TextAlign.Center
     )
-    val formattedValue = performedResultFormatter.getFormattedPerformedResultValue(activity)
-    val unit = performedResultFormatter.getUnit(LocalContext.current)
+    val formattedValue = valueFormatter.getFormattedValue(activity)
+    val unit = valueFormatter.getUnit(LocalContext.current)
     Text(
         text = "$formattedValue $unit",
         fontSize = 24.sp,
         textAlign = TextAlign.Center
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewTable() {
+    PerformanceTableComposable(
+        activity = RunningActivity(
+            activityData = ActivityData(
+                id = "id",
+                activityType = ActivityType.Running,
+                name = "Evening Run",
+                routeImage = "http://example.com",
+                placeIdentifier = null,
+                startTime = System.currentTimeMillis(),
+                endTime = 2000L,
+                duration = 1000L,
+                distance = 100.0,
+                encodedPolyline = "",
+                athleteInfo = Activity.AthleteInfo(
+                    userId = "id",
+                    userName = "Khoi Nguyen",
+                    userAvatar = "userAvatar"
+                )
+            ),
+            pace = 1.0,
+            cadence = 160
+        )
     )
 }

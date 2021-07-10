@@ -3,15 +3,15 @@ package akio.apps.myrun.domain
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-class PerformanceUnitTest {
+class TrackingValueConverterTest {
     @Test
     fun testObjectsHaveUniqueIds() {
         val mapUniqueCheck = mutableMapOf<String, Boolean>()
-        PerformanceUnit::class.nestedClasses
-            .mapNotNull { (it.objectInstance as? PerformanceUnit<*>)?.id }
+        TrackingValueConverter::class.sealedSubclasses
+            .mapNotNull { it.objectInstance }
             .forEach { objectId ->
-                assertNull(mapUniqueCheck[objectId])
-                mapUniqueCheck[objectId] = true
+                assertNull(mapUniqueCheck[objectId.id])
+                mapUniqueCheck[objectId.id] = true
             }
     }
 }

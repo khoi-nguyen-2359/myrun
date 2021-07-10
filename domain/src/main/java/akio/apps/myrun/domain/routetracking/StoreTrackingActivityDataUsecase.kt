@@ -16,7 +16,7 @@ import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.userprofile.UserProfileRepository
-import akio.apps.myrun.domain.PerformanceUnit
+import akio.apps.myrun.domain.TrackingValueConverter
 import android.graphics.Bitmap
 import com.google.maps.android.PolyUtil
 import javax.inject.Inject
@@ -97,14 +97,14 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         return when (activityType) {
             ActivityType.Running -> {
                 val pace =
-                    PerformanceUnit.TimeMinute.fromRawValue(duration) /
-                        PerformanceUnit.DistanceKm.fromRawValue(distance)
+                    TrackingValueConverter.TimeMinute.fromRawValue(duration) /
+                        TrackingValueConverter.DistanceKm.fromRawValue(distance)
                 RunningActivityModel(activityData, pace, cadence = 0)
             }
             ActivityType.Cycling -> {
                 val speed =
-                    PerformanceUnit.DistanceKm.fromRawValue(distance) /
-                        PerformanceUnit.TimeHour.fromRawValue(duration)
+                    TrackingValueConverter.DistanceKm.fromRawValue(distance) /
+                        TrackingValueConverter.TimeHour.fromRawValue(duration)
                 CyclingActivityModel(activityData, speed)
             }
             else -> throw UnsupportedOperationException(
