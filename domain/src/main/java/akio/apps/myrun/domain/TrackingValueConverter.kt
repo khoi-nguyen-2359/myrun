@@ -34,7 +34,7 @@ sealed class TrackingValueConverter<R, T : Number>(val id: String) {
         override fun fromRawValue(rawValue: Double): Double = rawValue * 3.6
     }
 
-    object SpeedKmPerMinute : TrackingValueConverter<Double, Double>("SpeedKmPerHour") {
+    object SpeedKmPerMinute : TrackingValueConverter<Double, Double>("SpeedKmPerMinute") {
         override fun fromRawValue(rawValue: Double): Double = rawValue * 0.06
     }
 }
