@@ -7,11 +7,11 @@ class TrackingValueConverterTest {
     @Test
     fun testObjectsHaveUniqueIds() {
         val mapUniqueCheck = mutableMapOf<String, Boolean>()
-        TrackingValueConverter::class.nestedClasses
-            .mapNotNull { (it.objectInstance as? TrackingValueConverter<*>)?.id }
+        TrackingValueConverter::class.sealedSubclasses
+            .mapNotNull { it.objectInstance }
             .forEach { objectId ->
-                assertNull(mapUniqueCheck[objectId])
-                mapUniqueCheck[objectId] = true
+                assertNull(mapUniqueCheck[objectId.id])
+                mapUniqueCheck[objectId.id] = true
             }
     }
 }

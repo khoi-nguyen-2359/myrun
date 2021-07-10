@@ -26,7 +26,7 @@ sealed class TrackingValueConverter<R, T : Number>(val id: String) {
         override fun fromRawValue(rawValue: Long): Double = rawValue / 3600000.0
     }
 
-    object TimeSecond : TrackingValueConverter<Long, Double>("TimeHour") {
+    object TimeSecond : TrackingValueConverter<Long, Double>("TimeSecond") {
         override fun fromRawValue(rawValue: Long): Double = rawValue / 1000.0
     }
 }

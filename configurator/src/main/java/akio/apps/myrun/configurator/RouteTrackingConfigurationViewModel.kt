@@ -1,6 +1,7 @@
 package akio.apps.myrun.configurator
 
 import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
+import akio.apps.myrun.data.routetracking.model.LocationProcessingConfig
 import akio.apps.myrun.data.routetracking.model.LocationRequestConfig
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,21 +18,24 @@ class RouteTrackingConfigurationViewModel @Inject constructor(
 ) : ViewModel() {
 
     // This value is for rolling back when text input is not a number
-    private var cacheLocationRequestConfig: LocationRequestConfig = LocationRequestConfig.foo()
+    private var cachedLocationRequestConfig: LocationRequestConfig = LocationRequestConfig()
     private var locationUpdateConfigState: MutableStateFlow<LocationUpdateConfiguration> =
         MutableStateFlow(LocationUpdateConfiguration())
+
     val locationUpdateConfigFlow: Flow<LocationUpdateConfiguration> = locationUpdateConfigState
 
     init {
         routeTrackingConfiguration.getLocationRequestConfig()
-            .onEach { cacheLocationRequestConfig = it }
-            .combine(routeTrackingConfiguration.isLocationAccumulationEnabled()) {
-                locationRequestConfig, isLocationAccumulationEnabled ->
+            .combine(
+                routeTrackingConfiguration.getLocationProcessingConfig()
+            ) { locationRequestConfig, locationProcessingConfig ->
+                cachedLocationRequestConfig = locationRequestConfig
                 LocationUpdateConfiguration(
                     updateInterval = locationRequestConfig.updateInterval.toString(),
                     fastestUpdateInterval = locationRequestConfig.fastestUpdateInterval.toString(),
                     smallestDisplacement = locationRequestConfig.smallestDisplacement.toString(),
-                    isAccumulationEnabled = isLocationAccumulationEnabled
+                    isAvgAccumulationEnabled = locationProcessingConfig.isAvgAccumulatorEnabled,
+                    isSpeedFilterEnabled = locationProcessingConfig.isSpeedFilterEnabled
                 )
             }
             .onEach { locationUpdateConfigState.value = it }
@@ -46,17 +50,22 @@ class RouteTrackingConfigurationViewModel @Inject constructor(
 
     fun applyChanges() = viewModelScope.launch {
         val updateConfig = locationUpdateConfigState.value
+
         val updateLocationRequest = LocationRequestConfig(
             updateInterval = updateConfig.updateInterval.toLongOrNull()
-                ?: cacheLocationRequestConfig.updateInterval,
+                ?: cachedLocationRequestConfig.updateInterval,
             fastestUpdateInterval = updateConfig.fastestUpdateInterval.toLongOrNull()
-                ?: cacheLocationRequestConfig.fastestUpdateInterval,
+                ?: cachedLocationRequestConfig.fastestUpdateInterval,
             smallestDisplacement = updateConfig.smallestDisplacement.toFloatOrNull()
-                ?: cacheLocationRequestConfig.smallestDisplacement
+                ?: cachedLocationRequestConfig.smallestDisplacement
         )
         routeTrackingConfiguration.setLocationRequestConfiguration(updateLocationRequest)
-        routeTrackingConfiguration.setLocationAccumulationEnabled(
-            updateConfig.isAccumulationEnabled
+
+        routeTrackingConfiguration.setLocationProcessingConfig(
+            LocationProcessingConfig(
+                updateConfig.isAvgAccumulationEnabled,
+                updateConfig.isSpeedFilterEnabled
+            )
         )
     }
 
@@ -64,6 +73,7 @@ class RouteTrackingConfigurationViewModel @Inject constructor(
         val updateInterval: String = "",
         val fastestUpdateInterval: String = "",
         val smallestDisplacement: String = "",
-        val isAccumulationEnabled: Boolean = false
+        val isAvgAccumulationEnabled: Boolean = false,
+        val isSpeedFilterEnabled: Boolean = false
     )
 }

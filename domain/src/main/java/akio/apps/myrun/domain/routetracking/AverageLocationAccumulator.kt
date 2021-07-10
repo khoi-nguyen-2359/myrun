@@ -1,20 +1,12 @@
-package akio.apps.myrun.feature.routetracking.impl
+package akio.apps.myrun.domain.routetracking
 
 import akio.apps.myrun.data.location.LocationEntity
 
-class LocationAccumulator(private val accumulateDuration: Long, startTime: Long) {
-    private var lastDeliverTime: Long = startTime
+class AverageLocationAccumulator(private val accumulationPeriod: Long) : LocationProcessor {
+    private var lastDeliverTime: Long = 0L
     private val currentLocationBatch: MutableList<LocationEntity> = mutableListOf()
-    fun accumulate(locations: List<LocationEntity>, time: Long): LocationEntity? {
-        currentLocationBatch.addAll(locations)
-        if (time - lastDeliverTime >= accumulateDuration) {
-            return deliverNow(time)
-        }
 
-        return null
-    }
-
-    fun deliverNow(time: Long): LocationEntity? {
+    private fun deliverNow(time: Long): LocationEntity? {
         if (currentLocationBatch.isEmpty()) {
             return null
         }
@@ -38,5 +30,15 @@ class LocationAccumulator(private val accumulateDuration: Long, startTime: Long)
             accumulatedLocation.altitude / batchSize,
             accumulatedLocation.speed / batchSize,
         )
+    }
+
+    override fun process(locations: List<LocationEntity>): List<LocationEntity> {
+        currentLocationBatch.addAll(locations)
+        val time = System.currentTimeMillis()
+        if (time - lastDeliverTime >= accumulationPeriod) {
+            return listOfNotNull(deliverNow(time))
+        }
+
+        return emptyList()
     }
 }
