@@ -1,12 +1,18 @@
 package akio.apps.myrun.domain.routetracking
 
 import akio.apps.myrun.data.location.LocationEntity
+import akio.apps.myrun.data.time.TimeProvider
+import androidx.annotation.VisibleForTesting
 
-class AverageLocationAccumulator(private val accumulationPeriod: Long) : LocationProcessor {
+class AverageLocationAccumulator(
+    private val accumulationPeriod: Long,
+    private val timeProvider: TimeProvider
+) : LocationProcessor {
     private var lastDeliverTime: Long = 0L
     private val currentLocationBatch: MutableList<LocationEntity> = mutableListOf()
 
-    private fun deliverNow(time: Long): LocationEntity? {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun deliverNow(time: Long): LocationEntity? {
         if (currentLocationBatch.isEmpty()) {
             return null
         }
@@ -34,7 +40,7 @@ class AverageLocationAccumulator(private val accumulationPeriod: Long) : Locatio
 
     override fun process(locations: List<LocationEntity>): List<LocationEntity> {
         currentLocationBatch.addAll(locations)
-        val time = System.currentTimeMillis()
+        val time = timeProvider.currentMillisecond()
         if (time - lastDeliverTime >= accumulationPeriod) {
             return listOfNotNull(deliverNow(time))
         }
