@@ -84,3 +84,10 @@
 }
 
 ##---------------End: proguard configuration for Kotlin Serialization  ----------
+
+##--- Remove Timber log statements ---
+-assumenosideeffects class timber.log.Timber* {
+    public static *** v(...);
+    public static *** d(...);
+    public static *** i(...);
+}
