@@ -19,12 +19,13 @@ class LocationAccumulator(private val accumulateDuration: Long, startTime: Long)
             return null
         }
         val accumulatedLocation =
-            currentLocationBatch.fold(LocationEntity(0, 0.0, 0.0, 0.0)) { accum, item ->
+            currentLocationBatch.fold(LocationEntity(0, 0.0, 0.0, 0.0, 0.0)) { accum, item ->
                 LocationEntity(
                     item.time,
                     accum.latitude + item.latitude,
                     accum.longitude + item.longitude,
-                    accum.altitude + item.altitude
+                    accum.altitude + item.altitude,
+                    accum.speed + item.speed
                 )
             }
         val batchSize = currentLocationBatch.size
@@ -34,7 +35,8 @@ class LocationAccumulator(private val accumulateDuration: Long, startTime: Long)
             accumulatedLocation.time,
             accumulatedLocation.latitude / batchSize,
             accumulatedLocation.longitude / batchSize,
-            accumulatedLocation.altitude / batchSize
+            accumulatedLocation.altitude / batchSize,
+            accumulatedLocation.speed / batchSize,
         )
     }
 }

@@ -36,8 +36,8 @@ class RouteTrackingLocationRepositoryImpl @Inject constructor(
     }
 
     private fun LocationEntity.toRoomEntity(id: Int) =
-        RoomTrackingLocation(id, time, latitude, longitude, altitude)
+        RoomTrackingLocation(id, time, latitude, longitude, altitude, speed)
 
     private fun RoomTrackingLocation.toLocationEntity() =
-        LocationEntity(time, latitude, longitude, altitude)
+        LocationEntity(time, latitude, longitude, altitude, speed)
 }
