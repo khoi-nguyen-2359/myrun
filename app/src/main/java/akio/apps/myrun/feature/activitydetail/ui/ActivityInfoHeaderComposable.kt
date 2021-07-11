@@ -45,7 +45,8 @@ import com.google.accompanist.coil.rememberCoilPainter
 fun ActivityInfoHeaderView(
     activityDetail: Activity,
     activityDisplayPlaceName: String?,
-    onClickExportFile: () -> Unit
+    onClickExportFile: () -> Unit,
+    isShareMenuVisible: Boolean = true
 ) = Column(
     modifier = Modifier
         .padding(vertical = dimensionResource(id = R.dimen.common_item_vertical_padding))
@@ -58,7 +59,9 @@ fun ActivityInfoHeaderView(
             AthleteNameText(activityDetail)
             ActivityTimeAndPlaceText(activityDetail, activityDisplayPlaceName)
         }
-        ActivityShareMenu(onClickExportFile)
+        if (isShareMenuVisible) {
+            ActivityShareMenu(onClickExportFile)
+        }
     }
     Spacer(modifier = Modifier.size(6.dp))
     ActivityNameText(activityDetail)
@@ -189,5 +192,6 @@ private fun PreviewActivityInfoHeader() = ActivityInfoHeaderView(
         pace = 1.0,
         cadence = 160
     ),
-    activityDisplayPlaceName = "California, Santa Clara County, San Jose"
-) { }
+    activityDisplayPlaceName = "California, Santa Clara County, San Jose",
+    {}
+)
