@@ -38,8 +38,8 @@ class UserTimelineViewModelImpl @Inject constructor(
     override val myActivityList: Flow<PagingData<Activity>> = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
-            enablePlaceholders = false,
-            prefetchDistance = 10
+            enablePlaceholders = true,
+            prefetchDistance = PAGE_SIZE
         ),
         initialKey = System.currentTimeMillis()
     ) { recreateActivityPagingSource() }.flow
@@ -79,6 +79,6 @@ class UserTimelineViewModelImpl @Inject constructor(
     }
 
     companion object {
-        const val PAGE_SIZE = 4
+        const val PAGE_SIZE = 10
     }
 }

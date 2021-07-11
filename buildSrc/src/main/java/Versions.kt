@@ -11,12 +11,12 @@ object Versions {
     const val coroutines = "1.5.0"
     const val kotlinSerialization = "1.2.1"
 
-    const val androidxCore = "1.6.0-rc01"
+    const val androidxCore = "1.6.0"
     const val appCompat = "1.3.0"
-    const val activity = "1.3.0-beta01"
+    const val activity = "1.3.0-rc01"
     const val fragment = "1.3.5"
     const val constraintLayout = "2.0.4"
-    const val androidMaterial = "1.3.0"
+    const val androidMaterial = "1.4.0"
 
     // compose
     const val compose = "1.0.0-rc01"

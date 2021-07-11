@@ -15,6 +15,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -30,6 +31,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,7 +50,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import com.google.accompanist.flowlayout.FlowRow
+import timber.log.Timber
 
 @Composable
 fun UserTimeline(
@@ -81,6 +83,7 @@ fun UserTimeline(
     }
 }
 
+@Suppress("UNUSED_PARAMETER")
 @Composable
 private fun UserTimelineActivityList(
     userTimelineViewModel: UserTimelineViewModel,
@@ -99,11 +102,13 @@ private fun UserTimelineActivityList(
     ) {
         items(lazyPagingItems) { activity ->
             if (activity != null) {
-                val activityDisplayPlaceName = userTimelineViewModel.getActivityDisplayPlaceName(
-                    userRecentPlaceIdentifier,
-                    activity.id,
-                    activity.placeIdentifier
-                )
+                val activityDisplayPlaceName = remember {
+                    userTimelineViewModel.getActivityDisplayPlaceName(
+                        userRecentPlaceIdentifier,
+                        activity.id,
+                        activity.placeIdentifier
+                    )
+                }
                 TimelineActivityItem(activity, activityDisplayPlaceName, onClickActivityAction) {
                     onClickExportActivityFile(activity)
                 }
@@ -202,6 +207,7 @@ fun TimelineActivityPlaceholderItem() = Surface(
         .fillMaxWidth()
         .aspectRatio(1.5f)
 ) {
+    Timber.d("Render activity placeholder")
     Image(
         painter = painterResource(id = R.drawable.common_avatar_placeholder_image),
         contentDescription = "Activity placeholder"
@@ -219,7 +225,12 @@ private fun TimelineActivityItem(
     modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
 ) {
     Column(modifier = Modifier.clickable { onClickActivityAction(activity) }) {
-        ActivityInfoHeaderView(activity, activityDisplayPlaceName, onClickExportFile)
+        ActivityInfoHeaderView(
+            activity,
+            activityDisplayPlaceName,
+            onClickExportFile,
+            isShareMenuVisible = false
+        )
         ActivityRouteImage(activity)
         TimelineActivityPerformanceRow(activity)
     }
@@ -242,11 +253,11 @@ private fun createActivityFormatterList(activity: Activity): List<TrackingValueF
 
 @Composable
 private fun TimelineActivityPerformanceRow(activity: Activity) {
-    val valueFormatterList = createActivityFormatterList(activity)
-    FlowRow(
-        modifier = Modifier.padding(
-            vertical = dimensionResource(id = R.dimen.common_item_vertical_padding)
-        )
+    val valueFormatterList = remember { createActivityFormatterList(activity) }
+    Row(
+        modifier = Modifier
+            .padding(vertical = dimensionResource(id = R.dimen.common_item_vertical_padding))
+            .fillMaxWidth()
     ) {
         valueFormatterList.forEach { performedResultFormatter ->
             PerformedResultItem(activity, performedResultFormatter)
@@ -263,13 +274,15 @@ private fun PerformedResultItem(
         horizontal = dimensionResource(id = R.dimen.common_item_horizontal_padding)
     )
 ) {
+    val context = LocalContext.current
+    val label = remember { performedResultFormatter.getLabel(context) }
     Text(
-        text = performedResultFormatter.getLabel(LocalContext.current),
+        text = label,
         fontSize = 10.sp,
         textAlign = TextAlign.Center
     )
-    val formattedValue = performedResultFormatter.getFormattedValue(activity)
-    val unit = performedResultFormatter.getUnit(LocalContext.current)
+    val formattedValue = remember { performedResultFormatter.getFormattedValue(activity) }
+    val unit = remember { performedResultFormatter.getUnit(context) }
     Text(
         text = "$formattedValue $unit",
         fontSize = 20.sp,
