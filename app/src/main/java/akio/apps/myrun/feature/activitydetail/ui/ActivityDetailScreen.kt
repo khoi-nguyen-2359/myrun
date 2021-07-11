@@ -61,9 +61,11 @@ fun ActivityDetailScreen(
         val activityDetail = activityResource.data
         if (activityDetail != null) {
             Column {
-                ActivityInfoHeaderView1(activityDetail, activityDisplayPlaceName) {
-                    onClickExportFile(activityDetail)
-                }
+                ActivityInfoHeaderView1(
+                    activityDetail,
+                    activityDisplayPlaceName,
+                    { onClickExportFile(activityDetail) }
+                )
                 ActivityRouteImage(activityDetail) {
                     onClickRouteImage(activityDetail.encodedPolyline)
                 }
