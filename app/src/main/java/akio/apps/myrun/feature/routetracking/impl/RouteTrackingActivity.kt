@@ -33,8 +33,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.addRepeatingJob
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
@@ -408,6 +408,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     private var isStickyCamera: Boolean = true
+
     @SuppressLint("MissingPermission")
     private fun initMapView(map: GoogleMap) {
         this.mapView = map
@@ -434,16 +435,18 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private fun setAutoCameraEnabled(isEnabled: Boolean) {
         trackMapCameraOnLocationUpdateJob?.cancel()
         if (isEnabled) {
-            trackMapCameraOnLocationUpdateJob = addRepeatingJob(Lifecycle.State.STARTED) {
-                routeTrackingViewModel.getLocationUpdate()
-                    .onStart { emit(routeTrackingViewModel.getLastLocationFlow().toList()) }
-                    .collect {
-                        if (isStickyCamera) {
-                            it.lastOrNull()?.let { lastItem ->
-                                recenterMap(lastItem)
+            trackMapCameraOnLocationUpdateJob = lifecycleScope.launch {
+                lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    routeTrackingViewModel.getLocationUpdate()
+                        .onStart { emit(routeTrackingViewModel.getLastLocationFlow().toList()) }
+                        .collect {
+                            if (isStickyCamera) {
+                                it.lastOrNull()?.let { lastItem ->
+                                    recenterMap(lastItem)
+                                }
                             }
                         }
-                    }
+                }
             }
         }
     }

@@ -1,8 +1,6 @@
 package akio.apps.myrun.data.googlemap
 
 import akio.apps.myrun.data._base.NetworkModule
-import akio.apps.myrun.data.impl.R
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -26,12 +24,7 @@ class GoogleMapApiModule {
             .build()
     }
 
-    @Provides
-    @Named(NAME_GOOGLE_MAP_API_KEY)
-    fun googleMapApiKey(appContext: Context) = appContext.getString(R.string.google_maps_sdk_key)
-
     companion object {
         const val NAME_GOOGLE_MAP_API_RETROFIT = "GoogleMapApiModule.NAMED_GOOGLE_MAP_API_RETROFIT"
-        const val NAME_GOOGLE_MAP_API_KEY = "GoogleMapApiModule.NAME_GOOGLE_MAP_API_KEY"
     }
 }

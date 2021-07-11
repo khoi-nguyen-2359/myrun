@@ -27,7 +27,7 @@ object Versions {
     const val workManager = "2.7.0-alpha04"
     const val paging = "3.0.0"
     const val room = "2.3.0"
-    const val lifecycle = "2.4.0-alpha01"
+    const val lifecycle = "2.4.0-alpha02"
     const val lifecycleExtension = "2.2.0"
     const val multidex = "1.0.3"
 
@@ -40,7 +40,7 @@ object Versions {
     const val retrofit = "2.9.0"
     const val tcxzPot = "0.2.0"
 
-    const val playServicesGradlePlugin = "4.3.4"
+    const val playServicesGradlePlugin = "4.3.8"
     const val playServicesGcm = "17.0.0"
     const val playServicesLocation = "18.0.0"
     const val playServicesAuth = "19.0.0"

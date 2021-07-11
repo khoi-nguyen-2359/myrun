@@ -58,8 +58,8 @@ class RouteTrackingConfigurationImpl @Inject constructor(application: Applicatio
 
     companion object {
         private const val LOCATION_UPDATE_INTERVAL = 2000L
-        private const val LOCATION_FASTEST_UPDATE_INTERVAL = 500L
-        private const val SMALLEST_DISPLACEMENT = 5f
+        private const val LOCATION_FASTEST_UPDATE_INTERVAL = 100L
+        private const val SMALLEST_DISPLACEMENT = 1f
 
         private val LOCATION_UPDATE_INTERVAL_KEY =
             longPreferencesKey("LOCATION_UPDATE_INTERVAL_KEY")
