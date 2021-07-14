@@ -7,19 +7,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import coil.request.ImageRequest
-import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestBuilder
-import com.google.accompanist.coil.rememberCoilPainter
 import com.google.accompanist.glide.rememberGlidePainter
 import com.google.accompanist.imageloading.ImageLoadState
 import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
-import com.google.accompanist.placeholder.material.shimmer
+
+private const val ACTIVITY_ROUTE_IMAGE_RATIO = 1.5f
 
 @Composable
 fun ActivityRouteImage(
@@ -27,9 +25,13 @@ fun ActivityRouteImage(
     onClickAction: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
-    val imagePainter = rememberCoilPainter(
+    val imageWidth = remember { context.resources.displayMetrics.widthPixels / 2 }
+    val imageHeight = remember { (imageWidth / ACTIVITY_ROUTE_IMAGE_RATIO).toInt() }
+    val imagePainter = rememberGlidePainter(
         request = activity.routeImage,
-        requestBuilder = { size -> ImageRequest.Builder(context).size(size.width, size.height) },
+        requestBuilder = {
+            override(imageWidth, imageHeight)
+        },
         shouldRefetchOnSizeChange = { _, _ -> false },
         previewPlaceholder = R.drawable.ic_run_circle,
         fadeIn = true,
@@ -40,10 +42,10 @@ fun ActivityRouteImage(
         contentDescription = "Activity route image",
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(1.5f)
+            .aspectRatio(ACTIVITY_ROUTE_IMAGE_RATIO)
             .placeholder(
                 visible = imagePainter.loadState !is ImageLoadState.Success,
-                color = Color(0xff8bb8f5)
+                highlight = PlaceholderHighlight.fade()
             )
             .run {
                 if (onClickAction != null) {

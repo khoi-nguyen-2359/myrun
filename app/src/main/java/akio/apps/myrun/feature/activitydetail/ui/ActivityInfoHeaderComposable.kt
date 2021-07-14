@@ -39,7 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.coil.rememberCoilPainter
+import com.google.accompanist.glide.rememberGlidePainter
 
 @Composable
 fun ActivityInfoHeaderView(
@@ -153,12 +153,12 @@ private fun UserAvatarImage(
     val avatarDimension = dimensionResource(id = R.dimen.user_timeline_avatar_size)
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
     Image(
-        painter = rememberCoilPainter(
+        painter = rememberGlidePainter(
             request = activityDetail.athleteInfo.userAvatar.orEmpty(),
             requestBuilder = {
-                size(avatarSize.toInt())
-                placeholder(R.drawable.common_avatar_placeholder_image)
-                error(R.drawable.common_avatar_placeholder_image)
+                override(avatarSize.toInt())
+                    .placeholder(R.drawable.common_avatar_placeholder_image)
+                    .error(R.drawable.common_avatar_placeholder_image)
             }
         ),
         contentDescription = "Athlete avatar",

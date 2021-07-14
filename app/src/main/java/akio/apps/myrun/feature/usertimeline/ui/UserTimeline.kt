@@ -7,6 +7,8 @@ import akio.apps.myrun.feature.activitydetail.ui.ActivityInfoHeaderView
 import akio.apps.myrun.feature.activitydetail.ui.ActivityRouteImage
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
+import akio.apps.myrun.feature.usertimeline.model.ActivityData
+import akio.apps.myrun.feature.usertimeline.model.RunningActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -190,20 +192,6 @@ private fun LoadingItem() = Column(
 @Composable
 private fun LoadingItemPreview() = LoadingItem()
 
-//@Composable
-//fun TimelineActivityPlaceholderItem() = Surface(
-//    elevation = 2.dp,
-//    modifier = Modifier
-//        .fillMaxWidth()
-//        .aspectRatio(1.5f)
-//) {
-//    Timber.d("Render activity placeholder")
-//    Image(
-//        painter = painterResource(id = R.drawable.common_avatar_placeholder_image),
-//        contentDescription = "Activity placeholder"
-//    )
-//}
-
 @Composable
 private fun TimelineActivityItem(
     activity: Activity,
@@ -214,7 +202,11 @@ private fun TimelineActivityItem(
     elevation = 2.dp,
     modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
 ) {
-    Timber.d("render TimelineActivityItem activity=${activity.id} placeName=$activityDisplayPlaceName")
+    Timber.d(
+        "render TimelineActivityItem " +
+            "activity=${activity.id}" +
+            " placeName=$activityDisplayPlaceName"
+    )
     Column(modifier = Modifier.clickable { onClickActivityAction(activity) }) {
         ActivityInfoHeaderView(
             activity,
@@ -227,8 +219,8 @@ private fun TimelineActivityItem(
     }
 }
 
-private fun createActivityFormatterList(activity: Activity): List<TrackingValueFormatter> =
-    when (activity.activityType) {
+private fun createActivityFormatterList(activityType: ActivityType): List<TrackingValueFormatter> =
+    when (activityType) {
         ActivityType.Running -> listOf(
             TrackingValueFormatter.DistanceKm,
             TrackingValueFormatter.PaceMinutePerKm,
@@ -244,7 +236,7 @@ private fun createActivityFormatterList(activity: Activity): List<TrackingValueF
 
 @Composable
 private fun TimelineActivityPerformanceRow(activity: Activity) {
-    val valueFormatterList = remember { createActivityFormatterList(activity) }
+    val valueFormatterList = remember { createActivityFormatterList(activity.activityType) }
     Row(
         modifier = Modifier
             .padding(vertical = dimensionResource(id = R.dimen.common_item_vertical_padding))
@@ -281,33 +273,33 @@ private fun PerformedResultItem(
     )
 }
 
-//@Preview
-//@Composable
-//private fun PreviewTimelineActivityItem() {
-//    TimelineActivityItem(
-//        activity = RunningActivity(
-//            activityData = ActivityData(
-//                id = "id",
-//                activityType = ActivityType.Running,
-//                name = "Evening Run",
-//                routeImage = "http://example.com",
-//                placeIdentifier = null,
-//                startTime = System.currentTimeMillis(),
-//                endTime = 2000L,
-//                duration = 1000L,
-//                distance = 100.0,
-//                encodedPolyline = "",
-//                athleteInfo = Activity.AthleteInfo(
-//                    userId = "id",
-//                    userName = "Khoi Nguyen",
-//                    userAvatar = "userAvatar"
-//                )
-//            ),
-//            pace = 1.0,
-//            cadence = 160
-//        ),
-//        activityDisplayPlaceName = "activityDisplayPlaceName",
-//        onClickActivityAction = { },
-//        onClickExportFile = { }
-//    )
-//}
+@Preview
+@Composable
+private fun PreviewTimelineActivityItem() {
+    TimelineActivityItem(
+        activity = RunningActivity(
+            activityData = ActivityData(
+                id = "id",
+                activityType = ActivityType.Running,
+                name = "Evening Run",
+                routeImage = "http://example.com",
+                placeIdentifier = null,
+                startTime = System.currentTimeMillis(),
+                endTime = 2000L,
+                duration = 1000L,
+                distance = 100.0,
+                encodedPolyline = "",
+                athleteInfo = Activity.AthleteInfo(
+                    userId = "id",
+                    userName = "Khoi Nguyen",
+                    userAvatar = "userAvatar"
+                )
+            ),
+            pace = 1.0,
+            cadence = 160
+        ),
+        activityDisplayPlaceName = "activityDisplayPlaceName",
+        onClickActivityAction = { },
+        onClickExportFile = { }
+    )
+}

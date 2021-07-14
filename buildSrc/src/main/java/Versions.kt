@@ -3,7 +3,7 @@ object Versions {
     const val versionCode = 1_03_00 // x_yy_zz
 
     const val minSdk = 21
-    const val targetSdk = "S"
+    const val targetSdk = 30
     const val compileSdk = "android-S"
 
     const val agp = "7.1.0-alpha03"
@@ -56,6 +56,8 @@ object Versions {
     const val dataStore = "1.0.0-beta01"
 
     const val autoValueAnnotation = "1.6.3"
+
+    const val leakCanary = "2.7"
 
     // testing
     const val junit = "4.13.2"
