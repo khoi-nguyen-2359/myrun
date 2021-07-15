@@ -39,7 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.glide.rememberGlidePainter
+import coil.compose.rememberImagePainter
+import timber.log.Timber
 
 @Composable
 fun ActivityInfoHeaderView(
@@ -120,23 +121,30 @@ private fun ActivityShareMenu(
 private fun ActivityTimeAndPlaceText(activityDetail: Activity, activityDisplayPlaceName: String?) {
     val activityDateTimeFormatter = remember(::ActivityDateTimeFormatter)
     val activityFormattedStartTime =
-        activityDateTimeFormatter.formatActivityDateTime(activityDetail.startTime)
-    val startTimeText = when (activityFormattedStartTime) {
-        is ActivityDateTimeFormatter.Result.WithinToday -> LocalContext.current.getString(
-            R.string.item_activity_time_today,
-            activityFormattedStartTime.formattedValue
-        )
-        is ActivityDateTimeFormatter.Result.WithinYesterday -> LocalContext.current.getString(
-            R.string.item_activity_time_yesterday,
-            activityFormattedStartTime.formattedValue
-        )
-        is ActivityDateTimeFormatter.Result.FullDateTime ->
-            activityFormattedStartTime.formattedValue
+        remember { activityDateTimeFormatter.formatActivityDateTime(activityDetail.startTime) }
+    val context = LocalContext.current
+    val startTimeText = remember(activityDetail.id) {
+        Timber.d("making startTimeText")
+        when (activityFormattedStartTime) {
+            is ActivityDateTimeFormatter.Result.WithinToday -> context.getString(
+                R.string.item_activity_time_today,
+                activityFormattedStartTime.formattedValue
+            )
+            is ActivityDateTimeFormatter.Result.WithinYesterday -> context.getString(
+                R.string.item_activity_time_yesterday,
+                activityFormattedStartTime.formattedValue
+            )
+            is ActivityDateTimeFormatter.Result.FullDateTime ->
+                activityFormattedStartTime.formattedValue
+        }
     }
-    val timeAndPlaceText = if (activityDisplayPlaceName == null) {
-        startTimeText
-    } else {
-        "$startTimeText \u00b7 $activityDisplayPlaceName"
+    Timber.d("startTimeText=$startTimeText")
+    val timeAndPlaceText = remember {
+        if (activityDisplayPlaceName == null) {
+            startTimeText
+        } else {
+            "$startTimeText \u00b7 $activityDisplayPlaceName"
+        }
     }
     Text(
         text = timeAndPlaceText,
@@ -153,12 +161,12 @@ private fun UserAvatarImage(
     val avatarDimension = dimensionResource(id = R.dimen.user_timeline_avatar_size)
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
     Image(
-        painter = rememberGlidePainter(
-            request = activityDetail.athleteInfo.userAvatar.orEmpty(),
-            requestBuilder = {
-                override(avatarSize.toInt())
-                    .placeholder(R.drawable.common_avatar_placeholder_image)
-                    .error(R.drawable.common_avatar_placeholder_image)
+        painter = rememberImagePainter(
+            data = activityDetail.athleteInfo.userAvatar.orEmpty(),
+            builder = {
+               size(avatarSize.toInt())
+               placeholder(R.drawable.common_avatar_placeholder_image)
+               error(R.drawable.common_avatar_placeholder_image)
             }
         ),
         contentDescription = "Athlete avatar",
