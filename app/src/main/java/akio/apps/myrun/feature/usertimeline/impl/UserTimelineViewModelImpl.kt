@@ -51,22 +51,23 @@ class UserTimelineViewModelImpl @Inject constructor(
             activityPagingSource = it
         }
 
-    private val mapActivityIdToPlaceName: MutableMap<String, String?> = mutableMapOf()
+    private val mapActivityIdToPlaceName: MutableMap<String, String> = mutableMapOf()
 
     override fun getActivityDisplayPlaceName(activity: Activity): String {
+        val activityPlaceIdentifier = activity.placeIdentifier ?: return ""
         val activityId = activity.id
         var placeName = mapActivityIdToPlaceName[activityId]
-        val activityPlaceIdentifier = activity.placeIdentifier
-        if (placeName == null && activityPlaceIdentifier != null) {
-            placeName = createActivityDisplayPlaceNameUsecase(
-                activityPlaceIdentifier,
-                userRecentPlaceIdentifier
-            )
-            mapActivityIdToPlaceName[activityId] = placeName
+        if (placeName != null) {
+            return placeName
         }
 
-        Timber.d("getActivityDisplayPlaceName activityId=${activity.id} result=$placeName")
-        return placeName ?: ""
+        placeName = createActivityDisplayPlaceNameUsecase(
+            activityPlaceIdentifier,
+            userRecentPlaceIdentifier
+        ) ?: ""
+        mapActivityIdToPlaceName[activityId] = placeName
+
+        return placeName
     }
 
     private var userRecentPlaceIdentifier: PlaceIdentifier? = null
