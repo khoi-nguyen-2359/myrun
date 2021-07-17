@@ -3,7 +3,7 @@ object Versions {
     const val versionCode = 1_03_00 // x_yy_zz
 
     const val minSdk = 21
-    const val targetSdk = "S"
+    const val targetSdk = 30
     const val compileSdk = "android-S"
 
     const val agp = "7.1.0-alpha03"
@@ -19,10 +19,10 @@ object Versions {
     const val androidMaterial = "1.4.0"
 
     // compose
-    const val compose = "1.0.0-rc01"
+    const val compose = "1.0.0-rc02"
     const val composeConstraintLayout = "1.0.0-alpha07"
     const val pagingCompose = "1.0.0-alpha11"
-    const val accompanist = "0.13.0"
+    const val accompanist = "0.14.0"
 
     const val workManager = "2.7.0-alpha04"
     const val paging = "3.0.0"
@@ -34,6 +34,7 @@ object Versions {
     const val dagger = "2.37"
     const val timber = "4.7.1"
     const val glide = "4.11.0"
+    const val coil = "1.3.0"
     const val facebookSdk = "8.2.0"
     const val okhttp = "4.9.1"
     const val gson = "2.8.6"
@@ -56,6 +57,8 @@ object Versions {
     const val dataStore = "1.0.0-beta01"
 
     const val autoValueAnnotation = "1.6.3"
+
+    const val leakCanary = "2.7"
 
     // testing
     const val junit = "4.13.2"
