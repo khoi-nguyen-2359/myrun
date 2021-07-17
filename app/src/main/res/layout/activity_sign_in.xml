@@ -58,30 +58,5 @@
             android:textAllCaps="false"
             app:icon="@drawable/ic_facebook" />
 
-        <TextView
-            android:id="@+id/adjacent_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingVertical="@dimen/common_page_section_vertical_spacing"
-            android:text="@string/sign_in_option_separator" />
-
-        <akio.apps.myrun.feature.signin.view.PhoneBox
-            android:id="@+id/phoneBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/common_edittext_background" />
-
-        <Space
-            android:id="@+id/spacer_1"
-            android:layout_width="wrap_content"
-            android:layout_height="15dp" />
-
-        <Button
-            android:id="@+id/send_otp_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:text="@string/action_send_otp" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

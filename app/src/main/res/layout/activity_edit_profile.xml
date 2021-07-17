@@ -50,19 +50,6 @@
                 android:lines="1"
                 android:singleLine="true" />
 
-            <akio.apps.myrun.feature.signin.view.PhoneBox
-                android:background="@drawable/common_edittext_background"
-                android:id="@+id/phoneBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                style="@style/UserProfileSectionLabel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/common_page_section_vertical_spacing"
-                android:text="@string/profile_physical_label" />
-
             <TextView
                 android:id="@+id/gender_text_view"
                 style="@style/CommonEditText"
@@ -70,6 +57,13 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/user_profile_hint_gender"
                 app:drawableStartCompat="@drawable/ic_person" />
+
+            <TextView
+                style="@style/UserProfileSectionLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_page_section_vertical_spacing"
+                android:text="@string/profile_physical_label" />
 
             <EditText
                 android:id="@+id/height_edit_text"

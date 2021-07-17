@@ -70,7 +70,7 @@ class SplashActivity : AppCompatActivity() {
         if (signInResult.isNewUser) {
             @Suppress("DEPRECATION")
             startActivityForResult(
-                EditProfileActivity.launchIntentForOnboarding(this),
+                EditProfileActivity.launchIntentForEditing(this),
                 RC_ON_BOARDING
             )
         } else {

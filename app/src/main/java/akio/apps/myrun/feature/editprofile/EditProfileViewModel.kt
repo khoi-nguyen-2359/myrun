@@ -6,9 +6,7 @@ import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import androidx.lifecycle.LiveData
 
-abstract class EditProfileViewModel : BaseViewModel(), UserPhoneNumberDelegate {
-    abstract val openOtp: LiveData<Event<OtpNavigationInfo>>
-
+abstract class EditProfileViewModel : BaseViewModel() {
     abstract val userProfile: LiveData<UserProfile>
 
     abstract val stravaTokenExchangedSuccess: LiveData<Event<Unit>>
@@ -17,6 +15,4 @@ abstract class EditProfileViewModel : BaseViewModel(), UserPhoneNumberDelegate {
     abstract val blankEditDisplayNameError: LiveData<Event<Unit>>
 
     abstract fun updateProfile(profileEditData: ProfileEditData)
-
-    data class OtpNavigationInfo(val phoneNumber: String)
 }
