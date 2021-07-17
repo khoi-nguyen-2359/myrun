@@ -164,9 +164,9 @@ private fun UserAvatarImage(
         painter = rememberImagePainter(
             data = activityDetail.athleteInfo.userAvatar.orEmpty(),
             builder = {
-               size(avatarSize.toInt())
-                   .placeholder(R.drawable.common_avatar_placeholder_image)
-                   .error(R.drawable.common_avatar_placeholder_image)
+                size(avatarSize.toInt())
+                    .placeholder(R.drawable.common_avatar_placeholder_image)
+                    .error(R.drawable.common_avatar_placeholder_image)
             }
         ),
         contentDescription = "Athlete avatar",

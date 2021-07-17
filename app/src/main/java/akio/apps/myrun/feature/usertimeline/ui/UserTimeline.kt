@@ -101,7 +101,9 @@ private fun UserTimelineActivityList(
     ) {
         items(lazyPagingItems) { activity ->
             if (activity != null) {
-                val activityDisplayPlaceName = remember { userTimelineViewModel.getActivityDisplayPlaceName(activity) }
+                val activityDisplayPlaceName = remember {
+                    userTimelineViewModel.getActivityDisplayPlaceName(activity)
+                }
                 TimelineActivityItem(activity, activityDisplayPlaceName, onClickActivityAction) {
                     onClickExportActivityFile(activity)
                 }
