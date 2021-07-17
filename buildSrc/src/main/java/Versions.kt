@@ -51,7 +51,7 @@ object Versions {
     const val places = "2.4.0"
     const val androidMapUtils = "2.2.3"
 
-    const val firebaseBom = "25.12.0"
+    const val firebaseBom = "28.2.1"
     const val crashlyticsGradlePlugin = "2.3.0"
 
     const val dataStore = "1.0.0-beta01"
