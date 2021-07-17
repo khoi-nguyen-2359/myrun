@@ -35,7 +35,7 @@ object Versions {
     const val timber = "4.7.1"
     const val glide = "4.11.0"
     const val coil = "1.3.0"
-    const val facebookSdk = "8.2.0"
+    const val facebookSdk = "9.1.1"
     const val okhttp = "4.9.1"
     const val gson = "2.8.6"
     const val retrofit = "2.9.0"
