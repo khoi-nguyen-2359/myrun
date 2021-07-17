@@ -7,6 +7,9 @@ plugins {
     id 'kotlin-parcelize'
 }
 
+Properties localProps = new Properties()
+localProps.load(project.rootProject.file('local.properties').newDataInputStream())
+
 android {
     compileSdkVersion Versions.compileSdk
 
@@ -27,6 +30,15 @@ android {
             keyAlias = 'myrun_debug_key_v2'
             keyPassword 'myrundebugkeyv2'
         }
+        rc {
+            def path = localProps.getProperty('signing.rc.path')
+            def password = localProps.getProperty('signing.rc.password')
+            def alias = localProps.getProperty('signing.rc.alias')
+            storeFile file(path)
+            storePassword password
+            keyAlias alias
+            keyPassword password
+        }
     }
 
     buildTypes {
@@ -40,6 +52,7 @@ android {
         rc {
             initWith release
             debuggable true
+            signingConfig signingConfigs.rc
         }
 
         debug {
