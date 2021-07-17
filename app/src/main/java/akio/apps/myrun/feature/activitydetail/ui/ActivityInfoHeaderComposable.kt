@@ -123,7 +123,7 @@ private fun ActivityTimeAndPlaceText(activityDetail: Activity, activityDisplayPl
     val activityFormattedStartTime =
         remember { activityDateTimeFormatter.formatActivityDateTime(activityDetail.startTime) }
     val context = LocalContext.current
-    val startTimeText = remember(activityDetail.id) {
+    val startTimeText = remember {
         Timber.d("making startTimeText")
         when (activityFormattedStartTime) {
             is ActivityDateTimeFormatter.Result.WithinToday -> context.getString(
@@ -165,8 +165,8 @@ private fun UserAvatarImage(
             data = activityDetail.athleteInfo.userAvatar.orEmpty(),
             builder = {
                size(avatarSize.toInt())
-               placeholder(R.drawable.common_avatar_placeholder_image)
-               error(R.drawable.common_avatar_placeholder_image)
+                   .placeholder(R.drawable.common_avatar_placeholder_image)
+                   .error(R.drawable.common_avatar_placeholder_image)
             }
         ),
         contentDescription = "Athlete avatar",

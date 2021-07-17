@@ -25,13 +25,13 @@ fun ActivityRouteImage(
     onClickAction: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
-    val imageWidth = remember { context.resources.displayMetrics.widthPixels / 2 }
+    val imageWidth = remember { (context.resources.displayMetrics.widthPixels * 0.8).toInt() }
     val imageHeight = remember { (imageWidth / ACTIVITY_ROUTE_IMAGE_RATIO).toInt() }
     val imagePainter = rememberImagePainter(
         data = activity.routeImage,
         builder = {
             size(imageWidth, imageHeight)
-            crossfade(200)
+                .crossfade(200)
         }
     )
     Image(
