@@ -82,14 +82,6 @@ class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
                     .logInWithReadPermissions(this@SignInActivity, FB_LOGIN_PERMISSIONS)
             }
 
-            phoneBox.eventListener = object : PhoneBox.EventListener {
-                override fun onPhoneBoxValueChanged(value: String?) {
-                    sendOtpButton.isEnabled = value != null
-                }
-            }
-
-            sendOtpButton.setOnClickListener { openOtp() }
-
             googleButton.setOnClickListener {
                 startGoogleSignIn()
             }
@@ -115,13 +107,6 @@ class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
         when (fragment) {
             is OtpDialogFragment -> fragment.eventListener = this
         }
-    }
-
-    private fun openOtp() {
-        val phone = viewBinding.phoneBox.getFullNumber()
-            ?: return
-        OtpDialogFragment.instantiate(phone)
-            .show(supportFragmentManager, null)
     }
 
     private fun onSignInSuccess(signInSuccessResult: SignInSuccessResult) {

@@ -22,6 +22,7 @@ import java.util.Timer
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.fixedRateTimer
 
+@Suppress("DEPRECATION")
 class OtpDialogFragment : DialogFragment() {
 
     private var resendTimer: Timer? = null
@@ -44,7 +45,7 @@ class OtpDialogFragment : DialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _viewBinding = DialogOtpBinding.inflate(inflater, container, false)
         return viewBinding.root
     }
