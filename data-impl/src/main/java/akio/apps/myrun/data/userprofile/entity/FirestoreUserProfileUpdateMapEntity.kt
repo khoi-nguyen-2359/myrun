@@ -1,7 +1,11 @@
 package akio.apps.myrun.data.userprofile.entity
 
+import com.google.firebase.firestore.PropertyName
+
 class FirestoreUserProfileUpdateMapEntity(
-    val profile: MutableMap<String, Any> = mutableMapOf()
+    @JvmField
+    @PropertyName("profile")
+    var profile: MutableMap<String, Any> = mutableMapOf()
 ) {
     fun displayName(value: String) {
         profile["displayName"] = value
