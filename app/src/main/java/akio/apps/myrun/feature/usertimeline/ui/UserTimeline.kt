@@ -9,7 +9,6 @@ import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityData
 import akio.apps.myrun.feature.usertimeline.model.RunningActivity
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,7 +36,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -62,9 +59,12 @@ fun UserTimeline(
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
     val activityStorageCount by userTimelineViewModel.activityStorageCount
         .collectAsState(initial = 0)
+    val isLoadingInitialData by userTimelineViewModel.isLoadingInitialData
+        .collectAsState(initial = true)
     Box {
         when {
-            lazyPagingItems.loadState.refresh == LoadState.Loading &&
+            isLoadingInitialData ||
+                lazyPagingItems.loadState.refresh == LoadState.Loading &&
                 lazyPagingItems.itemCount == 0 -> FullscreenLoadingView()
             lazyPagingItems.loadState.append.endOfPaginationReached &&
                 lazyPagingItems.itemCount == 0 -> UserTimelineEmptyMessage()
@@ -92,8 +92,7 @@ private fun UserTimelineActivityList(
     onClickActivityAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit
 ) {
-    val userRecentPlaceIdentifier by userTimelineViewModel.userRecentPlaceIdentifier
-        .collectAsState(initial = null)
+    Timber.d("render UserTimelineActivityList pagingItems=$lazyPagingItems")
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -103,17 +102,11 @@ private fun UserTimelineActivityList(
         items(lazyPagingItems) { activity ->
             if (activity != null) {
                 val activityDisplayPlaceName = remember {
-                    userTimelineViewModel.getActivityDisplayPlaceName(
-                        userRecentPlaceIdentifier,
-                        activity.id,
-                        activity.placeIdentifier
-                    )
+                    userTimelineViewModel.getActivityDisplayPlaceName(activity)
                 }
                 TimelineActivityItem(activity, activityDisplayPlaceName, onClickActivityAction) {
                     onClickExportActivityFile(activity)
                 }
-            } else {
-                TimelineActivityPlaceholderItem()
             }
         }
 
@@ -201,29 +194,20 @@ private fun LoadingItem() = Column(
 private fun LoadingItemPreview() = LoadingItem()
 
 @Composable
-fun TimelineActivityPlaceholderItem() = Surface(
-    elevation = 2.dp,
-    modifier = Modifier
-        .fillMaxWidth()
-        .aspectRatio(1.5f)
-) {
-    Timber.d("Render activity placeholder")
-    Image(
-        painter = painterResource(id = R.drawable.common_avatar_placeholder_image),
-        contentDescription = "Activity placeholder"
-    )
-}
-
-@Composable
 private fun TimelineActivityItem(
     activity: Activity,
-    activityDisplayPlaceName: String?,
+    activityDisplayPlaceName: String,
     onClickActivityAction: (Activity) -> Unit,
     onClickExportFile: () -> Unit
 ) = Surface(
     elevation = 2.dp,
     modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
 ) {
+    Timber.d(
+        "render TimelineActivityItem " +
+            "activity=${activity.id}" +
+            " placeName=$activityDisplayPlaceName"
+    )
     Column(modifier = Modifier.clickable { onClickActivityAction(activity) }) {
         ActivityInfoHeaderView(
             activity,
@@ -236,8 +220,8 @@ private fun TimelineActivityItem(
     }
 }
 
-private fun createActivityFormatterList(activity: Activity): List<TrackingValueFormatter> =
-    when (activity.activityType) {
+private fun createActivityFormatterList(activityType: ActivityType): List<TrackingValueFormatter> =
+    when (activityType) {
         ActivityType.Running -> listOf(
             TrackingValueFormatter.DistanceKm,
             TrackingValueFormatter.PaceMinutePerKm,
@@ -253,7 +237,7 @@ private fun createActivityFormatterList(activity: Activity): List<TrackingValueF
 
 @Composable
 private fun TimelineActivityPerformanceRow(activity: Activity) {
-    val valueFormatterList = remember { createActivityFormatterList(activity) }
+    val valueFormatterList = remember { createActivityFormatterList(activity.activityType) }
     Row(
         modifier = Modifier
             .padding(vertical = dimensionResource(id = R.dimen.common_item_vertical_padding))
