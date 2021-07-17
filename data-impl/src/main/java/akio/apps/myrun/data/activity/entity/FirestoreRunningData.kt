@@ -4,8 +4,8 @@ import com.google.firebase.firestore.PropertyName
 
 data class FirestoreRunningData(
     // stats
-    @JvmField @PropertyName("pace")
+    @PropertyName("pace")
     val pace: Double = 0.0,
-    @JvmField @PropertyName("cadence")
+    @PropertyName("cadence")
     val cadence: Int = 0
 )
