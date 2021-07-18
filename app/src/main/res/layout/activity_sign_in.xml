@@ -28,7 +28,7 @@
         <androidx.constraintlayout.helper.widget.Flow
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="google_button,facebook_button,adjacent_text_view,phoneBox,spacer_1,send_otp_button"
+            app:constraint_referenced_ids="google_button,facebook_button"
             app:flow_maxElementsWrap="1"
             app:flow_wrapMode="chain"
             app:layout_constraintBottom_toBottomOf="parent"
