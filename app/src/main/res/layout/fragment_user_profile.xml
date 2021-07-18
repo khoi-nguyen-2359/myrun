@@ -45,7 +45,7 @@
             <androidx.constraintlayout.helper.widget.Flow
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:constraint_referenced_ids="avatar_image,section_spacing_1st,basic_info_section_label_text_view,user_name_text_field,phone_text_field,section_spacing_2nd,physical_info_label_text_view,gender_text_field,height_text_field,weight_text_field,section_spacing_3,linked_apps_container,section_4_spacing,section_5_spacing,logout_button"
+                app:constraint_referenced_ids="avatar_image,section_spacing_1st,basic_info_section_label_text_view,user_name_text_field,gender_text_field,section_spacing_2nd,physical_info_label_text_view,height_text_field,weight_text_field,section_spacing_3,linked_apps_container,section_4_spacing,section_5_spacing,logout_button"
                 app:flow_maxElementsWrap="1"
                 app:flow_wrapMode="chain"
                 app:layout_constraintBottom_toTopOf="@id/bottom_guideline"
@@ -90,12 +90,12 @@
                 app:tf_label="@string/user_profile_hint_name" />
 
             <akio.apps.myrun._base.view.TextField
-                android:id="@+id/phone_text_field"
+                android:id="@+id/gender_text_field"
                 style="@style/UserProfileField"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:drawableStartCompat="@drawable/ic_call"
-                app:tf_label="@string/user_profile_hint_phone" />
+                app:drawableStartCompat="@drawable/ic_person"
+                app:tf_label="@string/user_profile_hint_gender" />
 
             <Space
                 android:id="@+id/section_spacing_2nd"
@@ -108,14 +108,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/profile_physical_label" />
-
-            <akio.apps.myrun._base.view.TextField
-                android:id="@+id/gender_text_field"
-                style="@style/UserProfileField"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:drawableStartCompat="@drawable/ic_person"
-                app:tf_label="@string/user_profile_hint_gender" />
 
             <akio.apps.myrun._base.view.TextField
                 android:id="@+id/height_text_field"

@@ -3,6 +3,7 @@ package akio.apps.myrun.feature.userprofile.impl
 import akio.apps._base.Resource
 import akio.apps._base.lifecycle.viewLifecycleScope
 import akio.apps._base.ui.SingleFragmentActivity
+import akio.apps._base.ui.ViewBindingDelegate
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.circleCenterCrop
@@ -33,7 +34,7 @@ import kotlinx.coroutines.launch
 class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
     private val dialogDelegate by lazy { DialogDelegate(requireContext()) }
-    private val viewBinding by lazy { FragmentUserProfileBinding.bind(requireView()) }
+    private val viewBinding by ViewBindingDelegate(FragmentUserProfileBinding::bind)
 
     private val profileViewModel: UserProfileViewModel by viewModel {
         DaggerUserProfileFeatureComponent.factory().create(requireActivity().application)
@@ -193,7 +194,6 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 .into(avatarImage)
 
             userNameTextField.setValue(updatedUserProfile.name)
-            phoneTextField.setValue(updatedUserProfile.phone)
             genderTextField.setValue(
                 updatedUserProfile.gender?.name?.replaceFirstChar {
                     if (it.isLowerCase()) {
