@@ -23,6 +23,4 @@ interface ActivityRepository {
     suspend fun getActivity(activityId: String): ActivityModel?
     suspend fun getActivityLocationDataPoints(activityId: String):
         List<ActivityLocation>
-
-    fun generateActivityId(userId: String): String
 }

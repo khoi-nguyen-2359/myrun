@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.activity.model
 
 data class RunningActivityModel(
-    val activityData: ActivityModel,
+    val activityData: ActivityDataModel,
 
     // stats
     val pace: Double,
