@@ -4,6 +4,7 @@ import akio.apps._base.di.AppDependantComponentFactory
 import akio.apps._base.di.FeatureScope
 import akio.apps._base.di.ViewModelFactoryProvider
 import akio.apps.myrun._di.AppComponent
+import akio.apps.myrun._di.DispatchersModule
 import akio.apps.myrun.data.authentication._di.AuthenticationDataModule
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
 import akio.apps.myrun.data.userprofile._di.UserProfileDataModule
@@ -15,7 +16,8 @@ import dagger.Component
         UserProfileFeatureModule::class,
         UserProfileDataModule::class,
         AuthenticationDataModule::class,
-        ExternalAppDataModule::class
+        ExternalAppDataModule::class,
+        DispatchersModule::class
     ],
     dependencies = [AppComponent::class]
 )

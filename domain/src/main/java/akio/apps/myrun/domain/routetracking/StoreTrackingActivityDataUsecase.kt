@@ -55,7 +55,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
             }
 
             val activitySyncAsync = async {
-                if (externalAppProvidersRepository.getStravaProviderToken(userId) != null) {
+                if (externalAppProvidersRepository.isStravaSyncEnabled()) {
                     activityLocalStorage.storeActivitySyncData(activityModel, activityLocations)
                 }
             }
