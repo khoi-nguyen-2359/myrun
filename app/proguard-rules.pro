@@ -85,13 +85,6 @@
 
 ##---------------End: proguard configuration for Kotlin Serialization  ----------
 
-##--- Remove Timber log statements ---
--assumenosideeffects class timber.log.Timber* {
-    public static *** v(...);
-    public static *** d(...);
-    public static *** i(...);
-}
-
 ##--- Added from the build generated missing rules
 -dontwarn org.bouncycastle.jsse.BCSSLParameters
 -dontwarn org.bouncycastle.jsse.BCSSLSocket
