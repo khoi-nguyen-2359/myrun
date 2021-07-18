@@ -9,8 +9,8 @@ import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import akio.apps.myrun.databinding.ActivitySignInBinding
 import akio.apps.myrun.feature.signin.SignInViewModel
 import akio.apps.myrun.feature.signin._di.DaggerSignInFeatureComponent
-import akio.apps.myrun.feature.signin.view.PhoneBox
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -34,7 +34,7 @@ import kotlinx.coroutines.withContext
 class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
 
     private val signInVM: SignInViewModel by viewModel {
-        DaggerSignInFeatureComponent.create()
+        DaggerSignInFeatureComponent.factory().create(applicationContext as Application)
     }
 
     private val viewBinding: ActivitySignInBinding by lazy {
@@ -75,8 +75,7 @@ class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
         setContentView(viewBinding.root)
 
         viewBinding.apply {
-            LoginManager.getInstance()
-                .registerCallback(facebookCallbackManager, fbCallback)
+            LoginManager.getInstance().registerCallback(facebookCallbackManager, fbCallback)
             facebookButton.setOnClickListener {
                 LoginManager.getInstance()
                     .logInWithReadPermissions(this@SignInActivity, FB_LOGIN_PERMISSIONS)

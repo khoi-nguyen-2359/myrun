@@ -8,7 +8,7 @@ object Versions {
 
     const val agp = "7.1.0-alpha03"
     const val kotlin = "1.5.10"
-    const val coroutines = "1.5.0"
+    const val coroutines = "1.5.1"
     const val kotlinSerialization = "1.2.1"
 
     const val androidxCore = "1.6.0"
