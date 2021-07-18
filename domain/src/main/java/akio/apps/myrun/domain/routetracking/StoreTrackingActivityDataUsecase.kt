@@ -1,21 +1,20 @@
 package akio.apps.myrun.domain.routetracking
 
+import akio.apps._base.ObjectAutoId
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun._di.NamedIoDispatcher
-import akio.apps.myrun.data.activity.ActivityRepository
+import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.activity.model.ActivityDataModel
+import akio.apps.myrun.data.activity.model.ActivityLocation
 import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.activity.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.model.RunningActivityModel
-import akio.apps.myrun.data.activity.ActivityLocalStorage
-import akio.apps.myrun.data.activity.model.ActivityLocation
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.domain.TrackingValueConverter
 import android.graphics.Bitmap
 import com.google.maps.android.PolyUtil
@@ -24,20 +23,23 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 
+/**
+ * Stores all information of an activity that have been tracked. Must not include any data that get
+ * from server because this works in offline mode.
+ */
 class StoreTrackingActivityDataUsecase @Inject constructor(
-    private val activityRepository: ActivityRepository,
     private val userAuthenticationState: UserAuthenticationState,
     private val routeTrackingState: RouteTrackingState,
-    private val userProfileRepository: UserProfileRepository,
     private val routeTrackingLocationRepository: RouteTrackingLocationRepository,
     private val activityLocalStorage: ActivityLocalStorage,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
+    private val objectAutoId: ObjectAutoId,
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend operator fun invoke(activityName: String, routeImageBitmap: Bitmap) =
         withContext(ioDispatcher) {
             val userId = userAuthenticationState.requireUserAccountId()
-            val activityId = activityRepository.generateActivityId(userId)
+            val activityId = objectAutoId.autoId()
             val trackedLocations = routeTrackingLocationRepository.getAllLocations()
             val activityModel =
                 createActivityInfo(userId, activityId, activityName, trackedLocations)
@@ -69,7 +71,6 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         activityName: String,
         trackedLocations: List<LocationEntity>
     ): ActivityModel {
-        val userProfile = userProfileRepository.getUserProfile(userId)
         val endTime = System.currentTimeMillis()
         val startTime = routeTrackingState.getTrackingStartTime()
         val duration = routeTrackingState.getTrackingDuration()
@@ -81,18 +82,14 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
             activityId,
             activityType,
             activityName,
-            routeImage = "", // not yet stored
+            routeImage = "", // local storage does not include
             placeIdentifier,
             startTime,
             endTime,
             duration,
             distance,
             encodedPolyline,
-            ActivityModel.AthleteInfo(
-                userProfile.accountId,
-                userProfile.name,
-                userProfile.photo,
-            )
+            ActivityModel.AthleteInfo(userId = userId) // local storage does not include
         )
         return when (activityType) {
             ActivityType.Running -> {
