@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.splash.impl
 
 import akio.apps._base.lifecycle.observeEvent
-import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.authentication.model.SignInSuccessResult
@@ -14,6 +13,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
 class SplashActivity : AppCompatActivity() {
 
@@ -25,8 +25,8 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
 
+        installSplashScreen()
         initObservers()
     }
 
@@ -55,6 +55,7 @@ class SplashActivity : AppCompatActivity() {
 
     private fun goHome() {
         startActivity(HomeActivity.clearTaskIntent(this))
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     private fun verifySignInResult(resultCode: Int, data: Intent?) {

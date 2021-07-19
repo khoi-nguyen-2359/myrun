@@ -60,6 +60,8 @@ object Versions {
 
     const val leakCanary = "2.7"
 
+    const val splashScreen = "1.0.0-alpha01"
+
     // testing
     const val junit = "4.13.2"
     const val androidXCoreTesting = "2.1.0"
