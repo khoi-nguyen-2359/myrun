@@ -5,6 +5,7 @@ plugins {
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
     id 'kotlin-parcelize'
+    id 'com.google.firebase.firebase-perf'
 }
 
 Properties localProps = new Properties()
@@ -136,6 +137,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation 'com.google.firebase:firebase-perf-ktx'
 
     implementation "androidx.room:room-runtime:$Versions.room"
 
