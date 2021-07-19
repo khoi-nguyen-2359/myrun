@@ -167,6 +167,8 @@ dependencies {
     debugImplementation project(":configurator")
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$Versions.leakCanary"
 
+    implementation "androidx.core:core-splashscreen:$Versions.splashScreen"
+
     testImplementation(testFixtures(project(':test')))
     testImplementation "junit:junit:$Versions.junit"
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
