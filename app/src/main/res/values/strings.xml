@@ -35,7 +35,7 @@
     <string name="activity_name_cycling">Ride</string>
     <string name="user_timeline_error_loading_list">There\'s an error loading activities.\nRetry.</string>
     <string name="splash_welcome_text">Let\'s start your\nfirst activity!</string>
-    <string name="sign_in_with_facebook_button">Sign in with Facebook</string>
+    <string name="sign_in_with_facebook_button">Log in with Facebook</string>
     <string name="sign_in_hint_mobile_number">Mobile Number</string>
     <string name="action_send_otp">Send OTP</string>
     <string name="action_confirm">Confirm</string>
@@ -76,7 +76,7 @@
     <string name="user_profile_title">Profile</string>
     <string name="edit_user_profile_mobile_number_update_success_message">Your phone number has been changed</string>
     <string name="action_no">No</string>
-    <string name="sign_in_with_google_button">Sign in with Google</string>
+    <string name="sign_in_with_google_button">Log in with Google</string>
     <string name="action_sign_out">Sign out</string>
     <string name="strava_app_name">Strava</string>
     <string name="user_profile_strava_description">Automatically upload your activity to Strava</string>
