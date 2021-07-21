@@ -1,21 +1,22 @@
 package akio.apps.myrun.domain.user
 
 import akio.apps._base.Resource
-import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.data.userprofile.model.UserProfile
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
 class GetUserProfileUsecase @Inject constructor(
     private val userProfileRepository: UserProfileRepository,
     private val userAuthenticationState: UserAuthenticationState
 ) {
-    fun getUserProfileFlow(): Flow<Resource<UserProfile>> {
-        val userId = userAuthenticationState.getUserAccountId()
-            ?: throw UnauthorizedUserError()
 
-        return userProfileRepository.getUserProfileFlow(userId)
+    /**
+     * [userId] is id of user to fetch data, null will load current user.
+     */
+    fun getUserProfileFlow(userId: String? = null): Flow<Resource<UserProfile>> {
+        val finalUserId = userId ?: userAuthenticationState.requireUserAccountId()
+        return userProfileRepository.getUserProfileFlow(finalUserId)
     }
 }

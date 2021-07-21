@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -65,7 +64,7 @@
             <ImageView
                 android:id="@+id/avatar_image"
                 android:layout_width="@dimen/profile_avatar_size"
-                android:layout_height="@dimen/profile_avatar_size"/>
+                android:layout_height="@dimen/profile_avatar_size" />
 
             <Space
                 android:id="@+id/section_spacing_1st"
@@ -157,8 +156,7 @@
                         android:layout_weight="1"
                         app:drawableStartCompat="@drawable/ic_settings_applications"
                         app:tf_label="@string/strava_app_name"
-                        app:tf_value="@string/user_profile_strava_description"
-                        />
+                        app:tf_value="@string/user_profile_strava_description" />
 
                     <CheckedTextView
                         android:checkMark="@drawable/common_checked_text_view_check_mark"
@@ -183,8 +181,7 @@
                         android:layout_weight="1"
                         app:drawableStartCompat="@drawable/ic_settings_applications"
                         app:tf_label="@string/google_fit_app_name"
-                        app:tf_value="@string/user_profile_google_fit_description"
-                        />
+                        app:tf_value="@string/user_profile_google_fit_description" />
 
                     <CheckedTextView
                         android:checkMark="@drawable/common_checked_text_view_check_mark"
@@ -211,6 +208,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/action_sign_out" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/current_user_view_group"
+                app:constraint_referenced_ids="edit_button, linked_apps_container, logout_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
