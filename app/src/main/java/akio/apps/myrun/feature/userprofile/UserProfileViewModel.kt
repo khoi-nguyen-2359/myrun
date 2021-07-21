@@ -14,4 +14,5 @@ abstract class UserProfileViewModel : BaseViewModel() {
     abstract fun getProvidersAlive(): LiveData<Resource<ExternalProviders>>
     abstract fun unlinkProvider(unlinkProviderToken: ProviderToken<out ExternalAppToken>)
     abstract fun logout()
+    abstract fun isCurrentUser(): Boolean
 }

@@ -57,7 +57,7 @@ class GetUserProfileUsecaseTest {
 
         // when
         runBlockingTest {
-            val userProfileFlow = testee.getUserProfileFlow()
+            val userProfileFlow = testee.getUserProfileFlow(params.userId)
             userProfileFlow.collect { userProfileResource ->
                 assertEquals(userProfile, userProfileResource.data)
             }
@@ -83,7 +83,7 @@ class GetUserProfileUsecaseTest {
         whenever(userAuthenticationState.getUserAccountId()).thenReturn(null)
 
         // when
-        testee.getUserProfileFlow()
+        testee.getUserProfileFlow(params.userId)
 
         // then
         verify(userAuthenticationState).getUserAccountId()

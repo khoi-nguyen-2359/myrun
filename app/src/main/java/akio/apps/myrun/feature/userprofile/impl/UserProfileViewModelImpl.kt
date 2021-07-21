@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.userprofile.impl
 
 import akio.apps._base.Resource
 import akio.apps._base.lifecycle.Event
+import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.ProviderToken
 import akio.apps.myrun.data.externalapp.model.RunningApp
@@ -23,11 +24,13 @@ import javax.inject.Inject
 
 class UserProfileViewModelImpl @Inject constructor(
     private val application: Application,
+    private val params: Params,
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val getProviderTokensUsecase: GetProviderTokensUsecase,
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
     private val removeStravaTokenUsecase: RemoveStravaTokenUsecase,
-    private val logoutUsecase: LogoutUsecase
+    private val logoutUsecase: LogoutUsecase,
+    private val userAuthenticationState: UserAuthenticationState
 ) : UserProfileViewModel() {
 
     private val _isInlineLoading = MutableLiveData<Boolean>()
@@ -36,7 +39,7 @@ class UserProfileViewModelImpl @Inject constructor(
     private val liveUserProfile = MutableLiveData<UserProfile>()
     override fun getUserProfileAlive(): LiveData<UserProfile> = liveUserProfile
 
-    private val liveUserProfileResource = getUserProfileUsecase.getUserProfileFlow()
+    private val liveUserProfileResource = getUserProfileUsecase.getUserProfileFlow(params.userId)
         .asLiveData(timeoutInMs = 0)
 
     private val liveProviders = getProviderTokensUsecase.getProviderTokensFlow()
@@ -68,6 +71,10 @@ class UserProfileViewModelImpl @Inject constructor(
         }
     }
 
+    override fun isCurrentUser(): Boolean =
+        params.userId == userAuthenticationState.getUserAccountId() ||
+            params.userId == null
+
     override fun unlinkProvider(unlinkProviderToken: ProviderToken<out ExternalAppToken>) {
         launchCatching {
             when (unlinkProviderToken.runningApp) {
@@ -79,8 +86,10 @@ class UserProfileViewModelImpl @Inject constructor(
     private suspend fun deauthorizeStrava() {
         deauthorizeStravaUsecase.deauthorizeStrava()
         removeStravaTokenUsecase.removeStravaToken()
-
+        EditProfileViewModelImplTest.kt
         WorkManager.getInstance(application)
             .cancelUniqueWork(UploadStravaFileWorker.UNIQUE_WORK_NAME)
     }
+
+    data class Params(val userId: String?)
 }

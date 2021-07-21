@@ -25,6 +25,8 @@ import android.view.View
 import android.widget.CheckedTextView
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
@@ -36,8 +38,13 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     private val dialogDelegate by lazy { DialogDelegate(requireContext()) }
     private val viewBinding by ViewBindingDelegate(FragmentUserProfileBinding::bind)
 
+    private val userId: String? by lazy { arguments?.getString(ARG_USER_ID) }
+
     private val profileViewModel: UserProfileViewModel by viewModel {
-        DaggerUserProfileFeatureComponent.factory().create(requireActivity().application)
+        DaggerUserProfileFeatureComponent.factory().create(
+            UserProfileViewModelImpl.Params(userId),
+            requireActivity().application
+        )
     }
 
     private val googleFitLinkingDelegate = GoogleFitLinkingDelegate()
@@ -110,6 +117,8 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
             editButton.setOnClickListener { openProfileDetails() }
             logoutButton.setOnClickListener { logout() }
             swipeRefreshLayout.isEnabled = false
+
+            currentUserViewGroup.isVisible = profileViewModel.isCurrentUser()
         }
     }
 
@@ -238,7 +247,18 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         const val RC_ACTIVITY_RECOGNITION_PERMISSION = 1
         const val RC_FITNESS_DATA_PERMISSION = 2
 
-        fun launchIntent(context: Context) =
+        /**
+         * Pass user id to fetch data, null value is for current user.
+         */
+        private const val ARG_USER_ID = "ARG_USER_ID"
+
+        fun intentForUserId(context: Context, userId: String) =
+            SingleFragmentActivity.launchIntent<UserProfileFragment>(
+                context,
+                bundleOf(ARG_USER_ID to userId)
+            )
+
+        fun intentForCurrentUser(context: Context): Intent =
             SingleFragmentActivity.launchIntent<UserProfileFragment>(context)
     }
 

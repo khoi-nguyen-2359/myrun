@@ -5,6 +5,7 @@ import akio.apps.myrun.feature.activitydetail._di.DaggerActivityDetailFeatureCom
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.activityexport.ActivityExportService
 import akio.apps.myrun.feature.activityroutemap.ui.ActivityRouteMapActivity
+import akio.apps.myrun.feature.userprofile.impl.UserProfileFragment
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import android.content.Context
 import android.content.Intent
@@ -28,12 +29,16 @@ class ActivityDetailActivity : AppCompatActivity() {
             ActivityDetailScreen(
                 activityDetailViewModel,
                 ::openActivityRouteMap,
-                ::startActivityExportService
+                ::startActivityExportService,
+                ::openUserProfile
             )
         }
 
         activityDetailViewModel.loadActivityDetails()
     }
+
+    private fun openUserProfile(userId: String) =
+        startActivity(UserProfileFragment.intentForUserId(this, userId))
 
     private fun startActivityExportService(activity: Activity) {
         val intent = ActivityExportService.createAddActivityIntent(

@@ -54,7 +54,8 @@ fun UserTimeline(
     userTimelineViewModel: UserTimelineViewModel,
     contentPadding: PaddingValues,
     onClickActivityAction: (Activity) -> Unit,
-    onClickExportActivityFile: (Activity) -> Unit
+    onClickExportActivityFile: (Activity) -> Unit,
+    onClickUserAvatar: (String) -> Unit
 ) {
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
     val activityStorageCount by userTimelineViewModel.activityStorageCount
@@ -73,7 +74,8 @@ fun UserTimeline(
                 contentPadding,
                 lazyPagingItems,
                 onClickActivityAction,
-                onClickExportActivityFile
+                onClickExportActivityFile,
+                onClickUserAvatar
             )
         }
 
@@ -90,7 +92,8 @@ private fun UserTimelineActivityList(
     contentPadding: PaddingValues,
     lazyPagingItems: LazyPagingItems<Activity>,
     onClickActivityAction: (Activity) -> Unit,
-    onClickExportActivityFile: (Activity) -> Unit
+    onClickExportActivityFile: (Activity) -> Unit,
+    onClickUserAvatar: (String) -> Unit
 ) {
     Timber.d("render UserTimelineActivityList pagingItems=$lazyPagingItems")
     LazyColumn(
@@ -104,9 +107,11 @@ private fun UserTimelineActivityList(
                 val activityDisplayPlaceName = remember {
                     userTimelineViewModel.getActivityDisplayPlaceName(activity)
                 }
-                TimelineActivityItem(activity, activityDisplayPlaceName, onClickActivityAction) {
-                    onClickExportActivityFile(activity)
-                }
+                TimelineActivityItem(
+                    activity, activityDisplayPlaceName, onClickActivityAction,
+                    { onClickExportActivityFile(activity) },
+                    { onClickUserAvatar(activity.athleteInfo.userId) }
+                )
             }
         }
 
@@ -198,7 +203,8 @@ private fun TimelineActivityItem(
     activity: Activity,
     activityDisplayPlaceName: String,
     onClickActivityAction: (Activity) -> Unit,
-    onClickExportFile: () -> Unit
+    onClickExportFile: () -> Unit,
+    onClickUserAvatar: () -> Unit
 ) = Surface(
     elevation = 2.dp,
     modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
@@ -213,6 +219,7 @@ private fun TimelineActivityItem(
             activity,
             activityDisplayPlaceName,
             onClickExportFile,
+            onClickUserAvatar,
             isShareMenuVisible = false
         )
         ActivityRouteImage(activity)
@@ -301,6 +308,7 @@ private fun PreviewTimelineActivityItem() {
         ),
         activityDisplayPlaceName = "activityDisplayPlaceName",
         onClickActivityAction = { },
-        onClickExportFile = { }
+        onClickExportFile = { },
+        onClickUserAvatar = { }
     )
 }
