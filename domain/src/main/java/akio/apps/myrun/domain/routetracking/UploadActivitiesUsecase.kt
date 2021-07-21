@@ -7,7 +7,6 @@ import akio.apps.myrun.data.activity.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.userprofile.UserProfileRepository
-import timber.log.Timber
 import javax.inject.Inject
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -21,10 +20,7 @@ class UploadActivitiesUsecase @Inject constructor(
     suspend fun uploadAll(onUploadActivityStarted: ((ActivityModel) -> Unit)? = null): Boolean {
         var isCompleted = true
         activityLocalStorage.loadAllActivityStorageDataFlow()
-            .catch { exception ->
-                isCompleted = false
-                Timber.e(exception)
-            }
+            .catch { isCompleted = false }
             .collect { storageData ->
                 val activityModel = updateAthleteInfo(storageData.activityModel)
                 onUploadActivityStarted?.invoke(activityModel)
