@@ -4,4 +4,8 @@
         android:fromXDelta="0"
         android:toXDelta="100%p"
         android:duration="@integer/activity_transition_duration" />
+    <alpha
+        android:fromAlpha="1.0"
+        android:toAlpha="0.0"
+        android:duration="@integer/activity_transition_duration" />
 </set>
