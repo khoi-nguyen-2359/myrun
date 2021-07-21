@@ -30,6 +30,8 @@ class HomeActivity : AppCompatActivity() {
 
     private val userTimelineViewModel: UserTimelineViewModel by viewModel { homeFeatureComponent }
 
+    private val homeViewModel: HomeViewModel by viewModel { homeFeatureComponent }
+
     private val locationPermissionChecker: LocationPermissionChecker =
         LocationPermissionChecker(activity = this)
 
@@ -38,6 +40,7 @@ class HomeActivity : AppCompatActivity() {
 
         setContent {
             HomeScreen(
+                homeViewModel,
                 userTimelineViewModel,
                 onClickUserProfileButton = ::openCurrentUserProfile,
                 onClickFloatingActionButton = ::openRouteTrackingOrCheckRequiredPermission,

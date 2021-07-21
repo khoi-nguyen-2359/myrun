@@ -24,7 +24,6 @@ interface ActivityLocalStorage {
     suspend fun deleteActivityData(activityId: String)
 
     fun getActivityStorageDataCount(): Flow<Int>
-    suspend fun setActivityStorageDataCount(count: Int)
 
     /**
      * Returns all data that are pending to be synced to Strava.

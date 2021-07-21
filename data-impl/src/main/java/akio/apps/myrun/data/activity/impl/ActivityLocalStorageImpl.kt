@@ -32,7 +32,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -101,6 +100,7 @@ class ActivityLocalStorageImpl @Inject constructor(
         writeInfoAsync.join()
         writeLocationsAsync.join()
         writeRouteImageAsync.join()
+        refreshActivityStorageCount()
         Timber.d("==== [DONE] STORE ACTIVITY DATA =====")
     }
 
@@ -133,8 +133,7 @@ class ActivityLocalStorageImpl @Inject constructor(
 
     override suspend fun deleteActivityData(activityId: String) {
         createActivityStorageDirectory(activityId).storageDir.deleteRecursively()
-        val count = getActivityStorageDataCount().first()
-        setActivityStorageDataCount(count - 1)
+        refreshActivityStorageCount()
     }
 
     private suspend fun loadActivityStorageData(
@@ -166,7 +165,12 @@ class ActivityLocalStorageImpl @Inject constructor(
         }
     }
 
-    override suspend fun setActivityStorageDataCount(count: Int) {
+    private suspend fun refreshActivityStorageCount() {
+        val activityStorageRootDir = createActivityStorageRootDir()
+        setActivityStorageDataCount(activityStorageRootDir.list()?.size ?: 0)
+    }
+
+    private suspend fun setActivityStorageDataCount(count: Int) {
         prefDataStore.edit { data -> data[KEY_ACTIVITY_STORAGE_DATA_COUNT] = count }
     }
 

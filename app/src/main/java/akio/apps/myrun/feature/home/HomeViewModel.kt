@@ -1,14 +1,14 @@
 package akio.apps.myrun.feature.home
 
-import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
-import akio.apps.myrun.data.routetracking.model.LocationRequestConfig
+import akio.apps.myrun.data.activity.ActivityLocalStorage
 import androidx.lifecycle.ViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 class HomeViewModel @Inject constructor(
-    private val routeTrackingConfiguration: RouteTrackingConfiguration
+    private val activityLocalStorage: ActivityLocalStorage
 ) : ViewModel() {
-    suspend fun getLocationRequest(): LocationRequestConfig =
-        routeTrackingConfiguration.getLocationRequestConfig().first()
+    val activityStorageCount: Flow<Int> =
+        activityLocalStorage.getActivityStorageDataCount().distinctUntilChanged()
 }
