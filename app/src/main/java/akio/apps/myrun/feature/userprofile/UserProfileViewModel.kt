@@ -13,6 +13,7 @@ abstract class UserProfileViewModel : BaseViewModel() {
     abstract fun getUserProfileAlive(): LiveData<UserProfile>
     abstract fun getProvidersAlive(): LiveData<Resource<ExternalProviders>>
     abstract fun unlinkProvider(unlinkProviderToken: ProviderToken<out ExternalAppToken>)
-    abstract fun logout()
+    abstract suspend fun logout()
     abstract fun isCurrentUser(): Boolean
+    abstract suspend fun getActivityUploadCount(): Int
 }

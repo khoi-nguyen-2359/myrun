@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.userprofile.impl
 
 import akio.apps._base.Resource
+import akio.apps._base.lifecycle.viewLifecycleScope
 import akio.apps._base.ui.SingleFragmentActivity
 import akio.apps._base.ui.ViewBindingDelegate
 import akio.apps.myrun.R
@@ -25,11 +26,13 @@ import android.widget.CheckedTextView
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
+import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
@@ -67,7 +70,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     private fun initViews() {
         viewBinding.apply {
             editButton.setOnClickListener { openProfileDetails() }
-            logoutButton.setOnClickListener { logout() }
+            logoutButton.setOnClickListener { showLogoutAlert() }
             swipeRefreshLayout.isEnabled = false
 
             currentUserViewGroup.isVisible = profileViewModel.isCurrentUser()
@@ -134,15 +137,29 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
             .show()
     }
 
-    private fun logout() {
+    private fun showLogoutAlert() = viewLifecycleScope.launch {
+        val uploadCount = profileViewModel.getActivityUploadCount()
+        val alertMessage = buildSpannedString {
+            append(getString(R.string.profile_logout_confirmation))
+            if (uploadCount > 0) {
+                appendLine()
+                append(getText(R.string.profile_logout_pending_activity_upload_warning))
+            }
+        }
         AlertDialog.Builder(requireContext())
-            .setMessage(R.string.profile_logout_confirmation)
+            .setMessage(alertMessage)
             .setNegativeButton(R.string.action_no, null)
             .setPositiveButton(R.string.action_yes) { _, _ ->
-                profileViewModel.logout()
-                startActivity(SplashActivity.clearTaskIntent(requireContext()))
+                logout()
             }
             .show()
+    }
+
+    private fun logout() = viewLifecycleScope.launch {
+        dialogDelegate.showProgressDialog()
+        profileViewModel.logout()
+        dialogDelegate.dismissProgressDialog()
+        startActivity(SplashActivity.clearTaskIntent(requireContext()))
     }
 
     private fun fillUserProfile(updatedUserProfile: UserProfile) {

@@ -115,6 +115,7 @@
     <string name="notification_channel_description_general">App general notifications</string>
     <string name="notification_channel_name_debug">Debug</string>
     <string name="notification_channel_description_debug">Available for debug only</string>
+    <string name="profile_logout_pending_activity_upload_warning">Your uploading activities <b>will be lost.</b></string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>
