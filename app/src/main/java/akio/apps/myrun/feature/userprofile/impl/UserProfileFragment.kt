@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.userprofile.impl
 
 import akio.apps._base.Resource
-import akio.apps._base.lifecycle.viewLifecycleScope
 import akio.apps._base.ui.SingleFragmentActivity
 import akio.apps._base.ui.ViewBindingDelegate
 import akio.apps.myrun.R
@@ -31,7 +30,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import java.util.Locale
-import kotlinx.coroutines.launch
 
 class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
@@ -53,63 +51,17 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
-        initGoogleFitAppView()
         initObservers()
     }
 
-    private fun initGoogleFitAppView() {
-        viewBinding.isGoogleFitLinkedCheckBox.isChecked =
-            googleFitLinkingDelegate.isGoogleFitLinked(requireActivity())
-        viewBinding.googleFitItemViewContainer.setOnClickListener {
-            if (googleFitLinkingDelegate.isGoogleFitLinked(requireActivity())) {
-                showUnlinkConfirmationDialog {
-                    viewLifecycleScope.launch {
-                        disconnectGoogleFit()
-                    }
-                }
-            } else {
-                viewLifecycleScope.launch {
-                    connectGoogleFit()
-                }
-            }
-        }
-    }
-
-    private suspend fun connectGoogleFit() {
-        dialogDelegate.toggleProgressDialog(true)
-        googleFitLinkingDelegate.requestGoogleFitPermissions(
-            requireActivity(),
-            RC_ACTIVITY_RECOGNITION_PERMISSION,
-            RC_FITNESS_DATA_PERMISSION,
-            this@UserProfileFragment
-        )
-        viewBinding.isGoogleFitLinkedCheckBox.isChecked =
-            googleFitLinkingDelegate.isGoogleFitLinked(requireActivity())
-        dialogDelegate.toggleProgressDialog(false)
-    }
-
-    private suspend fun disconnectGoogleFit() {
-        dialogDelegate.toggleProgressDialog(true)
-        val isSuccessfullyDisconnected =
-            googleFitLinkingDelegate.disconnectGoogleFit(requireActivity())
-        dialogDelegate.toggleProgressDialog(false)
-        if (!isSuccessfullyDisconnected) {
-            dialogDelegate.showErrorAlert(getString(R.string.user_profile_error_app_disconnect))
-        }
-        viewBinding.isGoogleFitLinkedCheckBox.isChecked =
-            !isSuccessfullyDisconnected
-    }
-
     private fun initObservers() {
-        profileViewModel.getUserProfileAlive()
-            .observe(viewLifecycleOwner, userProfileObserver)
+        profileViewModel.getUserProfileAlive().observe(viewLifecycleOwner, userProfileObserver)
         profileViewModel.isInlineLoading.observe(viewLifecycleOwner, inlineLoadingObserver)
         profileViewModel.isInProgress.observe(
             viewLifecycleOwner,
             dialogDelegate::toggleProgressDialog
         )
-        profileViewModel.getProvidersAlive()
-            .observe(viewLifecycleOwner, providersObserver)
+        profileViewModel.getProvidersAlive().observe(viewLifecycleOwner, providersObserver)
     }
 
     private fun initViews() {
@@ -266,7 +218,6 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         @IdRes val containerId: Int,
         @IdRes val checkBoxId: Int
     ) {
-        Strava(R.id.strava_item_view_container, R.id.is_strava_linked_check_box),
-        GoogleFit(R.id.google_fit_item_view_container, R.id.is_google_fit_linked_check_box)
+        Strava(R.id.strava_item_view_container, R.id.is_strava_linked_check_box)
     }
 }
