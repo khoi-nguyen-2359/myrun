@@ -2,12 +2,12 @@ package akio.apps.myrun.feature.userprofile.impl
 
 import akio.apps._base.Resource
 import akio.apps._base.lifecycle.Event
+import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.ProviderToken
 import akio.apps.myrun.data.externalapp.model.RunningApp
 import akio.apps.myrun.data.userprofile.model.UserProfile
-import akio.apps.myrun.domain.authentication.LogoutUsecase
 import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
 import akio.apps.myrun.domain.strava.RemoveStravaTokenUsecase
 import akio.apps.myrun.domain.user.GetProviderTokensUsecase
@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
 import androidx.work.WorkManager
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
 
 class UserProfileViewModelImpl @Inject constructor(
     private val application: Application,
@@ -29,8 +30,9 @@ class UserProfileViewModelImpl @Inject constructor(
     private val getProviderTokensUsecase: GetProviderTokensUsecase,
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
     private val removeStravaTokenUsecase: RemoveStravaTokenUsecase,
-    private val logoutUsecase: LogoutUsecase,
-    private val userAuthenticationState: UserAuthenticationState
+    private val logoutDelegate: UserLogoutDelegate,
+    private val userAuthenticationState: UserAuthenticationState,
+    private val activityLocalStorage: ActivityLocalStorage,
 ) : UserProfileViewModel() {
 
     private val _isInlineLoading = MutableLiveData<Boolean>()
@@ -65,12 +67,13 @@ class UserProfileViewModelImpl @Inject constructor(
         liveUserProfileResource.removeObserver(userProfileResourceObserver)
     }
 
-    override fun logout() {
-        launchCatching {
-            liveUserProfileResource.removeObserver(userProfileResourceObserver)
-            logoutUsecase.logout()
-        }
+    override suspend fun logout() {
+        liveUserProfileResource.removeObserver(userProfileResourceObserver)
+        logoutDelegate(application)
     }
+
+    override suspend fun getActivityUploadCount(): Int =
+        activityLocalStorage.getActivityStorageDataCountFlow().first()
 
     override fun isCurrentUser(): Boolean =
         params.userId == userAuthenticationState.getUserAccountId() ||

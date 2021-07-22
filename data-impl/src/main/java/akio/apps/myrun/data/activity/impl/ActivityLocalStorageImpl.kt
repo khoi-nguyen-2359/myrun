@@ -158,7 +158,7 @@ class ActivityLocalStorageImpl @Inject constructor(
         )
     }
 
-    override fun getActivityStorageDataCount(): Flow<Int> {
+    override fun getActivityStorageDataCountFlow(): Flow<Int> {
         return prefDataStore.data.map { data ->
             val count = data[KEY_ACTIVITY_STORAGE_DATA_COUNT] ?: 0
             return@map count
@@ -224,6 +224,12 @@ class ActivityLocalStorageImpl @Inject constructor(
 
     override fun deleteActivitySyncData(activityId: String) {
         createActivitySyncDirectory(activityId).syncDir.deleteRecursively()
+    }
+
+    override suspend fun clearAll() {
+        createActivityStorageRootDir().deleteRecursively()
+        createActivitySyncRootDir().deleteRecursively()
+        prefDataStore.edit { it.clear() }
     }
 
     private fun loadActivitySyncData(activityId: String): ActivitySyncData {

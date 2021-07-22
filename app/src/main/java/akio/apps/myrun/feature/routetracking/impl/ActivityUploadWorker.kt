@@ -92,5 +92,8 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
                     workRequest
                 )
         }
+
+        fun clear(context: Context) =
+            WorkManager.getInstance(context).cancelUniqueWork(UNIQUE_WORK_NAME)
     }
 }

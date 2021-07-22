@@ -51,5 +51,8 @@ class UploadStravaFileWorker(
             WorkManager.getInstance(context)
                 .enqueueUniqueWork(UNIQUE_WORK_NAME, ExistingWorkPolicy.KEEP, workRequest)
         }
+
+        fun clear(context: Context) =
+            WorkManager.getInstance(context).cancelUniqueWork(UNIQUE_WORK_NAME)
     }
 }

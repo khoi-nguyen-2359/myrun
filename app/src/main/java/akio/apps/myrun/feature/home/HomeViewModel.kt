@@ -10,5 +10,5 @@ class HomeViewModel @Inject constructor(
     private val activityLocalStorage: ActivityLocalStorage
 ) : ViewModel() {
     val activityStorageCount: Flow<Int> =
-        activityLocalStorage.getActivityStorageDataCount().distinctUntilChanged()
+        activityLocalStorage.getActivityStorageDataCountFlow().distinctUntilChanged()
 }

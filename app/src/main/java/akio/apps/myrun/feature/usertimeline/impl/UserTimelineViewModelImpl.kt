@@ -54,7 +54,7 @@ class UserTimelineViewModelImpl @Inject constructor(
     }
 
     private fun observeActivityUploadCount() = viewModelScope.launch {
-        activityLocalStorage.getActivityStorageDataCount()
+        activityLocalStorage.getActivityStorageDataCountFlow()
             .distinctUntilChanged()
             .collect {
                 activityPagingSource?.invalidate()
