@@ -116,12 +116,10 @@ class SignInActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 try {
                     val account = withContext(Dispatchers.IO) {
-                        GoogleSignIn.getSignedInAccountFromIntent(data)
-                            .await()
+                        GoogleSignIn.getSignedInAccountFromIntent(data).await()
                     }
                     signInVM.signInWithGoogleToken(account.idToken!!)
                 } catch (e: ApiException) {
-                    dialogDelegate.showExceptionAlert(e)
                 }
             }
         }
