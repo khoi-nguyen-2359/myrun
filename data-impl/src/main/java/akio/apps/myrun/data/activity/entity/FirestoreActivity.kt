@@ -8,7 +8,7 @@ data class FirestoreActivity(
 
     // activity info
     @PropertyName("activityType")
-    val activityType: FirestoreActivityType = FirestoreActivityType.Unknown,
+    val activityType: Int = FirestoreActivityType.Unknown.id,
     @PropertyName("name")
     val name: String = "",
     @PropertyName("routeImage")

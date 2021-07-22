@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class FirestoreActivityMapper @Inject constructor() {
     fun map(input: FirestoreActivity): ActivityModel {
-        val activityType = when (input.activityType) {
+        val activityType = when (FirestoreActivityType.fromId(input.activityType)) {
             FirestoreActivityType.Running -> ActivityType.Running
             FirestoreActivityType.Cycling -> ActivityType.Cycling
             else -> ActivityType.Unknown
@@ -62,7 +62,7 @@ class FirestoreActivityMapper @Inject constructor() {
         return with(input) {
             FirestoreActivity(
                 id = createdId,
-                activityType = activityType,
+                activityType = activityType.id,
                 name = name,
                 routeImage = uploadedUri.toString(),
                 placeIdentifier = input.placeIdentifier,
