@@ -67,6 +67,7 @@ class UserProfileViewModelImpl @Inject constructor(
 
     override fun logout() {
         launchCatching {
+            liveUserProfileResource.removeObserver(userProfileResourceObserver)
             logoutUsecase.logout()
         }
     }
