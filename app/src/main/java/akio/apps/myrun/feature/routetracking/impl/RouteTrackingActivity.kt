@@ -412,6 +412,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     @SuppressLint("MissingPermission")
     private fun initMapView(map: GoogleMap) {
         this.mapView = map
+        map.setMaxZoomPreference(MAX_MAP_ZOOM_LEVEL)
         map.setOnMyLocationButtonClickListener {
             isStickyCamera = true
             false
@@ -456,7 +457,8 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     companion object {
-        val MAP_LATLNG_BOUND_PADDING = 30.dp2px.toInt()
+        private val MAP_LATLNG_BOUND_PADDING = 30.dp2px.toInt()
+        private const val MAX_MAP_ZOOM_LEVEL = 19f // 20 = buildings level
         const val ROUTE_IMAGE_RATIO = 1.7f
 
         const val RC_LOCATION_SERVICE = 1
