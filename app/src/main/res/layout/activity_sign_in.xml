@@ -26,7 +26,6 @@
             app:layout_constraintGuide_end="@dimen/sign_in_page_horizontal_padding" />
 
         <androidx.constraintlayout.helper.widget.Flow
-            app:flow_verticalGap="4dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="google_button,facebook_button"
