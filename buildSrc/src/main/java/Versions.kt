@@ -28,7 +28,6 @@ object Versions {
     const val paging = "3.0.0"
     const val room = "2.3.0"
     const val lifecycle = "2.4.0-alpha02"
-    const val lifecycleExtension = "2.2.0"
     const val multidex = "1.0.3"
 
     const val dagger = "2.37"

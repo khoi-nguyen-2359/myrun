@@ -148,10 +148,10 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$Versions.retrofit"
 
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$Versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-extensions:$Versions.lifecycleExtension"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$Versions.lifecycle"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$Versions.lifecycle"
     implementation "androidx.lifecycle:lifecycle-common-java8:$Versions.lifecycle"
+    implementation "androidx.lifecycle:lifecycle-process:$Versions.lifecycle"
 
     implementation "com.jakewharton.timber:timber:$Versions.timber"
 
