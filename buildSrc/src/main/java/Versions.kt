@@ -21,7 +21,7 @@ object Versions {
     // compose
     const val compose = "1.0.0-rc02"
     const val composeConstraintLayout = "1.0.0-alpha07"
-    const val pagingCompose = "1.0.0-alpha11"
+    const val pagingCompose = "1.0.0-alpha12"
     const val accompanist = "0.14.0"
 
     const val workManager = "2.7.0-alpha04"
