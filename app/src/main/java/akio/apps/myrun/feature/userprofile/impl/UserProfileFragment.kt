@@ -22,9 +22,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.CheckedTextView
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.os.bundleOf
 import androidx.core.text.buildSpannedString
 import androidx.core.view.isVisible
@@ -78,7 +78,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     }
 
     private val providersObserver = Observer<Resource<ExternalProviders>> {
-        it.data?.let { showLinkedRunningApps(it) }
+        it.data?.let(::showLinkedRunningApps)
     }
 
     private val inlineLoadingObserver = Observer<Boolean> {
@@ -97,7 +97,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         viewBinding.apply {
             linkedAppMap.forEach { (viewIds, token) ->
                 val itemViewContainer = linkedAppsContainer.findViewById<View>(viewIds.containerId)
-                itemViewContainer.findViewById<CheckedTextView>(viewIds.checkBoxId).isChecked =
+                itemViewContainer.findViewById<SwitchCompat>(viewIds.checkBoxId).isChecked =
                     token != null
                 if (token != null) {
                     itemViewContainer.setOnClickListener {

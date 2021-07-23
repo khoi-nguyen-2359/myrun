@@ -79,7 +79,7 @@
     <string name="sign_in_with_google_button">Log in with Google</string>
     <string name="action_sign_out">Sign out</string>
     <string name="strava_app_name">Strava</string>
-    <string name="user_profile_strava_description">Automatically upload your activity to Strava</string>
+    <string name="user_profile_strava_description">Sync your new activity to Strava automatically.</string>
     <string name="google_fit_app_name">Google Fit</string>
     <string name="user_profile_google_fit_description">Access to Google Fit fitness data</string>
     <string name="user_profile_error_app_disconnect">Can not disconnect app at the moment</string>
@@ -116,6 +116,7 @@
     <string name="notification_channel_name_debug">Debug</string>
     <string name="notification_channel_description_debug">Available for debug only</string>
     <string name="profile_logout_pending_activity_upload_warning">Your uploading activities <b>will be lost.</b></string>
+    <string name="content_description_edit_profile_button">Edit Profile button</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>
