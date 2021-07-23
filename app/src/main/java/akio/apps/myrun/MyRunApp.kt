@@ -11,8 +11,10 @@ import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
 import akio.apps.myrun.feature.routetracking.impl.UpdateUserRecentPlaceWorker
 import android.app.Application
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration
@@ -26,7 +28,7 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
-class MyRunApp : Application(), LifecycleObserver, AppComponent.Holder, Configuration.Provider {
+class MyRunApp : Application(), DefaultLifecycleObserver, AppComponent.Holder, Configuration.Provider {
 
     @Inject
     lateinit var routeTrackingState: RouteTrackingState
@@ -46,7 +48,7 @@ class MyRunApp : Application(), LifecycleObserver, AppComponent.Holder, Configur
     private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO + exceptionHandler)
 
     override fun onCreate() {
-        super.onCreate()
+        super<Application>.onCreate()
 
         // create all notification channels at app startup.
         AppNotificationChannel.values().forEach { it.createChannelCompat(this) }
@@ -68,8 +70,7 @@ class MyRunApp : Application(), LifecycleObserver, AppComponent.Holder, Configur
         Places.initialize(applicationContext, getString(R.string.google_api_key))
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun onAppStarted() {
+    override fun onStart(owner: LifecycleOwner) {
         ioScope.launch {
             if (routeTrackingState.getTrackingStatus() == RouteTrackingStatus.RESUMED &&
                 !RouteTrackingService.isTrackingServiceRunning(this@MyRunApp)
