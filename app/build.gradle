@@ -8,8 +8,11 @@ plugins {
     id 'com.google.firebase.firebase-perf'
 }
 
+File localPropsFile = project.rootProject.file('local.properties')
 Properties localProps = new Properties()
-localProps.load(project.rootProject.file('local.properties').newDataInputStream())
+if (localPropsFile.exists()) {
+    localProps.load(localPropsFile.newDataInputStream())
+}
 
 android {
     compileSdkVersion Versions.compileSdk
@@ -32,7 +35,7 @@ android {
             keyPassword 'myrundebugkeyv2'
         }
         rc {
-            def path = localProps.getProperty('signing.rc.path')
+            def path = localProps.getProperty('signing.rc.path') ?: "signing.rc.path"
             def password = localProps.getProperty('signing.rc.password')
             def alias = localProps.getProperty('signing.rc.alias')
             storeFile file(path)

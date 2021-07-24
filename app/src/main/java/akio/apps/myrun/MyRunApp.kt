@@ -12,23 +12,24 @@ import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
 import akio.apps.myrun.feature.routetracking.impl.UpdateUserRecentPlaceWorker
 import android.app.Application
 import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration
 import com.google.android.libraries.places.api.Places
+import timber.log.Timber
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
-import javax.inject.Inject
 
-class MyRunApp : Application(), DefaultLifecycleObserver, AppComponent.Holder, Configuration.Provider {
+class MyRunApp :
+    Application(),
+    DefaultLifecycleObserver,
+    AppComponent.Holder,
+    Configuration.Provider {
 
     @Inject
     lateinit var routeTrackingState: RouteTrackingState
