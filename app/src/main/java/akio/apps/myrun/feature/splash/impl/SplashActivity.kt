@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.splash.impl
 
 import akio.apps._base.lifecycle.observeEvent
-import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.authentication.model.SignInSuccessResult
@@ -14,6 +13,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SplashActivity : AppCompatActivity() {
 
@@ -23,10 +26,13 @@ class SplashActivity : AppCompatActivity() {
 
     private val dialogDelegate by lazy { DialogDelegate(this) }
 
+    private val splashStartTime: Long = System.currentTimeMillis()
+    private var shouldKeepSplashVisible: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
 
+        installSplashScreen().setKeepVisibleCondition { shouldKeepSplashVisible }
         initObservers()
     }
 
@@ -35,12 +41,17 @@ class SplashActivity : AppCompatActivity() {
         observeEvent(splashViewModel.isUserSignedIn, ::onUserSignIn)
     }
 
-    private fun onUserSignIn(isSignedIn: Boolean) {
+    private fun onUserSignIn(isSignedIn: Boolean) = lifecycleScope.launch {
+        val delayMore = SPLASH_MIN_SHOWTIME - (System.currentTimeMillis() - splashStartTime)
+        if (delayMore > 0) {
+            delay(delayMore)
+        }
+        shouldKeepSplashVisible = false
         if (isSignedIn) {
             goHome()
         } else {
             @Suppress("DEPRECATION")
-            startActivityForResult(SignInActivity.launchIntent(this), RC_SIGN_IN)
+            startActivityForResult(SignInActivity.launchIntent(this@SplashActivity), RC_SIGN_IN)
         }
     }
 
@@ -70,7 +81,7 @@ class SplashActivity : AppCompatActivity() {
         if (signInResult.isNewUser) {
             @Suppress("DEPRECATION")
             startActivityForResult(
-                EditProfileActivity.launchIntentForOnboarding(this),
+                EditProfileActivity.launchIntentForEditing(this),
                 RC_ON_BOARDING
             )
         } else {
@@ -81,6 +92,8 @@ class SplashActivity : AppCompatActivity() {
     companion object {
         const val RC_SIGN_IN = 1
         const val RC_ON_BOARDING = 2
+
+        private const val SPLASH_MIN_SHOWTIME = 700
 
         fun clearTaskIntent(context: Context) = Intent(context, SplashActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)

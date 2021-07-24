@@ -142,9 +142,6 @@ class FirebaseActivityRepository @Inject constructor(
         FirestoreLocationDataPointParser().build(activityId, firestoreLocationDataPoints.data)
     }
 
-    override fun generateActivityId(userId: String): String =
-        getUserActivityCollection(userId).document().id
-
     override suspend fun getActivity(
         activityId: String
     ): ActivityModel? = withContext(ioDispatcher) {

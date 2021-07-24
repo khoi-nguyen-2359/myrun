@@ -56,7 +56,7 @@ sealed class TrackingValueFormatter(
             R.string.performance_unit_speed
         ) {
         override fun getFormattedValue(activity: Activity): String =
-            "${(activity as? CyclingActivity)?.speed ?: 0.0}"
+            String.format("%.2f", (activity as? CyclingActivity)?.speed ?: 0.0)
     }
 
     object DurationHourMinuteSecond :

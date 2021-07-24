@@ -9,13 +9,12 @@ import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import akio.apps.myrun.databinding.ActivitySignInBinding
 import akio.apps.myrun.feature.signin.SignInViewModel
 import akio.apps.myrun.feature.signin._di.DaggerSignInFeatureComponent
-import akio.apps.myrun.feature.signin.view.PhoneBox
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -25,16 +24,15 @@ import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.PhoneAuthCredential
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
+class SignInActivity : AppCompatActivity() {
 
     private val signInVM: SignInViewModel by viewModel {
-        DaggerSignInFeatureComponent.create()
+        DaggerSignInFeatureComponent.factory().create(applicationContext as Application)
     }
 
     private val viewBinding: ActivitySignInBinding by lazy {
@@ -75,20 +73,11 @@ class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
         setContentView(viewBinding.root)
 
         viewBinding.apply {
-            LoginManager.getInstance()
-                .registerCallback(facebookCallbackManager, fbCallback)
+            LoginManager.getInstance().registerCallback(facebookCallbackManager, fbCallback)
             facebookButton.setOnClickListener {
                 LoginManager.getInstance()
                     .logInWithReadPermissions(this@SignInActivity, FB_LOGIN_PERMISSIONS)
             }
-
-            phoneBox.eventListener = object : PhoneBox.EventListener {
-                override fun onPhoneBoxValueChanged(value: String?) {
-                    sendOtpButton.isEnabled = value != null
-                }
-            }
-
-            sendOtpButton.setOnClickListener { openOtp() }
 
             googleButton.setOnClickListener {
                 startGoogleSignIn()
@@ -108,26 +97,7 @@ class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
         startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN)
     }
 
-    @Suppress("DEPRECATION")
-    override fun onAttachFragment(fragment: Fragment) {
-        super.onAttachFragment(fragment)
-
-        when (fragment) {
-            is OtpDialogFragment -> fragment.eventListener = this
-        }
-    }
-
-    private fun openOtp() {
-        val phone = viewBinding.phoneBox.getFullNumber()
-            ?: return
-        OtpDialogFragment.instantiate(phone)
-            .show(supportFragmentManager, null)
-    }
-
     private fun onSignInSuccess(signInSuccessResult: SignInSuccessResult) {
-        (supportFragmentManager.findFragmentByTag(FRAGMENT_TAG_OTP_DIALOG) as? OtpDialogFragment)
-            ?.dismiss()
-
         val resultIntent = Intent()
         resultIntent.putExtra(RESULT_SIGN_RESULT_DATA, signInSuccessResult)
         setResult(Activity.RESULT_OK, resultIntent)
@@ -146,12 +116,10 @@ class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
             lifecycleScope.launch {
                 try {
                     val account = withContext(Dispatchers.IO) {
-                        GoogleSignIn.getSignedInAccountFromIntent(data)
-                            .await()
+                        GoogleSignIn.getSignedInAccountFromIntent(data).await()
                     }
                     signInVM.signInWithGoogleToken(account.idToken!!)
                 } catch (e: ApiException) {
-                    dialogDelegate.showExceptionAlert(e)
                 }
             }
         }
@@ -164,13 +132,7 @@ class SignInActivity : AppCompatActivity(), OtpDialogFragment.EventListener {
             .unregisterCallback(facebookCallbackManager)
     }
 
-    override fun onConfirmOtp(phoneAuthCredential: PhoneAuthCredential) {
-        signInVM.signInWithFirebasePhoneCredential(phoneAuthCredential)
-    }
-
     companion object {
-        const val FRAGMENT_TAG_OTP_DIALOG = "FRAGMENT_TAG_OTP_DIALOG"
-
         val FB_LOGIN_PERMISSIONS = listOf("email", "public_profile")
 
         const val RESULT_SIGN_RESULT_DATA = "RESULT_SIGN_RESULT_DATA"

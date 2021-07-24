@@ -22,8 +22,8 @@ interface ActivityModel {
     val encodedPolyline: String
 
     data class AthleteInfo(
-        val userId: String,
-        val userName: String?,
-        val userAvatar: String?
+        val userId: String = "",
+        val userName: String? = null,
+        val userAvatar: String? = null
     )
 }

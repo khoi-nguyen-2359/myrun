@@ -3,6 +3,7 @@ package akio.apps.myrun.feature.userprofile.impl
 import akio.apps._base.Resource
 import akio.apps._base.lifecycle.viewLifecycleScope
 import akio.apps._base.ui.SingleFragmentActivity
+import akio.apps._base.ui.ViewBindingDelegate
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.circleCenterCrop
@@ -21,9 +22,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.CheckedTextView
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SwitchCompat
+import androidx.core.os.bundleOf
+import androidx.core.text.buildSpannedString
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
@@ -33,10 +37,15 @@ import kotlinx.coroutines.launch
 class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
     private val dialogDelegate by lazy { DialogDelegate(requireContext()) }
-    private val viewBinding by lazy { FragmentUserProfileBinding.bind(requireView()) }
+    private val viewBinding by ViewBindingDelegate(FragmentUserProfileBinding::bind)
+
+    private val userId: String? by lazy { arguments?.getString(ARG_USER_ID) }
 
     private val profileViewModel: UserProfileViewModel by viewModel {
-        DaggerUserProfileFeatureComponent.factory().create(requireActivity().application)
+        DaggerUserProfileFeatureComponent.factory().create(
+            UserProfileViewModelImpl.Params(userId),
+            requireActivity().application
+        )
     }
 
     private val googleFitLinkingDelegate = GoogleFitLinkingDelegate()
@@ -45,75 +54,31 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
-        initGoogleFitAppView()
         initObservers()
     }
 
-    private fun initGoogleFitAppView() {
-        viewBinding.isGoogleFitLinkedCheckBox.isChecked =
-            googleFitLinkingDelegate.isGoogleFitLinked(requireActivity())
-        viewBinding.googleFitItemViewContainer.setOnClickListener {
-            if (googleFitLinkingDelegate.isGoogleFitLinked(requireActivity())) {
-                showUnlinkConfirmationDialog {
-                    viewLifecycleScope.launch {
-                        disconnectGoogleFit()
-                    }
-                }
-            } else {
-                viewLifecycleScope.launch {
-                    connectGoogleFit()
-                }
-            }
-        }
-    }
-
-    private suspend fun connectGoogleFit() {
-        dialogDelegate.toggleProgressDialog(true)
-        googleFitLinkingDelegate.requestGoogleFitPermissions(
-            requireActivity(),
-            RC_ACTIVITY_RECOGNITION_PERMISSION,
-            RC_FITNESS_DATA_PERMISSION,
-            this@UserProfileFragment
-        )
-        viewBinding.isGoogleFitLinkedCheckBox.isChecked =
-            googleFitLinkingDelegate.isGoogleFitLinked(requireActivity())
-        dialogDelegate.toggleProgressDialog(false)
-    }
-
-    private suspend fun disconnectGoogleFit() {
-        dialogDelegate.toggleProgressDialog(true)
-        val isSuccessfullyDisconnected =
-            googleFitLinkingDelegate.disconnectGoogleFit(requireActivity())
-        dialogDelegate.toggleProgressDialog(false)
-        if (!isSuccessfullyDisconnected) {
-            dialogDelegate.showErrorAlert(getString(R.string.user_profile_error_app_disconnect))
-        }
-        viewBinding.isGoogleFitLinkedCheckBox.isChecked =
-            !isSuccessfullyDisconnected
-    }
-
     private fun initObservers() {
-        profileViewModel.getUserProfileAlive()
-            .observe(viewLifecycleOwner, userProfileObserver)
+        profileViewModel.getUserProfileAlive().observe(viewLifecycleOwner, userProfileObserver)
         profileViewModel.isInlineLoading.observe(viewLifecycleOwner, inlineLoadingObserver)
         profileViewModel.isInProgress.observe(
             viewLifecycleOwner,
             dialogDelegate::toggleProgressDialog
         )
-        profileViewModel.getProvidersAlive()
-            .observe(viewLifecycleOwner, providersObserver)
+        profileViewModel.getProvidersAlive().observe(viewLifecycleOwner, providersObserver)
     }
 
     private fun initViews() {
         viewBinding.apply {
             editButton.setOnClickListener { openProfileDetails() }
-            logoutButton.setOnClickListener { logout() }
+            logoutButton.setOnClickListener { showLogoutAlert() }
             swipeRefreshLayout.isEnabled = false
+
+            currentUserViewGroup.isVisible = profileViewModel.isCurrentUser()
         }
     }
 
     private val providersObserver = Observer<Resource<ExternalProviders>> {
-        it.data?.let { showLinkedRunningApps(it) }
+        it.data?.let(::showLinkedRunningApps)
     }
 
     private val inlineLoadingObserver = Observer<Boolean> {
@@ -132,7 +97,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         viewBinding.apply {
             linkedAppMap.forEach { (viewIds, token) ->
                 val itemViewContainer = linkedAppsContainer.findViewById<View>(viewIds.containerId)
-                itemViewContainer.findViewById<CheckedTextView>(viewIds.checkBoxId).isChecked =
+                itemViewContainer.findViewById<SwitchCompat>(viewIds.checkBoxId).isChecked =
                     token != null
                 if (token != null) {
                     itemViewContainer.setOnClickListener {
@@ -172,15 +137,29 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
             .show()
     }
 
-    private fun logout() {
+    private fun showLogoutAlert() = viewLifecycleScope.launch {
+        val uploadCount = profileViewModel.getActivityUploadCount()
+        val alertMessage = buildSpannedString {
+            append(getString(R.string.profile_logout_confirmation))
+            if (uploadCount > 0) {
+                appendLine()
+                append(getText(R.string.profile_logout_pending_activity_upload_warning))
+            }
+        }
         AlertDialog.Builder(requireContext())
-            .setMessage(R.string.profile_logout_confirmation)
+            .setMessage(alertMessage)
             .setNegativeButton(R.string.action_no, null)
             .setPositiveButton(R.string.action_yes) { _, _ ->
-                profileViewModel.logout()
-                startActivity(SplashActivity.clearTaskIntent(requireContext()))
+                logout()
             }
             .show()
+    }
+
+    private fun logout() = viewLifecycleScope.launch {
+        dialogDelegate.showProgressDialog()
+        profileViewModel.logout()
+        dialogDelegate.dismissProgressDialog()
+        startActivity(SplashActivity.clearTaskIntent(requireContext()))
     }
 
     private fun fillUserProfile(updatedUserProfile: UserProfile) {
@@ -193,7 +172,6 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 .into(avatarImage)
 
             userNameTextField.setValue(updatedUserProfile.name)
-            phoneTextField.setValue(updatedUserProfile.phone)
             genderTextField.setValue(
                 updatedUserProfile.gender?.name?.replaceFirstChar {
                     if (it.isLowerCase()) {
@@ -238,7 +216,18 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         const val RC_ACTIVITY_RECOGNITION_PERMISSION = 1
         const val RC_FITNESS_DATA_PERMISSION = 2
 
-        fun launchIntent(context: Context) =
+        /**
+         * Pass user id to fetch data, null value is for current user.
+         */
+        private const val ARG_USER_ID = "ARG_USER_ID"
+
+        fun intentForUserId(context: Context, userId: String) =
+            SingleFragmentActivity.launchIntent<UserProfileFragment>(
+                context,
+                bundleOf(ARG_USER_ID to userId)
+            )
+
+        fun intentForCurrentUser(context: Context): Intent =
             SingleFragmentActivity.launchIntent<UserProfileFragment>(context)
     }
 
@@ -246,7 +235,6 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         @IdRes val containerId: Int,
         @IdRes val checkBoxId: Int
     ) {
-        Strava(R.id.strava_item_view_container, R.id.is_strava_linked_check_box),
-        GoogleFit(R.id.google_fit_item_view_container, R.id.is_google_fit_linked_check_box)
+        Strava(R.id.strava_item_view_container, R.id.is_strava_linked_check_box)
     }
 }

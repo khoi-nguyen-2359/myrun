@@ -23,12 +23,13 @@ interface ActivityLocalStorage {
 
     suspend fun deleteActivityData(activityId: String)
 
-    fun getActivityStorageDataCount(): Flow<Int>
-    suspend fun setActivityStorageDataCount(count: Int)
+    fun getActivityStorageDataCountFlow(): Flow<Int>
 
     /**
      * Returns all data that are pending to be synced to Strava.
      */
     fun loadAllActivitySyncDataFlow(): Flow<ActivitySyncData>
     fun deleteActivitySyncData(activityId: String)
+
+    suspend fun clearAll()
 }

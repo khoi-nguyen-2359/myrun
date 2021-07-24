@@ -4,6 +4,6 @@ import com.google.firebase.firestore.PropertyName
 
 data class FirestoreCyclingData(
     // stats
-    @JvmField @PropertyName("speed")
+    @PropertyName("speed")
     val speed: Double = 0.0,
 )

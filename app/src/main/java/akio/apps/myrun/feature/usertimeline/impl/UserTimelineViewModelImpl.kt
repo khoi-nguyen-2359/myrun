@@ -11,12 +11,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import timber.log.Timber
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class UserTimelineViewModelImpl @Inject constructor(
@@ -24,16 +23,8 @@ class UserTimelineViewModelImpl @Inject constructor(
     private val createActivityDisplayPlaceNameUsecase: CreateActivityDisplayPlaceNameUsecase,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
     private val userAuthenticationState: UserAuthenticationState,
-    activityLocalStorage: ActivityLocalStorage
+    private val activityLocalStorage: ActivityLocalStorage
 ) : UserTimelineViewModel() {
-
-    override val activityStorageCount: Flow<Int> =
-        activityLocalStorage.getActivityStorageDataCount()
-            .distinctUntilChanged()
-            .onEach {
-                Timber.d("activityStorageCount = $it")
-                activityPagingSource?.invalidate()
-            }
 
     private var activityPagingSource: ActivityPagingSource? = null
 
@@ -53,6 +44,23 @@ class UserTimelineViewModelImpl @Inject constructor(
 
     private val mapActivityIdToPlaceName: MutableMap<String, String> = mutableMapOf()
 
+    private var userRecentPlaceIdentifier: PlaceIdentifier? = null
+    private val isLoadingInitialDataMutable: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    override val isLoadingInitialData: Flow<Boolean> = isLoadingInitialDataMutable
+
+    init {
+        loadInitialData()
+        observeActivityUploadCount()
+    }
+
+    private fun observeActivityUploadCount() = viewModelScope.launch {
+        activityLocalStorage.getActivityStorageDataCountFlow()
+            .distinctUntilChanged()
+            .collect {
+                activityPagingSource?.invalidate()
+            }
+    }
+
     override fun getActivityDisplayPlaceName(activity: Activity): String {
         val activityPlaceIdentifier = activity.placeIdentifier ?: return ""
         val activityId = activity.id
@@ -68,14 +76,6 @@ class UserTimelineViewModelImpl @Inject constructor(
         mapActivityIdToPlaceName[activityId] = placeName
 
         return placeName
-    }
-
-    private var userRecentPlaceIdentifier: PlaceIdentifier? = null
-    private val isLoadingInitialDataMutable: MutableStateFlow<Boolean> = MutableStateFlow(true)
-    override val isLoadingInitialData: Flow<Boolean> = isLoadingInitialDataMutable
-
-    init {
-        loadInitialData()
     }
 
     private fun loadInitialData() = viewModelScope.launch {

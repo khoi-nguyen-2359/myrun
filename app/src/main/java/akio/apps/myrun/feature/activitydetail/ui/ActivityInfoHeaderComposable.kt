@@ -7,6 +7,7 @@ import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityData
 import akio.apps.myrun.feature.usertimeline.model.RunningActivity
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,6 +48,7 @@ fun ActivityInfoHeaderView(
     activityDetail: Activity,
     activityDisplayPlaceName: String?,
     onClickExportFile: () -> Unit,
+    onClickUserAvatar: () -> Unit,
     isShareMenuVisible: Boolean = true
 ) = Column(
     modifier = Modifier
@@ -54,7 +56,7 @@ fun ActivityInfoHeaderView(
         .padding(start = dimensionResource(id = R.dimen.common_item_horizontal_padding))
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        UserAvatarImage(activityDetail = activityDetail)
+        UserAvatarImage(activityDetail = activityDetail, onClickUserAvatar)
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1.0f)) {
             AthleteNameText(activityDetail)
@@ -156,7 +158,8 @@ private fun ActivityTimeAndPlaceText(activityDetail: Activity, activityDisplayPl
 
 @Composable
 private fun UserAvatarImage(
-    activityDetail: Activity
+    activityDetail: Activity,
+    onClickUserAvatar: () -> Unit
 ) {
     val avatarDimension = dimensionResource(id = R.dimen.user_timeline_avatar_size)
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
@@ -173,6 +176,7 @@ private fun UserAvatarImage(
         modifier = Modifier
             .size(avatarDimension)
             .clip(CircleShape)
+            .clickable { onClickUserAvatar() }
     )
 }
 
@@ -201,5 +205,6 @@ private fun PreviewActivityInfoHeader() = ActivityInfoHeaderView(
         cadence = 160
     ),
     activityDisplayPlaceName = "California, Santa Clara County, San Jose",
+    {},
     {}
 )

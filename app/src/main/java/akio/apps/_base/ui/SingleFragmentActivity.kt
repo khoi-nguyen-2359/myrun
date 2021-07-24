@@ -21,9 +21,7 @@ class SingleFragmentActivity : AppCompatActivity(R.layout.activity_single_fragme
         val instance = supportFragmentManager.fragmentFactory.instantiate(classLoader, className)
 
         intent.getBundleExtra(EXT_FRAGMENT_ARGUMENTS)
-            ?.let { arguments ->
-                instance.arguments = arguments
-            }
+            ?.let { arguments -> instance.arguments = arguments }
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.single_fragment_container, instance)
@@ -37,13 +35,8 @@ class SingleFragmentActivity : AppCompatActivity(R.layout.activity_single_fragme
         inline fun <reified T : Fragment> launchIntent(
             context: Context,
             arguments: Bundle? = null
-        ): Intent {
-            return Intent(context, SingleFragmentActivity::class.java).also {
-                it.putExtra(EXT_FRAGMENT_CLASS_NAME, T::class.java.name)
-                if (arguments != null) {
-                    it.putExtra(EXT_FRAGMENT_ARGUMENTS, arguments)
-                }
-            }
-        }
+        ): Intent = Intent(context, SingleFragmentActivity::class.java)
+            .putExtra(EXT_FRAGMENT_CLASS_NAME, T::class.java.name)
+            .putExtra(EXT_FRAGMENT_ARGUMENTS, arguments)
     }
 }

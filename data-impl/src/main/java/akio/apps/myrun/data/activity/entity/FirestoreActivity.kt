@@ -3,38 +3,38 @@ package akio.apps.myrun.data.activity.entity
 import com.google.firebase.firestore.PropertyName
 
 data class FirestoreActivity(
-    @JvmField @PropertyName("id")
+    @PropertyName("id")
     val id: String = "",
 
     // activity info
-    @JvmField @PropertyName("activityType")
-    val activityType: FirestoreActivityType = FirestoreActivityType.Unknown,
-    @JvmField @PropertyName("name")
+    @PropertyName("activityType")
+    val activityType: Int = FirestoreActivityType.Unknown.id,
+    @PropertyName("name")
     val name: String = "",
-    @JvmField @PropertyName("routeImage")
+    @PropertyName("routeImage")
     val routeImage: String = "",
-    @JvmField @PropertyName("placeIdentifier")
+    @PropertyName("placeIdentifier")
     val placeIdentifier: String? = null,
 
     // stats
-    @JvmField @PropertyName("startTime")
+    @PropertyName("startTime")
     val startTime: Long = 0,
-    @JvmField @PropertyName("endTime")
+    @PropertyName("endTime")
     val endTime: Long = 0,
-    @JvmField @PropertyName("duration")
+    @PropertyName("duration")
     val duration: Long = 0,
-    @JvmField @PropertyName("distance")
+    @PropertyName("distance")
     val distance: Double = 0.0,
-    @JvmField @PropertyName("encodedPolyline")
+    @PropertyName("encodedPolyline")
     val encodedPolyline: String = "",
 
     // activity data
-    @JvmField @PropertyName("runningData")
+    @PropertyName("runningData")
     val runningData: FirestoreRunningData? = null,
-    @JvmField @PropertyName("cyclingData")
+    @PropertyName("cyclingData")
     val cyclingData: FirestoreCyclingData? = null,
 
     // user info
-    @JvmField @PropertyName("athleteInfo")
+    @PropertyName("athleteInfo")
     val athleteInfo: FirestoreActivityAthleteInfo = FirestoreActivityAthleteInfo()
 )

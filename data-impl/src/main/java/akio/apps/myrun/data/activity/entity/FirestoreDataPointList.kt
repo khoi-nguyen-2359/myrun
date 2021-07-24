@@ -5,7 +5,7 @@ import akio.apps.myrun.data.fitness.DataPoint
 import com.google.firebase.firestore.PropertyName
 
 data class FirestoreDataPointList(
-    @JvmField @PropertyName("data")
+    @PropertyName("data")
     val data: List<Double> = emptyList()
 )
 

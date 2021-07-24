@@ -2,8 +2,7 @@ package akio.apps.myrun.data.userprofile.entity
 
 import com.google.firebase.firestore.PropertyName
 
-class FirestoreUserEntity {
-    @JvmField
+data class FirestoreUserEntity(
     @PropertyName("profile")
-    var profile: FirestoreUserProfileEntity? = null
-}
+    val profile: FirestoreUserProfileEntity = FirestoreUserProfileEntity()
+)

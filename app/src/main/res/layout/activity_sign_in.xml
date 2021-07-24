@@ -28,7 +28,7 @@
         <androidx.constraintlayout.helper.widget.Flow
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="google_button,facebook_button,adjacent_text_view,phoneBox,spacer_1,send_otp_button"
+            app:constraint_referenced_ids="google_button,facebook_button"
             app:flow_maxElementsWrap="1"
             app:flow_wrapMode="chain"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -36,19 +36,34 @@
             app:layout_constraintStart_toEndOf="@id/guideline_start"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <com.google.android.material.imageview.ShapeableImageView
+            android:elevation="4dp"
+            app:layout_constraintBottom_toTopOf="@id/google_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="48dp"
+            app:srcCompat="@mipmap/ic_launcher_round"
+            app:shapeAppearance="@style/RoundShape"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+
         <Button
+            android:letterSpacing="0"
             android:id="@+id/google_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/white"
             android:paddingVertical="@dimen/sign_in_option_vertical_padding"
             android:text="@string/sign_in_with_google_button"
+            android:textSize="15sp"
             android:textAllCaps="false"
             android:textColor="@color/darkText"
             app:icon="@drawable/ic_google_signin"
             app:iconTint="@null" />
 
         <Button
+            android:letterSpacing="0"
+            android:textSize="15sp"
             android:id="@+id/facebook_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -57,31 +72,6 @@
             android:text="@string/sign_in_with_facebook_button"
             android:textAllCaps="false"
             app:icon="@drawable/ic_facebook" />
-
-        <TextView
-            android:id="@+id/adjacent_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingVertical="@dimen/common_page_section_vertical_spacing"
-            android:text="@string/sign_in_option_separator" />
-
-        <akio.apps.myrun.feature.signin.view.PhoneBox
-            android:id="@+id/phoneBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/common_edittext_background" />
-
-        <Space
-            android:id="@+id/spacer_1"
-            android:layout_width="wrap_content"
-            android:layout_height="15dp" />
-
-        <Button
-            android:id="@+id/send_otp_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:text="@string/action_send_otp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

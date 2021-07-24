@@ -7,7 +7,6 @@ import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
 import akio.apps.myrun.feature.editprofile.EditProfileViewModel
-import akio.apps.myrun.feature.editprofile.UserPhoneNumberDelegate
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -15,10 +14,9 @@ import androidx.lifecycle.asLiveData
 import javax.inject.Inject
 
 class EditProfileViewModelImpl @Inject constructor(
-    private val getUserProfileUsecase: GetUserProfileUsecase,
-    private val updateUserProfileUsecase: UpdateUserProfileUsecase,
-    private val updateUserPhoneDelegate: UserPhoneNumberDelegate
-) : EditProfileViewModel(), UserPhoneNumberDelegate by updateUserPhoneDelegate {
+    getUserProfileUsecase: GetUserProfileUsecase,
+    private val updateUserProfileUsecase: UpdateUserProfileUsecase
+) : EditProfileViewModel() {
 
     private val _blankEditDisplayNameError = MutableLiveData<Event<Unit>>()
     override val blankEditDisplayNameError: LiveData<Event<Unit>> = _blankEditDisplayNameError
@@ -31,9 +29,6 @@ class EditProfileViewModelImpl @Inject constructor(
 
     private val _userProfile = MutableLiveData<UserProfile>()
     override val userProfile: LiveData<UserProfile> = _userProfile
-
-    private val _openOpt = MutableLiveData<Event<OtpNavigationInfo>>()
-    override val openOtp: LiveData<Event<OtpNavigationInfo>> = _openOpt
 
     private val liveUserProfile = getUserProfileUsecase.getUserProfileFlow()
         .asLiveData(timeoutInMs = 0)
@@ -53,10 +48,6 @@ class EditProfileViewModelImpl @Inject constructor(
         liveUserProfile.removeObserver(userProfileObserver)
     }
 
-    private fun getCurrentPhoneNumber() = liveUserProfile.value
-        ?.data
-        ?.phone
-
     override fun updateProfile(profileEditData: ProfileEditData) {
         launchCatching {
             if (profileEditData.displayName.isBlank()) {
@@ -65,12 +56,7 @@ class EditProfileViewModelImpl @Inject constructor(
             }
 
             updateUserProfileUsecase.updateUserProfile(profileEditData)
-            val updatePhone = profileEditData.phoneNumber
-            if (updatePhone?.isNotEmpty() == true && updatePhone != getCurrentPhoneNumber()) {
-                _openOpt.value = Event(OtpNavigationInfo(updatePhone))
-            } else {
-                _updateProfileSuccess.value = Event(Unit)
-            }
+            _updateProfileSuccess.value = Event(Unit)
         }
     }
 }
