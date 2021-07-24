@@ -4,7 +4,7 @@ object Versions {
 
     const val minSdk = 21
     const val targetSdk = 30
-    const val compileSdk = "android-S"
+    const val compileSdk = 31
 
     const val agp = "7.1.0-alpha03"
     const val kotlin = "1.5.10"
