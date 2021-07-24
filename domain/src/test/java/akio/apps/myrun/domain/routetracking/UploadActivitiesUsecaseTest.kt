@@ -7,6 +7,8 @@ import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.ActivityStorageData
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.activity.model.RunningActivityModel
+import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.data.userprofile.UserProfileRepository
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
@@ -21,6 +23,8 @@ import kotlinx.coroutines.test.runBlockingTest
 @ExperimentalCoroutinesApi
 class UploadActivitiesUsecaseTest {
 
+    private lateinit var mockedUserProfileRepository: UserProfileRepository
+    private lateinit var mockedAuthenticationState: UserAuthenticationState
     private lateinit var mockedActivityLocalStorage: ActivityLocalStorage
     private lateinit var mockedActivityRepository: ActivityRepository
     private lateinit var uploadActivitiesUsecase: UploadActivitiesUsecase
@@ -29,9 +33,13 @@ class UploadActivitiesUsecaseTest {
     fun setup() {
         mockedActivityRepository = mock()
         mockedActivityLocalStorage = mock()
+        mockedAuthenticationState = mock()
+        mockedUserProfileRepository = mock()
         uploadActivitiesUsecase = UploadActivitiesUsecase(
+            mockedAuthenticationState,
             mockedActivityRepository,
-            mockedActivityLocalStorage
+            mockedActivityLocalStorage,
+            mockedUserProfileRepository
         )
     }
 
