@@ -11,23 +11,26 @@ object Versions {
     const val coroutines = "1.5.1"
     const val kotlinSerialization = "1.2.1"
 
+    // jetpack
     const val androidxCore = "1.6.0"
-    const val appCompat = "1.3.0"
-    const val activity = "1.3.0-rc01"
-    const val fragment = "1.3.5"
+    const val appCompat = "1.3.1"
+    const val activity = "1.3.0-rc02"
+    const val fragment = "1.3.6"
     const val constraintLayout = "2.0.4"
     const val androidMaterial = "1.4.0"
-
-    // compose
-    const val compose = "1.0.0-rc02"
-    const val composeConstraintLayout = "1.0.0-alpha07"
-    const val pagingCompose = "1.0.0-alpha12"
-    const val accompanist = "0.14.0"
-
-    const val workManager = "2.7.0-alpha04"
+    const val dataStore = "1.0.0-rc02"
+    const val workManager = "2.7.0-alpha05"
     const val paging = "3.0.0"
     const val room = "2.3.0"
     const val lifecycle = "2.4.0-alpha02"
+    const val splashScreen = "1.0.0-alpha01"
+
+    // compose
+    const val compose = "1.0.0-rc02"
+    const val composeConstraintLayout = "1.0.0-beta01"
+    const val pagingCompose = "1.0.0-alpha12"
+    const val accompanist = "0.14.0"
+
     const val multidex = "1.0.3"
 
     const val dagger = "2.37"
@@ -40,26 +43,25 @@ object Versions {
     const val retrofit = "2.9.0"
     const val tcxzPot = "0.2.0"
 
+    // google play
     const val playServicesGradlePlugin = "4.3.8"
     const val playServicesGcm = "17.0.0"
     const val playServicesLocation = "18.0.0"
     const val playServicesAuth = "19.0.0"
     const val playServicesFitness = "20.0.0"
-    const val androidGoogleMap = "3.1.0-beta"
 
+    // google map
+    const val androidGoogleMap = "3.1.0-beta"
     const val places = "2.4.0"
     const val androidMapUtils = "2.2.3"
 
+    // firebase
     const val firebaseBom = "28.2.1"
     const val crashlyticsGradlePlugin = "2.3.0"
-
-    const val dataStore = "1.0.0-beta01"
 
     const val autoValueAnnotation = "1.6.3"
 
     const val leakCanary = "2.7"
-
-    const val splashScreen = "1.0.0-alpha01"
 
     // testing
     const val junit = "4.13.2"

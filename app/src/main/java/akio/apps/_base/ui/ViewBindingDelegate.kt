@@ -2,9 +2,9 @@ package akio.apps._base.ui
 
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -22,9 +22,8 @@ class ViewBindingDelegate<T : ViewBinding>(
 
         if (_value == null) {
             _value = creator(thisRef.requireView())
-            thisRef.lifecycle.addObserver(object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
+            thisRef.lifecycle.addObserver(object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
                     _value = null
                     thisRef.lifecycle.removeObserver(this)
                 }
