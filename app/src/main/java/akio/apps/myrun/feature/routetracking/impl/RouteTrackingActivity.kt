@@ -155,7 +155,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     /**
-     * There are 2 types of cameLocationDataSourceImpl.ktra movements: camera tracking on drawn route and on current location
+     * There are 2 types of camera movements: camera tracking on drawn route and on current location
      * If route tracking is in progress, camera tracks the route, otherwise, camera tracks on
      * location update.
      */
@@ -281,13 +281,13 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     private fun selectStopOptionItem(selectedOptionId: StopDialogOptionId) =
         when (selectedOptionId) {
             StopDialogOptionId.Save -> saveActivity()
-            StopDialogOptionId.Discard -> discardActivity()
+            StopDialogOptionId.Discard -> showActivityDiscardAlert()
             StopDialogOptionId.Cancel -> {
                 // dialog closed, no action.
             }
         }
 
-    private fun discardActivity() {
+    private fun showActivityDiscardAlert() {
         AlertDialog.Builder(this)
             .setMessage(R.string.route_tracking_discard_activity_confirm_message)
             .setPositiveButton(R.string.action_yes) { _, _ ->
@@ -379,14 +379,14 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     private fun saveActivity() {
         lifecycleScope.launch {
+            dialogDelegate.showProgressDialog()
             val routeImageBitmap = getRouteImageBitmap()
             if (routeImageBitmap != null) {
-                dialogDelegate.showProgressDialog()
                 routeTrackingViewModel.storeActivityData(routeImageBitmap)
-                dialogDelegate.dismissProgressDialog()
                 ActivityUploadWorker.enqueue(this@RouteTrackingActivity)
                 stopTrackingServiceAndFinish()
             }
+            dialogDelegate.dismissProgressDialog()
         }
     }
 
@@ -412,6 +412,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     @SuppressLint("MissingPermission")
     private fun initMapView(map: GoogleMap) {
         this.mapView = map
+        map.setMaxZoomPreference(MAX_MAP_ZOOM_LEVEL)
         map.setOnMyLocationButtonClickListener {
             isStickyCamera = true
             false
@@ -456,7 +457,8 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     }
 
     companion object {
-        val MAP_LATLNG_BOUND_PADDING = 30.dp2px.toInt()
+        private val MAP_LATLNG_BOUND_PADDING = 30.dp2px.toInt()
+        private const val MAX_MAP_ZOOM_LEVEL = 19f // 20 = buildings level
         const val ROUTE_IMAGE_RATIO = 1.7f
 
         const val RC_LOCATION_SERVICE = 1

@@ -54,10 +54,7 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
                 @Suppress("DEPRECATION")
                 Notification.Builder(applicationContext)
             } else {
-                Notification.Builder(
-                    applicationContext,
-                    AppNotificationChannel.General.id
-                )
+                Notification.Builder(applicationContext, AppNotificationChannel.General.id)
             }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             notificationBuilder.setForegroundServiceBehavior(
@@ -95,5 +92,8 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
                     workRequest
                 )
         }
+
+        fun clear(context: Context) =
+            WorkManager.getInstance(context).cancelUniqueWork(UNIQUE_WORK_NAME)
     }
 }

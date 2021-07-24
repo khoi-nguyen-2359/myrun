@@ -2,29 +2,28 @@ package akio.apps.myrun.data.userprofile.entity
 
 import com.google.firebase.firestore.PropertyName
 
-// for Firebase object converter
-class FirestoreUserProfileEntity(
-    @JvmField @PropertyName("uid")
-    var uid: String = "",
+data class FirestoreUserProfileEntity(
+    @PropertyName("uid")
+    val uid: String = "",
 
-    @JvmField @PropertyName("displayName")
-    var displayName: String? = null,
+    @PropertyName("displayName")
+    val displayName: String? = null,
 
-    @JvmField @PropertyName("photoUrl")
-    var photoUrl: String? = null,
+    @PropertyName("photoUrl")
+    val photoUrl: String? = null,
 
-    @JvmField @PropertyName("email")
-    var email: String? = null,
+    @PropertyName("email")
+    val email: String? = null,
 
-    @JvmField @PropertyName("phoneNumber")
-    var phoneNumber: String? = null,
+    @PropertyName("phoneNumber")
+    val phoneNumber: String? = null,
 
-    @JvmField @PropertyName("gender")
-    var gender: String? = null,
+    @PropertyName("gender")
+    val gender: String? = null,
 
-    @JvmField @PropertyName("height")
-    var height: Float? = null,
+    @PropertyName("height")
+    val height: Float? = null,
 
-    @JvmField @PropertyName("weight")
-    var weight: Float? = null
+    @PropertyName("weight")
+    val weight: Float? = null
 )

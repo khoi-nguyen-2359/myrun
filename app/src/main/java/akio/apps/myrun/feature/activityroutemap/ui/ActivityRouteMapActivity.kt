@@ -37,8 +37,7 @@ class ActivityRouteMapActivity : AppCompatActivity() {
     private lateinit var map: GoogleMap
 
     private val encodedPolyline: String by lazy {
-        intent.getStringExtra(EXT_ENCODED_POLYLINE)
-            ?: throw Exception("Missing data to display activity route")
+        intent.getStringExtra(EXT_ENCODED_POLYLINE) ?: ""
     }
 
     private val decodedPolyline: List<LatLng> by lazy { PolyUtil.decode(encodedPolyline) }
@@ -46,6 +45,10 @@ class ActivityRouteMapActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(viewBinding.root)
+        if (decodedPolyline.isEmpty()) {
+            finish()
+            return
+        }
         lifecycleScope.launch {
             initMap()
             drawRoutePolylineAndZoomToBounds()

@@ -1,227 +1,208 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/swipe_refresh_layout"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/swipe_refresh_layout"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+      <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/start_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/common_page_horizontal_padding" />
+
+      <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/end_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/common_page_horizontal_padding" />
+
+      <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/bottom_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="@dimen/common_page_vertical_padding" />
+
+      <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/top_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/common_no_topbar_page_top_margin" />
+
+      <androidx.constraintlayout.helper.widget.Flow
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="avatar_image,section_spacing_1st,basic_info_section_label_text_view,user_name_text_field,gender_text_field,section_spacing_2nd,physical_info_label_text_view,height_text_field,weight_text_field,section_spacing_3"
+        app:flow_maxElementsWrap="1"
+        app:flow_wrapMode="chain"
+        app:layout_constraintTop_toBottomOf="@id/top_guideline"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toStartOf="@id/start_guideline" />
+
+      <ImageButton
+        android:padding="12dp"
+        android:background="@drawable/icon_circular_button_bg"
+        android:contentDescription="@string/content_description_edit_profile_button"
+        android:src="@drawable/ic_edit"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintTop_toBottomOf="@id/top_guideline"
+        android:id="@+id/edit_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/user_profile_edit_button" />
+
+      <ImageView
+        android:id="@+id/avatar_image"
+        android:layout_width="@dimen/profile_avatar_size"
+        android:layout_height="@dimen/profile_avatar_size" />
+
+      <Space
+        android:id="@+id/section_spacing_1st"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/user_profile_section_spacing" />
+
+      <TextView
+        android:id="@+id/basic_info_section_label_text_view"
+        style="@style/UserProfileSectionLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_basic_label"
+        app:layout_constraintEnd_toEndOf="@id/end_guideline"
+        app:layout_constraintStart_toStartOf="@id/start_guideline" />
+
+      <akio.apps.myrun._base.view.TextField
+        android:id="@+id/user_name_text_field"
+        style="@style/UserProfileField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:drawableStartCompat="@drawable/ic_face"
+        app:tf_label="@string/user_profile_hint_name" />
+
+      <akio.apps.myrun._base.view.TextField
+        android:id="@+id/gender_text_field"
+        style="@style/UserProfileField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:drawableStartCompat="@drawable/ic_person"
+        app:tf_label="@string/user_profile_hint_gender" />
+
+      <Space
+        android:id="@+id/section_spacing_2nd"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/user_profile_section_spacing" />
+
+      <TextView
+        android:id="@+id/physical_info_label_text_view"
+        style="@style/UserProfileSectionLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_physical_label" />
+
+      <akio.apps.myrun._base.view.TextField
+        android:id="@+id/height_text_field"
+        style="@style/UserProfileField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:drawableStartCompat="@drawable/ic_height"
+        app:tf_label="@string/user_profile_hint_height" />
+
+      <akio.apps.myrun._base.view.TextField
+        android:id="@+id/weight_text_field"
+        style="@style/UserProfileField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:drawableStartCompat="@drawable/ic_fitness_center"
+        app:tf_label="@string/user_profile_hint_weight" />
+
+      <Space
+        android:id="@+id/section_spacing_3"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/user_profile_section_spacing" />
+
+      <LinearLayout
+        app:layout_constraintTop_toBottomOf="@id/section_spacing_3"
+        android:id="@+id/linked_apps_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <TextView
+          android:paddingStart="@dimen/common_page_horizontal_padding"
+          android:paddingEnd="@dimen/common_page_horizontal_padding"
+          style="@style/UserProfileSectionLabel"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/profile_linked_app_section_label" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/start_guideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_begin="@dimen/common_page_horizontal_padding" />
+        <LinearLayout
+          android:paddingStart="@dimen/common_page_horizontal_padding"
+          android:paddingEnd="@dimen/common_page_horizontal_padding"
+          android:background="?selectableItemBackground"
+          android:id="@+id/strava_item_view_container"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/end_guideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_end="@dimen/common_page_horizontal_padding" />
+          <akio.apps.myrun._base.view.TextField
+            android:id="@+id/strava_app_text_field"
+            style="@style/UserProfileField"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:drawableStartCompat="@drawable/ic_settings_applications"
+            app:tf_label="@string/strava_app_name"
+            app:tf_value="@string/user_profile_strava_description" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/bottom_guideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_end="@dimen/common_page_vertical_padding" />
+          <com.google.android.material.switchmaterial.SwitchMaterial
+            android:clickable="false"
+            android:id="@+id/is_strava_linked_check_box"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:checked="true"
+            android:layout_gravity="center_vertical" />
+        </LinearLayout>
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/top_guideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_begin="@dimen/common_no_topbar_page_top_margin" />
+      </LinearLayout>
 
-            <androidx.constraintlayout.helper.widget.Flow
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:constraint_referenced_ids="avatar_image,section_spacing_1st,basic_info_section_label_text_view,user_name_text_field,phone_text_field,section_spacing_2nd,physical_info_label_text_view,gender_text_field,height_text_field,weight_text_field,section_spacing_3,linked_apps_container,section_4_spacing,section_5_spacing,logout_button"
-                app:flow_maxElementsWrap="1"
-                app:flow_wrapMode="chain"
-                app:layout_constraintBottom_toTopOf="@id/bottom_guideline"
-                app:layout_constraintTop_toBottomOf="@id/top_guideline"
-                app:layout_constraintEnd_toEndOf="@id/end_guideline"
-                app:layout_constraintStart_toStartOf="@id/start_guideline" />
+      <Space
+        app:layout_constraintTop_toBottomOf="@id/linked_apps_container"
+        app:layout_constraintStart_toStartOf="parent"
+        android:id="@+id/section_4_spacing"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/user_profile_section_spacing" />
 
-            <Button
-                app:layout_constraintEnd_toEndOf="@id/end_guideline"
-                app:layout_constraintTop_toBottomOf="@id/top_guideline"
-                android:id="@+id/edit_button"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/user_profile_edit_button" />
+      <Button
+        style="@style/Widget.MaterialComponents.Button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/section_4_spacing"
+        app:layout_constraintBottom_toTopOf="@id/bottom_guideline"
+        android:id="@+id/logout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/action_sign_out" />
 
-            <ImageView
-                android:id="@+id/avatar_image"
-                android:layout_width="@dimen/profile_avatar_size"
-                android:layout_height="@dimen/profile_avatar_size"/>
+      <androidx.constraintlayout.widget.Group
+        android:id="@+id/current_user_view_group"
+        app:constraint_referenced_ids="edit_button, linked_apps_container, logout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-            <Space
-                android:id="@+id/section_spacing_1st"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/user_profile_section_spacing" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/basic_info_section_label_text_view"
-                style="@style/UserProfileSectionLabel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/profile_basic_label"
-                app:layout_constraintEnd_toEndOf="@id/end_guideline"
-                app:layout_constraintStart_toStartOf="@id/start_guideline" />
-
-            <akio.apps.myrun._base.view.TextField
-                android:id="@+id/user_name_text_field"
-                style="@style/UserProfileField"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:drawableStartCompat="@drawable/ic_face"
-                app:tf_label="@string/user_profile_hint_name" />
-
-            <akio.apps.myrun._base.view.TextField
-                android:id="@+id/phone_text_field"
-                style="@style/UserProfileField"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:drawableStartCompat="@drawable/ic_call"
-                app:tf_label="@string/user_profile_hint_phone" />
-
-            <Space
-                android:id="@+id/section_spacing_2nd"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/user_profile_section_spacing" />
-
-            <TextView
-                android:id="@+id/physical_info_label_text_view"
-                style="@style/UserProfileSectionLabel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/profile_physical_label" />
-
-            <akio.apps.myrun._base.view.TextField
-                android:id="@+id/gender_text_field"
-                style="@style/UserProfileField"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:drawableStartCompat="@drawable/ic_person"
-                app:tf_label="@string/user_profile_hint_gender" />
-
-            <akio.apps.myrun._base.view.TextField
-                android:id="@+id/height_text_field"
-                style="@style/UserProfileField"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:drawableStartCompat="@drawable/ic_height"
-                app:tf_label="@string/user_profile_hint_height" />
-
-            <akio.apps.myrun._base.view.TextField
-                android:id="@+id/weight_text_field"
-                style="@style/UserProfileField"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:drawableStartCompat="@drawable/ic_fitness_center"
-                app:tf_label="@string/user_profile_hint_weight" />
-
-            <Space
-                android:id="@+id/section_spacing_3"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/user_profile_section_spacing" />
-
-            <LinearLayout
-                android:id="@+id/linked_apps_container"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/UserProfileSectionLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/profile_linked_app_section_label" />
-
-                <LinearLayout
-                    android:background="?selectableItemBackground"
-                    android:id="@+id/strava_item_view_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <akio.apps.myrun._base.view.TextField
-                        android:id="@+id/strava_app_text_field"
-                        style="@style/UserProfileField"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:drawableStartCompat="@drawable/ic_settings_applications"
-                        app:tf_label="@string/strava_app_name"
-                        app:tf_value="@string/user_profile_strava_description"
-                        />
-
-                    <CheckedTextView
-                        android:checkMark="@drawable/common_checked_text_view_check_mark"
-                        android:id="@+id/is_strava_linked_check_box"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:background="?selectableItemBackground"
-                    android:id="@+id/google_fit_item_view_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <akio.apps.myrun._base.view.TextField
-                        android:id="@+id/google_fit_app_text_field"
-                        style="@style/UserProfileField"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:drawableStartCompat="@drawable/ic_settings_applications"
-                        app:tf_label="@string/google_fit_app_name"
-                        app:tf_value="@string/user_profile_google_fit_description"
-                        />
-
-                    <CheckedTextView
-                        android:checkMark="@drawable/common_checked_text_view_check_mark"
-                        android:id="@+id/is_google_fit_linked_check_box"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <Space
-                android:id="@+id/section_4_spacing"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/user_profile_section_spacing" />
-
-            <Space
-                android:id="@+id/section_5_spacing"
-                android:layout_width="wrap_content"
-                android:layout_height="16dp" />
-
-            <Button
-                android:id="@+id/logout_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/action_sign_out" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </ScrollView>
+  </ScrollView>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

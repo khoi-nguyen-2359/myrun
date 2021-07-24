@@ -13,6 +13,7 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
+import dagger.Lazy
 import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,10 +21,16 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 class GooglePlaceDataSource @Inject constructor(
-    private val placesClient: PlacesClient,
+    /**
+     * Use lazy to avoid uninitialized Places when providing PlacesClient
+     */
+    private val placesClientLazy: Lazy<PlacesClient>,
     private val application: Application,
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : PlaceDataSource {
+
+    private val placesClient by lazy { placesClientLazy.get() }
+
     @SuppressLint("MissingPermission")
     override suspend fun getCurrentPlace(): PlaceEntity? = withContext(ioDispatcher) {
         val request: FindCurrentPlaceRequest =

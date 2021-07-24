@@ -3,33 +3,33 @@ package akio.apps.myrun.data.externalapp.entity
 import com.google.firebase.firestore.PropertyName
 
 data class FirestoreProvidersEntity(
-    @JvmField @PropertyName("strava")
+    @PropertyName("strava")
     val strava: FirestoreProviderToken<FirestoreStravaToken>? = null
 ) {
 
     data class FirestoreProviderToken<T>(
-        @JvmField @PropertyName("name")
+        @PropertyName("name")
         val name: String = "",
 
-        @JvmField @PropertyName("token")
+        @PropertyName("token")
         val token: T? = null
     )
 
     data class FirestoreStravaToken(
-        @JvmField @PropertyName("accessToken")
+        @PropertyName("accessToken")
         val accessToken: String = "",
 
-        @JvmField @PropertyName("refreshToken")
+        @PropertyName("refreshToken")
         val refreshToken: String = "",
 
-        @JvmField @PropertyName("athlete")
+        @PropertyName("athlete")
         val athlete: FirestoreStravaAthlete = FirestoreStravaAthlete(
             0
         )
     )
 
     data class FirestoreStravaAthlete(
-        @JvmField @PropertyName("id")
+        @PropertyName("id")
         val id: Long = 0
     )
 }

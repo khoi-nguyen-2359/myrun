@@ -14,6 +14,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import okio.IOException
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -44,7 +45,7 @@ class UpdateUserRecentPlaceWorker(
         return try {
             updateUserRecentPlaceUsecase(lat, lng)
             Result.success()
-        } catch (throwable: Throwable) {
+        } catch (throwable: IOException) {
             Timber.e(throwable)
             Result.retry()
         }

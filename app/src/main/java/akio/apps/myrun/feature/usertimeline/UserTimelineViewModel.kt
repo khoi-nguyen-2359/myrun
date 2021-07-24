@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 abstract class UserTimelineViewModel : ViewModel() {
     abstract val myActivityList: Flow<PagingData<Activity>>
-    abstract val activityStorageCount: Flow<Int>
     abstract val isLoadingInitialData: Flow<Boolean>
 
     /**

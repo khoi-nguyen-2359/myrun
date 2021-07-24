@@ -5,6 +5,13 @@ plugins {
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
     id 'kotlin-parcelize'
+    id 'com.google.firebase.firebase-perf'
+}
+
+File localPropsFile = project.rootProject.file('local.properties')
+Properties localProps = new Properties()
+if (localPropsFile.exists()) {
+    localProps.load(localPropsFile.newDataInputStream())
 }
 
 android {
@@ -27,6 +34,15 @@ android {
             keyAlias = 'myrun_debug_key_v2'
             keyPassword 'myrundebugkeyv2'
         }
+        rc {
+            def path = localProps.getProperty('signing.rc.path') ?: "signing.rc.path"
+            def password = localProps.getProperty('signing.rc.password')
+            def alias = localProps.getProperty('signing.rc.alias')
+            storeFile file(path)
+            storePassword password
+            keyAlias alias
+            keyPassword password
+        }
     }
 
     buildTypes {
@@ -40,6 +56,7 @@ android {
         rc {
             initWith release
             debuggable true
+            signingConfig signingConfigs.rc
         }
 
         debug {
@@ -123,6 +140,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation 'com.google.firebase:firebase-perf-ktx'
 
     implementation "androidx.room:room-runtime:$Versions.room"
 
@@ -133,10 +151,10 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$Versions.retrofit"
 
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$Versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-extensions:$Versions.lifecycleExtension"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$Versions.lifecycle"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$Versions.lifecycle"
     implementation "androidx.lifecycle:lifecycle-common-java8:$Versions.lifecycle"
+    implementation "androidx.lifecycle:lifecycle-process:$Versions.lifecycle"
 
     implementation "com.jakewharton.timber:timber:$Versions.timber"
 
@@ -151,6 +169,8 @@ dependencies {
 
     debugImplementation project(":configurator")
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$Versions.leakCanary"
+
+    implementation "androidx.core:core-splashscreen:$Versions.splashScreen"
 
     testImplementation(testFixtures(project(':test')))
     testImplementation "junit:junit:$Versions.junit"

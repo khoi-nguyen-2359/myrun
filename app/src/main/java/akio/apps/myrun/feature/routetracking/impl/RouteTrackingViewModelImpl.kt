@@ -130,9 +130,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
 
     private suspend fun scheduleActivitySyncIfAvailable() {
         val userAccountId = authenticationState.getUserAccountId()
-        if (userAccountId != null &&
-            externalAppProvidersRepository.getStravaProviderToken(userAccountId) != null
-        ) {
+        if (userAccountId != null && externalAppProvidersRepository.isStravaSyncEnabled()) {
             UploadStravaFileWorker.enqueue(application)
         }
     }

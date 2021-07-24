@@ -17,27 +17,22 @@ import akio.apps.myrun.feature.cropavatar.CropAvatarActivity
 import akio.apps.myrun.feature.editprofile.EditProfileViewModel
 import akio.apps.myrun.feature.editprofile._di.DaggerEditProfileFeatureComponent
 import akio.apps.myrun.feature.signin.impl.OtpDialogFragment
-import akio.apps.myrun.feature.signin.impl.SignInActivity
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.PhoneAuthCredential
 import java.io.File
 import java.text.DecimalFormat
 import java.util.Locale
 
 class EditProfileActivity :
     AppCompatActivity(R.layout.activity_edit_profile),
-    PhotoSelectionDelegate.EventListener,
-    OtpDialogFragment.EventListener {
+    PhotoSelectionDelegate.EventListener {
 
     private var croppedPhotoFile: File? = null
     private val photoSelectionDelegate = PhotoSelectionDelegate(
@@ -51,8 +46,6 @@ class EditProfileActivity :
         ),
         this
     )
-
-    private val isOnboarding: Boolean by lazy { intent.getBooleanExtra(EXT_IS_ONBOARDING, false) }
 
     private val bodyDimensFormat = DecimalFormat("#.#")
 
@@ -73,8 +66,6 @@ class EditProfileActivity :
 
     private fun initObservers() {
         observe(editProfileVM.isInProgress, dialogDelegate::toggleProgressDialog)
-        observe(editProfileVM.isUpdatingPhoneNumber, dialogDelegate::toggleProgressDialog)
-        observeEvent(editProfileVM.isUpdatePhoneNumberSuccess, ::onUpdatePhoneNumberSuccess)
         observe(editProfileVM.userProfile, ::fillCurrentUserProfile)
 
         observeEvent(editProfileVM.error, dialogDelegate::showExceptionAlert)
@@ -84,26 +75,9 @@ class EditProfileActivity :
         observeEvent(editProfileVM.blankEditDisplayNameError) {
             dialogDelegate.showErrorAlert(getString(R.string.error_invalid_display_name))
         }
-        observeEvent(editProfileVM.openOtp) { navigationInfo ->
-            openOtp(navigationInfo.phoneNumber)
-        }
         observeEvent(editProfileVM.updateProfileSuccess) {
             onUpdateProfileSuccess()
         }
-        observeEvent(editProfileVM.phoneNumberReauthenticateError) {
-            requestReauthenticate(RC_REAUTHENTICATE_FOR_PHONE_UPDATE)
-        }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    private fun onUpdatePhoneNumberSuccess(unit: Unit) {
-        Snackbar.make(
-            viewBinding.saveButton,
-            R.string.edit_user_profile_mobile_number_update_success_message,
-            Snackbar.LENGTH_LONG
-        )
-            .show()
-        (supportFragmentManager.findFragmentByTag(TAG_OTP_DIALOG) as? OtpDialogFragment)?.dismiss()
     }
 
     private fun onStravaTokenExchanged() {
@@ -116,15 +90,6 @@ class EditProfileActivity :
             .show()
     }
 
-    @Suppress("DEPRECATION")
-    override fun onAttachFragment(fragment: Fragment) {
-        super.onAttachFragment(fragment)
-
-        when (fragment) {
-            is OtpDialogFragment -> fragment.eventListener = this
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
 
@@ -133,7 +98,6 @@ class EditProfileActivity :
 
     private fun fillCurrentUserProfile(userProfile: UserProfile) = viewBinding.apply {
         nameEditText.setText(userProfile.name)
-        phoneBox.setFullNumber(userProfile.phone)
         genderTextView.text = userProfile.gender?.name?.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(
                 Locale.getDefault()
@@ -166,22 +130,6 @@ class EditProfileActivity :
             val userProfileUpdateData = createUpdateData()
             editProfileVM.updateProfile(userProfileUpdateData)
         }
-
-        if (isOnboarding) {
-            phoneBox.isEnabled = false
-        }
-    }
-
-    private fun requestReauthenticate(requestCode: Int) {
-        Toast.makeText(
-            this,
-            R.string.edit_user_profile_session_expired_error_message,
-            Toast.LENGTH_LONG
-        )
-            .show()
-        val signInIntent = SignInActivity.launchIntent(this)
-        @Suppress("DEPRECATION")
-        startActivityForResult(signInIntent, requestCode)
     }
 
     private fun onUpdateProfileSuccess() {
@@ -189,11 +137,6 @@ class EditProfileActivity :
 
         setResult(Activity.RESULT_OK)
         finish()
-    }
-
-    private fun openOtp(updatePhone: String) {
-        OtpDialogFragment.instantiate(updatePhone)
-            .show(supportFragmentManager, TAG_OTP_DIALOG)
     }
 
     private fun createUpdateData(): ProfileEditData {
@@ -206,7 +149,6 @@ class EditProfileActivity :
                 weightEditText.getNoneEmptyTextOrNull()
                     ?.toFloat(),
                 croppedPhotoFile?.let { Uri.fromFile(it) },
-                phoneBox.getFullNumber()
             )
         }
     }
@@ -234,7 +176,6 @@ class EditProfileActivity :
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         photoSelectionDelegate.onActivityResult(requestCode, resultCode, data)
-        checkPhoneUpdateResult(requestCode, resultCode)
         checkReauthenticateResult(requestCode, resultCode)
         checkCropPhotoResult(requestCode, resultCode, data)
     }
@@ -258,19 +199,6 @@ class EditProfileActivity :
         if (requestCode == RC_REAUTHENTICATE_FOR_PROFILE_UPDATE && resultCode == RESULT_OK) {
             editProfileVM.updateProfile(createUpdateData())
         }
-
-        if (requestCode == RC_REAUTHENTICATE_FOR_PHONE_UPDATE && resultCode == RESULT_OK) {
-            viewBinding.phoneBox.getFullNumber()
-                ?.let { phoneNumber ->
-                    openOtp(phoneNumber)
-                }
-        }
-    }
-
-    private fun checkPhoneUpdateResult(requestCode: Int, resultCode: Int) {
-        if (requestCode == RC_UPDATE_PHONE && resultCode == Activity.RESULT_OK) {
-            finish()
-        }
     }
 
     override fun onPhotoSelectionReady(photoContentUri: Uri) {
@@ -281,33 +209,17 @@ class EditProfileActivity :
         )
     }
 
-    override fun onConfirmOtp(phoneAuthCredential: PhoneAuthCredential) {
-        editProfileVM.updatePhoneNumber(phoneAuthCredential)
-    }
-
     companion object {
         const val RC_TAKE_PHOTO_PERMISSIONS = 1
         const val RC_PICK_PHOTO_PERMISSIONS = 2
         const val RC_TAKE_PHOTO = 3
         const val RC_PICK_PHOTO = 4
-        const val RC_UPDATE_PHONE = 5
         const val RC_REAUTHENTICATE_FOR_PROFILE_UPDATE = 6
         const val RC_CROP_AVATAR = 7
-        const val RC_REAUTHENTICATE_FOR_PHONE_UPDATE = 8
 
         const val TAG_OTP_DIALOG = "TAG_OTP_DIALOG"
 
-        const val EXT_IS_ONBOARDING = "EXT_IS_ONBOARDING"
-
-        fun launchIntentForOnboarding(context: Context): Intent {
-            val intent = Intent(context, EditProfileActivity::class.java)
-            intent.putExtra(EXT_IS_ONBOARDING, true)
-            return intent
-        }
-
-        fun launchIntentForEditing(context: Context): Intent {
-            val intent = Intent(context, EditProfileActivity::class.java)
-            return intent
-        }
+        fun launchIntentForEditing(context: Context): Intent =
+            Intent(context, EditProfileActivity::class.java)
     }
 }

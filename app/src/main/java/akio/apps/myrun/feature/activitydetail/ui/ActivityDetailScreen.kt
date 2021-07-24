@@ -36,13 +36,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
-import akio.apps.myrun.feature.activitydetail.ui.ActivityInfoHeaderView as ActivityInfoHeaderView1
+import akio.apps.myrun.feature.activitydetail.ui.ActivityInfoHeaderView as ActivityInfoHeaderView
 
 @Composable
 fun ActivityDetailScreen(
     activityDetailViewModel: ActivityDetailViewModel,
     onClickRouteImage: (encodedPolyline: String) -> Unit,
-    onClickExportFile: (Activity) -> Unit
+    onClickExportFile: (Activity) -> Unit,
+    onClickUserAvatar: (String) -> Unit
 ) = MyRunAppTheme {
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
@@ -61,10 +62,11 @@ fun ActivityDetailScreen(
         val activityDetail = activityResource.data
         if (activityDetail != null) {
             Column {
-                ActivityInfoHeaderView1(
+                ActivityInfoHeaderView(
                     activityDetail,
                     activityDisplayPlaceName,
-                    { onClickExportFile(activityDetail) }
+                    { onClickExportFile(activityDetail) },
+                    { onClickUserAvatar(activityDetail.athleteInfo.userId) }
                 )
                 ActivityRouteImage(activityDetail) {
                     onClickRouteImage(activityDetail.encodedPolyline)
