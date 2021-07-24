@@ -59,10 +59,10 @@ fun UserTimeline(
         .collectAsState(initial = true)
     when {
         isLoadingInitialData ||
-                lazyPagingItems.loadState.refresh == LoadState.Loading &&
-                lazyPagingItems.itemCount == 0 -> FullscreenLoadingView()
+            lazyPagingItems.loadState.refresh == LoadState.Loading &&
+            lazyPagingItems.itemCount == 0 -> FullscreenLoadingView()
         lazyPagingItems.loadState.append.endOfPaginationReached &&
-                lazyPagingItems.itemCount == 0 -> UserTimelineEmptyMessage()
+            lazyPagingItems.itemCount == 0 -> UserTimelineEmptyMessage()
         else -> UserTimelineActivityList(
             userTimelineViewModel,
             contentPadding,
@@ -174,11 +174,6 @@ private fun TimelineActivityItem(
     elevation = 2.dp,
     modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
 ) {
-    Timber.d(
-        "render TimelineActivityItem " +
-                "activity=${activity.id}" +
-                " placeName=$activityDisplayPlaceName"
-    )
     Column(modifier = Modifier.clickable { onClickActivityAction(activity) }) {
         ActivityInfoHeaderView(
             activity,
