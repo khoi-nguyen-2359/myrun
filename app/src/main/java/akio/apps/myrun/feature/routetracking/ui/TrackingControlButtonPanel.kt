@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.routetracking.ui
 import akio.apps.myrun.R
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
-import akio.apps.myrun.ui.theme.MyRunAppTheme
+import akio.apps.myrun.ui.theme.AppTheme
 import androidx.annotation.StringRes
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
@@ -47,7 +47,7 @@ private val CIRCULAR_CONTROL_BUTTON_SIZE = 90.dp
 fun TrackingControlButtonPanel(
     routeTrackingViewModel: RouteTrackingViewModel,
     onClickControlButton: (TrackingControlButtonType) -> Unit
-) = MyRunAppTheme {
+) = AppTheme {
     val trackingStatus by routeTrackingViewModel.trackingStatus.observeAsState()
     // when entering the screen, initial location may not be available if location is not ready yet,
     // so use flow to get the location when it is ready.

@@ -45,7 +45,7 @@ sealed class TrackingValueFormatter(
             val minute = (activity as? RunningActivity)?.pace ?: 0.0
             val intMinute = minute.toInt()
             val second = (minute - intMinute) * 60
-            return "$intMinute:${second.toInt()}"
+            return String.format("%d:%02d", intMinute, second.toInt())
         }
     }
 

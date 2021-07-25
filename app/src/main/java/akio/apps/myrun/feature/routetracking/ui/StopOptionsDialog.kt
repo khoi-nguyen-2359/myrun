@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.routetracking.ui
 
 import akio.apps.myrun.R
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
-import akio.apps.myrun.ui.theme.MyRunAppTheme
+import akio.apps.myrun.ui.theme.AppTheme
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.ExperimentalMaterialApi
@@ -27,11 +27,11 @@ import androidx.compose.ui.window.Dialog
 fun StopOptionsDialog(
     routeTrackingViewModel: RouteTrackingViewModel,
     itemSelectAction: (StopDialogOptionId) -> Unit
-) = MyRunAppTheme {
+) = AppTheme {
     val isShowingState by routeTrackingViewModel.isStopOptionDialogShowing
         .collectAsState(initial = false)
     if (!isShowingState) {
-        return@MyRunAppTheme
+        return@AppTheme
     }
 
     val items = listOf(

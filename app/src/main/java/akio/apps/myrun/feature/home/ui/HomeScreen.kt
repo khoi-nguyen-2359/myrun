@@ -1,10 +1,9 @@
 package akio.apps.myrun.feature.home.ui
 
-import akio.apps.myrun.feature.home.HomeViewModel
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.ui.UserTimeline
-import akio.apps.myrun.ui.theme.MyRunAppTheme
+import akio.apps.myrun.ui.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,10 +22,8 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -39,7 +36,6 @@ private val BottomAppBarHeight = 56.dp
 
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel,
     userTimelineViewModel: UserTimelineViewModel,
     onClickUserProfileButton: () -> Unit,
     onClickFloatingActionButton: () -> Unit,
@@ -47,8 +43,7 @@ fun HomeScreen(
     onClickActivityFileAction: (Activity) -> Unit,
     onClickUserAvatar: (String) -> Unit
 ) {
-    val activityStorageCount by homeViewModel.activityStorageCount.collectAsState(initial = 0)
-    MyRunAppTheme {
+    AppTheme {
         Scaffold(
             bottomBar = { HomeBottomBar(onClickUserProfileButton) },
             floatingActionButton = { HomeFloatingActionButton(onClickFloatingActionButton) },
@@ -58,15 +53,13 @@ fun HomeScreen(
             Box {
                 UserTimeline(
                     userTimelineViewModel,
-                    PaddingValues(bottom = BottomAppBarHeight * 1.5f),
+                    PaddingValues(
+                        bottom = BottomAppBarHeight * 1.5f // avoid the bottom bar
+                    ),
                     onClickActivityItemAction,
                     onClickActivityFileAction,
                     onClickUserAvatar
                 )
-
-                if (activityStorageCount > 0) {
-                    UploadingNotifierItem(activityStorageCount)
-                }
             }
         }
     }
@@ -112,9 +105,11 @@ private fun HomeFloatingActionButton(onClick: () -> Unit) = FloatingActionButton
 @Composable
 private fun HomeBottomBar(
     onClickUserProfileButton: () -> Unit
-) = BottomAppBar {
+) = BottomAppBar(
+    elevation = 2.dp
+) {
     Spacer(modifier = Modifier.weight(weight = 1f, fill = true))
-    BottomBarIconButton(onClickUserProfileButton, Icons.Rounded.Person)
+    BottomBarIconButton(onClickUserProfileButton, Icons.Rounded.Settings)
 }
 
 @Composable
@@ -126,3 +121,7 @@ private fun BottomBarIconButton(onClick: () -> Unit, iconImageVector: ImageVecto
         contentDescription = "User profile icon button on bottom bar"
     )
 }
+
+@Preview
+@Composable
+private fun PreviewBottomBar() = HomeBottomBar { }

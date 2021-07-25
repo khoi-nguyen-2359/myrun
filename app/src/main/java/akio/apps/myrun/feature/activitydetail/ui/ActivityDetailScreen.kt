@@ -4,7 +4,7 @@ import akio.apps._base.Resource
 import akio.apps.myrun.R
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
-import akio.apps.myrun.ui.theme.MyRunAppTheme
+import akio.apps.myrun.ui.theme.AppTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,7 +44,7 @@ fun ActivityDetailScreen(
     onClickRouteImage: (encodedPolyline: String) -> Unit,
     onClickExportFile: (Activity) -> Unit,
     onClickUserAvatar: (String) -> Unit
-) = MyRunAppTheme {
+) = AppTheme {
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
     val activityResource by activityDetailViewModel.activityDetails
