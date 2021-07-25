@@ -27,6 +27,8 @@ class UserTimelineViewModelImpl @Inject constructor(
 ) : UserTimelineViewModel() {
 
     private var activityPagingSource: ActivityPagingSource? = null
+    override val activityStorageCount: Flow<Int> =
+        activityLocalStorage.getActivityStorageDataCountFlow().distinctUntilChanged()
 
     override val myActivityList: Flow<PagingData<Activity>> = Pager(
         config = PagingConfig(
@@ -54,11 +56,9 @@ class UserTimelineViewModelImpl @Inject constructor(
     }
 
     private fun observeActivityUploadCount() = viewModelScope.launch {
-        activityLocalStorage.getActivityStorageDataCountFlow()
-            .distinctUntilChanged()
-            .collect {
-                activityPagingSource?.invalidate()
-            }
+        activityStorageCount.collect {
+            activityPagingSource?.invalidate()
+        }
     }
 
     override fun getActivityDisplayPlaceName(activity: Activity): String {
