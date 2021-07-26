@@ -27,12 +27,11 @@ class SplashActivity : AppCompatActivity() {
     private val dialogDelegate by lazy { DialogDelegate(this) }
 
     private val splashStartTime: Long = System.currentTimeMillis()
-    private var shouldKeepSplashVisible: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        installSplashScreen().setKeepVisibleCondition { shouldKeepSplashVisible }
+        installSplashScreen().setKeepVisibleCondition { true }
         initObservers()
     }
 
@@ -46,7 +45,6 @@ class SplashActivity : AppCompatActivity() {
         if (delayMore > 0) {
             delay(delayMore)
         }
-        shouldKeepSplashVisible = false
         if (isSignedIn) {
             goHome()
         } else {
