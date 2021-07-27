@@ -81,7 +81,7 @@ private object TimelineDimensions {
     val timelineItemCornerRadius: Dp = 6.dp
     val activityItemHorizontalMargin: Dp = 0.dp
     val activityItemVerticalMargin: Dp = 12.dp
-    val activityItemHorizontalPadding: Dp = 12.dp
+    val activityItemHorizontalPadding: Dp = 16.dp
     val activityItemVerticalPadding: Dp = 12.dp
 }
 
@@ -232,7 +232,7 @@ private fun TimelineActivityItem(
 
 @Composable
 private fun ActivityRouteImageBox(activity: Activity) =
-    Box(contentAlignment = Alignment.BottomStart) {
+    Box(contentAlignment = Alignment.TopStart) {
         ActivityRouteImage(activity)
         TimelineActivityPerformanceRow(
             activity,
@@ -346,7 +346,7 @@ private fun ActivityInformationView(
             ActivityShareMenu(onClickExportFile)
         }
     }
-    Spacer(modifier = Modifier.size(8.dp))
+    Spacer(modifier = Modifier.size(12.dp))
     ActivityNameText(activity)
 }
 
@@ -355,8 +355,8 @@ private fun AthleteNameText(activityDetail: Activity) = Text(
     text = activityDetail.athleteInfo.userName.orEmpty(),
     maxLines = 1,
     overflow = TextOverflow.Ellipsis,
-    style = MaterialTheme.typography.subtitle2,
-    fontWeight = FontWeight.Bold
+    fontWeight = FontWeight.Bold,
+    fontSize = 16.sp
 )
 
 @Composable
@@ -375,7 +375,7 @@ private fun ActivityNameText(
 private fun ActivityShareMenu(
     onClickExportFile: () -> Unit
 ) = Box(
-    modifier = Modifier.padding(horizontal = 4.dp)
+    modifier = Modifier.padding(horizontal = 6.dp)
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     IconButton(
@@ -434,7 +434,7 @@ private fun ActivityTimeAndPlaceText(activityDetail: Activity, activityDisplayPl
         text = timeAndPlaceText,
         overflow = TextOverflow.Ellipsis,
         maxLines = 2,
-        style = MaterialTheme.typography.caption
+        fontSize = 13.sp
     )
 }
 
@@ -443,7 +443,7 @@ private fun UserAvatarImage(
     activityDetail: Activity,
     onClickUserAvatar: () -> Unit
 ) {
-    val avatarDimension = dimensionResource(id = R.dimen.user_timeline_avatar_size)
+    val avatarDimension = 52.dp
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
     Image(
         painter = rememberImagePainter(
