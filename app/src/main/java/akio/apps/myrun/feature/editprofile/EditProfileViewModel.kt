@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData
 abstract class EditProfileViewModel : BaseViewModel() {
     abstract val userProfile: LiveData<UserProfile>
 
-    abstract val stravaTokenExchangedSuccess: LiveData<Event<Unit>>
     abstract val updateProfileSuccess: LiveData<Event<Unit>>
 
     abstract val blankEditDisplayNameError: LiveData<Event<Unit>>

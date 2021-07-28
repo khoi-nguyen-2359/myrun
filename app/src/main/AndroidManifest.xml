@@ -1,5 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="akio.apps.myrun">
 
     <!-- Networking -->
@@ -40,6 +39,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
         <activity
             android:name=".feature.routetracking.impl.RouteTrackingActivity"
             android:screenOrientation="portrait"
@@ -58,6 +58,7 @@
 
         <activity
             android:name=".feature.home.HomeActivity"
+            android:theme="@style/AppTheme.SemiTransparentSystemBars"
             android:screenOrientation="portrait"
             android:exported="false" />
 
@@ -69,6 +70,7 @@
 
         <activity
             android:name="akio.apps._base.ui.SingleFragmentActivity"
+            android:theme="@style/AppTheme.SolidSystemBars"
             android:screenOrientation="portrait"
             android:exported="false" />
 
@@ -96,22 +98,24 @@
             android:enabled="true"
             android:exported="false" />
 
-      <!--        Facebook Login -->
+        <!--        Facebook Login -->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <activity android:name="com.facebook.FacebookActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
@@ -122,7 +126,7 @@
             android:name=".feature.strava.impl.LinkStravaActivity"
             android:theme="@style/TransparentAppCompat"
             android:launchMode="singleTask"
-            android:exported="true" >
+            android:exported="true">
             <!-- for Strava callback intent -->
             <intent-filter>
                 <data
