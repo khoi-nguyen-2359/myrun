@@ -69,25 +69,12 @@ class EditProfileActivity :
         observe(editProfileVM.userProfile, ::fillCurrentUserProfile)
 
         observeEvent(editProfileVM.error, dialogDelegate::showExceptionAlert)
-        observeEvent(editProfileVM.stravaTokenExchangedSuccess) {
-            onStravaTokenExchanged()
-        }
         observeEvent(editProfileVM.blankEditDisplayNameError) {
             dialogDelegate.showErrorAlert(getString(R.string.error_invalid_display_name))
         }
         observeEvent(editProfileVM.updateProfileSuccess) {
             onUpdateProfileSuccess()
         }
-    }
-
-    private fun onStravaTokenExchanged() {
-        setResult(Activity.RESULT_OK)
-        Snackbar.make(
-            viewBinding.saveButton,
-            getString(R.string.edit_user_profile_link_running_app_success_message),
-            Snackbar.LENGTH_LONG
-        )
-            .show()
     }
 
     override fun onDestroy() {
@@ -126,9 +113,15 @@ class EditProfileActivity :
 
         genderTextView.setOnClickListener { openGenderPicker() }
 
-        saveButton.setOnClickListener {
-            val userProfileUpdateData = createUpdateData()
-            editProfileVM.updateProfile(userProfileUpdateData)
+        viewBinding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_save_profile -> {
+                    val userProfileUpdateData = createUpdateData()
+                    editProfileVM.updateProfile(userProfileUpdateData)
+                    true
+                }
+                else -> false
+            }
         }
     }
 

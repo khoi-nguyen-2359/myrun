@@ -7,8 +7,15 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimations</item>
+    </style>
+
+    <style name="AppTheme.SemiTransparentSystemBars">
         <item name="android:statusBarColor">#55000000</item>
         <item name="android:navigationBarColor">#55000000</item>
+    </style>
+
+    <style name="AppTheme.SolidSystemBars">
+        <item name="android:statusBarColor">@color/colorPrimary</item>
     </style>
 
     <style name="WindowAnimations">

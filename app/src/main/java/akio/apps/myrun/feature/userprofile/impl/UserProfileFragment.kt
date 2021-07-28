@@ -68,12 +68,24 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     }
 
     private fun initViews() {
+        setupTopBar()
         viewBinding.apply {
-            editButton.setOnClickListener { openProfileDetails() }
             logoutButton.setOnClickListener { showLogoutAlert() }
             swipeRefreshLayout.isEnabled = false
 
             currentUserViewGroup.isVisible = profileViewModel.isCurrentUser()
+        }
+    }
+
+    private fun setupTopBar() {
+        viewBinding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_edit_profile -> {
+                    openProfileDetails()
+                    true
+                }
+                else -> false
+            }
         }
     }
 
@@ -97,8 +109,11 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         viewBinding.apply {
             linkedAppMap.forEach { (viewIds, token) ->
                 val itemViewContainer = linkedAppsContainer.findViewById<View>(viewIds.containerId)
-                itemViewContainer.findViewById<SwitchCompat>(viewIds.checkBoxId).isChecked =
-                    token != null
+                itemViewContainer.findViewById<SwitchCompat>(viewIds.checkBoxId).run {
+                    isEnabled = true
+                    isChecked = token != null
+                }
+
                 if (token != null) {
                     itemViewContainer.setOnClickListener {
                         showUnlinkConfirmationDialog {

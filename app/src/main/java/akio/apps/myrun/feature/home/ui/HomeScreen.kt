@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.home.ui
 
+import akio.apps.myrun.R
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.ui.UserTimeline
@@ -7,7 +8,6 @@ import akio.apps.myrun.ui.theme.AppColors
 import akio.apps.myrun.ui.theme.AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +18,6 @@ import androidx.compose.material.BottomAppBar
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -32,17 +31,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
 
 private val AppBarHeight = 56.dp
@@ -116,39 +114,20 @@ fun HomeScreen(
 private fun HomeTopBar(onClickUserProfileButton: () -> Unit, modifier: Modifier = Modifier) =
     Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
         TopAppBar(
-            title = { Text("Feed") },
+            title = {
+                Text(
+                    stringResource(id = R.string.user_feed_title),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = Icons.Rounded.Settings.defaultWidth)
+                )
+            },
             actions = {
                 BottomBarIconButton(onClickUserProfileButton, Icons.Rounded.Settings)
             }
         )
     }
-
-@Composable
-private fun UploadingNotifierItem(activityStorageCount: Int) = Column(
-    modifier = Modifier
-        .fillMaxWidth()
-        .background(Color.White)
-) {
-    Text(
-        text = "Uploading $activityStorageCount activities.",
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(3.dp),
-        fontSize = 12.sp,
-        textAlign = TextAlign.Center
-    )
-    LinearProgressIndicator(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(2.dp)
-    )
-}
-
-@Preview(showSystemUi = true)
-@Composable
-private fun PreviewUploadingNotifierItem() {
-    UploadingNotifierItem(activityStorageCount = 3)
-}
 
 @Composable
 private fun HomeFloatingActionButton(onClick: () -> Unit, modifier: Modifier = Modifier) =
