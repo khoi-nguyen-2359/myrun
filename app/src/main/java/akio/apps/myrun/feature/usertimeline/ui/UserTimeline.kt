@@ -101,7 +101,10 @@ fun UserTimeline(
             lazyPagingItems.loadState.refresh == LoadState.Loading &&
             lazyPagingItems.itemCount == 0 -> FullscreenLoadingView()
         lazyPagingItems.loadState.append.endOfPaginationReached &&
-            lazyPagingItems.itemCount == 0 -> UserTimelineEmptyMessage()
+            lazyPagingItems.itemCount == 0 ->
+            UserTimelineEmptyMessage(
+                Modifier.padding(bottom = contentPadding.calculateBottomPadding() + 8.dp)
+            )
         else -> UserTimelineActivityList(
             userTimelineViewModel,
             contentPadding,
@@ -159,8 +162,8 @@ private fun UserTimelineActivityList(
 }
 
 @Composable
-private fun UserTimelineEmptyMessage() = Box(
-    modifier = Modifier
+private fun UserTimelineEmptyMessage(modifier: Modifier = Modifier) = Box(
+    modifier = modifier
         .fillMaxWidth()
         .fillMaxHeight()
 ) {
@@ -168,10 +171,7 @@ private fun UserTimelineEmptyMessage() = Box(
         text = stringResource(R.string.splash_welcome_text),
         modifier = Modifier
             .align(Alignment.BottomCenter)
-            .padding(
-                horizontal = dimensionResource(R.dimen.common_page_horizontal_padding),
-                vertical = dimensionResource(R.dimen.user_timeline_listing_padding_bottom)
-            ),
+            .padding(horizontal = dimensionResource(R.dimen.common_page_horizontal_padding)),
         color = colorResource(R.color.user_timeline_instruction_text),
         fontSize = 30.sp,
         fontStyle = FontStyle.Italic,
@@ -366,7 +366,7 @@ private fun ActivityNameText(
 ) = Text(
     text = activityDetail.name,
     modifier = modifier.fillMaxWidth(),
-    fontSize = 23.sp,
+    fontSize = 22.sp,
     fontWeight = FontWeight.Bold,
     letterSpacing = 0.5.sp
 )
@@ -443,7 +443,7 @@ private fun UserAvatarImage(
     activityDetail: Activity,
     onClickUserAvatar: () -> Unit
 ) {
-    val avatarDimension = 52.dp
+    val avatarDimension = 50.dp
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
     Image(
         painter = rememberImagePainter(

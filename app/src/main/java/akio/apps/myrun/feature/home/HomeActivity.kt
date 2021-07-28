@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.home
 
+import akio.apps._base.ui.px2dp
 import akio.apps.myrun.R
 import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.feature.activitydetail.ActivityDetailActivity
@@ -18,7 +19,12 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
@@ -35,16 +41,25 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { _, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            setContent {
+                HomeScreen(
+                    userTimelineViewModel,
+                    contentPaddings = PaddingValues(
+                        top = insets.top.px2dp.dp,
+                        bottom = insets.bottom.px2dp.dp
+                    ),
+                    onClickUserProfileButton = ::openCurrentUserProfile,
+                    onClickFloatingActionButton = ::openRouteTrackingOrCheckRequiredPermission,
+                    onClickActivityItemAction = ::openActivityDetail,
+                    onClickActivityFileAction = ::startActivityExportService,
+                    onClickUserAvatar = ::openUserProfile
+                )
+            }
 
-        setContent {
-            HomeScreen(
-                userTimelineViewModel,
-                onClickUserProfileButton = ::openCurrentUserProfile,
-                onClickFloatingActionButton = ::openRouteTrackingOrCheckRequiredPermission,
-                onClickActivityItemAction = ::openActivityDetail,
-                onClickActivityFileAction = ::startActivityExportService,
-                onClickUserAvatar = ::openUserProfile
-            )
+            WindowInsetsCompat.CONSUMED
         }
     }
 
