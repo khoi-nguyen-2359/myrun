@@ -30,7 +30,8 @@ class ActivityDetailActivity : AppCompatActivity() {
                 activityDetailViewModel,
                 ::openActivityRouteMap,
                 ::startActivityExportService,
-                ::openUserProfile
+                ::openUserProfile,
+                ::finish
             )
         }
 

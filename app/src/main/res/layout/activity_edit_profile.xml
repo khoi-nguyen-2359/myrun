@@ -6,12 +6,12 @@
     android:orientation="vertical">
 
     <com.google.android.material.appbar.MaterialToolbar
-        app:titleCentered="true"
         android:id="@+id/topAppBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:title="@string/edit_user_profile_title"
         app:menu="@menu/edit_user_profile_top_bar"
+        app:navigationIcon="@drawable/ic_arrow_back"
         style="@style/Widget.MaterialComponents.Toolbar.Primary" />
 
     <ScrollView

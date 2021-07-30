@@ -37,7 +37,6 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -117,14 +116,13 @@ private fun HomeTopBar(onClickUserProfileButton: () -> Unit, modifier: Modifier 
             title = {
                 Text(
                     stringResource(id = R.string.user_feed_title),
-                    textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = Icons.Rounded.Settings.defaultWidth)
                 )
             },
             actions = {
-                BottomBarIconButton(onClickUserProfileButton, Icons.Rounded.Settings)
+                AppBarIconButton(onClickUserProfileButton, Icons.Rounded.Settings)
             }
         )
     }
@@ -142,13 +140,13 @@ private fun HomeFloatingActionButton(onClick: () -> Unit, modifier: Modifier = M
 private fun HomeBottomBar(
     onClickUserProfileButton: () -> Unit
 ) = BottomAppBar(elevation = 4.dp) {
-    BottomBarIconButton(onClickUserProfileButton, Icons.Rounded.Settings)
-    BottomBarIconButton(onClickUserProfileButton, Icons.Rounded.Settings)
-    BottomBarIconButton(onClickUserProfileButton, Icons.Rounded.Settings)
+    AppBarIconButton(onClickUserProfileButton, Icons.Rounded.Settings)
+    AppBarIconButton(onClickUserProfileButton, Icons.Rounded.Settings)
+    AppBarIconButton(onClickUserProfileButton, Icons.Rounded.Settings)
 }
 
 @Composable
-private fun BottomBarIconButton(onClick: () -> Unit, iconImageVector: ImageVector) =
+private fun AppBarIconButton(onClick: () -> Unit, iconImageVector: ImageVector) =
     IconButton(onClick = onClick) {
         Icon(
             imageVector = iconImageVector,
