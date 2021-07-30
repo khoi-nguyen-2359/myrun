@@ -1,8 +1,10 @@
 package akio.apps.myrun.feature.routetracking.ui
 
 import akio.apps.myrun.R
+import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
+import akio.apps.myrun.ui.theme.AppColors
 import akio.apps.myrun.ui.theme.AppTheme
 import androidx.annotation.StringRes
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -13,17 +15,22 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.MyLocation
 import androidx.compose.material.icons.rounded.GpsOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -46,13 +53,29 @@ private val CIRCULAR_CONTROL_BUTTON_SIZE = 90.dp
 @Composable
 fun TrackingControlButtonPanel(
     routeTrackingViewModel: RouteTrackingViewModel,
-    onClickControlButton: (TrackingControlButtonType) -> Unit
-) = AppTheme {
+    onClickControlButton: (TrackingControlButtonType) -> Unit,
+    onClickMyLocation: () -> Unit
+) {
     val trackingStatus by routeTrackingViewModel.trackingStatus.observeAsState()
     // when entering the screen, initial location may not be available if location is not ready yet,
     // so use flow to get the location when it is ready.
     val initialLocation by routeTrackingViewModel.getLastLocationFlow()
         .collectAsState(initial = null)
+    TrackingControlButtonPanel(
+        initialLocation,
+        trackingStatus,
+        onClickControlButton,
+        onClickMyLocation
+    )
+}
+
+@Composable
+private fun TrackingControlButtonPanel(
+    initialLocation: LocationEntity?,
+    @RouteTrackingStatus trackingStatus: Int?,
+    onClickControlButton: (TrackingControlButtonType) -> Unit,
+    onClickMyLocation: () -> Unit
+) = AppTheme {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -80,6 +103,22 @@ fun TrackingControlButtonPanel(
                     )
                 }
             }
+        }
+        Button(
+            shape = CircleShape,
+            onClick = onClickMyLocation,
+            modifier = Modifier
+                .padding(end = 16.dp)
+                .size(48.dp)
+                .align(Alignment.CenterEnd),
+            contentPadding = PaddingValues(4.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.MyLocation,
+                tint = AppColors.primary,
+                contentDescription = "Jump to my location on map"
+            )
         }
     }
 }
@@ -185,3 +224,12 @@ private fun TrackingControlButton(
 @Composable
 @Preview
 private fun PreviewControlButton() = TrackingControlButton("Resume", Color.Black) {}
+
+@Composable
+@Preview
+private fun PreviewTrackingControlButtonPanel() = TrackingControlButtonPanel(
+    initialLocation = LocationEntity(1, 2.0, 3.0, 4.0, 5.0),
+    trackingStatus = RouteTrackingStatus.STOPPED,
+    {},
+    {}
+)

@@ -8,7 +8,6 @@ import akio.apps.myrun.feature.usertimeline.model.ActivityData
 import akio.apps.myrun.feature.usertimeline.model.RunningActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,30 +15,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import timber.log.Timber
 
@@ -47,13 +36,13 @@ import timber.log.Timber
 fun ActivityInfoHeaderView(
     activityDetail: Activity,
     activityDisplayPlaceName: String?,
-    onClickExportFile: () -> Unit,
-    onClickUserAvatar: () -> Unit,
-    isShareMenuVisible: Boolean = true
+    onClickUserAvatar: () -> Unit
 ) = Column(
     modifier = Modifier
-        .padding(vertical = dimensionResource(id = R.dimen.common_item_vertical_padding))
-        .padding(start = dimensionResource(id = R.dimen.common_item_horizontal_padding))
+        .padding(
+            vertical = dimensionResource(id = R.dimen.common_item_vertical_padding),
+            horizontal = dimensionResource(id = R.dimen.common_item_horizontal_padding)
+        )
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         UserAvatarImage(activityDetail = activityDetail, onClickUserAvatar)
@@ -61,9 +50,6 @@ fun ActivityInfoHeaderView(
         Column(modifier = Modifier.weight(1.0f)) {
             AthleteNameText(activityDetail)
             ActivityTimeAndPlaceText(activityDetail, activityDisplayPlaceName)
-        }
-        if (isShareMenuVisible) {
-            ActivityShareMenu(onClickExportFile)
         }
     }
     Spacer(modifier = Modifier.size(6.dp))
@@ -75,8 +61,8 @@ private fun AthleteNameText(activityDetail: Activity) = Text(
     text = activityDetail.athleteInfo.userName.orEmpty(),
     maxLines = 1,
     overflow = TextOverflow.Ellipsis,
-    style = MaterialTheme.typography.subtitle2,
-    fontWeight = FontWeight.Bold
+    fontWeight = FontWeight.Bold,
+    fontSize = 16.sp
 )
 
 @Composable
@@ -85,39 +71,10 @@ private fun ActivityNameText(activityDetail: Activity) = Text(
     modifier = Modifier
         .fillMaxWidth()
         .padding(top = 8.dp, end = dimensionResource(id = R.dimen.common_item_horizontal_padding)),
-    style = MaterialTheme.typography.h6,
-    fontWeight = FontWeight.Bold
+    fontSize = 22.sp,
+    fontWeight = FontWeight.Bold,
+    letterSpacing = 0.5.sp
 )
-
-@Composable
-private fun ActivityShareMenu(
-    onClickExportFile: () -> Unit
-) = Box(
-    modifier = Modifier.padding(horizontal = 4.dp)
-) {
-    var isExpanded by remember { mutableStateOf(false) }
-    IconButton(
-        onClick = { isExpanded = !isExpanded }
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.Share,
-            contentDescription = "Share icon"
-        )
-    }
-    DropdownMenu(
-        expanded = isExpanded,
-        onDismissRequest = { isExpanded = false }
-    ) {
-        DropdownMenuItem(
-            onClick = {
-                onClickExportFile()
-                isExpanded = false
-            }
-        ) {
-            Text(text = stringResource(id = R.string.activity_details_share_menu_item_export_file))
-        }
-    }
-}
 
 @Composable
 private fun ActivityTimeAndPlaceText(activityDetail: Activity, activityDisplayPlaceName: String?) {
@@ -152,7 +109,7 @@ private fun ActivityTimeAndPlaceText(activityDetail: Activity, activityDisplayPl
         text = timeAndPlaceText,
         overflow = TextOverflow.Ellipsis,
         maxLines = 2,
-        style = MaterialTheme.typography.caption
+        fontSize = 13.sp
     )
 }
 
@@ -161,7 +118,7 @@ private fun UserAvatarImage(
     activityDetail: Activity,
     onClickUserAvatar: () -> Unit
 ) {
-    val avatarDimension = dimensionResource(id = R.dimen.user_timeline_avatar_size)
+    val avatarDimension = 50.dp
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
     Image(
         painter = rememberImagePainter(
@@ -204,7 +161,5 @@ private fun PreviewActivityInfoHeader() = ActivityInfoHeaderView(
         pace = 1.0,
         cadence = 160
     ),
-    activityDisplayPlaceName = "California, Santa Clara County, San Jose",
-    {},
-    {}
-)
+    activityDisplayPlaceName = "California, Santa Clara County, San Jose"
+) {}

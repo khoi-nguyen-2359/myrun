@@ -87,6 +87,9 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 else -> false
             }
         }
+        viewBinding.topAppBar.setNavigationOnClickListener {
+            activity?.finish()
+        }
     }
 
     private val providersObserver = Observer<Resource<ExternalProviders>> {

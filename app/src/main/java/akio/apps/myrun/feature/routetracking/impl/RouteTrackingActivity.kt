@@ -29,9 +29,13 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Size
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -53,6 +57,7 @@ import kotlin.coroutines.resume
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -98,10 +103,24 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge()
 
         routeTrackingViewModel.requestInitialData()
         initViews()
         initMap()
+    }
+
+    private fun setupEdgeToEdge() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        ViewCompat.setOnApplyWindowInsetsListener(
+            viewBinding.composableView
+        ) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val layoutParamsWithInsets = (view.layoutParams as? ViewGroup.MarginLayoutParams)
+                ?.apply { bottomMargin = insets.bottom }
+            view.layoutParams = layoutParamsWithInsets
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     override fun onStart() {
@@ -266,8 +285,20 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         setContentView(root)
         activitySettingsView.eventListener = this@RouteTrackingActivity
         composableView.setContent {
-            TrackingControlButtonPanel(routeTrackingViewModel, ::onClickControlButton)
+            TrackingControlButtonPanel(
+                routeTrackingViewModel,
+                ::onClickControlButton,
+                ::onClickMyLocation
+            )
             StopOptionsDialog(routeTrackingViewModel, ::selectStopOptionItem)
+        }
+    }
+
+    private fun onClickMyLocation() {
+        isStickyCamera = true
+        lifecycleScope.launch {
+            val lastLocation = routeTrackingViewModel.getLastLocationFlow().first()
+            recenterMap(lastLocation)
         }
     }
 
@@ -423,7 +454,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             }
         }
         map.isMyLocationEnabled = true
-        map.uiSettings.isMyLocationButtonEnabled = true
+        map.uiSettings.isMyLocationButtonEnabled = false
         map.uiSettings.setAllGesturesEnabled(true)
         map.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(

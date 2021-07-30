@@ -25,7 +25,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.google.android.material.snackbar.Snackbar
 import java.io.File
 import java.text.DecimalFormat
 import java.util.Locale
@@ -122,6 +121,10 @@ class EditProfileActivity :
                 }
                 else -> false
             }
+        }
+
+        viewBinding.topAppBar.setNavigationOnClickListener {
+            finish()
         }
     }
 

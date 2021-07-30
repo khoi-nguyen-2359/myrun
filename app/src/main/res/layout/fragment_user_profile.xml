@@ -11,12 +11,12 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.MaterialToolbar
-            app:titleCentered="true"
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="@string/user_profile_title"
             app:menu="@menu/user_profile_top_bar"
+            app:navigationIcon="@drawable/ic_arrow_back"
             style="@style/Widget.MaterialComponents.Toolbar.Primary" />
 
         <ScrollView
@@ -149,6 +149,7 @@
                         android:text="@string/profile_linked_app_section_label" />
 
                     <LinearLayout
+                        android:clickable="false"
                         android:paddingStart="@dimen/common_page_horizontal_padding"
                         android:paddingEnd="@dimen/common_page_horizontal_padding"
                         android:background="?selectableItemBackground"
