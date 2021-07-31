@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.splash.impl
 
+import akio.apps._base.di.viewModel
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun._base.utils.DialogDelegate
-import akio.apps._base.di.viewModel
 import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
 import akio.apps.myrun.feature.home.HomeActivity

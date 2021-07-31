@@ -34,7 +34,6 @@ import android.os.IBinder
 import android.os.PowerManager
 import androidx.core.content.ContextCompat
 import com.google.maps.android.SphericalUtil
-import timber.log.Timber
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -45,6 +44,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class RouteTrackingService : Service() {
 

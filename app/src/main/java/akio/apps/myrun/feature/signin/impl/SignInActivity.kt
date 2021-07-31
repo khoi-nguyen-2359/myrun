@@ -1,10 +1,10 @@
 package akio.apps.myrun.feature.signin.impl
 
+import akio.apps._base.di.viewModel
 import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
-import akio.apps._base.di.viewModel
 import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import akio.apps.myrun.databinding.ActivitySignInBinding
 import akio.apps.myrun.feature.signin.SignInViewModel

@@ -4,6 +4,7 @@ import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.authentication.model.UserAccount
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -12,7 +13,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class FirebaseAuthenticationState @Inject constructor(
     private val firebaseAuth: FirebaseAuth,

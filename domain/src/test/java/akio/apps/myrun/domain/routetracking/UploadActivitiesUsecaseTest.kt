@@ -12,13 +12,13 @@ import akio.apps.myrun.data.userprofile.UserProfileRepository
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import org.junit.Assert.assertFalse
-import org.junit.Before
-import org.junit.Test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Assert.assertFalse
+import org.junit.Before
+import org.junit.Test
 
 @ExperimentalCoroutinesApi
 class UploadActivitiesUsecaseTest {
