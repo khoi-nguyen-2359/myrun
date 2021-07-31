@@ -140,7 +140,11 @@ private fun ActivityDetailTopBar(
 private fun ShareActionMenu(onClickExportFile: () -> Unit) {
     Box {
         var isExpanded by remember { mutableStateOf(false) }
-        IconButton(onClick = { isExpanded = !isExpanded }) {
+        IconButton(
+            onClick = {
+                isExpanded = !isExpanded
+            }
+        ) {
             Icon(
                 imageVector = Icons.Sharp.Share,
                 contentDescription = "Share action menu"
