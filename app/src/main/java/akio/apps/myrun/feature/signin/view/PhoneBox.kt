@@ -15,8 +15,8 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
-import timber.log.Timber
 import java.util.Locale
+import timber.log.Timber
 
 class PhoneBox @JvmOverloads constructor(
     context: Context,

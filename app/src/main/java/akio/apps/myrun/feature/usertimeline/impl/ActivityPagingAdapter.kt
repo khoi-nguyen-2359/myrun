@@ -8,8 +8,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import kotlinx.coroutines.Dispatchers
 import java.text.SimpleDateFormat
+import kotlinx.coroutines.Dispatchers
 
 class ActivityPagingAdapter(
     private val selectItemAction: (Activity) -> Unit

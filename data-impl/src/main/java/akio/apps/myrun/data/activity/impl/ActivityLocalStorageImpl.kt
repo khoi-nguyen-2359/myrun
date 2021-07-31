@@ -24,7 +24,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import timber.log.Timber
 import java.io.BufferedOutputStream
 import java.io.File
 import javax.inject.Inject
@@ -40,6 +39,7 @@ import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.protobuf.ProtoBuf
+import timber.log.Timber
 
 private val Context.prefDataStore: DataStore<Preferences> by
 preferencesDataStore("ActivityLocalStorageImpl")

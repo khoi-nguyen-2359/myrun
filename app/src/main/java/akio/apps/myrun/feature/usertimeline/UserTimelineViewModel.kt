@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 
 abstract class UserTimelineViewModel : ViewModel() {
+    abstract val activityUploadBadge: Flow<ActivityUploadBadgeStatus>
     abstract val myActivityList: Flow<PagingData<Activity>>
     abstract val isLoadingInitialData: Flow<Boolean>
 
@@ -14,4 +15,10 @@ abstract class UserTimelineViewModel : ViewModel() {
      * activity doesn't have a place name.
      */
     abstract fun getActivityDisplayPlaceName(activity: Activity): String
+
+    sealed class ActivityUploadBadgeStatus {
+        class InProgress(val activityCount: Int) : ActivityUploadBadgeStatus()
+        object Complete : ActivityUploadBadgeStatus()
+        object Hidden : ActivityUploadBadgeStatus()
+    }
 }

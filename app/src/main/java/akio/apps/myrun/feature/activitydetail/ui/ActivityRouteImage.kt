@@ -1,6 +1,9 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
+import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.feature.usertimeline.model.Activity
+import akio.apps.myrun.feature.usertimeline.model.ActivityData
+import akio.apps.myrun.feature.usertimeline.model.RunningActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.aspectRatio
@@ -10,11 +13,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
+import com.google.accompanist.placeholder.material.shimmer
 
 private const val ACTIVITY_ROUTE_IMAGE_RATIO = 1.5f
 
@@ -22,11 +26,12 @@ private const val ACTIVITY_ROUTE_IMAGE_RATIO = 1.5f
 @Composable
 fun ActivityRouteImage(
     activity: Activity,
+    imageRatio: Float = ACTIVITY_ROUTE_IMAGE_RATIO,
     onClickAction: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     val imageWidth = remember { (context.resources.displayMetrics.widthPixels * 0.8).toInt() }
-    val imageHeight = remember { (imageWidth / ACTIVITY_ROUTE_IMAGE_RATIO).toInt() }
+    val imageHeight = remember { (imageWidth / imageRatio).toInt() }
     val imagePainter = rememberImagePainter(
         data = activity.routeImage,
         builder = {
@@ -39,10 +44,10 @@ fun ActivityRouteImage(
         contentDescription = "Activity route image",
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(ACTIVITY_ROUTE_IMAGE_RATIO)
+            .aspectRatio(imageRatio)
             .placeholder(
                 visible = imagePainter.state !is ImagePainter.State.Success,
-                highlight = PlaceholderHighlight.fade()
+                highlight = PlaceholderHighlight.shimmer()
             )
             .run {
                 if (onClickAction != null) {
@@ -54,3 +59,29 @@ fun ActivityRouteImage(
         contentScale = ContentScale.Crop,
     )
 }
+
+@Preview
+@Composable
+private fun PreviewActivityRouteImage() = ActivityRouteImage(
+    activity = RunningActivity(
+        activityData = ActivityData(
+            id = "id",
+            activityType = ActivityType.Running,
+            name = "Evening Run",
+            routeImage = "http://example.com",
+            placeIdentifier = null,
+            startTime = System.currentTimeMillis(),
+            endTime = 2000L,
+            duration = 1000L,
+            distance = 100.0,
+            encodedPolyline = "",
+            athleteInfo = Activity.AthleteInfo(
+                userId = "id",
+                userName = "Khoi Nguyen",
+                userAvatar = "userAvatar"
+            )
+        ),
+        pace = 1.0,
+        cadence = 160
+    )
+)

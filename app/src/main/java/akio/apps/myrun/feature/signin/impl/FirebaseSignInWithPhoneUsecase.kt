@@ -4,8 +4,8 @@ import akio.apps.myrun.data.authentication.model.SignInMethod
 import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlinx.coroutines.tasks.await
 
 class FirebaseSignInWithPhoneUsecase @Inject constructor(
     private val firebaseAuth: FirebaseAuth

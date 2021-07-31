@@ -93,6 +93,4 @@ class UserProfileViewModelImpl @Inject constructor(
         WorkManager.getInstance(application)
             .cancelUniqueWork(UploadStravaFileWorker.UNIQUE_WORK_NAME)
     }
-
-    data class Params(val userId: String?)
 }

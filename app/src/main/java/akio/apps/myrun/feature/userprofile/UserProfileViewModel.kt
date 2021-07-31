@@ -16,4 +16,5 @@ abstract class UserProfileViewModel : BaseViewModel() {
     abstract suspend fun logout()
     abstract fun isCurrentUser(): Boolean
     abstract suspend fun getActivityUploadCount(): Int
+    data class Params(val userId: String?)
 }

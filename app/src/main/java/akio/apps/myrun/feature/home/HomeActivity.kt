@@ -1,7 +1,8 @@
 package akio.apps.myrun.feature.home
 
+import akio.apps._base.di.viewModel
+import akio.apps._base.ui.px2dp
 import akio.apps.myrun.R
-import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.feature.activitydetail.ActivityDetailActivity
 import akio.apps.myrun.feature.activityexport.ActivityExportService
 import akio.apps.myrun.feature.home._di.DaggerHomeFeatureComponent
@@ -18,7 +19,12 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
@@ -30,24 +36,32 @@ class HomeActivity : AppCompatActivity() {
 
     private val userTimelineViewModel: UserTimelineViewModel by viewModel { homeFeatureComponent }
 
-    private val homeViewModel: HomeViewModel by viewModel { homeFeatureComponent }
-
     private val locationPermissionChecker: LocationPermissionChecker =
         LocationPermissionChecker(activity = this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        ViewCompat.setOnApplyWindowInsetsListener(
+            findViewById(android.R.id.content)
+        ) { _, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            setContent {
+                HomeScreen(
+                    userTimelineViewModel,
+                    contentPaddings = PaddingValues(
+                        top = insets.top.px2dp.dp,
+                        bottom = insets.bottom.px2dp.dp
+                    ),
+                    onClickUserProfileButton = ::openCurrentUserProfile,
+                    onClickFloatingActionButton = ::openRouteTrackingOrCheckRequiredPermission,
+                    onClickActivityItemAction = ::openActivityDetail,
+                    onClickActivityFileAction = ::startActivityExportService,
+                    onClickUserAvatar = ::openUserProfile
+                )
+            }
 
-        setContent {
-            HomeScreen(
-                homeViewModel,
-                userTimelineViewModel,
-                onClickUserProfileButton = ::openCurrentUserProfile,
-                onClickFloatingActionButton = ::openRouteTrackingOrCheckRequiredPermission,
-                onClickActivityItemAction = ::openActivityDetail,
-                onClickActivityFileAction = ::startActivityExportService,
-                onClickUserAvatar = ::openUserProfile
-            )
+            WindowInsetsCompat.CONSUMED
         }
     }
 
@@ -103,8 +117,7 @@ class HomeActivity : AppCompatActivity() {
     private fun openRouteTracking() = startActivity(RouteTrackingActivity.launchIntent(this))
 
     companion object {
-        fun clearTaskIntent(context: Context) = Intent(context, HomeActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+        fun clearTaskIntent(context: Context): Intent = Intent(context, HomeActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
     }
 }
