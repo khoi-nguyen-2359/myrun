@@ -98,10 +98,10 @@ fun UserTimeline(
         .collectAsState(initial = true)
     when {
         isLoadingInitialData ||
-            lazyPagingItems.loadState.refresh == LoadState.Loading &&
-            lazyPagingItems.itemCount == 0 -> FullscreenLoadingView()
+                lazyPagingItems.loadState.refresh == LoadState.Loading &&
+                lazyPagingItems.itemCount == 0 -> FullscreenLoadingView()
         lazyPagingItems.loadState.append.endOfPaginationReached &&
-            lazyPagingItems.itemCount == 0 -> UserTimelineEmptyMessage(
+                lazyPagingItems.itemCount == 0 -> UserTimelineEmptyMessage(
             Modifier.padding(bottom = contentPadding.calculateBottomPadding() + 8.dp)
         )
         else -> UserTimelineActivityList(
@@ -212,7 +212,11 @@ private fun TimelineActivityItem(
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit
 ) = TimelineItem {
-    Column(modifier = Modifier.clickable { onClickActivityAction(activity) }) {
+    Column(
+        modifier = Modifier.clickable {
+            onClickActivityAction(activity)
+        }
+    ) {
         Spacer(modifier = Modifier.height(activityItemVerticalPadding))
         ActivityInformationView(
             activity,
