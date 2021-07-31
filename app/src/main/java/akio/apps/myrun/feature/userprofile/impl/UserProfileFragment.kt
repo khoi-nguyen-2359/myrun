@@ -7,7 +7,7 @@ import akio.apps._base.ui.ViewBindingDelegate
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.circleCenterCrop
-import akio.apps.myrun._di.viewModel
+import akio.apps._base.di.viewModel
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.ExternalProviders
 import akio.apps.myrun.data.externalapp.model.ProviderToken
@@ -43,7 +43,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
     private val profileViewModel: UserProfileViewModel by viewModel {
         DaggerUserProfileFeatureComponent.factory().create(
-            UserProfileViewModelImpl.Params(userId),
+            UserProfileViewModel.Params(userId),
             requireActivity().application
         )
     }

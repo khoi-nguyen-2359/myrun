@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.home
 
+import akio.apps._base.di.viewModel
 import akio.apps._base.ui.px2dp
 import akio.apps.myrun.R
-import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.feature.activitydetail.ActivityDetailActivity
 import akio.apps.myrun.feature.activityexport.ActivityExportService
 import akio.apps.myrun.feature.home._di.DaggerHomeFeatureComponent
@@ -42,7 +42,9 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { _, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(
+            findViewById(android.R.id.content)
+        ) { _, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             setContent {
                 HomeScreen(
@@ -115,8 +117,7 @@ class HomeActivity : AppCompatActivity() {
     private fun openRouteTracking() = startActivity(RouteTrackingActivity.launchIntent(this))
 
     companion object {
-        fun clearTaskIntent(context: Context) = Intent(context, HomeActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
+        fun clearTaskIntent(context: Context): Intent = Intent(context, HomeActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
     }
 }

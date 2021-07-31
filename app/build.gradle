@@ -35,7 +35,7 @@ android {
             keyPassword 'myrundebugkeyv2'
         }
         rc {
-            def path = localProps.getProperty('signing.rc.path') ?: "signing.rc.path"
+            def path = localProps.getProperty('signing.rc.path') ?: "invalid"
             def password = localProps.getProperty('signing.rc.password')
             def alias = localProps.getProperty('signing.rc.alias')
             storeFile file(path)
@@ -168,7 +168,10 @@ dependencies {
     implementation "com.facebook.android:facebook-login:$Versions.facebookSdk"
 
     debugImplementation project(":configurator")
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$Versions.leakCanary"
+
+    if (localProps.getProperty("leakcanary.enabled", "1") == "1") {
+        debugImplementation "com.squareup.leakcanary:leakcanary-android:$Versions.leakCanary"
+    }
 
     implementation "androidx.core:core-splashscreen:$Versions.splashScreen"
 
