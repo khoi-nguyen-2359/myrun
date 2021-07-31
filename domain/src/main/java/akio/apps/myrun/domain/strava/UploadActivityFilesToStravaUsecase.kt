@@ -5,12 +5,12 @@ import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.StravaDataRepository
-import timber.log.Timber
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class UploadActivityFilesToStravaUsecase @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,

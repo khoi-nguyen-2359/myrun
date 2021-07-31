@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.editprofile.impl
 
+import akio.apps._base.di.viewModel
 import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.getNoneEmptyTextOrNull
@@ -8,7 +9,6 @@ import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.PhotoSelectionDelegate
 import akio.apps.myrun._base.utils.circleCenterCrop
-import akio.apps._base.di.viewModel
 import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import akio.apps.myrun.data.userprofile.model.UserProfile

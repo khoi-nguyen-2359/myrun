@@ -11,8 +11,8 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import timber.log.Timber
 import javax.inject.Inject
+import timber.log.Timber
 
 class UploadStravaFileWorker(
     appContext: Context,

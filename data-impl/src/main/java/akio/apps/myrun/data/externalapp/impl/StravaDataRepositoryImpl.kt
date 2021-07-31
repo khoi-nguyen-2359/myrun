@@ -4,12 +4,12 @@ import akio.apps.myrun.data.externalapp.StravaDataRepository
 import akio.apps.myrun.data.externalapp.mapper.StravaRouteEntityMapper
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.StravaRoute
+import java.io.File
+import javax.inject.Inject
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
-import javax.inject.Inject
 
 class StravaDataRepositoryImpl @Inject constructor(
     private val stravaApi: StravaApi,

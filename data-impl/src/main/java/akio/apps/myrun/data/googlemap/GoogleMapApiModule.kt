@@ -3,11 +3,11 @@ package akio.apps.myrun.data.googlemap
 import akio.apps.myrun.data._base.NetworkModule
 import dagger.Module
 import dagger.Provides
+import javax.inject.Named
+import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Named
-import javax.inject.Singleton
 
 @Module(includes = [NetworkModule::class])
 class GoogleMapApiModule {

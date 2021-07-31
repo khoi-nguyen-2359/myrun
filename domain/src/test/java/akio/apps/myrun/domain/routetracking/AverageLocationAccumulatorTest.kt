@@ -4,10 +4,10 @@ import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.time.TimeProvider
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
 class AverageLocationAccumulatorTest {
