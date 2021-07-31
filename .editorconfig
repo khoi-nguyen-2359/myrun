@@ -22,7 +22,10 @@ ij_continuation_indent_size = 4
 # Wildcard imports (of any type) are not allowed.
 ij_kotlin_name_count_to_use_star_import = 2147483647
 ij_kotlin_name_count_to_use_star_import_for_members = 2147483647
-disabled_rules = import-ordering
+# Other: Insert imports for nested classes -> false
+ij_kotlin_import_nested_classes = false
+# Import Layout: import all other imports, then import all alias imports
+ij_kotlin_imports_layout = *,^
 
 [*.java]
 ij_java_class_count_to_use_import_on_demand = 99
