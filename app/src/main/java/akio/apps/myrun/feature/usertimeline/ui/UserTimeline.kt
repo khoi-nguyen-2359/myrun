@@ -98,12 +98,14 @@ fun UserTimeline(
         .collectAsState(initial = true)
     when {
         isLoadingInitialData ||
-                lazyPagingItems.loadState.refresh == LoadState.Loading &&
-                lazyPagingItems.itemCount == 0 -> FullscreenLoadingView()
+            lazyPagingItems.loadState.refresh == LoadState.Loading &&
+            lazyPagingItems.itemCount == 0 -> FullscreenLoadingView()
         lazyPagingItems.loadState.append.endOfPaginationReached &&
-                lazyPagingItems.itemCount == 0 -> UserTimelineEmptyMessage(
-            Modifier.padding(bottom = contentPadding.calculateBottomPadding() + 8.dp)
-        )
+            lazyPagingItems.itemCount == 0 -> {
+            UserTimelineEmptyMessage(
+                Modifier.padding(bottom = contentPadding.calculateBottomPadding() + 8.dp)
+            )
+        }
         else -> UserTimelineActivityList(
             userTimelineViewModel,
             contentPadding,
