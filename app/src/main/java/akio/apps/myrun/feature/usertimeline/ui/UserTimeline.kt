@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -37,8 +38,6 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -89,6 +88,7 @@ private object TimelineDimensions {
 fun UserTimeline(
     userTimelineViewModel: UserTimelineViewModel,
     contentPadding: PaddingValues,
+    feedListState: LazyListState,
     onClickActivityAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit,
     onClickUserAvatar: (String) -> Unit
@@ -101,13 +101,13 @@ fun UserTimeline(
             lazyPagingItems.loadState.refresh == LoadState.Loading &&
             lazyPagingItems.itemCount == 0 -> FullscreenLoadingView()
         lazyPagingItems.loadState.append.endOfPaginationReached &&
-            lazyPagingItems.itemCount == 0 ->
-            UserTimelineEmptyMessage(
-                Modifier.padding(bottom = contentPadding.calculateBottomPadding() + 8.dp)
-            )
+            lazyPagingItems.itemCount == 0 -> UserTimelineEmptyMessage(
+            Modifier.padding(bottom = contentPadding.calculateBottomPadding() + 8.dp)
+        )
         else -> UserTimelineActivityList(
             userTimelineViewModel,
             contentPadding,
+            feedListState,
             lazyPagingItems,
             onClickActivityAction,
             onClickExportActivityFile,
@@ -120,25 +120,21 @@ fun UserTimeline(
 private fun UserTimelineActivityList(
     userTimelineViewModel: UserTimelineViewModel,
     contentPadding: PaddingValues,
+    feedListState: LazyListState,
     lazyPagingItems: LazyPagingItems<Activity>,
     onClickActivityAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit,
     onClickUserAvatar: (String) -> Unit
 ) {
     Timber.d("render UserTimelineActivityList pagingItems=$lazyPagingItems")
-    val activityStorageCount by userTimelineViewModel.activityStorageCount
-        .collectAsState(initial = 0)
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .background(listBackground),
-        contentPadding = contentPadding
+        contentPadding = contentPadding,
+        state = feedListState
     ) {
-        if (activityStorageCount > 0) {
-            item { UploadingNotifierItem(activityStorageCount) }
-        }
-
         items(
             lazyPagingItems,
             key = { activity -> activity.id }
@@ -460,29 +456,6 @@ private fun UserAvatarImage(
             .clip(CircleShape)
             .clickable { onClickUserAvatar() }
     )
-}
-
-@Composable
-private fun UploadingNotifierItem(activityStorageCount: Int) = TimelineItem {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-    ) {
-        Text(
-            text = "Uploading $activityStorageCount activities.",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(3.dp),
-            fontSize = 12.sp,
-            textAlign = TextAlign.Center
-        )
-        LinearProgressIndicator(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(2.dp)
-        )
-    }
 }
 
 @Composable

@@ -8,7 +8,7 @@ import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.LatLngBoundsBuilder
 import akio.apps.myrun._base.utils.LocationServiceChecker
 import akio.apps.myrun._base.utils.toGmsLatLng
-import akio.apps.myrun._di.viewModel
+import akio.apps._base.di.viewModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus

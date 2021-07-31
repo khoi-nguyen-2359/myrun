@@ -4,7 +4,7 @@ import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
-import akio.apps.myrun._di.viewModel
+import akio.apps._base.di.viewModel
 import akio.apps.myrun.feature.strava.LinkStravaViewModel
 import akio.apps.myrun.feature.strava._di.DaggerStravaFeatureComponent
 import akio.apps.myrun.feature.userprofile.impl.LinkStravaDelegate

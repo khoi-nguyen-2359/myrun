@@ -12,9 +12,11 @@ object AppColors {
     val primaryDark = Color(0xff003c8f)
     val secondary = Color(0xff5e92f3)
     val onSecondary = Color(0xffffffff)
+    val onPrimary = Color(0xffffffff)
 }
 
 object AppDimensions {
+    val iconButtonPadding = 16.dp
     val screenHorizontalPadding: Dp = 16.dp
 }
 
@@ -23,7 +25,8 @@ fun AppTheme(content: @Composable () -> Unit) = MaterialTheme(
     colors = lightColors(
         primary = AppColors.primary,
         secondary = AppColors.secondary,
-        onSecondary = AppColors.onSecondary
+        onSecondary = AppColors.onSecondary,
+        onPrimary = AppColors.onPrimary
     ),
     content = content,
     typography = MaterialTheme.typography

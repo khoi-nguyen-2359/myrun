@@ -12,10 +12,14 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import javax.inject.Inject
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
 class UserTimelineViewModelImpl @Inject constructor(
@@ -27,8 +31,28 @@ class UserTimelineViewModelImpl @Inject constructor(
 ) : UserTimelineViewModel() {
 
     private var activityPagingSource: ActivityPagingSource? = null
-    override val activityStorageCount: Flow<Int> =
-        activityLocalStorage.getActivityStorageDataCountFlow().distinctUntilChanged()
+
+    private var lastActivityStorageCount: Int = -1
+
+    override val activityUploadBadge: Flow<ActivityUploadBadgeStatus> =
+        createActivityUploadBadgeStatusFlow()
+
+    @OptIn(FlowPreview::class)
+    private fun createActivityUploadBadgeStatusFlow(): Flow<ActivityUploadBadgeStatus> =
+        activityLocalStorage.getActivityStorageDataCountFlow()
+            .distinctUntilChanged()
+            .mapNotNull { count ->
+                val status = when {
+                    count > 0 -> ActivityUploadBadgeStatus.InProgress(count)
+                    count == 0 && lastActivityStorageCount > 0 -> ActivityUploadBadgeStatus.Complete
+                    else -> null
+                }
+                lastActivityStorageCount = count
+
+                status
+            }
+            // there are 2 collectors so use shareIn
+            .shareIn(viewModelScope, replay = 1, started = SharingStarted.WhileSubscribed())
 
     override val myActivityList: Flow<PagingData<Activity>> = Pager(
         config = PagingConfig(
@@ -56,7 +80,7 @@ class UserTimelineViewModelImpl @Inject constructor(
     }
 
     private fun observeActivityUploadCount() = viewModelScope.launch {
-        activityStorageCount.collect {
+        activityUploadBadge.collect {
             activityPagingSource?.invalidate()
         }
     }

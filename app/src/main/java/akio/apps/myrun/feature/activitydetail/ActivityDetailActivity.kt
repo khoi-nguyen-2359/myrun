@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.activitydetail
 
-import akio.apps.myrun._di.viewModel
+import akio.apps._base.di.viewModel
 import akio.apps.myrun.feature.activitydetail._di.DaggerActivityDetailFeatureComponent
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.activityexport.ActivityExportService
