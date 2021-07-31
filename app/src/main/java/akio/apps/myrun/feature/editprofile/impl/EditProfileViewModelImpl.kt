@@ -24,9 +24,6 @@ class EditProfileViewModelImpl @Inject constructor(
     private val _updateProfileSuccess = MutableLiveData<Event<Unit>>()
     override val updateProfileSuccess: LiveData<Event<Unit>> = _updateProfileSuccess
 
-    private val _stravaTokenExchangedSuccess = MutableLiveData<Event<Unit>>()
-    override val stravaTokenExchangedSuccess: LiveData<Event<Unit>> = _stravaTokenExchangedSuccess
-
     private val _userProfile = MutableLiveData<UserProfile>()
     override val userProfile: LiveData<UserProfile> = _userProfile
 

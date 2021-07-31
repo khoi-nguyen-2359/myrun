@@ -16,11 +16,11 @@ import androidx.lifecycle.lifecycleScope
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.Timer
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.fixedRateTimer
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
 class OtpDialogFragment : DialogFragment() {

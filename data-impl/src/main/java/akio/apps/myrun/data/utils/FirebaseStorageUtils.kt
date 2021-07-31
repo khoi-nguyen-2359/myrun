@@ -3,8 +3,8 @@ package akio.apps.myrun.data.utils
 import android.graphics.Bitmap
 import android.net.Uri
 import com.google.firebase.storage.StorageReference
-import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
+import kotlinx.coroutines.tasks.await
 
 object FirebaseStorageUtils {
     suspend fun uploadBitmap(

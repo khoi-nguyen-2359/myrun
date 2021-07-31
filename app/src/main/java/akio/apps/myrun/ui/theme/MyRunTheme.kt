@@ -4,19 +4,30 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
-object MyRunAppColors {
+object AppColors {
     val primary = Color(0xff1565c0)
+    val primaryDark = Color(0xff003c8f)
     val secondary = Color(0xff5e92f3)
     val onSecondary = Color(0xffffffff)
+    val onPrimary = Color(0xffffffff)
+}
+
+object AppDimensions {
+    val iconButtonPadding = 16.dp
+    val screenHorizontalPadding: Dp = 16.dp
 }
 
 @Composable
-fun MyRunAppTheme(content: @Composable () -> Unit) = MaterialTheme(
+fun AppTheme(content: @Composable () -> Unit) = MaterialTheme(
     colors = lightColors(
-        primary = MyRunAppColors.primary,
-        secondary = MyRunAppColors.secondary,
-        onSecondary = MyRunAppColors.onSecondary
+        primary = AppColors.primary,
+        secondary = AppColors.secondary,
+        onSecondary = AppColors.onSecondary,
+        onPrimary = AppColors.onPrimary
     ),
-    content = content
+    content = content,
+    typography = MaterialTheme.typography
 )

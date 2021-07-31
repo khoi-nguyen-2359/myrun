@@ -7,6 +7,11 @@ import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import com.nhaarman.mockitokotlin2.mock
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -14,11 +19,6 @@ import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
 import org.mockito.Mockito.`when` as whenever
 
 @ExperimentalCoroutinesApi

@@ -1,13 +1,13 @@
 package akio.apps.myrun.feature.userprofile.impl
 
 import akio.apps._base.Resource
+import akio.apps._base.di.viewModel
 import akio.apps._base.lifecycle.viewLifecycleScope
 import akio.apps._base.ui.SingleFragmentActivity
 import akio.apps._base.ui.ViewBindingDelegate
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.circleCenterCrop
-import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.ExternalProviders
 import akio.apps.myrun.data.externalapp.model.ProviderToken
@@ -43,7 +43,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
     private val profileViewModel: UserProfileViewModel by viewModel {
         DaggerUserProfileFeatureComponent.factory().create(
-            UserProfileViewModelImpl.Params(userId),
+            UserProfileViewModel.Params(userId),
             requireActivity().application
         )
     }
@@ -68,12 +68,27 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     }
 
     private fun initViews() {
+        setupTopBar()
         viewBinding.apply {
-            editButton.setOnClickListener { openProfileDetails() }
             logoutButton.setOnClickListener { showLogoutAlert() }
             swipeRefreshLayout.isEnabled = false
 
             currentUserViewGroup.isVisible = profileViewModel.isCurrentUser()
+        }
+    }
+
+    private fun setupTopBar() {
+        viewBinding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_edit_profile -> {
+                    openProfileDetails()
+                    true
+                }
+                else -> false
+            }
+        }
+        viewBinding.topAppBar.setNavigationOnClickListener {
+            activity?.finish()
         }
     }
 
@@ -97,8 +112,11 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         viewBinding.apply {
             linkedAppMap.forEach { (viewIds, token) ->
                 val itemViewContainer = linkedAppsContainer.findViewById<View>(viewIds.containerId)
-                itemViewContainer.findViewById<SwitchCompat>(viewIds.checkBoxId).isChecked =
-                    token != null
+                itemViewContainer.findViewById<SwitchCompat>(viewIds.checkBoxId).run {
+                    isEnabled = true
+                    isChecked = token != null
+                }
+
                 if (token != null) {
                     itemViewContainer.setOnClickListener {
                         showUnlinkConfirmationDialog {

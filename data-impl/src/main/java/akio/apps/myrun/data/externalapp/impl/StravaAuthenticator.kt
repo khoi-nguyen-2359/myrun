@@ -6,6 +6,7 @@ import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntity
 import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntityMapper
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import com.google.gson.Gson
+import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -14,7 +15,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.Route
 import timber.log.Timber
-import kotlinx.coroutines.runBlocking
 
 class StravaAuthenticator(
     private val httpClient: OkHttpClient,
@@ -51,8 +51,7 @@ class StravaAuthenticator(
 
         val originalRefreshToken = originalToken.refreshToken
         Timber.d(
-            "refresh Strava token access_token=$originalAccessToken " +
-                "refresh_token=$originalRefreshToken"
+            "refresh Strava access_token=$originalAccessToken refresh_token=$originalRefreshToken"
         )
 
         val refreshRequest = Request.Builder()

@@ -59,7 +59,11 @@ private fun RouteTrackingSection(routeTrackingViewModel: RouteTrackingConfigurat
             .animateContentSize()
     ) {
         var isExpanded by remember { mutableStateOf(true) }
-        Row(modifier = Modifier.clickable { isExpanded = !isExpanded }) {
+        Row(
+            modifier = Modifier.clickable {
+                isExpanded = !isExpanded
+            }
+        ) {
             Icon(
                 imageVector = if (isExpanded) {
                     Icons.Rounded.ExpandLess

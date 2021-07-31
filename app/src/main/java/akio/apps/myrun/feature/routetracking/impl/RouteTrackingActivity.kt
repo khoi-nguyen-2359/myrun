@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.routetracking.impl
 
+import akio.apps._base.di.viewModel
 import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.dp2px
@@ -8,7 +9,6 @@ import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.LatLngBoundsBuilder
 import akio.apps.myrun._base.utils.LocationServiceChecker
 import akio.apps.myrun._base.utils.toGmsLatLng
-import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
@@ -29,9 +29,13 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Size
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -48,16 +52,17 @@ import com.google.android.libraries.maps.model.MarkerOptions
 import com.google.android.libraries.maps.model.Polyline
 import com.google.android.libraries.maps.model.PolylineOptions
 import com.google.android.libraries.maps.model.RoundCap
-import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventListener {
 
@@ -98,10 +103,24 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge()
 
         routeTrackingViewModel.requestInitialData()
         initViews()
         initMap()
+    }
+
+    private fun setupEdgeToEdge() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        ViewCompat.setOnApplyWindowInsetsListener(
+            viewBinding.composableView
+        ) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val layoutParamsWithInsets = (view.layoutParams as? ViewGroup.MarginLayoutParams)
+                ?.apply { bottomMargin = insets.bottom }
+            view.layoutParams = layoutParamsWithInsets
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     override fun onStart() {
@@ -266,8 +285,20 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
         setContentView(root)
         activitySettingsView.eventListener = this@RouteTrackingActivity
         composableView.setContent {
-            TrackingControlButtonPanel(routeTrackingViewModel, ::onClickControlButton)
+            TrackingControlButtonPanel(
+                routeTrackingViewModel,
+                ::onClickControlButton,
+                ::onClickMyLocation
+            )
             StopOptionsDialog(routeTrackingViewModel, ::selectStopOptionItem)
+        }
+    }
+
+    private fun onClickMyLocation() {
+        isStickyCamera = true
+        lifecycleScope.launch {
+            val lastLocation = routeTrackingViewModel.getLastLocationFlow().first()
+            recenterMap(lastLocation)
         }
     }
 
@@ -423,7 +454,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             }
         }
         map.isMyLocationEnabled = true
-        map.uiSettings.isMyLocationButtonEnabled = true
+        map.uiSettings.isMyLocationButtonEnabled = false
         map.uiSettings.setAllGesturesEnabled(true)
         map.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(

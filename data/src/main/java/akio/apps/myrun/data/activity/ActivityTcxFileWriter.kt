@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.activity
 
-import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.ActivityLocation
+import akio.apps.myrun.data.activity.model.ActivityModel
 import java.io.File
 
 interface ActivityTcxFileWriter {

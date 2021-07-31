@@ -11,13 +11,13 @@ import com.google.android.gms.fitness.data.DataPoint
 import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.fitness.request.DataReadRequest
+import java.util.TreeSet
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.TreeSet
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 class GoogleFitnessDataRepository @Inject constructor(
     private val application: Application,

@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.editprofile.impl
 
+import akio.apps._base.di.viewModel
 import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.getNoneEmptyTextOrNull
@@ -8,7 +9,6 @@ import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.PhotoSelectionDelegate
 import akio.apps.myrun._base.utils.circleCenterCrop
-import akio.apps.myrun._di.viewModel
 import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import akio.apps.myrun.data.userprofile.model.UserProfile
@@ -25,7 +25,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.google.android.material.snackbar.Snackbar
 import java.io.File
 import java.text.DecimalFormat
 import java.util.Locale
@@ -69,25 +68,12 @@ class EditProfileActivity :
         observe(editProfileVM.userProfile, ::fillCurrentUserProfile)
 
         observeEvent(editProfileVM.error, dialogDelegate::showExceptionAlert)
-        observeEvent(editProfileVM.stravaTokenExchangedSuccess) {
-            onStravaTokenExchanged()
-        }
         observeEvent(editProfileVM.blankEditDisplayNameError) {
             dialogDelegate.showErrorAlert(getString(R.string.error_invalid_display_name))
         }
         observeEvent(editProfileVM.updateProfileSuccess) {
             onUpdateProfileSuccess()
         }
-    }
-
-    private fun onStravaTokenExchanged() {
-        setResult(Activity.RESULT_OK)
-        Snackbar.make(
-            viewBinding.saveButton,
-            getString(R.string.edit_user_profile_link_running_app_success_message),
-            Snackbar.LENGTH_LONG
-        )
-            .show()
     }
 
     override fun onDestroy() {
@@ -126,9 +112,19 @@ class EditProfileActivity :
 
         genderTextView.setOnClickListener { openGenderPicker() }
 
-        saveButton.setOnClickListener {
-            val userProfileUpdateData = createUpdateData()
-            editProfileVM.updateProfile(userProfileUpdateData)
+        viewBinding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_save_profile -> {
+                    val userProfileUpdateData = createUpdateData()
+                    editProfileVM.updateProfile(userProfileUpdateData)
+                    true
+                }
+                else -> false
+            }
+        }
+
+        viewBinding.topAppBar.setNavigationOnClickListener {
+            finish()
         }
     }
 

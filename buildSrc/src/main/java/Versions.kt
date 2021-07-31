@@ -6,7 +6,7 @@ object Versions {
     const val targetSdk = 30
     const val compileSdk = 31
 
-    const val agp = "7.1.0-alpha03"
+    const val agp = "7.0.0"
     const val kotlin = "1.5.10"
     const val coroutines = "1.5.1"
     const val kotlinSerialization = "1.2.1"
@@ -14,7 +14,7 @@ object Versions {
     // jetpack
     const val androidxCore = "1.6.0"
     const val appCompat = "1.3.1"
-    const val activity = "1.3.0-rc02"
+    const val activity = "1.3.0"
     const val fragment = "1.3.6"
     const val constraintLayout = "2.0.4"
     const val androidMaterial = "1.4.0"
@@ -26,10 +26,10 @@ object Versions {
     const val splashScreen = "1.0.0-alpha01"
 
     // compose
-    const val compose = "1.0.0-rc02"
+    const val compose = "1.0.0"
     const val composeConstraintLayout = "1.0.0-beta01"
     const val pagingCompose = "1.0.0-alpha12"
-    const val accompanist = "0.14.0"
+    const val accompanist = "0.15.0"
 
     const val multidex = "1.0.3"
 

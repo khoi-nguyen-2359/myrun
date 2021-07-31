@@ -1,128 +1,270 @@
 package akio.apps.myrun.feature.home.ui
 
-import akio.apps.myrun.feature.home.HomeViewModel
+import akio.apps.myrun.R
+import akio.apps.myrun.feature.home.ui.HomeScreenColors.uploadingBadgeContentColor
+import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.AppBarHeight
+import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.FabSize
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.ui.UserTimeline
-import akio.apps.myrun.ui.theme.MyRunAppTheme
+import akio.apps.myrun.ui.theme.AppColors
+import akio.apps.myrun.ui.theme.AppDimensions
+import akio.apps.myrun.ui.theme.AppTheme
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.BottomAppBar
-import androidx.compose.material.FabPosition
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Person
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.sharp.CheckCircleOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
-private val BottomAppBarHeight = 56.dp
+object HomeScreenDimensions {
+    val AppBarHeight = 56.dp
+    val FabSize = 56.dp
+}
+
+object HomeScreenColors {
+    val uploadingBadgeContentColor = Color(0xffffffff)
+}
 
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel,
     userTimelineViewModel: UserTimelineViewModel,
+    contentPaddings: PaddingValues,
     onClickUserProfileButton: () -> Unit,
     onClickFloatingActionButton: () -> Unit,
     onClickActivityItemAction: (Activity) -> Unit,
     onClickActivityFileAction: (Activity) -> Unit,
     onClickUserAvatar: (String) -> Unit
 ) {
-    val activityStorageCount by homeViewModel.activityStorageCount.collectAsState(initial = 0)
-    MyRunAppTheme {
-        Scaffold(
-            bottomBar = { HomeBottomBar(onClickUserProfileButton) },
-            floatingActionButton = { HomeFloatingActionButton(onClickFloatingActionButton) },
-            floatingActionButtonPosition = FabPosition.Center,
-            isFloatingActionButtonDocked = true
-        ) {
-            Box {
-                UserTimeline(
-                    userTimelineViewModel,
-                    PaddingValues(bottom = BottomAppBarHeight * 1.5f),
-                    onClickActivityItemAction,
-                    onClickActivityFileAction,
-                    onClickUserAvatar
-                )
-
-                if (activityStorageCount > 0) {
-                    UploadingNotifierItem(activityStorageCount)
+    AppTheme {
+        val topBarHeightDp = AppBarHeight + contentPaddings.calculateTopPadding()
+        val topBarHeightPx = with(LocalDensity.current) { topBarHeightDp.roundToPx().toFloat() }
+        val fabBoxHeightDp = FabSize * 4 / 3 + contentPaddings.calculateBottomPadding()
+        val fabBoxSizePx = with(LocalDensity.current) { fabBoxHeightDp.roundToPx().toFloat() }
+        var topBarOffsetY by remember { mutableStateOf(0f) }
+        var fabOffsetY by remember { mutableStateOf(0f) }
+        val nestedScrollConnection = remember {
+            object : NestedScrollConnection {
+                override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                    val delta = available.y
+                    var newOffset = topBarOffsetY + delta
+                    topBarOffsetY = newOffset.coerceIn(-topBarHeightPx, 0f)
+                    newOffset = fabOffsetY - delta
+                    fabOffsetY = newOffset.coerceIn(0f, fabBoxSizePx)
+                    return Offset.Zero
                 }
+            }
+        }
+        val activityStorageCount by userTimelineViewModel.activityUploadBadge
+            .collectAsState(initial = null)
+        val feedListState = rememberLazyListState()
+        val coroutineScope = rememberCoroutineScope()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(nestedScrollConnection)
+        ) {
+            UserTimeline(
+                userTimelineViewModel,
+                PaddingValues(
+                    top = topBarHeightDp,
+                    bottom = fabBoxHeightDp // avoid the bottom bar
+                ),
+                feedListState,
+                onClickActivityItemAction,
+                onClickActivityFileAction,
+                onClickUserAvatar
+            )
+            HomeTopBar(
+                activityStorageCount,
+                onClickUserProfileButton,
+                { coroutineScope.launch { feedListState.animateScrollToItem(0) } },
+                Modifier
+                    .height(topBarHeightDp)
+                    .align(Alignment.TopCenter)
+                    .offset { IntOffset(x = 0, y = topBarOffsetY.roundToInt()) }
+                    .background(AppColors.primary)
+            )
+            Box(
+                modifier = Modifier
+                    .height(fabBoxHeightDp)
+                    .align(Alignment.BottomCenter)
+                    .offset { IntOffset(x = 0, y = fabOffsetY.roundToInt()) }
+            ) {
+                HomeFloatingActionButton(onClickFloatingActionButton)
             }
         }
     }
 }
 
 @Composable
-private fun UploadingNotifierItem(activityStorageCount: Int) = Column(
-    modifier = Modifier
-        .fillMaxWidth()
-        .background(Color.White)
-) {
-    Text(
-        text = "Uploading $activityStorageCount activities.",
+private fun UploadInProgressBadge(count: Int) {
+    var isUploadInfoPopupShowing by remember { mutableStateOf(false) }
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(3.dp),
-        fontSize = 12.sp,
-        textAlign = TextAlign.Center
-    )
-    LinearProgressIndicator(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(2.dp)
-    )
+            .size(AppBarHeight)
+            .clickable { isUploadInfoPopupShowing = true }
+            .padding(AppDimensions.iconButtonPadding),
+        contentAlignment = Alignment.Center
+    ) {
+        LinearProgressIndicator(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(2.dp)
+                .align(Alignment.BottomCenter),
+            color = uploadingBadgeContentColor
+        )
+        Text(
+            text = "$count",
+            fontWeight = FontWeight.Black,
+            fontSize = 11.sp,
+            color = uploadingBadgeContentColor
+        )
+        DropdownMenu(
+            modifier = Modifier
+                .background(Color.Black)
+                .padding(horizontal = 8.dp),
+            expanded = isUploadInfoPopupShowing,
+            onDismissRequest = { isUploadInfoPopupShowing = false },
+        ) {
+            val popupMessage = stringResource(R.string.home_upload_progress, count)
+            Text(
+                text = popupMessage,
+                color = Color.White,
+                fontSize = 12.sp
+            )
+        }
+    }
 }
 
-@Preview(showSystemUi = true)
+@Preview
 @Composable
-private fun PreviewUploadingNotifierItem() {
-    UploadingNotifierItem(activityStorageCount = 3)
-}
+private fun PreviewUploadingBadge() = UploadInProgressBadge(count = 3)
 
 @Composable
-private fun HomeFloatingActionButton(onClick: () -> Unit) = FloatingActionButton(
-    onClick = onClick
+private fun HomeTopBar(
+    activityUploadBadge: UserTimelineViewModel.ActivityUploadBadgeStatus?,
+    onClickUserProfileButton: () -> Unit,
+    onClickUploadCompleteBadge: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Icon(
-        imageVector = Icons.Rounded.Add,
-        contentDescription = "Floating action button on bottom bar"
-    )
+    Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
+        TopAppBar(
+            title = {
+                Text(
+                    stringResource(id = R.string.user_feed_title),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = Icons.Rounded.Settings.defaultWidth)
+                )
+            },
+            actions = {
+                ActivityUploadNotifierBadge(activityUploadBadge, onClickUploadCompleteBadge)
+                AppBarIconButton(onClickUserProfileButton, Icons.Rounded.Settings)
+            }
+        )
+    }
 }
 
 @Composable
-private fun HomeBottomBar(
-    onClickUserProfileButton: () -> Unit
-) = BottomAppBar {
-    Spacer(modifier = Modifier.weight(weight = 1f, fill = true))
-    BottomBarIconButton(onClickUserProfileButton, Icons.Rounded.Person)
-}
-
-@Composable
-private fun BottomBarIconButton(onClick: () -> Unit, iconImageVector: ImageVector) = IconButton(
-    onClick = onClick,
+private fun ActivityUploadNotifierBadge(
+    activityUploadBadge: UserTimelineViewModel.ActivityUploadBadgeStatus?,
+    onClickUploadCompleteBadge: () -> Unit
 ) {
-    Icon(
-        imageVector = iconImageVector,
-        contentDescription = "User profile icon button on bottom bar"
+    Crossfade(targetState = activityUploadBadge) {
+        when (it) {
+            is UserTimelineViewModel.ActivityUploadBadgeStatus.InProgress -> {
+                UploadInProgressBadge(count = it.activityCount)
+            }
+            UserTimelineViewModel.ActivityUploadBadgeStatus.Complete -> {
+                UploadCompleteBadge(onClickUploadCompleteBadge)
+            }
+            else -> {
+                // render void
+            }
+        }
+    }
+}
+
+@Composable
+private fun UploadCompleteBadge(onClickUploadCompleteBadge: () -> Unit) {
+    var isDismissed by remember { mutableStateOf(false) }
+    if (isDismissed) {
+        return
+    }
+    AppBarIconButton(
+        onClick = {
+            onClickUploadCompleteBadge()
+            isDismissed = true
+        },
+        iconImageVector = Icons.Sharp.CheckCircleOutline
     )
 }
+
+@Composable
+private fun HomeFloatingActionButton(onClick: () -> Unit, modifier: Modifier = Modifier) =
+    FloatingActionButton(onClick = onClick, modifier = modifier) {
+        Icon(
+            imageVector = Icons.Rounded.Add,
+            contentDescription = "Floating action button on bottom bar"
+        )
+    }
+
+@Composable
+private fun AppBarIconButton(onClick: () -> Unit, iconImageVector: ImageVector) =
+    IconButton(onClick = onClick) {
+        Icon(
+            tint = Color.White,
+            imageVector = iconImageVector,
+            contentDescription = "User profile icon button on bottom bar"
+        )
+    }
+
+@Preview
+@Composable
+private fun PreviewTopBar() = HomeTopBar(
+    activityUploadBadge = UserTimelineViewModel.ActivityUploadBadgeStatus.Complete,
+    {},
+    {}
+)
