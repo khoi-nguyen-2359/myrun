@@ -71,7 +71,6 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeoutOrNull
 
 class RouteTrackingActivity(
     private val launchCatchingDelegate: LaunchCatchingDelegateImpl = LaunchCatchingDelegateImpl()
@@ -79,6 +78,9 @@ class RouteTrackingActivity(
     AppCompatActivity(),
     ActivitySettingsView.EventListener,
     LaunchCatchingDelegate by launchCatchingDelegate {
+
+    // use this flag to check if map has ever been loaded (or never been due to no internet)
+    private var hasMapCameraBeenIdled: Boolean = false
 
     private val dialogDelegate by lazy { DialogDelegate(this) }
 
@@ -416,27 +418,24 @@ class RouteTrackingActivity(
      * (no internet, no drawing happens)
      */
     private suspend fun captureGoogleMapViewSnapshot(cameraViewPortSize: Size): Bitmap? {
-        val captureTimeout = 5000L // or mapView will wait forever if snapshot is unavailable
-        val snapshot: Bitmap? = withTimeoutOrNull(captureTimeout) {
-            suspendCancellableCoroutine<Bitmap> { continuation ->
-                mapView.snapshot { mapSnapshot ->
-                    continuation.resume(mapSnapshot)
-                }
+        if (!hasMapCameraBeenIdled)
+            return null
+        val snapshot = suspendCancellableCoroutine<Bitmap> { continuation ->
+            mapView.snapshot { mapSnapshot ->
+                continuation.resume(mapSnapshot)
             }
         }
 
         val routeImage = withContext(Dispatchers.IO) {
-            snapshot?.let {
-                Bitmap.createBitmap(
-                    snapshot,
-                    (snapshot.width - cameraViewPortSize.width) / 2,
-                    (snapshot.height - cameraViewPortSize.height) / 2,
-                    cameraViewPortSize.width,
-                    cameraViewPortSize.height
-                )
-            }
+            Bitmap.createBitmap(
+                snapshot,
+                (snapshot.width - cameraViewPortSize.width) / 2,
+                (snapshot.height - cameraViewPortSize.height) / 2,
+                cameraViewPortSize.width,
+                cameraViewPortSize.height
+            )
         }
-        snapshot?.recycle()
+        snapshot.recycle()
         return routeImage
     }
 
@@ -520,6 +519,9 @@ class RouteTrackingActivity(
         map.setOnMyLocationButtonClickListener {
             isStickyCamera = true
             false
+        }
+        map.setOnCameraIdleListener {
+            hasMapCameraBeenIdled = true
         }
         map.setOnCameraMoveStartedListener { reason ->
             if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
