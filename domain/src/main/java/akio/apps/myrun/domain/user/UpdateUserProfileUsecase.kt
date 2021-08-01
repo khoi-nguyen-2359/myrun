@@ -1,6 +1,5 @@
 package akio.apps.myrun.domain.user
 
-import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
@@ -12,9 +11,7 @@ class UpdateUserProfileUsecase @Inject constructor(
 ) {
 
     suspend fun updateUserProfile(profileEditData: ProfileEditData) =
-        userAuthenticationState.getUserAccountId()
-            ?.let { userId ->
-                userProfileRepository.updateUserProfile(userId, profileEditData)
-            }
-            ?: throw UnauthorizedUserError()
+        userAuthenticationState.requireUserAccountId().let { userId ->
+            userProfileRepository.updateUserProfile(userId, profileEditData)
+        }
 }

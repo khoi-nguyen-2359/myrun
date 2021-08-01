@@ -1,9 +1,13 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps._base.di.viewModel
+import akio.apps._base.lifecycle.collectEventRepeatOnStarted
+import akio.apps._base.lifecycle.collectRepeatOnStarted
 import akio.apps._base.lifecycle.observe
 import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.dp2px
+import akio.apps._base.viewmodel.LaunchCatchingDelegate
+import akio.apps._base.viewmodel.LaunchCatchingDelegateImpl
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.LatLngBoundsBuilder
@@ -26,6 +30,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
 import android.util.Size
 import android.view.View
@@ -36,6 +43,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.drawToBitmap
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -55,6 +63,7 @@ import com.google.android.libraries.maps.model.RoundCap
 import kotlin.coroutines.resume
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
@@ -62,9 +71,14 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import timber.log.Timber
+import kotlinx.coroutines.withTimeoutOrNull
 
-class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventListener {
+class RouteTrackingActivity(
+    private val launchCatchingDelegate: LaunchCatchingDelegateImpl = LaunchCatchingDelegateImpl()
+) :
+    AppCompatActivity(),
+    ActivitySettingsView.EventListener,
+    LaunchCatchingDelegate by launchCatchingDelegate {
 
     private val dialogDelegate by lazy { DialogDelegate(this) }
 
@@ -138,6 +152,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
     override fun onDestroy() {
         super.onDestroy()
 
+        routePolyline = null
         requisiteJobs.cancel()
     }
 
@@ -152,6 +167,8 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
             viewBinding.activitySettingsView::setActivityType
         )
         observe(routeTrackingViewModel.activityType, viewBinding.trackingStatsView::setActivityType)
+        collectRepeatOnStarted(isInProgress, dialogDelegate::toggleProgressDialog)
+        collectEventRepeatOnStarted(error, dialogDelegate::showExceptionAlert)
         setAutoCameraEnabled(true)
     }
 
@@ -369,7 +386,7 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
      * Returns null when map snapshot is failed to be captured.
      */
     @SuppressLint("MissingPermission")
-    private suspend fun getRouteImageBitmap(): Bitmap? {
+    private suspend fun getRouteImageBitmap(): Bitmap {
         // hide the my location button
         mapView.isMyLocationEnabled = false
         // hide the start point marker
@@ -383,41 +400,97 @@ class RouteTrackingActivity : AppCompatActivity(), ActivitySettingsView.EventLis
                 cameraViewPortSize
             )
         }
-        val mapImageSnapShot: Bitmap? = suspendCancellableCoroutine { continuation ->
-            mapView.snapshot { mapSnapshot ->
-                Timber.d(Thread.currentThread().name)
-                continuation.resume(mapSnapshot)
-            }
-        }
+        delay(500) // for above map adjustments take effects
+
+        val routeImageBitmap: Bitmap = captureGoogleMapViewSnapshot(cameraViewPortSize)
+            ?: drawRouteImage(cameraViewPortSize)
+
         mapView.isMyLocationEnabled = true
         startPointMarker?.isVisible = true
-        if (mapImageSnapShot == null) {
-            // null when snapshot can not be taken
-            Timber.e(Exception("Map snapshot can not be taken."))
-            return null
+
+        return routeImageBitmap
+    }
+
+    /**
+     * Captures Google map view snapshot in a bitmap. Returns null in case map is unavailable
+     * (no internet, no drawing happens)
+     */
+    private suspend fun captureGoogleMapViewSnapshot(cameraViewPortSize: Size): Bitmap? {
+        val captureTimeout = 5000L // or mapView will wait forever if snapshot is unavailable
+        val snapshot: Bitmap? = withTimeoutOrNull(captureTimeout) {
+            suspendCancellableCoroutine<Bitmap> { continuation ->
+                mapView.snapshot { mapSnapshot ->
+                    continuation.resume(mapSnapshot)
+                }
+            }
         }
 
-        return withContext(Dispatchers.IO) {
+        val routeImage = withContext(Dispatchers.IO) {
+            snapshot?.let {
+                Bitmap.createBitmap(
+                    snapshot,
+                    (snapshot.width - cameraViewPortSize.width) / 2,
+                    (snapshot.height - cameraViewPortSize.height) / 2,
+                    cameraViewPortSize.width,
+                    cameraViewPortSize.height
+                )
+            }
+        }
+        snapshot?.recycle()
+        return routeImage
+    }
+
+    /**
+     * In case map view can not generate snapshot, manually draw polyline into a bitmap.
+     */
+    private suspend fun drawRouteImage(cameraViewPortSize: Size): Bitmap {
+        val mapViewBitmap = viewBinding.trackingMapView.drawToBitmap()
+        val mapProjection = mapView.projection
+        val mapPolypoints = routePolyline?.points ?: emptyList()
+        val routeImage = withContext(Dispatchers.IO) {
+            val canvas = Canvas(mapViewBitmap)
+            canvas.drawColor(Color.parseColor("#e5e5e5"))
+            val pts = mapPolypoints.map(mapProjection::toScreenLocation)
+                .flatMapIndexed { index, item ->
+                    listOf(item.x.toFloat(), item.y.toFloat()) +
+                        if (index >= 1 && index < mapPolypoints.size - 1) {
+                            listOf(item.x.toFloat(), item.y.toFloat())
+                        } else {
+                            emptyList()
+                        }
+                }
+                .toFloatArray()
+            if (pts.isNotEmpty()) {
+                val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    strokeCap = Paint.Cap.ROUND
+                    strokeJoin = Paint.Join.ROUND
+                    strokeWidth = 3.dp2px
+                    color = ContextCompat.getColor(
+                        this@RouteTrackingActivity,
+                        R.color.route_tracking_polyline
+                    )
+                }
+                canvas.drawLines(pts, linePaint)
+            }
+
             Bitmap.createBitmap(
-                mapImageSnapShot,
-                (mapImageSnapShot.width - cameraViewPortSize.width) / 2,
-                (mapImageSnapShot.height - cameraViewPortSize.height) / 2,
+                mapViewBitmap,
+                (mapViewBitmap.width - cameraViewPortSize.width) / 2,
+                (mapViewBitmap.height - cameraViewPortSize.height) / 2,
                 cameraViewPortSize.width,
                 cameraViewPortSize.height
             )
         }
+        mapViewBitmap.recycle()
+        return routeImage
     }
 
     private fun saveActivity() {
-        lifecycleScope.launch {
-            dialogDelegate.showProgressDialog()
+        lifecycleScope.launchCatching {
             val routeImageBitmap = getRouteImageBitmap()
-            if (routeImageBitmap != null) {
-                routeTrackingViewModel.storeActivityData(routeImageBitmap)
-                ActivityUploadWorker.enqueue(this@RouteTrackingActivity)
-                stopTrackingServiceAndFinish()
-            }
-            dialogDelegate.dismissProgressDialog()
+            routeTrackingViewModel.storeActivityData(routeImageBitmap)
+            ActivityUploadWorker.enqueue(this@RouteTrackingActivity)
+            stopTrackingServiceAndFinish()
         }
     }
 

@@ -52,8 +52,7 @@ class FirebaseActivityRepository @Inject constructor(
             .startAfter(startAfterTime)
             .limit(limit.toLong())
 
-        val snapshot = query.get()
-            .await()
+        val snapshot = query.get().await()
 
         snapshot.documents.mapNotNull { doc ->
             val firestoreActivity = doc.toObject(FirestoreActivity::class.java)
