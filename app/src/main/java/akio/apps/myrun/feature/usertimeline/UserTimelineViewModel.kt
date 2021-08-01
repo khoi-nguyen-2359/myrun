@@ -21,4 +21,6 @@ abstract class UserTimelineViewModel : ViewModel() {
         object Complete : ActivityUploadBadgeStatus()
         object Hidden : ActivityUploadBadgeStatus()
     }
+
+    abstract fun reloadFeedData()
 }

@@ -94,12 +94,17 @@ fun UserTimeline(
     onClickUserAvatar: (String) -> Unit
 ) {
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
+    Timber.d("feed source load state ${lazyPagingItems.loadState.source}")
     val isLoadingInitialData by userTimelineViewModel.isLoadingInitialData
         .collectAsState(initial = true)
     when {
         isLoadingInitialData ||
-            lazyPagingItems.loadState.refresh == LoadState.Loading &&
-            lazyPagingItems.itemCount == 0 -> FullscreenLoadingView()
+            (
+                lazyPagingItems.loadState.refresh == LoadState.Loading &&
+                    lazyPagingItems.itemCount == 0
+                ) -> {
+            FullscreenLoadingView()
+        }
         lazyPagingItems.loadState.append.endOfPaginationReached &&
             lazyPagingItems.itemCount == 0 -> {
             UserTimelineEmptyMessage(

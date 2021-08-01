@@ -1,5 +1,8 @@
 package akio.apps.myrun.feature.usertimeline.impl
 
+import akio.apps._base.lifecycle.Event
+import akio.apps._base.viewmodel.LaunchCatchingDelegate
+import akio.apps._base.viewmodel.LaunchCatchingDelegateImpl
 import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.recentplace.PlaceIdentifier
@@ -27,8 +30,9 @@ class UserTimelineViewModelImpl @Inject constructor(
     private val createActivityDisplayPlaceNameUsecase: CreateActivityDisplayPlaceNameUsecase,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
     private val userAuthenticationState: UserAuthenticationState,
-    private val activityLocalStorage: ActivityLocalStorage
-) : UserTimelineViewModel() {
+    private val activityLocalStorage: ActivityLocalStorage,
+    private val launchCatchingViewModel: LaunchCatchingDelegateImpl = LaunchCatchingDelegateImpl()
+) : UserTimelineViewModel(), LaunchCatchingDelegate by launchCatchingViewModel {
 
     private var activityPagingSource: ActivityPagingSource? = null
 
@@ -70,7 +74,9 @@ class UserTimelineViewModelImpl @Inject constructor(
 
     private val mapActivityIdToPlaceName: MutableMap<String, String> = mutableMapOf()
 
+    // This is optional data, null for not found.
     private var userRecentPlaceIdentifier: PlaceIdentifier? = null
+
     private val isLoadingInitialDataMutable: MutableStateFlow<Boolean> = MutableStateFlow(true)
     override val isLoadingInitialData: Flow<Boolean> = isLoadingInitialDataMutable
 
@@ -81,8 +87,12 @@ class UserTimelineViewModelImpl @Inject constructor(
 
     private fun observeActivityUploadCount() = viewModelScope.launch {
         activityUploadBadge.collect {
-            activityPagingSource?.invalidate()
+            reloadFeedData()
         }
+    }
+
+    override fun reloadFeedData() {
+        activityPagingSource?.invalidate()
     }
 
     override fun getActivityDisplayPlaceName(activity: Activity): String {
@@ -102,14 +112,17 @@ class UserTimelineViewModelImpl @Inject constructor(
         return placeName
     }
 
-    private fun loadInitialData() = viewModelScope.launch {
-        isLoadingInitialDataMutable.value = true
-        val userId = userAuthenticationState.getUserAccountId()
-        if (userId != null) {
-            userRecentPlaceIdentifier = userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
+    private fun loadInitialData() =
+        viewModelScope.launchCatching(
+            progressStateFlow = isLoadingInitialDataMutable,
+            errorStateFlow = MutableStateFlow(Event(null))
+        ) {
+            val userId = userAuthenticationState.getUserAccountId()
+            if (userId != null) {
+                userRecentPlaceIdentifier =
+                    userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
+            }
         }
-        isLoadingInitialDataMutable.value = false
-    }
 
     companion object {
         const val PAGE_SIZE = 6
