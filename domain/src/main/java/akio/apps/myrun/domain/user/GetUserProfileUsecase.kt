@@ -6,6 +6,7 @@ import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 class GetUserProfileUsecase @Inject constructor(
     private val userProfileRepository: UserProfileRepository,
@@ -15,8 +16,10 @@ class GetUserProfileUsecase @Inject constructor(
     /**
      * [userId] is id of user to fetch data, null will load current user.
      */
-    fun getUserProfileFlow(userId: String? = null): Flow<Resource<UserProfile>> {
+    fun getUserProfileFlow(userId: String? = null): Flow<Resource<UserProfile>> = try {
         val finalUserId = userId ?: userAuthenticationState.requireUserAccountId()
-        return userProfileRepository.getUserProfileFlow(finalUserId)
+        userProfileRepository.getUserProfileFlow(finalUserId)
+    } catch (ex: Exception) {
+        flowOf(Resource.Error(ex))
     }
 }

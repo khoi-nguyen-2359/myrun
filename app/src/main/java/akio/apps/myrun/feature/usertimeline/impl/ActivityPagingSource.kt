@@ -7,6 +7,7 @@ import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import javax.inject.Inject
+import timber.log.Timber
 
 class ActivityPagingSource @Inject constructor(
     private val getUserTimelineActivitiesUsecase: GetUserTimelineActivitiesUsecase,
@@ -16,6 +17,7 @@ class ActivityPagingSource @Inject constructor(
         val startAfter = params.key ?: System.currentTimeMillis()
         val resource =
             getUserTimelineActivitiesUsecase.getUserTimelineActivity(startAfter, params.loadSize)
+        Timber.d("feed resource $resource")
         return when (resource) {
             is Resource.Success ->
                 LoadResult.Page(

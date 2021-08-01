@@ -41,7 +41,7 @@ class UpdateUserProfileUsecaseTest {
         runBlockingTest {
             // given
             val userId = "userId"
-            whenever(userAuthenticationState.getUserAccountId()).thenReturn(userId)
+            whenever(userAuthenticationState.requireUserAccountId()).thenReturn(userId)
             val editData = createProfileEditData()
             whenever(userProfileRepository.updateUserProfile(userId, editData)).thenReturn(Unit)
 
@@ -49,7 +49,7 @@ class UpdateUserProfileUsecaseTest {
             testee.updateUserProfile(editData)
 
             // then
-            verify(userAuthenticationState).getUserAccountId()
+            verify(userAuthenticationState).requireUserAccountId()
             verify(userProfileRepository).updateUserProfile(userId, editData)
         }
     }
@@ -58,7 +58,7 @@ class UpdateUserProfileUsecaseTest {
     fun testUpdateProfileWhenUserIsNotLoggedIn() {
         runBlockingTest {
             // given
-            whenever(userAuthenticationState.getUserAccountId()).thenReturn(null)
+            whenever(userAuthenticationState.requireUserAccountId()).thenReturn(null)
 
             // when
             val editData = createProfileEditData()
@@ -69,7 +69,7 @@ class UpdateUserProfileUsecaseTest {
             }
 
             // then
-            verify(userAuthenticationState).getUserAccountId()
+            verify(userAuthenticationState).requireUserAccountId()
             verify(userProfileRepository, never()).updateUserProfile(any(), eq(editData))
         }
     }

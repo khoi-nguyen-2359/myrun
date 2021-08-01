@@ -101,7 +101,7 @@ class FirebaseUserProfileRepository @Inject constructor(
                     profileEditData.weight?.let(::weight)
                     profileEditData.phoneNumber?.let(::phoneNumber)
                 }
-            getUserDocument(userId).set(updateMap, SetOptions.merge()).await()
+            getUserDocument(userId).set(updateMap, SetOptions.merge())
         }
 
     companion object {

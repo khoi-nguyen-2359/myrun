@@ -6,13 +6,18 @@ import akio.apps.myrun.data.authentication.model.UserAccount
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import akio.apps.myrun.data.userprofile.model.Gender
 import akio.apps.myrun.data.userprofile.model.UserProfile
+import app.cash.turbine.test
 import com.nhaarman.mockitokotlin2.mock
+import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyString
@@ -21,6 +26,7 @@ import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import org.mockito.Mockito.`when` as whenever
 
+@ExperimentalTime
 @ExperimentalCoroutinesApi
 @InternalCoroutinesApi
 class GetUserProfileUsecaseTest {
@@ -35,6 +41,8 @@ class GetUserProfileUsecaseTest {
     private val defaultPhotoUrl = "defaultPhotoUrl"
 
     lateinit var testee: GetUserProfileUsecase
+
+    private val testCoroutineDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
 
     @Before
     fun setup() {
@@ -75,20 +83,27 @@ class GetUserProfileUsecaseTest {
         )
     }
 
-    @Test(expected = IllegalStateException::class)
-    fun `given user not logged in, when get user profile, then exception thrown`() {
-        // given
-        whenever(mockedUserAuthenticationState.requireUserAccountId()).thenThrow(
-            IllegalStateException()
-        )
+    @Test
+    fun `given user not logged in, when get user profile, then exception thrown`() =
+        testCoroutineDispatcher.runBlockingTest {
+            // given
+            val thrownException = IllegalStateException()
+            whenever(mockedUserAuthenticationState.requireUserAccountId())
+                .thenThrow(thrownException)
 
-        // when
-        testee.getUserProfileFlow(null)
+            // when
+            testee.getUserProfileFlow(null).test {
+                val resource = expectItem()
+                assertTrue(resource is Resource.Error)
+                assertNull(resource.data)
+                assertEquals(thrownException, (resource as Resource.Error).exception)
+                expectComplete()
+            }
 
-        // then
-        verify(mockedUserAuthenticationState).getUserAccountId()
-        verify(mockedUserProfileRepository, never()).getUserProfileFlow(anyString())
-    }
+            // then
+            verify(mockedUserAuthenticationState).requireUserAccountId()
+            verify(mockedUserProfileRepository, never()).getUserProfileFlow(anyString())
+        }
 
     private fun createUserProfile(): UserProfile {
         return UserProfile(
