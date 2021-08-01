@@ -1,6 +1,6 @@
 object Versions {
-    const val versionName = "1.3.0" // x.yy.zz
-    const val versionCode = 1_03_00 // x_yy_zz
+    const val versionName = "1.3.1" // x.yy.zz
+    const val versionCode = 1_03_01 // x_yy_zz
 
     const val minSdk = 21
     const val targetSdk = 30
