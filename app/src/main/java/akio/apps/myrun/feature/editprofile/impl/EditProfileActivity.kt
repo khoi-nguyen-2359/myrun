@@ -20,10 +20,13 @@ import akio.apps.myrun.feature.signin.impl.OtpDialogFragment
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.getSystemService
 import com.bumptech.glide.Glide
 import java.io.File
 import java.text.DecimalFormat
@@ -115,8 +118,7 @@ class EditProfileActivity :
         viewBinding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_save_profile -> {
-                    val userProfileUpdateData = createUpdateData()
-                    editProfileVM.updateProfile(userProfileUpdateData)
+                    saveProfileUpdate()
                     true
                 }
                 else -> false
@@ -126,6 +128,23 @@ class EditProfileActivity :
         viewBinding.topAppBar.setNavigationOnClickListener {
             finish()
         }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun saveProfileUpdate() {
+        val userProfileUpdateData = createUpdateData()
+        val connMan = getSystemService<ConnectivityManager>()
+        if (userProfileUpdateData.avatarUri != null &&
+            connMan?.activeNetworkInfo?.isConnectedOrConnecting != true
+        ) {
+            Toast.makeText(
+                this,
+                R.string.edit_user_profile_connection_unavailable_error,
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+        editProfileVM.updateProfile(userProfileUpdateData)
     }
 
     private fun onUpdateProfileSuccess() {
