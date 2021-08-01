@@ -88,7 +88,8 @@ class GetUserProfileUsecaseTest {
         testCoroutineDispatcher.runBlockingTest {
             // given
             val thrownException = IllegalStateException()
-            whenever(mockedUserAuthenticationState.requireUserAccountId()).thenThrow(thrownException)
+            whenever(mockedUserAuthenticationState.requireUserAccountId())
+                .thenThrow(thrownException)
 
             // when
             testee.getUserProfileFlow(null).test {
