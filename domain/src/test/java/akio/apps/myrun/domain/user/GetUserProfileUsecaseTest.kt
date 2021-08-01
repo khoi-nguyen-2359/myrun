@@ -84,24 +84,25 @@ class GetUserProfileUsecaseTest {
     }
 
     @Test
-    fun `given user not logged in, when get user profile, then exception thrown`() = testCoroutineDispatcher.runBlockingTest {
-        // given
-        val thrownException = IllegalStateException()
-        whenever(mockedUserAuthenticationState.requireUserAccountId()).thenThrow(thrownException)
+    fun `given user not logged in, when get user profile, then exception thrown`() =
+        testCoroutineDispatcher.runBlockingTest {
+            // given
+            val thrownException = IllegalStateException()
+            whenever(mockedUserAuthenticationState.requireUserAccountId()).thenThrow(thrownException)
 
-        // when
-        testee.getUserProfileFlow(null).test {
-            val resource = expectItem()
-            assertTrue(resource is Resource.Error)
-            assertNull(resource.data)
-            assertEquals(thrownException, (resource as Resource.Error).exception)
-            expectComplete()
+            // when
+            testee.getUserProfileFlow(null).test {
+                val resource = expectItem()
+                assertTrue(resource is Resource.Error)
+                assertNull(resource.data)
+                assertEquals(thrownException, (resource as Resource.Error).exception)
+                expectComplete()
+            }
+
+            // then
+            verify(mockedUserAuthenticationState).requireUserAccountId()
+            verify(mockedUserProfileRepository, never()).getUserProfileFlow(anyString())
         }
-
-        // then
-        verify(mockedUserAuthenticationState).requireUserAccountId()
-        verify(mockedUserProfileRepository, never()).getUserProfileFlow(anyString())
-    }
 
     private fun createUserProfile(): UserProfile {
         return UserProfile(
