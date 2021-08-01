@@ -14,6 +14,7 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.facebook.CallbackManager
@@ -23,11 +24,13 @@ import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class SignInActivity : AppCompatActivity() {
 
@@ -120,6 +123,12 @@ class SignInActivity : AppCompatActivity() {
                     }
                     signInVM.signInWithGoogleToken(account.idToken!!)
                 } catch (e: ApiException) {
+                    Timber.d(e)
+                    Toast.makeText(
+                        this@SignInActivity,
+                        GoogleSignInStatusCodes.getStatusCodeString(e.statusCode),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
