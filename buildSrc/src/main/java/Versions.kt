@@ -20,7 +20,7 @@ object Versions {
     const val androidMaterial = "1.4.0"
     const val dataStore = "1.0.0-rc02"
     const val workManager = "2.7.0-alpha05"
-    const val paging = "3.0.0"
+    const val paging = "3.0.1"
     const val room = "2.3.0"
     const val lifecycle = "2.4.0-alpha02"
     const val splashScreen = "1.0.0-alpha01"
@@ -35,7 +35,7 @@ object Versions {
 
     const val dagger = "2.37"
     const val timber = "4.7.1"
-    const val glide = "4.11.0"
+    const val glide = "4.12.0"
     const val coil = "1.3.0"
     const val facebookSdk = "9.1.1"
     const val okhttp = "4.9.1"
@@ -47,13 +47,13 @@ object Versions {
     const val playServicesGradlePlugin = "4.3.8"
     const val playServicesGcm = "17.0.0"
     const val playServicesLocation = "18.0.0"
-    const val playServicesAuth = "19.0.0"
+    const val playServicesAuth = "19.2.0"
     const val playServicesFitness = "20.0.0"
 
     // google map
     const val androidGoogleMap = "3.1.0-beta"
     const val places = "2.4.0"
-    const val androidMapUtils = "2.2.3"
+    const val androidMapUtils = "2.2.5"
 
     // firebase
     const val firebaseBom = "28.2.1"
