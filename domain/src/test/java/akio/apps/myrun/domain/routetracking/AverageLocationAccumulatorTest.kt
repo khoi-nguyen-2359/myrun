@@ -2,11 +2,11 @@ package akio.apps.myrun.domain.routetracking
 
 import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.time.TimeProvider
-import org.mockito.kotlin.mock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
