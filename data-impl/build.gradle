@@ -42,47 +42,47 @@ android {
 dependencies {
     implementation project(":data")
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$Versions.coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$Versions.coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-protobuf:$Versions.kotlinSerialization"
+    implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.kotlinxCoroutinesAndroid)
+    implementation(libs.kotlinxCoroutinesPlayServices)
+    implementation(libs.kotlinxSerializationProtoBuf)
 
-    implementation "com.google.dagger:dagger:$Versions.dagger"
-    kapt "com.google.dagger:dagger-compiler:$Versions.dagger"
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
 
-    implementation "com.squareup.okhttp3:okhttp:$Versions.okhttp"
-    implementation "com.squareup.okhttp3:logging-interceptor:$Versions.okhttp"
+    implementation(libs.okHttp)
+    implementation(libs.okHttpLogger)
 
-    implementation "com.squareup.retrofit2:retrofit:$Versions.retrofit"
-    implementation "com.squareup.retrofit2:converter-gson:$Versions.retrofit"
+    implementation(libs.retrofit)
+    implementation(libs.retrofitGsonConverter)
 
-    implementation platform("com.google.firebase:firebase-bom:$Versions.firebaseBom")
-    implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.firebase:firebase-firestore-ktx'
-    implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation platform(libs.firebaseBom)
+    implementation(libs.firebaseAuthKtx)
+    implementation(libs.firebaseFirestoreKtx)
+    implementation(libs.firebaseStorageKtx)
 
-    implementation "androidx.room:room-runtime:$Versions.room"
-    kapt "androidx.room:room-compiler:$Versions.room"
-    implementation "androidx.room:room-ktx:$Versions.room"
+    implementation(libs.roomRuntime)
+    kapt(libs.roomCompiler)
+    implementation(libs.roomKtx)
 
-    implementation "androidx.datastore:datastore-preferences:$Versions.dataStore"
+    implementation(libs.dataStore)
 
-    implementation "com.google.android.gms:play-services-auth:$Versions.playServicesAuth"
-    implementation "com.google.android.gms:play-services-fitness:$Versions.playServicesFitness"
-    implementation "com.google.android.gms:play-services-location:$Versions.playServicesLocation"
+    implementation(libs.playServicesLocation)
+    implementation(libs.playServicesAuth)
+    implementation(libs.playServicesFitness)
 
-    implementation "com.jakewharton.timber:timber:$Versions.timber"
+    implementation(libs.timber)
 
-    implementation "com.sweetzpot.tcxzpot:lib:$Versions.tcxzPot"
+    implementation(libs.tcxzPot)
 
     // Google Places SDK
     implementation project(':places-sdk')
-    implementation "com.google.android.libraries.maps:maps:$Versions.androidGoogleMap"
-    implementation "com.google.maps.android:android-maps-utils-v3:$Versions.androidMapUtils"
-    implementation "com.google.android.gms:play-services-gcm:$Versions.playServicesGcm"
-    implementation "com.google.auto.value:auto-value-annotations:$Versions.autoValueAnnotation"
+    implementation(libs.androidGoogleMap)
+    implementation(libs.androidMapUtils)
+    implementation(libs.playServicesGcm)
+    implementation(libs.autoValueAnnotation)
 
-    testImplementation "junit:junit:$Versions.junit"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$Versions.coroutines"
-    androidTestImplementation "androidx.test.ext:junit:$Versions.androidXJunit"
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinXCoroutinesTest)
+    androidTestImplementation(libs.androidXJunit)
 }

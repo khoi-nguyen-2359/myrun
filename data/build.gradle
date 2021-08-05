@@ -34,7 +34,7 @@ android {
 }
 
 dependencies {
-    implementation "androidx.appcompat:appcompat:$Versions.appCompat"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
+    implementation(libs.androidXAppCompat)
+    implementation(libs.kotlinxCoroutinesCore)
     implementation "javax.inject:javax.inject:1"
 }
