@@ -3,11 +3,11 @@ package akio.apps.myrun.data.activity.impl
 import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.activity.ActivityTcxFileWriter
-import akio.apps.myrun.data.activity.entity.AthleteInfo
-import akio.apps.myrun.data.activity.entity.CyclingTrackingActivityInfo
-import akio.apps.myrun.data.activity.entity.RunningTrackingActivityInfo
-import akio.apps.myrun.data.activity.entity.TrackingActivityInfo
-import akio.apps.myrun.data.activity.entity.TrackingActivityInfoData
+import akio.apps.myrun.data.activity.model.AthleteInfo
+import akio.apps.myrun.data.activity.model.CyclingTrackingActivityInfo
+import akio.apps.myrun.data.activity.model.RunningTrackingActivityInfo
+import akio.apps.myrun.data.activity.model.TrackingActivityInfo
+import akio.apps.myrun.data.activity.model.TrackingActivityInfoData
 import akio.apps.myrun.data.activity.model.ActivityDataModel
 import akio.apps.myrun.data.activity.model.ActivityLocation
 import akio.apps.myrun.data.activity.model.ActivityModel

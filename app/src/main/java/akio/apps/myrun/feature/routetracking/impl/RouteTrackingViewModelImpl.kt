@@ -6,7 +6,7 @@ import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.LocationDataSource
-import akio.apps.myrun.data.location.LocationEntity
+import akio.apps.myrun.data.location.Location
 import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
@@ -45,11 +45,11 @@ class RouteTrackingViewModelImpl @Inject constructor(
     // TODO: Will refactor this screen to Composable
     override val isStopOptionDialogShowing: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
-    override fun getLastLocationFlow(): Flow<LocationEntity> =
+    override fun getLastLocationFlow(): Flow<Location> =
         locationDataSource.getLastLocationFlow()
 
-    private val _trackingLocationBatch = MutableLiveData<List<LocationEntity>>()
-    override val trackingLocationBatch: LiveData<List<LocationEntity>> =
+    private val _trackingLocationBatch = MutableLiveData<List<Location>>()
+    override val trackingLocationBatch: LiveData<List<Location>> =
         _trackingLocationBatch
 
     private val _trackingStats = MutableLiveData<RouteTrackingStats>()
@@ -102,7 +102,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
         clearRouteTrackingStateUsecase.clear()
     }
 
-    override suspend fun getLocationUpdate(): Flow<List<LocationEntity>> {
+    override suspend fun getLocationUpdate(): Flow<List<Location>> {
         val locationRequest = getLocationRequestConfig()
         return locationDataSource.getLocationUpdate(locationRequest)
     }

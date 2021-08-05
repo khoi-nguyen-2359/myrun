@@ -14,7 +14,7 @@ import akio.apps.myrun._base.utils.LatLngBoundsBuilder
 import akio.apps.myrun._base.utils.LocationServiceChecker
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.model.ActivityType
-import akio.apps.myrun.data.location.LocationEntity
+import akio.apps.myrun.data.location.Location
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature.activityroutemap.ui.ActivityRouteMapActivity
@@ -174,7 +174,7 @@ class RouteTrackingActivity(
         setAutoCameraEnabled(true)
     }
 
-    private fun recenterMap(location: LocationEntity) {
+    private fun recenterMap(location: Location) {
         if (!::mapView.isInitialized) {
             return
         }
@@ -216,13 +216,13 @@ class RouteTrackingActivity(
     }
 
     private var startPointMarker: Marker? = null
-    private fun onTrackingLocationUpdate(batch: List<LocationEntity>) {
+    private fun onTrackingLocationUpdate(batch: List<Location>) {
         addStartPointMarkerIfNotAdded(batch)
         drawTrackingLocationUpdate(batch)
         moveMapCameraOnTrackingLocationUpdate(batch)
     }
 
-    private fun addStartPointMarkerIfNotAdded(batch: List<LocationEntity>) {
+    private fun addStartPointMarkerIfNotAdded(batch: List<Location>) {
         if (startPointMarker != null || batch.isEmpty()) {
             return
         }
@@ -238,7 +238,7 @@ class RouteTrackingActivity(
         startPointMarker = mapView.addMarker(startMarker)
     }
 
-    private fun moveMapCameraOnTrackingLocationUpdate(batch: List<LocationEntity>) {
+    private fun moveMapCameraOnTrackingLocationUpdate(batch: List<Location>) {
         batch.forEach {
             trackingRouteLatLngBounds.include(it.toGmsLatLng())
         }
@@ -281,7 +281,7 @@ class RouteTrackingActivity(
         return Size(mapWidth, (mapWidth / routeImageRatio).toInt())
     }
 
-    private fun drawTrackingLocationUpdate(batch: List<LocationEntity>) {
+    private fun drawTrackingLocationUpdate(batch: List<Location>) {
         routePolyline?.let { currentPolyline ->
             val appendedPolypoints = currentPolyline.points
             appendedPolypoints.addAll(batch.map { LatLng(it.latitude, it.longitude) })

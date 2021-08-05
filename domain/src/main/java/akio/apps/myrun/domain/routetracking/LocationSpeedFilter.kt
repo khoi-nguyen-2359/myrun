@@ -1,11 +1,11 @@
 package akio.apps.myrun.domain.routetracking
 
-import akio.apps.myrun.data.location.LocationEntity
+import akio.apps.myrun.data.location.Location
 
 class LocationSpeedFilter(
     private val maxValidSpeed: Double
 ) : LocationProcessor {
-    override fun process(locations: List<LocationEntity>): List<LocationEntity> =
+    override fun process(locations: List<Location>): List<Location> =
         locations.filter { it.speed <= maxValidSpeed }
 
     companion object {

@@ -1,9 +1,9 @@
 package akio.apps.myrun.data.externalapp.impl
 
 import akio.apps.myrun.data.externalapp.StravaDataRepository
-import akio.apps.myrun.data.externalapp.mapper.StravaRouteEntityMapper
+import akio.apps.myrun.data.externalapp.mapper.StravaStravaRouteMapper
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
-import akio.apps.myrun.data.externalapp.model.StravaRoute
+import akio.apps.myrun.data.externalapp.model.StravaRouteModel
 import java.io.File
 import javax.inject.Inject
 import okhttp3.MediaType.Companion.toMediaType
@@ -13,7 +13,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 class StravaDataRepositoryImpl @Inject constructor(
     private val stravaApi: StravaApi,
-    private val stravaRouteEntityMapper: StravaRouteEntityMapper
+    private val stravaRouteMapper: StravaStravaRouteMapper
 ) : StravaDataRepository {
     override suspend fun saveActivity(
         stravaToken: ExternalAppToken.StravaToken,
@@ -33,12 +33,12 @@ class StravaDataRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getRoutes(stravaToken: ExternalAppToken.StravaToken): List<StravaRoute> {
+    override suspend fun getRoutes(stravaToken: ExternalAppToken.StravaToken): List<StravaRouteModel> {
         return stravaApi.getAthleteRoutes(
             "Bearer ${stravaToken.accessToken}",
             stravaToken.athlete.id
         )
-            .map(stravaRouteEntityMapper::map)
+            .map(stravaRouteMapper::map)
     }
 
     companion object {

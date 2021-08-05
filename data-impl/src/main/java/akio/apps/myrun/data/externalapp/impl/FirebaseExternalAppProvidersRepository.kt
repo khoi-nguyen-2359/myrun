@@ -2,7 +2,7 @@ package akio.apps.myrun.data.externalapp.impl
 
 import akio.apps._base.Resource
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
-import akio.apps.myrun.data.externalapp.entity.FirestoreProvidersEntity
+import akio.apps.myrun.data.externalapp.model.FirestoreProviders
 import akio.apps.myrun.data.externalapp.mapper.FirestoreProvidersMapper
 import akio.apps.myrun.data.externalapp.mapper.FirestoreStravaTokenMapper
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
@@ -59,7 +59,7 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
             try {
                 val cached = providerTokenDocument.get(Source.CACHE)
                     .await()
-                    .toObject(FirestoreProvidersEntity::class.java)
+                    .toObject(FirestoreProviders::class.java)
                     ?.run(firestoreProvidersMapper::map)
 
                 setStravaSyncEnabled(cached?.strava != null)
@@ -71,7 +71,7 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
 
             val listener = providerTokenDocument.addSnapshotListener { snapshot, error ->
                 if (error == null) {
-                    val providers = snapshot?.toObject(FirestoreProvidersEntity::class.java)
+                    val providers = snapshot?.toObject(FirestoreProviders::class.java)
                         ?.run(firestoreProvidersMapper::map)
                         ?: ExternalProviders.createEmpty()
                     CoroutineScope(Dispatchers.IO).launch {
@@ -97,7 +97,7 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
         val allTokenData = getProviderTokenDocument(accountId)
             .get()
             .await()
-            .toObject(FirestoreProvidersEntity::class.java)
+            .toObject(FirestoreProviders::class.java)
             ?.run(firestoreProvidersMapper::map)
             ?: ExternalProviders.createEmpty()
 
@@ -111,7 +111,7 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
         token: ExternalAppToken.StravaToken
     ): Unit = withContext(Dispatchers.IO) {
         val providerTokenDocument = getProviderTokenDocument(accountId)
-        val providerToken = FirestoreProvidersEntity.FirestoreProviderToken(
+        val providerToken = FirestoreProviders.FirestoreProviderToken(
             RunningApp.Strava.appName,
             firestoreStravaTokenMapper.mapReversed(token)
         )
@@ -139,7 +139,7 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
         val tokenData = getProviderTokenDocument(accountId)
             .get()
             .await()
-            .toObject(FirestoreProvidersEntity::class.java)
+            .toObject(FirestoreProviders::class.java)
             ?.run(firestoreProvidersMapper::map)
             ?.strava
             ?.token

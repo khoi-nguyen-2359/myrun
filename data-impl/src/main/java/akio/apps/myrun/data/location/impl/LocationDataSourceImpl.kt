@@ -1,10 +1,9 @@
 package akio.apps.myrun.data.location.impl
 
+import akio.apps.myrun.data.location.Location
 import akio.apps.myrun.data.location.LocationDataSource
-import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.model.LocationRequestConfig
 import android.annotation.SuppressLint
-import android.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -22,20 +21,22 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
+private typealias AndroidLocation = android.location.Location
+
 class LocationDataSourceImpl @Inject constructor(
     private val locationClient: FusedLocationProviderClient
 ) : LocationDataSource {
 
-    override suspend fun getLastLocation(): LocationEntity? = withContext(Dispatchers.IO) {
+    override suspend fun getLastLocation(): Location? = withContext(Dispatchers.IO) {
         try {
             val androidLocation = locationClient.lastLocation.await()
-            androidLocation?.toLocationEntity()
+            androidLocation?.toLocation()
         } catch (ex: SecurityException) {
             null
         }
     }
 
-    override fun getLastLocationFlow(): Flow<LocationEntity> = flow {
+    override fun getLastLocationFlow(): Flow<Location> = flow {
         val lastLocation = getLastLocation()
         if (lastLocation != null) {
             emit(lastLocation)
@@ -48,7 +49,7 @@ class LocationDataSourceImpl @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @SuppressLint("MissingPermission")
-    override fun getLocationUpdate(request: LocationRequestConfig): Flow<List<LocationEntity>> =
+    override fun getLocationUpdate(request: LocationRequestConfig): Flow<List<Location>> =
         callbackFlow {
             Timber.d("=== [START] Get location update config=$request")
             getLastLocation()?.let { lastLocation ->
@@ -57,7 +58,7 @@ class LocationDataSourceImpl @Inject constructor(
 
             val callback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
-                    trySend(locationResult.locations.map { it.toLocationEntity() })
+                    trySend(locationResult.locations.map { it.toLocation() })
                 }
             }
 
@@ -83,7 +84,8 @@ class LocationDataSourceImpl @Inject constructor(
         return locationRequest
     }
 
-    private fun Location.toLocationEntity(): LocationEntity = LocationEntity(
-        time, latitude, longitude, altitude, speed.toDouble()
-    )
+    private fun AndroidLocation.toLocation(): Location =
+        Location(
+            time, latitude, longitude, altitude, speed.toDouble()
+        )
 }
