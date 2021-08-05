@@ -5,7 +5,7 @@ import akio.apps.myrun.data._base.NetworkModule
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
-import akio.apps.myrun.data.externalapp.entity.StravaTokenRefreshEntityMapper
+import akio.apps.myrun.data.externalapp.model.StravaTokenRefreshMapper
 import akio.apps.myrun.data.externalapp.impl.StravaAuthenticator
 import akio.apps.myrun.feature.strava.LinkStravaViewModel
 import akio.apps.myrun.feature.strava.impl.LinkStravaViewModelImpl
@@ -31,7 +31,7 @@ interface StravaFeatureModule {
         fun stravaApiTokenRefreshAuthenticator(
             okHttpClientBuilder: OkHttpClient.Builder,
             @Named(ExternalAppDataModule.NAME_STRAVA_GSON) gson: Gson,
-            tokenRefreshMapper: StravaTokenRefreshEntityMapper,
+            tokenRefreshMapper: StravaTokenRefreshMapper,
             externalAppProvidersRepository: ExternalAppProvidersRepository,
             userAuthenticationState: UserAuthenticationState
         ): StravaAuthenticator {

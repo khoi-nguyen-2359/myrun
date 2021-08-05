@@ -1,7 +1,7 @@
 package akio.apps.myrun._base.utils
 
-import akio.apps.myrun.data.location.LocationEntity
+import akio.apps.myrun.data.location.Location
 
 typealias GmsLatLng = com.google.android.libraries.maps.model.LatLng
 
-fun LocationEntity.toGmsLatLng() = GmsLatLng(latitude, longitude)
+fun Location.toGmsLatLng() = GmsLatLng(latitude, longitude)

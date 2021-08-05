@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.routetracking.impl
 
 import akio.apps.myrun._di.NamedIoDispatcher
-import akio.apps.myrun.data.location.LocationEntity
+import akio.apps.myrun.data.location.Location
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -12,7 +12,7 @@ class RouteTrackingLocationRepositoryImpl @Inject constructor(
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : RouteTrackingLocationRepository {
 
-    override suspend fun insert(trackingLocations: List<LocationEntity>): Unit =
+    override suspend fun insert(trackingLocations: List<Location>): Unit =
         withContext(ioDispatcher) {
             routeTrackingLocationDao.insert(trackingLocations.map { it.toRoomEntity(0) })
         }
@@ -21,23 +21,23 @@ class RouteTrackingLocationRepositoryImpl @Inject constructor(
         routeTrackingLocationDao.clear()
     }
 
-    override suspend fun getTrackedLocations(skip: Int): List<LocationEntity> =
+    override suspend fun getTrackedLocations(skip: Int): List<Location> =
         routeTrackingLocationDao.getLocations(skip)
-            .map { it.toLocationEntity() }
+            .map { it.toLocation() }
 
-    override suspend fun getAllLocations(): List<LocationEntity> =
+    override suspend fun getAllLocations(): List<Location> =
         routeTrackingLocationDao.getAll()
             .map { roomLocation ->
-                roomLocation.toLocationEntity()
+                roomLocation.toLocation()
             }
 
     override suspend fun getLatestLocationTime(): Long = withContext(ioDispatcher) {
         routeTrackingLocationDao.getLatestLocationTime()
     }
 
-    private fun LocationEntity.toRoomEntity(id: Int) =
+    private fun Location.toRoomEntity(id: Int) =
         RoomTrackingLocation(id, time, latitude, longitude, altitude, speed)
 
-    private fun RoomTrackingLocation.toLocationEntity() =
-        LocationEntity(time, latitude, longitude, altitude, speed)
+    private fun RoomTrackingLocation.toLocation() =
+        Location(time, latitude, longitude, altitude, speed)
 }

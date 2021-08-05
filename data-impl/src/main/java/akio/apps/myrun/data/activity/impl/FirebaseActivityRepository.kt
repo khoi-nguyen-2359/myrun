@@ -2,13 +2,13 @@ package akio.apps.myrun.data.activity.impl
 
 import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.ActivityRepository
-import akio.apps.myrun.data.activity.entity.FirestoreActivity
-import akio.apps.myrun.data.activity.entity.FirestoreActivityMapper
-import akio.apps.myrun.data.activity.entity.FirestoreDataPointList
-import akio.apps.myrun.data.activity.entity.FirestoreDataPointSerializer
-import akio.apps.myrun.data.activity.entity.FirestoreFloatDataPointParser
-import akio.apps.myrun.data.activity.entity.FirestoreIntegerDataPointParser
-import akio.apps.myrun.data.activity.entity.FirestoreLocationDataPointParser
+import akio.apps.myrun.data.activity.model.FirestoreActivity
+import akio.apps.myrun.data.activity.model.FirestoreActivityMapper
+import akio.apps.myrun.data.activity.model.FirestoreDataPointList
+import akio.apps.myrun.data.activity.model.FirestoreDataPointSerializer
+import akio.apps.myrun.data.activity.model.FirestoreFloatDataPointParser
+import akio.apps.myrun.data.activity.model.FirestoreIntegerDataPointParser
+import akio.apps.myrun.data.activity.model.FirestoreLocationDataPointParser
 import akio.apps.myrun.data.activity.model.ActivityLocation
 import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.fitness.DataPoint

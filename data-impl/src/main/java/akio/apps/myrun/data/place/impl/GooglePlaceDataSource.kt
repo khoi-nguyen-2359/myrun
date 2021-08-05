@@ -1,10 +1,10 @@
 package akio.apps.myrun.data.place.impl
 
 import akio.apps.myrun._di.NamedIoDispatcher
-import akio.apps.myrun.data.place.LatLngEntity
+import akio.apps.myrun.data.place.LatLng
 import akio.apps.myrun.data.place.PlaceDataSource
-import akio.apps.myrun.data.place.PlaceEntity
-import akio.apps.myrun.data.place.entity.PlaceAddressComponent
+import akio.apps.myrun.data.place.PlaceDetails
+import akio.apps.myrun.data.place.model.PlaceAddressComponent
 import android.annotation.SuppressLint
 import android.app.Application
 import android.location.Address
@@ -32,7 +32,7 @@ class GooglePlaceDataSource @Inject constructor(
     private val placesClient by lazy { placesClientLazy.get() }
 
     @SuppressLint("MissingPermission")
-    override suspend fun getCurrentPlace(): PlaceEntity? = withContext(ioDispatcher) {
+    override suspend fun getCurrentPlace(): PlaceDetails? = withContext(ioDispatcher) {
         val request: FindCurrentPlaceRequest =
             FindCurrentPlaceRequest.newInstance(listOf(Place.Field.ID, Place.Field.NAME))
 
@@ -47,12 +47,12 @@ class GooglePlaceDataSource @Inject constructor(
                     FetchPlaceRequest.newInstance(placeId, listOf(Place.Field.ADDRESS_COMPONENTS))
                 val fetchPlaceResponse = placesClient.fetchPlace(fetchPlaceRequest).await()
                 val latLng = fetchPlaceResponse.place.latLng
-                return@withContext PlaceEntity(
+                return@withContext PlaceDetails(
                     placeId,
                     placeLikelihood.place.name ?: "",
                     fetchPlaceResponse.place.addressComponents?.asList()
                         ?.map { PlaceAddressComponent(it.name, it.types) } ?: emptyList(),
-                    LatLngEntity(latLng?.latitude ?: 0.0, latLng?.longitude ?: 0.0)
+                    LatLng(latLng?.latitude ?: 0.0, latLng?.longitude ?: 0.0)
                 )
             }
 
