@@ -26,7 +26,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.compose
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
     }
 
     compileOptions {
@@ -41,27 +41,17 @@ android {
 }
 
 dependencies {
-    implementation "androidx.core:core-ktx:$Versions.androidxCore"
-    implementation "androidx.appcompat:appcompat:$Versions.appCompat"
-    implementation "com.google.android.material:material:$Versions.androidMaterial"
-
-    implementation "androidx.compose.ui:ui:$Versions.compose"
-    implementation "androidx.compose.ui:ui-tooling:$Versions.compose"
-    implementation "androidx.compose.foundation:foundation:$Versions.compose"
-    implementation "androidx.compose.material:material:$Versions.compose"
-    implementation "androidx.compose.material:material-icons-core:$Versions.compose"
-    implementation "androidx.compose.material:material-icons-extended:$Versions.compose"
-    implementation "androidx.compose.runtime:runtime-livedata:$Versions.compose"
-    implementation "androidx.compose.runtime:runtime-rxjava2:$Versions.compose"
-    implementation "androidx.activity:activity-compose:$Versions.activity"
-    implementation "androidx.paging:paging-compose:$Versions.pagingCompose"
-
-    implementation "com.google.dagger:dagger-android:$Versions.dagger"
-    kapt "com.google.dagger:dagger-compiler:$Versions.dagger"
-
     implementation project(":data")
     implementation project(":data-impl")
 
-    // test
-    testImplementation "junit:junit:$Versions.junit"
+    implementation(libs.androidXCore)
+    implementation(libs.androidXAppCompat)
+    implementation(libs.androidMaterial)
+
+    implementation(libs.bundles.compose)
+
+    implementation(libs.daggerAndroid)
+    kapt(libs.daggerCompiler)
+
+    testImplementation(libs.junit)
 }

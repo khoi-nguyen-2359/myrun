@@ -36,22 +36,21 @@ dependencies {
     implementation project(":data")
 
     // for dagger @Inject
-    implementation "javax.inject:javax.inject:1"
+    implementation(libs.javaXInject)
 
-    implementation "com.google.maps.android:android-maps-utils-v3:$Versions.androidMapUtils"
-    implementation "com.google.android.libraries.maps:maps:$Versions.androidGoogleMap"
+    implementation(libs.androidMapUtils)
+    implementation(libs.androidGoogleMap)
 
-    implementation "com.jakewharton.timber:timber:$Versions.timber"
+    implementation(libs.timber)
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
+    implementation(libs.kotlinxCoroutinesCore)
 
     testImplementation(testFixtures(project(':test')))
-
-    testImplementation "junit:junit:$Versions.junit"
-    testImplementation "org.mockito:mockito-core:$Versions.mockitoCore"
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$Versions.mockitoKotlin"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$Versions.coroutines"
-    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$Versions.kotlin"
-    androidTestImplementation "androidx.test.ext:junit:$Versions.androidXJunit"
-    testImplementation "app.cash.turbine:turbine:$Versions.turbine"
+    testImplementation(libs.junit)
+    testImplementation(libs.mockitoCore)
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.kotlinCoroutinesTest)
+    testImplementation(libs.kotlinReflect)
+    androidTestImplementation(libs.androidXJunit)
+    testImplementation(libs.turbine)
 }
