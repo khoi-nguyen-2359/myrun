@@ -164,7 +164,7 @@ dependencies {
     testImplementation(testFixtures(project(':test')))
     testImplementation(libs.junit)
     testImplementation(libs.kotlinTest)
-    testImplementation(libs.kotlinCoroutinesTest)
+    testImplementation(libs.kotlinXCoroutinesTest)
     testImplementation(libs.androidXCoreTesting)
     testImplementation(libs.mockitoCore)
     testImplementation(libs.mockitoKotlin)

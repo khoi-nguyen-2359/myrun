@@ -175,7 +175,7 @@ autoValueAnnotation = { module = "com.google.auto.value:auto-value-annotations",
 # testing
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test" }
-kotlinCoroutinesTest = { module = "org.jetbrains.kotlin:kotlin-coroutines-test", version.ref = "coroutines" }
+kotlinXCoroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 androidXCoreTesting = { module = "androidx.arch.core:core-testing", version.ref = "androidXCoreTesting" }
 mockitoCore = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockitoKotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }

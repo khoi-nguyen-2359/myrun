@@ -12,9 +12,7 @@ import akio.apps.myrun.data.externalapp.StravaDataRepository
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.StravaAthlete
 import akio.apps.myrun.data.externalapp.model.StravaTokenRefresh
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
+import org.mockito.kotlin.mock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -23,6 +21,8 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 class UploadActivityFilesToStravaUsecaseTest {
