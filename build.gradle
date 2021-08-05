@@ -9,12 +9,12 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:$Versions.agp"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$Versions.kotlin"
-        classpath "com.google.gms:google-services:$Versions.playServicesGradlePlugin"
-        classpath "com.google.firebase:firebase-crashlytics-gradle:$Versions.crashlyticsGradlePlugin"
-        classpath "org.jetbrains.kotlin:kotlin-serialization:$Versions.kotlin"
-        classpath 'com.google.firebase:perf-plugin:1.4.0'
+        classpath(libs.agp)
+        classpath(libs.kotlinGradlePlugin)
+        classpath(libs.playServicesGradlePlugin)
+        classpath(libs.firebaseCrashlyticsGradle)
+        classpath(libs.kotlinSerialization)
+        classpath(libs.firebasePerf)
     }
 }
 

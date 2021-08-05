@@ -13,8 +13,6 @@ import akio.apps.myrun.domain.routetracking.StoreTrackingActivityDataUsecase
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.test.wheneverBlocking
 import android.app.Application
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyBlocking
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertNull
@@ -22,6 +20,8 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyBlocking
 
 @ExperimentalCoroutinesApi
 class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
