@@ -1,9 +1,10 @@
+enableFeaturePreview("VERSION_CATALOGS")
 rootProject.name = "My Run"
-include ':test'
-include ':data'
-include ':domain'
-include ':data-impl'
-include ':routeparser'
-include ':app'
-include ':places-sdk'
-include ':configurator'
+include(":test")
+include(":data")
+include(":domain")
+include(":data-impl")
+include(":routeparser")
+include(":app")
+include(":places-sdk")
+include(":configurator")

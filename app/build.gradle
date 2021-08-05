@@ -18,7 +18,7 @@ android {
     compileSdkVersion Versions.compileSdk
 
     defaultConfig {
-        applicationId "akio.apps.myrun"
+        applicationId Versions.appId
         minSdkVersion Versions.minSdk
         targetSdkVersion Versions.targetSdk
         versionCode Versions.versionCode
@@ -72,7 +72,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion Versions.compose
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
     }
 
     compileOptions {
@@ -94,102 +94,88 @@ dependencies {
     implementation project(':data')
     implementation project(':data-impl')
     implementation project(':domain')
-
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$Versions.coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$Versions.coroutines"
-
-    implementation "com.google.dagger:dagger-android:$Versions.dagger"
-    kapt "com.google.dagger:dagger-compiler:$Versions.dagger"
-
-    implementation "androidx.core:core:$Versions.androidxCore"
-    implementation "androidx.appcompat:appcompat:$Versions.appCompat"
-    implementation "androidx.constraintlayout:constraintlayout:$Versions.constraintLayout"
-    implementation "androidx.paging:paging-runtime-ktx:$Versions.paging"
-    implementation "androidx.fragment:fragment-ktx:$Versions.fragment"
-    implementation "androidx.activity:activity-ktx:$Versions.activity"
-    implementation "androidx.work:work-runtime-ktx:$Versions.workManager"
-    implementation "com.google.android.material:material:$Versions.androidMaterial"
-
-    implementation "androidx.compose.ui:ui:$Versions.compose"
-    implementation "androidx.compose.ui:ui-tooling:$Versions.compose"
-    implementation "androidx.compose.foundation:foundation:$Versions.compose"
-    implementation "androidx.compose.material:material:$Versions.compose"
-    implementation "androidx.compose.material:material-icons-core:$Versions.compose"
-    implementation "androidx.compose.material:material-icons-extended:$Versions.compose"
-    implementation "androidx.compose.runtime:runtime-livedata:$Versions.compose"
-    implementation "androidx.compose.runtime:runtime-rxjava2:$Versions.compose"
-    implementation "androidx.activity:activity-compose:$Versions.activity"
-    implementation "androidx.paging:paging-compose:$Versions.pagingCompose"
-
-    implementation "com.android.support:multidex:$Versions.multidex"
-
-    implementation "com.google.android.gms:play-services-location:$Versions.playServicesLocation"
-    implementation "com.google.android.gms:play-services-auth:$Versions.playServicesAuth"
-    implementation "com.google.android.gms:play-services-fitness:$Versions.playServicesFitness"
-
-    implementation platform("com.google.firebase:firebase-bom:$Versions.firebaseBom")
-    implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.firebase:firebase-firestore-ktx'
-
     implementation project(':places-sdk')
-    implementation "com.google.maps.android:android-maps-utils-v3:$Versions.androidMapUtils"
-    implementation "com.google.android.libraries.maps:maps:$Versions.androidGoogleMap"
-
-    implementation platform("com.google.firebase:firebase-bom:$Versions.firebaseBom")
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-storage-ktx'
-    implementation 'com.google.firebase:firebase-perf-ktx'
-
-    implementation "androidx.room:room-runtime:$Versions.room"
-
-    implementation "com.squareup.okhttp3:okhttp:$Versions.okhttp"
-    implementation "com.squareup.okhttp3:logging-interceptor:$Versions.okhttp"
-
-    implementation "com.squareup.retrofit2:retrofit:$Versions.retrofit"
-    implementation "com.squareup.retrofit2:converter-gson:$Versions.retrofit"
-
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$Versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$Versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$Versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-common-java8:$Versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-process:$Versions.lifecycle"
-
-    implementation "com.jakewharton.timber:timber:$Versions.timber"
-
-    implementation "com.github.bumptech.glide:glide:$Versions.glide"
-    kapt "com.github.bumptech.glide:compiler:$Versions.glide"
-
-    implementation "io.coil-kt:coil-compose:$Versions.coil"
-    implementation "com.google.accompanist:accompanist-flowlayout:$Versions.accompanist"
-    implementation "com.google.accompanist:accompanist-placeholder-material:$Versions.accompanist"
-
-    implementation "com.facebook.android:facebook-login:$Versions.facebookSdk"
 
     debugImplementation project(":configurator")
 
+    implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.kotlinxCoroutinesAndroid)
+    implementation(libs.kotlinxCoroutinesPlayServices)
+
+    implementation(libs.daggerAndroid)
+    kapt(libs.daggerCompiler)
+
+    implementation(libs.androidXCore)
+    implementation(libs.androidXAppCompat)
+    implementation(libs.androidMaterial)
+    implementation(libs.constraintLayout)
+    implementation(libs.paging)
+    implementation(libs.fragment)
+    implementation(libs.activity)
+    implementation(libs.workManager)
+    implementation(libs.splashScreen)
+
+    implementation(libs.bundles.compose)
+    implementation(libs.coilCompose)
+    implementation(libs.accompanistPlaceholder)
+
+    implementation(libs.multidex)
+
+    implementation(libs.playServicesLocation)
+    implementation(libs.playServicesAuth)
+    implementation(libs.playServicesFitness)
+
+    implementation platform(libs.firebaseBom)
+    implementation(libs.firebaseAuthKtx)
+    implementation(libs.firebaseFirestoreKtx)
+    implementation(libs.firebaseCrashlyticsKtx)
+    implementation(libs.firebaseAnalyticsKtx)
+    implementation(libs.firebaseStorageKtx)
+    implementation(libs.firebasePerfKtx)
+
+    implementation(libs.androidMapUtils)
+    implementation(libs.androidGoogleMap)
+
+    implementation(libs.roomRuntime)
+
+    implementation(libs.okHttp)
+    implementation(libs.okHttpLogger)
+
+    implementation(libs.retrofit)
+    implementation(libs.retrofitGsonConverter)
+
+    implementation(libs.lifecycleRuntimeKtx)
+    implementation(libs.lifecycleLiveDataKtx)
+    implementation(libs.lifecycleViewModelKtx)
+    implementation(libs.lifecycleCommonJava8)
+    implementation(libs.lifecycleProcess)
+
+    implementation(libs.timber)
+
+    implementation(libs.glide)
+    kapt(libs.glideCompiler)
+
+    implementation(libs.facebookLogin)
+
     if (localProps.getProperty("leakcanary.enabled", "1") == "1") {
-        debugImplementation "com.squareup.leakcanary:leakcanary-android:$Versions.leakCanary"
+        debugImplementation(libs.leakCanary)
     }
 
-    implementation "androidx.core:core-splashscreen:$Versions.splashScreen"
-
     testImplementation(testFixtures(project(':test')))
-    testImplementation "junit:junit:$Versions.junit"
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$Versions.coroutines"
-    testImplementation "androidx.arch.core:core-testing:$Versions.androidXCoreTesting"
-    testImplementation "org.mockito:mockito-core:$Versions.mockitoCore"
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$Versions.mockitoKotlin"
-    testImplementation "app.cash.turbine:turbine:$Versions.turbine"
-    testImplementation "org.jetbrains.kotlin:kotlin-reflect:$Versions.kotlin"
-    kaptAndroidTest "com.google.dagger:dagger-compiler:$Versions.dagger"
-    androidTestImplementation "org.mockito:mockito-android:$Versions.mockitoAndroid"
-    androidTestImplementation "androidx.test:runner:$Versions.androidXTestRunner"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$Versions.espresso"
-    androidTestImplementation "androidx.test.espresso:espresso-contrib:$Versions.espresso"
-    androidTestImplementation "androidx.test:rules:$Versions.androidXTestRules"
-    androidTestImplementation "androidx.test.ext:junit:$Versions.androidXJunit"
-    androidTestImplementation "androidx.test.uiautomator:uiautomator:$Versions.uiAutomator"
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinTest)
+    testImplementation(libs.kotlinCoroutinesTest)
+    testImplementation(libs.androidXCoreTesting)
+    testImplementation(libs.mockitoCore)
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinReflect)
+    kaptAndroidTest(libs.daggerCompiler)
+    androidTestImplementation(libs.mockitoAndroid)
+    androidTestImplementation(libs.androidXTestRunner)
+    androidTestImplementation(libs.espressoCore)
+    androidTestImplementation(libs.espressoContrib)
+    androidTestImplementation(libs.androidXTestRules)
+    androidTestImplementation(libs.androidXJunit)
+    androidTestImplementation(libs.uiAutomator)
 }
