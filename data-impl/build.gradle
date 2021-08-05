@@ -83,6 +83,6 @@ dependencies {
     implementation(libs.autoValueAnnotation)
 
     testImplementation(libs.junit)
-    testImplementation(libs.kotlinCoroutinesTest)
+    testImplementation(libs.kotlinXCoroutinesTest)
     androidTestImplementation(libs.androidXJunit)
 }
