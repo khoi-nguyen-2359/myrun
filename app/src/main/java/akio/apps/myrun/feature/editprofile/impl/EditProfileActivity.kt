@@ -16,7 +16,6 @@ import akio.apps.myrun.databinding.ActivityEditProfileBinding
 import akio.apps.myrun.feature.cropavatar.CropAvatarActivity
 import akio.apps.myrun.feature.editprofile.EditProfileViewModel
 import akio.apps.myrun.feature.editprofile._di.DaggerEditProfileFeatureComponent
-import akio.apps.myrun.feature.signin.impl.OtpDialogFragment
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -52,7 +51,7 @@ class EditProfileActivity :
     private val bodyDimensFormat = DecimalFormat("#.#")
 
     private val editProfileVM: EditProfileViewModel by viewModel {
-        DaggerEditProfileFeatureComponent.create()
+        DaggerEditProfileFeatureComponent.factory().create()
     }
 
     private val viewBinding by lazy { ActivityEditProfileBinding.inflate(layoutInflater) }
@@ -148,8 +147,6 @@ class EditProfileActivity :
     }
 
     private fun onUpdateProfileSuccess() {
-        (supportFragmentManager.findFragmentByTag(TAG_OTP_DIALOG) as? OtpDialogFragment)?.dismiss()
-
         setResult(Activity.RESULT_OK)
         finish()
     }
@@ -231,8 +228,6 @@ class EditProfileActivity :
         const val RC_PICK_PHOTO = 4
         const val RC_REAUTHENTICATE_FOR_PROFILE_UPDATE = 6
         const val RC_CROP_AVATAR = 7
-
-        const val TAG_OTP_DIALOG = "TAG_OTP_DIALOG"
 
         fun launchIntentForEditing(context: Context): Intent =
             Intent(context, EditProfileActivity::class.java)

@@ -1,21 +1,20 @@
 package akio.apps.myrun.data.activity.impl
 
-import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.activity.ActivityTcxFileWriter
-import akio.apps.myrun.data.activity.model.AthleteInfo
-import akio.apps.myrun.data.activity.model.CyclingTrackingActivityInfo
-import akio.apps.myrun.data.activity.model.RunningTrackingActivityInfo
-import akio.apps.myrun.data.activity.model.TrackingActivityInfo
-import akio.apps.myrun.data.activity.model.TrackingActivityInfoData
 import akio.apps.myrun.data.activity.model.ActivityDataModel
 import akio.apps.myrun.data.activity.model.ActivityLocation
 import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.ActivityStorageData
 import akio.apps.myrun.data.activity.model.ActivitySyncData
 import akio.apps.myrun.data.activity.model.ActivityType
+import akio.apps.myrun.data.activity.model.AthleteInfo
 import akio.apps.myrun.data.activity.model.CyclingActivityModel
+import akio.apps.myrun.data.activity.model.CyclingTrackingActivityInfo
 import akio.apps.myrun.data.activity.model.RunningActivityModel
+import akio.apps.myrun.data.activity.model.RunningTrackingActivityInfo
+import akio.apps.myrun.data.activity.model.TrackingActivityInfo
+import akio.apps.myrun.data.activity.model.TrackingActivityInfoData
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
@@ -44,15 +43,15 @@ import timber.log.Timber
 private val Context.prefDataStore: DataStore<Preferences> by
 preferencesDataStore("ActivityLocalStorageImpl")
 
-@ExperimentalSerializationApi
 class ActivityLocalStorageImpl @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @akio.apps.base.wiring.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ActivityLocalStorage {
 
     private val prefDataStore: DataStore<Preferences> = application.prefDataStore
 
+    @OptIn(ExperimentalSerializationApi::class)
     private val protoBuf = ProtoBuf {
         val module = SerializersModule {
             polymorphic(

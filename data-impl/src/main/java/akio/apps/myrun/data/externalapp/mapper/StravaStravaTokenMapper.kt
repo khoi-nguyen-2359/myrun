@@ -1,8 +1,8 @@
 package akio.apps.myrun.data.externalapp.mapper
 
-import akio.apps.myrun.data.externalapp.model.StravaStravaToken
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.StravaAthlete
+import akio.apps.myrun.data.externalapp.model.StravaStravaToken
 import javax.inject.Inject
 
 class StravaStravaTokenMapper @Inject constructor() {

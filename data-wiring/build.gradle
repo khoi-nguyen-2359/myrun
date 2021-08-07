@@ -1,0 +1,59 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 30
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        rc {}
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
+        useIR = true
+    }
+}
+
+dependencies {
+    api project(":data")
+    implementation project(":data-impl")
+    implementation project(":base-wiring")
+
+    implementation platform(libs.firebaseBom)
+    implementation(libs.firebaseAuthKtx)
+    implementation(libs.firebaseFirestoreKtx)
+    implementation(libs.firebaseStorageKtx)
+
+    implementation(libs.playServicesLocation)
+
+    implementation(libs.okHttp)
+    implementation(libs.okHttpLogger)
+    implementation(libs.retrofitGsonConverter)
+
+    implementation project(':places-sdk')
+
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
+
+    implementation(libs.roomRuntime)
+
+    implementation(libs.kotlinxCoroutinesCore)
+}

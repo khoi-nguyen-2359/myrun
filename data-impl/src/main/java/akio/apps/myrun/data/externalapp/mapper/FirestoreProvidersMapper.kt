@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.externalapp.mapper
 
-import akio.apps.myrun.data.externalapp.model.FirestoreProviders
 import akio.apps.myrun.data.externalapp.model.ExternalProviders
+import akio.apps.myrun.data.externalapp.model.FirestoreProviders
 import akio.apps.myrun.data.externalapp.model.ProviderToken
 import akio.apps.myrun.data.externalapp.model.RunningApp
 import javax.inject.Inject

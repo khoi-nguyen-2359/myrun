@@ -6,6 +6,7 @@ import com.google.android.gms.fitness.data.DataType
 object AppPermissions {
     const val preciseLocationPermission: String = Manifest.permission.ACCESS_FINE_LOCATION
     const val approximateLocationPermission: String = Manifest.permission.ACCESS_COARSE_LOCATION
+
     // From Android 12, location permission always include this couple:
     val locationPermissions = arrayOf(preciseLocationPermission, approximateLocationPermission)
     val takePhotoPermissions = arrayOf(

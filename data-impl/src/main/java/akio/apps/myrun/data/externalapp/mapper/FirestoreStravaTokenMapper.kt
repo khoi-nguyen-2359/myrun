@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.externalapp.mapper
 
-import akio.apps.myrun.data.externalapp.model.FirestoreProviders
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
+import akio.apps.myrun.data.externalapp.model.FirestoreProviders
 import akio.apps.myrun.data.externalapp.model.StravaAthlete
 import javax.inject.Inject
 

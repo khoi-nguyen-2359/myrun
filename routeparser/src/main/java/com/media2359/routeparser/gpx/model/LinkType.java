@@ -1,16 +1,14 @@
-
 package com.media2359.routeparser.gpx.model;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.Root;
 
-
 /**
  * LinkType<br>
  * Generated using Android JAXB<br>
  * @link https://github.com/yeshodhan/android-jaxb
- * 
+ *
  */
 @Root(name = "linkType", strict = false)
 @Namespace(reference = "http://www.topografix.com/GPX/1/1")

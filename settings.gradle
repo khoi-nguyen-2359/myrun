@@ -8,3 +8,5 @@ include(":routeparser")
 include(":app")
 include(":places-sdk")
 include(":configurator")
+include ':data-wiring'
+include ':base-wiring'

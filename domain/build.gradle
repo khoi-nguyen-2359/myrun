@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -20,7 +20,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        rc { }
+        rc {}
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
@@ -34,9 +34,7 @@ android {
 
 dependencies {
     implementation project(":data")
-
-    // for dagger @Inject
-    implementation(libs.javaXInject)
+    implementation project(":base-wiring")
 
     implementation(libs.androidMapUtils)
     implementation(libs.androidGoogleMap)

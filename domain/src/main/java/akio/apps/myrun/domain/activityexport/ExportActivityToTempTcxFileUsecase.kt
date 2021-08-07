@@ -1,6 +1,6 @@
 package akio.apps.myrun.domain.activityexport
 
-import akio.apps.myrun._di.NamedIoDispatcher
+import akio.apps.base.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.model.ActivityLocation

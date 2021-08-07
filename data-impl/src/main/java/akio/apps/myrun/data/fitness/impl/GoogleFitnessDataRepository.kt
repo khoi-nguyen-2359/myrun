@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.fitness.impl
 
-import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import android.app.Application
 import androidx.annotation.VisibleForTesting
@@ -21,7 +20,7 @@ import timber.log.Timber
 
 class GoogleFitnessDataRepository @Inject constructor(
     private val application: Application,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @akio.apps.base.wiring.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : FitnessDataRepository {
 
     private val fitnessOptions
