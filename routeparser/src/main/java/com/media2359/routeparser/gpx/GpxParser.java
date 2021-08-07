@@ -1,5 +1,12 @@
 package com.media2359.routeparser.gpx;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
+
 import com.media2359.routeparser.RouteParser;
 import com.media2359.routeparser.domain.Route;
 import com.media2359.routeparser.domain.Track;
@@ -8,13 +15,6 @@ import com.media2359.routeparser.gpx.model.Gpx;
 import com.media2359.routeparser.gpx.model.TrkType;
 import com.media2359.routeparser.gpx.model.TrksegType;
 import com.media2359.routeparser.gpx.model.WptType;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class GpxParser implements RouteParser {
 
@@ -52,6 +52,5 @@ public class GpxParser implements RouteParser {
         }
         return waypoints;
     }
-
 
 }

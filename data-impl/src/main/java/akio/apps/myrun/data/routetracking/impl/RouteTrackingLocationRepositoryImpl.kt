@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.routetracking.impl
 
-import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.location.Location
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import javax.inject.Inject
@@ -9,7 +8,7 @@ import kotlinx.coroutines.withContext
 
 class RouteTrackingLocationRepositoryImpl @Inject constructor(
     private val routeTrackingLocationDao: RouteTrackingLocationDao,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @akio.apps.base.wiring.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : RouteTrackingLocationRepository {
 
     override suspend fun insert(trackingLocations: List<Location>): Unit =

@@ -2,6 +2,7 @@ package akio.apps.myrun
 
 import akio.apps._base.utils.CrashReportTree
 import akio.apps._base.utils.MyDebugTree
+import akio.apps.base.wiring.ApplicationModule
 import akio.apps.myrun._base.configurator.ConfiguratorGate
 import akio.apps.myrun._base.notification.AppNotificationChannel
 import akio.apps.myrun._di.AppComponent
@@ -50,6 +51,8 @@ class MyRunApp :
 
     override fun onCreate() {
         super<Application>.onCreate()
+
+        ApplicationModule.application = this
 
         // create all notification channels at app startup.
         AppNotificationChannel.values().forEach { it.createChannelCompat(this) }

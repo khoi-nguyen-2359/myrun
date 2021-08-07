@@ -19,7 +19,7 @@ class ActivityDetailActivity : AppCompatActivity() {
 
     private val activityDetailViewModel: ActivityDetailViewModel by viewModel {
         DaggerActivityDetailFeatureComponent.factory()
-            .create(ActivityDetailViewModel.Params(extActivityId))
+            .create(application, ActivityDetailViewModel.Params(extActivityId))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

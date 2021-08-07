@@ -1,12 +1,13 @@
 package akio.apps.myrun.feature.userprofile.impl
 
 import akio.apps.myrun.R
-import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import timber.log.Timber
+
+const val STRAVA_APP_ID = "54817"
 
 class LinkStravaDelegate(
     private val activity: Activity,
@@ -36,7 +37,7 @@ class LinkStravaDelegate(
     fun openStravaLogin() {
         val intentUri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")
             .buildUpon()
-            .appendQueryParameter("client_id", ExternalAppDataModule.STRAVA_APP_ID)
+            .appendQueryParameter("client_id", STRAVA_APP_ID)
             .appendQueryParameter("redirect_uri", stravaRedirectUri)
             .appendQueryParameter("response_type", "code")
             .appendQueryParameter("approval_prompt", "auto")
@@ -55,7 +56,7 @@ class LinkStravaDelegate(
         fun buildStravaLoginIntent(context: Context): Intent {
             val intentUri = Uri.parse("https://www.strava.com/oauth/mobile/authorize")
                 .buildUpon()
-                .appendQueryParameter("client_id", ExternalAppDataModule.STRAVA_APP_ID)
+                .appendQueryParameter("client_id", STRAVA_APP_ID)
                 .appendQueryParameter("redirect_uri", createRedirectUri(context))
                 .appendQueryParameter("response_type", "code")
                 .appendQueryParameter("approval_prompt", "auto")

@@ -4,11 +4,9 @@ import akio.apps._base.lifecycle.Event
 import akio.apps._base.viewmodel.BaseViewModel
 import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import androidx.lifecycle.LiveData
-import com.google.firebase.auth.PhoneAuthCredential
 
 abstract class SignInViewModel : BaseViewModel() {
     abstract val signInSuccessResult: LiveData<Event<SignInSuccessResult>>
-    abstract fun signInWithFirebasePhoneCredential(phoneAuthCredential: PhoneAuthCredential)
     abstract fun signInWithFacebookToken(tokenValue: String)
     abstract fun signInWithGoogleToken(googleIdToken: String)
 }

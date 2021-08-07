@@ -1,12 +1,11 @@
 package akio.apps.myrun.data.userprofile.impl
 
 import akio.apps._base.Resource
-import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.userprofile.UserProfileRepository
-import akio.apps.myrun.data.userprofile.model.FirestoreUser
-import akio.apps.myrun.data.userprofile.model.FirestoreUserProfileUpdateMap
 import akio.apps.myrun.data.userprofile.error.UserProfileNotFoundError
 import akio.apps.myrun.data.userprofile.mapper.FirestoreUserProfileMapper
+import akio.apps.myrun.data.userprofile.model.FirestoreUser
+import akio.apps.myrun.data.userprofile.model.FirestoreUserProfileUpdateMap
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.data.utils.FirebaseStorageUtils
@@ -31,7 +30,7 @@ class FirebaseUserProfileRepository @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage,
     private val firestoreUserProfileMapper: FirestoreUserProfileMapper,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @akio.apps.base.wiring.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : UserProfileRepository {
 
     private fun getUserDocument(userId: String): DocumentReference {

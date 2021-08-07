@@ -8,26 +8,16 @@ import akio.apps.myrun.domain.authentication.SignInWithGoogleUsecase
 import akio.apps.myrun.feature.signin.SignInViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.auth.PhoneAuthCredential
 import javax.inject.Inject
 
 class SignInViewModelImpl @Inject constructor(
     private val signInWithFacebookUsecase: SignInWithFacebookUsecase,
     private val signInWithGoogleUsecase: SignInWithGoogleUsecase,
-    private val signInWithPhoneUsecase: FirebaseSignInWithPhoneUsecase,
     private val postSigningInUsecase: PostSigningInUsecase
 ) : SignInViewModel() {
 
     private val _signInSuccessResult = MutableLiveData<Event<SignInSuccessResult>>()
     override val signInSuccessResult: LiveData<Event<SignInSuccessResult>> = _signInSuccessResult
-
-    override fun signInWithFirebasePhoneCredential(phoneAuthCredential: PhoneAuthCredential) {
-        launchCatching {
-            val result =
-                signInWithPhoneUsecase.signInWithFirebasePhoneCredential(phoneAuthCredential)
-            onSignInSuccess(result)
-        }
-    }
 
     private suspend fun onSignInSuccess(result: SignInSuccessResult) {
         postSigningInUsecase.invoke(result)

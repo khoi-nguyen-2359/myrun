@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 class SplashActivity : AppCompatActivity() {
 
     private val splashViewModel: SplashViewModel by viewModel {
-        DaggerSplashFeatureComponent.create()
+        DaggerSplashFeatureComponent.factory().create()
     }
 
     private val dialogDelegate by lazy { DialogDelegate(this) }

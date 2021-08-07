@@ -5,19 +5,16 @@
 // Generated on: 2013.12.17 at 10:24:25 PM EET 
 //
 
-
 package com.media2359.routeparser.tcx.model;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.Root;
 
-
 @Root(name = "Step_t", strict = false)
 @Namespace(reference = "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2")
 public class StepT
-    extends AbstractStepT
-{
+        extends AbstractStepT {
 
     @Element(name = "Name", required = false)
     protected String name;
@@ -30,11 +27,11 @@ public class StepT
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -42,11 +39,11 @@ public class StepT
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -54,11 +51,11 @@ public class StepT
 
     /**
      * Gets the value of the duration property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link DurationT }
-     *     
+     *
      */
     public DurationT getDuration() {
         return duration;
@@ -66,11 +63,11 @@ public class StepT
 
     /**
      * Sets the value of the duration property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link DurationT }
-     *     
+     *
      */
     public void setDuration(DurationT value) {
         this.duration = value;
@@ -78,11 +75,11 @@ public class StepT
 
     /**
      * Gets the value of the intensity property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link IntensityT }
-     *     
+     *
      */
     public IntensityT getIntensity() {
         return intensity;
@@ -90,11 +87,11 @@ public class StepT
 
     /**
      * Sets the value of the intensity property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link IntensityT }
-     *     
+     *
      */
     public void setIntensity(IntensityT value) {
         this.intensity = value;
@@ -102,11 +99,11 @@ public class StepT
 
     /**
      * Gets the value of the target property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link TargetT }
-     *     
+     *
      */
     public TargetT getTarget() {
         return target;
@@ -114,11 +111,11 @@ public class StepT
 
     /**
      * Sets the value of the target property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link TargetT }
-     *     
+     *
      */
     public void setTarget(TargetT value) {
         this.target = value;

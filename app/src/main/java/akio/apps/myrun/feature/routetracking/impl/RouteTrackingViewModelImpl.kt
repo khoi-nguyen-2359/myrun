@@ -5,8 +5,8 @@ import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
-import akio.apps.myrun.data.location.LocationDataSource
 import akio.apps.myrun.data.location.Location
+import akio.apps.myrun.data.location.LocationDataSource
 import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus

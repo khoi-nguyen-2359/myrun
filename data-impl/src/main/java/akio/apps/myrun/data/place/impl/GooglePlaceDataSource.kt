@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.place.impl
 
-import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.place.LatLng
 import akio.apps.myrun.data.place.PlaceDataSource
 import akio.apps.myrun.data.place.PlaceDetails
@@ -26,7 +25,7 @@ class GooglePlaceDataSource @Inject constructor(
      */
     private val placesClientLazy: Lazy<PlacesClient>,
     private val application: Application,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @akio.apps.base.wiring.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : PlaceDataSource {
 
     private val placesClient by lazy { placesClientLazy.get() }

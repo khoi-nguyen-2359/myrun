@@ -8,8 +8,8 @@ import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.fitness.FitnessDataRepository
-import akio.apps.myrun.data.location.LocationDataSource
 import akio.apps.myrun.data.location.Location
+import akio.apps.myrun.data.location.LocationDataSource
 import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState

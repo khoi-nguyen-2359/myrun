@@ -6,6 +6,7 @@ plugins {
     id 'com.google.firebase.crashlytics'
     id 'kotlin-parcelize'
     id 'com.google.firebase.firebase-perf'
+//    id 'de.jjohannes.missing-metadata-guava'
 }
 
 File localPropsFile = project.rootProject.file('local.properties')
@@ -91,15 +92,15 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation project(':data')
-    implementation project(':data-impl')
     implementation project(':domain')
     implementation project(':places-sdk')
+
+    implementation project(':base-wiring')
+    implementation project(':data-wiring')
 
     debugImplementation project(":configurator")
 
     implementation(libs.kotlinxCoroutinesCore)
-    implementation(libs.kotlinxCoroutinesAndroid)
     implementation(libs.kotlinxCoroutinesPlayServices)
 
     implementation(libs.daggerAndroid)
@@ -115,6 +116,12 @@ dependencies {
     implementation(libs.workManager)
     implementation(libs.splashScreen)
 
+    implementation(libs.lifecycleRuntimeKtx)
+    implementation(libs.lifecycleLiveDataKtx)
+    implementation(libs.lifecycleViewModelKtx)
+    implementation(libs.lifecycleCommonJava8)
+    implementation(libs.lifecycleProcess)
+
     implementation(libs.bundles.compose)
     implementation(libs.coilCompose)
     implementation(libs.accompanistPlaceholder)
@@ -126,29 +133,13 @@ dependencies {
     implementation(libs.playServicesFitness)
 
     implementation platform(libs.firebaseBom)
-    implementation(libs.firebaseAuthKtx)
-    implementation(libs.firebaseFirestoreKtx)
-    implementation(libs.firebaseCrashlyticsKtx)
-    implementation(libs.firebaseAnalyticsKtx)
-    implementation(libs.firebaseStorageKtx)
+    implementation(libs.bundles.crashlytics)
     implementation(libs.firebasePerfKtx)
+    // to resolve error 'cannot access ListenableFuture' in work manager
+    implementation(libs.guava)
 
     implementation(libs.androidMapUtils)
     implementation(libs.androidGoogleMap)
-
-    implementation(libs.roomRuntime)
-
-    implementation(libs.okHttp)
-    implementation(libs.okHttpLogger)
-
-    implementation(libs.retrofit)
-    implementation(libs.retrofitGsonConverter)
-
-    implementation(libs.lifecycleRuntimeKtx)
-    implementation(libs.lifecycleLiveDataKtx)
-    implementation(libs.lifecycleViewModelKtx)
-    implementation(libs.lifecycleCommonJava8)
-    implementation(libs.lifecycleProcess)
 
     implementation(libs.timber)
 

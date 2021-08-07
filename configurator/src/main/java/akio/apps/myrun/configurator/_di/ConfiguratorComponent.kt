@@ -2,15 +2,14 @@ package akio.apps.myrun.configurator._di
 
 import akio.apps.myrun.configurator.ConfiguratorActivity
 import akio.apps.myrun.configurator.RouteTrackingConfigurationViewModel
-import akio.apps.myrun.data.routetracking._di.RouteTrackingDataModule
+import akio.apps.myrun.data.routetracking.wiring.DaggerRouteTrackingDataComponent
+import akio.apps.myrun.data.routetracking.wiring.RouteTrackingDataComponent
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
 
 @Component(
-    modules = [
-        RouteTrackingDataModule::class
-    ]
+    dependencies = [RouteTrackingDataComponent::class]
 )
 interface ConfiguratorComponent {
 
@@ -19,6 +18,10 @@ interface ConfiguratorComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(@BindsInstance application: Application): ConfiguratorComponent
+        fun create(
+            @BindsInstance application: Application,
+            routeTrackingDataComponent: RouteTrackingDataComponent =
+                DaggerRouteTrackingDataComponent.create()
+        ): ConfiguratorComponent
     }
 }
