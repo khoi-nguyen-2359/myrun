@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 class HomeActivity : AppCompatActivity() {
 
     private val homeFeatureComponent: HomeFeatureComponent by lazy {
-        DaggerHomeFeatureComponent.factory().create(application)
+        DaggerHomeFeatureComponent.factory().create()
     }
 
     private val userTimelineViewModel: UserTimelineViewModel by viewModel { homeFeatureComponent }

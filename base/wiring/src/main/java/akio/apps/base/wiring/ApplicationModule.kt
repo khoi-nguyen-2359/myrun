@@ -5,7 +5,7 @@ import dagger.Module
 import dagger.Provides
 
 /**
- * Module that provides application instance from initialization.
+ * Module that provides application instance.
  */
 @Module
 object ApplicationModule {
