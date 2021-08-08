@@ -9,13 +9,15 @@ import akio.apps.myrun.data.externalapp.StravaDataRepository
 import akio.apps.myrun.data.externalapp.StravaTokenRepository
 import dagger.Component
 
-@Component(modules = [
-    ExternalAppDataModule::class,
-    FirebaseDataModule::class,
-    NetworkModule::class,
-    AuthenticationDataModule::class,
-    ApplicationModule::class
-])
+@Component(
+    modules = [
+        ExternalAppDataModule::class,
+        FirebaseDataModule::class,
+        NetworkModule::class,
+        AuthenticationDataModule::class,
+        ApplicationModule::class
+    ]
+)
 interface ExternalAppDataComponent {
     fun stravaTokenRepository(): StravaTokenRepository
     fun externalAppRepository(): ExternalAppProvidersRepository

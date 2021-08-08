@@ -8,12 +8,14 @@ import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.ActivityTcxFileWriter
 import dagger.Component
 
-@Component(modules = [
-    ActivityDataModule::class,
-    FirebaseDataModule::class,
-    DispatchersModule::class,
-    ApplicationModule::class
-])
+@Component(
+    modules = [
+        ActivityDataModule::class,
+        FirebaseDataModule::class,
+        DispatchersModule::class,
+        ApplicationModule::class
+    ]
+)
 interface ActivityDataComponent {
     fun activityLocalStorage(): ActivityLocalStorage
     fun activityRepository(): ActivityRepository

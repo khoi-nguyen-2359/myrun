@@ -5,7 +5,9 @@ import akio.apps.myrun.data._base.wiring.FirebaseDataModule
 import akio.apps.myrun.data.userprofile.UserProfileRepository
 import dagger.Component
 
-@Component(modules = [UserProfileDataModule::class, FirebaseDataModule::class, DispatchersModule::class])
+@Component(
+    modules = [UserProfileDataModule::class, FirebaseDataModule::class, DispatchersModule::class]
+)
 interface UserProfileDataComponent {
     fun userProfileRepository(): UserProfileRepository
 }

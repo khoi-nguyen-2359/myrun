@@ -95,13 +95,13 @@ dependencies {
     implementation project(':data-wiring')
 
     implementation project(':base:wiring')
-    implementation project(':feature:base')
     implementation project(':base:feature')
 
+    implementation project(':feature:base')
     implementation project(':feature:registration:api')
+    implementation project(":feature:configurator:api")
 
     implementation project(':places-sdk')
-    debugImplementation project(":feature:configurator:api")
 
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.kotlinxCoroutinesPlayServices)
