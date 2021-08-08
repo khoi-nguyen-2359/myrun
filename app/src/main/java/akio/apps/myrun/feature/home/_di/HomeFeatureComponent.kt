@@ -6,8 +6,8 @@ import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
 import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
-import akio.apps.myrun.data.routetracking.wiring.DaggerRouteTrackingDataComponent
-import akio.apps.myrun.data.routetracking.wiring.RouteTrackingDataComponent
+import akio.apps.myrun.data.tracking.wiring.DaggerTrackingDataComponent
+import akio.apps.myrun.data.tracking.wiring.TrackingDataComponent
 import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
 import akio.apps.myrun.data.user.wiring.UserDataComponent
 import dagger.Component
@@ -21,7 +21,7 @@ import dagger.Component
         ActivityDataComponent::class,
         AuthenticationDataComponent::class,
         UserDataComponent::class,
-        RouteTrackingDataComponent::class
+        TrackingDataComponent::class
     ]
 )
 interface HomeFeatureComponent : ViewModelFactoryProvider {
@@ -33,8 +33,7 @@ interface HomeFeatureComponent : ViewModelFactoryProvider {
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
-            routeTrackingDataComponent: RouteTrackingDataComponent =
-                DaggerRouteTrackingDataComponent.create()
+            trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create()
         ): HomeFeatureComponent
     }
 }
