@@ -42,10 +42,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     private val userId: String? by lazy { arguments?.getString(ARG_USER_ID) }
 
     private val profileViewModel: UserProfileViewModel by viewModel {
-        DaggerUserProfileFeatureComponent.factory().create(
-            UserProfileViewModel.Params(userId),
-            requireActivity().application
-        )
+        DaggerUserProfileFeatureComponent.factory().create(UserProfileViewModel.Params(userId))
     }
 
     private val googleFitLinkingDelegate = GoogleFitLinkingDelegate()

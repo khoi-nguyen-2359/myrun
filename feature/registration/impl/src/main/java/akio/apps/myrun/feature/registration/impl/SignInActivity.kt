@@ -7,7 +7,6 @@ import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.registration.impl.databinding.ActivitySignInBinding
 import android.app.Activity
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -32,10 +31,7 @@ import timber.log.Timber
 class SignInActivity : AppCompatActivity() {
 
     private val signInVM: SignInViewModel by viewModelProvider {
-        DaggerSignInFeatureComponent
-            .factory()
-            .create(applicationContext as Application)
-            .signInViewModel()
+        DaggerSignInFeatureComponent.factory().create().signInViewModel()
     }
 
     private val viewBinding: ActivitySignInBinding by lazy {

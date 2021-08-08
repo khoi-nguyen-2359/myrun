@@ -49,7 +49,7 @@ class ActivityExportService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        DaggerActivityExportFeatureComponent.factory().create(this.application).inject(this)
+        DaggerActivityExportFeatureComponent.factory().create().inject(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
