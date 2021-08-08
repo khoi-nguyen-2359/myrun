@@ -34,7 +34,7 @@ android {
 
 dependencies {
     implementation project(":data")
-    implementation project(":base-wiring")
+    implementation project(":base:wiring")
 
     implementation(libs.androidMapUtils)
     implementation(libs.androidGoogleMap)

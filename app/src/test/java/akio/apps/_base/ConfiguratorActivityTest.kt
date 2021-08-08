@@ -1,6 +1,6 @@
 package akio.apps._base
 
-import akio.apps.myrun.configurator.ConfiguratorActivity
+import akio.apps.myrun.feature.configuration.impl.ConfiguratorActivity
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -11,8 +11,8 @@ class ConfiguratorActivityTest {
     @Test
     fun testConsistentActivityName() {
         assertEquals(
-            "akio.apps.myrun.configurator.ConfiguratorActivity",
-            ConfiguratorActivity::class.qualifiedName
+            "akio.apps.myrun.feature.configuration.impl.ConfiguratorActivity",
+            akio.apps.myrun.feature.configuration.impl.ConfiguratorActivity::class.qualifiedName
         )
     }
 }

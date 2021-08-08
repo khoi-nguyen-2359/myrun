@@ -1,6 +1,5 @@
 package akio.apps.myrun.feature.editprofile._di
 
-import akio.apps._base.di.ViewModelKey
 import akio.apps.myrun.feature.editprofile.EditProfileViewModel
 import akio.apps.myrun.feature.editprofile.impl.EditProfileViewModelImpl
 import androidx.lifecycle.ViewModel
@@ -12,6 +11,6 @@ import dagger.multibindings.IntoMap
 interface EditProfileFeatureModule {
     @Binds
     @IntoMap
-    @ViewModelKey(EditProfileViewModel::class)
+    @akio.apps.base.feature.viewmodel.ViewModelKey(EditProfileViewModel::class)
     fun editProfileVm(viewModelImpl: EditProfileViewModelImpl): ViewModel
 }

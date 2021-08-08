@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.routetracking
 
-import akio.apps._base.viewmodel.BaseViewModel
+import akio.apps.base.feature.viewmodel.BaseViewModel
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.location.Location
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus

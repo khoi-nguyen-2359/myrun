@@ -1,12 +1,11 @@
 package akio.apps.myrun.feature.editprofile.impl
 
-import akio.apps._base.di.viewModel
-import akio.apps._base.lifecycle.observe
-import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.getNoneEmptyTextOrNull
 import akio.apps._base.ui.getTextAsString
+import akio.apps.base.feature.lifecycle.observe
+import akio.apps.base.feature.lifecycle.observeEvent
+import akio.apps.base.feature.viewmodel.viewModel
 import akio.apps.myrun.R
-import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.PhotoSelectionDelegate
 import akio.apps.myrun._base.utils.circleCenterCrop
 import akio.apps.myrun.data.userprofile.model.Gender
@@ -56,7 +55,7 @@ class EditProfileActivity :
 
     private val viewBinding by lazy { ActivityEditProfileBinding.inflate(layoutInflater) }
 
-    private val dialogDelegate by lazy { DialogDelegate(this) }
+    private val dialogDelegate by lazy { akio.apps.myrun.feature.base.DialogDelegate(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         minSdk 21
-        targetSdk 30
+        targetSdk 31
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -35,7 +35,9 @@ android {
 dependencies {
     api project(":data")
     implementation project(":data-impl")
-    implementation project(":base-wiring")
+    implementation project(":base:wiring")
+
+    implementation project(':places-sdk')
 
     implementation platform(libs.firebaseBom)
     implementation(libs.firebaseAuthKtx)
@@ -47,8 +49,6 @@ dependencies {
     implementation(libs.okHttp)
     implementation(libs.okHttpLogger)
     implementation(libs.retrofitGsonConverter)
-
-    implementation project(':places-sdk')
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)

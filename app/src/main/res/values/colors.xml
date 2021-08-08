@@ -12,10 +12,8 @@
     <color name="route_tracking_resume_button_background_tint">#00c853</color>
     <color name="common_error_text">#7f0000</color>
     <color name="user_timeline_instruction_text">#66000000</color>
-    <color name="facebook_background">#1778F2</color>
     <color name="greyStroke">#b34a4a4a</color>
     <color name="greyText">#4a4a4a</color>
-    <color name="darkText">#e6222222</color>
     <color name="activity_detail_performance_table_divider">#ddd</color>
     <color name="activity_route_map_start_marker_tint">#00c853</color>
     <color name="activity_route_map_stop_marker_tint">#d50000</color>

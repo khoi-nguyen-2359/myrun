@@ -30,11 +30,4 @@
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
     </style>
-
-    <style name="AppDialogTheme" parent="Theme.MaterialComponents.Light.Dialog">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
 </resources>

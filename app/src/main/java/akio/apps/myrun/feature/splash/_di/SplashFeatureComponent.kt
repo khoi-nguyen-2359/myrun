@@ -1,17 +1,16 @@
 package akio.apps.myrun.feature.splash._di
 
-import akio.apps._base.di.ViewModelFactoryProvider
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
+import akio.apps.myrun.feature.splash.impl.SplashViewModel
 import dagger.Component
 
 @Component(
-    modules = [
-        SplashFeatureModule::class
-    ],
     dependencies = [AuthenticationDataComponent::class]
 )
-interface SplashFeatureComponent : ViewModelFactoryProvider {
+interface SplashFeatureComponent {
+    fun splashViewModel(): SplashViewModel
+
     @Component.Factory
     interface Factory {
         fun create(

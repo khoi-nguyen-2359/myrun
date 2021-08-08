@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.userprofile._di
 
-import akio.apps._base.di.FeatureScope
-import akio.apps._base.di.ViewModelFactoryProvider
+import akio.apps.base.wiring.FeatureScope
 import akio.apps.myrun._di.AppComponent
 import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
 import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
@@ -27,7 +26,7 @@ import dagger.Component
         ExternalAppDataComponent::class
     ]
 )
-interface UserProfileFeatureComponent : ViewModelFactoryProvider {
+interface UserProfileFeatureComponent : akio.apps.base.feature.viewmodel.ViewModelFactoryProvider {
     @Component.Factory
     interface Factory {
         fun create(
