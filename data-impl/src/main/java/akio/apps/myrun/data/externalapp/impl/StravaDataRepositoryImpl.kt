@@ -33,7 +33,9 @@ class StravaDataRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getRoutes(stravaToken: ExternalAppToken.StravaToken): List<StravaRouteModel> {
+    override suspend fun getRoutes(
+        stravaToken: ExternalAppToken.StravaToken
+    ): List<StravaRouteModel> {
         return stravaApi.getAthleteRoutes(
             "Bearer ${stravaToken.accessToken}",
             stravaToken.athlete.id

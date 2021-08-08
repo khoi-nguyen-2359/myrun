@@ -7,11 +7,13 @@ import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import dagger.Component
 
-@Component(modules = [
-    RouteTrackingDataModule::class,
-    ApplicationModule::class,
-    DispatchersModule::class
-])
+@Component(
+    modules = [
+        RouteTrackingDataModule::class,
+        ApplicationModule::class,
+        DispatchersModule::class
+    ]
+)
 interface RouteTrackingDataComponent {
     fun routeTrackingLocationRepo(): RouteTrackingLocationRepository
     fun routeTrackingConfiguration(): RouteTrackingConfiguration
