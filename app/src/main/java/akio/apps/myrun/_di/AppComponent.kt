@@ -1,11 +1,13 @@
 package akio.apps.myrun._di
 
+import akio.apps.base.wiring.DispatchersModule
 import akio.apps.myrun.MyRunApp
-import akio.apps.myrun.data.authentication._di.AuthenticationDataModule
-import akio.apps.myrun.data.externalapp._di.ExternalAppDataModule
-import akio.apps.myrun.data.externalapp.impl.StravaApi
-import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.routetracking._di.RouteTrackingDataModule
+import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
+import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
+import akio.apps.myrun.data.external.wiring.DaggerExternalAppDataComponent
+import akio.apps.myrun.data.external.wiring.ExternalAppDataComponent
+import akio.apps.myrun.data.routetracking.wiring.DaggerRouteTrackingDataComponent
+import akio.apps.myrun.data.routetracking.wiring.RouteTrackingDataComponent
 import akio.apps.myrun.feature.strava._di.StravaFeatureModule
 import android.app.Application
 import dagger.BindsInstance
@@ -15,28 +17,31 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
-        // singleton modules
-        ExternalAppDataModule.StravaApiDataModule::class,
-
         // application injection modules
-        RouteTrackingDataModule.RouteTrackingStateDataModule::class,
-        ExternalAppDataModule::class,
         StravaFeatureModule::class,
-        AuthenticationDataModule::class,
         DispatchersModule::class
+    ],
+    dependencies = [
+        AuthenticationDataComponent::class,
+        ExternalAppDataComponent::class,
+        RouteTrackingDataComponent::class
     ]
 )
 interface AppComponent {
     // Application injection method
     fun inject(myRunApp: MyRunApp)
 
-    // Singleton provision methods
-    fun routeTrackingState(): RouteTrackingState
-    fun stravaApi(): StravaApi
-
     @Component.Factory
     interface Factory {
-        fun create(@BindsInstance application: Application): AppComponent
+        fun create(
+            @BindsInstance application: Application,
+            authenticationDataComponent: AuthenticationDataComponent =
+                DaggerAuthenticationDataComponent.create(),
+            externalAppDataComponent: ExternalAppDataComponent =
+                DaggerExternalAppDataComponent.create(),
+            routeTrackingDataComponent: RouteTrackingDataComponent =
+                DaggerRouteTrackingDataComponent.create()
+        ): AppComponent
     }
 
     interface Holder {

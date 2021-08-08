@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.home
 
-import akio.apps._base.di.viewModel
 import akio.apps._base.ui.px2dp
+import akio.apps.base.feature.viewmodel.viewModel
 import akio.apps.myrun.R
 import akio.apps.myrun.feature.activitydetail.ActivityDetailActivity
 import akio.apps.myrun.feature.activityexport.ActivityExportService

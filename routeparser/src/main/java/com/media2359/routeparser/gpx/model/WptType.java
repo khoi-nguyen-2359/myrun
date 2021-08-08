@@ -1,16 +1,18 @@
-
 package com.media2359.routeparser.gpx.model;
-
-import org.simpleframework.xml.*;
 
 import java.util.List;
 
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.Namespace;
+import org.simpleframework.xml.Root;
 
 /**
  * WptType<br>
  * Generated using Android JAXB<br>
  * @link https://github.com/yeshodhan/android-jaxb
- * 
+ *
  */
 @Root(name = "wptType", strict = false)
 @Namespace(reference = "http://www.topografix.com/GPX/1/1")

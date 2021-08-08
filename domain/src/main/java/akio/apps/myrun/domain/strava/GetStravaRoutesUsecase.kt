@@ -4,7 +4,7 @@ import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.StravaDataRepository
-import akio.apps.myrun.data.externalapp.model.StravaRoute
+import akio.apps.myrun.data.externalapp.model.StravaRouteModel
 import javax.inject.Inject
 
 class GetStravaRoutesUsecase @Inject constructor(
@@ -12,7 +12,7 @@ class GetStravaRoutesUsecase @Inject constructor(
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val userAuthenticationState: UserAuthenticationState
 ) {
-    suspend fun getStravaRoutes(): List<StravaRoute> {
+    suspend fun getStravaRoutes(): List<StravaRouteModel> {
         val userAccountId = userAuthenticationState.getUserAccountId()
             ?: throw UnauthorizedUserError()
 

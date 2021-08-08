@@ -7,4 +7,11 @@ include(":data-impl")
 include(":routeparser")
 include(":app")
 include(":places-sdk")
-include(":configurator")
+include(':data-wiring')
+include(':feature:registration:api')
+include ':feature:registration:impl'
+include ':feature:base'
+include ':base:feature'
+include ':base:wiring'
+include ':feature:configurator:impl'
+include ':feature:configurator:api'

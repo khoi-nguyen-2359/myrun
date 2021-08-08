@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">My Run Debug</string>
     <string name="route_tracking_distance_label">Distance</string>
     <string name="route_tracking_time_label">Time</string>
     <string name="route_tracking_pace_label">Pace</string>
@@ -35,7 +34,6 @@
     <string name="activity_name_cycling">Ride</string>
     <string name="user_timeline_error_loading_list">There\'s an error loading activities.\nRetry.</string>
     <string name="splash_welcome_text">Let\'s start your\nfirst activity!</string>
-    <string name="sign_in_with_facebook_button">Log in with Facebook</string>
     <string name="sign_in_hint_mobile_number">Mobile Number</string>
     <string name="action_send_otp">Send OTP</string>
     <string name="action_confirm">Confirm</string>
@@ -76,7 +74,6 @@
     <string name="user_profile_title">Profile</string>
     <string name="edit_user_profile_mobile_number_update_success_message">Your phone number has been changed</string>
     <string name="action_no">No</string>
-    <string name="sign_in_with_google_button">Log in with Google</string>
     <string name="action_sign_out">Sign out</string>
     <string name="strava_app_name">Strava</string>
     <string name="user_profile_strava_description">Sync your new activity to Strava automatically.</string>
@@ -109,12 +106,6 @@
     <string name="action_proceed">Proceed</string>
     <string name="location_permission_is_missing_error">Feature is not available without required permissions.</string>
     <string name="route_tracking_discard_activity_confirm_message">Your tracking route will be lost after being discarded.\nDo you want to continue?</string>
-    <string name="notification_channel_name_tracking_service">Route tracking</string>
-    <string name="notification_channel_description_tracking_service">Notification that shows progress of your activity.</string>
-    <string name="notification_channel_name_general">General</string>
-    <string name="notification_channel_description_general">App general notifications</string>
-    <string name="notification_channel_name_debug">Debug</string>
-    <string name="notification_channel_description_debug">Available for debug only</string>
     <string name="profile_logout_pending_activity_upload_warning">Your uploading activities <b>will be lost.</b></string>
     <string name="content_description_edit_profile_button">Edit Profile button</string>
     <string name="edit_user_profile_title">Edit Profile</string>

@@ -19,7 +19,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        rc { }
+        rc {}
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
@@ -36,5 +36,4 @@ android {
 dependencies {
     implementation(libs.androidXAppCompat)
     implementation(libs.kotlinxCoroutinesCore)
-    implementation "javax.inject:javax.inject:1"
 }

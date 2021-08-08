@@ -1,15 +1,14 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun.R
-import akio.apps.myrun._base.notification.AppNotificationChannel
 import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.fitness.FitnessDataRepository
+import akio.apps.myrun.data.location.Location
 import akio.apps.myrun.data.location.LocationDataSource
-import akio.apps.myrun.data.location.LocationEntity
 import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
 import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
 import akio.apps.myrun.data.routetracking.RouteTrackingState
@@ -21,6 +20,7 @@ import akio.apps.myrun.domain.routetracking.AverageLocationAccumulator
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.LocationProcessorContainer
 import akio.apps.myrun.domain.routetracking.LocationSpeedFilter
+import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import android.annotation.SuppressLint
 import android.app.ActivityManager
@@ -79,7 +79,7 @@ class RouteTrackingService : Service() {
 
     private var locationUpdateJob: Job? = null
     private var trackingTimerJob: Job? = null
-    private var startLocation: LocationEntity? = null
+    private var startLocation: Location? = null
 
     private val routeDistanceCalculator = RouteDistanceCalculator()
 
@@ -142,9 +142,9 @@ class RouteTrackingService : Service() {
         }
     }
 
-    private suspend fun onLocationUpdate(locations: List<LocationEntity>) {
+    private suspend fun onLocationUpdate(locations: List<Location>) {
         Timber.d("onLocationUpdate ${locations.size}")
-        val batch: List<LocationEntity> = locationProcessors.process(locations)
+        val batch: List<Location> = locationProcessors.process(locations)
         if (batch.isEmpty()) {
             return
         }
@@ -164,10 +164,10 @@ class RouteTrackingService : Service() {
     }
 
     inner class RouteDistanceCalculator {
-        private var lastComputeLengthLocation: LocationEntity? = null
+        private var lastComputeLengthLocation: Location? = null
 
-        suspend fun calculateRouteDistance(locations: List<LocationEntity>): Double {
-            val computeLengthLocations = mutableListOf<LocationEntity>()
+        suspend fun calculateRouteDistance(locations: List<Location>): Double {
+            val computeLengthLocations = mutableListOf<Location>()
 
             // add last location of previous batch to compute distance to first location of this batch
             lastComputeLengthLocation?.let {

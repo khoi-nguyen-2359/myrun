@@ -1,6 +1,6 @@
 package akio.apps.myrun.domain.routetracking
 
-import akio.apps.myrun.data.location.LocationEntity
+import akio.apps.myrun.data.location.Location
 
 class LocationProcessorContainer : LocationProcessor {
     private val processorList: MutableList<LocationProcessor> = mutableListOf()
@@ -8,7 +8,7 @@ class LocationProcessorContainer : LocationProcessor {
         processorList.add(locationProcessor)
     }
 
-    override fun process(locations: List<LocationEntity>): List<LocationEntity> {
+    override fun process(locations: List<Location>): List<Location> {
         var processedLocations = locations
         processorList.forEach { processor ->
             processedLocations = processor.process(processedLocations)

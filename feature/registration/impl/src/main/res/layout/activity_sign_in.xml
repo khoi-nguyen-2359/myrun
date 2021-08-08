@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/sign_in_page_horizontal_padding" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/sign_in_page_horizontal_padding" />
+
+        <androidx.constraintlayout.helper.widget.Flow
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="google_button,facebook_button"
+            app:flow_maxElementsWrap="1"
+            app:flow_wrapMode="chain"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline_end"
+            app:layout_constraintStart_toEndOf="@id/guideline_start"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:elevation="4dp"
+            app:layout_constraintBottom_toTopOf="@id/google_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="48dp"
+            app:srcCompat="@mipmap/ic_launcher_round"
+            app:shapeAppearance="@style/MaterialRoundShape"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
+
+        <Button
+            android:letterSpacing="0"
+            android:id="@+id/google_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/white"
+            android:paddingVertical="@dimen/sign_in_option_vertical_padding"
+            android:text="@string/sign_in_with_google_button"
+            android:textSize="15sp"
+            android:textAllCaps="false"
+            android:textColor="@color/darkText"
+            app:icon="@drawable/ic_google_signin"
+            app:iconTint="@null" />
+
+        <Button
+            android:letterSpacing="0"
+            android:textSize="15sp"
+            android:id="@+id/facebook_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/facebook_background"
+            android:paddingVertical="@dimen/sign_in_option_vertical_padding"
+            android:text="@string/sign_in_with_facebook_button"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_facebook" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

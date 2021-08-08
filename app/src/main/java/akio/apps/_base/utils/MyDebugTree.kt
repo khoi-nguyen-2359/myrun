@@ -2,7 +2,7 @@ package akio.apps._base.utils
 
 import akio.apps.myrun.MyRunApp
 import akio.apps.myrun.R
-import akio.apps.myrun._base.notification.AppNotificationChannel
+import akio.apps.myrun.feature.base.AppNotificationChannel
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat

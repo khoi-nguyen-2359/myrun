@@ -1,6 +1,5 @@
 package akio.apps.myrun.feature.activitydetail._di
 
-import akio.apps._base.di.ViewModelKey
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.impl.ActivityDetailViewModelImpl
 import androidx.lifecycle.ViewModel
@@ -13,6 +12,6 @@ interface ActivityDetailFeatureModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ActivityDetailViewModel::class)
+    @akio.apps.base.feature.viewmodel.ViewModelKey(ActivityDetailViewModel::class)
     fun activityDetailViewModel(viewModel: ActivityDetailViewModelImpl): ViewModel
 }

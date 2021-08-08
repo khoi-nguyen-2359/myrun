@@ -1,20 +1,19 @@
 package akio.apps.myrun.feature.routetracking.impl
 
-import akio.apps._base.di.viewModel
-import akio.apps._base.lifecycle.collectEventRepeatOnStarted
-import akio.apps._base.lifecycle.collectRepeatOnStarted
-import akio.apps._base.lifecycle.observe
-import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.dp2px
-import akio.apps._base.viewmodel.LaunchCatchingDelegate
-import akio.apps._base.viewmodel.LaunchCatchingDelegateImpl
+import akio.apps.base.feature.lifecycle.collectEventRepeatOnStarted
+import akio.apps.base.feature.lifecycle.collectRepeatOnStarted
+import akio.apps.base.feature.lifecycle.observe
+import akio.apps.base.feature.lifecycle.observeEvent
+import akio.apps.base.feature.viewmodel.LaunchCatchingDelegate
+import akio.apps.base.feature.viewmodel.LaunchCatchingDelegateImpl
+import akio.apps.base.feature.viewmodel.viewModel
 import akio.apps.myrun.R
-import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.LatLngBoundsBuilder
 import akio.apps.myrun._base.utils.LocationServiceChecker
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.model.ActivityType
-import akio.apps.myrun.data.location.LocationEntity
+import akio.apps.myrun.data.location.Location
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature.activityroutemap.ui.ActivityRouteMapActivity
@@ -82,7 +81,7 @@ class RouteTrackingActivity(
     // use this flag to check if map has ever been loaded (or never been due to no internet)
     private var hasMapCameraBeenIdled: Boolean = false
 
-    private val dialogDelegate by lazy { DialogDelegate(this) }
+    private val dialogDelegate by lazy { akio.apps.myrun.feature.base.DialogDelegate(this) }
 
     private val viewBinding by lazy { ActivityRouteTrackingBinding.inflate(layoutInflater) }
 
@@ -113,6 +112,7 @@ class RouteTrackingActivity(
             finish()
             return@launchWhenCreated
         }
+        R.string.default_web_client_id
     }
 
     private var trackMapCameraOnLocationUpdateJob: Job? = null
@@ -174,7 +174,7 @@ class RouteTrackingActivity(
         setAutoCameraEnabled(true)
     }
 
-    private fun recenterMap(location: LocationEntity) {
+    private fun recenterMap(location: Location) {
         if (!::mapView.isInitialized) {
             return
         }
@@ -216,13 +216,13 @@ class RouteTrackingActivity(
     }
 
     private var startPointMarker: Marker? = null
-    private fun onTrackingLocationUpdate(batch: List<LocationEntity>) {
+    private fun onTrackingLocationUpdate(batch: List<Location>) {
         addStartPointMarkerIfNotAdded(batch)
         drawTrackingLocationUpdate(batch)
         moveMapCameraOnTrackingLocationUpdate(batch)
     }
 
-    private fun addStartPointMarkerIfNotAdded(batch: List<LocationEntity>) {
+    private fun addStartPointMarkerIfNotAdded(batch: List<Location>) {
         if (startPointMarker != null || batch.isEmpty()) {
             return
         }
@@ -238,7 +238,7 @@ class RouteTrackingActivity(
         startPointMarker = mapView.addMarker(startMarker)
     }
 
-    private fun moveMapCameraOnTrackingLocationUpdate(batch: List<LocationEntity>) {
+    private fun moveMapCameraOnTrackingLocationUpdate(batch: List<Location>) {
         batch.forEach {
             trackingRouteLatLngBounds.include(it.toGmsLatLng())
         }
@@ -281,7 +281,7 @@ class RouteTrackingActivity(
         return Size(mapWidth, (mapWidth / routeImageRatio).toInt())
     }
 
-    private fun drawTrackingLocationUpdate(batch: List<LocationEntity>) {
+    private fun drawTrackingLocationUpdate(batch: List<Location>) {
         routePolyline?.let { currentPolyline ->
             val appendedPolypoints = currentPolyline.points
             appendedPolypoints.addAll(batch.map { LatLng(it.latitude, it.longitude) })

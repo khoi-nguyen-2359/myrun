@@ -91,15 +91,19 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation project(':data')
-    implementation project(':data-impl')
     implementation project(':domain')
+    implementation project(':data-wiring')
+
+    implementation project(':base:wiring')
+    implementation project(':base:feature')
+
+    implementation project(':feature:base')
+    implementation project(':feature:registration:api')
+    implementation project(":feature:configurator:api")
+
     implementation project(':places-sdk')
 
-    debugImplementation project(":configurator")
-
     implementation(libs.kotlinxCoroutinesCore)
-    implementation(libs.kotlinxCoroutinesAndroid)
     implementation(libs.kotlinxCoroutinesPlayServices)
 
     implementation(libs.daggerAndroid)
@@ -115,6 +119,12 @@ dependencies {
     implementation(libs.workManager)
     implementation(libs.splashScreen)
 
+    implementation(libs.lifecycleRuntimeKtx)
+    implementation(libs.lifecycleLiveDataKtx)
+    implementation(libs.lifecycleViewModelKtx)
+    implementation(libs.lifecycleCommonJava8)
+    implementation(libs.lifecycleProcess)
+
     implementation(libs.bundles.compose)
     implementation(libs.coilCompose)
     implementation(libs.accompanistPlaceholder)
@@ -126,36 +136,18 @@ dependencies {
     implementation(libs.playServicesFitness)
 
     implementation platform(libs.firebaseBom)
-    implementation(libs.firebaseAuthKtx)
-    implementation(libs.firebaseFirestoreKtx)
-    implementation(libs.firebaseCrashlyticsKtx)
-    implementation(libs.firebaseAnalyticsKtx)
-    implementation(libs.firebaseStorageKtx)
+    implementation(libs.bundles.crashlytics)
     implementation(libs.firebasePerfKtx)
+    // to resolve error 'cannot access ListenableFuture' in work manager
+    implementation(libs.guava)
 
     implementation(libs.androidMapUtils)
     implementation(libs.androidGoogleMap)
-
-    implementation(libs.roomRuntime)
-
-    implementation(libs.okHttp)
-    implementation(libs.okHttpLogger)
-
-    implementation(libs.retrofit)
-    implementation(libs.retrofitGsonConverter)
-
-    implementation(libs.lifecycleRuntimeKtx)
-    implementation(libs.lifecycleLiveDataKtx)
-    implementation(libs.lifecycleViewModelKtx)
-    implementation(libs.lifecycleCommonJava8)
-    implementation(libs.lifecycleProcess)
 
     implementation(libs.timber)
 
     implementation(libs.glide)
     kapt(libs.glideCompiler)
-
-    implementation(libs.facebookLogin)
 
     if (localProps.getProperty("leakcanary.enabled", "1") == "1") {
         debugImplementation(libs.leakCanary)
