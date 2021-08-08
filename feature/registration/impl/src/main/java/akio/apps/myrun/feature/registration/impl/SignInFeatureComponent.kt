@@ -5,16 +5,14 @@ import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.external.wiring.DaggerExternalAppDataComponent
 import akio.apps.myrun.data.external.wiring.ExternalAppDataComponent
-import akio.apps.myrun.data.userprofile.wiring.DaggerUserProfileDataComponent
-import akio.apps.myrun.data.userprofile.wiring.UserProfileDataComponent
-import android.app.Application
-import dagger.BindsInstance
+import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
+import akio.apps.myrun.data.user.wiring.UserDataComponent
 import dagger.Component
 
 @FeatureScope
 @Component(
     dependencies = [
-        UserProfileDataComponent::class,
+        UserDataComponent::class,
         AuthenticationDataComponent::class,
         ExternalAppDataComponent::class
     ]
@@ -25,11 +23,9 @@ interface SignInFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            @BindsInstance application: Application,
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
-            userProfileDataComponent: UserProfileDataComponent =
-                DaggerUserProfileDataComponent.create(),
+            userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =
                 DaggerExternalAppDataComponent.create()
         ): SignInFeatureComponent

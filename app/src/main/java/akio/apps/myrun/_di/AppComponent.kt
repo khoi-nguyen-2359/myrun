@@ -9,15 +9,13 @@ import akio.apps.myrun.data.external.wiring.ExternalAppDataComponent
 import akio.apps.myrun.data.routetracking.wiring.DaggerRouteTrackingDataComponent
 import akio.apps.myrun.data.routetracking.wiring.RouteTrackingDataComponent
 import akio.apps.myrun.feature.strava._di.StravaFeatureModule
-import android.app.Application
-import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
 @Component(
     modules = [
-        // application injection modules
+        // modules to inject into MyRunApp
         StravaFeatureModule::class,
         DispatchersModule::class
     ],
@@ -34,7 +32,6 @@ interface AppComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            @BindsInstance application: Application,
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =

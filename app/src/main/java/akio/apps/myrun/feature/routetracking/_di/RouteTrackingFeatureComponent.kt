@@ -16,12 +16,10 @@ import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
 import akio.apps.myrun.data.location.wiring.LocationDataComponent
 import akio.apps.myrun.data.place.wiring.DaggerPlaceDataComponent
 import akio.apps.myrun.data.place.wiring.PlaceDataComponent
-import akio.apps.myrun.data.recentplace.wiring.DaggerRecentPlaceDataComponent
-import akio.apps.myrun.data.recentplace.wiring.RecentPlaceDataComponent
 import akio.apps.myrun.data.routetracking.wiring.DaggerRouteTrackingDataComponent
 import akio.apps.myrun.data.routetracking.wiring.RouteTrackingDataComponent
-import akio.apps.myrun.data.userprofile.wiring.DaggerUserProfileDataComponent
-import akio.apps.myrun.data.userprofile.wiring.UserProfileDataComponent
+import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
+import akio.apps.myrun.data.user.wiring.UserDataComponent
 import akio.apps.myrun.feature.routetracking.impl.ActivityUploadWorker
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
 import akio.apps.myrun.feature.routetracking.impl.UpdateUserRecentPlaceWorker
@@ -38,9 +36,8 @@ import dagger.Component
     dependencies = [
         AppComponent::class,
         ActivityDataComponent::class,
-        UserProfileDataComponent::class,
+        UserDataComponent::class,
         AuthenticationDataComponent::class,
-        RecentPlaceDataComponent::class,
         RouteTrackingDataComponent::class,
         LocationDataComponent::class,
         FitnessDataComponent::class,
@@ -59,12 +56,9 @@ interface RouteTrackingFeatureComponent : ViewModelFactoryProvider {
             @BindsInstance application: Application,
             appComponent: AppComponent = (application as AppComponent.Holder).getAppComponent(),
             activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create(),
-            userProfileDataComponent: UserProfileDataComponent =
-                DaggerUserProfileDataComponent.create(),
+            userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
-            recentPlaceDataComponent: RecentPlaceDataComponent =
-                DaggerRecentPlaceDataComponent.create(),
             routeTrackingDataComponent: RouteTrackingDataComponent =
                 DaggerRouteTrackingDataComponent.create(),
             locationDataComponent: LocationDataComponent = DaggerLocationDataComponent.create(),

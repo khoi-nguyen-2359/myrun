@@ -38,7 +38,7 @@ class MyRunApp :
     private lateinit var appComponent: AppComponent
     override fun getAppComponent(): AppComponent {
         if (!::appComponent.isInitialized) {
-            appComponent = DaggerAppComponent.factory().create(this)
+            appComponent = DaggerAppComponent.factory().create()
         }
         return appComponent
     }
