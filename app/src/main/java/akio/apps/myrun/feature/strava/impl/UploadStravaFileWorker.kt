@@ -2,7 +2,6 @@ package akio.apps.myrun.feature.strava.impl
 
 import akio.apps.myrun.domain.strava.UploadActivityFilesToStravaUsecase
 import akio.apps.myrun.feature.strava._di.DaggerStravaFeatureComponent
-import android.app.Application
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -23,7 +22,7 @@ class UploadStravaFileWorker(
     lateinit var uploadActivityFilesToStravaUsecase: UploadActivityFilesToStravaUsecase
 
     init {
-        DaggerStravaFeatureComponent.factory().create(appContext as Application).inject(this)
+        DaggerStravaFeatureComponent.factory().create().inject(this)
     }
 
     override suspend fun doWork(): Result {

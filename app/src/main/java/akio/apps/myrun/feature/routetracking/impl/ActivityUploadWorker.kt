@@ -4,7 +4,6 @@ import akio.apps.myrun.R
 import akio.apps.myrun.domain.routetracking.UploadActivitiesUsecase
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
-import android.app.Application
 import android.app.Notification
 import android.content.Context
 import android.os.Build
@@ -29,7 +28,7 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
     private val activityStartTimeFormatter = SimpleDateFormat("MMM dd, yyyy")
 
     init {
-        DaggerRouteTrackingFeatureComponent.factory().create(appContext as Application).inject(this)
+        DaggerRouteTrackingFeatureComponent.factory().create().inject(this)
     }
 
     override suspend fun doWork(): Result {

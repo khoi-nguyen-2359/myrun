@@ -86,7 +86,7 @@ class RouteTrackingActivity(
     private val viewBinding by lazy { ActivityRouteTrackingBinding.inflate(layoutInflater) }
 
     private val routeTrackingViewModel: RouteTrackingViewModel by viewModel {
-        DaggerRouteTrackingFeatureComponent.factory().create(application)
+        DaggerRouteTrackingFeatureComponent.factory().create()
     }
 
     private lateinit var mapView: GoogleMap
