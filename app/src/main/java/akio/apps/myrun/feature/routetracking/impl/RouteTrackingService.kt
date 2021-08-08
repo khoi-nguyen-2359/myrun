@@ -86,7 +86,7 @@ class RouteTrackingService : Service() {
     private var wakeLock: PowerManager.WakeLock? = null
 
     override fun onCreate() {
-        DaggerRouteTrackingFeatureComponent.factory().create(application).inject(this)
+        DaggerRouteTrackingFeatureComponent.factory().create().inject(this)
         super.onCreate()
         AppNotificationChannel.TrackingService.createChannelCompat(this)
         trackUserAuthenticationState()

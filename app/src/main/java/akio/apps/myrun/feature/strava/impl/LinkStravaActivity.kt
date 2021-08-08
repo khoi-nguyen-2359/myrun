@@ -22,7 +22,7 @@ class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.EventListener
     private val linkStravaDelegate by lazy { LinkStravaDelegate(this, this) }
 
     private val linkStravaViewModel: LinkStravaViewModel by viewModel {
-        DaggerStravaFeatureComponent.factory().create(application)
+        DaggerStravaFeatureComponent.factory().create()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
