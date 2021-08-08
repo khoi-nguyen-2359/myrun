@@ -7,7 +7,6 @@
     <dimen name="item_user_timeline_elevation">4dp</dimen>
     <dimen name="sign_in_phone_code_spinner_width">150dp</dimen>
     <dimen name="sign_in_phone_code_dropdown_width">180dp</dimen>
-    <dimen name="sign_in_option_vertical_padding">12dp</dimen>
     <dimen name="phone_box_item_text_size">14sp</dimen>
     <dimen name="profile_avatar_size">100dp</dimen>
     <dimen name="profile_field_spacing">15dp</dimen>
@@ -15,7 +14,6 @@
     <dimen name="text_size_body_1">16sp</dimen>
     <dimen name="text_size_body_2">14sp</dimen>
     <dimen name="user_timeline_avatar_size">42dp</dimen>
-    <dimen name="sign_in_page_horizontal_padding">48dp</dimen>
     <dimen name="user_timeline_listing_padding_bottom">100dp</dimen>
     <dimen name="common_no_topbar_page_top_margin">40dp</dimen>
     <dimen name="phone_box_corner_radius">4dp</dimen>

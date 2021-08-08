@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.externalapp.impl
 
-import akio.apps.myrun.data.externalapp.entity.StravaRouteEntity
-import akio.apps.myrun.data.externalapp.entity.StravaTokenEntity
+import akio.apps.myrun.data.externalapp.model.StravaStravaRoute
+import akio.apps.myrun.data.externalapp.model.StravaStravaToken
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.GET
@@ -24,7 +24,7 @@ interface StravaApi {
         @Query("client_id") clientId: String,
         @Query("client_secret") clientSecret: String,
         @Query("code") code: String
-    ): StravaTokenEntity
+    ): StravaStravaToken
 
     @POST("api/v3/uploads")
     @Multipart
@@ -39,5 +39,5 @@ interface StravaApi {
     suspend fun getAthleteRoutes(
         @Header("Authorization") bearer: String,
         @Path("id") athleteId: Long
-    ): List<StravaRouteEntity>
+    ): List<StravaStravaRoute>
 }

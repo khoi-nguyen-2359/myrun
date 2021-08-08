@@ -1,12 +1,11 @@
 package akio.apps.myrun.feature.editprofile.impl
 
-import akio.apps._base.di.viewModel
-import akio.apps._base.lifecycle.observe
-import akio.apps._base.lifecycle.observeEvent
 import akio.apps._base.ui.getNoneEmptyTextOrNull
 import akio.apps._base.ui.getTextAsString
+import akio.apps.base.feature.lifecycle.observe
+import akio.apps.base.feature.lifecycle.observeEvent
+import akio.apps.base.feature.viewmodel.viewModel
 import akio.apps.myrun.R
-import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun._base.utils.PhotoSelectionDelegate
 import akio.apps.myrun._base.utils.circleCenterCrop
 import akio.apps.myrun.data.userprofile.model.Gender
@@ -16,7 +15,6 @@ import akio.apps.myrun.databinding.ActivityEditProfileBinding
 import akio.apps.myrun.feature.cropavatar.CropAvatarActivity
 import akio.apps.myrun.feature.editprofile.EditProfileViewModel
 import akio.apps.myrun.feature.editprofile._di.DaggerEditProfileFeatureComponent
-import akio.apps.myrun.feature.signin.impl.OtpDialogFragment
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -52,12 +50,12 @@ class EditProfileActivity :
     private val bodyDimensFormat = DecimalFormat("#.#")
 
     private val editProfileVM: EditProfileViewModel by viewModel {
-        DaggerEditProfileFeatureComponent.create()
+        DaggerEditProfileFeatureComponent.factory().create()
     }
 
     private val viewBinding by lazy { ActivityEditProfileBinding.inflate(layoutInflater) }
 
-    private val dialogDelegate by lazy { DialogDelegate(this) }
+    private val dialogDelegate by lazy { akio.apps.myrun.feature.base.DialogDelegate(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -148,8 +146,6 @@ class EditProfileActivity :
     }
 
     private fun onUpdateProfileSuccess() {
-        (supportFragmentManager.findFragmentByTag(TAG_OTP_DIALOG) as? OtpDialogFragment)?.dismiss()
-
         setResult(Activity.RESULT_OK)
         finish()
     }
@@ -231,8 +227,6 @@ class EditProfileActivity :
         const val RC_PICK_PHOTO = 4
         const val RC_REAUTHENTICATE_FOR_PROFILE_UPDATE = 6
         const val RC_CROP_AVATAR = 7
-
-        const val TAG_OTP_DIALOG = "TAG_OTP_DIALOG"
 
         fun launchIntentForEditing(context: Context): Intent =
             Intent(context, EditProfileActivity::class.java)

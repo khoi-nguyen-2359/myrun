@@ -5,18 +5,14 @@
 // Generated on: 2013.12.17 at 10:24:25 PM EET 
 //
 
-
 package com.media2359.routeparser.tcx.model;
 
 import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.Root;
 
-
 @Root(name = "None_t")
 @Namespace(reference = "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2")
 public class NoneT
-    extends TargetT
-{
-
+        extends TargetT {
 
 }

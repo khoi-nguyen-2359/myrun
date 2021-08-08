@@ -1,6 +1,6 @@
 package akio.apps.myrun.domain.strava
 
-import akio.apps.myrun._di.NamedIoDispatcher
+import akio.apps.base.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository

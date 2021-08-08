@@ -1,16 +1,14 @@
-
 package com.media2359.routeparser.gpx.model;
 
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.Root;
 
-
 /**
  * EmailType<br>
  * Generated using Android JAXB<br>
  * @link https://github.com/yeshodhan/android-jaxb
- * 
+ *
  */
 @Root(name = "emailType")
 @Namespace(reference = "http://www.topografix.com/GPX/1/1")

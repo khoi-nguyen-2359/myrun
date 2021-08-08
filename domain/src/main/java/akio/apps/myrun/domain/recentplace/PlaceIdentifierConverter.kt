@@ -1,6 +1,6 @@
 package akio.apps.myrun.domain.recentplace
 
-import akio.apps.myrun.data.place.entity.PlaceAddressComponent
+import akio.apps.myrun.data.place.model.PlaceAddressComponent
 import akio.apps.myrun.data.recentplace.PlaceIdentifier
 import akio.apps.myrun.domain.recentplace.PlaceIdentifierConverter.Companion.ADDRESS_SEPARATOR
 import javax.inject.Inject

@@ -45,11 +45,11 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
-        "foreignKeys": []
+        "indices": [ ],
+        "foreignKeys": [ ]
       }
     ],
-    "views": [],
+    "views": [ ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
       "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'da107e958252de538dc82bedce2bc04f')"

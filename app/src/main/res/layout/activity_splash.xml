@@ -7,7 +7,7 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/splash_logo"
-        app:shapeAppearanceOverlay="@style/RoundShape"
+        app:shapeAppearanceOverlay="@style/MaterialRoundShape"
         android:layout_gravity="center"
         app:srcCompat="@mipmap/ic_launcher_round"
         android:layout_width="wrap_content"

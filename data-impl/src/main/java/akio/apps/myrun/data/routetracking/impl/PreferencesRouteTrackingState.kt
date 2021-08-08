@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.routetracking.impl
 
 import akio.apps.myrun.data.activity.model.ActivityType
-import akio.apps.myrun.data.location.LocationEntity
+import akio.apps.myrun.data.location.Location
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import android.app.Application
@@ -102,7 +102,7 @@ class PreferencesRouteTrackingState @Inject constructor(
         prefDataStore.edit { data -> data[KEY_ACTIVITY_TYPE] = activityType.identity }
     }
 
-    override suspend fun setStartLocation(location: LocationEntity) {
+    override suspend fun setStartLocation(location: Location) {
         prefDataStore.edit { data ->
             data[KEY_START_LOCATION_TIME] = location.time
             data[KEY_START_LOCATION_LAT] = location.latitude.toFloat()
@@ -112,7 +112,7 @@ class PreferencesRouteTrackingState @Inject constructor(
         }
     }
 
-    override suspend fun getStartLocation(): LocationEntity? = prefDataStore.data.map { data ->
+    override suspend fun getStartLocation(): Location? = prefDataStore.data.map { data ->
         val time = data[KEY_START_LOCATION_TIME]
         val lat = data[KEY_START_LOCATION_LAT]
         val lng = data[KEY_START_LOCATION_LNG]
@@ -121,7 +121,7 @@ class PreferencesRouteTrackingState @Inject constructor(
         if (time == null || lat == null || lng == null || alt == null)
             null
         else
-            LocationEntity(time, lat.toDouble(), lng.toDouble(), alt.toDouble(), speed.toDouble())
+            Location(time, lat.toDouble(), lng.toDouble(), alt.toDouble(), speed.toDouble())
     }
         .first()
 

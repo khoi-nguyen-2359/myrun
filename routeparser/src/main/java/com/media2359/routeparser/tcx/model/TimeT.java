@@ -5,26 +5,23 @@
 // Generated on: 2013.12.17 at 10:24:25 PM EET 
 //
 
-
 package com.media2359.routeparser.tcx.model;
 
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Namespace;
 import org.simpleframework.xml.Root;
 
-
 @Root(name = "Time_t", strict = false)
 @Namespace(reference = "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2")
 public class TimeT
-    extends DurationT
-{
+        extends DurationT {
 
     @Element(name = "Seconds", required = false)
     protected int seconds;
 
     /**
      * Gets the value of the seconds property.
-     * 
+     *
      */
     public int getSeconds() {
         return seconds;
@@ -32,7 +29,7 @@ public class TimeT
 
     /**
      * Sets the value of the seconds property.
-     * 
+     *
      */
     public void setSeconds(int value) {
         this.seconds = value;

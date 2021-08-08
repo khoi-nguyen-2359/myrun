@@ -1,10 +1,9 @@
 package com.media2359.routeparser.gpx.model;
 
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Root;
-
 import java.math.BigDecimal;
 
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Root;
 
 @Root(name = "boundsType", strict = false)
 public class BoundsType {
@@ -20,11 +19,11 @@ public class BoundsType {
 
     /**
      * Gets the value of the minlat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public Double getMinlat() {
         return minlat;
@@ -32,11 +31,11 @@ public class BoundsType {
 
     /**
      * Sets the value of the minlat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setMinlat(Double value) {
         this.minlat = value;
@@ -44,11 +43,11 @@ public class BoundsType {
 
     /**
      * Gets the value of the minlon property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public Double getMinlon() {
         return minlon;
@@ -56,11 +55,11 @@ public class BoundsType {
 
     /**
      * Sets the value of the minlon property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setMinlon(Double value) {
         this.minlon = value;
@@ -68,11 +67,11 @@ public class BoundsType {
 
     /**
      * Gets the value of the maxlat property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public Double getMaxlat() {
         return maxlat;
@@ -80,11 +79,11 @@ public class BoundsType {
 
     /**
      * Sets the value of the maxlat property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setMaxlat(Double value) {
         this.maxlat = value;
@@ -92,11 +91,11 @@ public class BoundsType {
 
     /**
      * Gets the value of the maxlon property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public Double getMaxlon() {
         return maxlon;
@@ -104,11 +103,11 @@ public class BoundsType {
 
     /**
      * Sets the value of the maxlon property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link BigDecimal }
-     *     
+     *
      */
     public void setMaxlon(Double value) {
         this.maxlon = value;

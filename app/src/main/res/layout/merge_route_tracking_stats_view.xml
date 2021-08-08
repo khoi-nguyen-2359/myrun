@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:paddingVertical="10dp"
-    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
-    >
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
 
     <TextView
         android:id="@+id/distance_label_text_view"

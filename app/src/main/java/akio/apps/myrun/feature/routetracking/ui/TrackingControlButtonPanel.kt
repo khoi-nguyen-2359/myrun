@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.routetracking.ui
 
 import akio.apps.myrun.R
-import akio.apps.myrun.data.location.LocationEntity
+import akio.apps.myrun.data.location.Location
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
 import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.ui.theme.AppColors
@@ -71,7 +71,7 @@ fun TrackingControlButtonPanel(
 
 @Composable
 private fun TrackingControlButtonPanel(
-    initialLocation: LocationEntity?,
+    initialLocation: Location?,
     @RouteTrackingStatus trackingStatus: Int?,
     onClickControlButton: (TrackingControlButtonType) -> Unit,
     onClickMyLocation: () -> Unit
@@ -228,7 +228,7 @@ private fun PreviewControlButton() = TrackingControlButton("Resume", Color.Black
 @Composable
 @Preview
 private fun PreviewTrackingControlButtonPanel() = TrackingControlButtonPanel(
-    initialLocation = LocationEntity(1, 2.0, 3.0, 4.0, 5.0),
+    initialLocation = Location(1, 2.0, 3.0, 4.0, 5.0),
     trackingStatus = RouteTrackingStatus.STOPPED,
     {},
     {}

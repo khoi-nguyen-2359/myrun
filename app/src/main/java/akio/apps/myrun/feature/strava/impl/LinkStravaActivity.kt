@@ -1,10 +1,9 @@
 package akio.apps.myrun.feature.strava.impl
 
-import akio.apps._base.di.viewModel
-import akio.apps._base.lifecycle.observe
-import akio.apps._base.lifecycle.observeEvent
+import akio.apps.base.feature.lifecycle.observe
+import akio.apps.base.feature.lifecycle.observeEvent
+import akio.apps.base.feature.viewmodel.viewModel
 import akio.apps.myrun.R
-import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun.feature.strava.LinkStravaViewModel
 import akio.apps.myrun.feature.strava._di.DaggerStravaFeatureComponent
 import akio.apps.myrun.feature.userprofile.impl.LinkStravaDelegate
@@ -19,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
  */
 class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.EventListener {
 
-    private val dialogDelegate = DialogDelegate(this)
+    private val dialogDelegate = akio.apps.myrun.feature.base.DialogDelegate(this)
     private val linkStravaDelegate by lazy { LinkStravaDelegate(this, this) }
 
     private val linkStravaViewModel: LinkStravaViewModel by viewModel {

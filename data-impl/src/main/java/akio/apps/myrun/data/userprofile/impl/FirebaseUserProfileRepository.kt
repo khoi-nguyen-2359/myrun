@@ -1,12 +1,11 @@
 package akio.apps.myrun.data.userprofile.impl
 
 import akio.apps._base.Resource
-import akio.apps.myrun._di.NamedIoDispatcher
 import akio.apps.myrun.data.userprofile.UserProfileRepository
-import akio.apps.myrun.data.userprofile.entity.FirestoreUserEntity
-import akio.apps.myrun.data.userprofile.entity.FirestoreUserProfileUpdateMapEntity
 import akio.apps.myrun.data.userprofile.error.UserProfileNotFoundError
 import akio.apps.myrun.data.userprofile.mapper.FirestoreUserProfileMapper
+import akio.apps.myrun.data.userprofile.model.FirestoreUser
+import akio.apps.myrun.data.userprofile.model.FirestoreUserProfileUpdateMap
 import akio.apps.myrun.data.userprofile.model.ProfileEditData
 import akio.apps.myrun.data.userprofile.model.UserProfile
 import akio.apps.myrun.data.utils.FirebaseStorageUtils
@@ -31,7 +30,7 @@ class FirebaseUserProfileRepository @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage,
     private val firestoreUserProfileMapper: FirestoreUserProfileMapper,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @akio.apps.base.wiring.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : UserProfileRepository {
 
     private fun getUserDocument(userId: String): DocumentReference {
@@ -46,7 +45,7 @@ class FirebaseUserProfileRepository @Inject constructor(
         callbackFlow<Resource<UserProfile>> {
             val listener = withContext(Dispatchers.Main.immediate) {
                 getUserDocument(userId).addSnapshotListener { snapshot, error ->
-                    snapshot?.toObject(FirestoreUserEntity::class.java)
+                    snapshot?.toObject(FirestoreUser::class.java)
                         ?.profile
                         ?.run(firestoreUserProfileMapper::map)
                         ?.let { userProfile ->
@@ -71,7 +70,7 @@ class FirebaseUserProfileRepository @Inject constructor(
         return getUserDocument(userId)
             .get()
             .await()
-            .toObject(FirestoreUserEntity::class.java)
+            .toObject(FirestoreUser::class.java)
             ?.profile
             ?.run(firestoreUserProfileMapper::map)
             ?: throw UserProfileNotFoundError("Could not find userId $userId")
@@ -91,7 +90,7 @@ class FirebaseUserProfileRepository @Inject constructor(
                 profileEditData.avatarUri
             }
 
-            val updateMap = FirestoreUserProfileUpdateMapEntity()
+            val updateMap = FirestoreUserProfileUpdateMap()
                 .apply {
                     uid(userId)
                     displayName(profileEditData.displayName)

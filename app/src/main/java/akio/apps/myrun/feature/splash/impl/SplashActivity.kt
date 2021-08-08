@@ -1,13 +1,11 @@
 package akio.apps.myrun.feature.splash.impl
 
-import akio.apps._base.di.viewModel
-import akio.apps._base.lifecycle.observeEvent
-import akio.apps.myrun._base.utils.DialogDelegate
-import akio.apps.myrun.data.authentication.model.SignInSuccessResult
+import akio.apps.base.feature.lifecycle.collectEventRepeatOnStarted
+import akio.apps.base.feature.viewmodel.viewModelProvider
+import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
 import akio.apps.myrun.feature.home.HomeActivity
-import akio.apps.myrun.feature.signin.impl.SignInActivity
-import akio.apps.myrun.feature.splash.SplashViewModel
+import akio.apps.myrun.feature.registration.api.SignInFeatureApi
 import akio.apps.myrun.feature.splash._di.DaggerSplashFeatureComponent
 import android.content.Context
 import android.content.Intent
@@ -17,11 +15,12 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class SplashActivity : AppCompatActivity() {
 
-    private val splashViewModel: SplashViewModel by viewModel {
-        DaggerSplashFeatureComponent.create()
+    private val splashViewModel: SplashViewModel by viewModelProvider {
+        DaggerSplashFeatureComponent.factory().create().splashViewModel()
     }
 
     private val dialogDelegate by lazy { DialogDelegate(this) }
@@ -36,11 +35,12 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        observeEvent(splashViewModel.error, dialogDelegate::showExceptionAlert)
-        observeEvent(splashViewModel.isUserSignedIn, ::onUserSignIn)
+        collectEventRepeatOnStarted(splashViewModel.error, dialogDelegate::showExceptionAlert)
+        collectEventRepeatOnStarted(splashViewModel.isUserSignedIn, ::onUserSignIn)
     }
 
     private fun onUserSignIn(isSignedIn: Boolean) = lifecycleScope.launch {
+        Timber.d("onUserSignIn $isSignedIn")
         val delayMore = SPLASH_MIN_SHOWTIME - (System.currentTimeMillis() - splashStartTime)
         if (delayMore > 0) {
             delay(delayMore)
@@ -48,8 +48,9 @@ class SplashActivity : AppCompatActivity() {
         if (isSignedIn) {
             goHome()
         } else {
+            val intent = SignInFeatureApi.getSignInLaunchIntent(this@SplashActivity)
             @Suppress("DEPRECATION")
-            startActivityForResult(SignInActivity.launchIntent(this@SplashActivity), RC_SIGN_IN)
+            startActivityForResult(intent, RC_SIGN_IN)
         }
     }
 
@@ -67,14 +68,12 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun verifySignInResult(resultCode: Int, data: Intent?) {
-        if (resultCode == RESULT_CANCELED) {
+        if (resultCode == RESULT_CANCELED || data == null) {
             finish()
             return
         }
 
-        val signInResult =
-            data?.getParcelableExtra<SignInSuccessResult>(SignInActivity.RESULT_SIGN_RESULT_DATA)
-                ?: return
+        val signInResult = SignInFeatureApi.parseSignInResultIntent(data) ?: return
 
         if (signInResult.isNewUser) {
             @Suppress("DEPRECATION")
@@ -88,8 +87,8 @@ class SplashActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val RC_SIGN_IN = 1
-        const val RC_ON_BOARDING = 2
+        private const val RC_SIGN_IN = 1
+        private const val RC_ON_BOARDING = 2
 
         private const val SPLASH_MIN_SHOWTIME = 700
 

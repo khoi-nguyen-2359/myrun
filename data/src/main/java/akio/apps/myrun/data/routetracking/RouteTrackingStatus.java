@@ -8,9 +8,9 @@ import java.lang.annotation.Target;
 
 import androidx.annotation.IntDef;
 
-@IntDef({RouteTrackingStatus.STOPPED, RouteTrackingStatus.RESUMED, RouteTrackingStatus.PAUSED})
+@IntDef({ RouteTrackingStatus.STOPPED, RouteTrackingStatus.RESUMED, RouteTrackingStatus.PAUSED })
 @Retention(SOURCE)
-@Target({ElementType.LOCAL_VARIABLE, ElementType.PARAMETER, ElementType.TYPE_USE})
+@Target({ ElementType.LOCAL_VARIABLE, ElementType.PARAMETER, ElementType.TYPE_USE })
 public @interface RouteTrackingStatus {
     public static final int STOPPED = 0;
     public static final int RESUMED = 1;
