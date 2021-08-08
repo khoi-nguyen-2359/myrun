@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.strava.impl
 
-import akio.apps._base.lifecycle.Event
+import akio.apps.base.feature.lifecycle.Event
 import akio.apps.myrun.domain.strava.ExchangeStravaLoginCodeUsecase
 import akio.apps.myrun.domain.strava.UpdateStravaTokenUsecase
 import akio.apps.myrun.feature.strava.LinkStravaViewModel

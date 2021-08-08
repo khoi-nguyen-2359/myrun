@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun.R
-import akio.apps.myrun._base.notification.AppNotificationChannel
 import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun._base.utils.toGmsLatLng
@@ -21,6 +20,7 @@ import akio.apps.myrun.domain.routetracking.AverageLocationAccumulator
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.LocationProcessorContainer
 import akio.apps.myrun.domain.routetracking.LocationSpeedFilter
+import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import android.annotation.SuppressLint
 import android.app.ActivityManager

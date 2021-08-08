@@ -1,6 +1,5 @@
 package akio.apps.myrun.feature.cropavatar
 
-import akio.apps.myrun._base.utils.DialogDelegate
 import akio.apps.myrun.databinding.ActivityCropImageBinding
 import android.content.Context
 import android.content.Intent
@@ -23,7 +22,7 @@ class CropAvatarActivity : AppCompatActivity() {
 
     private val viewBinding by lazy { ActivityCropImageBinding.inflate(layoutInflater) }
 
-    private val dialogDelegate by lazy { DialogDelegate(this) }
+    private val dialogDelegate by lazy { akio.apps.myrun.feature.base.DialogDelegate(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

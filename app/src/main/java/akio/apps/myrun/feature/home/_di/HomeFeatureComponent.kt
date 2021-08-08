@@ -1,6 +1,5 @@
 package akio.apps.myrun.feature.home._di
 
-import akio.apps._base.di.ViewModelFactoryProvider
 import akio.apps.base.wiring.DispatchersModule
 import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
 import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
@@ -29,7 +28,7 @@ import dagger.Component
         RouteTrackingDataComponent::class
     ]
 )
-interface HomeFeatureComponent : ViewModelFactoryProvider {
+interface HomeFeatureComponent : akio.apps.base.feature.viewmodel.ViewModelFactoryProvider {
     @Component.Factory
     interface Factory {
         fun create(

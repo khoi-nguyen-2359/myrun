@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps.myrun.R
-import akio.apps.myrun._base.notification.AppNotificationChannel
 import akio.apps.myrun.domain.routetracking.UploadActivitiesUsecase
+import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import android.app.Application
 import android.app.Notification

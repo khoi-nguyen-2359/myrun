@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.strava._di
 
-import akio.apps._base.di.ViewModelKey
+import akio.apps.base.feature.viewmodel.ViewModelKey
 import akio.apps.myrun.data._base.wiring.NetworkModule
 import akio.apps.myrun.feature.strava.LinkStravaViewModel
 import akio.apps.myrun.feature.strava.impl.LinkStravaViewModelImpl

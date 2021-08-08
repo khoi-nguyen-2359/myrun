@@ -3,12 +3,12 @@ package akio.apps.myrun
 import akio.apps._base.utils.CrashReportTree
 import akio.apps._base.utils.MyDebugTree
 import akio.apps.base.wiring.ApplicationModule
-import akio.apps.myrun._base.configurator.ConfiguratorGate
-import akio.apps.myrun._base.notification.AppNotificationChannel
 import akio.apps.myrun._di.AppComponent
 import akio.apps.myrun._di.DaggerAppComponent
 import akio.apps.myrun.data.routetracking.RouteTrackingState
 import akio.apps.myrun.data.routetracking.RouteTrackingStatus
+import akio.apps.myrun.feature.base.AppNotificationChannel
+import akio.apps.myrun.feature.configurator.api.ConfiguratorFeatureApi
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
 import akio.apps.myrun.feature.routetracking.impl.UpdateUserRecentPlaceWorker
 import android.app.Application
@@ -67,7 +67,7 @@ class MyRunApp :
 
         UpdateUserRecentPlaceWorker.enqueueDaily(this)
 
-        ConfiguratorGate.notifyInDebugMode(this)
+        ConfiguratorFeatureApi.notifyInDebugMode(this)
     }
 
     private fun initPlacesSdk() {

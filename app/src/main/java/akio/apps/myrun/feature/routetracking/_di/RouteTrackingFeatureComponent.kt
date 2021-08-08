@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.routetracking._di
 
-import akio.apps._base.di.FeatureScope
-import akio.apps._base.di.ViewModelFactoryProvider
+import akio.apps.base.feature.viewmodel.ViewModelFactoryProvider
 import akio.apps.base.wiring.DispatchersModule
+import akio.apps.base.wiring.FeatureScope
 import akio.apps.myrun._di.AppComponent
 import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
 import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
