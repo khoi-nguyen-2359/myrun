@@ -98,8 +98,8 @@ dependencies {
     implementation project(':base:feature')
 
     implementation project(':feature:base')
-    implementation project(':feature:registration:api')
-    implementation project(":feature:configurator:api")
+    implementation project(':feature:registration')
+    implementation project(":feature:configurator")
 
     implementation project(':places-sdk')
 

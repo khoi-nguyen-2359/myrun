@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.signin.view
 
-import akio.apps._base.ui.inflate
+import akio.apps.base.feature.ui.inflate
 import akio.apps._base.utils.PhoneNumberHelper
 import akio.apps.myrun.R
 import android.content.Context

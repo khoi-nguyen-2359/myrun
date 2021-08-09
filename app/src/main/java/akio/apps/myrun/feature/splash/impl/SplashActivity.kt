@@ -2,10 +2,11 @@ package akio.apps.myrun.feature.splash.impl
 
 import akio.apps.base.feature.lifecycle.collectEventRepeatOnStarted
 import akio.apps.base.feature.viewmodel.viewModelProvider
+import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
 import akio.apps.myrun.feature.home.HomeActivity
-import akio.apps.myrun.feature.registration.api.SignInFeatureApi
+import akio.apps.myrun.feature.registration.SignInActivity
 import akio.apps.myrun.feature.splash._di.DaggerSplashFeatureComponent
 import android.content.Context
 import android.content.Intent
@@ -48,7 +49,7 @@ class SplashActivity : AppCompatActivity() {
         if (isSignedIn) {
             goHome()
         } else {
-            val intent = SignInFeatureApi.getSignInLaunchIntent(this@SplashActivity)
+            val intent = SignInActivity.launchIntent(this@SplashActivity)
             @Suppress("DEPRECATION")
             startActivityForResult(intent, RC_SIGN_IN)
         }
@@ -73,7 +74,9 @@ class SplashActivity : AppCompatActivity() {
             return
         }
 
-        val signInResult = SignInFeatureApi.parseSignInResultIntent(data) ?: return
+        val signInResult = data.getParcelableExtra<SignInSuccessResult>(
+            SignInActivity.RESULT_SIGN_RESULT_DATA
+        ) ?: return
 
         if (signInResult.isNewUser) {
             @Suppress("DEPRECATION")

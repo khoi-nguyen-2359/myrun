@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.editprofile.impl
 
-import akio.apps._base.ui.getNoneEmptyTextOrNull
-import akio.apps._base.ui.getTextAsString
+import akio.apps.base.feature.ui.getNoneEmptyTextOrNull
+import akio.apps.base.feature.ui.getTextAsString
 import akio.apps.base.feature.lifecycle.observe
 import akio.apps.base.feature.lifecycle.observeEvent
 import akio.apps.base.feature.viewmodel.viewModel
