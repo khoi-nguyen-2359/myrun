@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.configurator
 
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ConfiguratorGateTest {
