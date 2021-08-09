@@ -5,18 +5,23 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdkVersion Versions.compileSdk
 
     defaultConfig {
-        minSdk 21
-        targetSdk 31
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
         rc { }
+    }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
     }
 
     compileOptions {
@@ -27,13 +32,21 @@ android {
     kotlinOptions {
         jvmTarget = "11"
         useIR = true
-        allWarningsAsErrors = true
     }
 }
 
 dependencies {
-    implementation(libs.lifecycleViewModelKtx)
-    implementation(libs.dagger)
+    implementation(project(":data-wiring"))
+    implementation(project(":feature:base"))
+
+    implementation(libs.androidXCore)
+    implementation(libs.androidXAppCompat)
+    implementation(libs.androidMaterial)
+
+    implementation(libs.bundles.compose)
+
+    implementation(libs.daggerAndroid)
     kapt(libs.daggerCompiler)
-    implementation(libs.kotlinxCoroutinesCore)
+
+    testImplementation(libs.junit)
 }

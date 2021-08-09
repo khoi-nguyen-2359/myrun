@@ -64,7 +64,7 @@
             android:exported="false" />
 
         <activity
-            android:name="akio.apps._base.ui.SingleFragmentActivity"
+            android:name="akio.apps.base.feature.ui.SingleFragmentActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
 
