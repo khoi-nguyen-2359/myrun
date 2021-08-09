@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.editprofile.impl
 
-import akio.apps.base.feature.ui.getNoneEmptyTextOrNull
-import akio.apps.base.feature.ui.getTextAsString
 import akio.apps.base.feature.lifecycle.observe
 import akio.apps.base.feature.lifecycle.observeEvent
+import akio.apps.base.feature.ui.getNoneEmptyTextOrNull
+import akio.apps.base.feature.ui.getTextAsString
 import akio.apps.base.feature.viewmodel.viewModel
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.PhotoSelectionDelegate
