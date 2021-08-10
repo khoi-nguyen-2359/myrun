@@ -13,3 +13,9 @@ include(':feature:base')
 include(':base:feature')
 include(':base:wiring')
 include(':feature:configurator')
+include ':data:tracking:api'
+include ':data:tracking:impl'
+include ':data:tracking:wiring'
+include ':data:location:api'
+include ':data:location:impl'
+include ':data:location:wiring'

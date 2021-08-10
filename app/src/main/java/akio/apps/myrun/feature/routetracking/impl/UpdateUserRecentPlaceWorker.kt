@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.routetracking.impl
 
-import akio.apps.myrun.data.location.LocationDataSource
+import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.domain.recentplace.UpdateUserRecentPlaceUsecase
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import android.content.Context
@@ -27,7 +27,7 @@ class UpdateUserRecentPlaceWorker(
     lateinit var updateUserRecentPlaceUsecase: UpdateUserRecentPlaceUsecase
 
     @Inject
-    lateinit var locationDataSource: LocationDataSource
+    lateinit var locationDataSource: akio.apps.myrun.data.location.api.LocationDataSource
 
     init {
         DaggerRouteTrackingFeatureComponent.factory().create().inject(this)

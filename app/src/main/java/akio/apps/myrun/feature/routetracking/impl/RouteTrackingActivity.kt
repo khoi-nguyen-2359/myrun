@@ -13,8 +13,8 @@ import akio.apps.myrun._base.utils.LatLngBoundsBuilder
 import akio.apps.myrun._base.utils.LocationServiceChecker
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.model.ActivityType
-import akio.apps.myrun.data.location.Location
-import akio.apps.myrun.data.routetracking.RouteTrackingStatus
+import akio.apps.myrun.data.location.api.model.Location
+import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature.activityroutemap.ui.ActivityRouteMapActivity
 import akio.apps.myrun.feature.home.HomeActivity

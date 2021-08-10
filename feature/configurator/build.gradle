@@ -36,8 +36,11 @@ android {
 }
 
 dependencies {
-    implementation(project(":data-wiring"))
     implementation(project(":feature:base"))
+
+    implementation(project(":data-wiring"))
+    implementation(project(":data:tracking:wiring"))
+    implementation(project(":data:location:wiring"))
 
     implementation(libs.androidXCore)
     implementation(libs.androidXAppCompat)
