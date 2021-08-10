@@ -12,9 +12,8 @@ import akio.apps.myrun.data.activity.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
-import akio.apps.myrun.data.location.Location
-import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
-import akio.apps.myrun.data.routetracking.RouteTrackingState
+import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
+import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.domain.TrackingValueConverter
 import android.graphics.Bitmap
 import com.google.maps.android.PolyUtil
@@ -69,7 +68,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         userId: String,
         activityId: String,
         activityName: String,
-        trackedLocations: List<Location>
+        trackedLocations: List<akio.apps.myrun.data.location.api.model.Location>
     ): ActivityModel {
         val endTime = System.currentTimeMillis()
         val startTime = routeTrackingState.getTrackingStartTime()

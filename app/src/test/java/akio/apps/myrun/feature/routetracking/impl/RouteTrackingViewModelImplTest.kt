@@ -3,10 +3,8 @@ package akio.apps.myrun.feature.routetracking.impl
 import akio.apps._base.InstantTaskExecutorTest
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
-import akio.apps.myrun.data.location.LocationDataSource
-import akio.apps.myrun.data.routetracking.RouteTrackingConfiguration
-import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.routetracking.RouteTrackingStatus.STOPPED
+import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
+import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.STOPPED
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.routetracking.StoreTrackingActivityDataUsecase
@@ -35,7 +33,7 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
     lateinit var mockedClearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
 
     @Mock
-    lateinit var mockedRouteTrackingState: RouteTrackingState
+    lateinit var mockedRouteTrackingState: akio.apps.myrun.data.tracking.api.RouteTrackingState
 
     @Mock
     lateinit var mockedGetTrackedLocationsUsecase: GetTrackedLocationsUsecase
@@ -47,7 +45,7 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
     lateinit var mockedAppContext: Application
 
     @Mock
-    lateinit var mockedLocationDataSource: LocationDataSource
+    lateinit var mockedLocationDataSource: akio.apps.myrun.data.location.api.LocationDataSource
 
     @Mock
     lateinit var mockedRouteTrackingConfiguration: RouteTrackingConfiguration

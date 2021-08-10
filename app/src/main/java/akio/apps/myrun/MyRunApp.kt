@@ -5,8 +5,8 @@ import akio.apps._base.utils.MyDebugTree
 import akio.apps.base.wiring.ApplicationModule
 import akio.apps.myrun._di.AppComponent
 import akio.apps.myrun._di.DaggerAppComponent
-import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.routetracking.RouteTrackingStatus
+import akio.apps.myrun.data.tracking.api.RouteTrackingState
+import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.configurator.ConfiguratorGate
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
@@ -33,7 +33,7 @@ class MyRunApp :
     Configuration.Provider {
 
     @Inject
-    lateinit var routeTrackingState: RouteTrackingState
+    lateinit var routeTrackingState: akio.apps.myrun.data.tracking.api.RouteTrackingState
 
     private lateinit var appComponent: AppComponent
     override fun getAppComponent(): AppComponent {
