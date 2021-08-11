@@ -36,6 +36,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":base:feature"))
+    implementation(project(":common:feature"))
     implementation(libs.androidXAppCompat)
 }

@@ -35,7 +35,7 @@ dependencies {
     api(project(":data:tracking:api"))
     implementation(project(":data:tracking:impl"))
 
-    implementation(project(":base:wiring"))
+    implementation(project(":common:wiring"))
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)

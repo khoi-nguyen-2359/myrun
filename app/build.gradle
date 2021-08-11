@@ -15,14 +15,14 @@ if (localPropsFile.exists()) {
 }
 
 android {
-    compileSdkVersion Versions.compileSdk
+    compileSdkVersion project.compileSdk
 
     defaultConfig {
-        applicationId Versions.appId
-        minSdkVersion Versions.minSdk
-        targetSdkVersion Versions.targetSdk
-        versionCode Versions.versionCode
-        versionName Versions.versionName
+        applicationId project.appId
+        minSdkVersion project.minSdk
+        targetSdkVersion project.targetSdk
+        versionCode project.versionCode
+        versionName project.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -103,10 +103,10 @@ dependencies {
     implementation(project(':data:tracking:wiring'))
     implementation(project(':data:location:wiring'))
 
-    implementation project(':base:wiring')
-    implementation project(':base:feature')
+    implementation project(':common:wiring')
+    implementation project(':common:feature')
 
-    implementation project(':places-sdk')
+    implementation project(':libs:places-sdk')
 
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.kotlinxCoroutinesPlayServices)

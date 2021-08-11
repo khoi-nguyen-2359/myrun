@@ -35,9 +35,9 @@ android {
 dependencies {
     api project(":data")
     implementation project(":data-impl")
-    implementation project(":base:wiring")
+    implementation project(":common:wiring")
 
-    implementation project(':places-sdk')
+    implementation project(':libs:places-sdk')
 
     implementation platform(libs.firebaseBom)
     implementation(libs.firebaseAuthKtx)

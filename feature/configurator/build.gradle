@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion Versions.compileSdk
+    compileSdkVersion project.compileSdk
 
     defaultConfig {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
