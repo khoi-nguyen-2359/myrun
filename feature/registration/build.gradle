@@ -40,8 +40,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":base:feature"))
-    implementation(project(":base:wiring"))
+    implementation(project(":common:feature"))
+    implementation(project(":common:wiring"))
     implementation(project(":feature:base"))
     implementation(project(":data-wiring"))
     implementation(project(":domain"))

@@ -32,10 +32,10 @@ android {
 }
 
 dependencies {
-    implementation(project(":base:wiring"))
+    implementation(project(":common:wiring"))
     implementation(project(":data:location:api"))
 
-    implementation(project(':places-sdk'))
+    implementation(project(':libs:places-sdk'))
     implementation(libs.bundles.placesDeps)
     implementation(libs.androidGoogleMap)
 
