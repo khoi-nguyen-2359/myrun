@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.editprofile.impl
 
-import akio.apps._base.Resource
+import akio.apps.common.data.Resource
 import akio.apps.common.feature.lifecycle.Event
-import akio.apps.myrun.data.userprofile.model.ProfileEditData
-import akio.apps.myrun.data.userprofile.model.UserProfile
+import akio.apps.myrun.data.user.api.model.ProfileEditData
+import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
 import akio.apps.myrun.feature.editprofile.EditProfileViewModel
@@ -29,10 +29,10 @@ class EditProfileViewModelImpl @Inject constructor(
 
     private val liveUserProfile = getUserProfileUsecase.getUserProfileFlow()
         .asLiveData(timeoutInMs = 0)
-    private val userProfileObserver = Observer<Resource<UserProfile>> { resource ->
+    private val userProfileObserver = Observer<akio.apps.common.data.Resource<UserProfile>> { resource ->
         when (resource) {
-            is Resource.Success -> _userProfile.value = resource.data
-            is Resource.Error -> _error.value = Event(resource.exception)
+            is akio.apps.common.data.Resource.Success -> _userProfile.value = resource.data
+            is akio.apps.common.data.Resource.Error -> _error.value = Event(resource.exception)
         }
     }
 

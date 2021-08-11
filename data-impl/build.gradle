@@ -35,6 +35,9 @@ android {
 
 dependencies {
     implementation project(":data")
+    implementation project(":data:base")
+
+    implementation project(":common:data")
     implementation project(":common:wiring")
 
     implementation(libs.kotlinxCoroutinesCore)

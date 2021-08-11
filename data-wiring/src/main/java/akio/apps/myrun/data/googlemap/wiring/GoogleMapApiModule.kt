@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.googlemap.wiring
 
-import akio.apps.myrun.data._base.wiring.NetworkModule
+import akio.apps.myrun.data.wiring.NetworkModule
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -9,7 +9,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-@Module(includes = [NetworkModule::class])
+@Module(includes = [akio.apps.myrun.data.wiring.NetworkModule::class])
 class GoogleMapApiModule {
 
     @Provides

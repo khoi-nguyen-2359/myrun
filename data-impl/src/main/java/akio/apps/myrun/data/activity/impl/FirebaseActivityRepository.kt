@@ -12,7 +12,7 @@ import akio.apps.myrun.data.activity.model.FirestoreFloatDataPointParser
 import akio.apps.myrun.data.activity.model.FirestoreIntegerDataPointParser
 import akio.apps.myrun.data.activity.model.FirestoreLocationDataPointParser
 import akio.apps.myrun.data.fitness.DataPoint
-import akio.apps.myrun.data.utils.FirebaseStorageUtils
+import akio.apps.myrun.data.base.FirebaseStorageUtils
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -79,7 +79,7 @@ class FirebaseActivityRepository @Inject constructor(
 
         Timber.d("uploading activity route image ...")
         val userActivityImageStorage = getActivityImageStorage(activity.athleteInfo.userId)
-        val uploadedUri = FirebaseStorageUtils.uploadLocalBitmap(
+        val uploadedUri = akio.apps.myrun.data.base.FirebaseStorageUtils.uploadLocalBitmap(
             userActivityImageStorage,
             docRef.id,
             routeBitmapFile.absolutePath,

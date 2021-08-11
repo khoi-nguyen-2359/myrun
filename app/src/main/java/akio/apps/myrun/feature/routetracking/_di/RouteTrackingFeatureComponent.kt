@@ -32,7 +32,7 @@ import dagger.Component
     ],
     dependencies = [
         ActivityDataComponent::class,
-        UserDataComponent::class,
+        akio.apps.myrun.data.user.wiring.UserDataComponent::class,
         AuthenticationDataComponent::class,
         TrackingDataComponent::class,
         FitnessDataComponent::class,
@@ -49,7 +49,7 @@ interface RouteTrackingFeatureComponent : ViewModelFactoryProvider {
     interface Factory {
         fun create(
             activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create(),
-            userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
+            userDataComponent: akio.apps.myrun.data.user.wiring.UserDataComponent = DaggerUserDataComponent.create(),
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
             trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create(),

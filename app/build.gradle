@@ -100,11 +100,14 @@ dependencies {
 
     // data
     implementation(project(':data-wiring'))
+    implementation(project(':data:wiring'))
     implementation(project(':data:tracking:wiring'))
     implementation(project(':data:location:wiring'))
+    implementation(project(':data:user:wiring'))
 
-    implementation project(':common:wiring')
     implementation project(':common:feature')
+    implementation project(':common:wiring')
+    implementation project(':common:data')
 
     implementation project(':libs:places-sdk')
 

@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.usertimeline.model
 
 import akio.apps.myrun.data.activity.model.ActivityType
-import akio.apps.myrun.data.recentplace.PlaceIdentifier
+import akio.apps.myrun.data.user.api.PlaceIdentifier
 
 interface Activity {
     val id: String

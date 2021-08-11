@@ -1,13 +1,13 @@
 package akio.apps.myrun.feature.userprofile.impl
 
-import akio.apps._base.Resource
+import akio.apps.common.data.Resource
 import akio.apps.common.feature.lifecycle.Event
 import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.ProviderToken
 import akio.apps.myrun.data.externalapp.model.RunningApp
-import akio.apps.myrun.data.userprofile.model.UserProfile
+import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
 import akio.apps.myrun.domain.strava.RemoveStravaTokenUsecase
 import akio.apps.myrun.domain.user.GetProviderTokensUsecase
@@ -49,13 +49,13 @@ class UserProfileViewModelImpl @Inject constructor(
 
     override fun getProvidersAlive() = liveProviders
 
-    private val userProfileResourceObserver = Observer<Resource<UserProfile>> {
+    private val userProfileResourceObserver = Observer<akio.apps.common.data.Resource<UserProfile>> {
         when (it) {
-            is Resource.Error -> _error.value = Event(it.exception)
-            is Resource.Success -> liveUserProfile.value = it.data
+            is akio.apps.common.data.Resource.Error -> _error.value = Event(it.exception)
+            is akio.apps.common.data.Resource.Success -> liveUserProfile.value = it.data
         }
 
-        _isInlineLoading.value = it is Resource.Loading
+        _isInlineLoading.value = it is akio.apps.common.data.Resource.Loading
     }
 
     init {

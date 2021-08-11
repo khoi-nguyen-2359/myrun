@@ -5,8 +5,8 @@ import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
 import akio.apps.common.feature.viewmodel.LaunchCatchingDelegateImpl
 import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.recentplace.PlaceIdentifier
-import akio.apps.myrun.data.recentplace.UserRecentPlaceRepository
+import akio.apps.myrun.data.user.api.PlaceIdentifier
+import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.domain.recentplace.CreateActivityDisplayPlaceNameUsecase
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity

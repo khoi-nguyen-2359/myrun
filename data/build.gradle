@@ -5,21 +5,14 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion project.compileSdk
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 30
-
         consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        rc {}
+        rc { }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
@@ -34,6 +27,7 @@ android {
 }
 
 dependencies {
+    implementation(project(':common:data'))
     implementation(libs.androidXAppCompat)
     implementation(libs.kotlinxCoroutinesCore)
 }

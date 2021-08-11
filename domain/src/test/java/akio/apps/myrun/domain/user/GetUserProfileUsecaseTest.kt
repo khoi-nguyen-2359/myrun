@@ -1,16 +1,15 @@
 package akio.apps.myrun.domain.user
 
-import akio.apps._base.Resource
+import akio.apps.common.data.Resource
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.authentication.model.UserAccount
-import akio.apps.myrun.data.userprofile.UserProfileRepository
-import akio.apps.myrun.data.userprofile.model.Gender
-import akio.apps.myrun.data.userprofile.model.UserProfile
+import akio.apps.myrun.data.user.api.UserProfileRepository
+import akio.apps.myrun.data.user.api.model.Gender
+import akio.apps.myrun.data.user.api.model.UserProfile
 import app.cash.turbine.test
 import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
@@ -58,7 +57,7 @@ class GetUserProfileUsecaseTest {
         val userProfile = createUserProfile()
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
         whenever(mockedUserProfileRepository.getUserProfileFlow(defaultUserId)).thenReturn(
-            flowOf(Resource.Success(userProfile))
+            flowOf(akio.apps.common.data.Resource.Success(userProfile))
         )
 
         // when
@@ -94,9 +93,9 @@ class GetUserProfileUsecaseTest {
             // when
             testee.getUserProfileFlow(null).test {
                 val resource = expectItem()
-                assertTrue(resource is Resource.Error)
+                assertTrue(resource is akio.apps.common.data.Resource.Error)
                 assertNull(resource.data)
-                assertEquals(thrownException, (resource as Resource.Error).exception)
+                assertEquals(thrownException, (resource as akio.apps.common.data.Resource.Error).exception)
                 expectComplete()
             }
 

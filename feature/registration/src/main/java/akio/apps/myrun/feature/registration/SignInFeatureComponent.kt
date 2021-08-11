@@ -12,7 +12,7 @@ import dagger.Component
 @FeatureScope
 @Component(
     dependencies = [
-        UserDataComponent::class,
+        akio.apps.myrun.data.user.wiring.UserDataComponent::class,
         AuthenticationDataComponent::class,
         ExternalAppDataComponent::class
     ]
@@ -25,7 +25,7 @@ interface SignInFeatureComponent {
         fun create(
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
-            userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
+            userDataComponent: akio.apps.myrun.data.user.wiring.UserDataComponent = DaggerUserDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =
                 DaggerExternalAppDataComponent.create()
         ): SignInFeatureComponent
