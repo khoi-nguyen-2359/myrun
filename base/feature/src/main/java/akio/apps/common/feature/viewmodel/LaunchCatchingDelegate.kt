@@ -1,6 +1,6 @@
-package akio.apps.base.feature.viewmodel
+package akio.apps.common.feature.viewmodel
 
-import akio.apps.base.feature.lifecycle.Event
+import akio.apps.common.feature.lifecycle.Event
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow

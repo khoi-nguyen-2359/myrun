@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.activitydetail._di
 
-import akio.apps.base.wiring.ViewModelKey
+import akio.apps.common.wiring.ViewModelKey
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.impl.ActivityDetailViewModelImpl
 import androidx.lifecycle.ViewModel

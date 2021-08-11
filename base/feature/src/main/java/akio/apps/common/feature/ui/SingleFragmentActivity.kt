@@ -1,6 +1,6 @@
-package akio.apps.base.feature.ui
+package akio.apps.common.feature.ui
 
-import akio.apps.base.feature.R
+import akio.apps.common.feature.R
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle

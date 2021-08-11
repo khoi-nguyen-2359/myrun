@@ -64,11 +64,6 @@
             android:exported="false" />
 
         <activity
-            android:name="akio.apps.base.feature.ui.SingleFragmentActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
-
-        <activity
             android:name=".feature.cropavatar.CropAvatarActivity"
             android:screenOrientation="portrait"
             android:exported="false" />

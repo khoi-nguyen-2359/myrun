@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.userprofile._di
 
-import akio.apps.base.feature.viewmodel.ViewModelFactoryProvider
-import akio.apps.base.wiring.ApplicationModule
-import akio.apps.base.wiring.FeatureScope
+import akio.apps.common.feature.viewmodel.ViewModelFactoryProvider
+import akio.apps.common.wiring.ApplicationModule
+import akio.apps.common.wiring.FeatureScope
 import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
 import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent

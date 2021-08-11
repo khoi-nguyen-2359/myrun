@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.strava.impl
 
-import akio.apps.base.feature.lifecycle.observe
-import akio.apps.base.feature.lifecycle.observeEvent
-import akio.apps.base.feature.viewmodel.viewModel
+import akio.apps.common.feature.lifecycle.observe
+import akio.apps.common.feature.lifecycle.observeEvent
+import akio.apps.common.feature.viewmodel.viewModel
 import akio.apps.myrun.R
 import akio.apps.myrun.feature.strava.LinkStravaViewModel
 import akio.apps.myrun.feature.strava._di.DaggerStravaFeatureComponent

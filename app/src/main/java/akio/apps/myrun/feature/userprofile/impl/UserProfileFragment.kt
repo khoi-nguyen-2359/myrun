@@ -1,10 +1,10 @@
 package akio.apps.myrun.feature.userprofile.impl
 
 import akio.apps._base.Resource
-import akio.apps.base.feature.lifecycle.viewLifecycleScope
-import akio.apps.base.feature.ui.SingleFragmentActivity
-import akio.apps.base.feature.ui.ViewBindingDelegate
-import akio.apps.base.feature.viewmodel.viewModel
+import akio.apps.common.feature.lifecycle.viewLifecycleScope
+import akio.apps.common.feature.ui.SingleFragmentActivity
+import akio.apps.common.feature.ui.ViewBindingDelegate
+import akio.apps.common.feature.viewmodel.viewModel
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.circleCenterCrop
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken

@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.activity.impl
 
+import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.model.ActivityLocation
 import akio.apps.myrun.data.activity.model.ActivityModel
@@ -28,7 +29,7 @@ class FirebaseActivityRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage,
     private val firestoreActivityMapper: FirestoreActivityMapper,
-    @akio.apps.base.wiring.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ActivityRepository {
 
     private val userActivityCollectionGroup: Query

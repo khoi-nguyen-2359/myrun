@@ -1,4 +1,4 @@
-package akio.apps.base.wiring
+package akio.apps.common.wiring
 
 import android.app.Application
 import dagger.Module
@@ -9,6 +9,9 @@ import dagger.Provides
  */
 @Module
 object ApplicationModule {
+    /**
+     * Should be assigned value right at app start.
+     */
     lateinit var application: Application
 
     @Provides

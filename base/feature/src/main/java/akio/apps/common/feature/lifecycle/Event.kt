@@ -1,4 +1,4 @@
-package akio.apps.base.feature.lifecycle
+package akio.apps.common.feature.lifecycle
 
 open class Event<out T>(private val content: T? = null) {
 
