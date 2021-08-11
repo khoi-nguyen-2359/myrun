@@ -1,13 +1,14 @@
 package akio.apps.myrun.domain.routetracking
 
-import akio.apps.myrun.data.activity.ActivityLocalStorage
-import akio.apps.myrun.data.activity.ActivityRepository
-import akio.apps.myrun.data.activity.model.ActivityModel
-import akio.apps.myrun.data.activity.model.CyclingActivityModel
-import akio.apps.myrun.data.activity.model.RunningActivityModel
+import akio.apps.myrun.data.activity.api.ActivityLocalStorage
+import akio.apps.myrun.data.activity.api.ActivityRepository
+import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
+import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import javax.inject.Inject
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 
@@ -17,6 +18,7 @@ class UploadActivitiesUsecase @Inject constructor(
     private val activityLocalStorage: ActivityLocalStorage,
     private val userProfileRepository: UserProfileRepository
 ) {
+    @OptIn(InternalCoroutinesApi::class)
     suspend fun uploadAll(onUploadActivityStarted: ((ActivityModel) -> Unit)? = null): Boolean {
         var isCompleted = true
         activityLocalStorage.loadAllActivityStorageDataFlow()

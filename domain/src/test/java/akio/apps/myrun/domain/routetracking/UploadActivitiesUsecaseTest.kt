@@ -1,12 +1,12 @@
 package akio.apps.myrun.domain.routetracking
 
-import akio.apps.myrun.data.activity.ActivityLocalStorage
-import akio.apps.myrun.data.activity.ActivityRepository
-import akio.apps.myrun.data.activity.model.ActivityDataModel
-import akio.apps.myrun.data.activity.model.ActivityModel
-import akio.apps.myrun.data.activity.model.ActivityStorageData
-import akio.apps.myrun.data.activity.model.ActivityType
-import akio.apps.myrun.data.activity.model.RunningActivityModel
+import akio.apps.myrun.data.activity.api.ActivityLocalStorage
+import akio.apps.myrun.data.activity.api.ActivityRepository
+import akio.apps.myrun.data.activity.api.model.ActivityDataModel
+import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.ActivityStorageData
+import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -66,25 +66,26 @@ class UploadActivitiesUsecaseTest {
         assertFalse(result)
     }
 
-    private fun createActivityStorageData(): ActivityStorageData = ActivityStorageData(
-        RunningActivityModel(
-            ActivityDataModel(
-                "id",
-                ActivityType.Cycling,
-                "name",
-                "routeImage",
-                "placeIdentifier",
-                startTime = 1000L,
-                endTime = 1000L,
-                duration = 1000L,
-                distance = 10.0,
-                "encodedPolyline",
-                ActivityModel.AthleteInfo("userId", "userName", "userAvatar")
+    private fun createActivityStorageData(): ActivityStorageData =
+        ActivityStorageData(
+            RunningActivityModel(
+                ActivityDataModel(
+                    "id",
+                    ActivityType.Cycling,
+                    "name",
+                    "routeImage",
+                    "placeIdentifier",
+                    startTime = 1000L,
+                    endTime = 1000L,
+                    duration = 1000L,
+                    distance = 10.0,
+                    "encodedPolyline",
+                    ActivityModel.AthleteInfo("userId", "userName", "userAvatar")
+                ),
+                pace = 4.0,
+                cadence = 0
             ),
-            pace = 4.0,
-            cadence = 0
-        ),
-        emptyList(),
-        mock()
-    )
+            emptyList(),
+            mock()
+        )
 }

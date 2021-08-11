@@ -42,6 +42,7 @@ dependencies {
     implementation(project(":common:wiring"))
     implementation(project(":data:tracking:api"))
     implementation(project(":data:location:api"))
+    implementation(project(":data:activity:api"))
 
     implementation(libs.roomKtx)
     kapt(libs.roomCompiler)

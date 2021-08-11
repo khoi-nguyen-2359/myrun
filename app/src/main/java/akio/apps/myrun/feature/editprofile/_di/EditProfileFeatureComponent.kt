@@ -10,13 +10,13 @@ import dagger.Component
 
 @Component(
     modules = [EditProfileFeatureModule::class, DispatchersModule::class],
-    dependencies = [akio.apps.myrun.data.user.wiring.UserDataComponent::class, AuthenticationDataComponent::class]
+    dependencies = [UserDataComponent::class, AuthenticationDataComponent::class]
 )
 interface EditProfileFeatureComponent : ViewModelFactoryProvider {
     @Component.Factory
     interface Factory {
         fun create(
-            userDataComponent: akio.apps.myrun.data.user.wiring.UserDataComponent = DaggerUserDataComponent.create(),
+            userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create()
         ): EditProfileFeatureComponent

@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.home
 
-import akio.apps.myrun.data.activity.ActivityLocalStorage
+import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import androidx.lifecycle.ViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

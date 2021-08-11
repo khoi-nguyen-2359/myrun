@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.editprofile.impl
 
 import akio.apps._base.InstantTaskExecutorTest
-import akio.apps.common.data.Resource
 import akio.apps._base.error.UnauthorizedUserError
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.ProfileEditData

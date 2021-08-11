@@ -20,7 +20,7 @@ import dagger.Component
     dependencies = [
         ActivityDataComponent::class,
         AuthenticationDataComponent::class,
-        akio.apps.myrun.data.user.wiring.UserDataComponent::class
+        UserDataComponent::class
     ]
 )
 interface ActivityDetailFeatureComponent : ViewModelFactoryProvider {
@@ -32,7 +32,7 @@ interface ActivityDetailFeatureComponent : ViewModelFactoryProvider {
                 DaggerActivityDataComponent.create(),
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
-            userDataComponent: akio.apps.myrun.data.user.wiring.UserDataComponent = DaggerUserDataComponent.create()
+            userDataComponent: UserDataComponent = DaggerUserDataComponent.create()
         ): ActivityDetailFeatureComponent
     }
 }

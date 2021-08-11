@@ -16,10 +16,10 @@ class GetUserProfileUsecase @Inject constructor(
     /**
      * [userId] is id of user to fetch data, null will load current user.
      */
-    fun getUserProfileFlow(userId: String? = null): Flow<akio.apps.common.data.Resource<UserProfile>> = try {
+    fun getUserProfileFlow(userId: String? = null): Flow<Resource<UserProfile>> = try {
         val finalUserId = userId ?: userAuthenticationState.requireUserAccountId()
         userProfileRepository.getUserProfileFlow(finalUserId)
     } catch (ex: Exception) {
-        flowOf(akio.apps.common.data.Resource.Error(ex))
+        flowOf(Resource.Error(ex))
     }
 }

@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.usertimeline.model
 
-import akio.apps.myrun.data.activity.model.ActivityDataModel
-import akio.apps.myrun.data.activity.model.ActivityModel
-import akio.apps.myrun.data.activity.model.CyclingActivityModel
-import akio.apps.myrun.data.activity.model.RunningActivityModel
+import akio.apps.myrun.data.activity.api.model.ActivityDataModel
+import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
+import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import javax.inject.Inject
 
 class ActivityModelMapper @Inject constructor() {
