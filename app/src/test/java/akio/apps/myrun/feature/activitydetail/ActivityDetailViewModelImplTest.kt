@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.activitydetail
 
-import akio.apps._base.Resource
+import akio.apps.common.data.Resource
 import akio.apps.myrun.data.activity.ActivityRepository
 import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.feature.activitydetail.impl.ActivityDetailViewModelImpl
@@ -69,10 +69,10 @@ class ActivityDetailViewModelImplTest {
 
         viewModel.activityDetails.test {
             viewModel.loadActivityDetails()
-            assertTrue(expectItem() is Resource.Loading)
-            assertTrue(expectItem() is Resource.Loading)
+            assertTrue(expectItem() is akio.apps.common.data.Resource.Loading)
+            assertTrue(expectItem() is akio.apps.common.data.Resource.Loading)
             val successItem = expectItem()
-            assertTrue(successItem is Resource.Success)
+            assertTrue(successItem is akio.apps.common.data.Resource.Success)
             assertEquals(activity, successItem.data)
         }
 
@@ -87,10 +87,10 @@ class ActivityDetailViewModelImplTest {
 
         viewModel.activityDetails.test {
             viewModel.loadActivityDetails()
-            assertTrue(expectItem() is Resource.Loading)
-            assertTrue(expectItem() is Resource.Loading)
+            assertTrue(expectItem() is akio.apps.common.data.Resource.Loading)
+            assertTrue(expectItem() is akio.apps.common.data.Resource.Loading)
             val failureItem = expectItem()
-            assertTrue(failureItem is Resource.Error)
+            assertTrue(failureItem is akio.apps.common.data.Resource.Error)
             assertTrue(failureItem.exception is ActivityDetailViewModel.ActivityNotFoundException)
             assertNull(failureItem.data)
 

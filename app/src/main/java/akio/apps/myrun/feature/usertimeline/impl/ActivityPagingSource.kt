@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.usertimeline.impl
 
-import akio.apps._base.Resource
+import akio.apps.common.data.Resource
 import akio.apps.myrun.domain.usertimeline.GetUserTimelineActivitiesUsecase
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
@@ -19,13 +19,13 @@ class ActivityPagingSource @Inject constructor(
             getUserTimelineActivitiesUsecase.getUserTimelineActivity(startAfter, params.loadSize)
         Timber.d("feed resource $resource")
         return when (resource) {
-            is Resource.Success ->
+            is akio.apps.common.data.Resource.Success ->
                 LoadResult.Page(
                     data = resource.data.map(activityModelMapper::map),
                     prevKey = null,
                     nextKey = resource.data.lastOrNull()?.startTime
                 )
-            is Resource.Error -> LoadResult.Error(resource.exception)
+            is akio.apps.common.data.Resource.Error -> LoadResult.Error(resource.exception)
             else -> LoadResult.Error(Exception("Invalid timeline resource"))
         }
     }

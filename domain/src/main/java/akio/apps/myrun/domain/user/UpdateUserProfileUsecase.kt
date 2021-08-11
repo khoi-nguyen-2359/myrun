@@ -1,8 +1,8 @@
 package akio.apps.myrun.domain.user
 
 import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.userprofile.UserProfileRepository
-import akio.apps.myrun.data.userprofile.model.ProfileEditData
+import akio.apps.myrun.data.user.api.UserProfileRepository
+import akio.apps.myrun.data.user.api.model.ProfileEditData
 import javax.inject.Inject
 
 class UpdateUserProfileUsecase @Inject constructor(

@@ -13,9 +13,15 @@ include(':feature:base')
 include(':common:feature')
 include(':common:wiring')
 include(':feature:configurator')
-include ':data:tracking:api'
-include ':data:tracking:impl'
-include ':data:tracking:wiring'
-include ':data:location:api'
-include ':data:location:impl'
-include ':data:location:wiring'
+include(':data:tracking:api')
+include(':data:tracking:impl')
+include(':data:tracking:wiring')
+include(':data:location:api')
+include(':data:location:impl')
+include(':data:location:wiring')
+include(':data:user:api')
+include ':data:user:impl'
+include ':common:data'
+include ':data:base'
+include ':data:user:wiring'
+include ':data:wiring'

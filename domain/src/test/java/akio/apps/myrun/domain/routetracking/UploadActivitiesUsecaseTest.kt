@@ -8,7 +8,7 @@ import akio.apps.myrun.data.activity.model.ActivityStorageData
 import akio.apps.myrun.data.activity.model.ActivityType
 import akio.apps.myrun.data.activity.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.userprofile.UserProfileRepository
+import akio.apps.myrun.data.user.api.UserProfileRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf

@@ -1,6 +1,6 @@
 package akio.apps.myrun.domain.recentplace
 
-import akio.apps.myrun.data.recentplace.PlaceIdentifier
+import akio.apps.myrun.data.user.api.PlaceIdentifier
 import javax.inject.Inject
 
 class CreateActivityDisplayPlaceNameUsecase @Inject constructor(

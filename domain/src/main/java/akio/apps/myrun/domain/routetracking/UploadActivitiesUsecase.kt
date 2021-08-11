@@ -6,7 +6,7 @@ import akio.apps.myrun.data.activity.model.ActivityModel
 import akio.apps.myrun.data.activity.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.userprofile.UserProfileRepository
+import akio.apps.myrun.data.user.api.UserProfileRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
