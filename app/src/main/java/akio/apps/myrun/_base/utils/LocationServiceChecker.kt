@@ -1,6 +1,6 @@
 package akio.apps.myrun._base.utils
 
-import akio.apps.myrun.data.routetracking.model.LocationRequestConfig
+import akio.apps.myrun.data.location.api.model.LocationRequestConfig
 import android.app.Activity
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException

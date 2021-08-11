@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.userprofile.impl
 
 import akio.apps._base.Resource
-import akio.apps._base.ui.SingleFragmentActivity
-import akio.apps._base.ui.ViewBindingDelegate
 import akio.apps.base.feature.lifecycle.viewLifecycleScope
+import akio.apps.base.feature.ui.SingleFragmentActivity
+import akio.apps.base.feature.ui.ViewBindingDelegate
 import akio.apps.base.feature.viewmodel.viewModel
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.circleCenterCrop

@@ -1,6 +1,6 @@
 package akio.apps.myrun.domain.routetracking
 
-import akio.apps.myrun.data.location.Location
+import akio.apps.myrun.data.location.api.model.Location
 
 class LocationSpeedFilter(
     private val maxValidSpeed: Double

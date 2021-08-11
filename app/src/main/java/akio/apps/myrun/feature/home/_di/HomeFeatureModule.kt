@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.home._di
 
+import akio.apps.base.wiring.ViewModelKey
 import akio.apps.myrun.feature.home.HomeViewModel
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModelImpl
@@ -12,11 +13,11 @@ import dagger.multibindings.IntoMap
 interface HomeFeatureModule {
     @Binds
     @IntoMap
-    @akio.apps.base.feature.viewmodel.ViewModelKey(UserTimelineViewModel::class)
+    @ViewModelKey(UserTimelineViewModel::class)
     fun userTimelineViewModel(viewModelImpl: UserTimelineViewModelImpl): ViewModel
 
     @Binds
     @IntoMap
-    @akio.apps.base.feature.viewmodel.ViewModelKey(HomeViewModel::class)
+    @ViewModelKey(HomeViewModel::class)
     fun homeViewModel(vm: HomeViewModel): ViewModel
 }

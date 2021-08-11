@@ -91,15 +91,20 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation project(':domain')
-    implementation project(':data-wiring')
+    // features
+    implementation project(':feature:base')
+    implementation project(':feature:registration')
+    implementation project(":feature:configurator")
+
+    implementation(project(':domain'))
+
+    // data
+    implementation(project(':data-wiring'))
+    implementation(project(':data:tracking:wiring'))
+    implementation(project(':data:location:wiring'))
 
     implementation project(':base:wiring')
     implementation project(':base:feature')
-
-    implementation project(':feature:base')
-    implementation project(':feature:registration:api')
-    implementation project(":feature:configurator:api")
 
     implementation project(':places-sdk')
 
