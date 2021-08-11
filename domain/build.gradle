@@ -30,6 +30,7 @@ dependencies {
     implementation project(":data:location:api")
     implementation project(":data:tracking:api")
     implementation project(":data:user:api")
+    implementation project(":data:activity:api")
 
     implementation project(":common:data")
     implementation project(":common:wiring")

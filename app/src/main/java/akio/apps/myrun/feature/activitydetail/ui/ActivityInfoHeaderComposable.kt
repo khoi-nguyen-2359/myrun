@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
 import akio.apps.myrun.R
-import akio.apps.myrun.data.activity.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.feature.activitydetail.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityData
@@ -143,7 +143,7 @@ private fun PreviewActivityInfoHeader() = ActivityInfoHeaderView(
     activityDetail = RunningActivity(
         activityData = ActivityData(
             id = "id",
-            activityType = ActivityType.Running,
+            activityType = akio.apps.myrun.data.activity.api.model.ActivityType.Running,
             name = "Evening Run",
             routeImage = "http://example.com",
             placeIdentifier = null,

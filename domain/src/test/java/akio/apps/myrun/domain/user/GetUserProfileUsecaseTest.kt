@@ -10,6 +10,7 @@ import app.cash.turbine.test
 import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
@@ -57,7 +58,7 @@ class GetUserProfileUsecaseTest {
         val userProfile = createUserProfile()
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
         whenever(mockedUserProfileRepository.getUserProfileFlow(defaultUserId)).thenReturn(
-            flowOf(akio.apps.common.data.Resource.Success(userProfile))
+            flowOf(Resource.Success(userProfile))
         )
 
         // when
@@ -93,9 +94,9 @@ class GetUserProfileUsecaseTest {
             // when
             testee.getUserProfileFlow(null).test {
                 val resource = expectItem()
-                assertTrue(resource is akio.apps.common.data.Resource.Error)
+                assertTrue(resource is Resource.Error)
                 assertNull(resource.data)
-                assertEquals(thrownException, (resource as akio.apps.common.data.Resource.Error).exception)
+                assertEquals(thrownException, (resource as Resource.Error).exception)
                 expectComplete()
             }
 

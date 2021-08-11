@@ -6,12 +6,9 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion project.compileSdk
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 31
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -21,7 +18,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        rc {}
+        rc { }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
@@ -51,7 +48,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofitGsonConverter)
 
-    implementation platform(libs.firebaseBom)
+    implementation(platform(libs.firebaseBom))
     implementation(libs.firebaseAuthKtx)
     implementation(libs.firebaseFirestoreKtx)
     implementation(libs.firebaseStorageKtx)
@@ -66,8 +63,6 @@ dependencies {
     implementation(libs.playServicesFitness)
 
     implementation(libs.timber)
-
-    implementation(libs.tcxzPot)
 
     // Google Places SDK
     implementation(libs.androidGoogleMap)

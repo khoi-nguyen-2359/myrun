@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.tracking.impl
 
-import akio.apps.myrun.data.activity.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus

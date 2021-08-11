@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.usertimeline.ui
 
 import akio.apps.myrun.R
-import akio.apps.myrun.data.activity.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.feature.activitydetail.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.activitydetail.TrackingValueFormatter
 import akio.apps.myrun.feature.activitydetail.ui.ActivityRouteImage

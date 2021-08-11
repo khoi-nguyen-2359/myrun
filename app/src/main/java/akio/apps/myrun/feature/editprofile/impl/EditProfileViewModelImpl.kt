@@ -29,10 +29,10 @@ class EditProfileViewModelImpl @Inject constructor(
 
     private val liveUserProfile = getUserProfileUsecase.getUserProfileFlow()
         .asLiveData(timeoutInMs = 0)
-    private val userProfileObserver = Observer<akio.apps.common.data.Resource<UserProfile>> { resource ->
+    private val userProfileObserver = Observer<Resource<UserProfile>> { resource ->
         when (resource) {
-            is akio.apps.common.data.Resource.Success -> _userProfile.value = resource.data
-            is akio.apps.common.data.Resource.Error -> _error.value = Event(resource.exception)
+            is Resource.Success -> _userProfile.value = resource.data
+            is Resource.Error -> _error.value = Event(resource.exception)
         }
     }
 

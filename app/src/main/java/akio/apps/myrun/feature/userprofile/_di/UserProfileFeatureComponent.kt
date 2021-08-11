@@ -20,7 +20,7 @@ import dagger.Component
     modules = [UserProfileFeatureModule::class, ApplicationModule::class],
     dependencies = [
         ActivityDataComponent::class,
-        akio.apps.myrun.data.user.wiring.UserDataComponent::class,
+        UserDataComponent::class,
         AuthenticationDataComponent::class,
         ExternalAppDataComponent::class
     ]
@@ -31,7 +31,7 @@ interface UserProfileFeatureComponent : ViewModelFactoryProvider {
         fun create(
             @BindsInstance params: UserProfileViewModel.Params,
             activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create(),
-            userDataComponent: akio.apps.myrun.data.user.wiring.UserDataComponent = DaggerUserDataComponent.create(),
+            userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =
