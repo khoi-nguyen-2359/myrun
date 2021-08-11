@@ -1,4 +1,4 @@
-package akio.apps.base.feature.ui
+package akio.apps.common.feature.ui
 
 import android.view.View
 import androidx.fragment.app.Fragment

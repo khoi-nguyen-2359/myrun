@@ -1,4 +1,4 @@
-package akio.apps.base.wiring
+package akio.apps.common.wiring
 
 import dagger.Module
 import dagger.Provides

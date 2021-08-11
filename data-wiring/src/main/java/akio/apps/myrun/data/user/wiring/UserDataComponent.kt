@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.user.wiring
 
-import akio.apps.base.wiring.DispatchersModule
+import akio.apps.common.wiring.DispatchersModule
 import akio.apps.myrun.data._base.wiring.FirebaseDataModule
 import akio.apps.myrun.data.recentplace.UserRecentPlaceRepository
 import akio.apps.myrun.data.userfollow.UserFollowRepository

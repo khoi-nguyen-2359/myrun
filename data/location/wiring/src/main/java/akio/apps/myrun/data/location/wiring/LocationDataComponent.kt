@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.location.wiring
 
-import akio.apps.base.wiring.ApplicationModule
-import akio.apps.base.wiring.DispatchersModule
+import akio.apps.common.wiring.ApplicationModule
+import akio.apps.common.wiring.DispatchersModule
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.PlaceDataSource
 import dagger.Component

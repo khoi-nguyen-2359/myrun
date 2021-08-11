@@ -1,4 +1,4 @@
-package akio.apps.base.feature.ui
+package akio.apps.common.feature.ui
 
 import android.content.res.Resources
 import android.graphics.Rect

@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.activity.impl
 
+import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.activity.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.model.ActivityDataModel
@@ -46,7 +47,7 @@ preferencesDataStore("ActivityLocalStorageImpl")
 class ActivityLocalStorageImpl @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
-    @akio.apps.base.wiring.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ActivityLocalStorage {
 
     private val prefDataStore: DataStore<Preferences> = application.prefDataStore

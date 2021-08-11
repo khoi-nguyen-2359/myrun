@@ -1,4 +1,4 @@
-package akio.apps.base.feature.viewmodel
+package akio.apps.common.feature.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

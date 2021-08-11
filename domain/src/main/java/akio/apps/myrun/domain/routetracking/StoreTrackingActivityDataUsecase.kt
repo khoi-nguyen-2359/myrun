@@ -1,7 +1,7 @@
 package akio.apps.myrun.domain.routetracking
 
 import akio.apps._base.ObjectAutoId
-import akio.apps.base.wiring.NamedIoDispatcher
+import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.ActivityLocalStorage
 import akio.apps.myrun.data.activity.model.ActivityDataModel

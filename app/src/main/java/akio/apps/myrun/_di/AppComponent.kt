@@ -1,6 +1,6 @@
 package akio.apps.myrun._di
 
-import akio.apps.base.wiring.DispatchersModule
+import akio.apps.common.wiring.DispatchersModule
 import akio.apps.myrun.MyRunApp
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent

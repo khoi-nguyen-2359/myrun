@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.registration
 
-import akio.apps.base.feature.lifecycle.Event
-import akio.apps.base.feature.viewmodel.LaunchCatchingDelegate
-import akio.apps.base.feature.viewmodel.LaunchCatchingDelegateImpl
+import akio.apps.common.feature.lifecycle.Event
+import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
+import akio.apps.common.feature.viewmodel.LaunchCatchingDelegateImpl
 import akio.apps.myrun.data.authentication.SignInManager
 import akio.apps.myrun.data.authentication.model.SignInSuccessResult
 import akio.apps.myrun.domain.authentication.PostSignInUsecase

@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.userprofile._di
 
-import akio.apps.base.wiring.ViewModelKey
+import akio.apps.common.wiring.ViewModelKey
 import akio.apps.myrun.feature.userprofile.UserProfileViewModel
 import akio.apps.myrun.feature.userprofile.impl.UserProfileViewModelImpl
 import androidx.lifecycle.ViewModel

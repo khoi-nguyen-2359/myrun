@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.usertimeline.impl
 
-import akio.apps.base.feature.ui.getResources
-import akio.apps.base.feature.ui.getString
+import akio.apps.common.feature.ui.getResources
+import akio.apps.common.feature.ui.getString
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.circleCenterCrop
 import akio.apps.myrun.data.activity.model.ActivityType
