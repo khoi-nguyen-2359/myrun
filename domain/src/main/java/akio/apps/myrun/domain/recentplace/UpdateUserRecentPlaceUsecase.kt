@@ -1,10 +1,10 @@
 package akio.apps.myrun.domain.recentplace
 
 import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.place.PlaceDataSource
+import akio.apps.myrun.data.location.api.PlaceDataSource
 import akio.apps.myrun.data.recentplace.UserRecentPlaceRepository
-import akio.apps.myrun.data.routetracking.RouteTrackingState
-import akio.apps.myrun.data.routetracking.RouteTrackingStatus
+import akio.apps.myrun.data.tracking.api.RouteTrackingState
+import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import javax.inject.Inject
 
 class UpdateUserRecentPlaceUsecase @Inject constructor(

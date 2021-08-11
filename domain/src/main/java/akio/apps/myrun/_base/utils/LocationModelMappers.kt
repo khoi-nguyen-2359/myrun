@@ -1,6 +1,6 @@
 package akio.apps.myrun._base.utils
 
-import akio.apps.myrun.data.location.Location
+import akio.apps.myrun.data.location.api.model.Location
 
 typealias GmsLatLng = com.google.android.libraries.maps.model.LatLng
 

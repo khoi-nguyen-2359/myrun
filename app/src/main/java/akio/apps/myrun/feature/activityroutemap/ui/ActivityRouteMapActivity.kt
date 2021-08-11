@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.activityroutemap.ui
 
-import akio.apps._base.ktext.getColorCompat
-import akio.apps._base.ktext.getDrawableCompat
-import akio.apps._base.ui.dp2px
+import akio.apps.base.feature.ui.dp2px
+import akio.apps.base.feature.ui.getColorCompat
+import akio.apps.base.feature.ui.getDrawableCompat
 import akio.apps.myrun.R
 import akio.apps.myrun.databinding.ActivityActivityRouteMapBinding
 import android.content.Context

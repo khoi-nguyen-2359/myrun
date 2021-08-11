@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    id 'kotlin-kapt'
 }
 
 android {
@@ -16,11 +15,7 @@ android {
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        rc {}
+        rc { }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
@@ -33,7 +28,11 @@ android {
 }
 
 dependencies {
+    // data
     implementation project(":data")
+    implementation project(":data:location:api")
+    implementation project(":data:tracking:api")
+
     implementation project(":base:wiring")
 
     implementation(libs.androidMapUtils)

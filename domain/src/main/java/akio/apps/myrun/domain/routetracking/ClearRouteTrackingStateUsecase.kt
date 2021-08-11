@@ -1,7 +1,7 @@
 package akio.apps.myrun.domain.routetracking
 
-import akio.apps.myrun.data.routetracking.RouteTrackingLocationRepository
-import akio.apps.myrun.data.routetracking.RouteTrackingState
+import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
+import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import javax.inject.Inject
 
 class ClearRouteTrackingStateUsecase @Inject constructor(

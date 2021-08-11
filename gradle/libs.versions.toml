@@ -195,3 +195,4 @@ uiAutomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = 
 [bundles]
 compose = ["composeUi", "composeUiTooling", "composeFoundation", "composeMaterial", "composeMaterialIconsCore", "composeMaterialIconsExtended", "composeRuntimeLiveData", "composeActivity", "composePaging"]
 crashlytics = ["firebaseCrashlyticsKtx", "firebaseAnalyticsKtx"]
+placesDeps = [ "autoValueAnnotation", "playServicesGcm" ]
