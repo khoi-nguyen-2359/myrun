@@ -91,14 +91,12 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // features
-    implementation project(':feature:base')
-    implementation project(':feature:registration')
-    implementation project(":feature:configurator")
+    implementation project(':features:base')
+    implementation project(':features:registration')
+    implementation project(":features:configurator")
 
     implementation(project(':domain'))
 
-    // data
     implementation(project(':data:wiring'))
     implementation(project(':data:fitness:wiring'))
     implementation(project(':data:tracking:wiring'))
@@ -142,7 +140,6 @@ dependencies {
 
     implementation(libs.multidex)
 
-    implementation(libs.playServicesLocation)
     implementation(libs.playServicesAuth)
     implementation(libs.playServicesFitness)
 
