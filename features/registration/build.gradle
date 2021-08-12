@@ -36,7 +36,7 @@ dependencies {
     implementation(project(":common:feature"))
     implementation(project(":common:wiring"))
 
-    implementation(project(":feature:base"))
+    implementation(project(":features:base"))
 
     implementation(project(":domain"))
 
