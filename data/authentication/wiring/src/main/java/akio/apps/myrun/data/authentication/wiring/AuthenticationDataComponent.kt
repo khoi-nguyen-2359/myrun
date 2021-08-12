@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.authentication.wiring
 
-import akio.apps.myrun.data.authentication.SignInManager
-import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.data.authentication.api.SignInManager
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.wiring.FirebaseDataModule
 import dagger.Component
 

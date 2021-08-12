@@ -1,14 +1,14 @@
 package akio.apps.myrun.data.authentication.impl
 
-import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.authentication.model.UserAccount
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.authentication.api.model.UserAccount
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.runBlocking
@@ -19,13 +19,13 @@ class FirebaseAuthenticationState @Inject constructor(
     private val firebaseUserMapper: FirebaseUserMapper
 ) : UserAuthenticationState {
 
-    @ExperimentalCoroutinesApi
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getUserAccountFlow(): Flow<UserAccount?> = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener {
             it.currentUser?.let { firebaseUser ->
-                sendBlocking(firebaseUserMapper.map(firebaseUser))
+                trySendBlocking(firebaseUserMapper.map(firebaseUser))
             } ?: run {
-                sendBlocking(null)
+                trySendBlocking(null)
             }
         }
 

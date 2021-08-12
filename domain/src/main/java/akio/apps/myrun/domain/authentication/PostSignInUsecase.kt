@@ -1,8 +1,8 @@
 package akio.apps.myrun.domain.authentication
 
-import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.authentication.model.SignInSuccessResult
-import akio.apps.myrun.data.authentication.model.UserAccount
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
+import akio.apps.myrun.data.authentication.api.model.UserAccount
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.model.ProfileEditData

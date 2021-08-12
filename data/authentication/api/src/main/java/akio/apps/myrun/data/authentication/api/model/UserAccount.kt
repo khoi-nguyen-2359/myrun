@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.authentication.model
+package akio.apps.myrun.data.authentication.api.model
 
 data class UserAccount(
     val uid: String,

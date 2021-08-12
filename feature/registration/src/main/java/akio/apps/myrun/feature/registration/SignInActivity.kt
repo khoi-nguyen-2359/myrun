@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.registration
 import akio.apps.common.feature.lifecycle.collectEventRepeatOnStarted
 import akio.apps.common.feature.lifecycle.collectRepeatOnStarted
 import akio.apps.common.feature.viewmodel.viewModelProvider
-import akio.apps.myrun.data.authentication.model.SignInSuccessResult
+import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.registration.databinding.ActivitySignInBinding
 import android.app.Activity

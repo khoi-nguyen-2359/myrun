@@ -21,6 +21,8 @@ android {
     kotlinOptions {
         jvmTarget = "11"
         useIR = true
+        allWarningsAsErrors = true
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
     }
 }
 
@@ -31,6 +33,7 @@ dependencies {
     implementation project(":data:tracking:api")
     implementation project(":data:user:api")
     implementation project(":data:activity:api")
+    implementation project(":data:authentication:api")
 
     implementation project(":common:data")
     implementation project(":common:wiring")

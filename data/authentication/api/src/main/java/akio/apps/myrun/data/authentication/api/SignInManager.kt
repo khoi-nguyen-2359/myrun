@@ -1,6 +1,6 @@
-package akio.apps.myrun.data.authentication
+package akio.apps.myrun.data.authentication.api
 
-import akio.apps.myrun.data.authentication.model.SignInSuccessResult
+import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 
 interface SignInManager {
     suspend fun linkFacebook(facebookAccessToken: String)

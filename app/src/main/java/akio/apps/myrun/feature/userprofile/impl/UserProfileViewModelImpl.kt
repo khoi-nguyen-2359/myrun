@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.userprofile.impl
 import akio.apps.common.data.Resource
 import akio.apps.common.feature.lifecycle.Event
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
-import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.ProviderToken
 import akio.apps.myrun.data.externalapp.model.RunningApp

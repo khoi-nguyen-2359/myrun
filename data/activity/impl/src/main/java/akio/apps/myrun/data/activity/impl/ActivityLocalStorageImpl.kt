@@ -160,8 +160,7 @@ class ActivityLocalStorageImpl @Inject constructor(
 
     override fun getActivityStorageDataCountFlow(): Flow<Int> {
         return prefDataStore.data.map { data ->
-            val count = data[KEY_ACTIVITY_STORAGE_DATA_COUNT] ?: 0
-            return@map count
+            return@map data[KEY_ACTIVITY_STORAGE_DATA_COUNT] ?: 0
         }
     }
 

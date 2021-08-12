@@ -1,6 +1,6 @@
 package akio.apps.myrun.domain.authentication
 
-import akio.apps.myrun.data.authentication.SignInManager
+import akio.apps.myrun.data.authentication.api.SignInManager
 import javax.inject.Inject
 
 class LinkFacebookUsecase @Inject constructor(

@@ -35,7 +35,7 @@ interface AppComponent {
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =
-                DaggerExternalAppDataComponent.create(),
+                DaggerExternalAppDataComponent.factory().create(),
             trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create()
         ): AppComponent
     }

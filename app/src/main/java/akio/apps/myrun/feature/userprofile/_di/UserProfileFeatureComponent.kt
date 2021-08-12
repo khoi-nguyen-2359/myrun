@@ -35,7 +35,7 @@ interface UserProfileFeatureComponent : ViewModelFactoryProvider {
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =
-                DaggerExternalAppDataComponent.create()
+                DaggerExternalAppDataComponent.factory().create()
         ): UserProfileFeatureComponent
     }
 }

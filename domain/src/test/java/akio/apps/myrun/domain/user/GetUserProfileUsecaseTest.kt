@@ -1,8 +1,7 @@
 package akio.apps.myrun.domain.user
 
 import akio.apps.common.data.Resource
-import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.authentication.model.UserAccount
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.UserProfile
@@ -73,8 +72,8 @@ class GetUserProfileUsecaseTest {
         verify(mockedUserProfileRepository).getUserProfileFlow(defaultUserId)
     }
 
-    private fun createUserAccount(): UserAccount {
-        return UserAccount(
+    private fun createUserAccount(): akio.apps.myrun.data.authentication.api.model.UserAccount {
+        return akio.apps.myrun.data.authentication.api.model.UserAccount(
             defaultUserId,
             defaultEmail,
             defaultDisplayName,
