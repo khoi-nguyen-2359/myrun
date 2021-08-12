@@ -56,7 +56,7 @@ interface RouteTrackingFeatureComponent : ViewModelFactoryProvider {
             locationDataComponent: LocationDataComponent = DaggerLocationDataComponent.create(),
             fitnessDataComponent: FitnessDataComponent = DaggerFitnessDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =
-                DaggerExternalAppDataComponent.create()
+                DaggerExternalAppDataComponent.factory().create()
         ): RouteTrackingFeatureComponent
     }
 }

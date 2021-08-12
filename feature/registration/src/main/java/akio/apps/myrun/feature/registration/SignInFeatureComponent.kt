@@ -27,7 +27,7 @@ interface SignInFeatureComponent {
                 DaggerAuthenticationDataComponent.create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =
-                DaggerExternalAppDataComponent.create()
+                DaggerExternalAppDataComponent.factory().create()
         ): SignInFeatureComponent
     }
 }

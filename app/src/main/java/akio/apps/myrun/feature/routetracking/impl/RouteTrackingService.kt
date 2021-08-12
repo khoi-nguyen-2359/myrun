@@ -5,7 +5,7 @@ import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.api.model.ActivityType
-import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location

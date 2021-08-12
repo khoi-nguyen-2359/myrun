@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.externalapp.impl
 
-import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
 import akio.apps.myrun.data.externalapp.model.ExternalAppToken
 import akio.apps.myrun.data.externalapp.model.StravaStravaTokenRefresh

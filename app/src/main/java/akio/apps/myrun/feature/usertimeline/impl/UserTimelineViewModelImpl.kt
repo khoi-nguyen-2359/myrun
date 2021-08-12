@@ -4,7 +4,7 @@ import akio.apps.common.feature.lifecycle.Event
 import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
 import akio.apps.common.feature.viewmodel.LaunchCatchingDelegateImpl
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
-import akio.apps.myrun.data.authentication.UserAuthenticationState
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.domain.recentplace.CreateActivityDisplayPlaceNameUsecase
@@ -31,7 +31,7 @@ class UserTimelineViewModelImpl @Inject constructor(
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
     private val userAuthenticationState: UserAuthenticationState,
     private val activityLocalStorage: ActivityLocalStorage,
-    private val launchCatchingViewModel: LaunchCatchingDelegateImpl = LaunchCatchingDelegateImpl()
+    private val launchCatchingViewModel: LaunchCatchingDelegateImpl = LaunchCatchingDelegateImpl(),
 ) : UserTimelineViewModel(), LaunchCatchingDelegate by launchCatchingViewModel {
 
     private var activityPagingSource: ActivityPagingSource? = null

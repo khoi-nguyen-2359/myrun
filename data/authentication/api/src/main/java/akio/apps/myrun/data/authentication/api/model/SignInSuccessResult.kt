@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.authentication.model
+package akio.apps.myrun.data.authentication.api.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

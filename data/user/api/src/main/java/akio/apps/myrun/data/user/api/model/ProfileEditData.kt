@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.user.api.model
 
-import akio.apps.myrun.data.authentication.model.UserAccount
+import akio.apps.myrun.data.authentication.api.model.UserAccount
 import android.net.Uri
 
 // Leave a field null in order not to send an update request for that field
