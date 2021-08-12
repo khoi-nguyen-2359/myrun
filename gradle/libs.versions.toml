@@ -78,6 +78,7 @@ kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ver
 playServicesGradlePlugin = { module = "com.google.gms:google-services", version.ref = "playServicesGradlePlugin" }
 firebaseCrashlyticsGradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "crashlyticsGradlePlugin" }
 firebasePerf = { module = "com.google.firebase:perf-plugin", version.ref = "firebasePerf" }
+viewBinding = { module = "androidx.databinding:viewbinding", version.ref = "agp"}
 
 multidex = { module = "com.android.support:multidex", version.ref = "multidex" }
 androidXCore = { module = "androidx.core:core-ktx", version.ref = "androidXCore" }
