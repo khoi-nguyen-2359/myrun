@@ -41,4 +41,6 @@ dependencies {
     implementation(libs.playServicesFitness)
     implementation(libs.javaXInject)
     implementation(libs.timber)
+
+    testImplementation(libs.junit)
 }
