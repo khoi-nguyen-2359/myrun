@@ -15,10 +15,6 @@ android {
         rc { }
     }
 
-    buildFeatures {
-        viewBinding true
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
@@ -32,6 +28,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.viewBinding)
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.lifecycleRuntimeKtx)
     implementation(libs.lifecycleProcess)

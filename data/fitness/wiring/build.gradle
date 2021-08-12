@@ -32,6 +32,7 @@ android {
 dependencies {
     api(project(':data:fitness:api'))
     implementation(project(':data:fitness:impl'))
+
     implementation(project(':data:wiring'))
     implementation project(":common:wiring")
 
