@@ -7,9 +7,9 @@ import akio.apps.common.feature.ui.ViewBindingDelegate
 import akio.apps.common.feature.viewmodel.viewModel
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.circleCenterCrop
-import akio.apps.myrun.data.externalapp.model.ExternalAppToken
-import akio.apps.myrun.data.externalapp.model.ExternalProviders
-import akio.apps.myrun.data.externalapp.model.ProviderToken
+import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
+import akio.apps.myrun.data.eapps.api.model.ExternalProviders
+import akio.apps.myrun.data.eapps.api.model.ProviderToken
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.databinding.FragmentUserProfileBinding
 import akio.apps.myrun.feature.base.DialogDelegate
@@ -89,7 +89,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         }
     }
 
-    private val providersObserver = Observer<akio.apps.common.data.Resource<ExternalProviders>> {
+    private val providersObserver = Observer<Resource<out ExternalProviders>> {
         it.data?.let(::showLinkedRunningApps)
     }
 

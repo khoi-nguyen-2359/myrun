@@ -7,11 +7,11 @@ import akio.apps.myrun.data.activity.api.model.ActivitySyncData
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
-import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
-import akio.apps.myrun.data.externalapp.StravaDataRepository
-import akio.apps.myrun.data.externalapp.model.ExternalAppToken
-import akio.apps.myrun.data.externalapp.model.StravaAthlete
-import akio.apps.myrun.data.externalapp.model.StravaTokenRefresh
+import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
+import akio.apps.myrun.data.eapps.api.StravaDataRepository
+import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
+import akio.apps.myrun.data.eapps.api.model.StravaAthlete
+import akio.apps.myrun.data.eapps.api.model.StravaTokenRefresh
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
