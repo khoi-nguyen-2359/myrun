@@ -30,31 +30,22 @@ android {
 }
 
 dependencies {
-    api project(":data")
-    implementation project(":data-impl")
-
+    api(project(':data:fitness:api'))
+    implementation(project(':data:fitness:impl'))
     implementation(project(':data:wiring'))
-    implementation(project(':data:authentication:wiring'))
-
     implementation project(":common:wiring")
-
-    implementation project(':libs:places-sdk')
-
-    implementation platform(libs.firebaseBom)
-    implementation(libs.firebaseAuthKtx)
-    implementation(libs.firebaseFirestoreKtx)
-    implementation(libs.firebaseStorageKtx)
-
-    implementation(libs.playServicesLocation)
-
-    implementation(libs.okHttp)
-    implementation(libs.okHttpLogger)
-    implementation(libs.retrofitGsonConverter)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
 
-    implementation(libs.roomRuntime)
-
     implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.kotlinxCoroutinesPlayServices)
+
+    implementation(libs.playServicesAuth)
+    implementation(libs.playServicesFitness)
+    implementation(libs.javaXInject)
+    implementation(libs.timber)
+
+    implementation(libs.retrofit)
+    implementation(libs.retrofitGsonConverter)
 }

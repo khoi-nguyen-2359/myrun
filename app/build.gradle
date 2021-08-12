@@ -99,8 +99,8 @@ dependencies {
     implementation(project(':domain'))
 
     // data
-    implementation(project(':data-wiring'))
     implementation(project(':data:wiring'))
+    implementation(project(':data:fitness:wiring'))
     implementation(project(':data:tracking:wiring'))
     implementation(project(':data:location:wiring'))
     implementation(project(':data:user:wiring'))
