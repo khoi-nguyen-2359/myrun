@@ -1,8 +1,8 @@
 package akio.apps.myrun.domain.strava
 
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
-import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
-import akio.apps.myrun.data.externalapp.StravaTokenRepository
+import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
+import akio.apps.myrun.data.eapps.api.StravaTokenRepository
 import javax.inject.Inject
 
 class DeauthorizeStravaUsecase @Inject constructor(

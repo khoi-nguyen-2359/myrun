@@ -8,8 +8,7 @@ import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
 import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
-import akio.apps.myrun.data.external.wiring.DaggerExternalAppDataComponent
-import akio.apps.myrun.data.external.wiring.ExternalAppDataComponent
+import akio.apps.myrun.data.eapps.wiring.DaggerExternalAppDataComponent
 import akio.apps.myrun.data.fitness.wiring.DaggerFitnessDataComponent
 import akio.apps.myrun.data.fitness.wiring.FitnessDataComponent
 import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
@@ -36,7 +35,7 @@ import dagger.Component
         AuthenticationDataComponent::class,
         TrackingDataComponent::class,
         FitnessDataComponent::class,
-        ExternalAppDataComponent::class,
+        akio.apps.myrun.data.eapps.wiring.ExternalAppDataComponent::class,
         LocationDataComponent::class
     ]
 )
@@ -55,8 +54,8 @@ interface RouteTrackingFeatureComponent : ViewModelFactoryProvider {
             trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create(),
             locationDataComponent: LocationDataComponent = DaggerLocationDataComponent.create(),
             fitnessDataComponent: FitnessDataComponent = DaggerFitnessDataComponent.create(),
-            externalAppDataComponent: ExternalAppDataComponent =
-                DaggerExternalAppDataComponent.factory().create()
+            externalAppDataComponent: akio.apps.myrun.data.eapps.wiring.ExternalAppDataComponent =
+                DaggerExternalAppDataComponent.factory().create(),
         ): RouteTrackingFeatureComponent
     }
 }
