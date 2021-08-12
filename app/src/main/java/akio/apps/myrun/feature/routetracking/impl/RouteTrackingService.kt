@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.routetracking.impl
 
+import akio.apps.common.data.time.Now
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun._base.utils.flowTimer
@@ -10,7 +11,6 @@ import akio.apps.myrun.data.fitness.FitnessDataRepository
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.location.api.model.LocationRequestConfig
-import akio.apps.myrun.data.time.Now
 import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
@@ -121,7 +121,7 @@ class RouteTrackingService : Service() {
 
     private suspend fun configureLocationProcessors(
         locationRequest: LocationRequestConfig,
-        locationProcessingConfig: LocationProcessingConfig
+        locationProcessingConfig: LocationProcessingConfig,
     ) {
         Timber.d("requestLocationUpdates with processors")
         if (locationProcessingConfig.isSpeedFilterEnabled) {
@@ -359,7 +359,7 @@ class RouteTrackingService : Service() {
         private const val INSTANT_SPEED_PERIOD = 5000L
 
         fun startIntent(
-            context: Context
+            context: Context,
         ): Intent {
             val intent = Intent(context, RouteTrackingService::class.java)
             intent.action = ACTION_START

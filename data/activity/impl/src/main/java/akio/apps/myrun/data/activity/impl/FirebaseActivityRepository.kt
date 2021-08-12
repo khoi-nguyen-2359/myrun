@@ -2,6 +2,8 @@ package akio.apps.myrun.data.activity.impl
 
 import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityRepository
+import akio.apps.myrun.data.activity.api.model.ActivityLocation
+import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.impl.model.FirestoreActivity
 import akio.apps.myrun.data.activity.impl.model.FirestoreActivityMapper
 import akio.apps.myrun.data.activity.impl.model.FirestoreDataPointList
@@ -27,7 +29,7 @@ class FirebaseActivityRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage,
     private val firestoreActivityMapper: FirestoreActivityMapper,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ActivityRepository {
 
     private val userActivityCollectionGroup: Query
@@ -43,8 +45,8 @@ class FirebaseActivityRepository @Inject constructor(
     override suspend fun getActivitiesByStartTime(
         userIds: List<String>,
         startAfterTime: Long,
-        limit: Int
-    ): List<akio.apps.myrun.data.activity.api.model.ActivityModel> = withContext(ioDispatcher) {
+        limit: Int,
+    ): List<ActivityModel> = withContext(ioDispatcher) {
         val query = userActivityCollectionGroup.whereIn("athleteInfo.userId", userIds)
             .orderBy("startTime", Query.Direction.DESCENDING)
             .startAfter(startAfterTime)
@@ -61,11 +63,11 @@ class FirebaseActivityRepository @Inject constructor(
     }
 
     override suspend fun saveActivity(
-        activity: akio.apps.myrun.data.activity.api.model.ActivityModel,
+        activity: ActivityModel,
         routeBitmapFile: File,
         speedDataPoints: List<DataPoint<Float>>,
         stepCadenceDataPoints: List<DataPoint<Int>>?,
-        locationDataPoints: List<akio.apps.myrun.data.activity.api.model.ActivityLocation>
+        locationDataPoints: List<ActivityLocation>,
     ): String = withContext(ioDispatcher) {
         Timber.d("=== SAVING ACTIVITY ===")
         val docRef = if (activity.id.isNotEmpty()) {
@@ -123,8 +125,8 @@ class FirebaseActivityRepository @Inject constructor(
     }
 
     override suspend fun getActivityLocationDataPoints(
-        activityId: String
-    ): List<akio.apps.myrun.data.activity.api.model.ActivityLocation> = withContext(ioDispatcher) {
+        activityId: String,
+    ): List<ActivityLocation> = withContext(ioDispatcher) {
         val firebaseActivity =
             userActivityCollectionGroup.whereEqualTo(FIELD_ACTIVITY_ID, activityId).get().await()
         val firestoreLocationDataPoints = firebaseActivity.documents.getOrNull(0)
@@ -140,8 +142,8 @@ class FirebaseActivityRepository @Inject constructor(
     }
 
     override suspend fun getActivity(
-        activityId: String
-    ): akio.apps.myrun.data.activity.api.model.ActivityModel? = withContext(ioDispatcher) {
+        activityId: String,
+    ): ActivityModel? = withContext(ioDispatcher) {
         val snapshot = userActivityCollectionGroup.whereEqualTo("id", activityId).get().await()
         snapshot.documents
             .getOrNull(0)

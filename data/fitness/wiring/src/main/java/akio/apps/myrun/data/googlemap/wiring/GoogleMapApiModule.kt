@@ -9,7 +9,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-@Module(includes = [akio.apps.myrun.data.wiring.NetworkModule::class])
+@Module(includes = [NetworkModule::class])
 class GoogleMapApiModule {
 
     @Provides

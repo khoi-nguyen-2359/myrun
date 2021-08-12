@@ -29,7 +29,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":data"))
     implementation(project(":data:location:api"))
     implementation(project(":data:activity:api"))
 

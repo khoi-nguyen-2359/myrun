@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.time
+package akio.apps.common.data.time
 
 interface TimeProvider {
     fun currentMillisecond(): Long

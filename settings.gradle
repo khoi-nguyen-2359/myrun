@@ -1,13 +1,10 @@
 enableFeaturePreview("VERSION_CATALOGS")
 rootProject.name = "My Run"
 include(":test")
-include(":data")
 include(":domain")
-include(":data-impl")
 include(":libs:routeparser")
 include(":app")
 include(":libs:places-sdk")
-include(':data-wiring')
 include(':feature:registration')
 include(':feature:base')
 include(':common:feature')
@@ -34,3 +31,6 @@ include ':data:authentication:wiring'
 include ':data:eapps:api'
 include ':data:eapps:impl'
 include ':data:eapps:wiring'
+include ':data:fitness:api'
+include ':data:fitness:impl'
+include ':data:fitness:wiring'
