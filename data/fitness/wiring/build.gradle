@@ -1,0 +1,52 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdk project.compileSdk
+
+    defaultConfig {
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        rc {}
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
+        useIR = true
+    }
+}
+
+dependencies {
+    api(project(':data:fitness:api'))
+    implementation(project(':data:fitness:impl'))
+
+    implementation(project(':data:wiring'))
+    implementation project(":common:wiring")
+
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
+
+    implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.kotlinxCoroutinesPlayServices)
+
+    implementation(libs.playServicesAuth)
+    implementation(libs.playServicesFitness)
+    implementation(libs.javaXInject)
+    implementation(libs.timber)
+
+    implementation(libs.retrofit)
+    implementation(libs.retrofitGsonConverter)
+}

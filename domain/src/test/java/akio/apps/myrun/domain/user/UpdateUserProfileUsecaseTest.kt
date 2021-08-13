@@ -1,10 +1,10 @@
 package akio.apps.myrun.domain.user
 
 import akio.apps._base.error.UnauthorizedUserError
-import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.userprofile.UserProfileRepository
-import akio.apps.myrun.data.userprofile.model.Gender
-import akio.apps.myrun.data.userprofile.model.ProfileEditData
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.user.api.UserProfileRepository
+import akio.apps.myrun.data.user.api.model.Gender
+import akio.apps.myrun.data.user.api.model.ProfileEditData
 import android.net.Uri
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -77,7 +77,7 @@ class UpdateUserProfileUsecaseTest {
     private fun createProfileEditData(
         phoneNumber: String? = "edit phone number",
         displayName: String = "displayName",
-        avatarUri: Uri? = null
+        avatarUri: Uri? = null,
     ): ProfileEditData {
         return ProfileEditData(
             displayName,

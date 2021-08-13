@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.routetracking.view
 
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.StatsPresentations
-import akio.apps.myrun.data.activity.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.databinding.MergeRouteTrackingStatsViewBinding
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingStats
 import android.content.Context
@@ -38,7 +38,7 @@ class RouteTrackingStatsView @JvmOverloads constructor(
         setActivityType(activityTypes[activityTypeIndex])
     }
 
-    fun setActivityType(activityType: ActivityType) {
+    fun setActivityType(activityType: akio.apps.myrun.data.activity.api.model.ActivityType) {
         when (activityType) {
             ActivityType.Running -> {
                 viewBinding.speedLabelTextView.setText(R.string.route_tracking_pace_label)

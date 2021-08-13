@@ -1,18 +1,18 @@
 package akio.apps.myrun.feature.routetracking.impl
 
-import akio.apps.base.feature.lifecycle.collectEventRepeatOnStarted
-import akio.apps.base.feature.lifecycle.collectRepeatOnStarted
-import akio.apps.base.feature.lifecycle.observe
-import akio.apps.base.feature.lifecycle.observeEvent
-import akio.apps.base.feature.ui.dp2px
-import akio.apps.base.feature.viewmodel.LaunchCatchingDelegate
-import akio.apps.base.feature.viewmodel.LaunchCatchingDelegateImpl
-import akio.apps.base.feature.viewmodel.viewModel
+import akio.apps.common.feature.lifecycle.collectEventRepeatOnStarted
+import akio.apps.common.feature.lifecycle.collectRepeatOnStarted
+import akio.apps.common.feature.lifecycle.observe
+import akio.apps.common.feature.lifecycle.observeEvent
+import akio.apps.common.feature.ui.dp2px
+import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
+import akio.apps.common.feature.viewmodel.LaunchCatchingDelegateImpl
+import akio.apps.common.feature.viewmodel.viewModel
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.LatLngBoundsBuilder
 import akio.apps.myrun._base.utils.LocationServiceChecker
 import akio.apps.myrun._base.utils.toGmsLatLng
-import akio.apps.myrun.data.activity.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding

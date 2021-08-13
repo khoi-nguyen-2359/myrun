@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.tracking.impl
 
-import akio.apps.base.wiring.NamedIoDispatcher
+import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import javax.inject.Inject

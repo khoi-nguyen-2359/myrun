@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
-import akio.apps._base.Resource
+import akio.apps.common.data.Resource
 import akio.apps.myrun.R
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
@@ -59,7 +59,7 @@ fun ActivityDetailScreen(
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
     val activityResource by activityDetailViewModel.activityDetails
-        .collectAsState(Resource.Loading())
+        .collectAsState(akio.apps.common.data.Resource.Loading())
     val activityDisplayPlaceName by activityDetailViewModel.activityPlaceName
         .collectAsState(initial = null)
     val activityDetail = activityResource.data
@@ -89,15 +89,15 @@ fun ActivityDetailScreen(
                     onClickRouteImage(activityDetail.encodedPolyline)
                 }
                 PerformanceTableComposable(activityDetail)
-                if (activityResource is Resource.Loading) {
+                if (activityResource is akio.apps.common.data.Resource.Loading) {
                     BottomLoadingIndicator()
                 }
             }
-        } else if (activityResource is Resource.Loading) {
+        } else if (activityResource is akio.apps.common.data.Resource.Loading) {
             FullscreenLoadingView()
         }
 
-        if (activityResource is Resource.Error) {
+        if (activityResource is akio.apps.common.data.Resource.Error) {
             val errorMessage = stringResource(id = R.string.activity_details_loading_error)
             val retryLabel = stringResource(id = R.string.action_retry)
             coroutineScope.launch {

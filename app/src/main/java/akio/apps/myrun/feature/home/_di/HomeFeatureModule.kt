@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.home._di
 
-import akio.apps.base.wiring.ViewModelKey
+import akio.apps.common.wiring.ViewModelKey
 import akio.apps.myrun.feature.home.HomeViewModel
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModelImpl

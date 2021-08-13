@@ -1,7 +1,7 @@
 package akio.apps.myrun.domain.strava
 
-import akio.apps.myrun.data.externalapp.StravaTokenRepository
-import akio.apps.myrun.data.externalapp.model.ExternalAppToken
+import akio.apps.myrun.data.eapps.api.StravaTokenRepository
+import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import javax.inject.Inject
 
 class ExchangeStravaLoginCodeUsecase @Inject constructor(

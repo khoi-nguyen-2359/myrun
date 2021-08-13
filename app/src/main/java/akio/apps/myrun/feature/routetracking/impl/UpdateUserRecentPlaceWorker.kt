@@ -20,14 +20,14 @@ import timber.log.Timber
 
 class UpdateUserRecentPlaceWorker(
     appContext: Context,
-    params: WorkerParameters
+    params: WorkerParameters,
 ) : CoroutineWorker(appContext, params) {
 
     @Inject
     lateinit var updateUserRecentPlaceUsecase: UpdateUserRecentPlaceUsecase
 
     @Inject
-    lateinit var locationDataSource: akio.apps.myrun.data.location.api.LocationDataSource
+    lateinit var locationDataSource: LocationDataSource
 
     init {
         DaggerRouteTrackingFeatureComponent.factory().create().inject(this)

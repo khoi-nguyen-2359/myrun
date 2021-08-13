@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.editprofile._di
 
-import akio.apps.base.wiring.ViewModelKey
+import akio.apps.common.wiring.ViewModelKey
 import akio.apps.myrun.feature.editprofile.EditProfileViewModel
 import akio.apps.myrun.feature.editprofile.impl.EditProfileViewModelImpl
 import androidx.lifecycle.ViewModel

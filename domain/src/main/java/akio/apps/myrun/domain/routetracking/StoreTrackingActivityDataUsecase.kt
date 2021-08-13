@@ -1,17 +1,17 @@
 package akio.apps.myrun.domain.routetracking
 
 import akio.apps._base.ObjectAutoId
-import akio.apps.base.wiring.NamedIoDispatcher
+import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun._base.utils.toGmsLatLng
-import akio.apps.myrun.data.activity.ActivityLocalStorage
-import akio.apps.myrun.data.activity.model.ActivityDataModel
-import akio.apps.myrun.data.activity.model.ActivityLocation
-import akio.apps.myrun.data.activity.model.ActivityModel
-import akio.apps.myrun.data.activity.model.ActivityType
-import akio.apps.myrun.data.activity.model.CyclingActivityModel
-import akio.apps.myrun.data.activity.model.RunningActivityModel
-import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
+import akio.apps.myrun.data.activity.api.ActivityLocalStorage
+import akio.apps.myrun.data.activity.api.model.ActivityDataModel
+import akio.apps.myrun.data.activity.api.model.ActivityLocation
+import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
+import akio.apps.myrun.data.activity.api.model.RunningActivityModel
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.domain.TrackingValueConverter

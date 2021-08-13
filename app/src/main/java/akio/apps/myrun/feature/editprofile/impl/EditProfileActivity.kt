@@ -1,16 +1,16 @@
 package akio.apps.myrun.feature.editprofile.impl
 
-import akio.apps.base.feature.lifecycle.observe
-import akio.apps.base.feature.lifecycle.observeEvent
-import akio.apps.base.feature.ui.getNoneEmptyTextOrNull
-import akio.apps.base.feature.ui.getTextAsString
-import akio.apps.base.feature.viewmodel.viewModel
+import akio.apps.common.feature.lifecycle.observe
+import akio.apps.common.feature.lifecycle.observeEvent
+import akio.apps.common.feature.ui.getNoneEmptyTextOrNull
+import akio.apps.common.feature.ui.getTextAsString
+import akio.apps.common.feature.viewmodel.viewModel
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.PhotoSelectionDelegate
 import akio.apps.myrun._base.utils.circleCenterCrop
-import akio.apps.myrun.data.userprofile.model.Gender
-import akio.apps.myrun.data.userprofile.model.ProfileEditData
-import akio.apps.myrun.data.userprofile.model.UserProfile
+import akio.apps.myrun.data.user.api.model.Gender
+import akio.apps.myrun.data.user.api.model.ProfileEditData
+import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.databinding.ActivityEditProfileBinding
 import akio.apps.myrun.feature.cropavatar.CropAvatarActivity
 import akio.apps.myrun.feature.editprofile.EditProfileViewModel

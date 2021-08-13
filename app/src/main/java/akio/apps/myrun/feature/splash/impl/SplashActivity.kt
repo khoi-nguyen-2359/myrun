@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.splash.impl
 
-import akio.apps.base.feature.lifecycle.collectEventRepeatOnStarted
-import akio.apps.base.feature.viewmodel.viewModelProvider
-import akio.apps.myrun.data.authentication.model.SignInSuccessResult
+import akio.apps.common.feature.lifecycle.collectEventRepeatOnStarted
+import akio.apps.common.feature.viewmodel.viewModelProvider
+import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
 import akio.apps.myrun.feature.home.HomeActivity

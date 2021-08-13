@@ -1,13 +1,13 @@
 package akio.apps.myrun.feature.userprofile.impl
 
-import akio.apps._base.Resource
-import akio.apps.base.feature.lifecycle.Event
-import akio.apps.myrun.data.activity.ActivityLocalStorage
-import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.externalapp.model.ExternalAppToken
-import akio.apps.myrun.data.externalapp.model.ProviderToken
-import akio.apps.myrun.data.externalapp.model.RunningApp
-import akio.apps.myrun.data.userprofile.model.UserProfile
+import akio.apps.common.data.Resource
+import akio.apps.common.feature.lifecycle.Event
+import akio.apps.myrun.data.activity.api.ActivityLocalStorage
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
+import akio.apps.myrun.data.eapps.api.model.ProviderToken
+import akio.apps.myrun.data.eapps.api.model.RunningApp.Strava
+import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
 import akio.apps.myrun.domain.strava.RemoveStravaTokenUsecase
 import akio.apps.myrun.domain.user.GetProviderTokensUsecase
@@ -82,7 +82,7 @@ class UserProfileViewModelImpl @Inject constructor(
     override fun unlinkProvider(unlinkProviderToken: ProviderToken<out ExternalAppToken>) {
         launchCatching {
             when (unlinkProviderToken.runningApp) {
-                RunningApp.Strava -> deauthorizeStrava()
+                Strava -> deauthorizeStrava()
             }
         }
     }
