@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.activitydetail._di
 
-import akio.apps.base.feature.viewmodel.ViewModelFactoryProvider
-import akio.apps.base.wiring.DispatchersModule
+import akio.apps.common.feature.viewmodel.ViewModelFactoryProvider
+import akio.apps.common.wiring.DispatchersModule
 import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
 import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent

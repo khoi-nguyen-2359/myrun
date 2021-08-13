@@ -1,10 +1,10 @@
 package akio.apps.myrun.domain.strava
 
 import akio.apps._base.error.UnauthorizedUserError
-import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
-import akio.apps.myrun.data.externalapp.StravaDataRepository
-import akio.apps.myrun.data.externalapp.model.StravaRouteModel
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
+import akio.apps.myrun.data.eapps.api.StravaDataRepository
+import akio.apps.myrun.data.eapps.api.model.StravaRouteModel
 import javax.inject.Inject
 
 class GetStravaRoutesUsecase @Inject constructor(

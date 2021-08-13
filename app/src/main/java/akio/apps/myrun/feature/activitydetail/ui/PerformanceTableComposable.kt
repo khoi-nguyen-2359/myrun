@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
 import akio.apps.myrun.R
-import akio.apps.myrun.data.activity.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.feature.activitydetail.TrackingValueFormatter
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityData
@@ -51,12 +51,12 @@ fun PerformanceTableComposable(activity: Activity) = Column(Modifier.padding(5.d
 
 private fun createActivityFormatterList(activity: Activity): List<TrackingValueFormatter> =
     when (activity.activityType) {
-        ActivityType.Running -> listOf(
+        akio.apps.myrun.data.activity.api.model.ActivityType.Running -> listOf(
             TrackingValueFormatter.DistanceKm,
             TrackingValueFormatter.PaceMinutePerKm,
             TrackingValueFormatter.DurationHourMinuteSecond
         )
-        ActivityType.Cycling -> listOf(
+        akio.apps.myrun.data.activity.api.model.ActivityType.Cycling -> listOf(
             TrackingValueFormatter.DistanceKm,
             TrackingValueFormatter.SpeedKmPerHour,
             TrackingValueFormatter.DurationHourMinuteSecond
@@ -93,7 +93,7 @@ private fun PreviewTable() {
         activity = RunningActivity(
             activityData = ActivityData(
                 id = "id",
-                activityType = ActivityType.Running,
+                activityType = akio.apps.myrun.data.activity.api.model.ActivityType.Running,
                 name = "Evening Run",
                 routeImage = "http://example.com",
                 placeIdentifier = null,

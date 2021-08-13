@@ -5,12 +5,9 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk project.compileSdk
 
     defaultConfig {
-        minSdk 21
-        targetSdk 31
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -36,9 +33,9 @@ dependencies {
     api(project(":data:location:api"))
     implementation(project(":data:location:impl"))
 
-    implementation(project(":base:wiring"))
+    implementation(project(":common:wiring"))
 
-    implementation project(':places-sdk')
+    implementation project(':libs:places-sdk')
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)

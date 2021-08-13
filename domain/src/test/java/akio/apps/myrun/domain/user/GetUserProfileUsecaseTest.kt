@@ -1,11 +1,10 @@
 package akio.apps.myrun.domain.user
 
-import akio.apps._base.Resource
-import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.authentication.model.UserAccount
-import akio.apps.myrun.data.userprofile.UserProfileRepository
-import akio.apps.myrun.data.userprofile.model.Gender
-import akio.apps.myrun.data.userprofile.model.UserProfile
+import akio.apps.common.data.Resource
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.user.api.UserProfileRepository
+import akio.apps.myrun.data.user.api.model.Gender
+import akio.apps.myrun.data.user.api.model.UserProfile
 import app.cash.turbine.test
 import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -73,8 +72,8 @@ class GetUserProfileUsecaseTest {
         verify(mockedUserProfileRepository).getUserProfileFlow(defaultUserId)
     }
 
-    private fun createUserAccount(): UserAccount {
-        return UserAccount(
+    private fun createUserAccount(): akio.apps.myrun.data.authentication.api.model.UserAccount {
+        return akio.apps.myrun.data.authentication.api.model.UserAccount(
             defaultUserId,
             defaultEmail,
             defaultDisplayName,

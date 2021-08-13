@@ -1,21 +1,36 @@
 enableFeaturePreview("VERSION_CATALOGS")
 rootProject.name = "My Run"
-include(":test")
-include(":data")
+include(':features:base')
+include(':features:registration')
+include(':features:configurator')
+include(":libs:routeparser")
+include(":libs:places-sdk")
 include(":domain")
-include(":data-impl")
-include(":routeparser")
 include(":app")
-include(":places-sdk")
-include(':data-wiring')
-include(':feature:registration')
-include(':feature:base')
-include(':base:feature')
-include(':base:wiring')
-include(':feature:configurator')
-include ':data:tracking:api'
-include ':data:tracking:impl'
-include ':data:tracking:wiring'
-include ':data:location:api'
-include ':data:location:impl'
-include ':data:location:wiring'
+include(':common:feature')
+include(':common:wiring')
+include(':data:tracking:api')
+include(':data:tracking:impl')
+include(':data:tracking:wiring')
+include(':data:location:api')
+include(':data:location:impl')
+include(':data:location:wiring')
+include(':data:user:api')
+include ':data:user:impl'
+include ':common:data'
+include ':data:base'
+include ':data:user:wiring'
+include ':data:wiring'
+include ':data:activity:api'
+include ':data:activity:impl'
+include ':data:activity:wiring'
+include ':data:authentication:api'
+include ':data:authentication:impl'
+include ':data:authentication:wiring'
+include ':data:eapps:api'
+include ':data:eapps:impl'
+include ':data:eapps:wiring'
+include ':data:fitness:api'
+include ':data:fitness:impl'
+include ':data:fitness:wiring'
+include(":test")

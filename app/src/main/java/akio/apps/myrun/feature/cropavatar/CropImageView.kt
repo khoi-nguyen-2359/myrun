@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.cropavatar
 
-import akio.apps.base.feature.ui.dp2px
-import akio.apps.base.feature.ui.toRect
+import akio.apps.common.feature.ui.dp2px
+import akio.apps.common.feature.ui.toRect
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas

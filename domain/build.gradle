@@ -4,12 +4,9 @@ plugins {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion project.compileSdk
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 31
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -24,16 +21,22 @@ android {
     kotlinOptions {
         jvmTarget = "11"
         useIR = true
+        allWarningsAsErrors = true
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
     }
 }
 
 dependencies {
     // data
-    implementation project(":data")
     implementation project(":data:location:api")
     implementation project(":data:tracking:api")
+    implementation project(":data:user:api")
+    implementation project(":data:activity:api")
+    implementation project(":data:authentication:api")
+    implementation project(":data:eapps:api")
 
-    implementation project(":base:wiring")
+    implementation project(":common:data")
+    implementation project(":common:wiring")
 
     implementation(libs.androidMapUtils)
     implementation(libs.androidGoogleMap)

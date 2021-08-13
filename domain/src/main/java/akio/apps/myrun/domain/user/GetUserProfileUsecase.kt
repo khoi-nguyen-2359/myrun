@@ -1,9 +1,9 @@
 package akio.apps.myrun.domain.user
 
-import akio.apps._base.Resource
-import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.userprofile.UserProfileRepository
-import akio.apps.myrun.data.userprofile.model.UserProfile
+import akio.apps.common.data.Resource
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.user.api.UserProfileRepository
+import akio.apps.myrun.data.user.api.model.UserProfile
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf

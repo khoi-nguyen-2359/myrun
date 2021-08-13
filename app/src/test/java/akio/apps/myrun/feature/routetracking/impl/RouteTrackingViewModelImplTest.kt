@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps._base.InstantTaskExecutorTest
-import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.externalapp.ExternalAppProvidersRepository
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.STOPPED
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase

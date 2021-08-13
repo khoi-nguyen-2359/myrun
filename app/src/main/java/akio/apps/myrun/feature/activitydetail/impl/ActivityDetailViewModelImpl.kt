@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.activitydetail.impl
 
-import akio.apps._base.Resource
-import akio.apps.myrun.data.activity.ActivityRepository
-import akio.apps.myrun.data.authentication.UserAuthenticationState
-import akio.apps.myrun.data.recentplace.UserRecentPlaceRepository
+import akio.apps.common.data.Resource
+import akio.apps.myrun.data.activity.api.ActivityRepository
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.domain.recentplace.CreateActivityDisplayPlaceNameUsecase
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity

@@ -15,14 +15,14 @@ if (localPropsFile.exists()) {
 }
 
 android {
-    compileSdkVersion Versions.compileSdk
+    compileSdkVersion project.compileSdk
 
     defaultConfig {
-        applicationId Versions.appId
-        minSdkVersion Versions.minSdk
-        targetSdkVersion Versions.targetSdk
-        versionCode Versions.versionCode
-        versionName Versions.versionName
+        applicationId project.appId
+        minSdkVersion project.minSdk
+        targetSdkVersion project.targetSdk
+        versionCode project.versionCode
+        versionName project.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -91,22 +91,26 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // features
-    implementation project(':feature:base')
-    implementation project(':feature:registration')
-    implementation project(":feature:configurator")
+    implementation project(':features:base')
+    implementation project(':features:registration')
+    implementation project(":features:configurator")
 
     implementation(project(':domain'))
 
-    // data
-    implementation(project(':data-wiring'))
+    implementation(project(':data:wiring'))
+    implementation(project(':data:fitness:wiring'))
     implementation(project(':data:tracking:wiring'))
     implementation(project(':data:location:wiring'))
+    implementation(project(':data:user:wiring'))
+    implementation(project(':data:activity:wiring'))
+    implementation(project(':data:authentication:wiring'))
+    implementation(project(':data:eapps:wiring'))
 
-    implementation project(':base:wiring')
-    implementation project(':base:feature')
+    implementation project(':common:feature')
+    implementation project(':common:wiring')
+    implementation project(':common:data')
 
-    implementation project(':places-sdk')
+    implementation project(':libs:places-sdk')
 
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.kotlinxCoroutinesPlayServices)
@@ -136,7 +140,6 @@ dependencies {
 
     implementation(libs.multidex)
 
-    implementation(libs.playServicesLocation)
     implementation(libs.playServicesAuth)
     implementation(libs.playServicesFitness)
 

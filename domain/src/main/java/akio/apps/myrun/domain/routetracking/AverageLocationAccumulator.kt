@@ -1,12 +1,12 @@
 package akio.apps.myrun.domain.routetracking
 
+import akio.apps.common.data.time.TimeProvider
 import akio.apps.myrun.data.location.api.model.Location
-import akio.apps.myrun.data.time.TimeProvider
 import androidx.annotation.VisibleForTesting
 
 class AverageLocationAccumulator(
     private val accumulationPeriod: Long,
-    private val timeProvider: TimeProvider
+    private val timeProvider: TimeProvider,
 ) : LocationProcessor {
     private var lastDeliverTime: Long = 0L
     private val currentLocationBatch: MutableList<Location> = mutableListOf()
