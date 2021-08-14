@@ -4,7 +4,7 @@ import akio.apps.myrun.R
 import akio.apps.myrun.feature.home.ui.HomeScreenColors.uploadingBadgeContentColor
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.AppBarHeight
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.FabSize
-import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
+import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.ui.UserTimeline
 import akio.apps.myrun.ui.theme.AppColors
@@ -75,7 +75,7 @@ fun HomeScreen(
     onClickFloatingActionButton: () -> Unit,
     onClickActivityItemAction: (Activity) -> Unit,
     onClickActivityFileAction: (Activity) -> Unit,
-    onClickUserAvatar: (String) -> Unit
+    onClickUserAvatar: (String) -> Unit,
 ) {
     AppTheme {
         val topBarHeightDp = AppBarHeight + contentPaddings.calculateTopPadding()
@@ -187,7 +187,7 @@ private fun HomeTopBar(
     activityUploadBadge: UserTimelineViewModel.ActivityUploadBadgeStatus?,
     onClickUserProfileButton: () -> Unit,
     onClickUploadCompleteBadge: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
         TopAppBar(
@@ -210,7 +210,7 @@ private fun HomeTopBar(
 @Composable
 private fun ActivityUploadNotifierBadge(
     activityUploadBadge: UserTimelineViewModel.ActivityUploadBadgeStatus?,
-    onClickUploadCompleteBadge: () -> Unit
+    onClickUploadCompleteBadge: () -> Unit,
 ) {
     Crossfade(targetState = activityUploadBadge) {
         when (it) {

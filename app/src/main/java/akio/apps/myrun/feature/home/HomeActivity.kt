@@ -1,16 +1,15 @@
 package akio.apps.myrun.feature.home
 
 import akio.apps.common.feature.ui.px2dp
-import akio.apps.common.feature.viewmodel.viewModel
+import akio.apps.common.feature.viewmodel.viewModelProvider
 import akio.apps.myrun.R
 import akio.apps.myrun.feature.activitydetail.ActivityDetailActivity
 import akio.apps.myrun.feature.activityexport.ActivityExportService
 import akio.apps.myrun.feature.home._di.DaggerHomeFeatureComponent
-import akio.apps.myrun.feature.home._di.HomeFeatureComponent
 import akio.apps.myrun.feature.home.ui.HomeScreen
 import akio.apps.myrun.feature.routetracking.impl.LocationPermissionChecker
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
-import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
+import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import android.content.Context
 import android.content.Intent
@@ -30,11 +29,9 @@ import timber.log.Timber
 
 class HomeActivity : AppCompatActivity() {
 
-    private val homeFeatureComponent: HomeFeatureComponent by lazy {
-        DaggerHomeFeatureComponent.factory().create()
+    private val userTimelineViewModel: UserTimelineViewModel by viewModelProvider {
+        DaggerHomeFeatureComponent.factory().create().userFeedViewModel()
     }
-
-    private val userTimelineViewModel: UserTimelineViewModel by viewModel { homeFeatureComponent }
 
     private val locationPermissionChecker: LocationPermissionChecker =
         LocationPermissionChecker(activity = this)

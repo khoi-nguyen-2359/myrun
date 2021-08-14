@@ -54,7 +54,6 @@
     <string name="profile_save_button">Save Profile</string>
     <string name="profile_link_running_app_button">Connect to running app</string>
     <string name="error_invalid_display_name">Please type in your name</string>
-    <string name="edit_user_profile_link_running_app_success_message">You have successfully linked your account</string>
     <string name="profile_link_running_app_dialog_title">Select app to upload your activity</string>
     <string name="photo_selection_dialog_title">Update image from</string>
     <string name="edit_user_profile_session_expired_error_message">Your session has expired. You need to re-login first.</string>

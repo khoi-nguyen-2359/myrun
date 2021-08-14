@@ -7,7 +7,6 @@ import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
-import akio.apps.myrun.feature.editprofile.EditProfileViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking

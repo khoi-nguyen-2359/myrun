@@ -34,7 +34,6 @@ dependencies {
     implementation(libs.lifecycleProcess)
     implementation(libs.lifecycleCommonJava8)
     implementation(libs.fragment)
-    implementation(libs.javaXInject)
     implementation(libs.timber)
     implementation(libs.androidMaterial)
 }

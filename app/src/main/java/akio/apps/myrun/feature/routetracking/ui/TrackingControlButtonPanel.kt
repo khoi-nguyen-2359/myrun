@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.routetracking.ui
 import akio.apps.myrun.R
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
-import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
+import akio.apps.myrun.feature.routetracking.impl.RouteTrackingViewModel
 import akio.apps.myrun.ui.theme.AppColors
 import akio.apps.myrun.ui.theme.AppTheme
 import androidx.annotation.StringRes
@@ -54,7 +54,7 @@ private val CIRCULAR_CONTROL_BUTTON_SIZE = 90.dp
 fun TrackingControlButtonPanel(
     routeTrackingViewModel: RouteTrackingViewModel,
     onClickControlButton: (TrackingControlButtonType) -> Unit,
-    onClickMyLocation: () -> Unit
+    onClickMyLocation: () -> Unit,
 ) {
     val trackingStatus by routeTrackingViewModel.trackingStatus.observeAsState()
     // when entering the screen, initial location may not be available if location is not ready yet,
@@ -74,7 +74,7 @@ private fun TrackingControlButtonPanel(
     initialLocation: Location?,
     @RouteTrackingStatus trackingStatus: Int?,
     onClickControlButton: (TrackingControlButtonType) -> Unit,
-    onClickMyLocation: () -> Unit
+    onClickMyLocation: () -> Unit,
 ) = AppTheme {
     Box(
         contentAlignment = Alignment.Center,
@@ -131,7 +131,7 @@ private val mapTrackingStatusToControlButtonType = mapOf(
 
 enum class TrackingControlButtonType(
     @StringRes val label: Int,
-    val color: Color
+    val color: Color,
 ) {
     Start(
         label = R.string.action_start,
@@ -157,7 +157,7 @@ private fun CircularControlButton(
     color: Color,
     onClickAction: (() -> Unit)? = null,
     isClickable: Boolean = false,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) = Surface(
     elevation = 2.dp,
     modifier = Modifier

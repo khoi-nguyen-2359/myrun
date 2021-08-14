@@ -1,8 +1,7 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
-import akio.apps.common.data.Resource
 import akio.apps.myrun.R
-import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
+import akio.apps.myrun.feature.activitydetail.impl.ActivityDetailViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.ui.theme.AppTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -54,7 +53,7 @@ fun ActivityDetailScreen(
     onClickRouteImage: (encodedPolyline: String) -> Unit,
     onClickExportFile: (Activity) -> Unit,
     onClickUserAvatar: (String) -> Unit,
-    onClickBackButton: () -> Unit
+    onClickBackButton: () -> Unit,
 ) = AppTheme {
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
@@ -119,7 +118,7 @@ fun ActivityDetailScreen(
 private fun ActivityDetailTopBar(
     activityName: String?,
     onClickBackButton: () -> Unit,
-    onClickExportFile: () -> Unit
+    onClickExportFile: () -> Unit,
 ) {
     TopAppBar(
         title = { Text(text = activityName ?: "") },

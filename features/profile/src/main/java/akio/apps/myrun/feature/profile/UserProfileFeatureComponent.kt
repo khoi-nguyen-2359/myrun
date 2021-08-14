@@ -27,6 +27,7 @@ import dagger.Component
 )
 interface UserProfileFeatureComponent {
     fun userProfileViewModel(): UserProfileViewModel
+    fun linkStravaViewModel(): LinkStravaViewModel
 
     @Component.Factory
     interface Factory {

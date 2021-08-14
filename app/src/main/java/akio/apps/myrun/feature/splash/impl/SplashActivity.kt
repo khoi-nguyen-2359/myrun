@@ -4,7 +4,6 @@ import akio.apps.common.feature.lifecycle.collectEventRepeatOnStarted
 import akio.apps.common.feature.viewmodel.viewModelProvider
 import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 import akio.apps.myrun.feature.base.DialogDelegate
-import akio.apps.myrun.feature.editprofile.impl.EditProfileActivity
 import akio.apps.myrun.feature.home.HomeActivity
 import akio.apps.myrun.feature.registration.SignInActivity
 import akio.apps.myrun.feature.splash._di.DaggerSplashFeatureComponent
@@ -79,11 +78,12 @@ class SplashActivity : AppCompatActivity() {
         ) ?: return
 
         if (signInResult.isNewUser) {
-            @Suppress("DEPRECATION")
-            startActivityForResult(
-                EditProfileActivity.launchIntentForEditing(this),
-                RC_ON_BOARDING
-            )
+            // TODO: Open user profile for newly created user
+//            @Suppress("DEPRECATION")
+//            startActivityForResult(
+//                EditProfileActivity.launchIntentForEditing(this),
+//                RC_ON_BOARDING
+//            )
         } else {
             goHome()
         }

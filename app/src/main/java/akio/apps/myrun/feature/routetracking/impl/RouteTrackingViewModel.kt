@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.routetracking.impl
 
+import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun.data.activity.api.model.ActivityType
@@ -14,12 +15,12 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.routetracking.StoreTrackingActivityDataUsecase
-import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import android.app.Application
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import java.util.Calendar
@@ -30,7 +31,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class RouteTrackingViewModelImpl @Inject constructor(
+class RouteTrackingViewModel @Inject constructor(
     private val application: Application,
     private val getTrackedLocationsUsecase: GetTrackedLocationsUsecase,
     private val routeTrackingState: RouteTrackingState,
@@ -39,27 +40,28 @@ class RouteTrackingViewModelImpl @Inject constructor(
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val authenticationState: UserAuthenticationState,
     private val locationDataSource: LocationDataSource,
-    private val routeTrackingConfiguration: RouteTrackingConfiguration
-) : RouteTrackingViewModel() {
+    private val routeTrackingConfiguration: RouteTrackingConfiguration,
+    private val launchCatchingDelegate: LaunchCatchingDelegate
+) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
     // TODO: Will refactor this screen to Composable
-    override val isStopOptionDialogShowing: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isStopOptionDialogShowing: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
-    override fun getLastLocationFlow(): Flow<Location> =
+    fun getLastLocationFlow(): Flow<Location> =
         locationDataSource.getLastLocationFlow()
 
     private val _trackingLocationBatch = MutableLiveData<List<Location>>()
-    override val trackingLocationBatch: LiveData<List<Location>> =
+    val trackingLocationBatch: LiveData<List<Location>> =
         _trackingLocationBatch
 
     private val _trackingStats = MutableLiveData<RouteTrackingStats>()
-    override val trackingStats: LiveData<RouteTrackingStats> = _trackingStats
+    val trackingStats: LiveData<RouteTrackingStats> = _trackingStats
 
-    override val trackingStatus: LiveData<@RouteTrackingStatus Int> =
+    val trackingStatus: LiveData<@RouteTrackingStatus Int> =
         routeTrackingState.getTrackingStatusFlow().asLiveData()
 
     private val _activityType = MutableLiveData<ActivityType>()
-    override val activityType: LiveData<ActivityType> = _activityType
+    val activityType: LiveData<ActivityType> = _activityType
 
     private var trackingTimerJob: Job? = null
     private var processedLocationCount = 0
@@ -69,7 +71,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
         ActivityType.Cycling to R.string.activity_name_cycling
     )
 
-    override fun resumeDataUpdates() {
+    fun resumeDataUpdates() {
         if (trackingStatus.value == RouteTrackingStatus.RESUMED) {
             requestDataUpdates()
         }
@@ -82,8 +84,8 @@ class RouteTrackingViewModelImpl @Inject constructor(
         }
     }
 
-    override fun requestInitialData() {
-        launchCatching {
+    fun requestInitialData() {
+        viewModelScope.launchCatching {
             _activityType.value = routeTrackingState.getActivityType()
 
             processedLocationCount = 0
@@ -94,7 +96,7 @@ class RouteTrackingViewModelImpl @Inject constructor(
         }
     }
 
-    override suspend fun storeActivityData(routeMapImage: Bitmap) {
+    suspend fun storeActivityData(routeMapImage: Bitmap) {
         val activityType = activityType.value ?: return
         val activityName = makeActivityName(activityType)
         storeTrackingActivityDataUsecase(activityName, routeMapImage)
@@ -102,12 +104,12 @@ class RouteTrackingViewModelImpl @Inject constructor(
         clearRouteTrackingStateUsecase.clear()
     }
 
-    override suspend fun getLocationUpdate(): Flow<List<Location>> {
+    suspend fun getLocationUpdate(): Flow<List<Location>> {
         val locationRequest = getLocationRequestConfig()
         return locationDataSource.getLocationUpdate(locationRequest)
     }
 
-    override suspend fun getLocationRequestConfig(): LocationRequestConfig =
+    suspend fun getLocationRequestConfig(): LocationRequestConfig =
         routeTrackingConfiguration.getLocationRequestConfig().first()
 
     private fun makeActivityName(activityType: ActivityType): String {
@@ -147,26 +149,26 @@ class RouteTrackingViewModelImpl @Inject constructor(
         }
     }
 
-    override fun requestDataUpdates() {
+    fun requestDataUpdates() {
         trackingTimerJob?.cancel()
         trackingTimerJob = viewModelScope.flowTimer(0, TRACKING_TIMER_PERIOD) {
             notifyLatestDataUpdate()
         }
     }
 
-    override fun cancelDataUpdates() {
+    fun cancelDataUpdates() {
         trackingTimerJob?.cancel()
     }
 
-    override fun onSelectActivityType(activityType: ActivityType) {
+    fun onSelectActivityType(activityType: ActivityType) {
         _activityType.value = activityType
         viewModelScope.launch {
             routeTrackingState.setActivityType(activityType)
         }
     }
 
-    override fun discardActivity() {
-        launchCatching {
+    fun discardActivity() {
+        viewModelScope.launchCatching {
             clearRouteTrackingStateUsecase.clear()
         }
     }

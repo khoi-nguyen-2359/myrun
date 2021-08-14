@@ -2,7 +2,6 @@ package akio.apps.myrun.feature.profile
 
 import akio.apps.common.data.Resource
 import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
-import akio.apps.common.feature.viewmodel.LaunchCatchingDelegateImpl
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
@@ -13,7 +12,6 @@ import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
 import akio.apps.myrun.domain.strava.RemoveStravaTokenUsecase
 import akio.apps.myrun.domain.user.GetProviderTokensUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
-import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
@@ -33,7 +31,7 @@ class UserProfileViewModel @Inject constructor(
     private val logoutDelegate: UserLogoutDelegate,
     private val userAuthenticationState: UserAuthenticationState,
     private val activityLocalStorage: ActivityLocalStorage,
-    private val launchCatchingDelegate: LaunchCatchingDelegate
+    private val launchCatchingDelegate: LaunchCatchingDelegate,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
     private val userProfileResourceFlow = getUserProfileUsecase.getUserProfileFlow(params.userId)

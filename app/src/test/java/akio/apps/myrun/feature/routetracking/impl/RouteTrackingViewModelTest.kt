@@ -8,7 +8,6 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.STOPPED
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.routetracking.StoreTrackingActivityDataUsecase
-import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.test.wheneverBlocking
 import android.app.Application
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +21,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
 
 @ExperimentalCoroutinesApi
-class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
+class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
     @Mock
     lateinit var mockedAuthenticationState: UserAuthenticationState
 
@@ -77,7 +76,7 @@ class RouteTrackingViewModelImplTest : InstantTaskExecutorTest() {
         verifyBlocking(mockedRouteTrackingState) { getTrackingStatus() }
     }
 
-    private fun createViewModel() = RouteTrackingViewModelImpl(
+    private fun createViewModel() = RouteTrackingViewModel(
         mockedAppContext,
         mockedGetTrackedLocationsUsecase,
         mockedRouteTrackingState,
