@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.activitydetail
 
 import akio.apps.myrun.data.activity.api.ActivityRepository
-import akio.apps.myrun.feature.activitydetail.impl.ActivityDetailViewModelImpl
+import akio.apps.myrun.feature.activitydetail.impl.ActivityDetailViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import akio.apps.test.wheneverBlocking
@@ -25,8 +25,8 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalTime
 @ExperimentalCoroutinesApi
-class ActivityDetailViewModelImplTest {
-    private lateinit var viewModel: ActivityDetailViewModelImpl
+class ActivityDetailViewModelTest {
+    private lateinit var viewModel: ActivityDetailViewModel
     private lateinit var mockedActivityRepository: ActivityRepository
     private lateinit var mockedActivityModelMapper: ActivityModelMapper
 
@@ -41,7 +41,7 @@ class ActivityDetailViewModelImplTest {
         mockedActivityModelMapper = mock()
 
         val viewModelParams = ActivityDetailViewModel.Params(defaultActivityId)
-        viewModel = ActivityDetailViewModelImpl(
+        viewModel = ActivityDetailViewModel(
             viewModelParams,
             mockedActivityRepository,
             mockedActivityModelMapper,

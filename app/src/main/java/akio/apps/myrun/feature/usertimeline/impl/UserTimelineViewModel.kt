@@ -2,14 +2,13 @@ package akio.apps.myrun.feature.usertimeline.impl
 
 import akio.apps.common.feature.lifecycle.Event
 import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
-import akio.apps.common.feature.viewmodel.LaunchCatchingDelegateImpl
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.domain.recentplace.CreateActivityDisplayPlaceNameUsecase
-import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -25,20 +24,20 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
-class UserTimelineViewModelImpl @Inject constructor(
+class UserTimelineViewModel @Inject constructor(
     private val activityPagingSourceFactory: ActivityPagingSourceFactory,
     private val createActivityDisplayPlaceNameUsecase: CreateActivityDisplayPlaceNameUsecase,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
     private val userAuthenticationState: UserAuthenticationState,
     private val activityLocalStorage: ActivityLocalStorage,
     private val launchCatchingViewModel: LaunchCatchingDelegate,
-) : UserTimelineViewModel(), LaunchCatchingDelegate by launchCatchingViewModel {
+) : ViewModel(), LaunchCatchingDelegate by launchCatchingViewModel {
 
     private var activityPagingSource: ActivityPagingSource? = null
 
     private var lastActivityStorageCount: Int = -1
 
-    override val activityUploadBadge: Flow<ActivityUploadBadgeStatus> =
+    val activityUploadBadge: Flow<ActivityUploadBadgeStatus> =
         createActivityUploadBadgeStatusFlow()
 
     @OptIn(FlowPreview::class)
@@ -58,7 +57,7 @@ class UserTimelineViewModelImpl @Inject constructor(
             // there are 2 collectors so use shareIn
             .shareIn(viewModelScope, replay = 1, started = SharingStarted.WhileSubscribed())
 
-    override val myActivityList: Flow<PagingData<Activity>> = Pager(
+    val myActivityList: Flow<PagingData<Activity>> = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
             enablePlaceholders = false,
@@ -78,7 +77,7 @@ class UserTimelineViewModelImpl @Inject constructor(
     private var userRecentPlaceIdentifier: PlaceIdentifier? = null
 
     private val isLoadingInitialDataMutable: MutableStateFlow<Boolean> = MutableStateFlow(true)
-    override val isLoadingInitialData: Flow<Boolean> = isLoadingInitialDataMutable
+    val isLoadingInitialData: Flow<Boolean> = isLoadingInitialDataMutable
 
     init {
         loadInitialData()
@@ -91,11 +90,11 @@ class UserTimelineViewModelImpl @Inject constructor(
         }
     }
 
-    override fun reloadFeedData() {
+    fun reloadFeedData() {
         activityPagingSource?.invalidate()
     }
 
-    override fun getActivityDisplayPlaceName(activity: Activity): String {
+    fun getActivityDisplayPlaceName(activity: Activity): String {
         val activityPlaceIdentifier = activity.placeIdentifier ?: return ""
         val activityId = activity.id
         var placeName = mapActivityIdToPlaceName[activityId]
@@ -123,6 +122,12 @@ class UserTimelineViewModelImpl @Inject constructor(
                     userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
             }
         }
+
+    sealed class ActivityUploadBadgeStatus {
+        class InProgress(val activityCount: Int) : ActivityUploadBadgeStatus()
+        object Complete : ActivityUploadBadgeStatus()
+        object Hidden : ActivityUploadBadgeStatus()
+    }
 
     companion object {
         const val PAGE_SIZE = 6

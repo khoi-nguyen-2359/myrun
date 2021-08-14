@@ -1,12 +1,10 @@
-package akio.apps.myrun.feature.strava.impl
+package akio.apps.myrun.feature.profile
 
-import akio.apps.common.feature.lifecycle.observe
+import akio.apps.common.feature.lifecycle.collectEventRepeatOnStarted
+import akio.apps.common.feature.lifecycle.collectRepeatOnStarted
 import akio.apps.common.feature.lifecycle.observeEvent
-import akio.apps.common.feature.viewmodel.viewModel
-import akio.apps.myrun.R
-import akio.apps.myrun.feature.strava.LinkStravaViewModel
-import akio.apps.myrun.feature.strava._di.DaggerStravaFeatureComponent
-import akio.apps.myrun.feature.profile.LinkStravaDelegate
+import akio.apps.common.feature.viewmodel.viewModelProvider
+import akio.apps.myrun.feature.base.DialogDelegate
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -18,19 +16,22 @@ import androidx.appcompat.app.AppCompatActivity
  */
 class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.EventListener {
 
-    private val dialogDelegate = akio.apps.myrun.feature.base.DialogDelegate(this)
+    private val dialogDelegate = DialogDelegate(this)
     private val linkStravaDelegate by lazy { LinkStravaDelegate(this, this) }
 
-    private val linkStravaViewModel: LinkStravaViewModel by viewModel {
-        DaggerStravaFeatureComponent.factory().create()
+    private val linkStravaViewModel: LinkStravaViewModel by viewModelProvider {
+        DaggerLinkStravaComponent.factory().create().linkStravaViewModel()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         linkStravaDelegate.checkStravaLoginResult(intent)
-        observe(linkStravaViewModel.isInProgress, dialogDelegate::toggleProgressDialog)
-        observeEvent(linkStravaViewModel.error) {
+        collectRepeatOnStarted(
+            linkStravaViewModel.isInProgress,
+            dialogDelegate::toggleProgressDialog
+        )
+        collectEventRepeatOnStarted(linkStravaViewModel.error) {
             Toast.makeText(this, it.message, Toast.LENGTH_LONG)
                 .show()
             finish()

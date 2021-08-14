@@ -1,23 +1,26 @@
-package akio.apps.myrun.feature.strava.impl
+package akio.apps.myrun.feature.profile
 
 import akio.apps.common.feature.lifecycle.Event
+import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
 import akio.apps.myrun.domain.strava.ExchangeStravaLoginCodeUsecase
 import akio.apps.myrun.domain.strava.UpdateStravaTokenUsecase
-import akio.apps.myrun.feature.strava.LinkStravaViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 
-class LinkStravaViewModelImpl @Inject constructor(
+class LinkStravaViewModel @Inject constructor(
     private val exchangeStravaLoginCodeUsecase: ExchangeStravaLoginCodeUsecase,
     private val updateStravaTokenUsecase: UpdateStravaTokenUsecase,
-) : LinkStravaViewModel() {
+    private val launchCatchingDelegate: LaunchCatchingDelegate
+) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
     private val _stravaTokenExchangedSuccess = MutableLiveData<Event<Unit>>()
-    override val stravaTokenExchangedSuccess: LiveData<Event<Unit>> = _stravaTokenExchangedSuccess
+    val stravaTokenExchangedSuccess: LiveData<Event<Unit>> = _stravaTokenExchangedSuccess
 
-    override fun exchangeStravaToken(stravaLoginCode: String) {
-        launchCatching {
+    fun exchangeStravaToken(stravaLoginCode: String) {
+        viewModelScope.launchCatching {
             val stravaToken =
                 exchangeStravaLoginCodeUsecase.exchangeStravaLoginCode(stravaLoginCode)
             updateStravaTokenUsecase.updateStravaToken(stravaToken)

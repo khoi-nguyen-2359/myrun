@@ -1,6 +1,5 @@
-package akio.apps.myrun.feature.strava._di
+package akio.apps.myrun.feature.profile
 
-import akio.apps.common.wiring.DispatchersModule
 import akio.apps.common.wiring.FeatureScope
 import akio.apps.common.wiring.LaunchCatchingModule
 import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
@@ -9,14 +8,12 @@ import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.eapps.wiring.DaggerExternalAppDataComponent
 import akio.apps.myrun.data.eapps.wiring.ExternalAppDataComponent
-import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
 import dagger.Component
 
 @FeatureScope
 @Component(
     modules = [
-        LaunchCatchingModule::class,
-        DispatchersModule::class
+        LaunchCatchingModule::class
     ],
     dependencies = [
         ActivityDataComponent::class,
@@ -24,8 +21,8 @@ import dagger.Component
         ExternalAppDataComponent::class
     ]
 )
-interface StravaFeatureComponent {
-    fun inject(uploadStravaFileWorker: UploadStravaFileWorker)
+interface LinkStravaComponent {
+    fun linkStravaViewModel(): LinkStravaViewModel
 
     @Component.Factory
     interface Factory {
@@ -35,6 +32,6 @@ interface StravaFeatureComponent {
                 DaggerAuthenticationDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =
                 DaggerExternalAppDataComponent.factory().create(),
-        ): StravaFeatureComponent
+        ): LinkStravaComponent
     }
 }

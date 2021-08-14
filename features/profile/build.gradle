@@ -43,6 +43,7 @@ dependencies {
     implementation(project(':common:data'))
     implementation(project(':common:feature'))
 
+    implementation(libs.androidXAppCompat)
     implementation(libs.timber)
     implementation(libs.javaXInject)
     implementation(libs.lifecycleViewModelKtx)

@@ -2,7 +2,6 @@ package akio.apps.myrun.feature.splash.impl
 
 import akio.apps.common.feature.lifecycle.Event
 import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
-import akio.apps.common.feature.viewmodel.LaunchCatchingDelegateImpl
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
