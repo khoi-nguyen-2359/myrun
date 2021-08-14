@@ -1,7 +1,6 @@
-package akio.apps.myrun._base.notification
+package akio.apps.myrun.feature.base
 
-import akio.apps.myrun.feature.base.AppNotificationChannel
-import kotlin.test.assertFalse
+import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class AppNotificationChannelTest {

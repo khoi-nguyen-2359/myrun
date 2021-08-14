@@ -5,7 +5,6 @@ import akio.apps.myrun.feature.activitydetail._di.DaggerActivityDetailFeatureCom
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.activityexport.ActivityExportService
 import akio.apps.myrun.feature.activityroutemap.ui.ActivityRouteMapActivity
-import akio.apps.myrun.feature.userprofile.impl.UserProfileFragment
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import android.content.Context
 import android.content.Intent
@@ -13,6 +12,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import timber.log.Timber
 
 class ActivityDetailActivity : AppCompatActivity() {
     private val extActivityId: String by lazy { intent.getStringExtra(EXT_ACTIVITY_ID).orEmpty() }
@@ -38,8 +38,11 @@ class ActivityDetailActivity : AppCompatActivity() {
         activityDetailViewModel.loadActivityDetails()
     }
 
-    private fun openUserProfile(userId: String) =
-        startActivity(UserProfileFragment.intentForUserId(this, userId))
+    private fun openUserProfile(userId: String) {
+        Timber.d(userId)
+        // TODO: Open user profile screen with user id
+//        startActivity(UserProfileFragment.intentForUserId(this, userId))
+    }
 
     private fun startActivityExportService(activity: Activity) {
         val intent = ActivityExportService.createAddActivityIntent(

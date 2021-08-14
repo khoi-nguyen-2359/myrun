@@ -10,7 +10,6 @@ import akio.apps.myrun.feature.home._di.HomeFeatureComponent
 import akio.apps.myrun.feature.home.ui.HomeScreen
 import akio.apps.myrun.feature.routetracking.impl.LocationPermissionChecker
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
-import akio.apps.myrun.feature.userprofile.impl.UserProfileFragment
 import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import android.content.Context
@@ -27,6 +26,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class HomeActivity : AppCompatActivity() {
 
@@ -83,13 +83,16 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun openUserProfile(userId: String) {
-        val launchIntent = UserProfileFragment.intentForUserId(this, userId)
-        startActivity(launchIntent)
+        Timber.d(userId)
+        // TODO: Open user profile screen with user id
+//        val launchIntent = UserProfileFragment.intentForUserId(this, userId)
+//        startActivity(launchIntent)
     }
 
     private fun openCurrentUserProfile() {
-        val launchIntent = UserProfileFragment.intentForCurrentUser(this)
-        startActivity(launchIntent)
+        // TODO: Open user profile screen with current user
+//        val launchIntent = UserProfileFragment.intentForCurrentUser(this)
+//        startActivity(launchIntent)
     }
 
     private fun openRouteTrackingOrCheckRequiredPermission() {

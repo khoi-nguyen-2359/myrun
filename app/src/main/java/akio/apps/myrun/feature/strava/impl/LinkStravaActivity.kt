@@ -6,7 +6,7 @@ import akio.apps.common.feature.viewmodel.viewModel
 import akio.apps.myrun.R
 import akio.apps.myrun.feature.strava.LinkStravaViewModel
 import akio.apps.myrun.feature.strava._di.DaggerStravaFeatureComponent
-import akio.apps.myrun.feature.userprofile.impl.LinkStravaDelegate
+import akio.apps.myrun.feature.profile.LinkStravaDelegate
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
