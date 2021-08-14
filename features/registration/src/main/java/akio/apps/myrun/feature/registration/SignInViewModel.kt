@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.filterNotNull
 class SignInViewModel @Inject constructor(
     private val signInManager: SignInManager,
     private val postSignInUsecase: PostSignInUsecase,
-    private val launchCatching: LaunchCatchingDelegateImpl
+    private val launchCatching: LaunchCatchingDelegate
 ) : ViewModel(), LaunchCatchingDelegate by launchCatching {
 
     private val _signInSuccessResult = MutableStateFlow<Event<SignInSuccessResult>?>(null)

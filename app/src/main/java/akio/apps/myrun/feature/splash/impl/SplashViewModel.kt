@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.filterNotNull
 
 class SplashViewModel @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
-    private val launchCatchingDelegate: LaunchCatchingDelegateImpl = LaunchCatchingDelegateImpl()
+    private val launchCatchingDelegate: LaunchCatchingDelegate,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
     private val _isUserSignedIn = MutableStateFlow<Event<Boolean>?>(null)

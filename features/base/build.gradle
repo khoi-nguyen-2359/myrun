@@ -30,4 +30,6 @@ android {
 dependencies {
     implementation(project(":common:feature"))
     implementation(libs.androidXAppCompat)
+
+    testImplementation(libs.junit)
 }

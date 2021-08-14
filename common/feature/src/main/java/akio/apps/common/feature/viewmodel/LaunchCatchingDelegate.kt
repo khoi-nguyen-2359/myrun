@@ -1,7 +1,6 @@
 package akio.apps.common.feature.viewmodel
 
 import akio.apps.common.feature.lifecycle.Event
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +17,7 @@ interface LaunchCatchingDelegate {
     )
 }
 
-class LaunchCatchingDelegateImpl @Inject constructor() : LaunchCatchingDelegate {
+class LaunchCatchingDelegateImpl : LaunchCatchingDelegate {
     private val _error: MutableStateFlow<Event<Exception>> = MutableStateFlow(Event(null))
     override val error: StateFlow<Event<Exception>> = _error
 

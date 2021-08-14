@@ -1,6 +1,5 @@
-package akio.apps.myrun.feature.userprofile.impl
+package akio.apps.myrun.feature.profile
 
-import akio.apps.myrun.R
 import android.app.Activity
 import android.content.Context
 import android.content.Intent

@@ -31,7 +31,7 @@ class UserTimelineViewModelImpl @Inject constructor(
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
     private val userAuthenticationState: UserAuthenticationState,
     private val activityLocalStorage: ActivityLocalStorage,
-    private val launchCatchingViewModel: LaunchCatchingDelegateImpl = LaunchCatchingDelegateImpl(),
+    private val launchCatchingViewModel: LaunchCatchingDelegate,
 ) : UserTimelineViewModel(), LaunchCatchingDelegate by launchCatchingViewModel {
 
     private var activityPagingSource: ActivityPagingSource? = null

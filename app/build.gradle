@@ -94,6 +94,7 @@ dependencies {
     implementation project(':features:base')
     implementation project(':features:registration')
     implementation project(":features:configurator")
+    implementation project(":features:profile")
 
     implementation(project(':domain'))
 

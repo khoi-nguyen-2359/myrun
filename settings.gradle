@@ -34,3 +34,4 @@ include ':data:fitness:api'
 include ':data:fitness:impl'
 include ':data:fitness:wiring'
 include(":test")
+include ':features:profile'

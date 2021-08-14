@@ -29,10 +29,23 @@ android {
 }
 
 dependencies {
+    implementation(project(':features:base'))
+
+    implementation(project(':domain'))
+
+    implementation(project(':data:user:wiring'))
+    implementation(project(':data:eapps:wiring'))
+    implementation(project(':data:authentication:wiring'))
+    implementation(project(':data:activity:wiring'))
+    implementation(project(':data:tracking:wiring'))
+
+    implementation(project(':common:wiring'))
+    implementation(project(':common:data'))
     implementation(project(':common:feature'))
 
+    implementation(libs.timber)
+    implementation(libs.javaXInject)
     implementation(libs.lifecycleViewModelKtx)
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
-    implementation(libs.kotlinxCoroutinesCore)
 }
