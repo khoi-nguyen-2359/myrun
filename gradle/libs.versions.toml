@@ -25,7 +25,7 @@ splashScreen = "1.0.0-alpha01"
 compose = "1.0.1"
 composeConstraintLayout = "1.0.0-beta01"
 pagingCompose = "1.0.0-alpha12"
-accompanist = "0.16.0"
+accompanist = "0.16.1"
 composeNavigation = "2.4.0-alpha06"
 
 # google play services: https://developers.google.com/android/guides/releases
@@ -105,6 +105,7 @@ composeActivity = { module = "androidx.activity:activity-compose", version.ref =
 composePaging = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 coilCompose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 accompanistPlaceholder = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanist" }
+accompanistInsets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
 composeNavigation = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
 
 # dagger
