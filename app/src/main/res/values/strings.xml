@@ -70,7 +70,6 @@
     <string name="profile_link_to_fb_button">Link to Facebook</string>
     <string name="user_profile_hint_phone">Mobile number</string>
     <string name="user_timeline_title">Timeline</string>
-    <string name="user_profile_title">Profile</string>
     <string name="edit_user_profile_mobile_number_update_success_message">Your phone number has been changed</string>
     <string name="action_no">No</string>
     <string name="action_sign_out">Sign out</string>

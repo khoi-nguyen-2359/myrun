@@ -1,4 +1,4 @@
-package akio.apps.myrun.ui.theme
+package akio.apps.myrun.feature.base.ui
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.lightColors

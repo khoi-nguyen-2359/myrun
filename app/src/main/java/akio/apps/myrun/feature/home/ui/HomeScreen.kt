@@ -1,15 +1,16 @@
 package akio.apps.myrun.feature.home.ui
 
 import akio.apps.myrun.R
+import akio.apps.myrun.feature.base.ui.AppBarIconButton
+import akio.apps.myrun.feature.base.ui.AppColors
+import akio.apps.myrun.feature.base.ui.AppDimensions
+import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.home.ui.HomeScreenColors.uploadingBadgeContentColor
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.AppBarHeight
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.FabSize
 import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.ui.UserTimeline
-import akio.apps.myrun.ui.theme.AppColors
-import akio.apps.myrun.ui.theme.AppDimensions
-import akio.apps.myrun.ui.theme.AppTheme
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,7 +26,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -44,7 +44,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -55,6 +54,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 
@@ -69,13 +70,12 @@ object HomeScreenColors {
 
 @Composable
 fun HomeScreen(
-    userTimelineViewModel: UserTimelineViewModel,
     contentPaddings: PaddingValues,
-    onClickUserProfileButton: () -> Unit,
     onClickFloatingActionButton: () -> Unit,
     onClickActivityItemAction: (Activity) -> Unit,
-    onClickActivityFileAction: (Activity) -> Unit,
-    onClickUserAvatar: (String) -> Unit,
+    onClickExportActivityFile: (Activity) -> Unit,
+    navController: NavController,
+    userTimelineViewModel: UserTimelineViewModel,
 ) {
     AppTheme {
         val topBarHeightDp = AppBarHeight + contentPaddings.calculateTopPadding()
@@ -113,12 +113,12 @@ fun HomeScreen(
                 ),
                 feedListState,
                 onClickActivityItemAction,
-                onClickActivityFileAction,
-                onClickUserAvatar
+                onClickExportActivityFile,
+                navController
             )
             HomeTopBar(
                 activityStorageCount,
-                onClickUserProfileButton,
+                navController,
                 { coroutineScope.launch { feedListState.animateScrollToItem(0) } },
                 Modifier
                     .height(topBarHeightDp)
@@ -185,7 +185,7 @@ private fun PreviewUploadingBadge() = UploadInProgressBadge(count = 3)
 @Composable
 private fun HomeTopBar(
     activityUploadBadge: UserTimelineViewModel.ActivityUploadBadgeStatus?,
-    onClickUserProfileButton: () -> Unit,
+    navController: NavController,
     onClickUploadCompleteBadge: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -201,7 +201,11 @@ private fun HomeTopBar(
             },
             actions = {
                 ActivityUploadNotifierBadge(activityUploadBadge, onClickUploadCompleteBadge)
-                AppBarIconButton(onClickUserProfileButton, Icons.Rounded.Settings)
+                AppBarIconButton(Icons.Rounded.Settings) {
+                    navController.navigate(
+                        MainNavigationDestination.Profile.routeWithUserId(null)
+                    )
+                }
             }
         )
     }
@@ -234,12 +238,11 @@ private fun UploadCompleteBadge(onClickUploadCompleteBadge: () -> Unit) {
         return
     }
     AppBarIconButton(
-        onClick = {
-            onClickUploadCompleteBadge()
-            isDismissed = true
-        },
         iconImageVector = Icons.Sharp.CheckCircleOutline
-    )
+    ) {
+        onClickUploadCompleteBadge()
+        isDismissed = true
+    }
 }
 
 @Composable
@@ -251,20 +254,10 @@ private fun HomeFloatingActionButton(onClick: () -> Unit, modifier: Modifier = M
         )
     }
 
-@Composable
-private fun AppBarIconButton(onClick: () -> Unit, iconImageVector: ImageVector) =
-    IconButton(onClick = onClick) {
-        Icon(
-            tint = Color.White,
-            imageVector = iconImageVector,
-            contentDescription = "User profile icon button on bottom bar"
-        )
-    }
-
 @Preview
 @Composable
 private fun PreviewTopBar() = HomeTopBar(
     activityUploadBadge = UserTimelineViewModel.ActivityUploadBadgeStatus.Complete,
-    {},
+    rememberNavController(),
     {}
 )

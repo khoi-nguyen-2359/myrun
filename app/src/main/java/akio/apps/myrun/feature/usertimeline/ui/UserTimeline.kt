@@ -5,6 +5,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.feature.activitydetail.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.activitydetail.TrackingValueFormatter
 import akio.apps.myrun.feature.activitydetail.ui.ActivityRouteImage
+import akio.apps.myrun.feature.home.ui.MainNavigationDestination
 import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityData
@@ -65,6 +66,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -91,7 +93,7 @@ fun UserTimeline(
     feedListState: LazyListState,
     onClickActivityAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit,
-    onClickUserAvatar: (String) -> Unit,
+    navController: NavController
 ) {
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
     Timber.d("feed source load state ${lazyPagingItems.loadState.source}")
@@ -118,7 +120,7 @@ fun UserTimeline(
             lazyPagingItems,
             onClickActivityAction,
             onClickExportActivityFile,
-            onClickUserAvatar
+            navController
         )
     }
 }
@@ -131,7 +133,7 @@ private fun UserTimelineActivityList(
     lazyPagingItems: LazyPagingItems<Activity>,
     onClickActivityAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit,
-    onClickUserAvatar: (String) -> Unit,
+    navController: NavController
 ) {
     Timber.d("render UserTimelineActivityList pagingItems=$lazyPagingItems")
     LazyColumn(
@@ -153,7 +155,12 @@ private fun UserTimelineActivityList(
                 TimelineActivityItem(
                     activity, activityDisplayPlaceName, onClickActivityAction,
                     { onClickExportActivityFile(activity) },
-                    { onClickUserAvatar(activity.athleteInfo.userId) }
+                    {
+                        val route = MainNavigationDestination.Profile.routeWithUserId(
+                            activity.athleteInfo.userId
+                        )
+                        navController.navigate(route)
+                    }
                 )
             }
         }

@@ -32,7 +32,7 @@ interface UserProfileFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            @BindsInstance params: UserProfileViewModel.Params,
+            @BindsInstance arguments: UserProfileViewModel.Arguments,
             activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
             authenticationDataComponent: AuthenticationDataComponent =

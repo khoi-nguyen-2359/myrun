@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.profile
 import akio.apps.common.feature.lifecycle.collectEventRepeatOnStarted
 import akio.apps.common.feature.lifecycle.collectRepeatOnStarted
 import akio.apps.common.feature.lifecycle.observeEvent
-import akio.apps.common.feature.viewmodel.viewModelProvider
+import akio.apps.common.feature.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.feature.base.DialogDelegate
 import android.content.Intent
 import android.os.Bundle
@@ -19,7 +19,7 @@ class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.EventListener
     private val dialogDelegate = DialogDelegate(this)
     private val linkStravaDelegate by lazy { LinkStravaDelegate(this, this) }
 
-    private val linkStravaViewModel: LinkStravaViewModel by viewModelProvider {
+    private val linkStravaViewModel: LinkStravaViewModel by lazyViewModelProvider {
         DaggerLinkStravaComponent.factory().create().linkStravaViewModel()
     }
 

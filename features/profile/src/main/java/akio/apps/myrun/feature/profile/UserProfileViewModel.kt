@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.shareIn
 
 class UserProfileViewModel @Inject constructor(
-    private val params: Params,
+    private val arguments: Arguments,
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val getProviderTokensUsecase: GetProviderTokensUsecase,
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
@@ -34,7 +34,7 @@ class UserProfileViewModel @Inject constructor(
     private val launchCatchingDelegate: LaunchCatchingDelegate,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
-    private val userProfileResourceFlow = getUserProfileUsecase.getUserProfileFlow(params.userId)
+    private val userProfileResourceFlow = getUserProfileUsecase.getUserProfileFlow(arguments.userId)
         .shareIn(viewModelScope, SharingStarted.WhileSubscribed(), 1)
     val userProfileFlow: Flow<UserProfile> = userProfileResourceFlow.mapNotNull { it.data }
     val userProfileErrorFlow: Flow<Throwable> = userProfileResourceFlow.mapNotNull {
@@ -54,8 +54,8 @@ class UserProfileViewModel @Inject constructor(
         activityLocalStorage.getActivityStorageDataCountFlow().first()
 
     fun isCurrentUser(): Boolean =
-        params.userId == userAuthenticationState.getUserAccountId() ||
-            params.userId == null
+        arguments.userId == userAuthenticationState.getUserAccountId() ||
+            arguments.userId == null
 
     fun unlinkProvider(unlinkProviderToken: ProviderToken<out ExternalAppToken>) {
         viewModelScope.launchCatching {
@@ -73,5 +73,5 @@ class UserProfileViewModel @Inject constructor(
 //            .cancelUniqueWork(UploadStravaFileWorker.UNIQUE_WORK_NAME)
     }
 
-    data class Params(val userId: String?)
+    data class Arguments(val userId: String?)
 }

@@ -6,7 +6,7 @@ import akio.apps.common.feature.lifecycle.observe
 import akio.apps.common.feature.ui.dp2px
 import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
 import akio.apps.common.feature.viewmodel.LaunchCatchingDelegateImpl
-import akio.apps.common.feature.viewmodel.viewModelProvider
+import akio.apps.common.feature.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.LatLngBoundsBuilder
 import akio.apps.myrun._base.utils.LocationServiceChecker
@@ -83,7 +83,7 @@ class RouteTrackingActivity(
 
     private val viewBinding by lazy { ActivityRouteTrackingBinding.inflate(layoutInflater) }
 
-    private val routeTrackingViewModel: RouteTrackingViewModel by viewModelProvider {
+    private val routeTrackingViewModel: RouteTrackingViewModel by lazyViewModelProvider {
         DaggerRouteTrackingFeatureComponent.factory().create().routeTrackingViewModel()
     }
 
