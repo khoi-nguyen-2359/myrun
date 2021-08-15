@@ -98,7 +98,7 @@ fun UserTimeline(
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
     Timber.d("feed source load state ${lazyPagingItems.loadState.source}")
     val isLoadingInitialData by userTimelineViewModel.isLoadingInitialData
-        .collectAsState(initial = true)
+        .collectAsState(initial = false)
     when {
         isLoadingInitialData ||
             (

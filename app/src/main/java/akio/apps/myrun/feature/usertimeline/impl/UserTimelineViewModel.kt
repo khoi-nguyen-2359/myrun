@@ -13,6 +13,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class UserTimelineViewModel @Inject constructor(
     private val activityPagingSourceFactory: ActivityPagingSourceFactory,
@@ -64,10 +66,13 @@ class UserTimelineViewModel @Inject constructor(
             prefetchDistance = PAGE_SIZE
         ),
         initialKey = System.currentTimeMillis()
-    ) { recreateActivityPagingSource() }.flow
+    ) { recreateActivityPagingSource() }
+        .flow
+        .cachedIn(viewModelScope)
 
     private fun recreateActivityPagingSource(): ActivityPagingSource =
         activityPagingSourceFactory().also {
+            Timber.d("recreateActivityPagingSource")
             activityPagingSource = it
         }
 
@@ -90,7 +95,8 @@ class UserTimelineViewModel @Inject constructor(
         }
     }
 
-    fun reloadFeedData() {
+    private fun reloadFeedData() {
+        Timber.d("reloadFeedData")
         activityPagingSource?.invalidate()
     }
 
