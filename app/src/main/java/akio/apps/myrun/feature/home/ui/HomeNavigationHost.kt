@@ -24,18 +24,18 @@ fun HomeNavigationHost(
         navController = navController,
         startDestination = MainNavigationDestination.Home.route
     ) {
-        homeDestination(
+        addHomeDestination(
             onClickFloatingActionButton,
             onClickActivityItemAction,
             onClickExportActivityFile,
             navController
         )
 
-        profileDestination(navController)
+        addProfileDestination(navController)
     }
 }
 
-private fun NavGraphBuilder.profileDestination(navController: NavHostController) {
+private fun NavGraphBuilder.addProfileDestination(navController: NavHostController) {
     composable(
         route = MainNavigationDestination.Profile.routeWithArguments,
         arguments = MainNavigationDestination.Profile.arguments
@@ -48,7 +48,7 @@ private fun NavGraphBuilder.profileDestination(navController: NavHostController)
     }
 }
 
-private fun NavGraphBuilder.homeDestination(
+private fun NavGraphBuilder.addHomeDestination(
     onClickFloatingActionButton: () -> Unit,
     onClickActivityItemAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit,
