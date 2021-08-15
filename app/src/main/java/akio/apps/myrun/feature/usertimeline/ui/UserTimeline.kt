@@ -5,7 +5,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.feature.activitydetail.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.activitydetail.TrackingValueFormatter
 import akio.apps.myrun.feature.activitydetail.ui.ActivityRouteImage
-import akio.apps.myrun.feature.home.ui.MainNavigationDestination
+import akio.apps.myrun.feature.home.ui.HomeNavigationDestination
 import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityData
@@ -156,7 +156,7 @@ private fun UserTimelineActivityList(
                     activity, activityDisplayPlaceName, onClickActivityAction,
                     { onClickExportActivityFile(activity) },
                     {
-                        val route = MainNavigationDestination.Profile.routeWithUserId(
+                        val route = HomeNavigationDestination.Profile.routeWithUserId(
                             activity.athleteInfo.userId
                         )
                         navController.navigate(route)

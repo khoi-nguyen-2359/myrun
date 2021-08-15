@@ -86,7 +86,7 @@ fun HomeScreen(
     var topBarOffsetY by remember { mutableStateOf(0f) }
     var fabOffsetY by remember { mutableStateOf(0f) }
 
-    // insets may be updated
+    // insets may be updated, so remember scroll connection with keys
     val nestedScrollConnection = remember(topBarHeightPx, fabBoxSizePx) {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
@@ -205,7 +205,7 @@ private fun HomeTopBar(
                 ActivityUploadNotifierBadge(activityUploadBadge, onClickUploadCompleteBadge)
                 AppBarIconButton(Icons.Rounded.Settings) {
                     navController.navigate(
-                        MainNavigationDestination.Profile.routeWithUserId(null)
+                        HomeNavigationDestination.Profile.routeWithUserId(null)
                     )
                 }
             }
