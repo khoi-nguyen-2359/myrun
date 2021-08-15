@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.routetracking.ui
 
 import akio.apps.myrun.R
+import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingViewModel
-import akio.apps.myrun.ui.theme.AppTheme
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.ExperimentalMaterialApi

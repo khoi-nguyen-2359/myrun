@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.activitydetail
 
-import akio.apps.common.feature.viewmodel.viewModelProvider
+import akio.apps.common.feature.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.feature.activitydetail._di.DaggerActivityDetailFeatureComponent
 import akio.apps.myrun.feature.activitydetail.impl.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
@@ -18,7 +18,7 @@ import timber.log.Timber
 class ActivityDetailActivity : AppCompatActivity() {
     private val extActivityId: String by lazy { intent.getStringExtra(EXT_ACTIVITY_ID).orEmpty() }
 
-    private val activityDetailViewModel: ActivityDetailViewModel by viewModelProvider {
+    private val activityDetailViewModel: ActivityDetailViewModel by lazyViewModelProvider {
         DaggerActivityDetailFeatureComponent.factory()
             .create(ActivityDetailViewModel.Params(extActivityId))
             .activityDetailsViewModel()

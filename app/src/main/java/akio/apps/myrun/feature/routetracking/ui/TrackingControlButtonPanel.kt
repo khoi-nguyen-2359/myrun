@@ -3,9 +3,9 @@ package akio.apps.myrun.feature.routetracking.ui
 import akio.apps.myrun.R
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
+import akio.apps.myrun.feature.base.ui.AppColors
+import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingViewModel
-import akio.apps.myrun.ui.theme.AppColors
-import akio.apps.myrun.ui.theme.AppTheme
 import androidx.annotation.StringRes
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize

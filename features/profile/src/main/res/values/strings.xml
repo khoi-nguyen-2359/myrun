@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="strava_callback_host">localhost</string>
     <string name="edit_user_profile_link_running_app_success_message">You have successfully linked your account</string>
+    <string name="user_profile_title">Profile</string>
 </resources>

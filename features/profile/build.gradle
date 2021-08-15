@@ -16,6 +16,14 @@ android {
         rc { }
     }
 
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
@@ -42,6 +50,8 @@ dependencies {
     implementation(project(':common:wiring'))
     implementation(project(':common:data'))
     implementation(project(':common:feature'))
+
+    implementation(libs.bundles.compose)
 
     implementation(libs.androidXAppCompat)
     implementation(libs.timber)

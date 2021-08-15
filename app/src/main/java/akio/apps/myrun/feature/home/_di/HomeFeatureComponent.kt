@@ -10,6 +10,7 @@ import akio.apps.myrun.data.tracking.wiring.DaggerTrackingDataComponent
 import akio.apps.myrun.data.tracking.wiring.TrackingDataComponent
 import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
 import akio.apps.myrun.data.user.wiring.UserDataComponent
+import akio.apps.myrun.feature.home.HomeViewModel
 import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
 import dagger.Component
 
@@ -27,6 +28,7 @@ import dagger.Component
 )
 interface HomeFeatureComponent {
     fun userFeedViewModel(): UserTimelineViewModel
+    fun homeViewModel(): HomeViewModel
 
     @Component.Factory
     interface Factory {

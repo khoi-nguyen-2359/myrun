@@ -26,6 +26,7 @@ compose = "1.0.1"
 composeConstraintLayout = "1.0.0-beta01"
 pagingCompose = "1.0.0-alpha12"
 accompanist = "0.16.0"
+composeNavigation = "2.4.0-alpha06"
 
 # google play services: https://developers.google.com/android/guides/releases
 playServicesGradlePlugin = "4.3.8"
@@ -104,6 +105,7 @@ composeActivity = { module = "androidx.activity:activity-compose", version.ref =
 composePaging = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 coilCompose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 accompanistPlaceholder = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanist" }
+composeNavigation = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
 
 # dagger
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
@@ -194,6 +196,17 @@ androidXJunit = { module = "androidx.test.ext:junit", version.ref = "androidXJun
 uiAutomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiAutomator" }
 
 [bundles]
-compose = ["composeUi", "composeUiTooling", "composeFoundation", "composeMaterial", "composeMaterialIconsCore", "composeMaterialIconsExtended", "composeRuntimeLiveData", "composeActivity", "composePaging"]
+compose = [
+    "composeUi",
+    "composeUiTooling",
+    "composeFoundation",
+    "composeMaterial",
+    "composeMaterialIconsCore",
+    "composeMaterialIconsExtended",
+    "composeRuntimeLiveData",
+    "composeActivity",
+    "composePaging",
+    "composeNavigation"
+]
 crashlytics = ["firebaseCrashlyticsKtx", "firebaseAnalyticsKtx"]
 placesDeps = [ "autoValueAnnotation", "playServicesGcm" ]
