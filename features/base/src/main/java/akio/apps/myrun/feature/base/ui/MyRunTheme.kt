@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.base.ui
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.lightColors
+import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -13,6 +14,9 @@ object AppColors {
     val secondary = Color(0xff5e92f3)
     val onSecondary = Color(0xffffffff)
     val onPrimary = Color(0xffffffff)
+
+    @Composable
+    fun primarySurface() = MaterialTheme.colors.primarySurface
 }
 
 object AppDimensions {

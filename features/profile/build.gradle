@@ -52,6 +52,8 @@ dependencies {
     implementation(project(':common:feature'))
 
     implementation(libs.bundles.compose)
+    implementation(libs.accompanistInsets)
+    implementation(libs.coilCompose)
 
     implementation(libs.androidXAppCompat)
     implementation(libs.timber)

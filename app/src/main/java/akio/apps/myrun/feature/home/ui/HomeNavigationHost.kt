@@ -22,7 +22,7 @@ fun HomeNavigationHost(
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = MainNavigationDestination.Home.route
+        startDestination = HomeNavigationDestination.Home.route
     ) {
         addHomeDestination(
             onClickFloatingActionButton,
@@ -37,10 +37,10 @@ fun HomeNavigationHost(
 
 private fun NavGraphBuilder.addProfileDestination(navController: NavHostController) {
     composable(
-        route = MainNavigationDestination.Profile.routeWithArguments,
-        arguments = MainNavigationDestination.Profile.arguments
+        route = HomeNavigationDestination.Profile.routeWithArguments,
+        arguments = HomeNavigationDestination.Profile.arguments
     ) { backStackEntry ->
-        val arguments = MainNavigationDestination.Profile.parseArguments(backStackEntry)
+        val arguments = HomeNavigationDestination.Profile.parseArguments(backStackEntry)
         val userProfileViewModel = backStackEntry.viewModelProvider {
             DaggerUserProfileFeatureComponent.factory().create(arguments).userProfileViewModel()
         }
@@ -54,7 +54,7 @@ private fun NavGraphBuilder.addHomeDestination(
     onClickExportActivityFile: (Activity) -> Unit,
     navController: NavHostController,
 ) {
-    composable(MainNavigationDestination.Home.route) { backStackEntry ->
+    composable(HomeNavigationDestination.Home.route) { backStackEntry ->
         val userFeedViewModel = backStackEntry.viewModelProvider {
             DaggerHomeFeatureComponent.factory().create().userFeedViewModel()
         }
