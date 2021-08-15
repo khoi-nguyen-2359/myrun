@@ -138,6 +138,7 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.coilCompose)
     implementation(libs.accompanistPlaceholder)
+    implementation(libs.accompanistInsets)
 
     implementation(libs.multidex)
 

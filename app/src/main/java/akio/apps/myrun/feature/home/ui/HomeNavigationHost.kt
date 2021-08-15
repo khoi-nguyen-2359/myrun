@@ -5,28 +5,26 @@ import akio.apps.myrun.feature.home._di.DaggerHomeFeatureComponent
 import akio.apps.myrun.feature.profile.DaggerUserProfileFeatureComponent
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
 import akio.apps.myrun.feature.usertimeline.model.Activity
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.insets.ProvideWindowInsets
 
 @Composable
 fun HomeNavigationHost(
-    contentPaddings: PaddingValues,
     onClickFloatingActionButton: () -> Unit,
     onClickActivityItemAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit,
-) {
+) = ProvideWindowInsets {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
         startDestination = MainNavigationDestination.Home.route
     ) {
         homeDestination(
-            contentPaddings,
             onClickFloatingActionButton,
             onClickActivityItemAction,
             onClickExportActivityFile,
@@ -51,7 +49,6 @@ private fun NavGraphBuilder.profileDestination(navController: NavHostController)
 }
 
 private fun NavGraphBuilder.homeDestination(
-    contentPaddings: PaddingValues,
     onClickFloatingActionButton: () -> Unit,
     onClickActivityItemAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit,
@@ -62,7 +59,6 @@ private fun NavGraphBuilder.homeDestination(
             DaggerHomeFeatureComponent.factory().create().userFeedViewModel()
         }
         HomeScreen(
-            contentPaddings,
             onClickFloatingActionButton,
             onClickActivityItemAction,
             onClickExportActivityFile,

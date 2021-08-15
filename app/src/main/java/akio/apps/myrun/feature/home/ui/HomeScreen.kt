@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.home.ui
 
+import akio.apps.common.feature.ui.px2dp
 import akio.apps.myrun.R
 import akio.apps.myrun.feature.base.ui.AppBarIconButton
 import akio.apps.myrun.feature.base.ui.AppColors
@@ -56,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.insets.LocalWindowInsets
 import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 
@@ -70,70 +72,70 @@ object HomeScreenColors {
 
 @Composable
 fun HomeScreen(
-    contentPaddings: PaddingValues,
     onClickFloatingActionButton: () -> Unit,
     onClickActivityItemAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit,
     navController: NavController,
     userTimelineViewModel: UserTimelineViewModel,
-) {
-    AppTheme {
-        val topBarHeightDp = AppBarHeight + contentPaddings.calculateTopPadding()
-        val topBarHeightPx = with(LocalDensity.current) { topBarHeightDp.roundToPx().toFloat() }
-        val fabBoxHeightDp = FabSize * 4 / 3 + contentPaddings.calculateBottomPadding()
-        val fabBoxSizePx = with(LocalDensity.current) { fabBoxHeightDp.roundToPx().toFloat() }
-        var topBarOffsetY by remember { mutableStateOf(0f) }
-        var fabOffsetY by remember { mutableStateOf(0f) }
-        val nestedScrollConnection = remember {
-            object : NestedScrollConnection {
-                override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                    val delta = available.y
-                    var newOffset = topBarOffsetY + delta
-                    topBarOffsetY = newOffset.coerceIn(-topBarHeightPx, 0f)
-                    newOffset = fabOffsetY - delta
-                    fabOffsetY = newOffset.coerceIn(0f, fabBoxSizePx)
-                    return Offset.Zero
-                }
+) = AppTheme {
+    val insets = LocalWindowInsets.current
+    val topBarHeightDp = AppBarHeight + insets.systemBars.top.px2dp.dp
+    val topBarHeightPx = with(LocalDensity.current) { topBarHeightDp.roundToPx().toFloat() }
+    val fabBoxHeightDp = FabSize * 4 / 3 + insets.systemBars.bottom.px2dp.dp
+    val fabBoxSizePx = with(LocalDensity.current) { fabBoxHeightDp.roundToPx().toFloat() }
+    var topBarOffsetY by remember { mutableStateOf(0f) }
+    var fabOffsetY by remember { mutableStateOf(0f) }
+
+    // insets may be updated
+    val nestedScrollConnection = remember(topBarHeightPx, fabBoxSizePx) {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                val delta = available.y
+                var newOffset = topBarOffsetY + delta
+                topBarOffsetY = newOffset.coerceIn(-topBarHeightPx, 0f)
+                newOffset = fabOffsetY - delta
+                fabOffsetY = newOffset.coerceIn(0f, fabBoxSizePx)
+                return Offset.Zero
             }
         }
-        val activityStorageCount by userTimelineViewModel.activityUploadBadge
-            .collectAsState(initial = null)
-        val feedListState = rememberLazyListState()
-        val coroutineScope = rememberCoroutineScope()
+    }
+    val activityStorageCount by userTimelineViewModel.activityUploadBadge
+        .collectAsState(initial = null)
+    val feedListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(nestedScrollConnection)
+    ) {
+        UserTimeline(
+            userTimelineViewModel,
+            PaddingValues(
+                top = topBarHeightDp,
+                bottom = fabBoxHeightDp // avoid the bottom bar
+            ),
+            feedListState,
+            onClickActivityItemAction,
+            onClickExportActivityFile,
+            navController
+        )
+        HomeTopBar(
+            activityStorageCount,
+            navController,
+            { coroutineScope.launch { feedListState.animateScrollToItem(0) } },
+            Modifier
+                .height(topBarHeightDp)
+                .align(Alignment.TopCenter)
+                .offset { IntOffset(x = 0, y = topBarOffsetY.roundToInt()) }
+                .background(AppColors.primary)
+        )
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .nestedScroll(nestedScrollConnection)
+                .height(fabBoxHeightDp)
+                .align(Alignment.BottomCenter)
+                .offset { IntOffset(x = 0, y = fabOffsetY.roundToInt()) }
         ) {
-            UserTimeline(
-                userTimelineViewModel,
-                PaddingValues(
-                    top = topBarHeightDp,
-                    bottom = fabBoxHeightDp // avoid the bottom bar
-                ),
-                feedListState,
-                onClickActivityItemAction,
-                onClickExportActivityFile,
-                navController
-            )
-            HomeTopBar(
-                activityStorageCount,
-                navController,
-                { coroutineScope.launch { feedListState.animateScrollToItem(0) } },
-                Modifier
-                    .height(topBarHeightDp)
-                    .align(Alignment.TopCenter)
-                    .offset { IntOffset(x = 0, y = topBarOffsetY.roundToInt()) }
-                    .background(AppColors.primary)
-            )
-            Box(
-                modifier = Modifier
-                    .height(fabBoxHeightDp)
-                    .align(Alignment.BottomCenter)
-                    .offset { IntOffset(x = 0, y = fabOffsetY.roundToInt()) }
-            ) {
-                HomeFloatingActionButton(onClickFloatingActionButton)
-            }
+            HomeFloatingActionButton(onClickFloatingActionButton)
         }
     }
 }
