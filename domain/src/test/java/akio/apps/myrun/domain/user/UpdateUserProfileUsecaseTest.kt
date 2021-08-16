@@ -81,7 +81,7 @@ class UpdateUserProfileUsecaseTest {
     ): ProfileEditData {
         return ProfileEditData(
             displayName,
-            Gender.male,
+            Gender.Male,
             170f,
             65f,
             avatarUri,

@@ -1,11 +1,13 @@
 package akio.apps.myrun.feature.profile
 
+import akio.apps.common.data.Resource
 import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import akio.apps.myrun.data.eapps.api.model.ProviderToken
 import akio.apps.myrun.data.eapps.api.model.RunningApp.Strava
+import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
 import akio.apps.myrun.domain.strava.RemoveStravaTokenUsecase
 import akio.apps.myrun.domain.user.GetProviderTokensUsecase
@@ -13,6 +15,7 @@ import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
 class UserProfileViewModel @Inject constructor(
@@ -27,7 +30,8 @@ class UserProfileViewModel @Inject constructor(
     private val launchCatchingDelegate: LaunchCatchingDelegate,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
-    val userProfileResourceFlow = getUserProfileUsecase.getUserProfileFlow(arguments.userId)
+    val userProfileResourceFlow: Flow<Resource<UserProfile>> =
+        getUserProfileUsecase.getUserProfileFlow(arguments.userId)
 //        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(), 1)
 //    val userProfileFlow: Flow<UserProfile> = userProfileResourceFlow.mapNotNull { it.data }
 //    val userProfileErrorFlow: Flow<Throwable> = userProfileResourceFlow.mapNotNull {

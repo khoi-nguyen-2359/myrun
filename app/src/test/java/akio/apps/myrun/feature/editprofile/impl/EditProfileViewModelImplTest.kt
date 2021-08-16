@@ -123,7 +123,7 @@ class EditProfileViewModelImplTest : InstantTaskExecutorTest() {
     ): ProfileEditData {
         return ProfileEditData(
             displayName,
-            Gender.male,
+            Gender.Male,
             170f,
             65f,
             null,
@@ -144,7 +144,7 @@ class EditProfileViewModelImplTest : InstantTaskExecutorTest() {
             "name",
             "email",
             phoneNumber,
-            Gender.male,
+            Gender.Male,
             1.70f,
             65f,
             null

@@ -110,7 +110,7 @@ class GetUserProfileUsecaseTest {
             "name",
             defaultEmail,
             defaultPhoneNumber,
-            Gender.male,
+            Gender.Male,
             1.70f,
             65f,
             null
