@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.configurator.ui
 
+import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.configurator.RouteTrackingConfigurationViewModel
 import akio.apps.myrun.feature.configurator.ui.SectionSpacing.elementHorizontalPadding
 import akio.apps.myrun.feature.configurator.ui.SectionSpacing.elementVerticalPadding
@@ -36,7 +37,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ConfiguratorScreen(routeTrackingViewModel: RouteTrackingConfigurationViewModel) =
-    ConfiguratorTheme {
+    AppTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()

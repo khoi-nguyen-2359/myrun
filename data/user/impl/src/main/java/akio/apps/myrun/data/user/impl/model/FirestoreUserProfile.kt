@@ -7,7 +7,7 @@ data class FirestoreUserProfile(
     val uid: String = "",
 
     @PropertyName("displayName")
-    val displayName: String? = null,
+    val displayName: String = "",
 
     @PropertyName("photoUrl")
     val photoUrl: String? = null,
@@ -19,11 +19,11 @@ data class FirestoreUserProfile(
     val phoneNumber: String? = null,
 
     @PropertyName("gender")
-    val gender: String? = null,
-
-    @PropertyName("height")
-    val height: Float? = null,
+    val gender: Int = FirestoreUserGender.Others.genderId,
 
     @PropertyName("weight")
-    val weight: Float? = null
+    val weight: Float = 0f,
+
+    @PropertyName("birthdate")
+    val birthdate: Long = 0,
 )

@@ -1,17 +1,10 @@
 package akio.apps.myrun.data.user.api.model
 
-import java.util.Locale
-
-enum class Gender {
-    male, female, others;
+enum class Gender(val genderId: Int) {
+    Male(0), Female(1), Others(-1);
 
     companion object {
-        fun parse(value: String?): Gender? {
-            return if (value.isNullOrEmpty()) {
-                null
-            } else {
-                valueOf(value.lowercase(Locale.getDefault()))
-            }
-        }
+        fun parse(genderId: Int?): Gender =
+            values().firstOrNull { it.genderId == genderId } ?: Others
     }
 }

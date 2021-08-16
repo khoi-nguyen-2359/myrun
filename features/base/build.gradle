@@ -39,5 +39,6 @@ dependencies {
     implementation(project(":common:feature"))
     implementation(libs.androidXAppCompat)
     implementation(libs.bundles.compose)
+    implementation(libs.accompanistInsets)
     testImplementation(libs.junit)
 }

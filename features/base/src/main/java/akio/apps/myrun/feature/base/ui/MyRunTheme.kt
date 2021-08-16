@@ -16,6 +16,8 @@ object AppColors {
     val onPrimary = Color(0xffffffff)
 
     @Composable
+    fun error() = MaterialTheme.colors.error
+    @Composable
     fun primarySurface() = MaterialTheme.colors.primarySurface
 }
 
