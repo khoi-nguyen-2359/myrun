@@ -32,9 +32,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.ListItem
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Snackbar
+import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -59,6 +63,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
@@ -203,6 +208,8 @@ private fun UserProfileScrollableForm(
     formData: UserProfileFormData,
     onUserProfileChanged: (UserProfileFormData) -> Unit,
 ) {
+    val context = LocalContext.current
+    var isGenderDialogShowing by remember { mutableStateOf(false) }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -213,6 +220,8 @@ private fun UserProfileScrollableForm(
         UserProfileImageView(formData.photoUrl)
         UserProfileSectionSpacer()
         SectionTitle(stringResource(id = R.string.profile_basic_label))
+
+        // name
         UserProfileTextField(
             label = stringResource(id = R.string.user_profile_hint_name),
             value = formData.name,
@@ -221,7 +230,8 @@ private fun UserProfileScrollableForm(
             }
         )
         SectionTitle(stringResource(id = R.string.profile_physical_label))
-        val context = LocalContext.current
+
+        // birthdate
         UserProfileReadOnlyTextField(
             label = stringResource(id = R.string.user_profile_hint_birthdate),
             value = formatBirthdateMillis(formData.birthdate),
@@ -231,11 +241,21 @@ private fun UserProfileScrollableForm(
                 }
             }
         )
-        UserProfileTextField(
+
+        // gender
+        UserProfileReadOnlyTextField(
             label = stringResource(id = R.string.user_profile_hint_gender),
-            value = formData.gender.toString(),
-            onValueChange = { }
+            value = formatGender(formData.gender),
+            onClick = { isGenderDialogShowing = true }
         )
+
+        if (isGenderDialogShowing) {
+            GenderDialog({ selectedGender ->
+                onUserProfileChanged(formData.copy(gender = selectedGender))
+                isGenderDialogShowing = false
+            }) { isGenderDialogShowing = false }
+        }
+
         UserProfileTextField(
             label = stringResource(id = R.string.user_profile_hint_weight),
             value = formData.weight.toString(),
@@ -248,6 +268,32 @@ private fun UserProfileScrollableForm(
             onCheckedChange = { }
         )
     }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun GenderDialog(onGenderSelect: (Gender) -> Unit, onDismissRequest: () -> Unit) {
+    Dialog(onDismissRequest = onDismissRequest) {
+        Surface(shape = MaterialTheme.shapes.medium) {
+            Column {
+                Gender.values().forEach { gender ->
+                    ListItem(
+                        text = { Text(text = formatGender(gender)) },
+                        modifier = Modifier.clickable {
+                            onGenderSelect(gender)
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun formatGender(gender: Gender): String = when (gender) {
+    Gender.Male -> stringResource(id = R.string.user_profile_gender_name_male)
+    Gender.Female -> stringResource(id = R.string.user_profile_gender_name_female)
+    Gender.Others -> stringResource(id = R.string.user_profile_gender_name_others)
 }
 
 @SuppressLint("SimpleDateFormat")
