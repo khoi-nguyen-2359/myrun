@@ -13,7 +13,11 @@ import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
 import akio.apps.myrun.feature.profile.R
 import akio.apps.myrun.feature.profile.UserProfileViewModel
+import android.annotation.SuppressLint
+import android.app.DatePickerDialog
+import android.content.Context
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -47,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +62,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 
 private sealed class UserProfileScreenState {
     object FullScreenLoading : UserProfileScreenState()
@@ -125,7 +133,7 @@ fun UserProfileScreen(
 @Composable
 private fun UserProfileScreen(
     navController: NavController,
-    screenState: UserProfileScreenState
+    screenState: UserProfileScreenState,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         StatusBarSpacer()
@@ -193,7 +201,7 @@ fun UserProfileErrorSnackbar(modifier: Modifier = Modifier) {
 @Composable
 private fun UserProfileScrollableForm(
     formData: UserProfileFormData,
-    onUserProfileChanged: (UserProfileFormData) -> Unit
+    onUserProfileChanged: (UserProfileFormData) -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -213,10 +221,15 @@ private fun UserProfileScrollableForm(
             }
         )
         SectionTitle(stringResource(id = R.string.profile_physical_label))
-        UserProfileTextField(
+        val context = LocalContext.current
+        UserProfileReadOnlyTextField(
             label = stringResource(id = R.string.user_profile_hint_birthdate),
-            value = formData.name,
-            onValueChange = { }
+            value = formatBirthdateMillis(formData.birthdate),
+            onClick = {
+                showDatePicker(context, formData.birthdate) { selectedBirthdate ->
+                    onUserProfileChanged(formData.copy(birthdate = selectedBirthdate))
+                }
+            }
         )
         UserProfileTextField(
             label = stringResource(id = R.string.user_profile_hint_gender),
@@ -237,6 +250,37 @@ private fun UserProfileScrollableForm(
     }
 }
 
+@SuppressLint("SimpleDateFormat")
+@Composable
+fun formatBirthdateMillis(birthdateMillis: Long): String = if (birthdateMillis == 0L) {
+    stringResource(id = R.string.user_profile_select_birthdate_instruction)
+} else {
+    val birthdateFormatter = remember { SimpleDateFormat("MM/dd/yyyy") }
+    birthdateFormatter.format(Date(birthdateMillis))
+}
+
+fun showDatePicker(context: Context, userBirthdateInMillis: Long, onDateSelect: (Long) -> Unit) {
+    val birthdateCalendar = Calendar.getInstance()
+    birthdateCalendar.timeInMillis = userBirthdateInMillis
+    val birthYear = birthdateCalendar[Calendar.YEAR]
+    val birthMonth = birthdateCalendar[Calendar.MONTH]
+    val birthDayOfMonth = birthdateCalendar[Calendar.DAY_OF_MONTH]
+    DatePickerDialog(
+        context,
+        { _, selectedYear, selectedMonth, selectedDayOfMonth ->
+            val selectedCalendar = Calendar.getInstance()
+            selectedCalendar[Calendar.YEAR] = selectedYear
+            selectedCalendar[Calendar.MONTH] = selectedMonth
+            selectedCalendar[Calendar.DAY_OF_MONTH] = selectedDayOfMonth
+            onDateSelect(selectedCalendar.timeInMillis)
+        },
+        birthYear,
+        birthMonth,
+        birthDayOfMonth
+    )
+        .show()
+}
+
 @Composable
 private fun UserProfileSwitch(
     label: String,
@@ -254,9 +298,11 @@ private fun UserProfileSwitch(
 private fun UserProfileTextField(
     label: String,
     value: String,
+    readOnly: Boolean = false,
     onValueChange: (String) -> Unit,
 ) {
     OutlinedTextField(
+        readOnly = readOnly,
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 12.dp),
@@ -264,6 +310,22 @@ private fun UserProfileTextField(
         value = value,
         onValueChange = onValueChange
     )
+}
+
+@Composable
+private fun UserProfileReadOnlyTextField(
+    label: String,
+    value: String,
+    onClick: () -> Unit,
+) {
+    Box {
+        UserProfileTextField(label = label, value = value, readOnly = true, onValueChange = { })
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clickable { onClick() }
+        )
+    }
 }
 
 @Composable

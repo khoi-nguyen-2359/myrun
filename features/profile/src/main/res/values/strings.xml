@@ -12,4 +12,5 @@
     <string name="user_profile_strava_description">Sync your new activity to Strava automatically.</string>
     <string name="user_profile_fullscreen_loading_text">Getting your profile …</string>
     <string name="user_profile_fullscreen_loading_error">Press to try again.</string>
+    <string name="user_profile_select_birthdate_instruction">Select your birthdate</string>
 </resources>
