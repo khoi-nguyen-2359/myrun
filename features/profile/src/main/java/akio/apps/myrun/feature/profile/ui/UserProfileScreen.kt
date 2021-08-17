@@ -7,8 +7,8 @@ import akio.apps.myrun.feature.base.ui.AppBarIconButton
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
 import akio.apps.myrun.feature.base.ui.AppTheme
-import akio.apps.myrun.feature.base.ui.FullscreenAnnouncementView
-import akio.apps.myrun.feature.base.ui.FullscreenLoadingView
+import akio.apps.myrun.feature.base.ui.CentralAnnouncementView
+import akio.apps.myrun.feature.base.ui.CentralLoadingView
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
 import akio.apps.myrun.feature.profile.R
@@ -41,6 +41,9 @@ import androidx.compose.material.icons.sharp.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -112,15 +115,18 @@ fun UserProfileScreen(
 ) = AppTheme {
     val userProfileResource by
     userProfileViewModel.userProfileResourceFlow.collectAsState(initial = Resource.Loading())
-    UserProfileScreen(navController, userProfileResource)
+    val screenState = UserProfileScreenState.createFromUserProfileResource(userProfileResource)
+    UserProfileScreen(
+        navController,
+        screenState,
+    )
 }
 
 @Composable
 private fun UserProfileScreen(
     navController: NavController,
-    userProfileResource: Resource<UserProfile>,
+    screenState: UserProfileScreenState
 ) {
-    val screenState = UserProfileScreenState.createFromUserProfileResource(userProfileResource)
     Column(modifier = Modifier.fillMaxSize()) {
         StatusBarSpacer()
         UserProfileTopBar(
@@ -130,11 +136,11 @@ private fun UserProfileScreen(
         Box(modifier = Modifier.weight(1f)) {
             when (screenState) {
                 UserProfileScreenState.FullScreenLoading ->
-                    FullscreenLoadingView(
+                    CentralLoadingView(
                         text = stringResource(id = R.string.user_profile_fullscreen_loading_text)
                     )
                 UserProfileScreenState.FullScreenError ->
-                    FullscreenAnnouncementView(
+                    CentralAnnouncementView(
                         text = stringResource(id = R.string.user_profile_fullscreen_loading_error)
                     ) {
                         // todo: retry
@@ -144,7 +150,8 @@ private fun UserProfileScreen(
                         UserProfileLoadingIndicator()
                     }
 
-                    UserProfileScrollableForm(screenState)
+                    var formData by remember(screenState) { mutableStateOf(screenState.formData) }
+                    UserProfileScrollableForm(formData) { formData = it }
 
                     if (screenState is UserProfileScreenState.UserProfileErrorForm) {
                         UserProfileErrorSnackbar(modifier = Modifier.align(Alignment.BottomCenter))
@@ -184,7 +191,10 @@ fun UserProfileErrorSnackbar(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun UserProfileScrollableForm(screenState: UserProfileScreenState.UserProfileForm) {
+private fun UserProfileScrollableForm(
+    formData: UserProfileFormData,
+    onUserProfileChanged: (UserProfileFormData) -> Unit
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -192,31 +202,30 @@ private fun UserProfileScrollableForm(screenState: UserProfileScreenState.UserPr
             .verticalScroll(rememberScrollState())
     ) {
         Spacer(modifier = Modifier.height(40.dp))
-        UserProfileImageView(screenState.formData.photoUrl)
-        UserProfileImageView(screenState.formData.photoUrl)
-        UserProfileImageView(screenState.formData.photoUrl)
-        UserProfileImageView(screenState.formData.photoUrl)
+        UserProfileImageView(formData.photoUrl)
         UserProfileSectionSpacer()
         SectionTitle(stringResource(id = R.string.profile_basic_label))
         UserProfileTextField(
             label = stringResource(id = R.string.user_profile_hint_name),
-            value = screenState.formData.name,
-            onValueChange = { }
+            value = formData.name,
+            onValueChange = { name ->
+                onUserProfileChanged(formData.copy(name = name))
+            }
         )
         SectionTitle(stringResource(id = R.string.profile_physical_label))
         UserProfileTextField(
             label = stringResource(id = R.string.user_profile_hint_birthdate),
-            value = screenState.formData.name,
+            value = formData.name,
             onValueChange = { }
         )
         UserProfileTextField(
             label = stringResource(id = R.string.user_profile_hint_gender),
-            value = screenState.formData.gender.toString(),
+            value = formData.gender.toString(),
             onValueChange = { }
         )
         UserProfileTextField(
             label = stringResource(id = R.string.user_profile_hint_weight),
-            value = screenState.formData.weight.toString(),
+            value = formData.weight.toString(),
             onValueChange = { }
         )
         SectionTitle(stringResource(id = R.string.profile_other_apps_section_title))
@@ -317,45 +326,50 @@ private fun UserProfileImageView(photoUrl: String?, imageLoadSizeDp: Dp = 100.dp
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
 @Composable
 private fun PreviewUserProfileScreenSuccessForm() {
+    val success = Resource.Success(createUserProfile())
     UserProfileScreen(
         navController = rememberNavController(),
-        userProfileResource = Resource.Success(createUserProfile())
+        screenState = UserProfileScreenState.createFromUserProfileResource(success),
     )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
 @Composable
 private fun PreviewUserProfileScreenLoadingFormWithoutData() {
+    val loading: Resource<UserProfile> = Resource.Loading(null)
     UserProfileScreen(
         navController = rememberNavController(),
-        userProfileResource = Resource.Loading(null)
+        screenState = UserProfileScreenState.createFromUserProfileResource(loading),
     )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
 @Composable
 private fun PreviewUserProfileScreenLoadingFormWithData() {
+    val loading = Resource.Loading(createUserProfile())
     UserProfileScreen(
         navController = rememberNavController(),
-        userProfileResource = Resource.Loading(createUserProfile())
+        screenState = UserProfileScreenState.createFromUserProfileResource(loading),
     )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
 @Composable
 private fun PreviewUserProfileScreenErrorFormWithoutData() {
+    val error: Resource<UserProfile> = Resource.Error(Exception(), data = null)
     UserProfileScreen(
         navController = rememberNavController(),
-        userProfileResource = Resource.Error(Exception(), data = null)
+        screenState = UserProfileScreenState.createFromUserProfileResource(error),
     )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
 @Composable
 private fun PreviewUserProfileScreenErrorFormWithData() {
+    val error = Resource.Error(Exception(), data = createUserProfile())
     UserProfileScreen(
         navController = rememberNavController(),
-        userProfileResource = Resource.Error(Exception(), data = createUserProfile())
+        screenState = UserProfileScreenState.createFromUserProfileResource(error),
     )
 }
 
