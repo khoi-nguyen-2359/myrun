@@ -4,16 +4,12 @@ import akio.apps.common.data.Resource
 import akio.apps.myrun.R
 import akio.apps.myrun.feature.activitydetail.impl.ActivityDetailViewModel
 import akio.apps.myrun.feature.base.ui.AppTheme
+import akio.apps.myrun.feature.base.ui.CentralLoadingView
 import akio.apps.myrun.feature.usertimeline.model.Activity
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -42,10 +38,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 
 @Composable
@@ -94,7 +87,9 @@ fun ActivityDetailScreen(
                 }
             }
         } else if (activityResource is Resource.Loading) {
-            FullscreenLoadingView()
+            CentralLoadingView(
+                text = stringResource(id = R.string.activity_details_loading_message)
+            )
         }
 
         if (activityResource is Resource.Error) {
@@ -187,22 +182,5 @@ private fun LoadingErrorSnackbar(snackbarData: SnackbarData) {
         contentColor = snackbarContentColor,
         actionColor = snackbarContentColor,
         snackbarData = snackbarData
-    )
-}
-
-@Composable
-private fun FullscreenLoadingView() = Column(
-    modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight(),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.Center
-) {
-    CircularProgressIndicator()
-    Spacer(modifier = Modifier.height(10.dp))
-    Text(
-        text = stringResource(id = R.string.activity_details_loading_message),
-        color = colorResource(id = R.color.user_timeline_instruction_text),
-        fontSize = 15.sp
     )
 }

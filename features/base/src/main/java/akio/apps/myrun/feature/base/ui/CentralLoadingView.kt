@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun FullscreenLoadingView(
+fun CentralLoadingView(
     text: String,
 ) = Column(
     modifier = Modifier.fillMaxSize(),
@@ -29,13 +29,13 @@ fun FullscreenLoadingView(
     Spacer(modifier = Modifier.height(10.dp))
     Text(
         text = text,
-        color = colorResource(id = R.color.fullscreen_loading_text),
+        color = colorResource(id = R.color.central_loading_text),
         fontSize = 15.sp
     )
 }
 
 @Composable
-fun FullscreenAnnouncementView(
+fun CentralAnnouncementView(
     text: String,
     onClick: () -> Unit,
 ) = Box(
@@ -46,7 +46,7 @@ fun FullscreenAnnouncementView(
 ) {
     Text(
         text = text,
-        color = colorResource(id = R.color.fullscreen_loading_text),
+        color = colorResource(id = R.color.central_loading_text),
         fontSize = 15.sp
     )
 }
