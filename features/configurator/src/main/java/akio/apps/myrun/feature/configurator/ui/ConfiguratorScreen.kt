@@ -106,21 +106,24 @@ private fun LocationUpdateConfiguration(
         value = config.updateInterval,
         onValueChange = { value -> onValueChanged(config.copy(updateInterval = value)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        maxLines = 1
+        maxLines = 1,
+        singleLine = true
     )
     TextField(
         label = { Text("Fastest update interval") },
         value = config.fastestUpdateInterval,
         onValueChange = { value -> onValueChanged(config.copy(fastestUpdateInterval = value)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        maxLines = 1
+        maxLines = 1,
+        singleLine = true
     )
     TextField(
         label = { Text("Smallest displacement") },
         value = config.smallestDisplacement,
         onValueChange = { value -> onValueChanged(config.copy(smallestDisplacement = value)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        maxLines = 1
+        maxLines = 1,
+        singleLine = true
     )
     Row(
         verticalAlignment = Alignment.CenterVertically,

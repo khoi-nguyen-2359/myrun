@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
@@ -59,6 +60,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -108,7 +110,7 @@ private data class UserProfileFormData private constructor(
     val photoUrl: String?,
     val birthdate: Long,
     val gender: Gender,
-    val weight: Float,
+    val weight: String,
 ) {
     companion object {
         fun createFromUserProfile(userProfile: UserProfile) = UserProfileFormData(
@@ -116,7 +118,7 @@ private data class UserProfileFormData private constructor(
             photoUrl = userProfile.photo,
             birthdate = userProfile.birthdate,
             gender = userProfile.gender,
-            weight = userProfile.weight
+            weight = userProfile.weight.toString()
         )
     }
 }
@@ -258,8 +260,9 @@ private fun UserProfileScrollableForm(
 
         UserProfileTextField(
             label = stringResource(id = R.string.user_profile_hint_weight),
-            value = formData.weight.toString(),
-            onValueChange = { }
+            value = formData.weight,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            onValueChange = { onUserProfileChanged(formData.copy(weight = it)) }
         )
         SectionTitle(stringResource(id = R.string.profile_other_apps_section_title))
         UserProfileSwitch(
@@ -344,10 +347,14 @@ private fun UserProfileSwitch(
 private fun UserProfileTextField(
     label: String,
     value: String,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
     readOnly: Boolean = false,
     onValueChange: (String) -> Unit,
 ) {
     OutlinedTextField(
+        keyboardOptions = keyboardOptions,
+        maxLines = 1,
+        singleLine = true,
         readOnly = readOnly,
         modifier = Modifier
             .fillMaxWidth()
