@@ -13,4 +13,7 @@
     <string name="user_profile_fullscreen_loading_text">Getting your profile …</string>
     <string name="user_profile_fullscreen_loading_error">Press to try again.</string>
     <string name="user_profile_select_birthdate_instruction">Select your birthdate</string>
+    <string name="user_profile_gender_name_male">Male</string>
+    <string name="user_profile_gender_name_female">Female</string>
+    <string name="user_profile_gender_name_others">Others</string>
 </resources>
