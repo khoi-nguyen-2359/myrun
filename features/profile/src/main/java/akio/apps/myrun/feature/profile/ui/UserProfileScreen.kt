@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.profile.ui
 
 import akio.apps.common.data.Resource
+import akio.apps.common.feature.ui.filterFloatTextField
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.feature.base.ui.AppBarIconButton
@@ -166,7 +167,7 @@ private fun UserProfileScreen(
                     }
 
                     var formData by remember(screenState) { mutableStateOf(screenState.formData) }
-                    UserProfileScrollableForm(formData) { formData = it }
+                    UserProfileForm(formData) { formData = it }
 
                     if (screenState is UserProfileScreenState.UserProfileErrorForm) {
                         UserProfileErrorSnackbar(modifier = Modifier.align(Alignment.BottomCenter))
@@ -206,7 +207,7 @@ fun UserProfileErrorSnackbar(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun UserProfileScrollableForm(
+private fun UserProfileForm(
     formData: UserProfileFormData,
     onUserProfileChanged: (UserProfileFormData) -> Unit,
 ) {
@@ -262,7 +263,10 @@ private fun UserProfileScrollableForm(
             label = stringResource(id = R.string.user_profile_hint_weight),
             value = formData.weight,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            onValueChange = { onUserProfileChanged(formData.copy(weight = it)) }
+            onValueChange = { editWeight ->
+                val selectedWeight = filterFloatTextField(formData.weight, editWeight)
+                onUserProfileChanged(formData.copy(weight = selectedWeight))
+            }
         )
         SectionTitle(stringResource(id = R.string.profile_other_apps_section_title))
         UserProfileSwitch(
