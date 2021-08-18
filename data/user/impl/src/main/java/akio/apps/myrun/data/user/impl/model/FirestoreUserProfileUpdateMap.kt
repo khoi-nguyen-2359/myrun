@@ -22,12 +22,12 @@ data class FirestoreUserProfileUpdateMap(
         profile["phoneNumber"] = value
     }
 
-    fun gender(value: String) {
+    fun gender(value: Int) {
         profile["gender"] = value
     }
 
-    fun height(value: Float) {
-        profile["height"] = value
+    fun birthdate(value: Long) {
+        profile["birthdate"] = value
     }
 
     fun weight(value: Float) {

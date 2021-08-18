@@ -3,6 +3,7 @@ package akio.apps.myrun.feature.profile.ui
 import akio.apps.common.data.Resource
 import akio.apps.common.feature.ui.filterFloatTextField
 import akio.apps.myrun.data.user.api.model.Gender
+import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.feature.base.ui.AppBarIconButton
 import akio.apps.myrun.feature.base.ui.AppColors
@@ -113,6 +114,15 @@ private data class UserProfileFormData private constructor(
     val gender: Gender,
     val weight: String,
 ) {
+    fun makeProfileEditData(): ProfileEditData {
+        return ProfileEditData(
+            displayName = name,
+            birthdate = birthdate,
+            gender = gender,
+            weight = weight.toFloatOrNull()
+        )
+    }
+
     companion object {
         fun createFromUserProfile(userProfile: UserProfile) = UserProfileFormData(
             name = userProfile.name,
@@ -134,20 +144,32 @@ fun UserProfileScreen(
     val screenState = UserProfileScreenState.createFromUserProfileResource(userProfileResource)
     UserProfileScreen(
         navController,
-        screenState,
-    )
+        screenState
+    ) { formData ->
+        userProfileViewModel.updateUserProfile(formData.makeProfileEditData())
+    }
 }
 
 @Composable
 private fun UserProfileScreen(
     navController: NavController,
     screenState: UserProfileScreenState,
+    onClickSaveUserProfile: (UserProfileFormData) -> Unit,
 ) {
+    var formData by remember(screenState) {
+        val initValue = if (screenState is UserProfileScreenState.UserProfileForm) {
+            screenState.formData
+        } else {
+            null
+        }
+        mutableStateOf(initValue)
+    }
     Column(modifier = Modifier.fillMaxSize()) {
         StatusBarSpacer()
+        val onClickSave = formData?.let { { onClickSaveUserProfile(it) } }
         UserProfileTopBar(
             navController,
-            screenState is UserProfileScreenState.UserProfileSuccessForm
+            onClickSave
         )
         Box(modifier = Modifier.weight(1f)) {
             when (screenState) {
@@ -166,8 +188,11 @@ private fun UserProfileScreen(
                         UserProfileLoadingIndicator()
                     }
 
-                    var formData by remember(screenState) { mutableStateOf(screenState.formData) }
-                    UserProfileForm(formData) { formData = it }
+                    formData?.let {
+                        UserProfileForm(it) { editFormData ->
+                            formData = editFormData
+                        }
+                    }
 
                     if (screenState is UserProfileScreenState.UserProfileErrorForm) {
                         UserProfileErrorSnackbar(modifier = Modifier.align(Alignment.BottomCenter))
@@ -406,7 +431,7 @@ private fun UserProfileSectionSpacer() {
 @Composable
 private fun UserProfileTopBar(
     navController: NavController,
-    shouldShowSaveButton: Boolean,
+    onClickSave: (() -> Unit)? = null,
 ) {
     TopAppBar(
         navigationIcon = {
@@ -416,8 +441,10 @@ private fun UserProfileTopBar(
         },
         title = { Text(text = stringResource(id = R.string.user_profile_title)) },
         actions = {
-            if (shouldShowSaveButton) {
-                AppBarIconButton(iconImageVector = Icons.Sharp.Save) { }
+            if (onClickSave != null) {
+                AppBarIconButton(iconImageVector = Icons.Sharp.Save) {
+                    onClickSave()
+                }
             }
         }
     )
@@ -449,7 +476,7 @@ private fun PreviewUserProfileScreenSuccessForm() {
     UserProfileScreen(
         navController = rememberNavController(),
         screenState = UserProfileScreenState.createFromUserProfileResource(success),
-    )
+    ) {}
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
@@ -458,8 +485,8 @@ private fun PreviewUserProfileScreenLoadingFormWithoutData() {
     val loading: Resource<UserProfile> = Resource.Loading(null)
     UserProfileScreen(
         navController = rememberNavController(),
-        screenState = UserProfileScreenState.createFromUserProfileResource(loading),
-    )
+        screenState = UserProfileScreenState.createFromUserProfileResource(loading)
+    ) {}
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
@@ -468,8 +495,8 @@ private fun PreviewUserProfileScreenLoadingFormWithData() {
     val loading = Resource.Loading(createUserProfile())
     UserProfileScreen(
         navController = rememberNavController(),
-        screenState = UserProfileScreenState.createFromUserProfileResource(loading),
-    )
+        screenState = UserProfileScreenState.createFromUserProfileResource(loading)
+    ) {}
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
@@ -478,8 +505,8 @@ private fun PreviewUserProfileScreenErrorFormWithoutData() {
     val error: Resource<UserProfile> = Resource.Error(Exception(), data = null)
     UserProfileScreen(
         navController = rememberNavController(),
-        screenState = UserProfileScreenState.createFromUserProfileResource(error),
-    )
+        screenState = UserProfileScreenState.createFromUserProfileResource(error)
+    ) {}
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
@@ -488,8 +515,8 @@ private fun PreviewUserProfileScreenErrorFormWithData() {
     val error = Resource.Error(Exception(), data = createUserProfile())
     UserProfileScreen(
         navController = rememberNavController(),
-        screenState = UserProfileScreenState.createFromUserProfileResource(error),
-    )
+        screenState = UserProfileScreenState.createFromUserProfileResource(error)
+    ) {}
 }
 
 private fun createUserProfile(): UserProfile {

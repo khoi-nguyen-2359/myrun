@@ -7,11 +7,13 @@ import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import akio.apps.myrun.data.eapps.api.model.ProviderToken
 import akio.apps.myrun.data.eapps.api.model.RunningApp.Strava
+import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
 import akio.apps.myrun.domain.strava.RemoveStravaTokenUsecase
 import akio.apps.myrun.domain.user.GetProviderTokensUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
+import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
@@ -28,6 +30,7 @@ class UserProfileViewModel @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
     private val activityLocalStorage: ActivityLocalStorage,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
+    private val updateUserProfileUsecase: UpdateUserProfileUsecase
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
     val userProfileResourceFlow: Flow<Resource<UserProfile>> =
@@ -60,6 +63,10 @@ class UserProfileViewModel @Inject constructor(
                 Strava -> deauthorizeStrava()
             }
         }
+    }
+
+    fun updateUserProfile(profileEditData: ProfileEditData) = viewModelScope.launchCatching {
+        updateUserProfileUsecase.updateUserProfile(profileEditData)
     }
 
     private suspend fun deauthorizeStrava() {

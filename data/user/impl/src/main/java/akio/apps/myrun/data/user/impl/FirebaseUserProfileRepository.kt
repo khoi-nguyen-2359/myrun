@@ -9,6 +9,7 @@ import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.data.user.impl.error.UserProfileNotFoundError
 import akio.apps.myrun.data.user.impl.mapper.FirestoreUserProfileMapper
 import akio.apps.myrun.data.user.impl.model.FirestoreUser
+import akio.apps.myrun.data.user.impl.model.FirestoreUserProfileUpdateMap
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -90,15 +91,15 @@ class FirebaseUserProfileRepository @Inject constructor(
                 profileEditData.avatarUri
             }
 
-            val updateMap = akio.apps.myrun.data.user.impl.model.FirestoreUserProfileUpdateMap()
+            val updateMap = FirestoreUserProfileUpdateMap()
                 .apply {
                     uid(userId)
                     displayName(profileEditData.displayName)
                     avatarUploadedUri?.toString()?.let(::photoUrl)
-                    profileEditData.gender?.name?.let(::gender)
-                    profileEditData.height?.let(::height)
+                    profileEditData.gender?.genderId?.let(::gender)
                     profileEditData.weight?.let(::weight)
                     profileEditData.phoneNumber?.let(::phoneNumber)
+                    profileEditData.birthdate?.let(::birthdate)
                 }
             getUserDocument(userId).set(updateMap, SetOptions.merge())
         }
