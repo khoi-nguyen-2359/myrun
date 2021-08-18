@@ -4,7 +4,7 @@
     <string name="user_profile_title">Profile</string>
     <string name="profile_basic_label">Basic Information</string>
     <string name="user_profile_hint_name">Name</string>
-    <string name="profile_physical_label">Physical Information</string>
+    <string name="profile_physical_label">Athlete Information</string>
     <string name="user_profile_hint_birthdate">Birthdate</string>
     <string name="user_profile_hint_gender">Gender</string>
     <string name="user_profile_hint_weight">Weight</string>
