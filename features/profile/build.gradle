@@ -8,6 +8,8 @@ android {
     compileSdk project.compileSdk
 
     defaultConfig {
+        minSdkVersion project.minSdk
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -52,6 +54,8 @@ dependencies {
     implementation(project(':common:data'))
     implementation(project(':common:feature'))
 
+    implementation(libs.androidMaterial)
+    implementation(libs.constraintLayout)
     implementation(libs.bundles.compose)
     implementation(libs.accompanistInsets)
     implementation(libs.coilCompose)

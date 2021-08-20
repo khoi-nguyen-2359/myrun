@@ -55,10 +55,7 @@
     <string name="profile_link_running_app_button">Connect to running app</string>
     <string name="error_invalid_display_name">Please type in your name</string>
     <string name="profile_link_running_app_dialog_title">Select app to upload your activity</string>
-    <string name="photo_selection_dialog_title">Update image from</string>
     <string name="edit_user_profile_session_expired_error_message">Your session has expired. You need to re-login first.</string>
-    <string name="profile_crop_photo_instruction">Drag to resize the image. Your profile photo will be cropped within the circle</string>
-    <string name="profile_crop_button">Crop</string>
     <string name="user_profile_edit_button">Edit</string>
     <string name="profile_linked_app_section_label">App Information</string>
     <string name="action_logout">Log out</string>
@@ -113,10 +110,6 @@
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>
-    </string-array>
-    <string-array name="photo_selection_options">
-        <item>Camera</item>
-        <item>Photo Gallery</item>
     </string-array>
     <string-array name="route_tracking_stop_options">
         <item>Finish and save activity</item>

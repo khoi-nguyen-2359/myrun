@@ -19,5 +19,11 @@
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".UploadAvatarActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+
     </application>
 </manifest>

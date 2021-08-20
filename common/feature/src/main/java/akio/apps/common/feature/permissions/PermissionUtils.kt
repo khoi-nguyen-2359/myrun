@@ -1,4 +1,4 @@
-package akio.apps._base.utils
+package akio.apps.common.feature.permissions
 
 import android.content.Context
 import android.content.pm.PackageManager

@@ -16,4 +16,12 @@
     <string name="user_profile_gender_name_male">Male</string>
     <string name="user_profile_gender_name_female">Female</string>
     <string name="user_profile_gender_name_others">Others</string>
+    <string name="upload_avatar_sucess_message">Your avatar has been updated.</string>
+    <string name="photo_selection_dialog_title">Select image from</string>
+    <string name="profile_crop_photo_instruction">Pinch to adjust the image. Your profile photo will be cropped within the circle</string>
+    <string name="profile_crop_button">Crop</string>
+    <string name="action_done">Done</string>
+    <string name="upload_avatar_menu_item_pick_file">SELECT</string>
+    <string name="upload_avatar_title">Change avatar</string>
+    <string name="user_profile_error_empty_user_name">User display name can not be blank.</string>
 </resources>

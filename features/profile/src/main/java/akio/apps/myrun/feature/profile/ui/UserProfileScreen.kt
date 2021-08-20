@@ -14,10 +14,12 @@ import akio.apps.myrun.feature.base.ui.CentralLoadingView
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
 import akio.apps.myrun.feature.profile.R
+import akio.apps.myrun.feature.profile.UploadAvatarActivity
 import akio.apps.myrun.feature.profile.UserProfileViewModel
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -36,6 +38,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.ListItem
 import androidx.compose.material.MaterialTheme
@@ -48,6 +51,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.ArrowBack
+import androidx.compose.material.icons.sharp.PhotoCamera
 import androidx.compose.material.icons.sharp.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -79,10 +83,12 @@ private sealed class UserProfileScreenState {
     object FullScreenLoading : UserProfileScreenState()
     object FullScreenError : UserProfileScreenState()
 
-    sealed class UserProfileForm(val formData: UserProfileFormData) : UserProfileScreenState()
-    class UserProfileLoadingForm(formData: UserProfileFormData) : UserProfileForm(formData)
-    class UserProfileErrorForm(formData: UserProfileFormData) : UserProfileForm(formData)
-    class UserProfileSuccessForm(formData: UserProfileFormData) : UserProfileForm(formData)
+    class UserProfileForm(
+        val formData: UserProfileFormData,
+        val formType: FormType,
+    ) : UserProfileScreenState() {
+        enum class FormType { Loading, Error, Success }
+    }
 
     object UnknownState : UserProfileScreenState()
 
@@ -92,14 +98,17 @@ private sealed class UserProfileScreenState {
             return when {
                 resource is Resource.Loading && data == null -> FullScreenLoading
                 resource is Resource.Error && data == null -> FullScreenError
-                resource is Resource.Loading && data != null -> UserProfileLoadingForm(
-                    UserProfileFormData.createFromUserProfile(data)
+                resource is Resource.Loading && data != null -> UserProfileForm(
+                    UserProfileFormData.createFromUserProfile(data),
+                    UserProfileForm.FormType.Loading
                 )
-                resource is Resource.Error && data != null -> UserProfileErrorForm(
-                    UserProfileFormData.createFromUserProfile(data)
+                resource is Resource.Error && data != null -> UserProfileForm(
+                    UserProfileFormData.createFromUserProfile(data),
+                    UserProfileForm.FormType.Error
                 )
-                resource is Resource.Success && data != null -> UserProfileSuccessForm(
-                    UserProfileFormData.createFromUserProfile(data)
+                resource is Resource.Success && data != null -> UserProfileForm(
+                    UserProfileFormData.createFromUserProfile(data),
+                    UserProfileForm.FormType.Success
                 )
                 else -> UnknownState
             }
@@ -122,6 +131,15 @@ private data class UserProfileFormData private constructor(
             weight = weight.toFloatOrNull()
         )
     }
+
+    @StringRes
+    fun getUserNameErrorMessageRes(): Int? = if (name.isBlank()) {
+        R.string.user_profile_error_empty_user_name
+    } else {
+        null
+    }
+
+    fun isValid(): Boolean = getUserNameErrorMessageRes() == null
 
     companion object {
         fun createFromUserProfile(userProfile: UserProfile) = UserProfileFormData(
@@ -146,7 +164,10 @@ fun UserProfileScreen(
         navController,
         screenState
     ) { formData ->
-        userProfileViewModel.updateUserProfile(formData.makeProfileEditData())
+        if (formData.isValid()) {
+            userProfileViewModel.updateUserProfile(formData.makeProfileEditData())
+            navController.popBackStack()
+        }
     }
 }
 
@@ -167,10 +188,7 @@ private fun UserProfileScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         StatusBarSpacer()
         val onClickSave = formData?.let { { onClickSaveUserProfile(it) } }
-        UserProfileTopBar(
-            navController,
-            onClickSave
-        )
+        UserProfileTopBar(navController, onClickSave)
         Box(modifier = Modifier.weight(1f)) {
             when (screenState) {
                 UserProfileScreenState.FullScreenLoading ->
@@ -184,7 +202,9 @@ private fun UserProfileScreen(
                         // todo: retry
                     }
                 is UserProfileScreenState.UserProfileForm -> {
-                    if (screenState is UserProfileScreenState.UserProfileLoadingForm) {
+                    if (screenState.formType ==
+                        UserProfileScreenState.UserProfileForm.FormType.Loading
+                    ) {
                         UserProfileLoadingIndicator()
                     }
 
@@ -194,7 +214,9 @@ private fun UserProfileScreen(
                         }
                     }
 
-                    if (screenState is UserProfileScreenState.UserProfileErrorForm) {
+                    if (screenState.formType ==
+                        UserProfileScreenState.UserProfileForm.FormType.Error
+                    ) {
                         UserProfileErrorSnackbar(modifier = Modifier.align(Alignment.BottomCenter))
                     }
                 }
@@ -245,18 +267,25 @@ private fun UserProfileForm(
             .verticalScroll(rememberScrollState())
     ) {
         Spacer(modifier = Modifier.height(40.dp))
-        UserProfileImageView(formData.photoUrl)
+        UserProfileImageView(formData.photoUrl) {
+            openUploadAvatarActivity(context)
+        }
         UserProfileSectionSpacer()
         SectionTitle(stringResource(id = R.string.profile_basic_label))
 
         // name
+        val userNameErrorMessage = formData.getUserNameErrorMessageRes()?.let { messageRes ->
+            stringResource(id = messageRes)
+        }
         UserProfileTextField(
             label = stringResource(id = R.string.user_profile_hint_name),
             value = formData.name,
             onValueChange = { name ->
                 onUserProfileChanged(formData.copy(name = name))
-            }
+            },
+            errorMessage = userNameErrorMessage
         )
+
         SectionTitle(stringResource(id = R.string.profile_physical_label))
 
         // birthdate
@@ -300,6 +329,11 @@ private fun UserProfileForm(
             onCheckedChange = { }
         )
     }
+}
+
+fun openUploadAvatarActivity(context: Context) {
+    val intent = UploadAvatarActivity.launchIntent(context)
+    context.startActivity(intent)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -379,19 +413,31 @@ private fun UserProfileTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
     readOnly: Boolean = false,
     onValueChange: (String) -> Unit,
+    errorMessage: String? = null,
 ) {
-    OutlinedTextField(
-        keyboardOptions = keyboardOptions,
-        maxLines = 1,
-        singleLine = true,
-        readOnly = readOnly,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 12.dp),
-        label = { Text(text = label) },
-        value = value,
-        onValueChange = onValueChange
-    )
+    Column {
+        OutlinedTextField(
+            keyboardOptions = keyboardOptions,
+            maxLines = 1,
+            singleLine = true,
+            isError = errorMessage != null,
+            readOnly = readOnly,
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text(text = label) },
+            value = value,
+            onValueChange = onValueChange
+        )
+        Text(
+            text = errorMessage ?: "", // let the space still be occupied when no error message
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 0.dp, top = 4.dp),
+            color = AppColors.error(),
+            fontSize = 12.sp
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+    }
 }
 
 @Composable
@@ -451,22 +497,34 @@ private fun UserProfileTopBar(
 }
 
 @Composable
-private fun UserProfileImageView(photoUrl: String?, imageLoadSizeDp: Dp = 100.dp) {
+private fun UserProfileImageView(
+    photoUrl: String?,
+    imageLoadSizeDp: Dp = 100.dp,
+    onClick: () -> Unit,
+) {
     val imageLoadSizePx = with(LocalDensity.current) { imageLoadSizeDp.roundToPx() }
-    Image(
-        painter = rememberImagePainter(
-            data = photoUrl,
-            builder = {
-                size(imageLoadSizePx)
-                placeholder(R.drawable.common_avatar_placeholder_image)
-                error(R.drawable.common_avatar_placeholder_image)
-            }
-        ),
-        contentDescription = "Athlete avatar",
-        modifier = Modifier
-            .size(imageLoadSizeDp)
-            .clip(CircleShape)
-    )
+    Box {
+        Image(
+            painter = rememberImagePainter(
+                data = photoUrl,
+                builder = {
+                    size(imageLoadSizePx)
+                    placeholder(R.drawable.common_avatar_placeholder_image)
+                    error(R.drawable.common_avatar_placeholder_image)
+                }
+            ),
+            contentDescription = "Athlete avatar",
+            modifier = Modifier
+                .size(imageLoadSizeDp)
+                .clip(CircleShape)
+                .clickable { onClick() }
+        )
+        Icon(
+            modifier = Modifier.align(Alignment.BottomEnd),
+            imageVector = Icons.Sharp.PhotoCamera,
+            contentDescription = "photo camera icon"
+        )
+    }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)

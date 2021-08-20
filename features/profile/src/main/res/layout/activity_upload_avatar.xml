@@ -5,12 +5,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <akio.apps.myrun.feature.cropavatar.CropImageView
+    <com.google.android.material.appbar.MaterialToolbar
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="@string/upload_avatar_title"
+        app:menu="@menu/upload_avatar_top_bar"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        style="@style/Widget.MaterialComponents.Toolbar.Primary" />
+
+    <akio.apps.myrun.feature.profile.ui.CropImageView
         android:id="@+id/cropImageView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/topAppBar" />
 
     <TextView
         android:id="@+id/tvInstruction"
@@ -28,12 +38,15 @@
         app:layout_constraintTop_toBottomOf="@+id/cropImageView" />
 
     <Button
+        android:id="@+id/crop_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
         android:layout_marginLeft="@dimen/common_page_horizontal_padding"
         android:layout_marginRight="@dimen/common_page_horizontal_padding"
-        android:onClick="onClickCrop"
-        android:text="@string/profile_crop_button"
+        android:text="@string/action_done"
         app:layout_constraintTop_toBottomOf="@+id/tvInstruction" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

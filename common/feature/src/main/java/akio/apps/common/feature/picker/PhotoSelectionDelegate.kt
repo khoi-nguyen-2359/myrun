@@ -1,8 +1,8 @@
-package akio.apps.myrun._base.utils
+package akio.apps.common.feature.picker
 
-import akio.apps._base.utils.PermissionUtils
-import akio.apps.myrun.R
-import akio.apps.myrun._base.permissions.AppPermissions
+import akio.apps.common.feature.R
+import akio.apps.common.feature.permissions.AppPermissions
+import akio.apps.common.feature.permissions.PermissionUtils
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
@@ -16,7 +16,7 @@ class PhotoSelectionDelegate(
     private val activity: Activity,
     private val fragment: Fragment?,
     private val requestCodes: RequestCodes,
-    private var eventListener: EventListener? = null
+    private var eventListener: EventListener? = null,
 ) {
 
     private var capturedPhotoContentUri: Uri? = null
@@ -140,7 +140,7 @@ class PhotoSelectionDelegate(
         val rcTakePhotoPermissions: Int,
         val rcPickPhotoPermissions: Int,
         val rcTakePhoto: Int,
-        val rcPickPhoto: Int
+        val rcPickPhoto: Int,
     )
 
     interface EventListener {
