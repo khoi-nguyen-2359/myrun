@@ -5,7 +5,7 @@ import android.net.Uri
 
 // Leave a field null in order not to include that field in the update request.
 data class ProfileEditData(
-    val displayName: String = "",
+    val displayName: String? = null,
     val birthdate: Long? = null,
     val gender: Gender? = null,
     val weight: Float? = null,

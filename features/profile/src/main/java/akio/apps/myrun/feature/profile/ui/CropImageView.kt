@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.cropavatar
+package akio.apps.myrun.feature.profile.ui
 
 import akio.apps.common.feature.ui.dp2px
 import akio.apps.common.feature.ui.toRect
@@ -60,10 +60,13 @@ class CropImageView @JvmOverloads constructor(
     fun setImageBitmap(imageBitmap: Bitmap) {
         this.imageBitmap = imageBitmap
         imageBounds = RectF(0f, 0f, imageBitmap.width.toFloat(), imageBitmap.height.toFloat())
-        findCenterCropScale()
+        scaleCenterCrop()
     }
 
-    private fun findCenterCropScale() {
+    private fun scaleCenterCrop() {
+        if (imageBitmap == null)
+            return
+
         centerCropScale = max(
             destDrawRect.width() / imageBounds.width(),
             destDrawRect.height() / imageBounds.height()
@@ -71,7 +74,7 @@ class CropImageView @JvmOverloads constructor(
         scaleSrcRect(centerCropScale, 0.5f, 0.5f)
         accScaleFactor = centerCropScale
 
-        ViewCompat.postInvalidateOnAnimation(this@CropImageView)
+        invalidate()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -82,7 +85,7 @@ class CropImageView @JvmOverloads constructor(
         destDrawRect.set(0f, 0f, fWidth, fHeight)
         srcDrawRect.set(0f, 0f, fWidth, fHeight)
         mask = createCircleMask(fWidth, fHeight)
-        findCenterCropScale()
+        scaleCenterCrop()
     }
 
     private val scrollDetector =
@@ -188,7 +191,7 @@ class CropImageView @JvmOverloads constructor(
         }
     }
 
-    fun createCircleMask(width: Float, height: Float): Bitmap {
+    private fun createCircleMask(width: Float, height: Float): Bitmap {
         val paint = Paint()
         paint.style = Paint.Style.FILL
         paint.color = Color.BLUE

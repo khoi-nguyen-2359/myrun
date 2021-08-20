@@ -10,6 +10,7 @@ import akio.apps.myrun.data.user.impl.error.UserProfileNotFoundError
 import akio.apps.myrun.data.user.impl.mapper.FirestoreUserProfileMapper
 import akio.apps.myrun.data.user.impl.model.FirestoreUser
 import akio.apps.myrun.data.user.impl.model.FirestoreUserProfileUpdateMap
+import android.net.Uri
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -31,7 +32,7 @@ class FirebaseUserProfileRepository @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage,
     private val firestoreUserProfileMapper: FirestoreUserProfileMapper,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : UserProfileRepository {
 
     private fun getUserDocument(userId: String): DocumentReference {
@@ -77,32 +78,36 @@ class FirebaseUserProfileRepository @Inject constructor(
             ?: throw UserProfileNotFoundError("Could not find userId $userId")
     }
 
-    override suspend fun updateUserProfile(userId: String, profileEditData: ProfileEditData): Unit =
-        withContext(ioDispatcher) {
-            val avatarUri = profileEditData.avatarUri?.toString()
-            val avatarUploadedUri = if (avatarUri != null && avatarUri.startsWith("file://")) {
+    override suspend fun uploadUserAvatarImage(userId: String, imageFileUri: String): Uri? =
+        withContext(Dispatchers.IO) {
+            val uploadedUri = if (imageFileUri.startsWith("file://")) {
                 FirebaseStorageUtils.uploadLocalBitmap(
                     getAvatarStorage(),
                     userId,
-                    avatarUri.removePrefix("file://"),
+                    imageFileUri.removePrefix("file://"),
                     AVATAR_SCALED_SIZE
                 )
             } else {
-                profileEditData.avatarUri
+                null
             }
 
-            val updateMap = FirestoreUserProfileUpdateMap()
-                .apply {
-                    uid(userId)
-                    displayName(profileEditData.displayName)
-                    avatarUploadedUri?.toString()?.let(::photoUrl)
-                    profileEditData.gender?.genderId?.let(::gender)
-                    profileEditData.weight?.let(::weight)
-                    profileEditData.phoneNumber?.let(::phoneNumber)
-                    profileEditData.birthdate?.let(::birthdate)
-                }
-            getUserDocument(userId).set(updateMap, SetOptions.merge())
+            updateUserProfile(userId, ProfileEditData(avatarUri = uploadedUri))
+
+            uploadedUri
         }
+
+    override fun updateUserProfile(userId: String, profileEditData: ProfileEditData) {
+        val updateMap = FirestoreUserProfileUpdateMap().apply {
+            uid(userId)
+            profileEditData.displayName?.let(::displayName)
+            profileEditData.avatarUri?.toString()?.let(::photoUrl)
+            profileEditData.gender?.genderId?.let(::gender)
+            profileEditData.weight?.let(::weight)
+            profileEditData.phoneNumber?.let(::phoneNumber)
+            profileEditData.birthdate?.let(::birthdate)
+        }
+        getUserDocument(userId).set(updateMap, SetOptions.merge())
+    }
 
     companion object {
         const val FIRESTORE_USERS_DOCUMENT = "users"

@@ -30,7 +30,7 @@ class UserProfileViewModel @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
     private val activityLocalStorage: ActivityLocalStorage,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
-    private val updateUserProfileUsecase: UpdateUserProfileUsecase
+    private val updateUserProfileUsecase: UpdateUserProfileUsecase,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
     val userProfileResourceFlow: Flow<Resource<UserProfile>> =
@@ -65,7 +65,7 @@ class UserProfileViewModel @Inject constructor(
         }
     }
 
-    fun updateUserProfile(profileEditData: ProfileEditData) = viewModelScope.launchCatching {
+    fun updateUserProfile(profileEditData: ProfileEditData) {
         updateUserProfileUsecase.updateUserProfile(profileEditData)
     }
 

@@ -1,7 +1,6 @@
-package akio.apps.myrun._base.permissions
+package akio.apps.common.feature.permissions
 
 import android.Manifest
-import com.google.android.gms.fitness.data.DataType
 
 object AppPermissions {
     const val preciseLocationPermission: String = Manifest.permission.ACCESS_FINE_LOCATION
@@ -17,10 +16,4 @@ object AppPermissions {
     val pickPhotoPermissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
     val appLaunchPermissions =
         arrayOf(*locationPermissions, *takePhotoPermissions, *pickPhotoPermissions)
-    val fitnessDataTypes = arrayOf(
-        DataType.TYPE_SPEED,
-        DataType.TYPE_STEP_COUNT_DELTA,
-        DataType.TYPE_STEP_COUNT_CADENCE,
-        DataType.TYPE_STEP_COUNT_CUMULATIVE
-    )
 }

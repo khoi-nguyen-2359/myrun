@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.routetracking.impl
 
+import akio.apps.common.feature.permissions.AppPermissions
 import akio.apps.myrun.R
-import akio.apps.myrun._base.permissions.AppPermissions
 import android.content.pm.PackageManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -13,7 +13,7 @@ import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 class LocationPermissionChecker(
-    private val activity: AppCompatActivity
+    private val activity: AppCompatActivity,
 ) {
     private val requestPermissionLauncher = activity.registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
