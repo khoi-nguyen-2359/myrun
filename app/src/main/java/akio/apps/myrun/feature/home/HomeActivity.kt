@@ -17,7 +17,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class HomeActivity : AppCompatActivity() {
 
@@ -51,19 +50,6 @@ class HomeActivity : AppCompatActivity() {
     private fun openActivityDetail(activity: Activity) {
         val intent = ActivityDetailActivity.createIntent(this, activity.id)
         startActivity(intent)
-    }
-
-    private fun openUserProfile(userId: String) {
-        Timber.d(userId)
-        // TODO: Open user profile screen with user id
-//        val launchIntent = UserProfileFragment.intentForUserId(this, userId)
-//        startActivity(launchIntent)
-    }
-
-    private fun openCurrentUserProfile() {
-        // TODO: Open user profile screen with current user
-//        val launchIntent = UserProfileFragment.intentForCurrentUser(this)
-//        startActivity(launchIntent)
     }
 
     private fun openRouteTrackingOrCheckRequiredPermission() {
