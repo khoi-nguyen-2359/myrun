@@ -43,7 +43,6 @@ class UpdateUserProfileUsecaseTest {
             val userId = "userId"
             whenever(userAuthenticationState.requireUserAccountId()).thenReturn(userId)
             val editData = createProfileEditData()
-            whenever(userProfileRepository.updateUserProfile(userId, editData)).thenReturn(Unit)
 
             // when
             testee.updateUserProfile(editData)
@@ -75,17 +74,16 @@ class UpdateUserProfileUsecaseTest {
     }
 
     private fun createProfileEditData(
-        phoneNumber: String? = "edit phone number",
         displayName: String = "displayName",
+        birthdate: Long = 0,
         avatarUri: Uri? = null,
     ): ProfileEditData {
         return ProfileEditData(
             displayName,
+            birthdate,
             Gender.Male,
-            170f,
             65f,
             avatarUri,
-            phoneNumber
         )
     }
 }
