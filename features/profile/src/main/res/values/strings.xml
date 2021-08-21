@@ -25,4 +25,5 @@
     <string name="user_profile_error_empty_user_name">User display name can not be blank.</string>
     <string name="action_select">Select photo</string>
     <string name="action_save">Save</string>
+    <string name="upload_avatar_connection_unavailable_error">You need internet connection to update your profile image.</string>
 </resources>
