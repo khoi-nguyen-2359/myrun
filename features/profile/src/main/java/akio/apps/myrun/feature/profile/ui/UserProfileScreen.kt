@@ -44,20 +44,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.ListItem
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Snackbar
 import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.ArrowBack
 import androidx.compose.material.icons.sharp.PhotoCamera
@@ -97,7 +94,7 @@ private sealed class UserProfileScreenState {
         val formData: UserProfileFormData,
         val formType: FormType,
     ) : UserProfileScreenState() {
-        enum class FormType { Loading, Error, Success }
+        enum class FormType { Loading, Success }
     }
 
     object UnknownState : UserProfileScreenState()
@@ -115,11 +112,7 @@ private sealed class UserProfileScreenState {
                     UserProfileFormData.create(data, eappsProvidersResource.data),
                     UserProfileForm.FormType.Loading
                 )
-                userProfileResource is Resource.Error && data != null -> UserProfileForm(
-                    UserProfileFormData.create(data, eappsProvidersResource.data),
-                    UserProfileForm.FormType.Error
-                )
-                userProfileResource is Resource.Success && data != null -> UserProfileForm(
+                data != null -> UserProfileForm(
                     UserProfileFormData.create(data, eappsProvidersResource.data),
                     UserProfileForm.FormType.Success
                 )
@@ -320,12 +313,6 @@ private fun UserProfileScreen(
                             onClickStravaLink = onClickStravaLink
                         )
                     }
-
-                    if (screenState.formType ==
-                        UserProfileScreenState.UserProfileForm.FormType.Error
-                    ) {
-                        UserProfileErrorSnackbar(modifier = Modifier.align(Alignment.BottomCenter))
-                    }
                 }
             }
         }
@@ -340,24 +327,6 @@ private fun BoxScope.UserProfileLoadingIndicator() {
             .align(Alignment.TopCenter)
             .fillMaxWidth()
     )
-}
-
-@Composable
-fun UserProfileErrorSnackbar(modifier: Modifier = Modifier) {
-    val snackbarBgColor = AppColors.error()
-    val snackbarContentColor = contentColorFor(backgroundColor = snackbarBgColor)
-    Snackbar(
-        backgroundColor = snackbarBgColor,
-        contentColor = snackbarContentColor,
-        action = {
-            Button(onClick = { /*TODO*/ }) {
-                Text(text = "Retry")
-            }
-        },
-        modifier = modifier.padding(8.dp)
-    ) {
-        Text(text = "Please try to fetch your profile again.")
-    }
 }
 
 @Composable
@@ -377,6 +346,7 @@ private fun UserProfileForm(
             openUploadAvatarActivity(context)
         }
         UserProfileSectionSpacer()
+        UserProfileSectionSpacer()
         SectionTitle(stringResource(id = R.string.profile_basic_label))
 
         // name
@@ -392,6 +362,7 @@ private fun UserProfileForm(
             errorMessage = userNameErrorMessage
         )
 
+        UserProfileSectionSpacer()
         SectionTitle(stringResource(id = R.string.profile_physical_label))
 
         // birthdate
@@ -428,6 +399,8 @@ private fun UserProfileForm(
                 onUserProfileFormDataChanged(formData.copy(weight = selectedWeight))
             }
         )
+
+        UserProfileSectionSpacer()
         SectionTitle(stringResource(id = R.string.profile_other_apps_section_title))
 
         // strava
@@ -591,7 +564,6 @@ private fun UserProfileReadOnlyTextField(
 @Composable
 private fun SectionTitle(titleText: String) =
     Column(modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)) {
-        UserProfileSectionSpacer()
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -604,7 +576,7 @@ private fun SectionTitle(titleText: String) =
 
 @Composable
 private fun UserProfileSectionSpacer() {
-    Spacer(modifier = Modifier.height(20.dp))
+    Spacer(modifier = Modifier.height(16.dp))
 }
 
 @Composable
@@ -713,18 +685,6 @@ private fun PreviewUserProfileScreenLoadingFormWithData() {
 @Composable
 private fun PreviewUserProfileScreenErrorFormWithoutData() {
     val error: Resource<UserProfile> = Resource.Error(Exception(), data = null)
-    UserProfileScreen(
-        navController = rememberNavController(),
-        screenState = UserProfileScreenState.create(error, Resource.Loading()),
-        {},
-        {}
-    )
-}
-
-@Preview(showBackground = true, backgroundColor = 0xffffffff)
-@Composable
-private fun PreviewUserProfileScreenErrorFormWithData() {
-    val error = Resource.Error(Exception(), data = createUserProfile())
     UserProfileScreen(
         navController = rememberNavController(),
         screenState = UserProfileScreenState.create(error, Resource.Loading()),
