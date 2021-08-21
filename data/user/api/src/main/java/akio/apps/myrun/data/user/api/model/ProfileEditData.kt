@@ -10,14 +10,12 @@ data class ProfileEditData(
     val gender: Gender? = null,
     val weight: Float? = null,
     val avatarUri: Uri? = null,
-    val phoneNumber: String? = null
 ) {
     companion object {
         fun createFromUserAccount(userAccount: UserAccount): ProfileEditData {
             return ProfileEditData(
                 displayName = userAccount.displayName ?: "",
-                avatarUri = userAccount.photoUrl?.let { Uri.parse(it) },
-                phoneNumber = userAccount.phoneNumber
+                avatarUri = userAccount.photoUrl?.let { Uri.parse(it) }
             )
         }
     }

@@ -695,8 +695,6 @@ private fun createUserProfile(): UserProfile {
     return UserProfile(
         "defaultUserId",
         "name",
-        "defaultEmail",
-        "defaultPhoneNumber",
         Gender.Male,
         65f,
         null
