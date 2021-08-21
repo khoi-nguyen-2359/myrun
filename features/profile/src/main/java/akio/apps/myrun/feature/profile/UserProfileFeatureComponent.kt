@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.profile
 
+import akio.apps.common.wiring.ApplicationModule
 import akio.apps.common.wiring.FeatureScope
 import akio.apps.common.wiring.LaunchCatchingModule
 import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
@@ -17,7 +18,8 @@ import dagger.Component
 @FeatureScope
 @Component(
     modules = [
-        LaunchCatchingModule::class
+        LaunchCatchingModule::class,
+        ApplicationModule::class
     ],
     dependencies = [
         ActivityDataComponent::class,

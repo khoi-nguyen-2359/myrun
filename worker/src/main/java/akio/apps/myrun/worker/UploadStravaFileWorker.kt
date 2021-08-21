@@ -1,7 +1,6 @@
-package akio.apps.myrun.feature.strava.impl
+package akio.apps.myrun.worker
 
 import akio.apps.myrun.domain.strava.UploadActivityFilesToStravaUsecase
-import akio.apps.myrun.feature.strava._di.DaggerStravaFeatureComponent
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -22,7 +21,7 @@ class UploadStravaFileWorker(
     lateinit var uploadActivityFilesToStravaUsecase: UploadActivityFilesToStravaUsecase
 
     init {
-        DaggerStravaFeatureComponent.factory().create().inject(this)
+        DaggerWorkerFeatureComponent.factory().create().inject(this)
     }
 
     override suspend fun doWork(): Result {
@@ -36,7 +35,7 @@ class UploadStravaFileWorker(
     }
 
     companion object {
-        const val UNIQUE_WORK_NAME = "UploadStravaFileWorker.WorkerName"
+        private const val UNIQUE_WORK_NAME = "UploadStravaFileWorker.WorkerName"
 
         fun enqueue(context: Context) {
             val constraints = Constraints.Builder()

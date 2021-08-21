@@ -17,10 +17,10 @@ import akio.apps.myrun.data.tracking.wiring.DaggerTrackingDataComponent
 import akio.apps.myrun.data.tracking.wiring.TrackingDataComponent
 import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
 import akio.apps.myrun.data.user.wiring.UserDataComponent
-import akio.apps.myrun.feature.routetracking.impl.ActivityUploadWorker
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingViewModel
-import akio.apps.myrun.feature.routetracking.impl.UpdateUserRecentPlaceWorker
+import akio.apps.myrun.worker.ActivityUploadWorker
+import akio.apps.myrun.worker.UpdateUserRecentPlaceWorker
 import dagger.Component
 
 @FeatureScope

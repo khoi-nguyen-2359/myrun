@@ -35,3 +35,4 @@ include ':data:fitness:impl'
 include ':data:fitness:wiring'
 include(":test")
 include ':features:profile'
+include ':worker'
