@@ -4,11 +4,13 @@ import akio.apps.common.data.Resource
 import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.base.FirebaseStorageUtils
 import akio.apps.myrun.data.user.api.UserProfileRepository
+import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.data.user.impl.error.UserProfileNotFoundError
 import akio.apps.myrun.data.user.impl.mapper.FirestoreUserProfileMapper
 import akio.apps.myrun.data.user.impl.model.FirestoreUser
+import akio.apps.myrun.data.user.impl.model.FirestoreUserGender
 import akio.apps.myrun.data.user.impl.model.FirestoreUserProfileUpdateMap
 import android.net.Uri
 import com.google.firebase.firestore.DocumentReference
@@ -44,7 +46,7 @@ class FirebaseUserProfileRepository @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getUserProfileFlow(userId: String): Flow<Resource<UserProfile>> =
-        callbackFlow<Resource<UserProfile>> {
+        callbackFlow {
             val listener = withContext(Dispatchers.Main.immediate) {
                 getUserDocument(userId).addSnapshotListener { snapshot, error ->
                     snapshot?.toObject(FirestoreUser::class.java)
@@ -66,7 +68,7 @@ class FirebaseUserProfileRepository @Inject constructor(
                 }
             }
         }
-            .flowOn(Dispatchers.IO)
+            .flowOn(ioDispatcher)
 
     override suspend fun getUserProfile(userId: String): UserProfile {
         return getUserDocument(userId)
@@ -79,7 +81,7 @@ class FirebaseUserProfileRepository @Inject constructor(
     }
 
     override suspend fun uploadUserAvatarImage(userId: String, imageFileUri: String): Uri? =
-        withContext(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             val uploadedUri = if (imageFileUri.startsWith("file://")) {
                 FirebaseStorageUtils.uploadLocalBitmap(
                     getAvatarStorage(),
@@ -97,13 +99,18 @@ class FirebaseUserProfileRepository @Inject constructor(
         }
 
     override fun updateUserProfile(userId: String, profileEditData: ProfileEditData) {
+        val firestoreGender = when (profileEditData.gender) {
+            Gender.Male -> FirestoreUserGender.Male
+            Gender.Female -> FirestoreUserGender.Female
+            Gender.Others -> FirestoreUserGender.Others
+            else -> null
+        }
         val updateMap = FirestoreUserProfileUpdateMap().apply {
             uid(userId)
             profileEditData.displayName?.let(::displayName)
             profileEditData.avatarUri?.toString()?.let(::photoUrl)
-            profileEditData.gender?.genderId?.let(::gender)
+            firestoreGender?.genderId?.let(::gender)
             profileEditData.weight?.let(::weight)
-            profileEditData.phoneNumber?.let(::phoneNumber)
             profileEditData.birthdate?.let(::birthdate)
         }
         getUserDocument(userId).set(updateMap, SetOptions.merge())

@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class FirestoreUserProfileMapper @Inject constructor() {
     fun map(input: FirestoreUserProfile): UserProfile {
-        val gender = when (FirestoreUserGender.parse(input.gender)) {
+        val gender = when (FirestoreUserGender.parse(input.genderId)) {
             FirestoreUserGender.Male -> Gender.Male
             FirestoreUserGender.Female -> Gender.Female
             FirestoreUserGender.Others -> Gender.Others
@@ -17,8 +17,6 @@ class FirestoreUserProfileMapper @Inject constructor() {
             UserProfile(
                 uid,
                 displayName,
-                email,
-                phoneNumber,
                 gender,
                 weight,
                 photoUrl,
