@@ -22,6 +22,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -61,7 +62,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -75,6 +77,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
+import coil.size.Scale
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -504,27 +507,37 @@ private fun UserProfileImageView(
     onClick: () -> Unit,
 ) {
     val imageLoadSizePx = with(LocalDensity.current) { imageLoadSizeDp.roundToPx() }
-    Box {
-        Image(
-            painter = rememberImagePainter(
-                data = photoUrl,
-                builder = {
-                    size(imageLoadSizePx)
-                    placeholder(R.drawable.common_avatar_placeholder_image)
-                    error(R.drawable.common_avatar_placeholder_image)
-                }
-            ),
-            contentDescription = "Athlete avatar",
-            modifier = Modifier
-                .size(imageLoadSizeDp)
-                .clip(CircleShape)
-                .clickable { onClick() }
-        )
-        Icon(
-            modifier = Modifier.align(Alignment.BottomEnd),
-            imageVector = Icons.Sharp.PhotoCamera,
-            contentDescription = "photo camera icon"
-        )
+    Surface(shape = CircleShape, modifier = Modifier.size(imageLoadSizeDp)) {
+        Box {
+            Image(
+                painter = rememberImagePainter(
+                    data = photoUrl,
+                    builder = {
+                        size(imageLoadSizePx)
+                        placeholder(R.drawable.common_avatar_placeholder_image)
+                        error(R.drawable.common_avatar_placeholder_image)
+                        scale(Scale.FILL)
+                    }
+                ),
+                contentDescription = "Athlete avatar",
+                modifier = Modifier
+                    .matchParentSize()
+                    .clickable { onClick() }
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .background(Color(0x55000000))
+            ) {
+                Icon(
+                    modifier = Modifier.align(Alignment.Center).scale(0.75f),
+                    imageVector = Icons.Sharp.PhotoCamera,
+                    tint = Color.White,
+                    contentDescription = "photo camera icon"
+                )
+            }
+        }
     }
 }
 
