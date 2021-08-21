@@ -8,11 +8,13 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.getSystemService
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
@@ -94,7 +96,16 @@ class UploadAvatarActivity :
         }
     }
 
+    @Suppress("DEPRECATION") // activeNetworkInfo.isConnectedOrConnecting
     private fun cropAndUploadAvatar() {
+        val connMan = getSystemService<ConnectivityManager>()
+        if (connMan?.activeNetworkInfo?.isConnectedOrConnecting != true) {
+            dialogDelegate.showErrorAlert(
+                getString(R.string.upload_avatar_connection_unavailable_error)
+            )
+            return
+        }
+
         lifecycleScope.launch {
             dialogDelegate.showProgressDialog()
             try {
