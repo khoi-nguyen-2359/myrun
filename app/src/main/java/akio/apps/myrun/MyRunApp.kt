@@ -10,7 +10,7 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.configurator.ConfiguratorGate
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
-import akio.apps.myrun.feature.routetracking.impl.UpdateUserRecentPlaceWorker
+import akio.apps.myrun.worker.UpdateUserRecentPlaceWorker
 import android.app.Application
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner

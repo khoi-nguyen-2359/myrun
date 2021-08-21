@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.strava._di
+package akio.apps.myrun.worker
 
 import akio.apps.common.wiring.DispatchersModule
 import akio.apps.common.wiring.FeatureScope
@@ -9,7 +9,12 @@ import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.eapps.wiring.DaggerExternalAppDataComponent
 import akio.apps.myrun.data.eapps.wiring.ExternalAppDataComponent
-import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
+import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
+import akio.apps.myrun.data.location.wiring.LocationDataComponent
+import akio.apps.myrun.data.tracking.wiring.DaggerTrackingDataComponent
+import akio.apps.myrun.data.tracking.wiring.TrackingDataComponent
+import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
+import akio.apps.myrun.data.user.wiring.UserDataComponent
 import dagger.Component
 
 @FeatureScope
@@ -21,11 +26,16 @@ import dagger.Component
     dependencies = [
         ActivityDataComponent::class,
         AuthenticationDataComponent::class,
-        ExternalAppDataComponent::class
+        ExternalAppDataComponent::class,
+        LocationDataComponent::class,
+        UserDataComponent::class,
+        TrackingDataComponent::class
     ]
 )
-interface StravaFeatureComponent {
+interface WorkerFeatureComponent {
     fun inject(uploadStravaFileWorker: UploadStravaFileWorker)
+    fun inject(updateUserRecentPlaceWorker: UpdateUserRecentPlaceWorker)
+    fun inject(activityUploadWorker: ActivityUploadWorker)
 
     @Component.Factory
     interface Factory {
@@ -35,6 +45,9 @@ interface StravaFeatureComponent {
                 DaggerAuthenticationDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =
                 DaggerExternalAppDataComponent.factory().create(),
-        ): StravaFeatureComponent
+            locationDataComponent: LocationDataComponent = DaggerLocationDataComponent.create(),
+            userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
+            trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create(),
+        ): WorkerFeatureComponent
     }
 }

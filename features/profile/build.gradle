@@ -54,6 +54,9 @@ dependencies {
     implementation(project(':common:data'))
     implementation(project(':common:feature'))
 
+    implementation(project(':worker'))
+    implementation(libs.workManager) // still needed when using module 'worker'
+
     implementation(libs.androidMaterial)
     implementation(libs.constraintLayout)
     implementation(libs.bundles.compose)

@@ -12,6 +12,8 @@ import akio.apps.myrun.domain.strava.RemoveStravaTokenUsecase
 import akio.apps.myrun.domain.user.GetProviderTokensUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
+import akio.apps.myrun.worker.UploadStravaFileWorker
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
 class UserProfileViewModel @Inject constructor(
+    private val application: Application,
     private val arguments: Arguments,
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val getProviderTokensUsecase: GetProviderTokensUsecase,
@@ -49,9 +52,7 @@ class UserProfileViewModel @Inject constructor(
             deauthorizeStravaUsecase.deauthorizeStrava()
             removeStravaTokenUsecase.removeStravaToken()
 
-            // TODO: react on this event to clear worker
-//        WorkManager.getInstance(application)
-//            .cancelUniqueWork(UploadStravaFileWorker.UNIQUE_WORK_NAME)
+            UploadStravaFileWorker.clear(application)
         }
     }
 

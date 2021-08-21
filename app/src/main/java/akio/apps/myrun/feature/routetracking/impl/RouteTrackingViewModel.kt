@@ -15,7 +15,7 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.routetracking.StoreTrackingActivityDataUsecase
-import akio.apps.myrun.feature.strava.impl.UploadStravaFileWorker
+import akio.apps.myrun.worker.UploadStravaFileWorker
 import android.app.Application
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData

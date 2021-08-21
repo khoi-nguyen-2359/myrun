@@ -1,8 +1,7 @@
-package akio.apps.myrun.feature.routetracking.impl
+package akio.apps.myrun.worker
 
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.domain.recentplace.UpdateUserRecentPlaceUsecase
-import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -30,7 +29,7 @@ class UpdateUserRecentPlaceWorker(
     lateinit var locationDataSource: LocationDataSource
 
     init {
-        DaggerRouteTrackingFeatureComponent.factory().create().inject(this)
+        DaggerWorkerFeatureComponent.factory().create().inject(this)
     }
 
     override suspend fun doWork(): Result {
