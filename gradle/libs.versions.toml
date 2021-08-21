@@ -25,7 +25,7 @@ splashScreen = "1.0.0-alpha01"
 compose = "1.0.1"
 composeConstraintLayout = "1.0.0-beta01"
 pagingCompose = "1.0.0-alpha12"
-accompanist = "0.16.1"
+accompanist = "0.17.0"
 composeNavigation = "2.4.0-alpha06"
 
 # google play services: https://developers.google.com/android/guides/releases
