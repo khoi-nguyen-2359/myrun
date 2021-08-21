@@ -5,7 +5,8 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.feature.activitydetail.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.activitydetail.TrackingValueFormatter
 import akio.apps.myrun.feature.activitydetail.ui.ActivityRouteImage
-import akio.apps.myrun.feature.usertimeline.UserTimelineViewModel
+import akio.apps.myrun.feature.home.ui.HomeNavigationDestination
+import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityData
 import akio.apps.myrun.feature.usertimeline.model.RunningActivity
@@ -65,6 +66,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -91,12 +93,12 @@ fun UserTimeline(
     feedListState: LazyListState,
     onClickActivityAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit,
-    onClickUserAvatar: (String) -> Unit
+    navController: NavController
 ) {
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
     Timber.d("feed source load state ${lazyPagingItems.loadState.source}")
     val isLoadingInitialData by userTimelineViewModel.isLoadingInitialData
-        .collectAsState(initial = true)
+        .collectAsState(initial = false)
     when {
         isLoadingInitialData ||
             (
@@ -118,7 +120,7 @@ fun UserTimeline(
             lazyPagingItems,
             onClickActivityAction,
             onClickExportActivityFile,
-            onClickUserAvatar
+            navController
         )
     }
 }
@@ -131,7 +133,7 @@ private fun UserTimelineActivityList(
     lazyPagingItems: LazyPagingItems<Activity>,
     onClickActivityAction: (Activity) -> Unit,
     onClickExportActivityFile: (Activity) -> Unit,
-    onClickUserAvatar: (String) -> Unit
+    navController: NavController
 ) {
     Timber.d("render UserTimelineActivityList pagingItems=$lazyPagingItems")
     LazyColumn(
@@ -153,7 +155,12 @@ private fun UserTimelineActivityList(
                 TimelineActivityItem(
                     activity, activityDisplayPlaceName, onClickActivityAction,
                     { onClickExportActivityFile(activity) },
-                    { onClickUserAvatar(activity.athleteInfo.userId) }
+                    {
+                        val route = HomeNavigationDestination.Profile.routeWithUserId(
+                            activity.athleteInfo.userId
+                        )
+                        navController.navigate(route)
+                    }
                 )
             }
         }
@@ -217,7 +224,7 @@ private fun TimelineActivityItem(
     activityDisplayPlaceName: String,
     onClickActivityAction: (Activity) -> Unit,
     onClickExportFile: () -> Unit,
-    onClickUserAvatar: () -> Unit
+    onClickUserAvatar: () -> Unit,
 ) = TimelineItem {
     Column(
         modifier = Modifier.clickable {
@@ -340,7 +347,7 @@ private fun ActivityInformationView(
     activityDisplayPlaceName: String?,
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
-    isShareMenuVisible: Boolean = true
+    isShareMenuVisible: Boolean = true,
 ) = Column(modifier = Modifier.padding(start = activityItemHorizontalPadding)) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         UserAvatarImage(activityDetail = activity, onClickUserAvatar)
@@ -369,7 +376,7 @@ private fun AthleteNameText(activityDetail: Activity) = Text(
 @Composable
 private fun ActivityNameText(
     activityDetail: Activity,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) = Text(
     text = activityDetail.name,
     modifier = modifier.fillMaxWidth(),
@@ -380,7 +387,7 @@ private fun ActivityNameText(
 
 @Composable
 private fun ActivityShareMenu(
-    onClickExportFile: () -> Unit
+    onClickExportFile: () -> Unit,
 ) = Box(
     modifier = Modifier.padding(horizontal = 6.dp)
 ) {
@@ -448,7 +455,7 @@ private fun ActivityTimeAndPlaceText(activityDetail: Activity, activityDisplayPl
 @Composable
 private fun UserAvatarImage(
     activityDetail: Activity,
-    onClickUserAvatar: () -> Unit
+    onClickUserAvatar: () -> Unit,
 ) {
     val avatarDimension = 50.dp
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }

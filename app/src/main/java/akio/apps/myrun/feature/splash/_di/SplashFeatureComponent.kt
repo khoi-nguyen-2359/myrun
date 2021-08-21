@@ -1,11 +1,13 @@
 package akio.apps.myrun.feature.splash._di
 
+import akio.apps.common.wiring.LaunchCatchingModule
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.feature.splash.impl.SplashViewModel
 import dagger.Component
 
 @Component(
+    modules = [LaunchCatchingModule::class],
     dependencies = [AuthenticationDataComponent::class]
 )
 interface SplashFeatureComponent {

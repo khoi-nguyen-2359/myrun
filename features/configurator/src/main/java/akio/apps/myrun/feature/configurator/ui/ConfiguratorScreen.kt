@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.configurator.ui
 
+import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.configurator.RouteTrackingConfigurationViewModel
 import akio.apps.myrun.feature.configurator.ui.SectionSpacing.elementHorizontalPadding
 import akio.apps.myrun.feature.configurator.ui.SectionSpacing.elementVerticalPadding
@@ -36,7 +37,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ConfiguratorScreen(routeTrackingViewModel: RouteTrackingConfigurationViewModel) =
-    ConfiguratorTheme {
+    AppTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -105,21 +106,24 @@ private fun LocationUpdateConfiguration(
         value = config.updateInterval,
         onValueChange = { value -> onValueChanged(config.copy(updateInterval = value)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        maxLines = 1
+        maxLines = 1,
+        singleLine = true
     )
     TextField(
         label = { Text("Fastest update interval") },
         value = config.fastestUpdateInterval,
         onValueChange = { value -> onValueChanged(config.copy(fastestUpdateInterval = value)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        maxLines = 1
+        maxLines = 1,
+        singleLine = true
     )
     TextField(
         label = { Text("Smallest displacement") },
         value = config.smallestDisplacement,
         onValueChange = { value -> onValueChanged(config.copy(smallestDisplacement = value)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        maxLines = 1
+        maxLines = 1,
+        singleLine = true
     )
     Row(
         verticalAlignment = Alignment.CenterVertically,

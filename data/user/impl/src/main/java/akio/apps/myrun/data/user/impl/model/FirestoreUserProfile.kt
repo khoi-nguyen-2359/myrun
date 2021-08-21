@@ -3,27 +3,21 @@ package akio.apps.myrun.data.user.impl.model
 import com.google.firebase.firestore.PropertyName
 
 data class FirestoreUserProfile(
-    @PropertyName("uid")
+    @PropertyName(FirestoreUserProfileFields.FIELD_UID)
     val uid: String = "",
 
-    @PropertyName("displayName")
-    val displayName: String? = null,
+    @PropertyName(FirestoreUserProfileFields.FIELD_DISPLAY_NAME)
+    val displayName: String = "",
 
-    @PropertyName("photoUrl")
+    @PropertyName(FirestoreUserProfileFields.FIELD_PHOTO_URL)
     val photoUrl: String? = null,
 
-    @PropertyName("email")
-    val email: String? = null,
+    @PropertyName(FirestoreUserProfileFields.FIELD_GENDER_ID)
+    val genderId: Int = FirestoreUserGender.Others.genderId,
 
-    @PropertyName("phoneNumber")
-    val phoneNumber: String? = null,
+    @PropertyName(FirestoreUserProfileFields.FIELD_WEIGHT)
+    val weight: Float = 0f,
 
-    @PropertyName("gender")
-    val gender: String? = null,
-
-    @PropertyName("height")
-    val height: Float? = null,
-
-    @PropertyName("weight")
-    val weight: Float? = null
+    @PropertyName(FirestoreUserProfileFields.FIELD_BIRTHDATE)
+    val birthdate: Long = 0,
 )

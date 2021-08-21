@@ -19,13 +19,13 @@ class ActivityPagingSource @Inject constructor(
             getUserTimelineActivitiesUsecase.getUserTimelineActivity(startAfter, params.loadSize)
         Timber.d("feed resource $resource")
         return when (resource) {
-            is akio.apps.common.data.Resource.Success ->
+            is Resource.Success ->
                 LoadResult.Page(
                     data = resource.data.map(activityModelMapper::map),
                     prevKey = null,
                     nextKey = resource.data.lastOrNull()?.startTime
                 )
-            is akio.apps.common.data.Resource.Error -> LoadResult.Error(resource.exception)
+            is Resource.Error -> LoadResult.Error(resource.exception)
             else -> LoadResult.Error(Exception("Invalid timeline resource"))
         }
     }

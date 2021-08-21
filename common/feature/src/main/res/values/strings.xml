@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="action_no">No</string>
+    <string name="action_yes">Yes</string>
     <string name="action_close">Close</string>
+    <string name="action_done">Done</string>
+    <string name="action_select">Select photo</string>
+    <string name="action_save">Save</string>
+    <string name="action_retry">Retry</string>
+    <string-array name="photo_selection_options">
+        <item>Camera</item>
+        <item>Photo Gallery</item>
+    </string-array>
 </resources>

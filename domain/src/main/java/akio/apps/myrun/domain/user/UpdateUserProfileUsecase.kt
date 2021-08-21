@@ -10,7 +10,7 @@ class UpdateUserProfileUsecase @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
 ) {
 
-    suspend fun updateUserProfile(profileEditData: ProfileEditData) =
+    fun updateUserProfile(profileEditData: ProfileEditData) =
         userAuthenticationState.requireUserAccountId().let { userId ->
             userProfileRepository.updateUserProfile(userId, profileEditData)
         }

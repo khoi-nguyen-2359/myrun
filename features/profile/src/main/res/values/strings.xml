@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edit_user_profile_link_running_app_success_message">You have successfully linked your account</string>
+    <string name="user_profile_title">Profile</string>
+    <string name="profile_basic_label">Basic Information</string>
+    <string name="user_profile_hint_name">Name</string>
+    <string name="profile_physical_label">Athlete Information</string>
+    <string name="user_profile_hint_birthdate">Birthdate</string>
+    <string name="user_profile_hint_gender">Gender</string>
+    <string name="user_profile_hint_weight">Weight</string>
+    <string name="profile_other_apps_section_title">Other apps</string>
+    <string name="user_profile_strava_description">Sync your new activity to Strava automatically.</string>
+    <string name="user_profile_fullscreen_loading_text">Getting your profile …</string>
+    <string name="user_profile_select_birthdate_instruction">Select your birthdate</string>
+    <string name="user_profile_gender_name_male">Male</string>
+    <string name="user_profile_gender_name_female">Female</string>
+    <string name="user_profile_gender_name_others">Others</string>
+    <string name="upload_avatar_sucess_message">Your avatar has been updated.</string>
+    <string name="photo_selection_dialog_title">Select image from</string>
+    <string name="profile_crop_photo_instruction">Pinch to adjust the image. Your profile photo will be cropped within the circle</string>
+    <string name="profile_crop_button">Crop</string>
+    <string name="upload_avatar_title">Change avatar</string>
+    <string name="user_profile_error_empty_user_name">User display name can not be blank.</string>
+    <string name="upload_avatar_connection_unavailable_error">You need internet connection to update your profile image.</string>
+    <string name="message_loading">Please wait a moment …</string>
+    <string name="user_profile_app_strava_unlink_dialog_message">Do you want to unlink from Strava? Your future activities won\'t be synced up.</string>
+    <string name="user_profile_error_getting_profile">Error happened when getting profile.</string>
+</resources>

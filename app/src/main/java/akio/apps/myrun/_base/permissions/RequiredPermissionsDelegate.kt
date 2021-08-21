@@ -1,7 +1,7 @@
 package akio.apps.myrun._base.permissions
 
 import akio.apps._base.utils.GoogleSignInPermissionUtils
-import akio.apps._base.utils.PermissionUtils
+import akio.apps.common.feature.permissions.PermissionUtils
 import akio.apps.myrun.R
 import android.app.Activity
 import android.content.Context
@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.fitness.FitnessOptions
+import com.google.android.gms.fitness.data.DataType
 import kotlinx.coroutines.Job
 
 class RequiredPermissionsDelegate {
@@ -19,7 +20,7 @@ class RequiredPermissionsDelegate {
         permissions: Array<String>,
         rcPermissions: Int,
         activity: Activity,
-        fragment: Fragment? = null
+        fragment: Fragment? = null,
     ): Boolean {
         RequiredPermissionsDelegate.requestPermissions(
             permissions,
@@ -51,11 +52,18 @@ class RequiredPermissionsDelegate {
     }
 
     companion object {
+        private val fitnessDataTypes = arrayOf(
+            DataType.TYPE_SPEED,
+            DataType.TYPE_STEP_COUNT_DELTA,
+            DataType.TYPE_STEP_COUNT_CADENCE,
+            DataType.TYPE_STEP_COUNT_CUMULATIVE
+        )
+
         fun requestPermissions(
             permissions: Array<String>,
             rcPermissions: Int,
             activity: Activity,
-            fragment: Fragment? = null
+            fragment: Fragment? = null,
         ) {
             if (fragment != null) {
                 @Suppress("DEPRECATION")
@@ -68,11 +76,11 @@ class RequiredPermissionsDelegate {
         fun requestFitnessDataPermissions(
             activity: Activity,
             requestCode: Int,
-            fragment: Fragment? = null
+            fragment: Fragment? = null,
         ): Boolean {
             return GoogleSignInPermissionUtils.mayRequestGoogleSignInPermissions(
                 activity,
-                AppPermissions.fitnessDataTypes,
+                fitnessDataTypes,
                 requestCode,
                 fragment
             )
@@ -81,12 +89,12 @@ class RequiredPermissionsDelegate {
         fun isFitnessDataPermissionsGranted(activity: Activity): Boolean {
             return GoogleSignInPermissionUtils.isDataTypePermissionsGranted(
                 activity,
-                AppPermissions.fitnessDataTypes
+                fitnessDataTypes
             )
         }
 
         fun buildFitnessDataOptions(): FitnessOptions {
-            return GoogleSignInPermissionUtils.buildFitnessOptions(AppPermissions.fitnessDataTypes)
+            return GoogleSignInPermissionUtils.buildFitnessOptions(fitnessDataTypes)
         }
     }
 

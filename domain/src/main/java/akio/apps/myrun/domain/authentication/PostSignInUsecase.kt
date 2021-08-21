@@ -30,7 +30,8 @@ class PostSignInUsecase @Inject constructor(
     }
 
     /**
-     * In case user doesn't make a profile update in onboarding process (for new user), this usecase will clone info from auth account to user profile.
+     * In case user doesn't make a profile update in onboarding process (for new user), this usecase
+     * will clone info from auth account to user profile.
      */
     private suspend fun syncUserProfile(userAccount: UserAccount) {
         val editData = ProfileEditData.createFromUserAccount(userAccount)

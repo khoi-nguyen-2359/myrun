@@ -94,6 +94,7 @@ dependencies {
     implementation project(':features:base')
     implementation project(':features:registration')
     implementation project(":features:configurator")
+    implementation project(":features:profile")
 
     implementation(project(':domain'))
 
@@ -110,6 +111,9 @@ dependencies {
     implementation project(':common:wiring')
     implementation project(':common:data')
 
+    implementation project(':worker')
+    implementation(libs.workManager) // still needed when using module 'worker'
+
     implementation project(':libs:places-sdk')
 
     implementation(libs.kotlinxCoroutinesCore)
@@ -125,7 +129,6 @@ dependencies {
     implementation(libs.paging)
     implementation(libs.fragment)
     implementation(libs.activity)
-    implementation(libs.workManager)
     implementation(libs.splashScreen)
 
     implementation(libs.lifecycleRuntimeKtx)
@@ -137,6 +140,7 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.coilCompose)
     implementation(libs.accompanistPlaceholder)
+    implementation(libs.accompanistInsets)
 
     implementation(libs.multidex)
 
@@ -146,8 +150,6 @@ dependencies {
     implementation platform(libs.firebaseBom)
     implementation(libs.bundles.crashlytics)
     implementation(libs.firebasePerfKtx)
-    // to resolve error 'cannot access ListenableFuture' in work manager
-    implementation(libs.guava)
 
     implementation(libs.androidMapUtils)
     implementation(libs.androidGoogleMap)
