@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.profile.ui
 
 import akio.apps.common.data.Resource
 import akio.apps.common.feature.ui.filterFloatTextField
+import akio.apps.myrun.data.eapps.api.model.ExternalProviders
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.data.user.api.model.UserProfile
@@ -12,8 +13,11 @@ import akio.apps.myrun.feature.base.ui.AppDimensions
 import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.base.ui.CentralAnnouncementView
 import akio.apps.myrun.feature.base.ui.CentralLoadingView
+import akio.apps.myrun.feature.base.ui.ErrorDialog
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
+import akio.apps.myrun.feature.base.ui.ProgressDialog
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
+import akio.apps.myrun.feature.profile.LinkStravaDelegate
 import akio.apps.myrun.feature.profile.R
 import akio.apps.myrun.feature.profile.UploadAvatarActivity
 import akio.apps.myrun.feature.profile.UserProfileViewModel
@@ -24,6 +28,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -38,6 +43,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -49,6 +55,7 @@ import androidx.compose.material.Snackbar
 import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
@@ -96,21 +103,24 @@ private sealed class UserProfileScreenState {
     object UnknownState : UserProfileScreenState()
 
     companion object {
-        fun createFromUserProfileResource(resource: Resource<UserProfile>): UserProfileScreenState {
-            val data = resource.data
+        fun create(
+            userProfileResource: Resource<UserProfile>,
+            eappsProvidersResource: Resource<out ExternalProviders>,
+        ): UserProfileScreenState {
+            val data = userProfileResource.data
             return when {
-                resource is Resource.Loading && data == null -> FullScreenLoading
-                resource is Resource.Error && data == null -> FullScreenError
-                resource is Resource.Loading && data != null -> UserProfileForm(
-                    UserProfileFormData.createFromUserProfile(data),
+                userProfileResource is Resource.Loading && data == null -> FullScreenLoading
+                userProfileResource is Resource.Error && data == null -> FullScreenError
+                userProfileResource is Resource.Loading && data != null -> UserProfileForm(
+                    UserProfileFormData.create(data, eappsProvidersResource.data),
                     UserProfileForm.FormType.Loading
                 )
-                resource is Resource.Error && data != null -> UserProfileForm(
-                    UserProfileFormData.createFromUserProfile(data),
+                userProfileResource is Resource.Error && data != null -> UserProfileForm(
+                    UserProfileFormData.create(data, eappsProvidersResource.data),
                     UserProfileForm.FormType.Error
                 )
-                resource is Resource.Success && data != null -> UserProfileForm(
-                    UserProfileFormData.createFromUserProfile(data),
+                userProfileResource is Resource.Success && data != null -> UserProfileForm(
+                    UserProfileFormData.create(data, eappsProvidersResource.data),
                     UserProfileForm.FormType.Success
                 )
                 else -> UnknownState
@@ -125,6 +135,7 @@ private data class UserProfileFormData private constructor(
     val birthdate: Long,
     val gender: Gender,
     val weight: String,
+    val stravaLinkingState: StravaLinkingState,
 ) {
     fun makeProfileEditData(): ProfileEditData {
         return ProfileEditData(
@@ -145,14 +156,22 @@ private data class UserProfileFormData private constructor(
     fun isValid(): Boolean = getUserNameErrorMessageRes() == null
 
     companion object {
-        fun createFromUserProfile(userProfile: UserProfile) = UserProfileFormData(
+        fun create(userProfile: UserProfile, data: ExternalProviders?) = UserProfileFormData(
             name = userProfile.name,
             photoUrl = userProfile.photo,
             birthdate = userProfile.birthdate,
             gender = userProfile.gender,
-            weight = userProfile.weight.toString()
+            weight = userProfile.weight.toString(),
+            stravaLinkingState = when {
+                data == null -> StravaLinkingState.Unknown
+                data.strava == null -> StravaLinkingState.NotLinked
+                data.strava != null -> StravaLinkingState.Linked
+                else -> StravaLinkingState.Unknown
+            }
         )
     }
+
+    enum class StravaLinkingState { Linked, NotLinked, Unknown }
 }
 
 @Composable
@@ -160,18 +179,98 @@ fun UserProfileScreen(
     navController: NavController,
     userProfileViewModel: UserProfileViewModel,
 ) = AppTheme {
-    val userProfileResource by
-    userProfileViewModel.userProfileResourceFlow.collectAsState(initial = Resource.Loading())
-    val screenState = UserProfileScreenState.createFromUserProfileResource(userProfileResource)
+    val context = LocalContext.current
+    val userProfileResource by userProfileViewModel.userProfileResourceFlow.collectAsState(
+        initial = Resource.Loading()
+    )
+    val eappsProvidersResource by userProfileViewModel.liveProviders.collectAsState(
+        initial = Resource.Loading()
+    )
+    val isInProgress by userProfileViewModel.isInProgress.collectAsState()
+    val error by userProfileViewModel.error.collectAsState()
+    var isStravaUnlinkAlertShowing by remember { mutableStateOf(false) }
+    val screenState = UserProfileScreenState.create(
+        userProfileResource,
+        eappsProvidersResource
+    )
     UserProfileScreen(
         navController,
-        screenState
-    ) { formData ->
-        if (formData.isValid()) {
-            userProfileViewModel.updateUserProfile(formData.makeProfileEditData())
-            navController.popBackStack()
+        screenState,
+        onClickSaveUserProfile = { formData ->
+            if (formData.isValid()) {
+                userProfileViewModel.updateUserProfile(formData.makeProfileEditData())
+                navController.popBackStack()
+            }
+        },
+        onClickStravaLink = { formData ->
+            when (formData.stravaLinkingState) {
+                UserProfileFormData.StravaLinkingState.NotLinked ->
+                    openStravaLinkActivity(context)
+                UserProfileFormData.StravaLinkingState.Linked ->
+                    isStravaUnlinkAlertShowing = true
+                else -> { /* do nothing */
+                }
+            }
         }
+    )
+
+    if (isInProgress) {
+        ProgressDialog(stringResource(id = R.string.message_loading))
     }
+
+    error.getContentIfNotHandled()?.let { ex ->
+        ErrorDialog(ex.message ?: stringResource(id = R.string.dialog_delegate_unknown_error))
+    }
+
+    if (isStravaUnlinkAlertShowing) {
+        StravaUnlinkAlert(
+            onDismissRequest = { isStravaUnlinkAlertShowing = false },
+            onConfirmed = { userProfileViewModel.deauthorizeStrava() }
+        )
+    }
+}
+
+@Composable
+private fun StravaUnlinkAlert(onDismissRequest: () -> Unit, onConfirmed: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        buttons = {
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = AppDimensions.rowVerticalSpacing)
+                    .padding(horizontal = AppDimensions.screenHorizontalPadding)
+            ) {
+                TextButton(
+                    onClick = {
+                        onConfirmed()
+                        onDismissRequest()
+                    }
+                ) {
+                    Text(text = stringResource(id = R.string.action_yes), fontSize = 18.sp)
+                }
+                TextButton(
+                    onClick = {
+                        onDismissRequest()
+                    }
+                ) {
+                    Text(text = stringResource(id = R.string.action_no), fontSize = 18.sp)
+                }
+            }
+        },
+        text = {
+            Text(
+                text = stringResource(id = R.string.user_profile_app_strava_unlink_dialog_message),
+                fontSize = 16.sp
+            )
+        }
+    )
+}
+
+fun openStravaLinkActivity(context: Context) {
+    val intent = LinkStravaDelegate.buildStravaLoginIntent(context)
+    context.startActivity(intent)
 }
 
 @Composable
@@ -179,6 +278,7 @@ private fun UserProfileScreen(
     navController: NavController,
     screenState: UserProfileScreenState,
     onClickSaveUserProfile: (UserProfileFormData) -> Unit,
+    onClickStravaLink: (UserProfileFormData) -> Unit,
 ) {
     var formData by remember(screenState) {
         val initValue = if (screenState is UserProfileScreenState.UserProfileForm) {
@@ -211,10 +311,14 @@ private fun UserProfileScreen(
                         UserProfileLoadingIndicator()
                     }
 
-                    formData?.let {
-                        UserProfileForm(it) { editFormData ->
-                            formData = editFormData
-                        }
+                    formData?.let { it ->
+                        UserProfileForm(
+                            it,
+                            onUserProfileFormDataChanged = { editFormData ->
+                                formData = editFormData
+                            },
+                            onClickStravaLink = onClickStravaLink
+                        )
                     }
 
                     if (screenState.formType ==
@@ -259,7 +363,8 @@ fun UserProfileErrorSnackbar(modifier: Modifier = Modifier) {
 @Composable
 private fun UserProfileForm(
     formData: UserProfileFormData,
-    onUserProfileChanged: (UserProfileFormData) -> Unit,
+    onUserProfileFormDataChanged: (UserProfileFormData) -> Unit,
+    onClickStravaLink: (UserProfileFormData) -> Unit,
 ) {
     val context = LocalContext.current
     var isGenderDialogShowing by remember { mutableStateOf(false) }
@@ -282,7 +387,7 @@ private fun UserProfileForm(
             label = stringResource(id = R.string.user_profile_hint_name),
             value = formData.name,
             onValueChange = { name ->
-                onUserProfileChanged(formData.copy(name = name))
+                onUserProfileFormDataChanged(formData.copy(name = name))
             },
             errorMessage = userNameErrorMessage
         )
@@ -295,7 +400,7 @@ private fun UserProfileForm(
             value = formatBirthdateMillis(formData.birthdate),
             onClick = {
                 showDatePicker(context, formData.birthdate) { selectedBirthdate ->
-                    onUserProfileChanged(formData.copy(birthdate = selectedBirthdate))
+                    onUserProfileFormDataChanged(formData.copy(birthdate = selectedBirthdate))
                 }
             }
         )
@@ -309,7 +414,7 @@ private fun UserProfileForm(
 
         if (isGenderDialogShowing) {
             GenderDialog({ selectedGender ->
-                onUserProfileChanged(formData.copy(gender = selectedGender))
+                onUserProfileFormDataChanged(formData.copy(gender = selectedGender))
                 isGenderDialogShowing = false
             }) { isGenderDialogShowing = false }
         }
@@ -320,14 +425,17 @@ private fun UserProfileForm(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             onValueChange = { editWeight ->
                 val selectedWeight = filterFloatTextField(formData.weight, editWeight)
-                onUserProfileChanged(formData.copy(weight = selectedWeight))
+                onUserProfileFormDataChanged(formData.copy(weight = selectedWeight))
             }
         )
         SectionTitle(stringResource(id = R.string.profile_other_apps_section_title))
+
+        // strava
         UserProfileSwitch(
             label = stringResource(id = R.string.user_profile_strava_description),
-            checked = true,
-            onClick = { }
+            enabled = formData.stravaLinkingState != UserProfileFormData.StravaLinkingState.Unknown,
+            checked = formData.stravaLinkingState == UserProfileFormData.StravaLinkingState.Linked,
+            onClick = { onClickStravaLink(formData) }
         )
     }
 }
@@ -394,22 +502,40 @@ fun showDatePicker(context: Context, userBirthdateInMillis: Long, onDateSelect: 
         .show()
 }
 
+private fun Modifier.modifyIf(enabled: Boolean, application: Modifier.() -> Modifier): Modifier =
+    this.run {
+        if (enabled) {
+            this.application()
+        } else {
+            this
+        }
+    }
+
 @Composable
 private fun UserProfileSwitch(
     label: String,
     checked: Boolean,
-    onClick: (Boolean) -> Unit,
+    enabled: Boolean,
+    onClick: () -> Unit,
 ) = Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier
-        .clickable { onClick(checked) }
+        .modifyIf(enabled) {
+            clickable { onClick() }
+        }
         .padding(
             vertical = AppDimensions.rowVerticalSpacing,
             horizontal = AppDimensions.screenHorizontalPadding
         )
 ) {
     Text(text = label, modifier = Modifier.weight(1f))
-    Switch(checked = checked, onCheckedChange = null)
+    Switch(enabled = enabled, checked = checked, onCheckedChange = null)
+}
+
+@Preview
+@Composable
+private fun PreviewUserProfileSwitch() {
+    UserProfileSwitch("label", checked = true, enabled = true) {}
 }
 
 @Composable
@@ -553,8 +679,10 @@ private fun PreviewUserProfileScreenSuccessForm() {
     val success = Resource.Success(createUserProfile())
     UserProfileScreen(
         navController = rememberNavController(),
-        screenState = UserProfileScreenState.createFromUserProfileResource(success),
-    ) {}
+        screenState = UserProfileScreenState.create(success, Resource.Loading()),
+        {},
+        {}
+    )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
@@ -563,8 +691,10 @@ private fun PreviewUserProfileScreenLoadingFormWithoutData() {
     val loading: Resource<UserProfile> = Resource.Loading(null)
     UserProfileScreen(
         navController = rememberNavController(),
-        screenState = UserProfileScreenState.createFromUserProfileResource(loading)
-    ) {}
+        screenState = UserProfileScreenState.create(loading, Resource.Loading()),
+        {},
+        {}
+    )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
@@ -573,8 +703,10 @@ private fun PreviewUserProfileScreenLoadingFormWithData() {
     val loading = Resource.Loading(createUserProfile())
     UserProfileScreen(
         navController = rememberNavController(),
-        screenState = UserProfileScreenState.createFromUserProfileResource(loading)
-    ) {}
+        screenState = UserProfileScreenState.create(loading, Resource.Loading()),
+        {},
+        {}
+    )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
@@ -583,8 +715,10 @@ private fun PreviewUserProfileScreenErrorFormWithoutData() {
     val error: Resource<UserProfile> = Resource.Error(Exception(), data = null)
     UserProfileScreen(
         navController = rememberNavController(),
-        screenState = UserProfileScreenState.createFromUserProfileResource(error)
-    ) {}
+        screenState = UserProfileScreenState.create(error, Resource.Loading()),
+        {},
+        {}
+    )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
@@ -593,8 +727,10 @@ private fun PreviewUserProfileScreenErrorFormWithData() {
     val error = Resource.Error(Exception(), data = createUserProfile())
     UserProfileScreen(
         navController = rememberNavController(),
-        screenState = UserProfileScreenState.createFromUserProfileResource(error)
-    ) {}
+        screenState = UserProfileScreenState.create(error, Resource.Loading()),
+        {},
+        {}
+    )
 }
 
 private fun createUserProfile(): UserProfile {
