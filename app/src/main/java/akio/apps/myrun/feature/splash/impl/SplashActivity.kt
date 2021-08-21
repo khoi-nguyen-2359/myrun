@@ -73,20 +73,11 @@ class SplashActivity : AppCompatActivity() {
             return
         }
 
-        val signInResult = data.getParcelableExtra<SignInSuccessResult>(
+        data.getParcelableExtra<SignInSuccessResult>(
             SignInActivity.RESULT_SIGN_RESULT_DATA
         ) ?: return
 
-        if (signInResult.isNewUser) {
-            // TODO: Open user profile for newly created user
-//            @Suppress("DEPRECATION")
-//            startActivityForResult(
-//                EditProfileActivity.launchIntentForEditing(this),
-//                RC_ON_BOARDING
-//            )
-        } else {
-            goHome()
-        }
+        goHome()
     }
 
     companion object {

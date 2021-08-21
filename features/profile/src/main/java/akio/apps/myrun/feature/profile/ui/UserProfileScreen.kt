@@ -293,10 +293,8 @@ private fun UserProfileScreen(
                     )
                 UserProfileScreenState.FullScreenError ->
                     CentralAnnouncementView(
-                        text = stringResource(id = R.string.user_profile_fullscreen_loading_error)
-                    ) {
-                        // todo: retry
-                    }
+                        text = stringResource(id = R.string.dialog_delegate_unknown_error)
+                    ) { }
                 is UserProfileScreenState.UserProfileForm -> {
                     if (screenState.formType ==
                         UserProfileScreenState.UserProfileForm.FormType.Loading
