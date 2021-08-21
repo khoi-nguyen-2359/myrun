@@ -453,7 +453,9 @@ fun formatBirthdateMillis(birthdateMillis: Long): String = if (birthdateMillis =
 
 fun showDatePicker(context: Context, userBirthdateInMillis: Long, onDateSelect: (Long) -> Unit) {
     val birthdateCalendar = Calendar.getInstance()
-    birthdateCalendar.timeInMillis = userBirthdateInMillis
+    if (userBirthdateInMillis > 0) {
+        birthdateCalendar.timeInMillis = userBirthdateInMillis
+    }
     val birthYear = birthdateCalendar[Calendar.YEAR]
     val birthMonth = birthdateCalendar[Calendar.MONTH]
     val birthDayOfMonth = birthdateCalendar[Calendar.DAY_OF_MONTH]
