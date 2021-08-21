@@ -4,9 +4,7 @@ import akio.apps.common.data.Resource
 import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
-import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
-import akio.apps.myrun.data.eapps.api.model.ProviderToken
-import akio.apps.myrun.data.eapps.api.model.RunningApp.Strava
+import akio.apps.myrun.data.eapps.api.model.ExternalProviders
 import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
@@ -35,20 +33,9 @@ class UserProfileViewModel @Inject constructor(
 
     val userProfileResourceFlow: Flow<Resource<UserProfile>> =
         getUserProfileUsecase.getUserProfileFlow(arguments.userId)
-//        .shareIn(viewModelScope, SharingStarted.WhileSubscribed(), 1)
-//    val userProfileFlow: Flow<UserProfile> = userProfileResourceFlow.mapNotNull { it.data }
-//    val userProfileErrorFlow: Flow<Throwable> = userProfileResourceFlow.mapNotNull {
-//        (it as? Resource.Error)?.exception
-//    }
-//    val isUserProfileLoadingFlow: Flow<Boolean> = userProfileResourceFlow.map {
-//        it is Resource.Loading
-//    }
 
-    val liveProviders = getProviderTokensUsecase.getProviderTokensFlow()
-
-    suspend fun logout() {
-//        logoutDelegate(application)
-    }
+    val liveProviders: Flow<Resource<out ExternalProviders>> =
+        getProviderTokensUsecase.getProviderTokensFlow()
 
     suspend fun getActivityUploadCount(): Int =
         activityLocalStorage.getActivityStorageDataCountFlow().first()
@@ -57,24 +44,19 @@ class UserProfileViewModel @Inject constructor(
         arguments.userId == userAuthenticationState.getUserAccountId() ||
             arguments.userId == null
 
-    fun unlinkProvider(unlinkProviderToken: ProviderToken<out ExternalAppToken>) {
+    fun deauthorizeStrava() {
         viewModelScope.launchCatching {
-            when (unlinkProviderToken.runningApp) {
-                Strava -> deauthorizeStrava()
-            }
+            deauthorizeStravaUsecase.deauthorizeStrava()
+            removeStravaTokenUsecase.removeStravaToken()
+
+            // TODO: react on this event to clear worker
+//        WorkManager.getInstance(application)
+//            .cancelUniqueWork(UploadStravaFileWorker.UNIQUE_WORK_NAME)
         }
     }
 
     fun updateUserProfile(profileEditData: ProfileEditData) {
         updateUserProfileUsecase.updateUserProfile(profileEditData)
-    }
-
-    private suspend fun deauthorizeStrava() {
-        deauthorizeStravaUsecase.deauthorizeStrava()
-        removeStravaTokenUsecase.removeStravaToken()
-        // TODO: react on this event to clear worker
-//        WorkManager.getInstance(application)
-//            .cancelUniqueWork(UploadStravaFileWorker.UNIQUE_WORK_NAME)
     }
 
     data class Arguments(val userId: String?)
