@@ -27,7 +27,7 @@ class UploadAvatarActivity :
 
     private val dialogDelegate by lazy { DialogDelegate(this) }
     private val cropImageView: CropImageView by lazy { findViewById(R.id.cropImageView) }
-    private val cropButton: Button by lazy { findViewById(R.id.crop_button) }
+    private val selectPhotoButton: Button by lazy { findViewById(R.id.select_button) }
     private val topAppBar: MaterialToolbar by lazy { findViewById(R.id.topAppBar) }
 
     // TODO: refactor to composable UI
@@ -55,16 +55,18 @@ class UploadAvatarActivity :
             getString(R.string.photo_selection_dialog_title)
         )
 
-        cropButton.setOnClickListener { cropAndUploadAvatar() }
+        selectPhotoButton.setOnClickListener {
+            photoSelectionDelegate.showPhotoSelectionDialog(
+                getString(R.string.photo_selection_dialog_title)
+            )
+        }
 
         topAppBar.setNavigationOnClickListener {
             finish()
         }
 
         topAppBar.setOnMenuItemClickListener {
-            photoSelectionDelegate.showPhotoSelectionDialog(
-                getString(R.string.photo_selection_dialog_title)
-            )
+            cropAndUploadAvatar()
             true
         }
     }

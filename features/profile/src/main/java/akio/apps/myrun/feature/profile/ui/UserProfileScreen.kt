@@ -6,6 +6,7 @@ import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.feature.base.ui.AppBarIconButton
+import akio.apps.myrun.feature.base.ui.AppBarTextButton
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
 import akio.apps.myrun.feature.base.ui.AppTheme
@@ -52,7 +53,6 @@ import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.ArrowBack
 import androidx.compose.material.icons.sharp.PhotoCamera
-import androidx.compose.material.icons.sharp.Save
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -488,9 +488,10 @@ private fun UserProfileTopBar(
         title = { Text(text = stringResource(id = R.string.user_profile_title)) },
         actions = {
             if (onClickSave != null) {
-                AppBarIconButton(iconImageVector = Icons.Sharp.Save) {
-                    onClickSave()
-                }
+                AppBarTextButton(
+                    text = stringResource(id = R.string.action_save),
+                    onClick = { onClickSave() }
+                )
             }
         }
     )

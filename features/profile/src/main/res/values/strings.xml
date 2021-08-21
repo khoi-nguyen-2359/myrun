@@ -21,7 +21,8 @@
     <string name="profile_crop_photo_instruction">Pinch to adjust the image. Your profile photo will be cropped within the circle</string>
     <string name="profile_crop_button">Crop</string>
     <string name="action_done">Done</string>
-    <string name="upload_avatar_menu_item_pick_file">SELECT</string>
     <string name="upload_avatar_title">Change avatar</string>
     <string name="user_profile_error_empty_user_name">User display name can not be blank.</string>
+    <string name="action_select">Select photo</string>
+    <string name="action_save">Save</string>
 </resources>
