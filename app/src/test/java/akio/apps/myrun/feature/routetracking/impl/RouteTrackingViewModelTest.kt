@@ -1,8 +1,10 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps._base.InstantTaskExecutorTest
+import akio.apps.common.feature.viewmodel.LaunchCatchingDelegateImpl
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
+import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.STOPPED
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
@@ -22,6 +24,7 @@ import org.mockito.kotlin.verifyBlocking
 
 @ExperimentalCoroutinesApi
 class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
+
     @Mock
     lateinit var mockedAuthenticationState: UserAuthenticationState
 
@@ -44,7 +47,7 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
     lateinit var mockedAppContext: Application
 
     @Mock
-    lateinit var mockedLocationDataSource: akio.apps.myrun.data.location.api.LocationDataSource
+    lateinit var mockedLocationDataSource: LocationDataSource
 
     @Mock
     lateinit var mockedRouteTrackingConfiguration: RouteTrackingConfiguration
@@ -64,8 +67,9 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
 
         testee = createViewModel()
 
-        wheneverBlocking(mockedRouteTrackingState) { getTrackingStatus() }
-            .thenReturn(STOPPED)
+        wheneverBlocking(mockedRouteTrackingState) {
+            getTrackingStatus()
+        }.thenReturn(STOPPED)
 
         testee.requestInitialData()
 
@@ -85,6 +89,7 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
         mockedExternalAppProvidersRepository,
         mockedAuthenticationState,
         mockedLocationDataSource,
-        mockedRouteTrackingConfiguration
+        mockedRouteTrackingConfiguration,
+        LaunchCatchingDelegateImpl()
     )
 }
