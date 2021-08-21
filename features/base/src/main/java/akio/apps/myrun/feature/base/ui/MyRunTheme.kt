@@ -25,6 +25,7 @@ object AppColors {
 object AppDimensions {
     val iconButtonPadding = 16.dp
     val screenHorizontalPadding: Dp = 16.dp
+    val rowVerticalSpacing: Dp = 12.dp
 }
 
 @Composable
