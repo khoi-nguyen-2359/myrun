@@ -15,6 +15,14 @@ android {
         rc { }
     }
 
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
@@ -24,10 +32,14 @@ android {
         jvmTarget = "11"
         useIR = true
         allWarningsAsErrors = true
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
     }
 }
 
 dependencies {
     implementation(project(":common:feature"))
     implementation(libs.androidXAppCompat)
+    implementation(libs.bundles.compose)
+    implementation(libs.accompanistInsets)
+    testImplementation(libs.junit)
 }

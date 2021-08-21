@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_scheme">myrun</string>
     <string name="app_name">My Run Debug</string>
 
     <string name="dialog_delegate_unknown_error">Unknown error</string>

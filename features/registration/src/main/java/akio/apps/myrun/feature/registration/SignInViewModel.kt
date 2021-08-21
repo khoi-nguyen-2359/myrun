@@ -2,7 +2,6 @@ package akio.apps.myrun.feature.registration
 
 import akio.apps.common.feature.lifecycle.Event
 import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
-import akio.apps.common.feature.viewmodel.LaunchCatchingDelegateImpl
 import akio.apps.myrun.data.authentication.api.SignInManager
 import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 import akio.apps.myrun.domain.authentication.PostSignInUsecase
@@ -16,7 +15,7 @@ import kotlinx.coroutines.flow.filterNotNull
 class SignInViewModel @Inject constructor(
     private val signInManager: SignInManager,
     private val postSignInUsecase: PostSignInUsecase,
-    private val launchCatching: LaunchCatchingDelegateImpl
+    private val launchCatching: LaunchCatchingDelegate,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatching {
 
     private val _signInSuccessResult = MutableStateFlow<Event<SignInSuccessResult>?>(null)

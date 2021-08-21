@@ -6,12 +6,16 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
 object ConfiguratorGate {
-    private const val CONFIGURATOR_ACTIVITY_NAME =
-        "akio.apps.myrun.feature.configuration.impl.ConfiguratorActivity"
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    const val CONFIGURATOR_ACTIVITY_NAME =
+        "akio.apps.myrun.feature.configurator.ConfiguratorActivity"
     private val NOTIFICATION_ID = AppNotificationChannel.Debug.nextNotificationStaticId()
 
     fun notifyInDebugMode(context: Context) {

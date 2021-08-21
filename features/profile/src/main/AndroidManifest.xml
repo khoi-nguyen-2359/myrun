@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="akio.apps.myrun.feature.profile">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application>
+        <activity
+            android:name=".LinkStravaActivity"
+            android:theme="@style/TransparentAppCompat"
+            android:launchMode="singleTask"
+            android:exported="true">
+            <!-- for Strava callback intent -->
+            <intent-filter>
+                <data
+                    android:host="@string/strava_callback_host"
+                    android:scheme="@string/app_scheme" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".UploadAvatarActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+
+    </application>
+</manifest>

@@ -108,10 +108,7 @@ class GetUserProfileUsecaseTest {
         return UserProfile(
             defaultUserId,
             "name",
-            defaultEmail,
-            defaultPhoneNumber,
-            Gender.male,
-            1.70f,
+            Gender.Male,
             65f,
             null
         )

@@ -201,7 +201,7 @@
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/current_user_view_group"
-                    app:constraint_referenced_ids="edit_button, linked_apps_container, logout_button"
+                    app:constraint_referenced_ids="linked_apps_container, logout_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 

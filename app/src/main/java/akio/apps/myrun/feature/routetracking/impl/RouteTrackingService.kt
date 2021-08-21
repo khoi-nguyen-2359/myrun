@@ -22,6 +22,7 @@ import akio.apps.myrun.domain.routetracking.LocationProcessorContainer
 import akio.apps.myrun.domain.routetracking.LocationSpeedFilter
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
+import akio.apps.myrun.worker.UpdateUserRecentPlaceWorker
 import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.Notification

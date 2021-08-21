@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.home._di
 
-import akio.apps.common.feature.viewmodel.ViewModelFactoryProvider
 import akio.apps.common.wiring.DispatchersModule
+import akio.apps.common.wiring.LaunchCatchingModule
 import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
 import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
@@ -10,12 +10,14 @@ import akio.apps.myrun.data.tracking.wiring.DaggerTrackingDataComponent
 import akio.apps.myrun.data.tracking.wiring.TrackingDataComponent
 import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
 import akio.apps.myrun.data.user.wiring.UserDataComponent
+import akio.apps.myrun.feature.home.HomeViewModel
+import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
 import dagger.Component
 
 @Component(
     modules = [
-        HomeFeatureModule::class,
         DispatchersModule::class,
+        LaunchCatchingModule::class
     ],
     dependencies = [
         ActivityDataComponent::class,
@@ -24,7 +26,10 @@ import dagger.Component
         TrackingDataComponent::class
     ]
 )
-interface HomeFeatureComponent : ViewModelFactoryProvider {
+interface HomeFeatureComponent {
+    fun userFeedViewModel(): UserTimelineViewModel
+    fun homeViewModel(): HomeViewModel
+
     @Component.Factory
     interface Factory {
         fun create(
@@ -33,7 +38,7 @@ interface HomeFeatureComponent : ViewModelFactoryProvider {
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
-            trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create()
+            trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create(),
         ): HomeFeatureComponent
     }
 }

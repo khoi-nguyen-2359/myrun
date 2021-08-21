@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flowOf
 
 class GetUserProfileUsecase @Inject constructor(
     private val userProfileRepository: UserProfileRepository,
-    private val userAuthenticationState: UserAuthenticationState
+    private val userAuthenticationState: UserAuthenticationState,
 ) {
 
     /**

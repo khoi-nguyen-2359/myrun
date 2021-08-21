@@ -3,11 +3,10 @@ package akio.apps.myrun.feature.routetracking.impl
 import akio.apps.common.feature.lifecycle.collectEventRepeatOnStarted
 import akio.apps.common.feature.lifecycle.collectRepeatOnStarted
 import akio.apps.common.feature.lifecycle.observe
-import akio.apps.common.feature.lifecycle.observeEvent
 import akio.apps.common.feature.ui.dp2px
 import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
 import akio.apps.common.feature.viewmodel.LaunchCatchingDelegateImpl
-import akio.apps.common.feature.viewmodel.viewModel
+import akio.apps.common.feature.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.LatLngBoundsBuilder
 import akio.apps.myrun._base.utils.LocationServiceChecker
@@ -18,13 +17,13 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature.activityroutemap.ui.ActivityRouteMapActivity
 import akio.apps.myrun.feature.home.HomeActivity
-import akio.apps.myrun.feature.routetracking.RouteTrackingViewModel
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.feature.routetracking.ui.StopDialogOptionId
 import akio.apps.myrun.feature.routetracking.ui.StopOptionsDialog
 import akio.apps.myrun.feature.routetracking.ui.TrackingControlButtonPanel
 import akio.apps.myrun.feature.routetracking.ui.TrackingControlButtonType
 import akio.apps.myrun.feature.routetracking.view.ActivitySettingsView
+import akio.apps.myrun.worker.ActivityUploadWorker
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -72,7 +71,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 
 class RouteTrackingActivity(
-    private val launchCatchingDelegate: LaunchCatchingDelegateImpl = LaunchCatchingDelegateImpl()
+    private val launchCatchingDelegate: LaunchCatchingDelegate = LaunchCatchingDelegateImpl(),
 ) :
     AppCompatActivity(),
     ActivitySettingsView.EventListener,
@@ -85,8 +84,8 @@ class RouteTrackingActivity(
 
     private val viewBinding by lazy { ActivityRouteTrackingBinding.inflate(layoutInflater) }
 
-    private val routeTrackingViewModel: RouteTrackingViewModel by viewModel {
-        DaggerRouteTrackingFeatureComponent.factory().create()
+    private val routeTrackingViewModel: RouteTrackingViewModel by lazyViewModelProvider {
+        DaggerRouteTrackingFeatureComponent.factory().create().routeTrackingViewModel()
     }
 
     private lateinit var mapView: GoogleMap
@@ -159,11 +158,17 @@ class RouteTrackingActivity(
     }
 
     private fun initObservers() {
-        observe(routeTrackingViewModel.isInProgress, dialogDelegate::toggleProgressDialog)
+        collectRepeatOnStarted(
+            routeTrackingViewModel.isInProgress,
+            dialogDelegate::toggleProgressDialog
+        )
         observe(routeTrackingViewModel.trackingLocationBatch, ::onTrackingLocationUpdate)
         observe(routeTrackingViewModel.trackingStats, viewBinding.trackingStatsView::update)
         observe(routeTrackingViewModel.trackingStatus, ::onTrackingStatusChanged)
-        observeEvent(routeTrackingViewModel.error, dialogDelegate::showExceptionAlert)
+        collectEventRepeatOnStarted(
+            routeTrackingViewModel.error,
+            dialogDelegate::showExceptionAlert
+        )
         observe(
             routeTrackingViewModel.activityType,
             viewBinding.activitySettingsView::setActivityType
@@ -254,7 +259,7 @@ class RouteTrackingActivity(
     private fun recenterMap(
         latLngBounds: LatLngBounds,
         animation: Boolean,
-        cameraViewPortSize: Size
+        cameraViewPortSize: Size,
     ) {
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(
             latLngBounds,

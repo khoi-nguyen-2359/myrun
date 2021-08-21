@@ -4,37 +4,29 @@ import com.google.firebase.firestore.PropertyName
 
 data class FirestoreUserProfileUpdateMap(
     @PropertyName("profile")
-    val profile: MutableMap<String, Any> = mutableMapOf()
+    val profile: MutableMap<String, Any> = mutableMapOf(),
 ) {
     fun displayName(value: String) {
-        profile["displayName"] = value
+        profile[FirestoreUserProfileFields.FIELD_DISPLAY_NAME] = value
     }
 
     fun photoUrl(value: String) {
-        profile["photoUrl"] = value
+        profile[FirestoreUserProfileFields.FIELD_PHOTO_URL] = value
     }
 
-    fun email(value: String) {
-        profile["email"] = value
+    fun gender(value: Int) {
+        profile[FirestoreUserProfileFields.FIELD_GENDER_ID] = value
     }
 
-    fun phoneNumber(value: String) {
-        profile["phoneNumber"] = value
-    }
-
-    fun gender(value: String) {
-        profile["gender"] = value
-    }
-
-    fun height(value: Float) {
-        profile["height"] = value
+    fun birthdate(value: Long) {
+        profile[FirestoreUserProfileFields.FIELD_BIRTHDATE] = value
     }
 
     fun weight(value: Float) {
-        profile["weight"] = value
+        profile[FirestoreUserProfileFields.FIELD_WEIGHT] = value
     }
 
     fun uid(value: String) {
-        profile["uid"] = value
+        profile[FirestoreUserProfileFields.FIELD_UID] = value
     }
 }

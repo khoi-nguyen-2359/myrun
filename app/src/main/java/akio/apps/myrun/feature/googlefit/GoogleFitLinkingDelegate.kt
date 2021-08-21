@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.googlefit
 
-import akio.apps._base.utils.PermissionUtils
+import akio.apps.common.feature.permissions.PermissionUtils
 import akio.apps.myrun._base.permissions.RequiredPermissionsDelegate
 import android.Manifest
 import android.app.Activity
