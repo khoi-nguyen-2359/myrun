@@ -4,5 +4,5 @@
     <item
         app:showAsAction="always"
         android:id="@+id/menu_edit_profile"
-        android:title="@string/upload_avatar_menu_item_pick_file" />
+        android:title="@string/action_done" />
 </menu>
