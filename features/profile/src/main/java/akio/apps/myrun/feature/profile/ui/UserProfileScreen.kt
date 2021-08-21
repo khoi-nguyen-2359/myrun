@@ -265,9 +265,7 @@ private fun UserProfileForm(
     var isGenderDialogShowing by remember { mutableStateOf(false) }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .padding(horizontal = AppDimensions.screenHorizontalPadding)
-            .verticalScroll(rememberScrollState())
+        modifier = Modifier.verticalScroll(rememberScrollState())
     ) {
         Spacer(modifier = Modifier.height(40.dp))
         UserProfileImageView(formData.photoUrl) {
@@ -329,7 +327,7 @@ private fun UserProfileForm(
         UserProfileSwitch(
             label = stringResource(id = R.string.user_profile_strava_description),
             checked = true,
-            onCheckedChange = { }
+            onClick = { }
         )
     }
 }
@@ -400,13 +398,18 @@ fun showDatePicker(context: Context, userBirthdateInMillis: Long, onDateSelect: 
 private fun UserProfileSwitch(
     label: String,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-) = Row {
+    onClick: (Boolean) -> Unit,
+) = Row(
+    verticalAlignment = Alignment.CenterVertically,
+    modifier = Modifier
+        .clickable { onClick(checked) }
+        .padding(
+            vertical = AppDimensions.rowVerticalSpacing,
+            horizontal = AppDimensions.screenHorizontalPadding
+        )
+) {
     Text(text = label, modifier = Modifier.weight(1f))
-    Switch(
-        checked = checked,
-        onCheckedChange = onCheckedChange
-    )
+    Switch(checked = checked, onCheckedChange = null)
 }
 
 @Composable
@@ -418,7 +421,7 @@ private fun UserProfileTextField(
     onValueChange: (String) -> Unit,
     errorMessage: String? = null,
 ) {
-    Column {
+    Column(modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)) {
         OutlinedTextField(
             keyboardOptions = keyboardOptions,
             maxLines = 1,
@@ -460,17 +463,18 @@ private fun UserProfileReadOnlyTextField(
 }
 
 @Composable
-private fun SectionTitle(titleText: String) = Column {
-    UserProfileSectionSpacer()
-    Text(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp),
-        text = titleText.uppercase(),
-        fontWeight = FontWeight.Bold,
-        fontSize = 15.sp
-    )
-}
+private fun SectionTitle(titleText: String) =
+    Column(modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)) {
+        UserProfileSectionSpacer()
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp),
+            text = titleText.uppercase(),
+            fontWeight = FontWeight.Bold,
+            fontSize = 15.sp
+        )
+    }
 
 @Composable
 private fun UserProfileSectionSpacer() {
@@ -531,7 +535,9 @@ private fun UserProfileImageView(
                     .background(Color(0x55000000))
             ) {
                 Icon(
-                    modifier = Modifier.align(Alignment.Center).scale(0.75f),
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .scale(0.75f),
                     imageVector = Icons.Sharp.PhotoCamera,
                     tint = Color.White,
                     contentDescription = "photo camera icon"
