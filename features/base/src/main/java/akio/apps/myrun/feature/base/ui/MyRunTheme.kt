@@ -36,6 +36,6 @@ fun AppTheme(content: @Composable () -> Unit) = MaterialTheme(
         onSecondary = AppColors.onSecondary,
         onPrimary = AppColors.onPrimary
     ),
-    content = content,
-    typography = MaterialTheme.typography
+    typography = MaterialTheme.typography,
+    content = content
 )
