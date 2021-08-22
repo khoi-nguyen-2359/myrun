@@ -86,6 +86,10 @@ android {
         allWarningsAsErrors = true
         freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
     }
+
+    lintOptions {
+        disable 'NullSafeMutableLiveData' // bypass this bug https://issuetracker.google.com/issues/169249668
+    }
 }
 
 dependencies {
