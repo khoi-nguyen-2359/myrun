@@ -3,16 +3,21 @@ package akio.apps.myrun.feature.home.ui
 import akio.apps.myrun.feature.profile.UserProfileViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
+import androidx.navigation.compose.NamedNavArgument
 import androidx.navigation.compose.navArgument
 
-sealed class HomeNavigationDestination(open val route: String) {
+sealed class HomeNavigationDestination(protected val routeName: String) {
 
-    object Home : HomeNavigationDestination(route = "home")
+    open val route: String = routeName
+    open val arguments: List<NamedNavArgument> = emptyList()
 
-    object Profile : HomeNavigationDestination(route = "profile") {
+    object Home : HomeNavigationDestination(routeName = "home")
+
+    object Profile : HomeNavigationDestination(routeName = "profile") {
         private const val ARG_USER_ID = "userId"
-        val routeWithArguments: String = "$route?$ARG_USER_ID={$ARG_USER_ID}"
-        val arguments = listOf(
+
+        override val route: String = "$routeName?$ARG_USER_ID={$ARG_USER_ID}"
+        override val arguments: List<NamedNavArgument> = listOf(
             navArgument(ARG_USER_ID) {
                 type = NavType.StringType
                 defaultValue = null
@@ -27,6 +32,6 @@ sealed class HomeNavigationDestination(open val route: String) {
 
         // Passing null [userId] to load current user
         fun routeWithUserId(userId: String?) =
-            userId?.let { "$route?$ARG_USER_ID=$userId" } ?: route
+            userId?.let { "$routeName?$ARG_USER_ID=$userId" } ?: routeName
     }
 }

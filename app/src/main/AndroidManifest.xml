@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="akio.apps.myrun">
 
     <!-- Networking -->
@@ -89,6 +90,19 @@
         <meta-data
             android:name="firebase_performance_logcat_enabled"
             android:value="true" />
+
+        <!-- Disable some initializers of android.startup -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <!-- Remove work manager initializer because we init WM in MyRunApp -->
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
     </application>
 
 </manifest>
