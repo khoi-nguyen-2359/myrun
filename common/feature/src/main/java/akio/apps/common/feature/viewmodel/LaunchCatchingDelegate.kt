@@ -8,8 +8,8 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 interface LaunchCatchingDelegate {
-    val error: StateFlow<Event<Exception>>
-    val isInProgress: StateFlow<Boolean>
+    val launchCatchingError: StateFlow<Event<Exception>>
+    val isLaunchCatchingInProgress: StateFlow<Boolean>
     fun CoroutineScope.launchCatching(
         progressStateFlow: MutableStateFlow<Boolean>? = null,
         errorStateFlow: MutableStateFlow<Event<Exception>>? = null,
@@ -18,11 +18,12 @@ interface LaunchCatchingDelegate {
 }
 
 class LaunchCatchingDelegateImpl : LaunchCatchingDelegate {
-    private val _error: MutableStateFlow<Event<Exception>> = MutableStateFlow(Event(null))
-    override val error: StateFlow<Event<Exception>> = _error
+    private val _launchCatchingError: MutableStateFlow<Event<Exception>> =
+        MutableStateFlow(Event(null))
+    override val launchCatchingError: StateFlow<Event<Exception>> = _launchCatchingError
 
-    private val _isInProgress: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    override val isInProgress: StateFlow<Boolean> = _isInProgress
+    private val _isLaunchCatchingInProgress: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    override val isLaunchCatchingInProgress: StateFlow<Boolean> = _isLaunchCatchingInProgress
 
     override fun CoroutineScope.launchCatching(
         progressStateFlow: MutableStateFlow<Boolean>?,
@@ -30,8 +31,8 @@ class LaunchCatchingDelegateImpl : LaunchCatchingDelegate {
         task: suspend CoroutineScope.() -> Unit
     ) {
         launch {
-            val selectedProgressStateFlow = progressStateFlow ?: _isInProgress
-            val selectedErrorStateFlow = errorStateFlow ?: _error
+            val selectedProgressStateFlow = progressStateFlow ?: _isLaunchCatchingInProgress
+            val selectedErrorStateFlow = errorStateFlow ?: _launchCatchingError
             try {
                 selectedProgressStateFlow.value = true
                 task()

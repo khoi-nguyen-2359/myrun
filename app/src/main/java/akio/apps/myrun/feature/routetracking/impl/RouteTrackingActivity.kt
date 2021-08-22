@@ -159,14 +159,14 @@ class RouteTrackingActivity(
 
     private fun initObservers() {
         collectRepeatOnStarted(
-            routeTrackingViewModel.isInProgress,
+            routeTrackingViewModel.isLaunchCatchingInProgress,
             dialogDelegate::toggleProgressDialog
         )
         observe(routeTrackingViewModel.trackingLocationBatch, ::onTrackingLocationUpdate)
         observe(routeTrackingViewModel.trackingStats, viewBinding.trackingStatsView::update)
         observe(routeTrackingViewModel.trackingStatus, ::onTrackingStatusChanged)
         collectEventRepeatOnStarted(
-            routeTrackingViewModel.error,
+            routeTrackingViewModel.launchCatchingError,
             dialogDelegate::showExceptionAlert
         )
         observe(
@@ -174,8 +174,8 @@ class RouteTrackingActivity(
             viewBinding.activitySettingsView::setActivityType
         )
         observe(routeTrackingViewModel.activityType, viewBinding.trackingStatsView::setActivityType)
-        collectRepeatOnStarted(isInProgress, dialogDelegate::toggleProgressDialog)
-        collectEventRepeatOnStarted(error, dialogDelegate::showExceptionAlert)
+        collectRepeatOnStarted(isLaunchCatchingInProgress, dialogDelegate::toggleProgressDialog)
+        collectEventRepeatOnStarted(launchCatchingError, dialogDelegate::showExceptionAlert)
         setAutoCameraEnabled(true)
     }
 

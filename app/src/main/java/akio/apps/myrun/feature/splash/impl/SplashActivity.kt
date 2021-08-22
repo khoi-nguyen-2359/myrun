@@ -35,7 +35,10 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        collectEventRepeatOnStarted(splashViewModel.error, dialogDelegate::showExceptionAlert)
+        collectEventRepeatOnStarted(
+            splashViewModel.launchCatchingError,
+            dialogDelegate::showExceptionAlert
+        )
         collectEventRepeatOnStarted(splashViewModel.isUserSignedIn, ::onUserSignIn)
     }
 
