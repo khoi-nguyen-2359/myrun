@@ -285,7 +285,7 @@ private fun UserProfileScreen(
         StatusBarSpacer()
         val onClickSave = formData?.let { { onClickSaveUserProfile(it) } }
         UserProfileTopBar(navController, onClickSave)
-        Box(modifier = Modifier.weight(1f)) {
+        Box(modifier = Modifier.weight(1f).background(Color.White)) {
             when (screenState) {
                 UserProfileScreenState.FullScreenLoading ->
                     CentralLoadingView(
