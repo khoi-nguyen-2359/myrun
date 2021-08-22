@@ -179,8 +179,8 @@ fun UserProfileScreen(
     val eappsProvidersResource by userProfileViewModel.liveProviders.collectAsState(
         initial = Resource.Loading()
     )
-    val isInProgress by userProfileViewModel.isInProgress.collectAsState()
-    val error by userProfileViewModel.error.collectAsState()
+    val isInProgress by userProfileViewModel.isLaunchCatchingInProgress.collectAsState()
+    val error by userProfileViewModel.launchCatchingError.collectAsState()
     var isStravaUnlinkAlertShowing by remember { mutableStateOf(false) }
     val screenState = UserProfileScreenState.create(
         userProfileResource,
