@@ -1,13 +1,11 @@
 package akio.apps.common.feature.lifecycle
 
-import androidx.fragment.app.Fragment
+import akio.apps.common.data.Event
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
@@ -21,9 +19,6 @@ fun <T> LifecycleOwner.observeEvent(liveData: LiveData<Event<T>>, block: (T) -> 
     liveData.observe(this, EventObserver { eventData -> block(eventData) })
 }
 
-val Fragment.viewLifecycleScope: CoroutineScope
-    get() = viewLifecycleOwner.lifecycle.coroutineScope
-
 fun <T> LifecycleOwner.collectRepeatOnStarted(flow: Flow<T>, action: suspend (T) -> Unit) =
     lifecycleScope.launch {
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -33,7 +28,7 @@ fun <T> LifecycleOwner.collectRepeatOnStarted(flow: Flow<T>, action: suspend (T)
 
 fun <T> LifecycleOwner.collectEventRepeatOnStarted(
     flow: Flow<Event<T>>,
-    action: suspend (T) -> Unit
+    action: suspend (T) -> Unit,
 ) = lifecycleScope.launch {
     lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
         flow.mapNotNull { it.getContentIfNotHandled() }

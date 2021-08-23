@@ -1,22 +1,20 @@
 package akio.apps.myrun.feature.home._di
 
-import akio.apps.common.wiring.DispatchersModule
 import akio.apps.common.wiring.LaunchCatchingModule
-import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
-import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
-import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
-import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
-import akio.apps.myrun.data.tracking.wiring.DaggerTrackingDataComponent
-import akio.apps.myrun.data.tracking.wiring.TrackingDataComponent
-import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
-import akio.apps.myrun.data.user.wiring.UserDataComponent
 import akio.apps.myrun.feature.home.HomeViewModel
 import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
+import akio.apps.myrun.wiring.data.activity.ActivityDataComponent
+import akio.apps.myrun.wiring.data.activity.DaggerActivityDataComponent
+import akio.apps.myrun.wiring.data.authentication.AuthenticationDataComponent
+import akio.apps.myrun.wiring.data.authentication.DaggerAuthenticationDataComponent
+import akio.apps.myrun.wiring.data.tracking.DaggerTrackingDataComponent
+import akio.apps.myrun.wiring.data.tracking.TrackingDataComponent
+import akio.apps.myrun.wiring.data.user.DaggerUserDataComponent
+import akio.apps.myrun.wiring.data.user.UserDataComponent
 import dagger.Component
 
 @Component(
     modules = [
-        DispatchersModule::class,
         LaunchCatchingModule::class
     ],
     dependencies = [
