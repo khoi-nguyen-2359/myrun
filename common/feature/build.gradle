@@ -28,6 +28,7 @@ android {
 }
 
 dependencies {
+    implementation(project(':common:data'))
     implementation(libs.viewBinding)
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.lifecycleRuntimeKtx)

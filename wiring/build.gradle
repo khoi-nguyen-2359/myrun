@@ -1,0 +1,91 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdk project.compileSdk
+
+    defaultConfig {
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        rc { }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+        useIR = true
+        allWarningsAsErrors = true
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
+    }
+}
+
+dependencies {
+    implementation(project(":common:wiring"))
+    implementation(project(":data:wiring"))
+
+    api(project(":domain"))
+
+    api(project(":data:authentication:api"))
+    implementation(project(":data:authentication:impl"))
+
+    api(project(':data:activity:api'))
+    implementation(project(':data:activity:impl'))
+
+    api(project(':data:eapps:api'))
+    implementation(project(':data:eapps:impl'))
+
+    api(project(':data:fitness:api'))
+    implementation(project(':data:fitness:impl'))
+
+    api(project(":data:location:api"))
+    implementation(project(":data:location:impl"))
+
+    api(project(":data:tracking:api"))
+    implementation(project(":data:tracking:impl"))
+
+    api(project(":data:user:api"))
+    implementation(project(":data:user:impl"))
+
+    implementation project(':libs:places-sdk')
+
+    implementation(libs.timber)
+    implementation(libs.javaXInject)
+
+    implementation(libs.dataStore)
+
+    implementation(libs.roomRuntime)
+
+    // dagger
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
+
+    // coroutines
+    implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.kotlinxCoroutinesPlayServices)
+
+    // firebase
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebaseAuthKtx)
+    implementation(libs.firebaseFirestoreKtx)
+    implementation(libs.firebaseStorageKtx)
+
+    // play services
+    implementation(libs.playServicesAuth)
+    implementation(libs.playServicesFitness)
+    implementation(libs.playServicesLocation)
+
+    // retrofit
+    implementation(libs.okHttp)
+    implementation(libs.retrofit)
+    implementation(libs.retrofitGsonConverter)
+}

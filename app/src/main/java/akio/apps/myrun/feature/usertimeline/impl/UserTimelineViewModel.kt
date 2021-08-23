@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.usertimeline.impl
 
-import akio.apps.common.feature.lifecycle.Event
-import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
+import akio.apps.common.data.Event
+import akio.apps.common.data.LaunchCatchingDelegate
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.PlaceIdentifier

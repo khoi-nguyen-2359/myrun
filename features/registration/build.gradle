@@ -34,15 +34,12 @@ android {
 
 dependencies {
     implementation(project(":common:feature"))
+    implementation(project(":common:data"))
     implementation(project(":common:wiring"))
 
     implementation(project(":features:base"))
 
-    implementation(project(":domain"))
-
-    implementation(project(":data:user:wiring"))
-    implementation(project(":data:authentication:wiring"))
-    implementation(project(":data:eapps:wiring"))
+    implementation(project(':wiring'))
 
     implementation(libs.lifecycleRuntimeKtx)
     implementation(libs.lifecycleLiveDataKtx)
