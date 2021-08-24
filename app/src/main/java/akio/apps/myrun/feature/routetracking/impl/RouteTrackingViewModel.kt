@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.routetracking.impl
 
-import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
+import akio.apps.common.data.LaunchCatchingDelegate
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun.data.activity.api.model.ActivityType

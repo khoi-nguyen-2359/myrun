@@ -29,4 +29,6 @@ android {
 }
 
 dependencies {
+    implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.timber)
 }

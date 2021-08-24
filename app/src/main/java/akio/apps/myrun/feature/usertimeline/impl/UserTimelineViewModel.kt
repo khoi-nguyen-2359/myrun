@@ -1,12 +1,12 @@
 package akio.apps.myrun.feature.usertimeline.impl
 
-import akio.apps.common.feature.lifecycle.Event
-import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
+import akio.apps.common.data.Event
+import akio.apps.common.data.LaunchCatchingDelegate
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
-import akio.apps.myrun.domain.recentplace.CreateActivityDisplayPlaceNameUsecase
+import akio.apps.myrun.domain.recentplace.MakeActivityPlaceNameUsecase
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,7 +28,7 @@ import timber.log.Timber
 
 class UserTimelineViewModel @Inject constructor(
     private val activityPagingSourceFactory: ActivityPagingSourceFactory,
-    private val createActivityDisplayPlaceNameUsecase: CreateActivityDisplayPlaceNameUsecase,
+    private val makeActivityPlaceNameUsecase: MakeActivityPlaceNameUsecase,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
     private val userAuthenticationState: UserAuthenticationState,
     private val activityLocalStorage: ActivityLocalStorage,
@@ -108,7 +108,7 @@ class UserTimelineViewModel @Inject constructor(
             return placeName
         }
 
-        placeName = createActivityDisplayPlaceNameUsecase(
+        placeName = makeActivityPlaceNameUsecase(
             activityPlaceIdentifier,
             userRecentPlaceIdentifier
         ) ?: ""

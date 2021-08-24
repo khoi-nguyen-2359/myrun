@@ -39,8 +39,6 @@ dependencies {
     implementation(libs.bundles.placesDeps)
     implementation(libs.androidGoogleMap)
 
-    implementation(libs.dagger)
-
     implementation(libs.timber)
 
     implementation(libs.kotlinxCoroutinesPlayServices)

@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.profile
 
-import akio.apps.common.feature.lifecycle.Event
-import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
+import akio.apps.common.data.Event
+import akio.apps.common.data.LaunchCatchingDelegate
 import akio.apps.myrun.domain.strava.ExchangeStravaLoginCodeUsecase
 import akio.apps.myrun.domain.strava.UpdateStravaTokenUsecase
 import androidx.lifecycle.LiveData

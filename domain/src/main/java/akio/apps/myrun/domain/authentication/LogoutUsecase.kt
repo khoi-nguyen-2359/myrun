@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class LogoutUsecase @Inject constructor(
     private val authenticationState: UserAuthenticationState,
-    private val activityLocalStorage: ActivityLocalStorage
+    private val activityLocalStorage: ActivityLocalStorage,
 ) {
     suspend fun logout() {
         activityLocalStorage.clearAll()

@@ -14,7 +14,7 @@ import javax.inject.Inject
 class PostSignInUsecase @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
     private val userProfileRepository: UserProfileRepository,
-    private val externalAppProvidersRepository: ExternalAppProvidersRepository
+    private val externalAppProvidersRepository: ExternalAppProvidersRepository,
 ) {
 
     suspend operator fun invoke(result: SignInSuccessResult) {

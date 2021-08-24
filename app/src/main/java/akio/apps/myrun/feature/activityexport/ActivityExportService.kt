@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.activityexport
 
 import akio.apps.myrun.BuildConfig
 import akio.apps.myrun.R
-import akio.apps.myrun.domain.activityexport.ExportActivityToTempTcxFileUsecase
+import akio.apps.myrun.domain.activityexport.ExportTempTcxFileUsecase
 import akio.apps.myrun.feature.activityexport._di.DaggerActivityExportFeatureComponent
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import android.app.PendingIntent
@@ -34,7 +34,7 @@ import timber.log.Timber
 class ActivityExportService : Service() {
 
     @Inject
-    lateinit var exportActivityToTempTcxFileUsecase: ExportActivityToTempTcxFileUsecase
+    lateinit var exportTempTcxFileUsecase: ExportTempTcxFileUsecase
 
     private val activityInfoQueue = ConcurrentLinkedQueue<ActivityInfo>()
     private var processingJob: Job? = null
@@ -98,7 +98,7 @@ class ActivityExportService : Service() {
     private suspend fun exportActivityList() = withContext(Dispatchers.IO) {
         while (true) {
             val activityInfo = activityInfoQueue.peek() ?: break
-            val exportedFile = exportActivityToTempTcxFileUsecase(activityInfo.id)
+            val exportedFile = exportTempTcxFileUsecase(activityInfo.id)
             // reduce the queue at this place for correct counter on the progress notification
             // message
             activityInfoQueue.poll()
