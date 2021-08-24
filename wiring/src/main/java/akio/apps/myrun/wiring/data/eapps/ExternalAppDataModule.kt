@@ -10,6 +10,7 @@ import akio.apps.myrun.data.eapps.impl.StravaAuthenticator
 import akio.apps.myrun.data.eapps.impl.StravaDataRepositoryImpl
 import akio.apps.myrun.data.eapps.impl.StravaTokenRepositoryImpl
 import akio.apps.myrun.data.eapps.impl.model.StravaTokenRefreshMapper
+import akio.apps.myrun.data.wiring.NetworkModule
 import com.google.gson.Gson
 import dagger.Binds
 import dagger.Module
@@ -20,7 +21,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Module(
-    includes = [ExternalAppDataModule.Providers::class]
+    includes = [
+        ExternalAppDataModule.Providers::class,
+        NetworkModule::class
+    ]
 )
 internal interface ExternalAppDataModule {
     @Binds

@@ -46,7 +46,7 @@ dependencies {
 
     implementation(libs.bundles.compose)
 
-    implementation(libs.daggerAndroid)
+    implementation(libs.dagger)
     kapt(libs.daggerCompiler)
 
     testImplementation(libs.junit)

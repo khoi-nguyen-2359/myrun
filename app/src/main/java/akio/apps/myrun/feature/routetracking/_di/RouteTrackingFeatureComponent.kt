@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.routetracking._di
 
 import akio.apps.common.wiring.ApplicationModule
-import akio.apps.common.wiring.DispatchersModule
 import akio.apps.common.wiring.FeatureScope
 import akio.apps.common.wiring.LaunchCatchingModule
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
@@ -29,7 +28,6 @@ import dagger.Component
 @FeatureScope
 @Component(
     modules = [
-        DispatchersModule::class,
         ApplicationModule::class,
         LaunchCatchingModule::class
     ],
@@ -63,7 +61,7 @@ interface RouteTrackingFeatureComponent {
             fitnessDataComponent: FitnessDataComponent = DaggerFitnessDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =
                 DaggerExternalAppDataComponent.factory().create(),
-            domainComponent: DomainComponent = DaggerDomainComponent.create()
+            domainComponent: DomainComponent = DaggerDomainComponent.create(),
         ): RouteTrackingFeatureComponent
     }
 }
