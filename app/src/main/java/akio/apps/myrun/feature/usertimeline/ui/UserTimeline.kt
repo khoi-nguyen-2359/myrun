@@ -303,7 +303,7 @@ private fun TimelineActivityPerformanceRow(activity: Activity, modifier: Modifie
             color = Color.White,
             fontWeight = FontWeight.Bold,
             text = performanceValue,
-            fontSize = 14.sp,
+            fontSize = 13.sp,
             textAlign = TextAlign.Center
         )
     }
@@ -354,6 +354,7 @@ private fun ActivityInformationView(
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1.0f)) {
             AthleteNameText(activity)
+            Spacer(modifier = Modifier.height(2.dp))
             ActivityTimeAndPlaceText(activity, activityDisplayPlaceName)
         }
         if (isShareMenuVisible) {
@@ -370,7 +371,7 @@ private fun AthleteNameText(activityDetail: Activity) = Text(
     maxLines = 1,
     overflow = TextOverflow.Ellipsis,
     fontWeight = FontWeight.Bold,
-    fontSize = 16.sp
+    fontSize = 15.sp
 )
 
 @Composable
@@ -380,7 +381,7 @@ private fun ActivityNameText(
 ) = Text(
     text = activityDetail.name,
     modifier = modifier.fillMaxWidth(),
-    fontSize = 22.sp,
+    fontSize = 19.sp,
     fontWeight = FontWeight.Bold,
     letterSpacing = 0.5.sp
 )
@@ -448,7 +449,7 @@ private fun ActivityTimeAndPlaceText(activityDetail: Activity, activityDisplayPl
         text = timeAndPlaceText,
         overflow = TextOverflow.Ellipsis,
         maxLines = 2,
-        fontSize = 13.sp
+        fontSize = 12.sp
     )
 }
 
@@ -457,7 +458,7 @@ private fun UserAvatarImage(
     activityDetail: Activity,
     onClickUserAvatar: () -> Unit,
 ) {
-    val avatarDimension = 50.dp
+    val avatarDimension = 46.dp
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
     Image(
         painter = rememberImagePainter(
