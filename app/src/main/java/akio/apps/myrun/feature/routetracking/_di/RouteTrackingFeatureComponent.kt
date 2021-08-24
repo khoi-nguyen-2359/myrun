@@ -20,6 +20,8 @@ import akio.apps.myrun.wiring.data.tracking.DaggerTrackingDataComponent
 import akio.apps.myrun.wiring.data.tracking.TrackingDataComponent
 import akio.apps.myrun.wiring.data.user.DaggerUserDataComponent
 import akio.apps.myrun.wiring.data.user.UserDataComponent
+import akio.apps.myrun.wiring.domain.DaggerDomainComponent
+import akio.apps.myrun.wiring.domain.DomainComponent
 import akio.apps.myrun.worker.ActivityUploadWorker
 import akio.apps.myrun.worker.UpdateUserRecentPlaceWorker
 import dagger.Component
@@ -38,7 +40,8 @@ import dagger.Component
         TrackingDataComponent::class,
         FitnessDataComponent::class,
         ExternalAppDataComponent::class,
-        LocationDataComponent::class
+        LocationDataComponent::class,
+        DomainComponent::class
     ]
 )
 interface RouteTrackingFeatureComponent {
@@ -60,6 +63,7 @@ interface RouteTrackingFeatureComponent {
             fitnessDataComponent: FitnessDataComponent = DaggerFitnessDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =
                 DaggerExternalAppDataComponent.factory().create(),
+            domainComponent: DomainComponent = DaggerDomainComponent.create()
         ): RouteTrackingFeatureComponent
     }
 }

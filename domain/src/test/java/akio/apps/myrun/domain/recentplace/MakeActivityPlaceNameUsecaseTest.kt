@@ -4,12 +4,12 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class CreateActivityDisplayPlaceNameUsecaseTest {
-    private lateinit var usecase: CreateActivityDisplayPlaceNameUsecase
+class MakeActivityPlaceNameUsecaseTest {
+    private lateinit var usecase: MakeActivityPlaceNameUsecase
 
     @Before
     fun setup() {
-        usecase = CreateActivityDisplayPlaceNameUsecase(PlaceIdentifierConverter())
+        usecase = MakeActivityPlaceNameUsecase(PlaceIdentifierConverter())
     }
 
     @Test

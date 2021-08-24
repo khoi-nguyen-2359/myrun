@@ -3,8 +3,8 @@ package akio.apps.myrun.domain.recentplace
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import javax.inject.Inject
 
-class CreateActivityDisplayPlaceNameUsecase @Inject constructor(
-    private val placeIdentifierConverter: PlaceIdentifierConverter
+class MakeActivityPlaceNameUsecase @Inject constructor(
+    private val placeIdentifierConverter: PlaceIdentifierConverter,
 ) {
     /**
      * Gets the activity place name to display, depends on user current place.
@@ -14,7 +14,7 @@ class CreateActivityDisplayPlaceNameUsecase @Inject constructor(
      */
     operator fun invoke(
         activityPlaceIdentifier: PlaceIdentifier?,
-        currentUserPlaceIdentifier: PlaceIdentifier?
+        currentUserPlaceIdentifier: PlaceIdentifier?,
     ): String? {
         val activityAddressList =
             placeIdentifierConverter.toAddressNameList(activityPlaceIdentifier)

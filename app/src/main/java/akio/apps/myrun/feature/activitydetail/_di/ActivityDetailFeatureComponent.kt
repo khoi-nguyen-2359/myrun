@@ -8,6 +8,8 @@ import akio.apps.myrun.wiring.data.authentication.AuthenticationDataComponent
 import akio.apps.myrun.wiring.data.authentication.DaggerAuthenticationDataComponent
 import akio.apps.myrun.wiring.data.user.DaggerUserDataComponent
 import akio.apps.myrun.wiring.data.user.UserDataComponent
+import akio.apps.myrun.wiring.domain.DaggerDomainComponent
+import akio.apps.myrun.wiring.domain.DomainComponent
 import dagger.BindsInstance
 import dagger.Component
 
@@ -18,7 +20,8 @@ import dagger.Component
     dependencies = [
         ActivityDataComponent::class,
         AuthenticationDataComponent::class,
-        UserDataComponent::class
+        UserDataComponent::class,
+        DomainComponent::class
     ]
 )
 interface ActivityDetailFeatureComponent {
@@ -33,6 +36,7 @@ interface ActivityDetailFeatureComponent {
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
+            domainComponent: DomainComponent = DaggerDomainComponent.create()
         ): ActivityDetailFeatureComponent
     }
 }

@@ -27,7 +27,6 @@ class UserProfileViewModel @Inject constructor(
     private val getProviderTokensUsecase: GetProviderTokensUsecase,
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
     private val removeStravaTokenUsecase: RemoveStravaTokenUsecase,
-    private val logoutDelegate: UserLogoutDelegate,
     private val userAuthenticationState: UserAuthenticationState,
     private val activityLocalStorage: ActivityLocalStorage,
     private val launchCatchingDelegate: LaunchCatchingDelegate,

@@ -14,11 +14,11 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
-class ExportActivityToTempTcxFileUsecase @Inject constructor(
+class ExportTempTcxFileUsecase @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
     private val activityRepository: ActivityRepository,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) {
     private val timeFormatter = SimpleDateFormat("ddMMyyyy_HHmm", Locale.US)
 
