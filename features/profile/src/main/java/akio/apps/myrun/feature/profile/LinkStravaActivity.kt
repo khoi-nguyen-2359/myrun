@@ -28,10 +28,10 @@ class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.EventListener
 
         linkStravaDelegate.checkStravaLoginResult(intent)
         collectRepeatOnStarted(
-            linkStravaViewModel.isInProgress,
+            linkStravaViewModel.isLaunchCatchingInProgress,
             dialogDelegate::toggleProgressDialog
         )
-        collectEventRepeatOnStarted(linkStravaViewModel.error) {
+        collectEventRepeatOnStarted(linkStravaViewModel.launchCatchingError) {
             Toast.makeText(this, it.message, Toast.LENGTH_LONG)
                 .show()
             finish()

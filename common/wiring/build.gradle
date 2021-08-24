@@ -29,7 +29,7 @@ android {
 }
 
 dependencies {
-    implementation(project(':common:feature'))
+    implementation(project(':common:data'))
 
     implementation(libs.lifecycleViewModelKtx)
     implementation(libs.dagger)

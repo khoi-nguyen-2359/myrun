@@ -64,8 +64,14 @@ class SignInActivity : AppCompatActivity() {
 
     private fun initObservers() {
         collectEventRepeatOnStarted(signInVM.signInSuccessResult, ::onSignInSuccess)
-        collectRepeatOnStarted(signInVM.isInProgress, dialogDelegate::toggleProgressDialog)
-        collectEventRepeatOnStarted(signInVM.error, dialogDelegate::showExceptionAlert)
+        collectRepeatOnStarted(
+            signInVM.isLaunchCatchingInProgress,
+            dialogDelegate::toggleProgressDialog
+        )
+        collectEventRepeatOnStarted(
+            signInVM.launchCatchingError,
+            dialogDelegate::showExceptionAlert
+        )
     }
 
     private fun initViews() {

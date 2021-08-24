@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class RouteTrackingConfigurationViewModel @Inject constructor(
-    private val routeTrackingConfiguration: RouteTrackingConfiguration
+    private val routeTrackingConfiguration: RouteTrackingConfiguration,
 ) : ViewModel() {
 
     // This value is for rolling back when text input is not a number
@@ -43,7 +43,7 @@ class RouteTrackingConfigurationViewModel @Inject constructor(
     }
 
     fun onLocationUpdateConfigurationChanged(
-        updateConfig: LocationUpdateConfiguration
+        updateConfig: LocationUpdateConfiguration,
     ) = viewModelScope.launch {
         locationUpdateConfigState.value = updateConfig
     }
@@ -74,6 +74,6 @@ class RouteTrackingConfigurationViewModel @Inject constructor(
         val fastestUpdateInterval: String = "",
         val smallestDisplacement: String = "",
         val isAvgAccumulationEnabled: Boolean = false,
-        val isSpeedFilterEnabled: Boolean = false
+        val isSpeedFilterEnabled: Boolean = false,
     )
 }

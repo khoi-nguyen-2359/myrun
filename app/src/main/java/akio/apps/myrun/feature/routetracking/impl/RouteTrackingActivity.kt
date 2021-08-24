@@ -1,11 +1,11 @@
 package akio.apps.myrun.feature.routetracking.impl
 
+import akio.apps.common.data.LaunchCatchingDelegate
+import akio.apps.common.data.LaunchCatchingDelegateImpl
 import akio.apps.common.feature.lifecycle.collectEventRepeatOnStarted
 import akio.apps.common.feature.lifecycle.collectRepeatOnStarted
 import akio.apps.common.feature.lifecycle.observe
 import akio.apps.common.feature.ui.dp2px
-import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
-import akio.apps.common.feature.viewmodel.LaunchCatchingDelegateImpl
 import akio.apps.common.feature.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.LatLngBoundsBuilder
@@ -159,14 +159,14 @@ class RouteTrackingActivity(
 
     private fun initObservers() {
         collectRepeatOnStarted(
-            routeTrackingViewModel.isInProgress,
+            routeTrackingViewModel.isLaunchCatchingInProgress,
             dialogDelegate::toggleProgressDialog
         )
         observe(routeTrackingViewModel.trackingLocationBatch, ::onTrackingLocationUpdate)
         observe(routeTrackingViewModel.trackingStats, viewBinding.trackingStatsView::update)
         observe(routeTrackingViewModel.trackingStatus, ::onTrackingStatusChanged)
         collectEventRepeatOnStarted(
-            routeTrackingViewModel.error,
+            routeTrackingViewModel.launchCatchingError,
             dialogDelegate::showExceptionAlert
         )
         observe(
@@ -174,8 +174,8 @@ class RouteTrackingActivity(
             viewBinding.activitySettingsView::setActivityType
         )
         observe(routeTrackingViewModel.activityType, viewBinding.trackingStatsView::setActivityType)
-        collectRepeatOnStarted(isInProgress, dialogDelegate::toggleProgressDialog)
-        collectEventRepeatOnStarted(error, dialogDelegate::showExceptionAlert)
+        collectRepeatOnStarted(isLaunchCatchingInProgress, dialogDelegate::toggleProgressDialog)
+        collectEventRepeatOnStarted(launchCatchingError, dialogDelegate::showExceptionAlert)
         setAutoCameraEnabled(true)
     }
 

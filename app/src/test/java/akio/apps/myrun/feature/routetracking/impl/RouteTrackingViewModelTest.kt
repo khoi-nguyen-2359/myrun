@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.routetracking.impl
 
 import akio.apps._base.InstantTaskExecutorTest
-import akio.apps.common.feature.viewmodel.LaunchCatchingDelegateImpl
+import akio.apps.common.data.LaunchCatchingDelegateImpl
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.api.LocationDataSource

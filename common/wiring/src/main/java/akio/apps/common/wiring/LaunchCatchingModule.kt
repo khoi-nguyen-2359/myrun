@@ -1,7 +1,7 @@
 package akio.apps.common.wiring
 
-import akio.apps.common.feature.viewmodel.LaunchCatchingDelegate
-import akio.apps.common.feature.viewmodel.LaunchCatchingDelegateImpl
+import akio.apps.common.data.LaunchCatchingDelegate
+import akio.apps.common.data.LaunchCatchingDelegateImpl
 import dagger.Module
 import dagger.Provides
 

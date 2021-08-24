@@ -100,16 +100,7 @@ dependencies {
     implementation project(":features:configurator")
     implementation project(":features:profile")
 
-    implementation(project(':domain'))
-
-    implementation(project(':data:wiring'))
-    implementation(project(':data:fitness:wiring'))
-    implementation(project(':data:tracking:wiring'))
-    implementation(project(':data:location:wiring'))
-    implementation(project(':data:user:wiring'))
-    implementation(project(':data:activity:wiring'))
-    implementation(project(':data:authentication:wiring'))
-    implementation(project(':data:eapps:wiring'))
+    implementation(project(':wiring'))
 
     implementation project(':common:feature')
     implementation project(':common:wiring')
@@ -123,7 +114,7 @@ dependencies {
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.kotlinxCoroutinesPlayServices)
 
-    implementation(libs.daggerAndroid)
+    implementation(libs.dagger)
     kapt(libs.daggerCompiler)
 
     implementation(libs.androidXCore)
