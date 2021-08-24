@@ -2,12 +2,8 @@ package akio.apps.myrun.feature.profile
 
 import akio.apps.common.wiring.FeatureScope
 import akio.apps.common.wiring.LaunchCatchingModule
-import akio.apps.myrun.wiring.data.activity.ActivityDataComponent
-import akio.apps.myrun.wiring.data.activity.DaggerActivityDataComponent
-import akio.apps.myrun.wiring.data.authentication.AuthenticationDataComponent
-import akio.apps.myrun.wiring.data.authentication.DaggerAuthenticationDataComponent
-import akio.apps.myrun.wiring.data.eapps.DaggerExternalAppDataComponent
-import akio.apps.myrun.wiring.data.eapps.ExternalAppDataComponent
+import akio.apps.myrun.wiring.domain.DaggerDomainComponent
+import akio.apps.myrun.wiring.domain.DomainComponent
 import dagger.Component
 
 @FeatureScope
@@ -16,9 +12,7 @@ import dagger.Component
         LaunchCatchingModule::class
     ],
     dependencies = [
-        ActivityDataComponent::class,
-        AuthenticationDataComponent::class,
-        ExternalAppDataComponent::class
+        DomainComponent::class
     ]
 )
 interface LinkStravaComponent {
@@ -27,11 +21,7 @@ interface LinkStravaComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create(),
-            authenticationDataComponent: AuthenticationDataComponent =
-                DaggerAuthenticationDataComponent.create(),
-            externalAppDataComponent: ExternalAppDataComponent =
-                DaggerExternalAppDataComponent.factory().create(),
+            domainComponent: DomainComponent = DaggerDomainComponent.create(),
         ): LinkStravaComponent
     }
 }

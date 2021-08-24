@@ -114,7 +114,7 @@ dependencies {
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.kotlinxCoroutinesPlayServices)
 
-    implementation(libs.daggerAndroid)
+    implementation(libs.dagger)
     kapt(libs.daggerCompiler)
 
     implementation(libs.androidXCore)

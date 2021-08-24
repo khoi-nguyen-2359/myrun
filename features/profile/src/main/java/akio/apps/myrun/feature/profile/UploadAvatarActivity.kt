@@ -4,6 +4,7 @@ import akio.apps.common.feature.picker.PhotoSelectionDelegate
 import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
 import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.profile.ui.CropImageView
+import akio.apps.myrun.wiring.domain.DaggerDomainComponent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -51,7 +52,7 @@ class UploadAvatarActivity :
         super.onCreate(savedInstanceState)
 
         uploadUserAvatarImageUsecase =
-            DaggerUploadAvatarFeatureComponent.factory().create().uploadUserAvatarImageUsecase()
+            DaggerDomainComponent.create().uploadUserAvatarImageUsecase()
 
         photoSelectionDelegate.showPhotoSelectionDialog(
             getString(R.string.photo_selection_dialog_title)

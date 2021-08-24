@@ -1,6 +1,5 @@
 package akio.apps.myrun.feature.activitydetail._di
 
-import akio.apps.common.wiring.DispatchersModule
 import akio.apps.myrun.feature.activitydetail.impl.ActivityDetailViewModel
 import akio.apps.myrun.wiring.data.activity.ActivityDataComponent
 import akio.apps.myrun.wiring.data.activity.DaggerActivityDataComponent
@@ -14,9 +13,6 @@ import dagger.BindsInstance
 import dagger.Component
 
 @Component(
-    modules = [
-        DispatchersModule::class
-    ],
     dependencies = [
         ActivityDataComponent::class,
         AuthenticationDataComponent::class,
@@ -36,7 +32,7 @@ interface ActivityDetailFeatureComponent {
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
-            domainComponent: DomainComponent = DaggerDomainComponent.create()
+            domainComponent: DomainComponent = DaggerDomainComponent.create(),
         ): ActivityDetailFeatureComponent
     }
 }

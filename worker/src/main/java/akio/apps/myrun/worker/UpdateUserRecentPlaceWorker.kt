@@ -1,6 +1,5 @@
 package akio.apps.myrun.worker
 
-import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.domain.recentplace.UpdateUserRecentPlaceUsecase
 import android.content.Context
 import androidx.work.Constraints
@@ -14,8 +13,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import okio.IOException
-import timber.log.Timber
 
 class UpdateUserRecentPlaceWorker(
     appContext: Context,
@@ -25,26 +22,16 @@ class UpdateUserRecentPlaceWorker(
     @Inject
     lateinit var updateUserRecentPlaceUsecase: UpdateUserRecentPlaceUsecase
 
-    @Inject
-    lateinit var locationDataSource: LocationDataSource
-
     init {
         DaggerWorkerFeatureComponent.factory().create().inject(this)
     }
 
-    override suspend fun doWork(): Result {
-        val lastLocation = locationDataSource.getLastLocation()
-            ?: return Result.retry()
-
-        val lat = lastLocation.latitude
-        val lng = lastLocation.longitude
-        return try {
-            updateUserRecentPlaceUsecase(lat, lng)
-            Result.success()
-        } catch (throwable: IOException) {
-            Timber.e(throwable)
-            Result.retry()
-        }
+    override suspend fun doWork(): Result = when (updateUserRecentPlaceUsecase.invoke()) {
+        UpdateUserRecentPlaceUsecase.Result.InvalidUser -> Result.failure()
+        UpdateUserRecentPlaceUsecase.Result.LocationUnavailable,
+        UpdateUserRecentPlaceUsecase.Result.IOFailure,
+        -> Result.retry()
+        UpdateUserRecentPlaceUsecase.Result.Success -> Result.success()
     }
 
     companion object {
