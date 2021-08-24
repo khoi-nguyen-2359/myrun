@@ -4,7 +4,7 @@ import akio.apps.common.data.Resource
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
-import akio.apps.myrun.domain.recentplace.CreateActivityDisplayPlaceNameUsecase
+import akio.apps.myrun.domain.recentplace.MakeActivityPlaceNameUsecase
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import androidx.lifecycle.ViewModel
@@ -21,7 +21,7 @@ class ActivityDetailViewModel @Inject constructor(
     private val activityModelMapper: ActivityModelMapper,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
     private val userAuthenticationState: UserAuthenticationState,
-    private val createActivityDisplayPlaceNameUsecase: CreateActivityDisplayPlaceNameUsecase,
+    private val makeActivityPlaceNameUsecase: MakeActivityPlaceNameUsecase,
 ) : ViewModel() {
 
     private val activityDetailsMutableStateFlow: MutableStateFlow<Resource<Activity>> =
@@ -34,7 +34,7 @@ class ActivityDetailViewModel @Inject constructor(
             val activityPlaceIdentifier = resource.data?.placeIdentifier ?: return@map null
             val currentUserPlaceIdentifier =
                 userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
-            val placeName = createActivityDisplayPlaceNameUsecase(
+            val placeName = makeActivityPlaceNameUsecase(
                 activityPlaceIdentifier,
                 currentUserPlaceIdentifier
             )
