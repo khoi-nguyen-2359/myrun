@@ -1,11 +1,11 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
-import akio.apps.myrun.R
+import akio.apps.myrun.data.activity.api.model.ActivityDataModel
+import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.RunningActivityModel
+import akio.apps.myrun.feature.activitydetail.R
 import akio.apps.myrun.feature.activitydetail.TrackingValueFormatter
-import akio.apps.myrun.feature.usertimeline.model.Activity
-import akio.apps.myrun.feature.usertimeline.model.ActivityData
-import akio.apps.myrun.feature.usertimeline.model.RunningActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun PerformanceTableComposable(activity: Activity) = Column(Modifier.padding(5.dp)) {
+fun PerformanceTableComposable(activity: ActivityModel) = Column(Modifier.padding(5.dp)) {
     val trackingValueFormatterList = createActivityFormatterList(activity)
 
     val iterator = trackingValueFormatterList.iterator()
@@ -49,7 +49,7 @@ fun PerformanceTableComposable(activity: Activity) = Column(Modifier.padding(5.d
     }
 }
 
-private fun createActivityFormatterList(activity: Activity): List<TrackingValueFormatter> =
+private fun createActivityFormatterList(activity: ActivityModel): List<TrackingValueFormatter> =
     when (activity.activityType) {
         akio.apps.myrun.data.activity.api.model.ActivityType.Running -> listOf(
             TrackingValueFormatter.DistanceKm,
@@ -66,8 +66,8 @@ private fun createActivityFormatterList(activity: Activity): List<TrackingValueF
 
 @Composable
 private fun RowScope.PerformedResultCellComposable(
-    activity: Activity,
-    valueFormatter: TrackingValueFormatter
+    activity: ActivityModel,
+    valueFormatter: TrackingValueFormatter,
 ) = Column(
     horizontalAlignment = Alignment.CenterHorizontally,
     modifier = Modifier.weight(weight = 1f)
@@ -90,10 +90,10 @@ private fun RowScope.PerformedResultCellComposable(
 @Composable
 private fun PreviewTable() {
     PerformanceTableComposable(
-        activity = RunningActivity(
-            activityData = ActivityData(
+        activity = RunningActivityModel(
+            activityData = ActivityDataModel(
                 id = "id",
-                activityType = akio.apps.myrun.data.activity.api.model.ActivityType.Running,
+                activityType = ActivityType.Running,
                 name = "Evening Run",
                 routeImage = "http://example.com",
                 placeIdentifier = null,
@@ -102,7 +102,7 @@ private fun PreviewTable() {
                 duration = 1000L,
                 distance = 100.0,
                 encodedPolyline = "",
-                athleteInfo = Activity.AthleteInfo(
+                athleteInfo = ActivityModel.AthleteInfo(
                     userId = "id",
                     userName = "Khoi Nguyen",
                     userAvatar = "userAvatar"

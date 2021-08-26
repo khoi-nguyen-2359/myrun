@@ -8,7 +8,7 @@ android {
     compileSdk project.compileSdk
 
     defaultConfig {
-        minSdkVersion project.minSdk
+        minSdk project.minSdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -20,6 +20,7 @@ android {
 
     buildFeatures {
         compose true
+        viewBinding true
     }
 
     composeOptions {
@@ -40,26 +41,23 @@ android {
 }
 
 dependencies {
-    implementation(project(':features:base'))
-
-    implementation(project(':wiring'))
-
-    implementation(project(':common:wiring'))
-    implementation(project(':common:data'))
     implementation(project(':common:feature'))
+    implementation(project(':features:base'))
+    implementation(project(':wiring'))
+    implementation(project(':common:data'))
 
-    implementation(project(':worker'))
-    implementation(libs.workManager) // still needed when using module 'worker'
-
-    implementation(libs.androidMaterial)
-    implementation(libs.constraintLayout)
     implementation(libs.bundles.compose)
+    implementation(libs.accompanistPlaceholder)
     implementation(libs.accompanistInsets)
     implementation(libs.coilCompose)
 
     implementation(libs.androidXAppCompat)
     implementation(libs.timber)
     implementation(libs.lifecycleViewModelKtx)
+
+    implementation(libs.androidMapUtils)
+    implementation(libs.androidGoogleMap)
+
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
 }

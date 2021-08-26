@@ -1,11 +1,6 @@
 <resources>
-    <string name="route_tracking_distance_label">Distance</string>
     <string name="route_tracking_time_label">Time</string>
-    <string name="route_tracking_pace_label">Pace</string>
-    <string name="performance_unit_distance_km">km</string>
     <string name="common_time_unit">minute</string>
-    <string name="performance_unit_pace_min_per_km">/km</string>
-    <string name="route_tracking_speed_label">Speed</string>
     <string name="common_speed_unit">km/h</string>
     <string name="error_permission_settings_disabled">Please grant permissions in app settings</string>
     <string name="action_open_settings">Open settings</string>
@@ -25,8 +20,6 @@
     <string name="action_pause">Pause</string>
     <string name="action_stop">Stop</string>
     <string name="action_resume">Resume</string>
-    <string name="item_activity_time_today">Today at %1$s</string>
-    <string name="item_activity_time_yesterday">Yesterday at %1$s</string>
     <string name="item_activity_title_morning">Morning %1$s</string>
     <string name="item_activity_title_afternoon">Afternoon %1$s</string>
     <string name="item_activity_title_evening">Evening %1$s</string>
@@ -75,19 +68,14 @@
     <string name="user_profile_error_app_connect">Can not connect this app at the moment.</string>
     <string name="performance_avg_pace_label">Avg. Pace</string>
     <string name="performance_speed_label">Speed</string>
-    <string name="performance_unit_speed">km/h</string>
-    <string name="performance_duration_label">Time</string>
     <string name="performance_cadence_label">Avg. Cadence</string>
     <string name="performance_cadence_unit">spm</string>
     <string name="user_timeline_loading_item_message">Loading your activities…</string>
-    <string name="activity_details_loading_message">Loading your activity…</string>
-    <string name="activity_details_loading_error">Loading error.</string>
     <string name="action_retry">Retry</string>
     <string name="activity_export_error_notification_title">Activity export error</string>
     <string name="activity_export_progress_notification_title">Exporting activities</string>
     <string name="activity_export_progress_notification_remaining">%1$d remaining</string>
     <string name="activity_export_success_notification_title">Your tracklog was exported. Tap to share it.</string>
-    <string name="activity_details_share_menu_item_export_file">Export tracklog file</string>
     <string name="activity_export_send_tracklog_title">Send tracklog of %1$s</string>
     <string name="action_send">Send</string>
     <string name="activity_export_progress_notification_finishing">Finishing</string>

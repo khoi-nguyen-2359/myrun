@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.activity.impl
 
+import akio.apps.common.data.Resource
 import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
@@ -19,6 +20,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
@@ -149,6 +151,13 @@ class FirebaseActivityRepository @Inject constructor(
             .getOrNull(0)
             ?.toObject(FirestoreActivity::class.java)
             ?.let(firestoreActivityMapper::map)
+    }
+
+    override suspend fun getActivityResource(activityId: String): Resource<ActivityModel?> = try {
+        val activityData = getActivity(activityId)
+        Resource.Success(activityData)
+    } catch (ioEx: IOException) {
+        Resource.Error(ioEx)
     }
 
     companion object {

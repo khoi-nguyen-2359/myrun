@@ -2,6 +2,8 @@ package akio.apps.myrun.feature.home.ui
 
 import akio.apps.common.feature.ui.px2dp
 import akio.apps.myrun.R
+import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.feature.base.navigation.HomeNavigationDestination
 import akio.apps.myrun.feature.base.ui.AppBarIconButton
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
@@ -10,7 +12,6 @@ import akio.apps.myrun.feature.home.ui.HomeScreenColors.uploadingBadgeContentCol
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.AppBarHeight
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.FabSize
 import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
-import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.ui.UserTimeline
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
@@ -73,8 +74,7 @@ object HomeScreenColors {
 @Composable
 fun HomeScreen(
     onClickFloatingActionButton: () -> Unit,
-    onClickActivityItemAction: (Activity) -> Unit,
-    onClickExportActivityFile: (Activity) -> Unit,
+    onClickExportActivityFile: (ActivityModel) -> Unit,
     navController: NavController,
     userTimelineViewModel: UserTimelineViewModel,
 ) = AppTheme {
@@ -115,7 +115,6 @@ fun HomeScreen(
                 bottom = fabBoxHeightDp // avoid the bottom bar
             ),
             feedListState,
-            onClickActivityItemAction,
             onClickExportActivityFile,
             navController
         )

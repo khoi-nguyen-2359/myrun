@@ -1,10 +1,17 @@
 package akio.apps.myrun.feature.home.ui
 
 import akio.apps.common.feature.viewmodel.viewModelProvider
+import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
+import akio.apps.myrun.feature.activitydetail.DaggerActivityDetailFeatureComponent
+import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
+import akio.apps.myrun.feature.base.navigation.HomeNavigationDestination
 import akio.apps.myrun.feature.home._di.DaggerHomeFeatureComponent
 import akio.apps.myrun.feature.profile.DaggerUserProfileFeatureComponent
+import akio.apps.myrun.feature.profile.UserProfileViewModel
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
-import akio.apps.myrun.feature.usertimeline.model.Activity
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -21,11 +28,28 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 @OptIn(ExperimentalAnimationApi::class)
+object HomeNavigationTransitionDefaults {
+    val enterTransition: EnterTransition = slideInHorizontally(
+        initialOffsetX = { fullWidth -> fullWidth / 2 },
+        animationSpec = tween(200, easing = LinearEasing)
+    ) + fadeIn(initialAlpha = 0f, animationSpec = tween(200, easing = LinearEasing))
+
+    val popEnterTransition: EnterTransition = slideInHorizontally(
+        initialOffsetX = { 0 },
+        animationSpec = tween(200, easing = LinearEasing)
+    ) + fadeIn(initialAlpha = 1f, animationSpec = tween(200, easing = LinearEasing))
+
+    val popExitTransition: ExitTransition = slideOutHorizontally(
+        targetOffsetX = { fullWidth -> fullWidth },
+        animationSpec = tween(200, easing = LinearEasing)
+    ) + fadeOut(targetAlpha = 0f, animationSpec = tween(200, easing = LinearEasing))
+}
+
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun HomeNavigationHost(
     onClickFloatingActionButton: () -> Unit,
-    onClickActivityItemAction: (Activity) -> Unit,
-    onClickExportActivityFile: (Activity) -> Unit,
+    onClickExportActivityFile: (ActivityModel) -> Unit,
 ) = ProvideWindowInsets {
     val navController = rememberAnimatedNavController()
     AnimatedNavHost(
@@ -34,12 +58,16 @@ fun HomeNavigationHost(
     ) {
         addHomeDestination(
             onClickFloatingActionButton,
-            onClickActivityItemAction,
             onClickExportActivityFile,
             navController
         )
 
         addProfileDestination(navController)
+
+        addActivityDetailDestination(
+            onClickExportActivityFile,
+            navController
+        )
     }
 }
 
@@ -48,22 +76,15 @@ private fun NavGraphBuilder.addProfileDestination(navController: NavHostControll
     composable(
         route = HomeNavigationDestination.Profile.route,
         arguments = HomeNavigationDestination.Profile.arguments,
-        enterTransition = { _, _ ->
-            slideInHorizontally(
-                initialOffsetX = { fullWidth -> fullWidth / 2 },
-                animationSpec = tween(200, easing = LinearEasing)
-            ) + fadeIn(initialAlpha = 0f, animationSpec = tween(200, easing = LinearEasing))
-        },
-        popExitTransition = { _, _ ->
-            slideOutHorizontally(
-                targetOffsetX = { fullWidth -> fullWidth },
-                animationSpec = tween(200, easing = LinearEasing)
-            ) + fadeOut(targetAlpha = 0f, animationSpec = tween(200, easing = LinearEasing))
-        }
+        enterTransition = { _, _ -> HomeNavigationTransitionDefaults.enterTransition },
+        popEnterTransition = { _, _ -> HomeNavigationTransitionDefaults.popEnterTransition },
+        popExitTransition = { _, _ -> HomeNavigationTransitionDefaults.popExitTransition }
     ) { backStackEntry ->
-        val arguments = HomeNavigationDestination.Profile.parseArguments(backStackEntry)
+        val userId = HomeNavigationDestination.Profile.parseUserId(backStackEntry)
         val userProfileViewModel = backStackEntry.viewModelProvider {
-            DaggerUserProfileFeatureComponent.factory().create(arguments).userProfileViewModel()
+            DaggerUserProfileFeatureComponent.factory()
+                .create(UserProfileViewModel.Arguments(userId))
+                .userProfileViewModel()
         }
         UserProfileScreen(navController, userProfileViewModel)
     }
@@ -72,34 +93,49 @@ private fun NavGraphBuilder.addProfileDestination(navController: NavHostControll
 @OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.addHomeDestination(
     onClickFloatingActionButton: () -> Unit,
-    onClickActivityItemAction: (Activity) -> Unit,
-    onClickExportActivityFile: (Activity) -> Unit,
+    onClickExportActivityFile: (ActivityModel) -> Unit,
     navController: NavHostController,
 ) {
     composable(
         route = HomeNavigationDestination.Home.route,
-        popEnterTransition = { _, _ ->
-            slideInHorizontally(
-                initialOffsetX = { 0 },
-                animationSpec = tween(200, easing = LinearEasing)
-            ) + fadeIn(initialAlpha = 1f, animationSpec = tween(200, easing = LinearEasing))
-        },
-        popExitTransition = { _, _ ->
-            slideOutHorizontally(
-                targetOffsetX = { fullWidth -> fullWidth },
-                animationSpec = tween(200, easing = LinearEasing)
-            ) + fadeOut(targetAlpha = 0f, animationSpec = tween(200, easing = LinearEasing))
-        }
+        enterTransition = { _, _ -> HomeNavigationTransitionDefaults.enterTransition },
+        popEnterTransition = { _, _ -> HomeNavigationTransitionDefaults.popEnterTransition },
+        popExitTransition = { _, _ -> HomeNavigationTransitionDefaults.popExitTransition }
     ) { backStackEntry ->
         val userFeedViewModel = backStackEntry.viewModelProvider {
             DaggerHomeFeatureComponent.factory().create().userFeedViewModel()
         }
         HomeScreen(
             onClickFloatingActionButton,
-            onClickActivityItemAction,
             onClickExportActivityFile,
             navController,
             userFeedViewModel
+        )
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+private fun NavGraphBuilder.addActivityDetailDestination(
+    onClickExportFile: (ActivityModel) -> Unit,
+    navController: NavHostController,
+) {
+    composable(
+        route = HomeNavigationDestination.ActivityDetail.route,
+        arguments = HomeNavigationDestination.ActivityDetail.arguments,
+        enterTransition = { _, _ -> HomeNavigationTransitionDefaults.enterTransition },
+        popEnterTransition = { _, _ -> HomeNavigationTransitionDefaults.popEnterTransition },
+        popExitTransition = { _, _ -> HomeNavigationTransitionDefaults.popExitTransition }
+    ) { navBackStackEntry ->
+        val activityId = HomeNavigationDestination.ActivityDetail.parseActivityId(navBackStackEntry)
+        val activityDetailViewModel = navBackStackEntry.viewModelProvider {
+            DaggerActivityDetailFeatureComponent.factory()
+                .create(ActivityDetailViewModel.Arguments(activityId))
+                .activityDetailsViewModel()
+        }
+        ActivityDetailScreen(
+            activityDetailViewModel = activityDetailViewModel,
+            onClickExportFile = onClickExportFile,
+            navController
         )
     }
 }

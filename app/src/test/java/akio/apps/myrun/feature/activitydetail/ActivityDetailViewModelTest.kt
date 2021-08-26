@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.activitydetail
 
 import akio.apps.myrun.data.activity.api.ActivityRepository
-import akio.apps.myrun.feature.activitydetail.impl.ActivityDetailViewModel
 import akio.apps.myrun.feature.usertimeline.model.Activity
 import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import akio.apps.test.wheneverBlocking
@@ -40,7 +39,7 @@ class ActivityDetailViewModelTest {
         mockedActivityRepository = mock()
         mockedActivityModelMapper = mock()
 
-        val viewModelParams = ActivityDetailViewModel.Params(defaultActivityId)
+        val viewModelParams = ActivityDetailViewModel.Arguments(defaultActivityId)
         viewModel = ActivityDetailViewModel(
             viewModelParams,
             mockedActivityRepository,

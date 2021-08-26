@@ -1,12 +1,11 @@
-package akio.apps.myrun.feature.activitydetail.impl
+package akio.apps.myrun.feature.activitydetail
 
 import akio.apps.common.data.Resource
 import akio.apps.myrun.data.activity.api.ActivityRepository
+import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.domain.recentplace.MakeActivityPlaceNameUsecase
-import akio.apps.myrun.feature.usertimeline.model.Activity
-import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
@@ -16,17 +15,16 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class ActivityDetailViewModel @Inject constructor(
-    private val params: Params,
+    private val arguments: Arguments,
     private val activityRepository: ActivityRepository,
-    private val activityModelMapper: ActivityModelMapper,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
     private val userAuthenticationState: UserAuthenticationState,
     private val makeActivityPlaceNameUsecase: MakeActivityPlaceNameUsecase,
 ) : ViewModel() {
 
-    private val activityDetailsMutableStateFlow: MutableStateFlow<Resource<Activity>> =
+    private val activityDetailsMutableStateFlow: MutableStateFlow<Resource<ActivityModel>> =
         MutableStateFlow(Resource.Loading())
-    val activityDetails: Flow<Resource<Activity>> = activityDetailsMutableStateFlow
+    val activityDetails: Flow<Resource<ActivityModel>> = activityDetailsMutableStateFlow
 
     val activityPlaceName: Flow<String?> =
         activityDetailsMutableStateFlow.map { resource ->
@@ -41,11 +39,14 @@ class ActivityDetailViewModel @Inject constructor(
             placeName
         }
 
+    init {
+        loadActivityDetails()
+    }
+
     fun loadActivityDetails() {
         viewModelScope.launch {
             activityDetailsMutableStateFlow.value = Resource.Loading()
-            val activity = activityRepository.getActivity(params.activityId)
-                ?.let(activityModelMapper::map)
+            val activity = activityRepository.getActivity(arguments.activityId)
             if (activity == null) {
                 activityDetailsMutableStateFlow.value = Resource.Error(ActivityNotFoundException())
             } else {
@@ -56,5 +57,5 @@ class ActivityDetailViewModel @Inject constructor(
 
     class ActivityNotFoundException : Exception()
 
-    data class Params(val activityId: String)
+    data class Arguments(val activityId: String)
 }

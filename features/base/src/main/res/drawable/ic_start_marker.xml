@@ -8,5 +8,5 @@
         android:fillColor="#000" />
     <path
         android:pathData="M12,20c-4.41,0 -8,-3.59 -8,-8s3.59,-8 8,-8 8,3.59 8,8 -3.59,8 -8,8z"
-        android:fillColor="@color/activity_route_map_stop_marker_tint" />
+        android:fillColor="#00c853" />
 </vector>
