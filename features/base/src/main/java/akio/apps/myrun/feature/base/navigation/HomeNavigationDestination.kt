@@ -1,6 +1,5 @@
-package akio.apps.myrun.feature.home.ui
+package akio.apps.myrun.feature.base.navigation
 
-import akio.apps.myrun.feature.profile.UserProfileViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
 import androidx.navigation.compose.NamedNavArgument
@@ -25,13 +24,26 @@ sealed class HomeNavigationDestination(protected val routeName: String) {
             }
         )
 
-        fun parseArguments(backStackEntry: NavBackStackEntry): UserProfileViewModel.Arguments {
-            val userId = backStackEntry.arguments?.getString(ARG_USER_ID)
-            return UserProfileViewModel.Arguments(userId)
-        }
+        fun parseUserId(backStackEntry: NavBackStackEntry): String? =
+            backStackEntry.arguments?.getString(ARG_USER_ID)
 
         // Passing null [userId] to load current user
         fun routeWithUserId(userId: String?) =
             userId?.let { "$routeName?$ARG_USER_ID=$userId" } ?: routeName
+    }
+
+    object ActivityDetail : HomeNavigationDestination(routeName = "activity") {
+        private const val ARG_ACTIVITY_ID = "activityId"
+
+        fun parseActivityId(navBackStackEntry: NavBackStackEntry): String =
+            navBackStackEntry.arguments?.getString(ARG_ACTIVITY_ID) ?: ""
+
+        fun routeWithActivityId(activityId: String): String =
+            "$routeName/$activityId"
+
+        override val route: String = "$routeName/{$ARG_ACTIVITY_ID}"
+        override val arguments: List<NamedNavArgument> = listOf(
+            navArgument(ARG_ACTIVITY_ID) { type = NavType.StringType }
+        )
     }
 }

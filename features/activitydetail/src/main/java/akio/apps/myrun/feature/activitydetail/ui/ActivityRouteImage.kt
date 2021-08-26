@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
+import akio.apps.myrun.data.activity.api.model.ActivityDataModel
+import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
-import akio.apps.myrun.feature.usertimeline.model.Activity
-import akio.apps.myrun.feature.usertimeline.model.ActivityData
-import akio.apps.myrun.feature.usertimeline.model.RunningActivity
+import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.aspectRatio
@@ -25,9 +25,9 @@ private const val ACTIVITY_ROUTE_IMAGE_RATIO = 1.5f
 @OptIn(coil.annotation.ExperimentalCoilApi::class)
 @Composable
 fun ActivityRouteImage(
-    activity: Activity,
+    activity: ActivityModel,
     imageRatio: Float = ACTIVITY_ROUTE_IMAGE_RATIO,
-    onClickAction: (() -> Unit)? = null
+    onClickAction: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     val imageWidth = remember { (context.resources.displayMetrics.widthPixels * 0.8).toInt() }
@@ -63,10 +63,10 @@ fun ActivityRouteImage(
 @Preview
 @Composable
 private fun PreviewActivityRouteImage() = ActivityRouteImage(
-    activity = RunningActivity(
-        activityData = ActivityData(
+    activity = RunningActivityModel(
+        activityData = ActivityDataModel(
             id = "id",
-            activityType = akio.apps.myrun.data.activity.api.model.ActivityType.Running,
+            activityType = ActivityType.Running,
             name = "Evening Run",
             routeImage = "http://example.com",
             placeIdentifier = null,
@@ -75,7 +75,7 @@ private fun PreviewActivityRouteImage() = ActivityRouteImage(
             duration = 1000L,
             distance = 100.0,
             encodedPolyline = "",
-            athleteInfo = Activity.AthleteInfo(
+            athleteInfo = ActivityModel.AthleteInfo(
                 userId = "id",
                 userName = "Khoi Nguyen",
                 userAvatar = "userAvatar"

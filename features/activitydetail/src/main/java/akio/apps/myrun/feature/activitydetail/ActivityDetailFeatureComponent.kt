@@ -1,6 +1,5 @@
-package akio.apps.myrun.feature.activitydetail._di
+package akio.apps.myrun.feature.activitydetail
 
-import akio.apps.myrun.feature.activitydetail.impl.ActivityDetailViewModel
 import akio.apps.myrun.wiring.data.activity.ActivityDataComponent
 import akio.apps.myrun.wiring.data.activity.DaggerActivityDataComponent
 import akio.apps.myrun.wiring.data.authentication.AuthenticationDataComponent
@@ -26,7 +25,7 @@ interface ActivityDetailFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            @BindsInstance params: ActivityDetailViewModel.Params,
+            @BindsInstance arguments: ActivityDetailViewModel.Arguments,
             activityDataComponent: ActivityDataComponent =
                 DaggerActivityDataComponent.create(),
             authenticationDataComponent: AuthenticationDataComponent =

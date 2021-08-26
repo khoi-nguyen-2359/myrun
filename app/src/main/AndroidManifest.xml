@@ -79,13 +79,6 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity
-            android:name=".feature.activitydetail.ActivityDetailActivity"
-            android:exported="false" />
-        <activity
-            android:name=".feature.activityroutemap.ui.ActivityRouteMapActivity"
-            android:exported="false" />
-
         <!-- Firebase Android perf library debug log -->
         <meta-data
             android:name="firebase_performance_logcat_enabled"

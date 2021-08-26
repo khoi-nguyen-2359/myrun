@@ -1,10 +1,9 @@
-package akio.apps.myrun.feature.activityroutemap.ui
+package akio.apps.myrun.feature.activitydetail
 
 import akio.apps.common.feature.ui.dp2px
 import akio.apps.common.feature.ui.getColorCompat
 import akio.apps.common.feature.ui.getDrawableCompat
-import akio.apps.myrun.R
-import akio.apps.myrun.databinding.ActivityActivityRouteMapBinding
+import akio.apps.myrun.feature.activitydetail.databinding.ActivityActivityRouteMapBinding
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -131,7 +130,7 @@ class ActivityRouteMapActivity : AppCompatActivity() {
 
         fun createDrawableBitmap(
             context: Context,
-            @DrawableRes drawableResId: Int
+            @DrawableRes drawableResId: Int,
         ): Bitmap? {
             val drawable = context.getDrawableCompat(drawableResId) ?: return null
             drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)

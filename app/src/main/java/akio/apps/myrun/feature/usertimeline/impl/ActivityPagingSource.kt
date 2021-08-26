@@ -1,9 +1,8 @@
 package akio.apps.myrun.feature.usertimeline.impl
 
 import akio.apps.common.data.Resource
+import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.domain.usertimeline.GetUserTimelineActivitiesUsecase
-import akio.apps.myrun.feature.usertimeline.model.Activity
-import akio.apps.myrun.feature.usertimeline.model.ActivityModelMapper
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import javax.inject.Inject
@@ -11,9 +10,8 @@ import timber.log.Timber
 
 class ActivityPagingSource @Inject constructor(
     private val getUserTimelineActivitiesUsecase: GetUserTimelineActivitiesUsecase,
-    private val activityModelMapper: ActivityModelMapper
-) : PagingSource<Long, Activity>() {
-    override suspend fun load(params: LoadParams<Long>): LoadResult<Long, Activity> {
+) : PagingSource<Long, ActivityModel>() {
+    override suspend fun load(params: LoadParams<Long>): LoadResult<Long, ActivityModel> {
         val startAfter = params.key ?: System.currentTimeMillis()
         val resource =
             getUserTimelineActivitiesUsecase.getUserTimelineActivity(startAfter, params.loadSize)
@@ -21,7 +19,7 @@ class ActivityPagingSource @Inject constructor(
         return when (resource) {
             is Resource.Success ->
                 LoadResult.Page(
-                    data = resource.data.map(activityModelMapper::map),
+                    data = resource.data,
                     prevKey = null,
                     nextKey = resource.data.lastOrNull()?.startTime
                 )
@@ -30,13 +28,12 @@ class ActivityPagingSource @Inject constructor(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Long, Activity>): Long? = null
+    override fun getRefreshKey(state: PagingState<Long, ActivityModel>): Long? = null
 }
 
 class ActivityPagingSourceFactory @Inject constructor(
     private val getUserTimelineActivitiesUsecase: GetUserTimelineActivitiesUsecase,
-    private val activityModelMapper: ActivityModelMapper
 ) {
     operator fun invoke(): ActivityPagingSource =
-        ActivityPagingSource(getUserTimelineActivitiesUsecase, activityModelMapper)
+        ActivityPagingSource(getUserTimelineActivitiesUsecase)
 }

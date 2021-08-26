@@ -1,11 +1,11 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
-import akio.apps.myrun.R
+import akio.apps.myrun.data.activity.api.model.ActivityDataModel
+import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.feature.activitydetail.ActivityDateTimeFormatter
-import akio.apps.myrun.feature.usertimeline.model.Activity
-import akio.apps.myrun.feature.usertimeline.model.ActivityData
-import akio.apps.myrun.feature.usertimeline.model.RunningActivity
+import akio.apps.myrun.feature.activitydetail.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -34,9 +34,9 @@ import timber.log.Timber
 
 @Composable
 fun ActivityInfoHeaderView(
-    activityDetail: Activity,
+    activityDetail: ActivityModel,
     activityDisplayPlaceName: String?,
-    onClickUserAvatar: () -> Unit
+    onClickUserAvatar: () -> Unit,
 ) = Column(
     modifier = Modifier
         .padding(
@@ -57,7 +57,7 @@ fun ActivityInfoHeaderView(
 }
 
 @Composable
-private fun AthleteNameText(activityDetail: Activity) = Text(
+private fun AthleteNameText(activityDetail: ActivityModel) = Text(
     text = activityDetail.athleteInfo.userName.orEmpty(),
     maxLines = 1,
     overflow = TextOverflow.Ellipsis,
@@ -66,7 +66,7 @@ private fun AthleteNameText(activityDetail: Activity) = Text(
 )
 
 @Composable
-private fun ActivityNameText(activityDetail: Activity) = Text(
+private fun ActivityNameText(activityDetail: ActivityModel) = Text(
     text = activityDetail.name,
     modifier = Modifier
         .fillMaxWidth()
@@ -77,7 +77,10 @@ private fun ActivityNameText(activityDetail: Activity) = Text(
 )
 
 @Composable
-private fun ActivityTimeAndPlaceText(activityDetail: Activity, activityDisplayPlaceName: String?) {
+private fun ActivityTimeAndPlaceText(
+    activityDetail: ActivityModel,
+    activityDisplayPlaceName: String?,
+) {
     val activityDateTimeFormatter = remember(::ActivityDateTimeFormatter)
     val activityFormattedStartTime =
         remember { activityDateTimeFormatter.formatActivityDateTime(activityDetail.startTime) }
@@ -115,8 +118,8 @@ private fun ActivityTimeAndPlaceText(activityDetail: Activity, activityDisplayPl
 
 @Composable
 private fun UserAvatarImage(
-    activityDetail: Activity,
-    onClickUserAvatar: () -> Unit
+    activityDetail: ActivityModel,
+    onClickUserAvatar: () -> Unit,
 ) {
     val avatarDimension = 50.dp
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
@@ -140,10 +143,10 @@ private fun UserAvatarImage(
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 private fun PreviewActivityInfoHeader() = ActivityInfoHeaderView(
-    activityDetail = RunningActivity(
-        activityData = ActivityData(
+    activityDetail = RunningActivityModel(
+        activityData = ActivityDataModel(
             id = "id",
-            activityType = akio.apps.myrun.data.activity.api.model.ActivityType.Running,
+            activityType = ActivityType.Running,
             name = "Evening Run",
             routeImage = "http://example.com",
             placeIdentifier = null,
@@ -152,7 +155,7 @@ private fun PreviewActivityInfoHeader() = ActivityInfoHeaderView(
             duration = 1000L,
             distance = 100.0,
             encodedPolyline = "",
-            athleteInfo = Activity.AthleteInfo(
+            athleteInfo = ActivityModel.AthleteInfo(
                 userId = "id",
                 userName = "Khoi Nguyen",
                 userAvatar = "userAvatar"

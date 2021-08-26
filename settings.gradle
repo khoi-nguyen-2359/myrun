@@ -30,3 +30,4 @@ include(":test")
 include ':features:profile'
 include ':worker'
 include ':wiring'
+include ':features:activitydetail'
