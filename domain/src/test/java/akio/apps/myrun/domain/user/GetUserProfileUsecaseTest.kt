@@ -92,11 +92,11 @@ class GetUserProfileUsecaseTest {
 
             // when
             testee.getUserProfileFlow(null).test {
-                val resource = expectItem()
+                val resource = awaitItem()
                 assertTrue(resource is Resource.Error)
                 assertNull(resource.data)
                 assertEquals(thrownException, (resource as Resource.Error).exception)
-                expectComplete()
+                awaitComplete()
             }
 
             // then
