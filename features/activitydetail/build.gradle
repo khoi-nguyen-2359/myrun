@@ -60,4 +60,10 @@ dependencies {
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
+
+    testImplementation(testFixtures(project(':test')))
+    testImplementation(libs.bundles.testCoroutine)
+    testImplementation(libs.kotlinTest)
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.kotlinReflect)
 }
