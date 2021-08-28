@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.activity.api
 
+import akio.apps.common.data.Resource
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.fitness.DataPoint
@@ -21,6 +22,12 @@ interface ActivityRepository {
     ): String
 
     suspend fun getActivity(activityId: String): ActivityModel?
+
+    /**
+     * Get activity data at given [activityId]. Returns null data if the id is not exist or in error
+     * case.
+     */
+    suspend fun getActivityResource(activityId: String): Resource<ActivityModel?>
     suspend fun getActivityLocationDataPoints(activityId: String):
         List<ActivityLocation>
 }

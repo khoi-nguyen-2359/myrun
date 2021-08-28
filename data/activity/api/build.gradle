@@ -30,5 +30,6 @@ android {
 
 dependencies {
     implementation(project(':data:fitness:api'))
+    implementation project(path: ':common:data')
     implementation(libs.kotlinxCoroutinesCore)
 }

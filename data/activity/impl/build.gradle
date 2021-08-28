@@ -33,6 +33,7 @@ dependencies {
     implementation(project(':data:activity:api'))
     implementation(project(':data:fitness:api'))
     implementation(project(':common:wiring'))
+    implementation(project(':common:data'))
     implementation(project(':data:base'))
 
     implementation(libs.javaXInject)

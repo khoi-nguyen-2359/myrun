@@ -3,11 +3,11 @@ package akio.apps.myrun.feature.usertimeline.impl
 import akio.apps.common.data.Event
 import akio.apps.common.data.LaunchCatchingDelegate
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
+import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.domain.recentplace.MakeActivityPlaceNameUsecase
-import akio.apps.myrun.feature.usertimeline.model.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -59,7 +59,7 @@ class UserTimelineViewModel @Inject constructor(
             // there are 2 collectors so use shareIn
             .shareIn(viewModelScope, replay = 1, started = SharingStarted.WhileSubscribed())
 
-    val myActivityList: Flow<PagingData<Activity>> = Pager(
+    val myActivityList: Flow<PagingData<ActivityModel>> = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
             enablePlaceholders = false,
@@ -100,7 +100,7 @@ class UserTimelineViewModel @Inject constructor(
         activityPagingSource?.invalidate()
     }
 
-    fun getActivityDisplayPlaceName(activity: Activity): String {
+    fun getActivityDisplayPlaceName(activity: ActivityModel): String {
         val activityPlaceIdentifier = activity.placeIdentifier ?: return ""
         val activityId = activity.id
         var placeName = mapActivityIdToPlaceName[activityId]
