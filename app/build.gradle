@@ -99,6 +99,7 @@ dependencies {
     implementation project(':features:registration')
     implementation project(":features:configurator")
     implementation project(":features:profile")
+    implementation project(":features:activitydetail")
 
     implementation(project(':wiring'))
 
@@ -159,13 +160,12 @@ dependencies {
     }
 
     testImplementation(testFixtures(project(':test')))
+    testImplementation(libs.bundles.testCoroutine)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinTest)
-    testImplementation(libs.kotlinXCoroutinesTest)
     testImplementation(libs.androidXCoreTesting)
     testImplementation(libs.mockitoCore)
     testImplementation(libs.mockitoKotlin)
-    testImplementation(libs.turbine)
     testImplementation(libs.kotlinReflect)
     kaptAndroidTest(libs.daggerCompiler)
     androidTestImplementation(libs.mockitoAndroid)

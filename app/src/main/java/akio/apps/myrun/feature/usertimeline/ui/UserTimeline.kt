@@ -1,15 +1,15 @@
 package akio.apps.myrun.feature.usertimeline.ui
 
 import akio.apps.myrun.R
+import akio.apps.myrun.data.activity.api.model.ActivityDataModel
+import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.feature.activitydetail.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.activitydetail.TrackingValueFormatter
 import akio.apps.myrun.feature.activitydetail.ui.ActivityRouteImage
-import akio.apps.myrun.feature.home.ui.HomeNavigationDestination
+import akio.apps.myrun.feature.base.navigation.HomeNavigationDestination
 import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
-import akio.apps.myrun.feature.usertimeline.model.Activity
-import akio.apps.myrun.feature.usertimeline.model.ActivityData
-import akio.apps.myrun.feature.usertimeline.model.RunningActivity
 import akio.apps.myrun.feature.usertimeline.ui.TimelineColors.listBackground
 import akio.apps.myrun.feature.usertimeline.ui.TimelineDimensions.activityItemHorizontalMargin
 import akio.apps.myrun.feature.usertimeline.ui.TimelineDimensions.activityItemHorizontalPadding
@@ -91,9 +91,8 @@ fun UserTimeline(
     userTimelineViewModel: UserTimelineViewModel,
     contentPadding: PaddingValues,
     feedListState: LazyListState,
-    onClickActivityAction: (Activity) -> Unit,
-    onClickExportActivityFile: (Activity) -> Unit,
-    navController: NavController
+    onClickExportActivityFile: (ActivityModel) -> Unit,
+    navController: NavController,
 ) {
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
     Timber.d("feed source load state ${lazyPagingItems.loadState.source}")
@@ -118,7 +117,6 @@ fun UserTimeline(
             contentPadding,
             feedListState,
             lazyPagingItems,
-            onClickActivityAction,
             onClickExportActivityFile,
             navController
         )
@@ -130,10 +128,9 @@ private fun UserTimelineActivityList(
     userTimelineViewModel: UserTimelineViewModel,
     contentPadding: PaddingValues,
     feedListState: LazyListState,
-    lazyPagingItems: LazyPagingItems<Activity>,
-    onClickActivityAction: (Activity) -> Unit,
-    onClickExportActivityFile: (Activity) -> Unit,
-    navController: NavController
+    lazyPagingItems: LazyPagingItems<ActivityModel>,
+    onClickExportActivityFile: (ActivityModel) -> Unit,
+    navController: NavController,
 ) {
     Timber.d("render UserTimelineActivityList pagingItems=$lazyPagingItems")
     LazyColumn(
@@ -153,7 +150,13 @@ private fun UserTimelineActivityList(
                     userTimelineViewModel.getActivityDisplayPlaceName(activity)
                 }
                 TimelineActivityItem(
-                    activity, activityDisplayPlaceName, onClickActivityAction,
+                    activity, activityDisplayPlaceName,
+                    { activityModel ->
+                        val route = HomeNavigationDestination.ActivityDetail.routeWithActivityId(
+                            activityModel.id
+                        )
+                        navController.navigate(route)
+                    },
                     { onClickExportActivityFile(activity) },
                     {
                         val route = HomeNavigationDestination.Profile.routeWithUserId(
@@ -220,9 +223,9 @@ private fun LoadingItemPreview() = LoadingItem()
 
 @Composable
 private fun TimelineActivityItem(
-    activity: Activity,
+    activity: ActivityModel,
     activityDisplayPlaceName: String,
-    onClickActivityAction: (Activity) -> Unit,
+    onClickActivityAction: (ActivityModel) -> Unit,
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
 ) = TimelineItem {
@@ -245,7 +248,7 @@ private fun TimelineActivityItem(
 }
 
 @Composable
-private fun ActivityRouteImageBox(activity: Activity) =
+private fun ActivityRouteImageBox(activity: ActivityModel) =
     Box(contentAlignment = Alignment.TopStart) {
         ActivityRouteImage(activity)
         TimelineActivityPerformanceRow(
@@ -273,7 +276,7 @@ private fun createActivityFormatterList(activityType: ActivityType): List<Tracki
 private const val PERFORMANCE_VALUE_DELIM = " - "
 
 @Composable
-private fun TimelineActivityPerformanceRow(activity: Activity, modifier: Modifier = Modifier) {
+private fun TimelineActivityPerformanceRow(activity: ActivityModel, modifier: Modifier = Modifier) {
     var isExpanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val valueFormatterList = remember { createActivityFormatterList(activity.activityType) }
@@ -303,7 +306,7 @@ private fun TimelineActivityPerformanceRow(activity: Activity, modifier: Modifie
             color = Color.White,
             fontWeight = FontWeight.Bold,
             text = performanceValue,
-            fontSize = 14.sp,
+            fontSize = 13.sp,
             textAlign = TextAlign.Center
         )
     }
@@ -313,8 +316,8 @@ private fun TimelineActivityPerformanceRow(activity: Activity, modifier: Modifie
 @Composable
 private fun PreviewTimelineActivityItem() {
     TimelineActivityItem(
-        activity = RunningActivity(
-            activityData = ActivityData(
+        activity = RunningActivityModel(
+            activityData = ActivityDataModel(
                 id = "id",
                 activityType = ActivityType.Running,
                 name = "Evening Run",
@@ -325,7 +328,7 @@ private fun PreviewTimelineActivityItem() {
                 duration = 1000L,
                 distance = 1234.0,
                 encodedPolyline = "",
-                athleteInfo = Activity.AthleteInfo(
+                athleteInfo = ActivityModel.AthleteInfo(
                     userId = "id",
                     userName = "Khoi Nguyen",
                     userAvatar = "userAvatar"
@@ -343,7 +346,7 @@ private fun PreviewTimelineActivityItem() {
 
 @Composable
 private fun ActivityInformationView(
-    activity: Activity,
+    activity: ActivityModel,
     activityDisplayPlaceName: String?,
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
@@ -354,6 +357,7 @@ private fun ActivityInformationView(
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1.0f)) {
             AthleteNameText(activity)
+            Spacer(modifier = Modifier.height(2.dp))
             ActivityTimeAndPlaceText(activity, activityDisplayPlaceName)
         }
         if (isShareMenuVisible) {
@@ -365,22 +369,22 @@ private fun ActivityInformationView(
 }
 
 @Composable
-private fun AthleteNameText(activityDetail: Activity) = Text(
+private fun AthleteNameText(activityDetail: ActivityModel) = Text(
     text = activityDetail.athleteInfo.userName.orEmpty(),
     maxLines = 1,
     overflow = TextOverflow.Ellipsis,
     fontWeight = FontWeight.Bold,
-    fontSize = 16.sp
+    fontSize = 15.sp
 )
 
 @Composable
 private fun ActivityNameText(
-    activityDetail: Activity,
+    activityDetail: ActivityModel,
     modifier: Modifier = Modifier,
 ) = Text(
     text = activityDetail.name,
     modifier = modifier.fillMaxWidth(),
-    fontSize = 22.sp,
+    fontSize = 19.sp,
     fontWeight = FontWeight.Bold,
     letterSpacing = 0.5.sp
 )
@@ -416,7 +420,10 @@ private fun ActivityShareMenu(
 }
 
 @Composable
-private fun ActivityTimeAndPlaceText(activityDetail: Activity, activityDisplayPlaceName: String?) {
+private fun ActivityTimeAndPlaceText(
+    activityDetail: ActivityModel,
+    activityDisplayPlaceName: String?,
+) {
     val activityDateTimeFormatter = remember(::ActivityDateTimeFormatter)
     val activityFormattedStartTime =
         remember { activityDateTimeFormatter.formatActivityDateTime(activityDetail.startTime) }
@@ -448,16 +455,16 @@ private fun ActivityTimeAndPlaceText(activityDetail: Activity, activityDisplayPl
         text = timeAndPlaceText,
         overflow = TextOverflow.Ellipsis,
         maxLines = 2,
-        fontSize = 13.sp
+        fontSize = 12.sp
     )
 }
 
 @Composable
 private fun UserAvatarImage(
-    activityDetail: Activity,
+    activityDetail: ActivityModel,
     onClickUserAvatar: () -> Unit,
 ) {
-    val avatarDimension = 50.dp
+    val avatarDimension = 46.dp
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
     Image(
         painter = rememberImagePainter(

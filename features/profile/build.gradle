@@ -59,7 +59,6 @@ dependencies {
 
     implementation(libs.androidXAppCompat)
     implementation(libs.timber)
-    implementation(libs.javaXInject)
     implementation(libs.lifecycleViewModelKtx)
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)

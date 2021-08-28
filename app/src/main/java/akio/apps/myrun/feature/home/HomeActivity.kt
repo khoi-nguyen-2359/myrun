@@ -1,12 +1,11 @@
 package akio.apps.myrun.feature.home
 
 import akio.apps.myrun.R
-import akio.apps.myrun.feature.activitydetail.ActivityDetailActivity
+import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.activityexport.ActivityExportService
 import akio.apps.myrun.feature.home.ui.HomeNavigationHost
 import akio.apps.myrun.feature.routetracking.impl.LocationPermissionChecker
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
-import akio.apps.myrun.feature.usertimeline.model.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -29,13 +28,12 @@ class HomeActivity : AppCompatActivity() {
         setContent {
             HomeNavigationHost(
                 onClickFloatingActionButton = ::openRouteTrackingOrCheckRequiredPermission,
-                onClickActivityItemAction = ::openActivityDetail,
-                onClickExportActivityFile = ::startActivityExportService
+                onClickExportActivityFile = ::startActivityExportService,
             )
         }
     }
 
-    private fun startActivityExportService(activity: Activity) {
+    private fun startActivityExportService(activity: ActivityModel) {
         val intent = ActivityExportService.createAddActivityIntent(
             this,
             ActivityExportService.ActivityInfo(
@@ -45,11 +43,6 @@ class HomeActivity : AppCompatActivity() {
             )
         )
         ContextCompat.startForegroundService(this, intent)
-    }
-
-    private fun openActivityDetail(activity: Activity) {
-        val intent = ActivityDetailActivity.createIntent(this, activity.id)
-        startActivity(intent)
     }
 
     private fun openRouteTrackingOrCheckRequiredPermission() {

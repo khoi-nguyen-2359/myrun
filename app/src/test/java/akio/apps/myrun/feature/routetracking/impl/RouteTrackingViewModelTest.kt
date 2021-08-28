@@ -6,11 +6,12 @@ import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
+import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.STOPPED
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.routetracking.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.routetracking.StoreTrackingActivityDataUsecase
-import akio.apps.test.wheneverBlocking
+import akio.apps.test.whenBlocking
 import android.app.Application
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -35,7 +36,7 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
     lateinit var mockedClearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
 
     @Mock
-    lateinit var mockedRouteTrackingState: akio.apps.myrun.data.tracking.api.RouteTrackingState
+    lateinit var mockedRouteTrackingState: RouteTrackingState
 
     @Mock
     lateinit var mockedGetTrackedLocationsUsecase: GetTrackedLocationsUsecase
@@ -61,13 +62,13 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
 
     @Test
     fun `given tracking is stopped, when request initial data, then got initial location`() {
-        wheneverBlocking(mockedRouteTrackingState) {
+        whenBlocking(mockedRouteTrackingState) {
             getTrackingStatusFlow()
         }.thenReturn(flowOf(STOPPED))
 
         testee = createViewModel()
 
-        wheneverBlocking(mockedRouteTrackingState) {
+        whenBlocking(mockedRouteTrackingState) {
             getTrackingStatus()
         }.thenReturn(STOPPED)
 

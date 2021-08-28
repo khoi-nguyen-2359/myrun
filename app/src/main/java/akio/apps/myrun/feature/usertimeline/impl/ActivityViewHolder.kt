@@ -4,10 +4,10 @@ import akio.apps.common.feature.ui.getResources
 import akio.apps.common.feature.ui.getString
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.circleCenterCrop
+import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.databinding.ItemUserTimelineActivityBinding
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingStats
-import akio.apps.myrun.feature.usertimeline.model.Activity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
@@ -19,11 +19,11 @@ class ActivityViewHolder(
     private val viewBinding: ItemUserTimelineActivityBinding,
     private val timeFormatter: SimpleDateFormat,
     private val dateFormatter: SimpleDateFormat,
-    private val activityTypeNameMap: Map<akio.apps.myrun.data.activity.api.model.ActivityType, Int>,
-    private val selectItemAction: (Activity) -> Unit
+    private val activityTypeNameMap: Map<ActivityType, Int>,
+    private val selectItemAction: (ActivityModel) -> Unit,
 ) : RecyclerView.ViewHolder(viewBinding.root) {
 
-    fun bind(activity: Activity) = viewBinding.apply {
+    fun bind(activity: ActivityModel) = viewBinding.apply {
         Glide.with(itemView)
             .load(activity.athleteInfo.userAvatar)
             .override(getResources().getDimensionPixelSize(R.dimen.user_timeline_avatar_size))
