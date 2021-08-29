@@ -8,7 +8,7 @@
     <string name="performance_unit_distance_km">km</string>
     <string name="performance_duration_label">Time</string>
     <string name="activity_details_loading_message">Loading your activity…</string>
-    <string name="activity_details_loading_error">Loading error.</string>
+    <string name="activity_details_loading_error">Loading error. Please tap to retry.</string>
     <string name="activity_details_share_menu_item_export_file">Export tracklog file</string>
     <string name="item_activity_time_today">Today at %1$s</string>
     <string name="item_activity_time_yesterday">Yesterday at %1$s</string>

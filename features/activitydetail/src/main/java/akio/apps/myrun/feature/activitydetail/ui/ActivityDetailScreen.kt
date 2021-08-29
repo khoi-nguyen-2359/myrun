@@ -7,6 +7,7 @@ import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
 import akio.apps.myrun.feature.activitydetail.R
 import akio.apps.myrun.feature.base.navigation.HomeNavigationDestination
 import akio.apps.myrun.feature.base.ui.AppTheme
+import akio.apps.myrun.feature.base.ui.CentralAnnouncementView
 import akio.apps.myrun.feature.base.ui.CentralLoadingView
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
@@ -21,32 +22,60 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarData
-import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.ArrowBack
 import androidx.compose.material.icons.sharp.Share
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
-import kotlinx.coroutines.launch
+
+private sealed class ActivityDetailScreenState {
+    object FullScreenLoading : ActivityDetailScreenState()
+    object ErrorAndRetry : ActivityDetailScreenState()
+    object UnknownState : ActivityDetailScreenState()
+
+    class DataAvailable(
+        val activityData: ActivityModel,
+        val activityPlaceName: String?,
+        val isStillLoading: Boolean,
+    ) : ActivityDetailScreenState()
+
+    companion object {
+        fun create(
+            activityDetailResource: Resource<ActivityModel>,
+            activityPlaceName: String?,
+        ): ActivityDetailScreenState {
+            val activityData = activityDetailResource.data
+            return when {
+                activityData == null && activityDetailResource is Resource.Loading ->
+                    FullScreenLoading
+                activityData == null && activityDetailResource is Resource.Error ->
+                    ErrorAndRetry
+                activityData != null -> {
+                    DataAvailable(
+                        activityData,
+                        activityPlaceName,
+                        isStillLoading = activityDetailResource is Resource.Loading
+                    )
+                }
+                else -> UnknownState
+            }
+        }
+    }
+}
 
 @Composable
 fun ActivityDetailScreen(
@@ -54,70 +83,82 @@ fun ActivityDetailScreen(
     onClickExportFile: (ActivityModel) -> Unit,
     navController: NavController,
 ) = AppTheme {
-    val scaffoldState = rememberScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
     val activityResource by activityDetailViewModel.activityDetails
         .collectAsState(Resource.Loading())
     val activityDisplayPlaceName by activityDetailViewModel.activityPlaceName
         .collectAsState(initial = null)
-    val activityDetail = activityResource.data
-    val activityName = activityDetail?.name
-    val context = LocalContext.current
+    val screenState = ActivityDetailScreenState.create(activityResource, activityDisplayPlaceName)
+    ActivityDetailScreen(
+        screenState,
+        navController,
+        onClickExportFile
+    ) {
+        activityDetailViewModel.loadActivityDetails()
+    }
+}
+
+@Composable
+private fun ActivityDetailScreen(
+    screenState: ActivityDetailScreenState,
+    navController: NavController,
+    onClickExportFile: (ActivityModel) -> Unit,
+    onActivityDetailLoadRetry: () -> Unit,
+) {
     Column {
         StatusBarSpacer()
-        Scaffold(
-            modifier = Modifier.weight(1f),
-            topBar = {
-                ActivityDetailTopBar(
-                    activityName,
-                    { navController.popBackStack() },
-                    { if (activityDetail != null) onClickExportFile(activityDetail) }
-                )
-            },
-            scaffoldState = scaffoldState,
-            snackbarHost = { hostState ->
-                SnackbarHost(hostState) { snackbarData ->
-                    LoadingErrorSnackbar(snackbarData)
-                }
-            }
-        ) {
-            if (activityDetail != null) {
-                Column {
-                    ActivityInfoHeaderView(
-                        activityDetail,
-                        activityDisplayPlaceName
-                    ) { navController.navigateToProfile(activityDetail.athleteInfo.userId) }
-                    ActivityRouteImage(activityDetail) {
-                        navigateToActivityMap(context, activityDetail.encodedPolyline)
-                    }
-                    PerformanceTableComposable(activityDetail)
-                    if (activityResource is Resource.Loading) {
-                        BottomLoadingIndicator()
-                    }
-                }
-            } else if (activityResource is Resource.Loading) {
+        ActivityDetailTopBar(
+            screenState,
+            { navController.popBackStack() },
+            onClickExportFile
+        )
+        when (screenState) {
+            is ActivityDetailScreenState.FullScreenLoading -> {
                 CentralLoadingView(
                     text = stringResource(id = R.string.activity_details_loading_message)
                 )
             }
-
-            if (activityResource is Resource.Error) {
-                val errorMessage = stringResource(id = R.string.activity_details_loading_error)
-                val retryLabel = stringResource(id = R.string.action_retry)
-                coroutineScope.launch {
-                    val snackbarResult = scaffoldState.snackbarHostState.showSnackbar(
-                        message = errorMessage,
-                        actionLabel = retryLabel,
-                        duration = SnackbarDuration.Long
-                    )
-
-                    if (snackbarResult == SnackbarResult.ActionPerformed) {
-                        activityDetailViewModel.loadActivityDetails()
-                    }
+            is ActivityDetailScreenState.ErrorAndRetry -> {
+                CentralAnnouncementView(
+                    text = stringResource(id = R.string.activity_details_loading_error)
+                ) {
+                    onActivityDetailLoadRetry()
                 }
+            }
+            is ActivityDetailScreenState.DataAvailable -> {
+                ActivityDetailDataContainer(
+                    screenState,
+                    navController,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            ActivityDetailScreenState.UnknownState -> {
             }
         }
         NavigationBarSpacer()
+    }
+}
+
+@Composable
+private fun ActivityDetailDataContainer(
+    screenState: ActivityDetailScreenState.DataAvailable,
+    navController: NavController,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+    Column(modifier) {
+        ActivityInfoHeaderView(
+            screenState.activityData,
+            screenState.activityPlaceName
+        ) {
+            navController.navigateToProfile(screenState.activityData.athleteInfo.userId)
+        }
+        ActivityRouteImage(screenState.activityData) {
+            navigateToActivityMap(context, screenState.activityData.encodedPolyline)
+        }
+        PerformanceTableComposable(screenState.activityData)
+        if (screenState.isStillLoading) {
+            BottomLoadingIndicator()
+        }
     }
 }
 
@@ -132,15 +173,17 @@ private fun NavController.navigateToProfile(userId: String) {
 
 @Composable
 private fun ActivityDetailTopBar(
-    activityName: String?,
+    screenState: ActivityDetailScreenState,
     onClickBackButton: () -> Unit,
-    onClickExportFile: () -> Unit,
+    onClickExportFile: (ActivityModel) -> Unit,
 ) {
+    val topBarTitle =
+        (screenState as? ActivityDetailScreenState.DataAvailable)?.activityData?.name ?: ""
     TopAppBar(
-        title = { Text(text = activityName ?: "") },
+        title = { Text(text = topBarTitle) },
         actions = {
-            if (activityName != null) {
-                ShareActionMenu(onClickExportFile)
+            if (screenState is ActivityDetailScreenState.DataAvailable) {
+                ShareActionMenu { onClickExportFile(screenState.activityData) }
             }
         },
         navigationIcon = {
