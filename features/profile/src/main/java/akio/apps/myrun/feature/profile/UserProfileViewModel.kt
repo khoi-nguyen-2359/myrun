@@ -2,8 +2,6 @@ package akio.apps.myrun.feature.profile
 
 import akio.apps.common.data.LaunchCatchingDelegate
 import akio.apps.common.data.Resource
-import akio.apps.myrun.data.activity.api.ActivityLocalStorage
-import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.model.ExternalProviders
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.ProfileEditData
@@ -22,7 +20,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
 class UserProfileViewModel @Inject constructor(
@@ -32,17 +29,9 @@ class UserProfileViewModel @Inject constructor(
     private val getProviderTokensUsecase: GetProviderTokensUsecase,
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
     private val removeStravaTokenUsecase: RemoveStravaTokenUsecase,
-    private val userAuthenticationState: UserAuthenticationState,
-    private val activityLocalStorage: ActivityLocalStorage,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
     private val updateUserProfileUsecase: UpdateUserProfileUsecase,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
-
-    val userProfileResourceFlow: Flow<Resource<UserProfile>> =
-        flow { emit(getUserProfileUsecase.getUserProfileResource(savedStateHandle.getUserId())) }
-
-    val tokenProvidersFlow: Flow<Resource<out ExternalProviders>> =
-        getProviderTokensUsecase.getProviderTokensFlow()
 
     /**
      * Presents the data of editing values in input fields. Null means no initial data fetched,
@@ -65,16 +54,6 @@ class UserProfileViewModel @Inject constructor(
                 eappTokensResource
             )
         }
-
-    suspend fun getActivityUploadCount(): Int =
-        activityLocalStorage.getActivityStorageDataCountFlow().first()
-
-    suspend fun getUserProfileResource(): Resource<UserProfile> =
-        getUserProfileUsecase.getUserProfileResource(savedStateHandle.getUserId())
-
-    fun isCurrentUser(): Boolean =
-        savedStateHandle.getUserId() == userAuthenticationState.getUserAccountId() ||
-            savedStateHandle.getUserId() == null
 
     fun deauthorizeStrava() {
         viewModelScope.launchCatching {
