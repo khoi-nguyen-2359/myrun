@@ -15,6 +15,7 @@ import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
 import akio.apps.myrun.worker.UploadStravaFileWorker
 import android.app.Application
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
@@ -26,7 +27,7 @@ import kotlinx.coroutines.flow.flow
 
 class UserProfileViewModel @Inject constructor(
     private val application: Application,
-    private val arguments: Arguments,
+    private val savedStateHandle: SavedStateHandle,
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val getProviderTokensUsecase: GetProviderTokensUsecase,
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
@@ -38,7 +39,7 @@ class UserProfileViewModel @Inject constructor(
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
     val userProfileResourceFlow: Flow<Resource<UserProfile>> =
-        flow { emit(getUserProfileUsecase.getUserProfileResource(arguments.userId)) }
+        flow { emit(getUserProfileUsecase.getUserProfileResource(savedStateHandle.getUserId())) }
 
     val tokenProvidersFlow: Flow<Resource<out ExternalProviders>> =
         getProviderTokensUsecase.getProviderTokensFlow()
@@ -48,13 +49,13 @@ class UserProfileViewModel @Inject constructor(
      * screen hasn't ever entered editing state.
      */
     private val editingUserProfileFormDataMutableStateFlow: MutableStateFlow<UserProfileFormData?> =
-        MutableStateFlow(null)
-    val editingUserProfileFormDataFlow: Flow<UserProfileFormData?> =
-        editingUserProfileFormDataMutableStateFlow
+        MutableStateFlow(savedStateHandle.getFormData())
 
     val userProfileScreenStateFlow: Flow<UserProfileScreenState> =
         combine(
-            flow { emit(getUserProfileUsecase.getUserProfileResource(arguments.userId)) },
+            flow {
+                emit(getUserProfileUsecase.getUserProfileResource(savedStateHandle.getUserId()))
+            },
             getProviderTokensUsecase.getProviderTokensFlow(),
             editingUserProfileFormDataMutableStateFlow
         ) { initialUserProfileData, eappTokensResource, editingUserProfileFormData ->
@@ -69,11 +70,11 @@ class UserProfileViewModel @Inject constructor(
         activityLocalStorage.getActivityStorageDataCountFlow().first()
 
     suspend fun getUserProfileResource(): Resource<UserProfile> =
-        getUserProfileUsecase.getUserProfileResource(arguments.userId)
+        getUserProfileUsecase.getUserProfileResource(savedStateHandle.getUserId())
 
     fun isCurrentUser(): Boolean =
-        arguments.userId == userAuthenticationState.getUserAccountId() ||
-            arguments.userId == null
+        savedStateHandle.getUserId() == userAuthenticationState.getUserAccountId() ||
+            savedStateHandle.getUserId() == null
 
     fun deauthorizeStrava() {
         viewModelScope.launchCatching {
@@ -93,9 +94,36 @@ class UserProfileViewModel @Inject constructor(
 
     fun onFormDataChanged(formData: UserProfileFormData) {
         editingUserProfileFormDataMutableStateFlow.value = formData
+        savedStateHandle.saveFormData(formData)
     }
 
-    data class Arguments(val userId: String?)
+    /**
+     * Reads form data from saved state.
+     */
+    private fun SavedStateHandle.getFormData(): UserProfileFormData? {
+        val name = get<String>(SAVED_STATE_USER_NAME) ?: return null
+        val birthdate = get<Long>(SAVED_STATE_USER_BIRTHDATE) ?: return null
+        val genderIdentity = get<Int>(SAVED_STATE_USER_GENDER) ?: return null
+        val weight = get<String>(SAVED_STATE_USER_WEIGHT) ?: return null
+        val photoUrl = get<String>(SAVED_STATE_USER_PHOTO_URL) ?: return null
+        return UserProfileFormData(
+            name,
+            photoUrl,
+            birthdate,
+            Gender.create(genderIdentity),
+            weight
+        )
+    }
+
+    private fun SavedStateHandle.saveFormData(formData: UserProfileFormData) {
+        this[SAVED_STATE_USER_NAME] = formData.name
+        this[SAVED_STATE_USER_BIRTHDATE] = formData.birthdate
+        this[SAVED_STATE_USER_GENDER] = formData.gender.identity
+        this[SAVED_STATE_USER_WEIGHT] = formData.weight
+        this[SAVED_STATE_USER_PHOTO_URL] = formData.photoUrl
+    }
+
+    private fun SavedStateHandle.getUserId(): String? = this.get<String>(SAVED_STATE_USER_ID)
 
     enum class StravaLinkingState { Linked, NotLinked, Unknown }
 
@@ -138,7 +166,7 @@ class UserProfileViewModel @Inject constructor(
         }
     }
 
-    data class UserProfileFormData private constructor(
+    data class UserProfileFormData constructor(
         val name: String,
         val photoUrl: String?,
         val birthdate: Long,
@@ -166,6 +194,20 @@ class UserProfileViewModel @Inject constructor(
                 gender = userProfile.gender,
                 weight = userProfile.weight.toString()
             )
+        }
+    }
+
+    companion object {
+        private const val SAVED_STATE_USER_ID = "SAVED_STATE_USER_ID"
+        private const val SAVED_STATE_USER_NAME = "SAVED_STATE_USER_NAME"
+        private const val SAVED_STATE_USER_BIRTHDATE = "SAVED_STATE_USER_BIRTHDATE"
+        private const val SAVED_STATE_USER_GENDER = "SAVED_STATE_USER_GENDER"
+        private const val SAVED_STATE_USER_WEIGHT = "SAVED_STATE_USER_WEIGHT"
+        private const val SAVED_STATE_USER_PHOTO_URL = "SAVED_STATE_USER_PHOTO_URL"
+
+        fun setInitialSavedState(handle: SavedStateHandle, userId: String?): SavedStateHandle {
+            handle[SAVED_STATE_USER_ID] = userId
+            return handle
         }
     }
 }
