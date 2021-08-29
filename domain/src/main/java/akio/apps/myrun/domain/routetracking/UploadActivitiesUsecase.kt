@@ -16,7 +16,7 @@ class UploadActivitiesUsecase @Inject constructor(
     private val authenticationState: UserAuthenticationState,
     private val activityRepository: ActivityRepository,
     private val activityLocalStorage: ActivityLocalStorage,
-    private val userProfileRepository: UserProfileRepository
+    private val userProfileRepository: UserProfileRepository,
 ) {
     @OptIn(InternalCoroutinesApi::class)
     suspend fun uploadAll(onUploadActivityStarted: ((ActivityModel) -> Unit)? = null): Boolean {
@@ -30,8 +30,8 @@ class UploadActivitiesUsecase @Inject constructor(
                     activityModel,
                     storageData.routeBitmapFile,
                     speedDataPoints = emptyList(),
-                    stepCadenceDataPoints = emptyList(),
-                    storageData.locationDataPoints
+                    locationDataPoints = storageData.locationDataPoints,
+                    stepCadenceDataPoints = emptyList()
                 )
                 activityLocalStorage.deleteActivityData(activityModel.id)
             }
