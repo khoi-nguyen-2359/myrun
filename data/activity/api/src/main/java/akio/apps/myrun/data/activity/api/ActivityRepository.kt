@@ -13,12 +13,15 @@ interface ActivityRepository {
         limit: Int
     ): List<ActivityModel>
 
+    /**
+     * [stepCadenceDataPoints] and [runSplits] are for Running activity.
+     */
     suspend fun saveActivity(
         activity: ActivityModel,
         routeBitmapFile: File,
         speedDataPoints: List<DataPoint<Float>>,
-        stepCadenceDataPoints: List<DataPoint<Int>>?,
-        locationDataPoints: List<ActivityLocation>
+        locationDataPoints: List<ActivityLocation>,
+        stepCadenceDataPoints: List<DataPoint<Int>>?
     ): String
 
     suspend fun getActivity(activityId: String): ActivityModel?

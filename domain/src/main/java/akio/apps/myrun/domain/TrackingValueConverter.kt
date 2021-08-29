@@ -18,8 +18,8 @@ sealed class TrackingValueConverter<R, T : Number>(val id: String) {
         override fun fromRawValue(rawValue: Double): Double = rawValue / 1000
     }
 
-    object TimeMinute : TrackingValueConverter<Long, Long>("TimeMinute") {
-        override fun fromRawValue(rawValue: Long): Long = rawValue / 60000
+    object TimeMinute : TrackingValueConverter<Long, Double>("TimeMinute") {
+        override fun fromRawValue(rawValue: Long): Double = rawValue / 60000.0
     }
 
     object TimeHour : TrackingValueConverter<Long, Double>("TimeHour") {
