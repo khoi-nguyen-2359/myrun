@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.home.ui
 
+import akio.apps.common.feature.viewmodel.savedStateViewModelProvider
 import akio.apps.common.feature.viewmodel.viewModelProvider
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
@@ -81,9 +82,11 @@ private fun NavGraphBuilder.addProfileDestination(navController: NavHostControll
         popExitTransition = { _, _ -> HomeNavigationTransitionDefaults.popExitTransition }
     ) { backStackEntry ->
         val userId = HomeNavigationDestination.Profile.parseUserId(backStackEntry)
-        val userProfileViewModel = backStackEntry.viewModelProvider {
+        val userProfileViewModel = backStackEntry.savedStateViewModelProvider(
+            backStackEntry
+        ) { handle ->
             DaggerUserProfileFeatureComponent.factory()
-                .create(UserProfileViewModel.Arguments(userId))
+                .create(UserProfileViewModel.setInitialSavedState(handle, userId))
                 .userProfileViewModel()
         }
         UserProfileScreen(navController, userProfileViewModel)
