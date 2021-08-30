@@ -130,9 +130,11 @@ private fun NavGraphBuilder.addActivityDetailDestination(
         popExitTransition = { _, _ -> HomeNavigationTransitionDefaults.popExitTransition }
     ) { navBackStackEntry ->
         val activityId = HomeNavigationDestination.ActivityDetail.parseActivityId(navBackStackEntry)
-        val activityDetailViewModel = navBackStackEntry.viewModelProvider {
+        val activityDetailViewModel = navBackStackEntry.savedStateViewModelProvider(
+            navBackStackEntry
+        ) { handle ->
             DaggerActivityDetailFeatureComponent.factory()
-                .create(ActivityDetailViewModel.Arguments(activityId))
+                .create(ActivityDetailViewModel.setInitialSavedState(handle, activityId))
                 .activityDetailsViewModel()
         }
         ActivityDetailScreen(
