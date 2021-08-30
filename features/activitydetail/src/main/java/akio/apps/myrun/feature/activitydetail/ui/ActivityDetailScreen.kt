@@ -1,6 +1,5 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
-import akio.apps.common.data.Resource
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
@@ -12,6 +11,7 @@ import akio.apps.myrun.feature.base.ui.CentralLoadingView
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -38,44 +38,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
-
-private sealed class ActivityDetailScreenState {
-    object FullScreenLoading : ActivityDetailScreenState()
-    object ErrorAndRetry : ActivityDetailScreenState()
-    object UnknownState : ActivityDetailScreenState()
-
-    class DataAvailable(
-        val activityData: ActivityModel,
-        val activityPlaceName: String?,
-        val isStillLoading: Boolean,
-    ) : ActivityDetailScreenState()
-
-    companion object {
-        fun create(
-            activityDetailResource: Resource<ActivityModel>,
-            activityPlaceName: String?,
-        ): ActivityDetailScreenState {
-            val activityData = activityDetailResource.data
-            return when {
-                activityData == null && activityDetailResource is Resource.Loading ->
-                    FullScreenLoading
-                activityData == null && activityDetailResource is Resource.Error ->
-                    ErrorAndRetry
-                activityData != null -> {
-                    DataAvailable(
-                        activityData,
-                        activityPlaceName,
-                        isStillLoading = activityDetailResource is Resource.Loading
-                    )
-                }
-                else -> UnknownState
-            }
-        }
-    }
-}
 
 @Composable
 fun ActivityDetailScreen(
@@ -83,11 +49,9 @@ fun ActivityDetailScreen(
     onClickExportFile: (ActivityModel) -> Unit,
     navController: NavController,
 ) = AppTheme {
-    val activityResource by activityDetailViewModel.activityDetails
-        .collectAsState(Resource.Loading())
-    val activityDisplayPlaceName by activityDetailViewModel.activityPlaceName
-        .collectAsState(initial = null)
-    val screenState = ActivityDetailScreenState.create(activityResource, activityDisplayPlaceName)
+    val screenState by activityDetailViewModel.activityDetailScreenStateFlow.collectAsState(
+        initial = ActivityDetailViewModel.ActivityDetailScreenState.FullScreenLoading
+    )
     ActivityDetailScreen(
         screenState,
         navController,
@@ -99,7 +63,7 @@ fun ActivityDetailScreen(
 
 @Composable
 private fun ActivityDetailScreen(
-    screenState: ActivityDetailScreenState,
+    screenState: ActivityDetailViewModel.ActivityDetailScreenState,
     navController: NavController,
     onClickExportFile: (ActivityModel) -> Unit,
     onActivityDetailLoadRetry: () -> Unit,
@@ -112,26 +76,26 @@ private fun ActivityDetailScreen(
             onClickExportFile
         )
         when (screenState) {
-            is ActivityDetailScreenState.FullScreenLoading -> {
+            is ActivityDetailViewModel.ActivityDetailScreenState.FullScreenLoading -> {
                 CentralLoadingView(
                     text = stringResource(id = R.string.activity_details_loading_message)
                 )
             }
-            is ActivityDetailScreenState.ErrorAndRetry -> {
+            is ActivityDetailViewModel.ActivityDetailScreenState.ErrorAndRetry -> {
                 CentralAnnouncementView(
                     text = stringResource(id = R.string.activity_details_loading_error)
                 ) {
                     onActivityDetailLoadRetry()
                 }
             }
-            is ActivityDetailScreenState.DataAvailable -> {
+            is ActivityDetailViewModel.ActivityDetailScreenState.DataAvailable -> {
                 ActivityDetailDataContainer(
                     screenState,
                     navController,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f).background(Color.White)
                 )
             }
-            ActivityDetailScreenState.UnknownState -> {
+            ActivityDetailViewModel.ActivityDetailScreenState.UnknownState -> {
             }
         }
         NavigationBarSpacer()
@@ -140,7 +104,7 @@ private fun ActivityDetailScreen(
 
 @Composable
 private fun ActivityDetailDataContainer(
-    screenState: ActivityDetailScreenState.DataAvailable,
+    screenState: ActivityDetailViewModel.ActivityDetailScreenState.DataAvailable,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -173,16 +137,19 @@ private fun NavController.navigateToProfile(userId: String) {
 
 @Composable
 private fun ActivityDetailTopBar(
-    screenState: ActivityDetailScreenState,
+    screenState: ActivityDetailViewModel.ActivityDetailScreenState,
     onClickBackButton: () -> Unit,
     onClickExportFile: (ActivityModel) -> Unit,
 ) {
     val topBarTitle =
-        (screenState as? ActivityDetailScreenState.DataAvailable)?.activityData?.name ?: ""
+        (screenState as? ActivityDetailViewModel.ActivityDetailScreenState.DataAvailable)
+            ?.activityData
+            ?.name
+            ?: ""
     TopAppBar(
         title = { Text(text = topBarTitle) },
         actions = {
-            if (screenState is ActivityDetailScreenState.DataAvailable) {
+            if (screenState is ActivityDetailViewModel.ActivityDetailScreenState.DataAvailable) {
                 ShareActionMenu { onClickExportFile(screenState.activityData) }
             }
         },
