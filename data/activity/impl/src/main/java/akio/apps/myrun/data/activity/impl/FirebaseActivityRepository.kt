@@ -15,8 +15,10 @@ import akio.apps.myrun.data.activity.impl.model.FirestoreLocationDataPointParser
 import akio.apps.myrun.data.base.FirebaseStorageUtils
 import akio.apps.myrun.data.fitness.DataPoint
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.File
@@ -68,62 +70,78 @@ class FirebaseActivityRepository @Inject constructor(
         activity: ActivityModel,
         routeBitmapFile: File,
         speedDataPoints: List<DataPoint<Float>>,
-        stepCadenceDataPoints: List<DataPoint<Int>>?,
         locationDataPoints: List<ActivityLocation>,
+        stepCadenceDataPoints: List<DataPoint<Int>>?,
     ): String = withContext(ioDispatcher) {
         Timber.d("=== SAVING ACTIVITY ===")
-        val docRef = if (activity.id.isNotEmpty()) {
+        val activityDocRef = if (activity.id.isNotEmpty()) {
             getUserActivityCollection(activity.athleteInfo.userId).document(activity.id)
         } else {
             getUserActivityCollection(activity.athleteInfo.userId).document()
         }
-        Timber.d("created activity document id=${docRef.id}")
+        Timber.d("created activity document id=${activityDocRef.id}")
 
         Timber.d("uploading activity route image ...")
         val userActivityImageStorage = getActivityImageStorage(activity.athleteInfo.userId)
         val uploadedUri = FirebaseStorageUtils.uploadLocalBitmap(
             userActivityImageStorage,
-            docRef.id,
+            activityDocRef.id,
             routeBitmapFile.absolutePath,
             THUMBNAIL_SCALED_SIZE
         )
         Timber.d("[DONE] uploading activity route image url=$uploadedUri")
 
-        val firestoreActivity = firestoreActivityMapper.mapRev(activity, docRef.id, uploadedUri)
+        val firestoreActivity =
+            firestoreActivityMapper.mapRev(activity, activityDocRef.id, uploadedUri)
 
+        Timber.d("writing activity and data points to firebase ...")
+        firestore.runBatch { batch ->
+            batch.set(activityDocRef, firestoreActivity)
+            batchWriteActivityDataPoints(
+                batch,
+                activityDocRef,
+                speedDataPoints,
+                locationDataPoints,
+                stepCadenceDataPoints,
+            )
+        }.await()
+        Timber.d("=== [DONE] SAVING ACTIVITY ===")
+
+        activityDocRef.id
+    }
+
+    private fun batchWriteActivityDataPoints(
+        batch: WriteBatch,
+        docRef: DocumentReference,
+        speedDataPoints: List<DataPoint<Float>>,
+        locationDataPoints: List<ActivityLocation>,
+        stepCadenceDataPoints: List<DataPoint<Int>>?,
+    ) {
         val dataPointCollections = docRef.collection(PATH_DATA_POINTS)
         val speedDocRef = dataPointCollections.document(PATH_DATA_POINTS_SPEED)
         val stepCadenceDocRef = dataPointCollections.document(PATH_DATA_POINTS_STEP_CADENCE)
         val locationDocRef = dataPointCollections.document(PATH_DATA_POINTS_LOCATIONS)
-        Timber.d("writing activity and data points to firebase ...")
-        firestore.runBatch { batch ->
-            batch.set(docRef, firestoreActivity)
-            batch.set(
-                speedDocRef,
-                FirestoreDataPointSerializer(FirestoreFloatDataPointParser()).serialize(
-                    speedDataPoints
-                )
+        batch.set(
+            speedDocRef,
+            FirestoreDataPointSerializer(FirestoreFloatDataPointParser()).serialize(
+                speedDataPoints
             )
-            batch.set(
-                locationDocRef,
-                FirestoreDataPointList(
-                    data = FirestoreLocationDataPointParser().flatten(locationDataPoints)
-                )
+        )
+        batch.set(
+            locationDocRef,
+            FirestoreDataPointList(
+                data = FirestoreLocationDataPointParser().flatten(locationDataPoints)
             )
+        )
 
-            if (stepCadenceDataPoints != null) {
-                batch.set(
-                    stepCadenceDocRef,
-                    FirestoreDataPointSerializer(FirestoreIntegerDataPointParser()).serialize(
-                        stepCadenceDataPoints
-                    )
+        if (stepCadenceDataPoints != null) {
+            batch.set(
+                stepCadenceDocRef,
+                FirestoreDataPointSerializer(FirestoreIntegerDataPointParser()).serialize(
+                    stepCadenceDataPoints
                 )
-            }
+            )
         }
-            .await()
-        Timber.d("=== [DONE] SAVING ACTIVITY ===")
-
-        docRef.id
     }
 
     override suspend fun getActivityLocationDataPoints(
@@ -161,16 +179,16 @@ class FirebaseActivityRepository @Inject constructor(
     }
 
     companion object {
-        const val PATH_USER_ACTIVITIES_COLLECTION_GROUP = "userActivities"
-        const val PATH_USERS = "users"
-        const val PATH_USER_ACTIVITIES = "userActivities"
-        const val PATH_DATA_POINTS = "dataPoints"
-        const val PATH_DATA_POINTS_SPEED = "speed"
-        const val PATH_DATA_POINTS_STEP_CADENCE = "stepCadence"
-        const val PATH_DATA_POINTS_LOCATIONS = "location"
+        private const val PATH_USER_ACTIVITIES_COLLECTION_GROUP = "userActivities"
+        private const val PATH_USERS = "users"
+        private const val PATH_USER_ACTIVITIES = "userActivities"
+        private const val PATH_DATA_POINTS = "dataPoints"
+        private const val PATH_DATA_POINTS_SPEED = "speed"
+        private const val PATH_DATA_POINTS_STEP_CADENCE = "stepCadence"
+        private const val PATH_DATA_POINTS_LOCATIONS = "location"
 
-        const val FIELD_ACTIVITY_ID = "id"
+        private const val FIELD_ACTIVITY_ID = "id"
 
-        const val THUMBNAIL_SCALED_SIZE = 1024 // px
+        private const val THUMBNAIL_SCALED_SIZE = 1024 // px
     }
 }

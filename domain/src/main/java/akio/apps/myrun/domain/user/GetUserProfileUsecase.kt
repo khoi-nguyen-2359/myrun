@@ -22,4 +22,11 @@ class GetUserProfileUsecase @Inject constructor(
     } catch (ex: Exception) {
         flowOf(Resource.Error(ex))
     }
+
+    suspend fun getUserProfileResource(userId: String? = null): Resource<UserProfile> = try {
+        val finalUserId = userId ?: userAuthenticationState.requireUserAccountId()
+        Resource.Success(userProfileRepository.getUserProfile(finalUserId))
+    } catch (ex: Exception) {
+        Resource.Error(ex)
+    }
 }

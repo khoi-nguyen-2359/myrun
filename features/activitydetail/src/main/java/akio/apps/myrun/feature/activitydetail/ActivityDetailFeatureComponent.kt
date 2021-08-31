@@ -8,6 +8,7 @@ import akio.apps.myrun.wiring.data.user.DaggerUserDataComponent
 import akio.apps.myrun.wiring.data.user.UserDataComponent
 import akio.apps.myrun.wiring.domain.DaggerDomainComponent
 import akio.apps.myrun.wiring.domain.DomainComponent
+import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Component
 
@@ -25,7 +26,7 @@ interface ActivityDetailFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            @BindsInstance arguments: ActivityDetailViewModel.Arguments,
+            @BindsInstance savedStateHandle: SavedStateHandle,
             activityDataComponent: ActivityDataComponent =
                 DaggerActivityDataComponent.create(),
             authenticationDataComponent: AuthenticationDataComponent =
