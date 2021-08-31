@@ -10,6 +10,10 @@ class UpdateUserProfileUsecase @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
 ) {
 
+    /**
+     * Updates current user profile with given [profileEditData]. This method has no returning
+     * signal, just fire and forget.
+     */
     fun updateUserProfile(profileEditData: ProfileEditData) =
         userAuthenticationState.requireUserAccountId().let { userId ->
             userProfileRepository.updateUserProfile(userId, profileEditData)

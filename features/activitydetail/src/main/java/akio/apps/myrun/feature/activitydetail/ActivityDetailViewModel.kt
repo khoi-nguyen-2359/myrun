@@ -6,6 +6,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.domain.recentplace.MakeActivityPlaceNameUsecase
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class ActivityDetailViewModel @Inject constructor(
-    private val arguments: Arguments,
+    private val savedStateHandle: SavedStateHandle,
     private val activityRepository: ActivityRepository,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
     private val userAuthenticationState: UserAuthenticationState,
@@ -24,19 +25,17 @@ class ActivityDetailViewModel @Inject constructor(
 
     private val activityDetailsMutableStateFlow: MutableStateFlow<Resource<ActivityModel>> =
         MutableStateFlow(Resource.Loading())
-    val activityDetails: Flow<Resource<ActivityModel>> = activityDetailsMutableStateFlow
 
-    val activityPlaceName: Flow<String?> =
-        activityDetailsMutableStateFlow.map { resource ->
-            val userId = userAuthenticationState.getUserAccountId() ?: return@map null
-            val activityPlaceIdentifier = resource.data?.placeIdentifier ?: return@map null
-            val currentUserPlaceIdentifier =
+    val activityDetailScreenStateFlow: Flow<ActivityDetailScreenState> =
+        activityDetailsMutableStateFlow.map { activityResource ->
+            val userId = userAuthenticationState.requireUserAccountId()
+            val userPlaceIdentifier =
                 userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
             val placeName = makeActivityPlaceNameUsecase(
-                activityPlaceIdentifier,
-                currentUserPlaceIdentifier
+                activityResource.data?.placeIdentifier,
+                userPlaceIdentifier
             )
-            placeName
+            ActivityDetailScreenState.create(activityResource, placeName)
         }
 
     init {
@@ -46,7 +45,7 @@ class ActivityDetailViewModel @Inject constructor(
     fun loadActivityDetails() {
         viewModelScope.launch {
             activityDetailsMutableStateFlow.value = Resource.Loading()
-            val activity = activityRepository.getActivity(arguments.activityId)
+            val activity = activityRepository.getActivity(savedStateHandle.getActivityId())
             if (activity == null) {
                 activityDetailsMutableStateFlow.value = Resource.Error(ActivityNotFoundException())
             } else {
@@ -55,7 +54,52 @@ class ActivityDetailViewModel @Inject constructor(
         }
     }
 
+    private fun SavedStateHandle.getActivityId(): String =
+        get<String>(SAVED_STATE_ACTIVITY_ID) ?: ""
+
     class ActivityNotFoundException : Exception()
 
-    data class Arguments(val activityId: String)
+    sealed class ActivityDetailScreenState {
+        object FullScreenLoading : ActivityDetailScreenState()
+        object ErrorAndRetry : ActivityDetailScreenState()
+        object UnknownState : ActivityDetailScreenState()
+
+        class DataAvailable(
+            val activityData: ActivityModel,
+            val activityPlaceName: String?,
+            val isStillLoading: Boolean,
+        ) : ActivityDetailScreenState()
+
+        companion object {
+            fun create(
+                activityDetailResource: Resource<ActivityModel>,
+                activityPlaceName: String?,
+            ): ActivityDetailScreenState {
+                val activityData = activityDetailResource.data
+                return when {
+                    activityData == null && activityDetailResource is Resource.Loading ->
+                        FullScreenLoading
+                    activityData == null && activityDetailResource is Resource.Error ->
+                        ErrorAndRetry
+                    activityData != null -> {
+                        DataAvailable(
+                            activityData,
+                            activityPlaceName,
+                            isStillLoading = activityDetailResource is Resource.Loading
+                        )
+                    }
+                    else -> UnknownState
+                }
+            }
+        }
+    }
+
+    companion object {
+        private const val SAVED_STATE_ACTIVITY_ID = "SAVED_STATE_ACTIVITY_ID"
+
+        fun setInitialSavedState(handle: SavedStateHandle, activityId: String): SavedStateHandle {
+            handle[SAVED_STATE_ACTIVITY_ID] = activityId
+            return handle
+        }
+    }
 }

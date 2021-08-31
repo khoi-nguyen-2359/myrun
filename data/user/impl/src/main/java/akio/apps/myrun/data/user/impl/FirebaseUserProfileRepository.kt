@@ -70,8 +70,8 @@ class FirebaseUserProfileRepository @Inject constructor(
         }
             .flowOn(ioDispatcher)
 
-    override suspend fun getUserProfile(userId: String): UserProfile {
-        return getUserDocument(userId)
+    override suspend fun getUserProfile(userId: String): UserProfile = withContext(ioDispatcher) {
+        getUserDocument(userId)
             .get()
             .await()
             .toObject(FirestoreUser::class.java)

@@ -3,7 +3,7 @@
     <string name="app_scheme">myrun</string>
     <string name="app_name">My Run Debug</string>
 
-    <string name="dialog_delegate_unknown_error">Unknown error</string>
+    <string name="dialog_delegate_unknown_error">Unknown error.</string>
 
     <string name="notification_channel_name_tracking_service">Route tracking</string>
     <string name="notification_channel_description_tracking_service">Notification that shows progress of your activity.</string>
