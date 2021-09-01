@@ -14,8 +14,10 @@ import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -92,7 +94,9 @@ private fun ActivityDetailScreen(
                 ActivityDetailDataContainer(
                     screenState,
                     navController,
-                    modifier = Modifier.weight(1f).background(Color.White)
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(Color.White)
                 )
             }
             ActivityDetailViewModel.ActivityDetailScreenState.UnknownState -> {
@@ -109,19 +113,42 @@ private fun ActivityDetailDataContainer(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    Column(modifier) {
-        ActivityInfoHeaderView(
-            screenState.activityData,
-            screenState.activityPlaceName
-        ) {
-            navController.navigateToProfile(screenState.activityData.athleteInfo.userId)
+    Box(modifier = modifier) {
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            ActivityInfoHeaderView(
+                screenState.activityData,
+                screenState.activityPlaceName
+            ) {
+                navController.navigateToProfile(screenState.activityData.athleteInfo.userId)
+            }
+            ActivityRouteImage(screenState.activityData) {
+                navigateToActivityMap(context, screenState.activityData.encodedPolyline)
+            }
+            PerformanceTableComposable(screenState.activityData)
+            if (screenState.runSplits.isNotEmpty()) {
+                RunSplitsTable(screenState.runSplits)
+            }
         }
-        ActivityRouteImage(screenState.activityData) {
-            navigateToActivityMap(context, screenState.activityData.encodedPolyline)
-        }
-        PerformanceTableComposable(screenState.activityData)
+
         if (screenState.isStillLoading) {
-            BottomLoadingIndicator()
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+            )
+        }
+    }
+}
+
+@Composable
+fun RunSplitsTable(runSplits: List<Double>) {
+    Column {
+        Text(text = stringResource(id = R.string.activity_details_run_splits_caption))
+        runSplits.forEachIndexed { index, item ->
+            Row {
+                Text(text = (index + 1).toString(), modifier = Modifier.weight(0.5f))
+                Text(text = item.toString(), modifier = Modifier.weight(0.5f))
+            }
         }
     }
 }
@@ -193,14 +220,6 @@ private fun ShareActionMenu(onClickExportFile: () -> Unit) {
             }
         }
     }
-}
-
-@Composable
-private fun ColumnScope.BottomLoadingIndicator() = Box(
-    modifier = Modifier.weight(1.0f),
-    contentAlignment = Alignment.BottomCenter
-) {
-    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
 }
 
 @Composable
