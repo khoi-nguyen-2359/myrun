@@ -3,6 +3,7 @@ package akio.apps.myrun.wiring.domain
 import akio.apps.common.wiring.ApplicationModule
 import akio.apps.common.wiring.DispatchersModule
 import akio.apps.myrun.data.wiring.FirebaseDataModule
+import akio.apps.myrun.domain.activity.RunSplitsCalculator
 import akio.apps.myrun.domain.activityexport.ExportTempTcxFileUsecase
 import akio.apps.myrun.domain.authentication.PostSignInUsecase
 import akio.apps.myrun.domain.recentplace.MakeActivityPlaceNameUsecase
@@ -63,4 +64,5 @@ interface DomainComponent {
     fun deauthorizeStravaUsecase(): DeauthorizeStravaUsecase
     fun getProviderTokensUsecase(): GetProviderTokensUsecase
     fun removeStravaTokenUsecase(): RemoveStravaTokenUsecase
+    fun runSplitCalculator(): RunSplitsCalculator
 }
