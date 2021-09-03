@@ -228,7 +228,7 @@ private fun PreviewControlButton() = TrackingControlButton("Resume", Color.Black
 @Composable
 @Preview
 private fun PreviewTrackingControlButtonPanel() = TrackingControlButtonPanel(
-    initialLocation = Location(1, 2.0, 3.0, 4.0, 5.0),
+    initialLocation = Location(0, 1, 2.0, 3.0, 4.0, 5.0),
     trackingStatus = RouteTrackingStatus.STOPPED,
     {},
     {}

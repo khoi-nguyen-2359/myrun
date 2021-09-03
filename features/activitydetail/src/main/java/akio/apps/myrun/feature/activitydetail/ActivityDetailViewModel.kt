@@ -44,7 +44,7 @@ class ActivityDetailViewModel @Inject constructor(
                 ) {
                     val locations =
                         activityRepository.getActivityLocationDataPoints(activityResource.data.id)
-                    runSplitsCalculator.createRunSplits(activityResource.data.startTime, locations)
+                    runSplitsCalculator.createRunSplits(locations)
                 } else {
                     emptyList()
                 }

@@ -19,7 +19,6 @@ class RunSplitsCalculatorTest {
     @Test
     fun testCreateRunSplits_1FullSplit_1HalfSplit() {
         val runSplits = runSplitsCalculator.createRunSplits(
-            activityStartTime = 0L,
             locationDataPoints = listOf(
                 createNextStopFromOrigin(0, 0.0),
                 createNextStopFromOrigin(2, 300.0),
@@ -36,7 +35,6 @@ class RunSplitsCalculatorTest {
     @Test
     fun testCreateRunSplits_1HalfSplit() {
         val runSplits = runSplitsCalculator.createRunSplits(
-            activityStartTime = 0L,
             locationDataPoints = listOf(
                 createNextStopFromOrigin(0, 0.0),
                 createNextStopFromOrigin(2, 300.0),
@@ -51,7 +49,6 @@ class RunSplitsCalculatorTest {
     @Test
     fun testCreateRunSplits_2MissingSplits_1HalfSplit() {
         val runSplits = runSplitsCalculator.createRunSplits(
-            activityStartTime = 0L,
             locationDataPoints = listOf(
                 createNextStopFromOrigin(0, 0.0),
                 createNextStopFromOrigin(620_000, 2200.0),
@@ -67,7 +64,6 @@ class RunSplitsCalculatorTest {
     @Test
     fun testCreateRunSplits_1RoundedSplit_2MissingSplits() {
         val runSplits = runSplitsCalculator.createRunSplits(
-            activityStartTime = 0L,
             locationDataPoints = listOf(
                 createNextStopFromOrigin(0, 0.0),
                 createNextStopFromOrigin(300_000, 1000.0),
@@ -81,17 +77,33 @@ class RunSplitsCalculatorTest {
         assertEquals("4.99998", String.format("%.5f", runSplits[3]))
     }
 
+    @Test
+    fun testCreateRunSplits_1RoundedSplit_2MissingSplits_PositiveActivityStartTime() {
+        val runSplits = runSplitsCalculator.createRunSplits(
+            locationDataPoints = listOf(
+                createNextStopFromOrigin(1001, 0.0),
+                createNextStopFromOrigin(301_001, 1000.0),
+                createNextStopFromOrigin(1_111_001, 3700.0)
+            )
+        )
+        assertEquals(4, runSplits.size)
+        assertEquals("5.01668", String.format("%.5f", runSplits[0]))
+        assertEquals("4.99999", String.format("%.5f", runSplits[1]))
+        assertEquals("4.99999", String.format("%.5f", runSplits[2]))
+        assertEquals("4.99998", String.format("%.5f", runSplits[3]))
+    }
+
     /**
      * On the line of origin(0,0) with heading=0.0, choose a point from origin an offset=[offset]
      */
     private fun createNextStopFromOrigin(locationTime: Long, offset: Double): ActivityLocation {
         val destination = SphericalUtil.computeOffset(originLatLng, offset, 0.0)
         return ActivityLocation(
-            "activityId",
-            time = locationTime,
+            elapsedTime = locationTime,
             latitude = destination.latitude,
             longitude = destination.longitude,
-            altitude = 0.0
+            altitude = 0.0,
+            speed = 0.0
         )
     }
 }
