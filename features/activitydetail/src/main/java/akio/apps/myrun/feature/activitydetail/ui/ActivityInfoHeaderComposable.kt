@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -28,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import timber.log.Timber
 
@@ -62,7 +62,7 @@ private fun AthleteNameText(activityDetail: ActivityModel) = Text(
     maxLines = 1,
     overflow = TextOverflow.Ellipsis,
     fontWeight = FontWeight.Bold,
-    fontSize = 16.sp
+    style = MaterialTheme.typography.subtitle1
 )
 
 @Composable
@@ -71,9 +71,8 @@ private fun ActivityNameText(activityDetail: ActivityModel) = Text(
     modifier = Modifier
         .fillMaxWidth()
         .padding(top = 8.dp, end = dimensionResource(id = R.dimen.common_item_horizontal_padding)),
-    fontSize = 22.sp,
     fontWeight = FontWeight.Bold,
-    letterSpacing = 0.5.sp
+    style = MaterialTheme.typography.h6
 )
 
 @Composable
@@ -112,7 +111,7 @@ private fun ActivityTimeAndPlaceText(
         text = timeAndPlaceText,
         overflow = TextOverflow.Ellipsis,
         maxLines = 2,
-        fontSize = 13.sp
+        style = MaterialTheme.typography.caption
     )
 }
 
@@ -121,7 +120,7 @@ private fun UserAvatarImage(
     activityDetail: ActivityModel,
     onClickUserAvatar: () -> Unit,
 ) {
-    val avatarDimension = 50.dp
+    val avatarDimension = 46.dp
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
     Image(
         painter = rememberImagePainter(

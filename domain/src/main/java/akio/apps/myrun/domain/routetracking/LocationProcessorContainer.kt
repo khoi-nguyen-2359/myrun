@@ -15,4 +15,6 @@ class LocationProcessorContainer : LocationProcessor {
         }
         return processedLocations
     }
+
+    fun clear() = processorList.clear()
 }

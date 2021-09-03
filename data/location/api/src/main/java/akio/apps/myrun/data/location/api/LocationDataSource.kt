@@ -4,6 +4,8 @@ import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.location.api.model.LocationRequestConfig
 import kotlinx.coroutines.flow.Flow
 
+const val LOG_TAG_LOCATION = "LOCATION"
+
 interface LocationDataSource {
     suspend fun getLastLocation(): Location?
 

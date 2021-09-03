@@ -39,6 +39,7 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -260,7 +261,9 @@ private fun ActivityRouteImageBox(activity: ActivityModel) =
         )
     }
 
-private fun createActivityFormatterList(activityType: ActivityType): List<TrackingValueFormatter> =
+private fun createActivityFormatterList(
+    activityType: ActivityType
+): List<TrackingValueFormatter<*>> =
     when (activityType) {
         ActivityType.Running -> listOf(
             TrackingValueFormatter.DistanceKm,
@@ -374,7 +377,7 @@ private fun AthleteNameText(activityDetail: ActivityModel) = Text(
     maxLines = 1,
     overflow = TextOverflow.Ellipsis,
     fontWeight = FontWeight.Bold,
-    fontSize = 15.sp
+    style = MaterialTheme.typography.subtitle1
 )
 
 @Composable
@@ -384,9 +387,8 @@ private fun ActivityNameText(
 ) = Text(
     text = activityDetail.name,
     modifier = modifier.fillMaxWidth(),
-    fontSize = 19.sp,
     fontWeight = FontWeight.Bold,
-    letterSpacing = 0.5.sp
+    style = MaterialTheme.typography.h6
 )
 
 @Composable
@@ -455,7 +457,7 @@ private fun ActivityTimeAndPlaceText(
         text = timeAndPlaceText,
         overflow = TextOverflow.Ellipsis,
         maxLines = 2,
-        fontSize = 12.sp
+        style = MaterialTheme.typography.caption
     )
 }
 

@@ -14,15 +14,29 @@ interface RouteTrackingState {
     suspend fun getTrackingStartTime(): Long
     suspend fun setInstantSpeed(currentSpeed: Double)
     suspend fun getInstantSpeed(): Double
+
     suspend fun setTrackingDuration(totalSec: Long)
     suspend fun getTrackingDuration(): Long
-    suspend fun setLastResumeTime(resumeTime: Long)
-    suspend fun getLastResumeTime(): Long
-    suspend fun clear()
+    suspend fun setLastPauseTime(checkPointMs: Long?)
+    suspend fun getLastPauseTime(): Long?
+    suspend fun setPauseDuration(duration: Long)
+    suspend fun getPauseDuration(): Long
+
     suspend fun getActivityType(): ActivityType
     suspend fun setActivityType(activityType: ActivityType)
+
     suspend fun setStartLocation(location: Location)
     suspend fun getStartLocation(): Location?
+
+    /**
+     * Calendar time of the last location update during tracking. This value is used for
+     * calculating the pause duration if tracking is interrupted (process is killed).
+     */
+    suspend fun setLastLocationUpdateTime(time: Long)
+    suspend fun getLastLocationUpdateTime(): Long?
+
     suspend fun setPlaceIdentifier(placeIdentifier: String)
     suspend fun getPlaceIdentifier(): String?
+
+    suspend fun clear()
 }

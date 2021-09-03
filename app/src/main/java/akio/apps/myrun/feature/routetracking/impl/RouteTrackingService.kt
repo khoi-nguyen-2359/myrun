@@ -5,9 +5,11 @@ import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun._base.utils.toGmsLatLng
+import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.fitness.FitnessDataRepository
+import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.location.api.model.LocationRequestConfig
@@ -35,6 +37,7 @@ import android.os.IBinder
 import android.os.PowerManager
 import androidx.core.content.ContextCompat
 import com.google.maps.android.SphericalUtil
+import java.util.Calendar
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -80,11 +83,15 @@ class RouteTrackingService : Service() {
 
     private var locationUpdateJob: Job? = null
     private var trackingTimerJob: Job? = null
-    private var startLocation: Location? = null
+
+    // Cached values to avoid getting from storage in event listeners
+    private var cachedStartLocation: Location? = null
 
     private val routeDistanceCalculator = RouteDistanceCalculator()
 
     private var wakeLock: PowerManager.WakeLock? = null
+
+    private val now: Now = Now()
 
     override fun onCreate() {
         DaggerRouteTrackingFeatureComponent.factory().create().inject(this)
@@ -125,6 +132,7 @@ class RouteTrackingService : Service() {
         locationProcessingConfig: LocationProcessingConfig,
     ) {
         Timber.d("requestLocationUpdates with processors")
+        locationProcessors.clear()
         if (locationProcessingConfig.isSpeedFilterEnabled) {
             val maxValidSpeed = when (routeTrackingState.getActivityType()) {
                 ActivityType.Running -> LocationSpeedFilter.RUNNING_MAX_SPEED
@@ -144,23 +152,58 @@ class RouteTrackingService : Service() {
     }
 
     private suspend fun onLocationUpdate(locations: List<Location>) {
-        Timber.d("onLocationUpdate ${locations.size}")
-        val batch: List<Location> = locationProcessors.process(locations)
-        if (batch.isEmpty()) {
+        Timber.tag(LOG_TAG_LOCATION).d("[RouteTrackingService] onLocationUpdate: ${locations.size}")
+        val processedLocations: List<Location> = locationProcessors.process(locations)
+        if (processedLocations.isEmpty()) {
             return
         }
-        Timber.d("onLocationUpdate to be processed ${batch.size}")
-        routeTrackingLocationRepository.insert(locations)
+        Timber.tag(LOG_TAG_LOCATION).d(
+            "[RouteTrackingService] Location processed: ${processedLocations.size}"
+        )
+        routeTrackingLocationRepository.insert(
+            mapLocationUpdateToActivityLocation(processedLocations)
+        )
 
-        routeDistanceCalculator.calculateRouteDistance(locations)
-        routeTrackingState.setInstantSpeed(locations.last().speed)
+        routeDistanceCalculator.calculateRouteDistance(processedLocations)
+        routeTrackingState.setInstantSpeed(processedLocations.last().speed)
 
-        if (startLocation == null) {
-            val firstLocation = locations.firstOrNull()
-            if (firstLocation != null) {
-                routeTrackingState.setStartLocation(firstLocation)
-                startLocation = firstLocation
-            }
+        cacheStartLocation(processedLocations.first())
+        routeTrackingState.setLastLocationUpdateTime(now.currentMillisecond())
+    }
+
+    private suspend fun mapLocationUpdateToActivityLocation(
+        locations: List<Location>,
+    ): List<ActivityLocation> {
+        val activityElapsedTime = getActivityElapsedTime()
+        val firstLocationTime = locations.firstOrNull()?.elapsedTime ?: return emptyList()
+        return locations.map { location ->
+            ActivityLocation(
+                activityElapsedTime + location.elapsedTime - firstLocationTime,
+                location.latitude,
+                location.longitude,
+                location.altitude,
+                location.speed
+            )
+        }
+    }
+
+    private suspend fun getActivityElapsedTime(): Long {
+        val activityElapsedTime = now.currentMillisecond() -
+            routeTrackingState.getTrackingStartTime() -
+            routeTrackingState.getPauseDuration()
+
+        Timber.d("activityElapsedTime = $activityElapsedTime")
+
+        return activityElapsedTime
+    }
+
+    private suspend fun cacheStartLocation(firstOfBatch: Location) {
+        if (cachedStartLocation == null) {
+            cachedStartLocation = routeTrackingState.getStartLocation()
+        }
+        if (cachedStartLocation == null) {
+            routeTrackingState.setStartLocation(firstOfBatch)
+            cachedStartLocation = firstOfBatch
         }
     }
 
@@ -269,24 +312,24 @@ class RouteTrackingService : Service() {
     }
 
     private fun setRouteTrackingStartState() = mainScope.launch {
-        val startTime = System.currentTimeMillis()
+        val startTime = Calendar.getInstance().timeInMillis
         routeTrackingState.setTrackingStatus(RouteTrackingStatus.RESUMED)
         routeTrackingState.setTrackingStartTime(startTime)
-        routeTrackingState.setLastResumeTime(startTime)
     }
 
     private fun startTrackingTimer() {
         trackingTimerJob?.cancel()
         trackingTimerJob = mainScope.flowTimer(TRACKING_TIMER_PERIOD, TRACKING_TIMER_PERIOD) {
-            val trackingDuration = TRACKING_TIMER_PERIOD + routeTrackingState.getTrackingDuration()
-            routeTrackingState.setTrackingDuration(trackingDuration)
-
             notifyTrackingNotification()
+
+//            val trackingDuration = TRACKING_TIMER_PERIOD + routeTrackingState.getTrackingDuration()
+            routeTrackingState.setTrackingDuration(getActivityElapsedTime())
         }
     }
 
     private fun onActionPause() {
         mainScope.launch {
+            routeTrackingState.setLastPauseTime(now.currentMillisecond())
             routeTrackingState.setTrackingStatus(RouteTrackingStatus.PAUSED)
         }
 
@@ -309,8 +352,23 @@ class RouteTrackingService : Service() {
 
         mainScope.launch {
             routeTrackingState.setTrackingStatus(RouteTrackingStatus.RESUMED)
-            routeTrackingState.setLastResumeTime(System.currentTimeMillis())
         }
+        addPauseDuration(now.currentMillisecond())
+    }
+
+    /**
+     * Adds up to accumulated pause duration each time the tracking is resumed.
+     */
+    private fun addPauseDuration(resumeTime: Long) = mainScope.launch {
+        val lastPauseTime = routeTrackingState.getLastPauseTime()
+            ?: routeTrackingState.getLastLocationUpdateTime()
+            ?: return@launch
+        val currPauseDuration = routeTrackingState.getPauseDuration()
+        val updatedPauseTime = currPauseDuration + resumeTime - lastPauseTime
+        Timber.d("updatedPauseTime = $updatedPauseTime")
+        routeTrackingState.setPauseDuration(updatedPauseTime)
+        // pause duration already added up, this pause time is invalid so clear it here.
+        routeTrackingState.setLastPauseTime(null)
     }
 
     private fun onActionStop() {
@@ -356,8 +414,6 @@ class RouteTrackingService : Service() {
         private const val ACTION_STOP = "ACTION_STOP"
         private const val ACTION_RESUME = "ACTION_RESUME"
         private const val ACTION_PAUSE = "ACTION_PAUSE"
-
-        private const val INSTANT_SPEED_PERIOD = 5000L
 
         fun startIntent(
             context: Context,

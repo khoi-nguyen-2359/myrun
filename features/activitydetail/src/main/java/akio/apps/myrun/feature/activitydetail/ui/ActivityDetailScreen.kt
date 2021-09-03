@@ -4,7 +4,10 @@ import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
 import akio.apps.myrun.feature.activitydetail.R
+import akio.apps.myrun.feature.activitydetail.TrackingValueFormatter
 import akio.apps.myrun.feature.base.navigation.HomeNavigationDestination
+import akio.apps.myrun.feature.base.ui.AppColors
+import akio.apps.myrun.feature.base.ui.AppDimensions
 import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.base.ui.CentralAnnouncementView
 import akio.apps.myrun.feature.base.ui.CentralLoadingView
@@ -16,6 +19,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DropdownMenu
@@ -43,6 +48,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
@@ -126,7 +134,13 @@ private fun ActivityDetailDataContainer(
             }
             PerformanceTableComposable(screenState.activityData)
             if (screenState.runSplits.isNotEmpty()) {
-                RunSplitsTable(screenState.runSplits)
+                RunSplitsTable(
+                    screenState.runSplits,
+                    modifier = Modifier.padding(
+                        horizontal = AppDimensions.screenHorizontalPadding,
+                        vertical = AppDimensions.sectionVerticalSpacing
+                    )
+                )
             }
         }
 
@@ -141,17 +155,47 @@ private fun ActivityDetailDataContainer(
 }
 
 @Composable
-fun RunSplitsTable(runSplits: List<Double>) {
-    Column {
-        Text(text = stringResource(id = R.string.activity_details_run_splits_caption))
-        runSplits.forEachIndexed { index, item ->
-            Row {
-                Text(text = (index + 1).toString(), modifier = Modifier.weight(0.5f))
-                Text(text = item.toString(), modifier = Modifier.weight(0.5f))
+fun RunSplitsTable(
+    runSplits: List<Double>,
+    modifier: Modifier = Modifier,
+) {
+    val fastestPace = runSplits.minOrNull() ?: return
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(id = R.string.activity_details_run_splits_caption),
+            style = MaterialTheme.typography.h6,
+            fontWeight = FontWeight.Bold
+        )
+        runSplits.forEachIndexed { index, splitPace ->
+            Row(
+                modifier = Modifier.padding(vertical = 1.dp)
+            ) {
+                Text(
+                    text = (index + 1).toString(), modifier = Modifier.weight(1.5f),
+                    style = MaterialTheme.typography.caption
+                )
+                Text(
+                    text = TrackingValueFormatter.PaceMinutePerKm.getFormattedValue(splitPace),
+                    modifier = Modifier.weight(2f),
+                    style = MaterialTheme.typography.caption
+                )
+                LinearProgressIndicator(
+                    progress = (fastestPace / splitPace).toFloat(),
+                    modifier = Modifier
+                        .weight(10f)
+                        .height(14.dp)
+                        .align(Alignment.CenterVertically),
+                    color = AppColors.secondary,
+                    backgroundColor = Color.Transparent
+                )
             }
         }
     }
 }
+
+@Preview(showBackground = true, backgroundColor = 0xffffff)
+@Composable
+fun PreviewRunSplitsTable() = RunSplitsTable(runSplits = listOf(6.4, 6.15, 6.0, 5.8, 5.6, 5.5, 7.0))
 
 fun navigateToActivityMap(context: Context, encodedPolyline: String) {
     val intent = ActivityRouteMapActivity.createLaunchIntent(context, encodedPolyline)

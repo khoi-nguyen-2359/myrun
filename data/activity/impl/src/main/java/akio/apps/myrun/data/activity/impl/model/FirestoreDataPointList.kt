@@ -59,21 +59,21 @@ class FirestoreIntegerDataPointParser : FirestoreDataPointParser<Int> {
 class FirestoreLocationDataPointParser {
     fun flatten(dataPoint: List<ActivityLocation>): List<Double> =
         dataPoint.fold(mutableListOf()) { accum, item ->
-            accum.add(item.time.toDouble())
+            accum.add(item.elapsedTime.toDouble())
             accum.add(item.latitude)
             accum.add(item.longitude)
             accum.add(item.altitude)
             accum
         }
 
-    fun build(activityId: String, firestoreDataPoints: List<Double>): List<ActivityLocation> {
+    fun build(firestoreDataPoints: List<Double>): List<ActivityLocation> {
         return firestoreDataPoints.chunked(4) {
             ActivityLocation(
-                activityId,
                 it[0].toLong(),
                 it[1],
                 it[2],
-                it[3]
+                it[3],
+                0.0
             )
         }
     }

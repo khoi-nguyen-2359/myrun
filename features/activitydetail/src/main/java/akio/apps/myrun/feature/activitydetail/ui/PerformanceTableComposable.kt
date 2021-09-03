@@ -49,14 +49,14 @@ fun PerformanceTableComposable(activity: ActivityModel) = Column(Modifier.paddin
     }
 }
 
-private fun createActivityFormatterList(activity: ActivityModel): List<TrackingValueFormatter> =
+private fun createActivityFormatterList(activity: ActivityModel): List<TrackingValueFormatter<*>> =
     when (activity.activityType) {
-        akio.apps.myrun.data.activity.api.model.ActivityType.Running -> listOf(
+        ActivityType.Running -> listOf(
             TrackingValueFormatter.DistanceKm,
             TrackingValueFormatter.PaceMinutePerKm,
             TrackingValueFormatter.DurationHourMinuteSecond
         )
-        akio.apps.myrun.data.activity.api.model.ActivityType.Cycling -> listOf(
+        ActivityType.Cycling -> listOf(
             TrackingValueFormatter.DistanceKm,
             TrackingValueFormatter.SpeedKmPerHour,
             TrackingValueFormatter.DurationHourMinuteSecond
@@ -67,7 +67,7 @@ private fun createActivityFormatterList(activity: ActivityModel): List<TrackingV
 @Composable
 private fun RowScope.PerformedResultCellComposable(
     activity: ActivityModel,
-    valueFormatter: TrackingValueFormatter,
+    valueFormatter: TrackingValueFormatter<*>,
 ) = Column(
     horizontalAlignment = Alignment.CenterHorizontally,
     modifier = Modifier.weight(weight = 1f)

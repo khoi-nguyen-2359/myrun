@@ -158,7 +158,7 @@ class FirebaseActivityRepository @Inject constructor(
             ?.toObject(FirestoreDataPointList::class.java)
             ?: return@withContext emptyList()
 
-        FirestoreLocationDataPointParser().build(activityId, firestoreLocationDataPoints.data)
+        FirestoreLocationDataPointParser().build(firestoreLocationDataPoints.data)
     }
 
     override suspend fun getActivity(

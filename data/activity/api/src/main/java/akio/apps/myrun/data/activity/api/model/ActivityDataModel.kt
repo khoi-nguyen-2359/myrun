@@ -10,7 +10,11 @@ data class ActivityDataModel(
     override val placeIdentifier: String?,
 
     // stats
+    /**
+     * Start date-time for presentation layer, not used for activity data calculation.
+     */
     override val startTime: Long,
+
     override val endTime: Long,
     override val duration: Long,
     override val distance: Double,
