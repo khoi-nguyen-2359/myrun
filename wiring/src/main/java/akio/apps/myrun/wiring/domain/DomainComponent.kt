@@ -6,6 +6,8 @@ import akio.apps.myrun.data.wiring.FirebaseDataModule
 import akio.apps.myrun.domain.activity.RunSplitsCalculator
 import akio.apps.myrun.domain.activityexport.ExportTempTcxFileUsecase
 import akio.apps.myrun.domain.authentication.PostSignInUsecase
+import akio.apps.myrun.domain.migration.AppVersionMigrationUsecase
+import akio.apps.myrun.domain.migration.task.MigrationTask10500
 import akio.apps.myrun.domain.recentplace.MakeActivityPlaceNameUsecase
 import akio.apps.myrun.domain.recentplace.UpdateUserRecentPlaceUsecase
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
@@ -65,4 +67,8 @@ interface DomainComponent {
     fun getProviderTokensUsecase(): GetProviderTokensUsecase
     fun removeStravaTokenUsecase(): RemoveStravaTokenUsecase
     fun runSplitCalculator(): RunSplitsCalculator
+
+    // App Migration
+    fun migrationTask10500(): MigrationTask10500
+    fun appVersionMigrationUsecase(): AppVersionMigrationUsecase
 }

@@ -52,7 +52,7 @@ class RouteTrackingConfigurationImpl @Inject constructor(application: Applicatio
     override fun getLocationProcessingConfig(): Flow<LocationProcessingConfig> =
         prefDataStore.data.map { data ->
             val isAvgAccumEnabled = data[LOCATION_AVG_ACCUMULATION_ENABLED] ?: AVG_ACCUM_ENABLED
-            val isSpeedFilterEnabled = SPEED_FILTER_ENABLED // disabled this filter for now
+            val isSpeedFilterEnabled = data[LOCATION_SPEED_FILTER_ENABLED] ?: SPEED_FILTER_ENABLED
             LocationProcessingConfig(isAvgAccumEnabled, isSpeedFilterEnabled)
         }
 
