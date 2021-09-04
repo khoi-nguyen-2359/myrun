@@ -18,11 +18,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -136,10 +138,7 @@ private fun ActivityDetailDataContainer(
             if (screenState.runSplits.isNotEmpty()) {
                 RunSplitsTable(
                     screenState.runSplits,
-                    modifier = Modifier.padding(
-                        horizontal = AppDimensions.screenHorizontalPadding,
-                        vertical = AppDimensions.sectionVerticalSpacing
-                    )
+                    modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)
                 )
             }
         }
@@ -161,28 +160,56 @@ fun RunSplitsTable(
 ) {
     val fastestPace = runSplits.minOrNull() ?: return
     Column(modifier = modifier) {
+        Spacer(modifier = Modifier.height(AppDimensions.sectionVerticalSpacing * 2))
         Text(
             text = stringResource(id = R.string.activity_details_run_splits_caption),
             style = MaterialTheme.typography.h6,
             fontWeight = FontWeight.Bold
         )
+        Spacer(modifier = Modifier.height(AppDimensions.rowVerticalPadding))
+        val kmColumnWeight = 1.5f
+        val paceColumnWeight = 2f
+        val progressColumnWeight = 10f
+        Row {
+            Text(
+                text = stringResource(id = R.string.activity_detail_split_km_column).uppercase(),
+                modifier = Modifier.weight(kmColumnWeight),
+                style = MaterialTheme.typography.overline,
+                fontWeight = FontWeight.Bold,
+                color = Color.Gray.copy(alpha = 0.5f)
+            )
+            Text(
+                text = stringResource(id = R.string.activity_detail_split_pace_column).uppercase(),
+                modifier = Modifier.weight(paceColumnWeight),
+                style = MaterialTheme.typography.overline,
+                fontWeight = FontWeight.Bold,
+                color = Color.Gray.copy(alpha = 0.5f)
+            )
+            Spacer(modifier = Modifier.weight(progressColumnWeight))
+        }
+        Divider(
+            color = Color.Gray.copy(alpha = 0.5f),
+            thickness = 0.5.dp,
+            modifier = Modifier.padding(top = 2.dp)
+        )
+        Spacer(modifier = Modifier.height(4.dp))
         runSplits.forEachIndexed { index, splitPace ->
             Row(
                 modifier = Modifier.padding(vertical = 1.dp)
             ) {
                 Text(
-                    text = (index + 1).toString(), modifier = Modifier.weight(1.5f),
+                    text = (index + 1).toString(), modifier = Modifier.weight(kmColumnWeight),
                     style = MaterialTheme.typography.caption
                 )
                 Text(
                     text = TrackingValueFormatter.PaceMinutePerKm.getFormattedValue(splitPace),
-                    modifier = Modifier.weight(2f),
+                    modifier = Modifier.weight(paceColumnWeight),
                     style = MaterialTheme.typography.caption
                 )
                 LinearProgressIndicator(
                     progress = (fastestPace / splitPace).toFloat(),
                     modifier = Modifier
-                        .weight(10f)
+                        .weight(progressColumnWeight)
                         .height(14.dp)
                         .align(Alignment.CenterVertically),
                     color = AppColors.secondary,
@@ -190,6 +217,7 @@ fun RunSplitsTable(
                 )
             }
         }
+        Spacer(modifier = Modifier.height(AppDimensions.screenVerticalSpacing))
     }
 }
 
