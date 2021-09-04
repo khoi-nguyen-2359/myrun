@@ -65,8 +65,11 @@ class ActivityTcxFileWriterImpl @Inject constructor() : ActivityTcxFileWriter {
                                 .withTracks(
                                     Track.trackWith(
                                         locations.mapIndexed { index, waypoint ->
+                                            val tcxDate = TCXDate(
+                                                Date(activity.startTime + waypoint.elapsedTime)
+                                            )
                                             TrackpointBuilder.aTrackpoint()
-                                                .onTime(TCXDate(Date(waypoint.elapsedTime)))
+                                                .onTime(tcxDate)
                                                 .withPosition(
                                                     Position.position(
                                                         waypoint.latitude,
