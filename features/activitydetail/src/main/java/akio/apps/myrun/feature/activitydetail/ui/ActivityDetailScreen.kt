@@ -138,6 +138,7 @@ private fun ActivityDetailDataContainer(
             if (screenState.runSplits.isNotEmpty()) {
                 RunSplitsTable(
                     screenState.runSplits,
+                    screenState.activityData.distance,
                     modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)
                 )
             }
@@ -156,6 +157,7 @@ private fun ActivityDetailDataContainer(
 @Composable
 fun RunSplitsTable(
     runSplits: List<Double>,
+    totalDistance: Double,
     modifier: Modifier = Modifier,
 ) {
     val fastestPace = runSplits.minOrNull() ?: return
@@ -197,8 +199,13 @@ fun RunSplitsTable(
             Row(
                 modifier = Modifier.padding(vertical = 1.dp)
             ) {
+                val kmLabel = if (index == runSplits.size - 1) {
+                    String.format("%.1f", (totalDistance % 1000) / 1000)
+                } else {
+                    (index + 1).toString()
+                }
                 Text(
-                    text = (index + 1).toString(), modifier = Modifier.weight(kmColumnWeight),
+                    text = kmLabel, modifier = Modifier.weight(kmColumnWeight),
                     style = MaterialTheme.typography.caption
                 )
                 Text(
@@ -223,7 +230,10 @@ fun RunSplitsTable(
 
 @Preview(showBackground = true, backgroundColor = 0xffffff)
 @Composable
-fun PreviewRunSplitsTable() = RunSplitsTable(runSplits = listOf(6.4, 6.15, 6.0, 5.8, 5.6, 5.5, 7.0))
+fun PreviewRunSplitsTable() = RunSplitsTable(
+    runSplits = listOf(6.4, 6.15, 6.0, 5.8, 5.6, 5.5, 7.0),
+    6700.0,
+)
 
 fun navigateToActivityMap(context: Context, encodedPolyline: String) {
     val intent = ActivityRouteMapActivity.createLaunchIntent(context, encodedPolyline)
