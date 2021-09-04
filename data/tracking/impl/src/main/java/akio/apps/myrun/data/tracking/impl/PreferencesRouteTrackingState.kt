@@ -16,6 +16,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
@@ -33,6 +34,7 @@ class PreferencesRouteTrackingState @Inject constructor(
 
     override fun getTrackingStatusFlow(): Flow<@RouteTrackingStatus Int> = prefDataStore.data
         .map { data -> data[KEY_TRACKING_STATUS] ?: RouteTrackingStatus.STOPPED }
+        .distinctUntilChanged() // or it will fire whenever prefDataStore.data change
 
     override suspend fun setTrackingStatus(@RouteTrackingStatus status: Int) {
         prefDataStore.edit { state -> state[KEY_TRACKING_STATUS] = status }

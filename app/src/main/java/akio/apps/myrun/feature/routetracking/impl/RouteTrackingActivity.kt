@@ -16,6 +16,8 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
+import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.PAUSED
+import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.RESUMED
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
 import akio.apps.myrun.feature.home.HomeActivity
@@ -44,9 +46,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.drawToBitmap
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
@@ -62,12 +62,7 @@ import com.google.android.libraries.maps.model.PolylineOptions
 import com.google.android.libraries.maps.model.RoundCap
 import kotlin.coroutines.resume
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -100,14 +95,17 @@ class RouteTrackingActivity(
     private var routePolyline: Polyline? = null
     private var drawnLocationCount: Int = 0
 
-    private val trackingRouteLatLngBounds: LatLngBoundsBuilder = LatLngBoundsBuilder()
+    /**
+     * LatLngBounds that is used for map camera to zoom into the whole route.
+     */
+    private val trackingRouteCameraBounds: LatLngBoundsBuilder = LatLngBoundsBuilder()
 
     private val locationPermissionChecker: LocationPermissionChecker =
         LocationPermissionChecker(activity = this)
 
     private val requisiteJobs = lifecycleScope.launchWhenCreated {
         // onCreate: check location permissions -> check location service availability -> allow user to use this screen
-        val requestConfig = routeTrackingViewModel.getLocationRequestConfig()
+        val requestConfig = routeTrackingViewModel.getLocationRequestConfigFlow().first()
         val missingRequiredPermission =
             !locationPermissionChecker.check() || !locationServiceChecker.check(requestConfig)
         if (missingRequiredPermission) {
@@ -117,7 +115,7 @@ class RouteTrackingActivity(
         R.string.default_web_client_id
     }
 
-    private var trackMapCameraOnLocationUpdateJob: Job? = null
+    private var cameraMovement: CameraMovement = CameraMovement.StickyLocation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -179,7 +177,41 @@ class RouteTrackingActivity(
         observe(routeTrackingViewModel.activityType, viewBinding.trackingStatsView::setActivityType)
         collectRepeatOnStarted(isLaunchCatchingInProgress, dialogDelegate::toggleProgressDialog)
         collectEventRepeatOnStarted(launchCatchingError, dialogDelegate::showExceptionAlert)
-        setAutoCameraEnabled(true)
+        collectRepeatOnStarted(
+            routeTrackingViewModel.locationUpdateFlow,
+            ::moveCameraToLastLocation
+        )
+    }
+
+    private fun moveCameraToLastLocation(locationUpdate: List<Location>) {
+        Timber.d("Sticky Camera $cameraMovement")
+        when (cameraMovement) {
+            CameraMovement.StickyLocation -> {
+                locationUpdate.lastOrNull()?.let(::recenterMap)
+            }
+            CameraMovement.StickyBounds -> {
+                val latLngBounds = trackingRouteCameraBounds.build()
+                if (latLngBounds != null) {
+                    recenterMap(latLngBounds, getCameraViewPortSize())
+                } else {
+                    locationUpdate.lastOrNull()?.let(::recenterZoomOutMap)
+                }
+            }
+            else -> {
+            } // do nothing
+        }
+    }
+
+    private fun recenterZoomOutMap(location: Location) {
+        if (!::mapView.isInitialized) {
+            return
+        }
+
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(
+            location.toGmsLatLng(),
+            MAX_MAP_ZOOM_LEVEL - 3
+        )
+        mapView.animateCamera(cameraUpdate)
     }
 
     private fun recenterMap(location: Location) {
@@ -187,7 +219,7 @@ class RouteTrackingActivity(
             return
         }
         val bounds = LatLngBounds.builder().include(location.toGmsLatLng()).build()
-        recenterMap(bounds, animation = true, getCameraViewPortSize())
+        recenterMap(bounds, getCameraViewPortSize())
     }
 
     private fun stopTrackingServiceAndFinish() {
@@ -197,36 +229,41 @@ class RouteTrackingActivity(
 
     private fun onTrackingStatusChanged(@RouteTrackingStatus trackingStatus: Int) {
         updateViews(trackingStatus)
-        changeMapCameraLocationUpdateTracking(trackingStatus)
+        when (trackingStatus) {
+            RESUMED -> setCameraMovementAndUpdateUi(CameraMovement.StickyBounds)
+            PAUSED -> setCameraMovementAndUpdateUi(CameraMovement.StickyLocation)
+        }
     }
 
-    /**
-     * There are 2 types of camera movements: camera tracking on drawn route and on current location
-     * If route tracking is in progress, camera tracks the route, otherwise, camera tracks on
-     * location update.
-     */
-    private fun changeMapCameraLocationUpdateTracking(@RouteTrackingStatus trackingStatus: Int) {
-        when (trackingStatus) {
-            RouteTrackingStatus.RESUMED -> {
-                setAutoCameraEnabled(false)
-            }
-            RouteTrackingStatus.PAUSED -> {
-                setAutoCameraEnabled(true)
-            }
+    private fun setCameraMovementAndUpdateUi(expectedMode: CameraMovement) {
+        val prevCameraMovement = this.cameraMovement
+        this.cameraMovement = expectedMode
+        // move right after set mode value
+        lifecycleScope.launch {
+            val lastLocation = routeTrackingViewModel.getLastLocationFlow().first()
+            moveCameraToLastLocation(listOf(lastLocation))
+        }
+        val cameraButtonState = when (expectedMode) {
+            CameraMovement.StickyLocation -> CameraMovement.StickyBounds
+            CameraMovement.StickyBounds -> CameraMovement.StickyLocation
+            CameraMovement.None -> prevCameraMovement
+        }
+        if (cameraButtonState != CameraMovement.None) {
+            routeTrackingViewModel.stickyCameraButtonState.value = cameraButtonState
         }
     }
 
     private fun updateViews(@RouteTrackingStatus trackingStatus: Int) {
         when (trackingStatus) {
-            RouteTrackingStatus.RESUMED -> updateViewsOnTrackingResumed()
-            RouteTrackingStatus.PAUSED -> updateViewsOnTrackingPaused()
+            RESUMED -> updateViewsOnTrackingResumed()
+            PAUSED -> updateViewsOnTrackingPaused()
         }
     }
 
     private var startPointMarker: Marker? = null
     private fun onTrackingLocationUpdate(batch: List<ActivityLocation>) {
         Timber.tag(LOG_TAG_LOCATION)
-            .d("[RouteTrackingActivity] onTrackingLocationUpdate: ${batch.size}")
+            .d("onTrackingLocationUpdate: ${batch.size}")
         addStartPointMarkerIfNotAdded(batch)
         drawTrackingLocationUpdate(batch)
         moveMapCameraOnTrackingLocationUpdate(batch)
@@ -250,22 +287,11 @@ class RouteTrackingActivity(
 
     private fun moveMapCameraOnTrackingLocationUpdate(batch: List<ActivityLocation>) {
         batch.forEach {
-            trackingRouteLatLngBounds.include(it.toGmsLatLng())
-        }
-
-        if (isStickyCamera) {
-            val latLngBounds = trackingRouteLatLngBounds.build()
-            if (latLngBounds != null) {
-                recenterMap(latLngBounds, true, getCameraViewPortSize())
-            }
+            trackingRouteCameraBounds.include(it.toGmsLatLng())
         }
     }
 
-    private fun recenterMap(
-        latLngBounds: LatLngBounds,
-        animation: Boolean,
-        cameraViewPortSize: Size,
-    ) {
+    private fun recenterMap(latLngBounds: LatLngBounds, cameraViewPortSize: Size) {
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(
             latLngBounds,
             cameraViewPortSize.width,
@@ -273,11 +299,7 @@ class RouteTrackingActivity(
             MAP_LATLNG_BOUND_PADDING
         )
 
-        if (animation) {
-            mapView.animateCamera(cameraUpdate)
-        } else {
-            mapView.moveCamera(cameraUpdate)
-        }
+        mapView.animateCamera(cameraUpdate)
     }
 
     private fun getCameraViewPortSize(): Size {
@@ -319,17 +341,9 @@ class RouteTrackingActivity(
             TrackingControlButtonPanel(
                 routeTrackingViewModel,
                 ::onClickControlButton,
-                ::onClickMyLocation
+                ::setCameraMovementAndUpdateUi
             )
             StopOptionsDialog(routeTrackingViewModel, ::selectStopOptionItem)
-        }
-    }
-
-    private fun onClickMyLocation() {
-        isStickyCamera = true
-        lifecycleScope.launch {
-            val lastLocation = routeTrackingViewModel.getLastLocationFlow().first()
-            recenterMap(lastLocation)
         }
     }
 
@@ -392,6 +406,7 @@ class RouteTrackingActivity(
     }
 
     private fun stopRouteTracking() {
+        setCameraMovementAndUpdateUi(CameraMovement.StickyBounds)
         routeTrackingViewModel.isStopOptionDialogShowing.value = true
     }
 
@@ -406,16 +421,6 @@ class RouteTrackingActivity(
         // hide the start point marker
         startPointMarker?.isVisible = false
         val cameraViewPortSize = getCameraViewPortSize()
-        val bounds = trackingRouteLatLngBounds.build()
-        if (bounds != null) {
-            recenterMap(
-                bounds,
-                animation = false,
-                cameraViewPortSize
-            )
-        }
-        delay(500) // for above map adjustments take effects
-
         val routeImageBitmap: Bitmap = captureGoogleMapViewSnapshot(cameraViewPortSize)
             ?: drawRouteImage(cameraViewPortSize)
 
@@ -522,22 +527,16 @@ class RouteTrackingActivity(
             }
     }
 
-    private var isStickyCamera: Boolean = true
-
     @SuppressLint("MissingPermission")
     private fun initMapView(map: GoogleMap) {
         this.mapView = map
         map.setMaxZoomPreference(MAX_MAP_ZOOM_LEVEL)
-        map.setOnMyLocationButtonClickListener {
-            isStickyCamera = true
-            false
-        }
         map.setOnCameraIdleListener {
             hasMapCameraBeenIdled = true
         }
         map.setOnCameraMoveStartedListener { reason ->
             if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-                isStickyCamera = false
+                setCameraMovementAndUpdateUi(CameraMovement.None)
             }
         }
         map.isMyLocationEnabled = true
@@ -551,27 +550,25 @@ class RouteTrackingActivity(
         )
     }
 
-    private fun setAutoCameraEnabled(isEnabled: Boolean) {
-        trackMapCameraOnLocationUpdateJob?.cancel()
-        if (isEnabled) {
-            trackMapCameraOnLocationUpdateJob = lifecycleScope.launch {
-                lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    routeTrackingViewModel.getLocationUpdate()
-                        .onStart { emit(routeTrackingViewModel.getLastLocationFlow().toList()) }
-                        .collect {
-                            if (isStickyCamera) {
-                                it.lastOrNull()?.let { lastItem ->
-                                    recenterMap(lastItem)
-                                }
-                            }
-                        }
-                }
-            }
-        }
-    }
-
     override fun onActivityTypeSelected(activityType: ActivityType) {
         routeTrackingViewModel.onSelectActivityType(activityType)
+    }
+
+    enum class CameraMovement {
+        /**
+         * Camera is being controlled by user.
+         */
+        None,
+
+        /**
+         * Camera is auto sticky to the current location point.
+         */
+        StickyLocation,
+
+        /**
+         * Camera is auto sticky to the current route lat-lng bounds.
+         */
+        StickyBounds
     }
 
     companion object {

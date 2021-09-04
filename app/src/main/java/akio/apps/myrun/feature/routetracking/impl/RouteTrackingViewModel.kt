@@ -27,10 +27,13 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import java.util.Calendar
 import javax.inject.Inject
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -49,6 +52,8 @@ class RouteTrackingViewModel @Inject constructor(
 
     // TODO: Will refactor this screen to Composable
     val isStopOptionDialogShowing: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val stickyCameraButtonState: MutableStateFlow<RouteTrackingActivity.CameraMovement> =
+        MutableStateFlow(RouteTrackingActivity.CameraMovement.StickyBounds)
 
     fun getLastLocationFlow(): Flow<Location> =
         locationDataSource.getLastLocationFlow()
@@ -73,6 +78,12 @@ class RouteTrackingViewModel @Inject constructor(
         ActivityType.Running to R.string.activity_name_running,
         ActivityType.Cycling to R.string.activity_name_cycling
     )
+
+    @OptIn(FlowPreview::class)
+    val locationUpdateFlow: Flow<List<Location>> =
+        getLocationRequestConfigFlow()
+            .flatMapConcat(locationDataSource::getLocationUpdate)
+            .onStart { emit(getLastLocationFlow().toList()) }
 
     fun resumeDataUpdates() {
         if (trackingStatus.value == RouteTrackingStatus.RESUMED) {
@@ -107,13 +118,8 @@ class RouteTrackingViewModel @Inject constructor(
         clearRouteTrackingStateUsecase.clear()
     }
 
-    suspend fun getLocationUpdate(): Flow<List<Location>> {
-        val locationRequest = getLocationRequestConfig()
-        return locationDataSource.getLocationUpdate(locationRequest)
-    }
-
-    suspend fun getLocationRequestConfig(): LocationRequestConfig =
-        routeTrackingConfiguration.getLocationRequestConfig().first()
+    fun getLocationRequestConfigFlow(): Flow<LocationRequestConfig> =
+        routeTrackingConfiguration.getLocationRequestConfig()
 
     private fun makeActivityName(activityType: ActivityType): String {
         val calendar = Calendar.getInstance()
