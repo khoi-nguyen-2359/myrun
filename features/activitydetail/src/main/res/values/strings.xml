@@ -13,4 +13,6 @@
     <string name="item_activity_time_today">Today at %1$s</string>
     <string name="item_activity_time_yesterday">Yesterday at %1$s</string>
     <string name="activity_details_run_splits_caption">Splits</string>
+    <string name="activity_detail_split_km_column">Km</string>
+    <string name="activity_detail_split_pace_column">Pace</string>
 </resources>

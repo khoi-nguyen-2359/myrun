@@ -24,6 +24,7 @@ object AppColors {
 
 object AppDimensions {
     val iconButtonPadding = 16.dp
+    val screenVerticalSpacing: Dp = 16.dp
     val screenHorizontalPadding: Dp = 16.dp
     val sectionVerticalSpacing: Dp = 16.dp
     val rowVerticalPadding: Dp = 12.dp
