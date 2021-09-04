@@ -162,7 +162,7 @@ fun RunSplitsTable(
 ) {
     val fastestPace = runSplits.minOrNull() ?: return
     Column(modifier = modifier) {
-        Spacer(modifier = Modifier.height(AppDimensions.sectionVerticalSpacing * 2))
+        Spacer(modifier = Modifier.height(AppDimensions.sectionVerticalSpacing))
         Text(
             text = stringResource(id = R.string.activity_details_run_splits_caption),
             style = MaterialTheme.typography.h6,

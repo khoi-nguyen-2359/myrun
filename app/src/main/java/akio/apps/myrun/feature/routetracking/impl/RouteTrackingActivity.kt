@@ -530,24 +530,34 @@ class RouteTrackingActivity(
     @SuppressLint("MissingPermission")
     private fun initMapView(map: GoogleMap) {
         this.mapView = map
-        map.setMaxZoomPreference(MAX_MAP_ZOOM_LEVEL)
-        map.setOnCameraIdleListener {
-            hasMapCameraBeenIdled = true
-        }
-        map.setOnCameraMoveStartedListener { reason ->
-            if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-                setCameraMovementAndUpdateUi(CameraMovement.None)
+        map.apply {
+            setMaxZoomPreference(MAX_MAP_ZOOM_LEVEL)
+            setOnCameraIdleListener {
+                hasMapCameraBeenIdled = true
+            }
+            setOnCameraMoveStartedListener { reason ->
+                if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+                    setCameraMovementAndUpdateUi(CameraMovement.None)
+                }
+            }
+            setOnMarkerClickListener { true } // avoid camera movement on marker click event
+            isMyLocationEnabled = true
+            setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(
+                    this@RouteTrackingActivity,
+                    R.raw.google_map_styles
+                )
+            )
+            uiSettings.apply {
+                isMyLocationButtonEnabled = false
+                setAllGesturesEnabled(true)
+                isZoomControlsEnabled = false
+                isCompassEnabled = false
+                isIndoorLevelPickerEnabled = false
+                isMapToolbarEnabled = false
+                isTiltGesturesEnabled = false
             }
         }
-        map.isMyLocationEnabled = true
-        map.uiSettings.isMyLocationButtonEnabled = false
-        map.uiSettings.setAllGesturesEnabled(true)
-        map.setMapStyle(
-            MapStyleOptions.loadRawResourceStyle(
-                this,
-                R.raw.google_map_styles
-            )
-        )
     }
 
     override fun onActivityTypeSelected(activityType: ActivityType) {
