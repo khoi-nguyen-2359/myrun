@@ -8,6 +8,8 @@ android {
     compileSdk project.compileSdk
 
     defaultConfig {
+        minSdk project.minSdk
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
