@@ -77,6 +77,7 @@ class RouteTrackingActivity(
 
     // use this flag to check if map has ever been loaded (or never been due to no internet)
     private var hasMapCameraBeenIdled: Boolean = false
+    private var isMapCameraMoving: Boolean = false
 
     private val dialogDelegate by lazy { akio.apps.myrun.feature.base.DialogDelegate(this) }
 
@@ -179,12 +180,15 @@ class RouteTrackingActivity(
         collectEventRepeatOnStarted(launchCatchingError, dialogDelegate::showExceptionAlert)
         collectRepeatOnStarted(
             routeTrackingViewModel.locationUpdateFlow,
-            ::moveCameraToLastLocation
+            ::updateStickyCamera
         )
     }
 
-    private fun moveCameraToLastLocation(locationUpdate: List<Location>) {
+    private fun updateStickyCamera(locationUpdate: List<Location>) {
         Timber.d("Sticky Camera $cameraMovement")
+        if (isMapCameraMoving) {
+            return
+        }
         when (cameraMovement) {
             CameraMovement.StickyLocation -> {
                 locationUpdate.lastOrNull()?.let(::recenterMap)
@@ -211,7 +215,7 @@ class RouteTrackingActivity(
             location.toGmsLatLng(),
             MAX_MAP_ZOOM_LEVEL - 3
         )
-        mapView.animateCamera(cameraUpdate)
+        mapView.animateCamera(cameraUpdate, DEFAULT_CAMERA_ANIMATE_DURATION, null)
     }
 
     private fun recenterMap(location: Location) {
@@ -230,8 +234,7 @@ class RouteTrackingActivity(
     private fun onTrackingStatusChanged(@RouteTrackingStatus trackingStatus: Int) {
         updateViews(trackingStatus)
         when (trackingStatus) {
-            RESUMED -> setCameraMovementAndUpdateUi(CameraMovement.StickyBounds)
-            PAUSED -> setCameraMovementAndUpdateUi(CameraMovement.StickyLocation)
+            RESUMED, PAUSED -> setCameraMovementAndUpdateUi(CameraMovement.StickyLocation)
         }
     }
 
@@ -241,7 +244,7 @@ class RouteTrackingActivity(
         // move right after set mode value
         lifecycleScope.launch {
             val lastLocation = routeTrackingViewModel.getLastLocationFlow().first()
-            moveCameraToLastLocation(listOf(lastLocation))
+            updateStickyCamera(listOf(lastLocation))
         }
         val cameraButtonState = when (expectedMode) {
             CameraMovement.StickyLocation -> CameraMovement.StickyBounds
@@ -301,7 +304,7 @@ class RouteTrackingActivity(
             MAP_LATLNG_BOUND_PADDING
         )
 
-        mapView.animateCamera(cameraUpdate)
+        mapView.animateCamera(cameraUpdate, DEFAULT_CAMERA_ANIMATE_DURATION, null)
     }
 
     private fun getCameraViewPortSize(): Size {
@@ -536,6 +539,10 @@ class RouteTrackingActivity(
             setMaxZoomPreference(MAX_MAP_ZOOM_LEVEL)
             setOnCameraIdleListener {
                 hasMapCameraBeenIdled = true
+                isMapCameraMoving = false
+            }
+            setOnCameraMoveStartedListener {
+                isMapCameraMoving = true
             }
             setOnCameraMoveStartedListener { reason ->
                 if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
@@ -584,6 +591,7 @@ class RouteTrackingActivity(
     }
 
     companion object {
+        private const val DEFAULT_CAMERA_ANIMATE_DURATION = 1000
         private val MAP_LATLNG_BOUND_PADDING = 30.dp2px.toInt()
         private const val MAX_MAP_ZOOM_LEVEL = 19f // 20 = buildings level
         const val ROUTE_IMAGE_RATIO = 1.7f
