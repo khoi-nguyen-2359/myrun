@@ -3,14 +3,15 @@ package akio.apps.myrun.data.activity.impl.model
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.fitness.DataPoint
 import com.google.firebase.firestore.PropertyName
+import java.util.concurrent.TimeUnit
 
 data class FirestoreDataPointList(
     @PropertyName("data")
-    val data: List<Double> = emptyList()
+    val data: List<Double> = emptyList(),
 )
 
 class FirestoreDataPointSerializer<T>(
-    private val firestoreDataPointParser: FirestoreDataPointParser<T>
+    private val firestoreDataPointParser: FirestoreDataPointParser<T>,
 ) {
     fun serialize(dataPoints: List<DataPoint<T>>): FirestoreDataPointList {
         return FirestoreDataPointList(dataPoints.flatMap { firestoreDataPointParser.flatten(it) })
@@ -18,7 +19,7 @@ class FirestoreDataPointSerializer<T>(
 }
 
 class FirestoreDataPointDeserializer<T>(
-    private val dataPointParser: FirestoreDataPointParser<T>
+    private val dataPointParser: FirestoreDataPointParser<T>,
 ) {
     fun deserialize(firestoreData: FirestoreDataPointList): List<DataPoint<T>> {
         val dataPointList = firestoreData.data
@@ -59,22 +60,58 @@ class FirestoreIntegerDataPointParser : FirestoreDataPointParser<Int> {
 class FirestoreLocationDataPointParser {
     fun flatten(dataPoint: List<ActivityLocation>): List<Double> =
         dataPoint.fold(mutableListOf()) { accum, item ->
-            accum.add(item.time.toDouble())
+            accum.add(item.elapsedTime.toDouble())
             accum.add(item.latitude)
             accum.add(item.longitude)
             accum.add(item.altitude)
             accum
         }
 
-    fun build(activityId: String, firestoreDataPoints: List<Double>): List<ActivityLocation> {
+    fun build(firestoreDataPoints: List<Double>): List<ActivityLocation> {
+        val firstLocationTime = firestoreDataPoints.firstOrNull()?.toLong() ?: 0L
+        val fixFunction = createActivityLocationTimeFixFunction(firstLocationTime)
         return firestoreDataPoints.chunked(4) {
+            val fixedLocationTime = fixFunction(it[0].toLong())
             ActivityLocation(
-                activityId,
-                it[0].toLong(),
+                fixedLocationTime,
                 it[1],
                 it[2],
-                it[3]
+                it[3],
+                0.0
             )
         }
+    }
+
+    /**
+     * 1.5.0 Migration:
+     * - Convert activities' location time (calendar time, maybe in second) -> activity time
+     * (activity elapsed time in millisecond)
+     * TODO: Remove this after migration are done on Firestore.
+     */
+    private fun createActivityLocationTimeFixFunction(firstLocationTime: Long): (Long) -> Long {
+        // won't fix the whole array if the first location's time is already elapsed time.
+        if (firstLocationTime < ACTIVITY_LOCATION_TIME_FIX_MIN_THRESHOLD) {
+            return { time -> time } // no fixes needed
+        }
+
+        val shouldFixLocationTimeUnit =
+            firstLocationTime < ACTIVITY_LOCATION_TIME_UNIT_FIX_MAX_THRESHOLD
+        return { oldLocationTime ->
+            // convert from calendar time to elapsed time
+            var fixedLocationTime = oldLocationTime - firstLocationTime
+            if (shouldFixLocationTimeUnit) {
+                // convert from second to millisecond
+                fixedLocationTime *= 1000
+            }
+            fixedLocationTime
+        }
+    }
+
+    companion object {
+        // ten days in milliseconds
+        private val ACTIVITY_LOCATION_TIME_FIX_MIN_THRESHOLD: Long = TimeUnit.DAYS.toMillis(10)
+
+        private const val ACTIVITY_LOCATION_TIME_UNIT_FIX_MAX_THRESHOLD: Long =
+            2_000_000_000 // 2 bil seconds
     }
 }

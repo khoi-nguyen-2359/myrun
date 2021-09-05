@@ -61,7 +61,7 @@ class RouteTrackingConfigurationImpl @Inject constructor(application: Applicatio
         private const val LOCATION_FASTEST_UPDATE_INTERVAL = 100L
         private const val SMALLEST_DISPLACEMENT = 1f
         private const val AVG_ACCUM_ENABLED = true
-        private const val SPEED_FILTER_ENABLED = true
+        private const val SPEED_FILTER_ENABLED = false
 
         private val LOCATION_UPDATE_INTERVAL_KEY =
             longPreferencesKey("LOCATION_UPDATE_INTERVAL_KEY")

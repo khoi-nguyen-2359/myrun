@@ -3,8 +3,10 @@ package akio.apps.myrun.feature.activitydetail
 import akio.apps.common.data.Resource
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
+import akio.apps.myrun.domain.activity.RunSplitsCalculator
 import akio.apps.myrun.domain.recentplace.MakeActivityPlaceNameUsecase
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -21,6 +23,7 @@ class ActivityDetailViewModel @Inject constructor(
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
     private val userAuthenticationState: UserAuthenticationState,
     private val makeActivityPlaceNameUsecase: MakeActivityPlaceNameUsecase,
+    private val runSplitsCalculator: RunSplitsCalculator,
 ) : ViewModel() {
 
     private val activityDetailsMutableStateFlow: MutableStateFlow<Resource<ActivityModel>> =
@@ -35,7 +38,17 @@ class ActivityDetailViewModel @Inject constructor(
                 activityResource.data?.placeIdentifier,
                 userPlaceIdentifier
             )
-            ActivityDetailScreenState.create(activityResource, placeName)
+            val runSplits =
+                if (activityResource is Resource.Success &&
+                    activityResource.data.activityType == ActivityType.Running
+                ) {
+                    val locations =
+                        activityRepository.getActivityLocationDataPoints(activityResource.data.id)
+                    runSplitsCalculator.createRunSplits(locations)
+                } else {
+                    emptyList()
+                }
+            ActivityDetailScreenState.create(activityResource, placeName, runSplits)
         }
 
     init {
@@ -67,6 +80,7 @@ class ActivityDetailViewModel @Inject constructor(
         class DataAvailable(
             val activityData: ActivityModel,
             val activityPlaceName: String?,
+            val runSplits: List<Double>,
             val isStillLoading: Boolean,
         ) : ActivityDetailScreenState()
 
@@ -74,6 +88,7 @@ class ActivityDetailViewModel @Inject constructor(
             fun create(
                 activityDetailResource: Resource<ActivityModel>,
                 activityPlaceName: String?,
+                runSplits: List<Double>,
             ): ActivityDetailScreenState {
                 val activityData = activityDetailResource.data
                 return when {
@@ -85,6 +100,7 @@ class ActivityDetailViewModel @Inject constructor(
                         DataAvailable(
                             activityData,
                             activityPlaceName,
+                            runSplits,
                             isStillLoading = activityDetailResource is Resource.Loading
                         )
                     }

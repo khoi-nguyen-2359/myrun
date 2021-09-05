@@ -148,7 +148,7 @@ class ActivityLocalStorageImpl @Inject constructor(
         val locationsDeferred = async {
             val locationsBytes = activityDirectory.locationsFile.bufferedReadByteArray()
             val flattenLocations = protoBuf.decodeFromByteArray<List<Double>>(locationsBytes)
-            deserializeActivityLocation(activityId, flattenLocations)
+            deserializeActivityLocation(flattenLocations)
         }
 
         ActivityStorageData(
@@ -185,19 +185,20 @@ class ActivityLocalStorageImpl @Inject constructor(
     }
 
     private fun serializeActivityLocations(locations: List<ActivityLocation>): List<Double> =
-        locations.flatMap { listOf(it.time.toDouble(), it.latitude, it.longitude, it.latitude) }
+        locations.flatMap {
+            listOf(it.elapsedTime.toDouble(), it.latitude, it.longitude, it.latitude)
+        }
 
     private fun deserializeActivityLocation(
-        activityId: String,
         flattenList: List<Double>
     ): List<ActivityLocation> = flattenList.chunked(4).flatMap {
         listOf(
             ActivityLocation(
-                activityId = activityId,
-                time = it[0].toLong(),
+                elapsedTime = it[0].toLong(),
                 latitude = it[1],
                 longitude = it[2],
-                altitude = it[3]
+                altitude = it[3],
+                speed = 0.0
             )
         )
     }

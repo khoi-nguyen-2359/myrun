@@ -312,7 +312,7 @@ private fun StravaUnlinkAlert(onDismissRequest: () -> Unit, onConfirmed: () -> U
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = AppDimensions.rowVerticalSpacing)
+                    .padding(bottom = AppDimensions.rowVerticalPadding)
                     .padding(horizontal = AppDimensions.screenHorizontalPadding)
             ) {
                 TextButton(
@@ -425,7 +425,7 @@ private fun UserProfileSwitch(
             clickable { onClick() }
         }
         .padding(
-            vertical = AppDimensions.rowVerticalSpacing,
+            vertical = AppDimensions.rowVerticalPadding,
             horizontal = AppDimensions.screenHorizontalPadding
         )
 ) {

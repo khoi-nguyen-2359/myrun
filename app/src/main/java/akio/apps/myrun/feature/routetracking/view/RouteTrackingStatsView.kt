@@ -38,7 +38,7 @@ class RouteTrackingStatsView @JvmOverloads constructor(
         setActivityType(activityTypes[activityTypeIndex])
     }
 
-    fun setActivityType(activityType: akio.apps.myrun.data.activity.api.model.ActivityType) {
+    fun setActivityType(activityType: ActivityType) {
         when (activityType) {
             ActivityType.Running -> {
                 viewBinding.speedLabelTextView.setText(R.string.route_tracking_pace_label)

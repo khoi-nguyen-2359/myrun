@@ -5,6 +5,7 @@ import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppTheme
+import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingViewModel
 import androidx.annotation.StringRes
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -31,6 +32,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MyLocation
+import androidx.compose.material.icons.outlined.ZoomOutMap
 import androidx.compose.material.icons.rounded.GpsOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -54,27 +56,30 @@ private val CIRCULAR_CONTROL_BUTTON_SIZE = 90.dp
 fun TrackingControlButtonPanel(
     routeTrackingViewModel: RouteTrackingViewModel,
     onClickControlButton: (TrackingControlButtonType) -> Unit,
-    onClickMyLocation: () -> Unit,
+    onClickCameraMode: (RouteTrackingActivity.CameraMovement) -> Unit,
 ) {
     val trackingStatus by routeTrackingViewModel.trackingStatus.observeAsState()
     // when entering the screen, initial location may not be available if location is not ready yet,
     // so use flow to get the location when it is ready.
     val initialLocation by routeTrackingViewModel.getLastLocationFlow()
         .collectAsState(initial = null)
+    val stickyCameraMode by routeTrackingViewModel.stickyCameraButtonState.collectAsState()
     TrackingControlButtonPanel(
+        stickyCameraMode,
         initialLocation,
         trackingStatus,
         onClickControlButton,
-        onClickMyLocation
+        onClickCameraMode
     )
 }
 
 @Composable
 private fun TrackingControlButtonPanel(
+    cameraMovement: RouteTrackingActivity.CameraMovement,
     initialLocation: Location?,
     @RouteTrackingStatus trackingStatus: Int?,
     onClickControlButton: (TrackingControlButtonType) -> Unit,
-    onClickMyLocation: () -> Unit,
+    onClickMyLocation: (RouteTrackingActivity.CameraMovement) -> Unit,
 ) = AppTheme {
     Box(
         contentAlignment = Alignment.Center,
@@ -104,22 +109,39 @@ private fun TrackingControlButtonPanel(
                 }
             }
         }
-        Button(
-            shape = CircleShape,
-            onClick = onClickMyLocation,
-            modifier = Modifier
-                .padding(end = 16.dp)
-                .size(48.dp)
-                .align(Alignment.CenterEnd),
-            contentPadding = PaddingValues(4.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.MyLocation,
-                tint = AppColors.primary,
-                contentDescription = "Jump to my location on map"
-            )
-        }
+        StickyCameraModeButton(
+            cameraMovement,
+            onClickMyLocation,
+            Modifier.align(Alignment.CenterEnd)
+        )
+    }
+}
+
+@Composable
+private fun StickyCameraModeButton(
+    cameraMovement: RouteTrackingActivity.CameraMovement,
+    onClickMyLocation: (RouteTrackingActivity.CameraMovement) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val icon = when (cameraMovement) {
+        RouteTrackingActivity.CameraMovement.StickyLocation -> Icons.Outlined.MyLocation
+        RouteTrackingActivity.CameraMovement.StickyBounds -> Icons.Outlined.ZoomOutMap
+        RouteTrackingActivity.CameraMovement.None -> return
+    }
+    Button(
+        shape = CircleShape,
+        onClick = { onClickMyLocation(cameraMovement) },
+        modifier = modifier
+            .padding(end = 16.dp)
+            .size(48.dp),
+        contentPadding = PaddingValues(4.dp),
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
+    ) {
+        Icon(
+            imageVector = icon,
+            tint = AppColors.primary,
+            contentDescription = "Jump to my location on map"
+        )
     }
 }
 
@@ -228,7 +250,8 @@ private fun PreviewControlButton() = TrackingControlButton("Resume", Color.Black
 @Composable
 @Preview
 private fun PreviewTrackingControlButtonPanel() = TrackingControlButtonPanel(
-    initialLocation = Location(1, 2.0, 3.0, 4.0, 5.0),
+    RouteTrackingActivity.CameraMovement.StickyBounds,
+    initialLocation = Location(0, 1, 2.0, 3.0, 4.0, 5.0),
     trackingStatus = RouteTrackingStatus.STOPPED,
     {},
     {}

@@ -49,11 +49,10 @@ dependencies {
     implementation(libs.kotlinxCoroutinesCore)
 
     testImplementation(testFixtures(project(':test')))
-    testImplementation(libs.junit)
-    testImplementation(libs.mockitoCore)
+    testImplementation(libs.bundles.testCoroutine)
+    testImplementation(libs.kotlinTest)
     testImplementation(libs.mockitoKotlin)
-    testImplementation(libs.kotlinXCoroutinesTest)
     testImplementation(libs.kotlinReflect)
+
     androidTestImplementation(libs.androidXJunit)
-    testImplementation(libs.turbine)
 }

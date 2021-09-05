@@ -17,8 +17,9 @@ class AverageLocationAccumulator(
             return null
         }
         val accumulatedLocation =
-            currentLocationBatch.fold(Location(0, 0.0, 0.0, 0.0, 0.0)) { accum, item ->
+            currentLocationBatch.fold(Location(0, 0, 0.0, 0.0, 0.0, 0.0)) { accum, item ->
                 Location(
+                    item.elapsedTime,
                     item.time,
                     accum.latitude + item.latitude,
                     accum.longitude + item.longitude,
@@ -30,6 +31,7 @@ class AverageLocationAccumulator(
         currentLocationBatch.clear()
         lastDeliverTime = time
         return Location(
+            accumulatedLocation.elapsedTime,
             accumulatedLocation.time,
             accumulatedLocation.latitude / batchSize,
             accumulatedLocation.longitude / batchSize,
