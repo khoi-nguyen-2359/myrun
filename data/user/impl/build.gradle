@@ -34,6 +34,9 @@ dependencies {
     implementation(project(':common:data'))
     implementation(project(':common:wiring'))
 
+    // app migration
+    implementation(libs.dataStore)
+
     implementation(libs.kotlinxCoroutinesPlayServices)
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.javaXInject)

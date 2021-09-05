@@ -39,13 +39,9 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         withContext(ioDispatcher) {
             val userId = userAuthenticationState.requireUserAccountId()
             val activityId = objectAutoId.autoId()
-            val trackedLocations = routeTrackingLocationRepository.getAllLocations()
+            val activityLocations = routeTrackingLocationRepository.getAllLocations()
             val activityModel =
-                createActivityInfo(userId, activityId, activityName, trackedLocations)
-
-            val activityLocations = trackedLocations.map {
-                ActivityLocation(activityId, it.time, it.latitude, it.longitude, it.altitude)
-            }
+                createActivityInfo(userId, activityId, activityName, activityLocations)
 
             val activityStorageAsync = async {
                 activityLocalStorage.storeActivityData(
@@ -68,7 +64,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         userId: String,
         activityId: String,
         activityName: String,
-        trackedLocations: List<akio.apps.myrun.data.location.api.model.Location>
+        trackedLocations: List<ActivityLocation>
     ): ActivityModel {
         val endTime = System.currentTimeMillis()
         val startTime = routeTrackingState.getTrackingStartTime()

@@ -38,7 +38,9 @@ class FirestoreActivityMapper @Inject constructor() {
 
         return input.run {
             runningData?.run {
-                RunningActivityModel(activityData, pace, cadence)
+                // TODO: Replace this with stored pace field when migration are done on firestore.
+                val fixedPace = (duration / 60000.0) / (distance / 1000)
+                RunningActivityModel(activityData, fixedPace, cadence)
             } ?: cyclingData?.run {
                 CyclingActivityModel(activityData, speed)
             }

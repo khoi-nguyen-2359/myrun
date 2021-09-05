@@ -90,7 +90,7 @@
     <string name="content_description_edit_profile_button">Edit Profile button</string>
     <string name="edit_user_profile_title">Edit Profile</string>
     <string name="user_feed_title">Feed</string>
-    <string name="home_upload_progress">Uploading %1$d activities.</string>
+    <string name="home_upload_progress">%1$d uploading activity</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>

@@ -3,9 +3,11 @@ package akio.apps.myrun.feature.routetracking.impl
 import akio.apps.common.data.LaunchCatchingDelegate
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.flowTimer
+import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
+import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.location.api.model.LocationRequestConfig
@@ -25,11 +27,15 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import java.util.Calendar
 import javax.inject.Inject
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class RouteTrackingViewModel @Inject constructor(
     private val application: Application,
@@ -46,12 +52,14 @@ class RouteTrackingViewModel @Inject constructor(
 
     // TODO: Will refactor this screen to Composable
     val isStopOptionDialogShowing: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val stickyCameraButtonState: MutableStateFlow<RouteTrackingActivity.CameraMovement> =
+        MutableStateFlow(RouteTrackingActivity.CameraMovement.StickyBounds)
 
     fun getLastLocationFlow(): Flow<Location> =
         locationDataSource.getLastLocationFlow()
 
-    private val _trackingLocationBatch = MutableLiveData<List<Location>>()
-    val trackingLocationBatch: LiveData<List<Location>> =
+    private val _trackingLocationBatch = MutableLiveData<List<ActivityLocation>>()
+    val trackingLocationBatch: LiveData<List<ActivityLocation>> =
         _trackingLocationBatch
 
     private val _trackingStats = MutableLiveData<RouteTrackingStats>()
@@ -70,6 +78,12 @@ class RouteTrackingViewModel @Inject constructor(
         ActivityType.Running to R.string.activity_name_running,
         ActivityType.Cycling to R.string.activity_name_cycling
     )
+
+    @OptIn(FlowPreview::class)
+    val locationUpdateFlow: Flow<List<Location>> =
+        getLocationRequestConfigFlow()
+            .flatMapConcat(locationDataSource::getLocationUpdate)
+            .onStart { emit(getLastLocationFlow().toList()) }
 
     fun resumeDataUpdates() {
         if (trackingStatus.value == RouteTrackingStatus.RESUMED) {
@@ -104,13 +118,8 @@ class RouteTrackingViewModel @Inject constructor(
         clearRouteTrackingStateUsecase.clear()
     }
 
-    suspend fun getLocationUpdate(): Flow<List<Location>> {
-        val locationRequest = getLocationRequestConfig()
-        return locationDataSource.getLocationUpdate(locationRequest)
-    }
-
-    suspend fun getLocationRequestConfig(): LocationRequestConfig =
-        routeTrackingConfiguration.getLocationRequestConfig().first()
+    fun getLocationRequestConfigFlow(): Flow<LocationRequestConfig> =
+        routeTrackingConfiguration.getLocationRequestConfig()
 
     private fun makeActivityName(activityType: ActivityType): String {
         val calendar = Calendar.getInstance()
@@ -144,6 +153,8 @@ class RouteTrackingViewModel @Inject constructor(
 
         val batch = getTrackedLocationsUsecase.getTrackedLocations(processedLocationCount)
         if (batch.isNotEmpty()) {
+            Timber.tag(LOG_TAG_LOCATION)
+                .d("[RouteTrackingViewModel] notifyLatestDataUpdate: ${batch.size}")
             _trackingLocationBatch.value = batch
             processedLocationCount += batch.size
         }

@@ -35,7 +35,7 @@ fun ProgressDialog(text: String) {
 @Composable
 private fun ProgressDialogContent(text: String) {
     Surface(shape = MaterialTheme.shapes.medium) {
-        Box(modifier = Modifier.padding(vertical = AppDimensions.rowVerticalSpacing)) {
+        Box(modifier = Modifier.padding(vertical = AppDimensions.rowVerticalPadding)) {
             ListItem(
                 icon = { CircularProgressIndicator() },
                 text = { Text(text = text) }
@@ -53,7 +53,7 @@ fun ErrorDialog(text: String) {
     }
     Dialog(onDismissRequest = { isShowing = false }) {
         Surface(shape = MaterialTheme.shapes.medium) {
-            Box(modifier = Modifier.padding(vertical = AppDimensions.rowVerticalSpacing)) {
+            Box(modifier = Modifier.padding(vertical = AppDimensions.rowVerticalPadding)) {
                 ListItem(
                     icon = {
                         Icon(
