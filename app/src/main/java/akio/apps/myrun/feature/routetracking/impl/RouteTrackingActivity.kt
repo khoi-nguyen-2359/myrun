@@ -242,7 +242,7 @@ class RouteTrackingActivity(
     private fun onTrackingStatusChanged(@RouteTrackingStatus trackingStatus: Int) {
         updateViews(trackingStatus)
         when (trackingStatus) {
-            RESUMED, PAUSED -> setCameraMovementAndUpdateUi(CameraMovement.StickyLocation, false)
+            RESUMED, PAUSED -> setCameraMovementAndUpdateUi(CameraMovement.StickyLocation)
         }
     }
 
