@@ -12,24 +12,24 @@ import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.google.android.libraries.maps.CameraUpdateFactory
-import com.google.android.libraries.maps.GoogleMap
-import com.google.android.libraries.maps.SupportMapFragment
-import com.google.android.libraries.maps.model.BitmapDescriptorFactory
-import com.google.android.libraries.maps.model.JointType
-import com.google.android.libraries.maps.model.LatLng
-import com.google.android.libraries.maps.model.LatLngBounds
-import com.google.android.libraries.maps.model.MapStyleOptions
-import com.google.android.libraries.maps.model.MarkerOptions
-import com.google.android.libraries.maps.model.PolylineOptions
-import com.google.android.libraries.maps.model.RoundCap
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.JointType
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.RoundCap
 import com.google.maps.android.PolyUtil
 import kotlin.coroutines.resume
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 class ActivityRouteMapActivity : AppCompatActivity() {
-    val viewBinding: ActivityActivityRouteMapBinding by lazy {
+    private val viewBinding: ActivityActivityRouteMapBinding by lazy {
         ActivityActivityRouteMapBinding.inflate(layoutInflater)
     }
 
@@ -81,21 +81,25 @@ class ActivityRouteMapActivity : AppCompatActivity() {
             context = this,
             drawableResId = R.drawable.ic_start_marker
         )
-        val startMarker = MarkerOptions()
-            .position(decodedPolyline[0])
-            .icon(BitmapDescriptorFactory.fromBitmap(startMarkerBitmap))
-            .anchor(0.5f, 0.5f)
-        map.addMarker(startMarker)
+        if (startMarkerBitmap != null) {
+            val startMarker = MarkerOptions()
+                .position(decodedPolyline[0])
+                .icon(BitmapDescriptorFactory.fromBitmap(startMarkerBitmap))
+                .anchor(0.5f, 0.5f)
+            map.addMarker(startMarker)
+        }
 
         val stopMarkerBitmap = createDrawableBitmap(
             context = this,
             drawableResId = R.drawable.ic_stop_marker
         )
-        val stopMarker = MarkerOptions()
-            .position(decodedPolyline.last())
-            .icon(BitmapDescriptorFactory.fromBitmap(stopMarkerBitmap))
-            .anchor(0.5f, 0.5f)
-        map.addMarker(stopMarker)
+        if (stopMarkerBitmap != null) {
+            val stopMarker = MarkerOptions()
+                .position(decodedPolyline.last())
+                .icon(BitmapDescriptorFactory.fromBitmap(stopMarkerBitmap))
+                .anchor(0.5f, 0.5f)
+            map.addMarker(stopMarker)
+        }
     }
 
     private fun drawRoutePolylineAndZoomToBounds() {
