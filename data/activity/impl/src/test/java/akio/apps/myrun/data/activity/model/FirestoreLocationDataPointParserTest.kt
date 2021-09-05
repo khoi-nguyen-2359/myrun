@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.activity.model
 
+import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.impl.model.FirestoreLocationDataPointParser
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -17,26 +18,26 @@ class FirestoreLocationDataPointParserTest {
     @Test
     fun testFlatten() {
         val locations = listOf(
-            akio.apps.myrun.data.activity.api.model.ActivityLocation(
-                "activityId",
+            ActivityLocation(
                 elapsedTime = 0,
                 latitude = 1.0,
                 longitude = 2.0,
-                altitude = 32.0
+                altitude = 32.0,
+                speed = 0.0
             ),
-            akio.apps.myrun.data.activity.api.model.ActivityLocation(
-                "activityId",
+            ActivityLocation(
                 elapsedTime = 4,
                 latitude = 5.0,
                 longitude = 6.0,
-                altitude = 71.0
+                altitude = 71.0,
+                speed = 0.0
             ),
-            akio.apps.myrun.data.activity.api.model.ActivityLocation(
-                "activityId",
+            ActivityLocation(
                 elapsedTime = 8,
                 latitude = 9.0,
                 longitude = 10.0,
-                altitude = 13.0
+                altitude = 13.0,
+                speed = 0.0
             )
         )
         val result = firestoreLocationDataPointParser.flatten(locations)
@@ -49,26 +50,26 @@ class FirestoreLocationDataPointParserTest {
         val locations = firestoreLocationDataPointParser.build(dataPoints)
         assertEquals(
             listOf(
-                akio.apps.myrun.data.activity.api.model.ActivityLocation(
-                    "activityId",
+                ActivityLocation(
                     elapsedTime = 0,
                     latitude = 1.0,
                     longitude = 2.0,
-                    altitude = 32.0
+                    altitude = 32.0,
+                    speed = 0.0
                 ),
-                akio.apps.myrun.data.activity.api.model.ActivityLocation(
-                    "activityId",
+                ActivityLocation(
                     elapsedTime = 4,
                     latitude = 5.0,
                     longitude = 6.0,
-                    altitude = 71.0
+                    altitude = 71.0,
+                    speed = 0.0
                 ),
-                akio.apps.myrun.data.activity.api.model.ActivityLocation(
-                    "activityId",
+                ActivityLocation(
                     elapsedTime = 8,
                     latitude = 9.0,
                     longitude = 10.0,
-                    altitude = 13.0
+                    altitude = 13.0,
+                    speed = 0.0
                 )
             ),
             locations
