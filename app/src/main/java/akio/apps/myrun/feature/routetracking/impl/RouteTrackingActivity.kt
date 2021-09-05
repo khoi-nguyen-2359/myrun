@@ -47,19 +47,19 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.drawToBitmap
 import androidx.lifecycle.lifecycleScope
-import com.google.android.libraries.maps.CameraUpdateFactory
-import com.google.android.libraries.maps.GoogleMap
-import com.google.android.libraries.maps.SupportMapFragment
-import com.google.android.libraries.maps.model.BitmapDescriptorFactory
-import com.google.android.libraries.maps.model.JointType
-import com.google.android.libraries.maps.model.LatLng
-import com.google.android.libraries.maps.model.LatLngBounds
-import com.google.android.libraries.maps.model.MapStyleOptions
-import com.google.android.libraries.maps.model.Marker
-import com.google.android.libraries.maps.model.MarkerOptions
-import com.google.android.libraries.maps.model.Polyline
-import com.google.android.libraries.maps.model.PolylineOptions
-import com.google.android.libraries.maps.model.RoundCap
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.JointType
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.RoundCap
 import kotlin.coroutines.resume
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -278,11 +278,13 @@ class RouteTrackingActivity(
             context = this,
             drawableResId = R.drawable.ic_start_marker
         )
-        val startMarker = MarkerOptions()
-            .position(startPointLocation.toGmsLatLng())
-            .icon(BitmapDescriptorFactory.fromBitmap(startMarkerBitmap))
-            .anchor(0.5f, 0.5f)
-        startPointMarker = mapView.addMarker(startMarker)
+        if (startMarkerBitmap != null) {
+            val startMarker = MarkerOptions()
+                .position(startPointLocation.toGmsLatLng())
+                .icon(BitmapDescriptorFactory.fromBitmap(startMarkerBitmap))
+                .anchor(0.5f, 0.5f)
+            startPointMarker = mapView.addMarker(startMarker)
+        }
     }
 
     private fun moveMapCameraOnTrackingLocationUpdate(batch: List<ActivityLocation>) {
@@ -437,11 +439,11 @@ class RouteTrackingActivity(
     private suspend fun captureGoogleMapViewSnapshot(cameraViewPortSize: Size): Bitmap? {
         if (!hasMapCameraBeenIdled)
             return null
-        val snapshot = suspendCancellableCoroutine<Bitmap> { continuation ->
+        val snapshot = suspendCancellableCoroutine<Bitmap?> { continuation ->
             mapView.snapshot { mapSnapshot ->
                 continuation.resume(mapSnapshot)
             }
-        }
+        } ?: return null
 
         val routeImage = withContext(Dispatchers.IO) {
             Bitmap.createBitmap(

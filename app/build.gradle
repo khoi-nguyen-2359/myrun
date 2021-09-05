@@ -110,7 +110,7 @@ dependencies {
     implementation project(':worker')
     implementation(libs.workManager) // still needed when using module 'worker'
 
-    implementation project(':libs:places-sdk')
+    implementation(libs.googlePlaces)
 
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.kotlinxCoroutinesPlayServices)

@@ -46,6 +46,8 @@ dependencies {
     implementation(project(':wiring'))
     implementation(project(':common:data'))
 
+    implementation(libs.constraintLayout)
+
     implementation(libs.bundles.compose)
     implementation(libs.accompanistPlaceholder)
     implementation(libs.accompanistInsets)

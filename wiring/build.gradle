@@ -56,7 +56,7 @@ dependencies {
     api(project(":data:user:api"))
     implementation(project(":data:user:impl"))
 
-    implementation project(':libs:places-sdk')
+    implementation(libs.googlePlaces)
 
     implementation(libs.timber)
     implementation(libs.javaXInject)
