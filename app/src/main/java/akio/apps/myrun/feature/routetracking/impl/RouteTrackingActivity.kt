@@ -184,21 +184,25 @@ class RouteTrackingActivity(
         )
     }
 
-    private fun updateStickyCamera(locationUpdate: List<Location>) {
+    private fun updateStickyCamera(locationUpdate: List<Location>, animate: Boolean = true) {
         Timber.d("Sticky Camera $cameraMovement")
         if (isMapCameraMoving) {
             return
         }
         when (cameraMovement) {
             CameraMovement.StickyLocation -> {
-                locationUpdate.lastOrNull()?.let(::recenterMap)
+                locationUpdate.lastOrNull()?.let {
+                    recenterMap(it, animate)
+                }
             }
             CameraMovement.StickyBounds -> {
                 val latLngBounds = trackingRouteCameraBounds.build()
                 if (latLngBounds != null) {
-                    recenterMap(latLngBounds, getCameraViewPortSize())
+                    recenterMap(latLngBounds, getCameraViewPortSize(), animate)
                 } else {
-                    locationUpdate.lastOrNull()?.let(::recenterZoomOutMap)
+                    locationUpdate.lastOrNull()?.let { location ->
+                        recenterZoomOutMap(location, animate)
+                    }
                 }
             }
             else -> {
@@ -206,7 +210,7 @@ class RouteTrackingActivity(
         }
     }
 
-    private fun recenterZoomOutMap(location: Location) {
+    private fun recenterZoomOutMap(location: Location, animate: Boolean) {
         if (!::mapView.isInitialized) {
             return
         }
@@ -215,15 +219,19 @@ class RouteTrackingActivity(
             location.toGmsLatLng(),
             MAX_MAP_ZOOM_LEVEL - 3
         )
-        mapView.animateCamera(cameraUpdate, DEFAULT_CAMERA_ANIMATE_DURATION, null)
+        if (animate) {
+            mapView.animateCamera(cameraUpdate, DEFAULT_CAMERA_ANIMATE_DURATION, null)
+        } else {
+            mapView.moveCamera(cameraUpdate)
+        }
     }
 
-    private fun recenterMap(location: Location) {
+    private fun recenterMap(location: Location, animate: Boolean) {
         if (!::mapView.isInitialized) {
             return
         }
         val bounds = LatLngBounds.builder().include(location.toGmsLatLng()).build()
-        recenterMap(bounds, getCameraViewPortSize())
+        recenterMap(bounds, getCameraViewPortSize(), animate)
     }
 
     private fun stopTrackingServiceAndFinish() {
@@ -234,17 +242,20 @@ class RouteTrackingActivity(
     private fun onTrackingStatusChanged(@RouteTrackingStatus trackingStatus: Int) {
         updateViews(trackingStatus)
         when (trackingStatus) {
-            RESUMED, PAUSED -> setCameraMovementAndUpdateUi(CameraMovement.StickyLocation)
+            RESUMED, PAUSED -> setCameraMovementAndUpdateUi(CameraMovement.StickyLocation, false)
         }
     }
 
-    private fun setCameraMovementAndUpdateUi(expectedMode: CameraMovement) {
+    private fun setCameraMovementAndUpdateUi(
+        expectedMode: CameraMovement,
+        animate: Boolean = true
+    ) {
         val prevCameraMovement = this.cameraMovement
         this.cameraMovement = expectedMode
         // move right after set mode value
         lifecycleScope.launch {
             val lastLocation = routeTrackingViewModel.getLastLocationFlow().first()
-            updateStickyCamera(listOf(lastLocation))
+            updateStickyCamera(listOf(lastLocation), animate)
         }
         val cameraButtonState = when (expectedMode) {
             CameraMovement.StickyLocation -> CameraMovement.StickyBounds
@@ -296,7 +307,11 @@ class RouteTrackingActivity(
         }
     }
 
-    private fun recenterMap(latLngBounds: LatLngBounds, cameraViewPortSize: Size) {
+    private fun recenterMap(
+        latLngBounds: LatLngBounds,
+        cameraViewPortSize: Size,
+        animate: Boolean
+    ) {
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(
             latLngBounds,
             cameraViewPortSize.width,
@@ -304,7 +319,11 @@ class RouteTrackingActivity(
             MAP_LATLNG_BOUND_PADDING
         )
 
-        mapView.animateCamera(cameraUpdate, DEFAULT_CAMERA_ANIMATE_DURATION, null)
+        if (animate) {
+            mapView.animateCamera(cameraUpdate, DEFAULT_CAMERA_ANIMATE_DURATION, null)
+        } else {
+            mapView.moveCamera(cameraUpdate)
+        }
     }
 
     private fun getCameraViewPortSize(): Size {
@@ -411,7 +430,7 @@ class RouteTrackingActivity(
     }
 
     private fun stopRouteTracking() {
-        setCameraMovementAndUpdateUi(CameraMovement.StickyBounds)
+        setCameraMovementAndUpdateUi(CameraMovement.StickyBounds, animate = false)
         routeTrackingViewModel.isStopOptionDialogShowing.value = true
     }
 
@@ -546,7 +565,7 @@ class RouteTrackingActivity(
             }
             setOnCameraMoveStartedListener { reason ->
                 if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
-                    setCameraMovementAndUpdateUi(CameraMovement.None)
+                    setCameraMovementAndUpdateUi(CameraMovement.None, false)
                 }
             }
             setOnMarkerClickListener { true } // avoid camera movement on marker click event
