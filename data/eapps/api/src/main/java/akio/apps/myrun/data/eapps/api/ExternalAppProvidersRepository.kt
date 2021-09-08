@@ -12,7 +12,7 @@ interface ExternalAppProvidersRepository {
 
     /**
      * Gets the flag of strava syncing status. This flag works in offline mode because is it
-     * fetched and stored together with strava token data.
+     * fetched and stored together with strava token data via [getStravaProviderToken]
      */
     suspend fun isStravaSyncEnabled(): Boolean
     fun getExternalProvidersFlow(accountId: String): Flow<Resource<out ExternalProviders>>
