@@ -29,7 +29,7 @@ accompanist = "0.17.0"
 composeNavigation = "2.4.0-alpha08"
 
 # google play services: https://developers.google.com/android/guides/releases
-playServicesGradlePlugin = "4.3.8"
+playServicesGradlePlugin = "4.3.10"  # https://developers.google.com/android/guides/google-services-plugin
 playServicesGcm = "17.0.0"
 playServicesLocation = "18.0.0"
 playServicesAuth = "19.2.0"
@@ -41,7 +41,7 @@ googlePlaces = "2.4.0"
 androidMapUtils = "2.2.5"
 
 # firebase
-firebaseBom = "28.3.1"
+firebaseBom = "28.4.0"
 crashlyticsGradlePlugin = "2.7.1"
 firebasePerf = "1.4.0"
 guava = "30.1.1-android"
