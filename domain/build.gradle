@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.androidGoogleMap)
 
     implementation(libs.timber)
+    implementation(libs.dagger)
 
     implementation(libs.kotlinxCoroutinesCore)
 

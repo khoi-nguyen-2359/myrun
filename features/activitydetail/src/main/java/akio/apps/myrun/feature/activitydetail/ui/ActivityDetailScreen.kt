@@ -200,7 +200,12 @@ fun RunSplitsTable(
                 modifier = Modifier.padding(vertical = 1.dp)
             ) {
                 val kmLabel = if (index == runSplits.size - 1) {
-                    String.format("%.1f", (totalDistance % 1000) / 1000)
+                    val rounded = String.format("%.1f", (totalDistance % 1000) / 1000)
+                    if (rounded == "1.0") {
+                        "${index + 1}"
+                    } else {
+                        rounded
+                    }
                 } else {
                     (index + 1).toString()
                 }

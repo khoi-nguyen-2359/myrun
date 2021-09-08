@@ -59,7 +59,8 @@
             android:textAllCaps="false"
             android:textColor="@color/darkText"
             app:icon="@drawable/ic_google_signin"
-            app:iconTint="@null" />
+            app:iconTint="@android:color/transparent"
+            app:iconTintMode="add"/>
 
         <Button
             android:letterSpacing="0"
@@ -71,7 +72,8 @@
             android:paddingVertical="@dimen/sign_in_option_vertical_padding"
             android:text="@string/sign_in_with_facebook_button"
             android:textAllCaps="false"
-            app:icon="@drawable/ic_facebook" />
+            app:icon="@drawable/ic_facebook"
+            app:iconTint="@android:color/white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

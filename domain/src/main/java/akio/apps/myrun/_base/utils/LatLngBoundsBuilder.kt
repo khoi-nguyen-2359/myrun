@@ -1,6 +1,6 @@
 package akio.apps.myrun._base.utils
 
-import com.google.android.libraries.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.LatLngBounds
 
 class LatLngBoundsBuilder() {
     private val internalBuilder: LatLngBounds.Builder = LatLngBounds.builder()
