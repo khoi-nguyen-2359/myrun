@@ -4,7 +4,7 @@ import akio.apps.myrun.data.activity.api.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
-import com.google.android.libraries.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import com.sweetzpot.tcxzpot.Activities
 import com.sweetzpot.tcxzpot.Cadence

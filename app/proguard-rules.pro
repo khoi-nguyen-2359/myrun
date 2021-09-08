@@ -60,7 +60,7 @@
 ##---------------End: proguard configuration for Gson  ----------
 
 # Google Map v3 Beta
--keep,allowoptimization class com.google.android.libraries.maps.** { *; }
+-keep,allowoptimization class com.google.android.gms.maps.** { *; }
 
 -keepattributes *Annotation*, InnerClasses
 

@@ -35,11 +35,11 @@ dependencies {
     implementation(project(":common:wiring"))
     implementation(project(":data:location:api"))
 
-    implementation(project(':libs:places-sdk'))
-    implementation(libs.bundles.placesDeps)
+    implementation(libs.googlePlaces)
     implementation(libs.androidGoogleMap)
 
     implementation(libs.timber)
+    implementation(libs.dagger)
 
     implementation(libs.kotlinxCoroutinesPlayServices)
     implementation(libs.kotlinxCoroutinesCore)

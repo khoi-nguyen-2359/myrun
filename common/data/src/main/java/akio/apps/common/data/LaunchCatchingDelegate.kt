@@ -36,7 +36,7 @@ class LaunchCatchingDelegateImpl : LaunchCatchingDelegate {
                 selectedProgressStateFlow.value = true
                 task()
             } catch (ex: Exception) {
-                Timber.d(ex)
+                Timber.e(ex)
                 selectedErrorStateFlow.value = Event(ex)
             } finally {
                 selectedProgressStateFlow.value = false

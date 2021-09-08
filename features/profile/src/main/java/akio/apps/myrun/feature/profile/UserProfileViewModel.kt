@@ -20,7 +20,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 
 class UserProfileViewModel @Inject constructor(
     private val application: Application,
@@ -42,9 +41,7 @@ class UserProfileViewModel @Inject constructor(
 
     val userProfileScreenStateFlow: Flow<UserProfileScreenState> =
         combine(
-            flow {
-                emit(getUserProfileUsecase.getUserProfileResource(savedStateHandle.getUserId()))
-            },
+            getUserProfileUsecase.getUserProfileFlow(savedStateHandle.getUserId()),
             getProviderTokensUsecase.getProviderTokensFlow(),
             editingUserProfileFormDataMutableStateFlow
         ) { initialUserProfileData, eappTokensResource, editingUserProfileFormData ->
