@@ -17,10 +17,14 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageException
+import com.google.firebase.storage.StorageException.ERROR_OBJECT_NOT_FOUND
+import com.google.firebase.storage.StorageReference
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
@@ -38,8 +42,7 @@ class FirebaseUserProfileRepository @Inject constructor(
 ) : UserProfileRepository {
 
     private fun getUserDocument(userId: String): DocumentReference {
-        return firebaseFirestore.collection(FIRESTORE_USERS_DOCUMENT)
-            .document(userId)
+        return firebaseFirestore.collection(FIRESTORE_USERS_DOCUMENT).document(userId)
     }
 
     private fun getAvatarStorage() = firebaseStorage.getReference(FIREBASE_STORAGE_USER_FOLDER)
@@ -47,14 +50,13 @@ class FirebaseUserProfileRepository @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getUserProfileFlow(userId: String): Flow<Resource<UserProfile>> =
         callbackFlow {
+            val photoUrl = getAvatarStorage().child(userId).getExistingDownloadUrl()?.toString()
             val listener = withContext(Dispatchers.Main.immediate) {
                 getUserDocument(userId).addSnapshotListener { snapshot, error ->
-                    snapshot?.toObject(FirestoreUser::class.java)
-                        ?.profile
-                        ?.run(firestoreUserProfileMapper::map)
-                        ?.let { userProfile ->
-                            trySendBlocking(Resource.Success(userProfile))
-                        }
+                    val fsUserProfile = snapshot?.toObject(FirestoreUser::class.java)?.profile
+                        ?: return@addSnapshotListener
+                    val userProfile = firestoreUserProfileMapper.map(fsUserProfile, photoUrl)
+                    trySendBlocking(Resource.Success(userProfile))
                     error?.let {
                         trySendBlocking(Resource.Error<UserProfile>(it))
                         close(it)
@@ -71,13 +73,18 @@ class FirebaseUserProfileRepository @Inject constructor(
             .flowOn(ioDispatcher)
 
     override suspend fun getUserProfile(userId: String): UserProfile = withContext(ioDispatcher) {
-        getUserDocument(userId)
-            .get()
-            .await()
-            .toObject(FirestoreUser::class.java)
-            ?.profile
-            ?.run(firestoreUserProfileMapper::map)
-            ?: throw UserProfileNotFoundError("Could not find userId $userId")
+        val fsUserProfileAsync = async {
+            getUserDocument(userId).get()
+                .await()
+                .toObject(FirestoreUser::class.java)
+                ?.profile
+                ?: throw UserProfileNotFoundError("Could not find userId $userId")
+        }
+
+        val photoUrlAsync = async {
+            getAvatarStorage().child(userId).getExistingDownloadUrl()?.toString()
+        }
+        firestoreUserProfileMapper.map(fsUserProfileAsync.await(), photoUrlAsync.await())
     }
 
     override suspend fun uploadUserAvatarImage(userId: String, imageFileUri: String): Uri? =
@@ -114,6 +121,19 @@ class FirebaseUserProfileRepository @Inject constructor(
             profileEditData.birthdate?.let(::birthdate)
         }
         getUserDocument(userId).set(updateMap, SetOptions.merge())
+    }
+
+    /**
+     * Gets the download url if reference is existing, otherwise returns null.
+     */
+    private suspend fun StorageReference.getExistingDownloadUrl(): Uri? = try {
+        downloadUrl.await()
+    } catch (ex: StorageException) {
+        if (ex.errorCode == ERROR_OBJECT_NOT_FOUND) {
+            null
+        } else {
+            throw ex
+        }
     }
 
     companion object {

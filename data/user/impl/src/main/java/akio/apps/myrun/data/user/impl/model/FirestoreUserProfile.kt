@@ -9,9 +9,6 @@ data class FirestoreUserProfile(
     @PropertyName(FirestoreUserProfileFields.FIELD_DISPLAY_NAME)
     val displayName: String = "",
 
-    @PropertyName(FirestoreUserProfileFields.FIELD_PHOTO_URL)
-    val photoUrl: String? = null,
-
     @PropertyName(FirestoreUserProfileFields.FIELD_GENDER_ID)
     val genderId: Int = FirestoreUserGender.Others.genderId,
 
