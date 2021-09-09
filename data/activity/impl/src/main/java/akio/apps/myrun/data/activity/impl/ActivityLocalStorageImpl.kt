@@ -44,6 +44,7 @@ import timber.log.Timber
 private val Context.prefDataStore: DataStore<Preferences> by
 preferencesDataStore("ActivityLocalStorageImpl")
 
+@OptIn(ExperimentalSerializationApi::class)
 class ActivityLocalStorageImpl @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
@@ -52,7 +53,6 @@ class ActivityLocalStorageImpl @Inject constructor(
 
     private val prefDataStore: DataStore<Preferences> = application.prefDataStore
 
-    @OptIn(ExperimentalSerializationApi::class)
     private val protoBuf = ProtoBuf {
         val module = SerializersModule {
             polymorphic(
