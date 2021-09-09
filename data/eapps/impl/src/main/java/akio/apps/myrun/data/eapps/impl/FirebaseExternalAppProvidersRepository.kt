@@ -52,7 +52,7 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
             .document(userUid)
     }
 
-    @ExperimentalCoroutinesApi
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getExternalProvidersFlow(
         accountId: String
     ): Flow<Resource<out ExternalProviders>> =

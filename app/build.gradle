@@ -152,9 +152,6 @@ dependencies {
 
     implementation(libs.timber)
 
-    implementation(libs.glide)
-    kapt(libs.glideCompiler)
-
     if (localProps.getProperty("leakcanary.enabled", "1") == "1") {
         debugImplementation(libs.leakCanary)
     }
