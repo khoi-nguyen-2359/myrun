@@ -25,7 +25,7 @@ import dagger.Component
     ]
 )
 interface HomeFeatureComponent {
-    fun userFeedViewModel(): UserTimelineViewModel
+    fun activityFeedViewModel(): UserTimelineViewModel
     fun homeViewModel(): HomeViewModel
 
     @Component.Factory

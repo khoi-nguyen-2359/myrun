@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.usertimeline.ui
 
+import akio.apps.common.feature.ui.px2dp
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
 import akio.apps.myrun.data.activity.api.model.ActivityModel
@@ -9,6 +10,8 @@ import akio.apps.myrun.feature.activitydetail.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.activitydetail.TrackingValueFormatter
 import akio.apps.myrun.feature.activitydetail.ui.ActivityRouteImage
 import akio.apps.myrun.feature.base.navigation.HomeNavigationDestination
+import akio.apps.myrun.feature.base.ui.AppColors
+import akio.apps.myrun.feature.home.ui.HomeScreenDimensions
 import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
 import akio.apps.myrun.feature.usertimeline.ui.TimelineColors.listBackground
 import akio.apps.myrun.feature.usertimeline.ui.TimelineDimensions.activityItemHorizontalMargin
@@ -24,14 +27,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -49,11 +56,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
@@ -65,6 +77,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -73,6 +87,9 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.rememberImagePainter
+import com.google.accompanist.insets.LocalWindowInsets
+import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 private object TimelineColors {
@@ -88,6 +105,72 @@ private object TimelineDimensions {
 }
 
 @Composable
+fun ActivityFeed(
+    userTimelineViewModel: UserTimelineViewModel,
+    contentPadding: PaddingValues,
+    onClickExportActivityFile: (ActivityModel) -> Unit,
+    navController: NavController,
+) {
+    val insets = LocalWindowInsets.current
+    val topBarHeightDp = HomeScreenDimensions.AppBarHeight + insets.systemBars.top.px2dp.dp
+    var topBarOffsetY by remember { mutableStateOf(0f) }
+    val topBarHeightPx = with(LocalDensity.current) { topBarHeightDp.roundToPx().toFloat() }
+
+    // insets may be updated => top bar height changes, so remember scroll connection with keys
+    val nestedScrollConnection = remember(topBarHeightPx) {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                val delta = available.y
+                val newOffset = topBarOffsetY + delta
+                topBarOffsetY = newOffset.coerceIn(-topBarHeightPx, 0f)
+                return Offset.Zero
+            }
+        }
+    }
+
+    val activityUploadBadge by userTimelineViewModel.activityUploadBadge.collectAsState(
+        initial = null
+    )
+
+    val feedListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(nestedScrollConnection)
+    ) {
+        UserTimeline(
+            userTimelineViewModel = userTimelineViewModel,
+            contentPadding = contentPadding.clone(
+                top = contentPadding.calculateTopPadding() + topBarHeightDp
+            ),
+            feedListState = feedListState,
+            onClickExportActivityFile = onClickExportActivityFile,
+            navController = navController
+        )
+
+        ActivityFeedTopBar(
+            activityUploadBadge,
+            navController,
+            { coroutineScope.launch { feedListState.animateScrollToItem(0) } },
+            Modifier
+                .height(topBarHeightDp)
+                .align(Alignment.TopCenter)
+                .offset { IntOffset(x = 0, y = topBarOffsetY.roundToInt()) }
+                .background(AppColors.primary)
+        )
+    }
+}
+
+private fun PaddingValues.clone(
+    start: Dp = calculateStartPadding(LayoutDirection.Ltr),
+    top: Dp = calculateTopPadding(),
+    end: Dp = calculateEndPadding(LayoutDirection.Ltr),
+    bottom: Dp = calculateBottomPadding(),
+): PaddingValues = PaddingValues(start, top, end, bottom)
+
+@Composable
 fun UserTimeline(
     userTimelineViewModel: UserTimelineViewModel,
     contentPadding: PaddingValues,
@@ -97,8 +180,9 @@ fun UserTimeline(
 ) {
     val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
     Timber.d("feed source load state ${lazyPagingItems.loadState.source}")
-    val isLoadingInitialData by userTimelineViewModel.isLoadingInitialData
-        .collectAsState(initial = false)
+    val isLoadingInitialData by userTimelineViewModel.isLoadingInitialData.collectAsState(
+        initial = false
+    )
     when {
         isLoadingInitialData ||
             (
@@ -262,7 +346,7 @@ private fun ActivityRouteImageBox(activity: ActivityModel) =
     }
 
 private fun createActivityFormatterList(
-    activityType: ActivityType
+    activityType: ActivityType,
 ): List<TrackingValueFormatter<*>> =
     when (activityType) {
         ActivityType.Running -> listOf(

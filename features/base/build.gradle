@@ -43,5 +43,5 @@ dependencies {
     implementation(libs.androidXAppCompat)
     implementation(libs.bundles.compose)
     implementation(libs.accompanistInsets)
-    testImplementation(libs.junit)
+    testImplementation(libs.kotlinTest)
 }
