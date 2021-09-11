@@ -1,66 +1,58 @@
 package akio.apps.myrun.feature.home.ui
 
 import akio.apps.common.feature.ui.px2dp
+import akio.apps.common.feature.viewmodel.viewModelProvider
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.ActivityModel
-import akio.apps.myrun.feature.base.navigation.HomeNavigationDestination
-import akio.apps.myrun.feature.base.ui.AppBarIconButton
-import akio.apps.myrun.feature.base.ui.AppColors
-import akio.apps.myrun.feature.base.ui.AppDimensions
 import akio.apps.myrun.feature.base.ui.AppTheme
-import akio.apps.myrun.feature.home.ui.HomeScreenColors.uploadingBadgeContentColor
+import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
+import akio.apps.myrun.feature.home._di.DaggerHomeFeatureComponent
+import akio.apps.myrun.feature.home.navigation.HomeTabNavDestinationInfo
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.AppBarHeight
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.FabSize
-import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
-import akio.apps.myrun.feature.usertimeline.ui.UserTimeline
-import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import akio.apps.myrun.feature.userhome.ui.UserHome
+import akio.apps.myrun.feature.usertimeline.ui.ActivityFeed
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.DropdownMenu
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material.icons.sharp.CheckCircleOutline
+import androidx.compose.material.icons.sharp.Home
+import androidx.compose.material.icons.sharp.Timeline
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.LocalWindowInsets
 import kotlin.math.roundToInt
-import kotlinx.coroutines.launch
 
 object HomeScreenDimensions {
     val AppBarHeight = 56.dp
@@ -71,63 +63,66 @@ object HomeScreenColors {
     val uploadingBadgeContentColor = Color(0xffffffff)
 }
 
+private enum class HomeNavItemInfo(
+    @StringRes
+    val label: Int,
+    val icon: ImageVector,
+    val navInfo: HomeTabNavDestinationInfo,
+) {
+    ActivityFeed(
+        label = R.string.home_nav_activity_feed_tab_label,
+        icon = Icons.Sharp.Timeline,
+        navInfo = HomeTabNavDestinationInfo.ActivityFeedTab
+    ),
+    UserHome(
+        label = R.string.home_nav_user_home_tab_label,
+        icon = Icons.Sharp.Home,
+        navInfo = HomeTabNavDestinationInfo.UserHomeTab
+    )
+}
+
+@Suppress("UNUSED_PARAMETER")
 @Composable
 fun HomeScreen(
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (ActivityModel) -> Unit,
-    navController: NavController,
-    userTimelineViewModel: UserTimelineViewModel,
+    appNavController: NavController,
 ) = AppTheme {
     val insets = LocalWindowInsets.current
-    val topBarHeightDp = AppBarHeight + insets.systemBars.top.px2dp.dp
-    val topBarHeightPx = with(LocalDensity.current) { topBarHeightDp.roundToPx().toFloat() }
-    val fabBoxHeightDp = FabSize * 4 / 3 + insets.systemBars.bottom.px2dp.dp
+    val fabBoxHeightDp = FabSize * 4 / 3 + AppBarHeight + insets.systemBars.bottom.px2dp.dp
     val fabBoxSizePx = with(LocalDensity.current) { fabBoxHeightDp.roundToPx().toFloat() }
-    var topBarOffsetY by remember { mutableStateOf(0f) }
     var fabOffsetY by remember { mutableStateOf(0f) }
 
     // insets may be updated, so remember scroll connection with keys
-    val nestedScrollConnection = remember(topBarHeightPx, fabBoxSizePx) {
+    val nestedScrollConnection = remember(fabBoxSizePx) {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 val delta = available.y
-                var newOffset = topBarOffsetY + delta
-                topBarOffsetY = newOffset.coerceIn(-topBarHeightPx, 0f)
-                newOffset = fabOffsetY - delta
+                val newOffset = fabOffsetY - delta
                 fabOffsetY = newOffset.coerceIn(0f, fabBoxSizePx)
                 return Offset.Zero
             }
         }
     }
-    val activityStorageCount by userTimelineViewModel.activityUploadBadge
-        .collectAsState(initial = null)
-    val feedListState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
+    val homeNavController = rememberNavController()
     Box(
         modifier = Modifier
             .fillMaxSize()
             .nestedScroll(nestedScrollConnection)
     ) {
-        UserTimeline(
-            userTimelineViewModel,
-            PaddingValues(
-                top = topBarHeightDp,
-                bottom = fabBoxHeightDp // avoid the bottom bar
-            ),
-            feedListState,
-            onClickExportActivityFile,
-            navController
-        )
-        HomeTopBar(
-            activityStorageCount,
-            navController,
-            { coroutineScope.launch { feedListState.animateScrollToItem(0) } },
-            Modifier
-                .height(topBarHeightDp)
-                .align(Alignment.TopCenter)
-                .offset { IntOffset(x = 0, y = topBarOffsetY.roundToInt()) }
-                .background(AppColors.primary)
-        )
+        NavHost(
+            modifier = Modifier.fillMaxSize(),
+            navController = homeNavController,
+            startDestination = HomeTabNavDestinationInfo.ActivityFeedTab.route
+        ) {
+            addActivityFeedDestination(
+                contentPadding = PaddingValues(bottom = fabBoxHeightDp),
+                onClickExportActivityFile = onClickExportActivityFile,
+                navController = appNavController
+            )
+
+            addUserHomeDestination()
+        }
         Box(
             modifier = Modifier
                 .height(fabBoxHeightDp)
@@ -136,113 +131,67 @@ fun HomeScreen(
         ) {
             HomeFloatingActionButton(onClickFloatingActionButton)
         }
+
+        HomeBottomNavBar(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            homeNavController
+        )
     }
 }
 
-@Composable
-private fun UploadInProgressBadge(count: Int) {
-    var isUploadInfoPopupShowing by remember { mutableStateOf(false) }
-    Box(
-        modifier = Modifier
-            .size(AppBarHeight)
-            .clickable { isUploadInfoPopupShowing = true }
-            .padding(AppDimensions.iconButtonPadding),
-        contentAlignment = Alignment.Center
+private fun NavGraphBuilder.addUserHomeDestination() {
+    composable(
+        route = HomeTabNavDestinationInfo.UserHomeTab.route,
+        arguments = HomeTabNavDestinationInfo.UserHomeTab.arguments
     ) {
-        LinearProgressIndicator(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(2.dp)
-                .align(Alignment.BottomCenter),
-            color = uploadingBadgeContentColor
-        )
-        Text(
-            text = "$count",
-            fontWeight = FontWeight.Black,
-            fontSize = 11.sp,
-            color = uploadingBadgeContentColor
-        )
-        DropdownMenu(
-            modifier = Modifier
-                .background(Color.Black)
-                .padding(horizontal = 8.dp),
-            expanded = isUploadInfoPopupShowing,
-            onDismissRequest = { isUploadInfoPopupShowing = false },
-        ) {
-            val popupMessage = stringResource(R.string.home_upload_progress, count)
-            Text(
-                text = popupMessage,
-                color = Color.White,
-                fontSize = 12.sp
-            )
-        }
+        UserHome()
     }
 }
 
-@Preview
 @Composable
-private fun PreviewUploadingBadge() = UploadInProgressBadge(count = 3)
-
-@Composable
-private fun HomeTopBar(
-    activityUploadBadge: UserTimelineViewModel.ActivityUploadBadgeStatus?,
-    navController: NavController,
-    onClickUploadCompleteBadge: () -> Unit,
+private fun HomeBottomNavBar(
     modifier: Modifier = Modifier,
+    homeNavController: NavHostController,
 ) {
-    Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
-        TopAppBar(
-            title = {
-                Text(
-                    stringResource(id = R.string.user_feed_title),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = Icons.Rounded.Settings.defaultWidth)
+    Column(modifier = modifier) {
+        BottomNavigation {
+            HomeNavItemInfo.values().forEach { itemInfo ->
+                BottomNavigationItem(
+                    selected = true,
+                    onClick = {
+                        homeNavController.navigate(itemInfo.navInfo.route) {
+                            popUpTo(itemInfo.navInfo.route)
+                            launchSingleTop = true
+                        }
+                    },
+                    icon = { Icon(itemInfo.icon, "") },
+                    label = { Text(text = stringResource(id = itemInfo.label)) }
                 )
-            },
-            actions = {
-                ActivityUploadNotifierBadge(activityUploadBadge, onClickUploadCompleteBadge)
-                AppBarIconButton(Icons.Rounded.Settings) {
-                    navController.navigate(
-                        HomeNavigationDestination.Profile.routeWithUserId(null)
-                    )
-                }
-            }
-        )
-    }
-}
-
-@Composable
-private fun ActivityUploadNotifierBadge(
-    activityUploadBadge: UserTimelineViewModel.ActivityUploadBadgeStatus?,
-    onClickUploadCompleteBadge: () -> Unit,
-) {
-    Crossfade(targetState = activityUploadBadge) {
-        when (it) {
-            is UserTimelineViewModel.ActivityUploadBadgeStatus.InProgress -> {
-                UploadInProgressBadge(count = it.activityCount)
-            }
-            UserTimelineViewModel.ActivityUploadBadgeStatus.Complete -> {
-                UploadCompleteBadge(onClickUploadCompleteBadge)
-            }
-            else -> {
-                // render void
             }
         }
+        NavigationBarSpacer()
     }
 }
 
-@Composable
-private fun UploadCompleteBadge(onClickUploadCompleteBadge: () -> Unit) {
-    var isDismissed by remember { mutableStateOf(false) }
-    if (isDismissed) {
-        return
-    }
-    AppBarIconButton(
-        iconImageVector = Icons.Sharp.CheckCircleOutline
-    ) {
-        onClickUploadCompleteBadge()
-        isDismissed = true
+private fun NavGraphBuilder.addActivityFeedDestination(
+    contentPadding: PaddingValues,
+    onClickExportActivityFile: (ActivityModel) -> Unit,
+    navController: NavController,
+) {
+    composable(
+        route = HomeTabNavDestinationInfo.ActivityFeedTab.route,
+        arguments = HomeTabNavDestinationInfo.ActivityFeedTab.arguments
+    ) { backstackEntry ->
+        val diComponent = remember { DaggerHomeFeatureComponent.factory().create() }
+        val userTimelineViewModel = backstackEntry.viewModelProvider {
+            diComponent.activityFeedViewModel()
+        }
+        ActivityFeed(
+            userTimelineViewModel = userTimelineViewModel,
+            contentPadding = contentPadding,
+            onClickExportActivityFile = onClickExportActivityFile,
+            navController = navController
+        )
     }
 }
 
@@ -254,11 +203,3 @@ private fun HomeFloatingActionButton(onClick: () -> Unit, modifier: Modifier = M
             contentDescription = "Floating action button on bottom bar"
         )
     }
-
-@Preview
-@Composable
-private fun PreviewTopBar() = HomeTopBar(
-    activityUploadBadge = UserTimelineViewModel.ActivityUploadBadgeStatus.Complete,
-    rememberNavController(),
-    {}
-)

@@ -1,13 +1,11 @@
 package akio.apps.myrun.feature.home.ui
 
 import akio.apps.common.feature.viewmodel.savedStateViewModelProvider
-import akio.apps.common.feature.viewmodel.viewModelProvider
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.DaggerActivityDetailFeatureComponent
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.base.navigation.HomeNavigationDestination
-import akio.apps.myrun.feature.home._di.DaggerHomeFeatureComponent
 import akio.apps.myrun.feature.profile.DaggerUserProfileFeatureComponent
 import akio.apps.myrun.feature.profile.UserProfileViewModel
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
@@ -104,15 +102,11 @@ private fun NavGraphBuilder.addHomeDestination(
         enterTransition = { _, _ -> HomeNavigationTransitionDefaults.enterTransition },
         popEnterTransition = { _, _ -> HomeNavigationTransitionDefaults.popEnterTransition },
         popExitTransition = { _, _ -> HomeNavigationTransitionDefaults.popExitTransition }
-    ) { backStackEntry ->
-        val userFeedViewModel = backStackEntry.viewModelProvider {
-            DaggerHomeFeatureComponent.factory().create().userFeedViewModel()
-        }
+    ) {
         HomeScreen(
             onClickFloatingActionButton,
             onClickExportActivityFile,
-            navController,
-            userFeedViewModel
+            navController
         )
     }
 }
