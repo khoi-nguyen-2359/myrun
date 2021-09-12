@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.usertimeline.ui
+package akio.apps.myrun.feature.feed.ui
 
 import akio.apps.common.feature.ui.px2dp
 import akio.apps.myrun.R
@@ -9,15 +9,15 @@ import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.feature.activitydetail.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.activitydetail.TrackingValueFormatter
 import akio.apps.myrun.feature.activitydetail.ui.ActivityRouteImage
-import akio.apps.myrun.feature.base.navigation.HomeNavigationDestination
+import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppColors
+import akio.apps.myrun.feature.feed.impl.ActivityFeedViewModel
+import akio.apps.myrun.feature.feed.ui.FeedColors.listBackground
+import akio.apps.myrun.feature.feed.ui.FeedDimensions.activityItemHorizontalMargin
+import akio.apps.myrun.feature.feed.ui.FeedDimensions.activityItemHorizontalPadding
+import akio.apps.myrun.feature.feed.ui.FeedDimensions.activityItemVerticalMargin
+import akio.apps.myrun.feature.feed.ui.FeedDimensions.activityItemVerticalPadding
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions
-import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
-import akio.apps.myrun.feature.usertimeline.ui.TimelineColors.listBackground
-import akio.apps.myrun.feature.usertimeline.ui.TimelineDimensions.activityItemHorizontalMargin
-import akio.apps.myrun.feature.usertimeline.ui.TimelineDimensions.activityItemHorizontalPadding
-import akio.apps.myrun.feature.usertimeline.ui.TimelineDimensions.activityItemVerticalMargin
-import akio.apps.myrun.feature.usertimeline.ui.TimelineDimensions.activityItemVerticalPadding
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -92,12 +92,11 @@ import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-private object TimelineColors {
+private object FeedColors {
     val listBackground: Color = Color.White
 }
 
-private object TimelineDimensions {
-    val timelineItemCornerRadius: Dp = 6.dp
+private object FeedDimensions {
     val activityItemHorizontalMargin: Dp = 0.dp
     val activityItemVerticalMargin: Dp = 12.dp
     val activityItemHorizontalPadding: Dp = 16.dp
@@ -106,7 +105,7 @@ private object TimelineDimensions {
 
 @Composable
 fun ActivityFeed(
-    userTimelineViewModel: UserTimelineViewModel,
+    activityFeedViewModel: ActivityFeedViewModel,
     contentPadding: PaddingValues,
     onClickExportActivityFile: (ActivityModel) -> Unit,
     navController: NavController,
@@ -128,7 +127,7 @@ fun ActivityFeed(
         }
     }
 
-    val activityUploadBadge by userTimelineViewModel.activityUploadBadge.collectAsState(
+    val activityUploadBadge by activityFeedViewModel.activityUploadBadge.collectAsState(
         initial = null
     )
 
@@ -140,8 +139,8 @@ fun ActivityFeed(
             .fillMaxSize()
             .nestedScroll(nestedScrollConnection)
     ) {
-        UserTimeline(
-            userTimelineViewModel = userTimelineViewModel,
+        ActivityFeed(
+            activityFeedViewModel = activityFeedViewModel,
             contentPadding = contentPadding.clone(
                 top = contentPadding.calculateTopPadding() + topBarHeightDp
             ),
@@ -171,16 +170,16 @@ private fun PaddingValues.clone(
 ): PaddingValues = PaddingValues(start, top, end, bottom)
 
 @Composable
-fun UserTimeline(
-    userTimelineViewModel: UserTimelineViewModel,
+fun ActivityFeed(
+    activityFeedViewModel: ActivityFeedViewModel,
     contentPadding: PaddingValues,
     feedListState: LazyListState,
     onClickExportActivityFile: (ActivityModel) -> Unit,
     navController: NavController,
 ) {
-    val lazyPagingItems = userTimelineViewModel.myActivityList.collectAsLazyPagingItems()
+    val lazyPagingItems = activityFeedViewModel.myActivityList.collectAsLazyPagingItems()
     Timber.d("feed source load state ${lazyPagingItems.loadState.source}")
-    val isLoadingInitialData by userTimelineViewModel.isLoadingInitialData.collectAsState(
+    val isLoadingInitialData by activityFeedViewModel.isLoadingInitialData.collectAsState(
         initial = false
     )
     when {
@@ -193,12 +192,12 @@ fun UserTimeline(
         }
         lazyPagingItems.loadState.append.endOfPaginationReached &&
             lazyPagingItems.itemCount == 0 -> {
-            UserTimelineEmptyMessage(
+            ActivityFeedEmptyMessage(
                 Modifier.padding(bottom = contentPadding.calculateBottomPadding() + 8.dp)
             )
         }
-        else -> UserTimelineActivityList(
-            userTimelineViewModel,
+        else -> ActivityFeedItemList(
+            activityFeedViewModel,
             contentPadding,
             feedListState,
             lazyPagingItems,
@@ -209,8 +208,8 @@ fun UserTimeline(
 }
 
 @Composable
-private fun UserTimelineActivityList(
-    userTimelineViewModel: UserTimelineViewModel,
+private fun ActivityFeedItemList(
+    activityFeedViewModel: ActivityFeedViewModel,
     contentPadding: PaddingValues,
     feedListState: LazyListState,
     lazyPagingItems: LazyPagingItems<ActivityModel>,
@@ -232,19 +231,19 @@ private fun UserTimelineActivityList(
         ) { activity ->
             if (activity != null) {
                 val activityDisplayPlaceName = remember {
-                    userTimelineViewModel.getActivityDisplayPlaceName(activity)
+                    activityFeedViewModel.getActivityDisplayPlaceName(activity)
                 }
-                TimelineActivityItem(
+                FeedActivityItem(
                     activity, activityDisplayPlaceName,
                     { activityModel ->
-                        val route = HomeNavigationDestination.ActivityDetail.routeWithActivityId(
+                        val route = HomeNavDestination.ActivityDetail.routeWithActivityId(
                             activityModel.id
                         )
                         navController.navigate(route)
                     },
                     { onClickExportActivityFile(activity) },
                     {
-                        val route = HomeNavigationDestination.Profile.routeWithUserId(
+                        val route = HomeNavDestination.Profile.routeWithUserId(
                             activity.athleteInfo.userId
                         )
                         navController.navigate(route)
@@ -260,7 +259,7 @@ private fun UserTimelineActivityList(
 }
 
 @Composable
-private fun UserTimelineEmptyMessage(modifier: Modifier = Modifier) = Box(
+private fun ActivityFeedEmptyMessage(modifier: Modifier = Modifier) = Box(
     modifier = modifier
         .fillMaxWidth()
         .fillMaxHeight()
@@ -270,7 +269,7 @@ private fun UserTimelineEmptyMessage(modifier: Modifier = Modifier) = Box(
         modifier = Modifier
             .align(Alignment.BottomCenter)
             .padding(horizontal = dimensionResource(R.dimen.common_page_horizontal_padding)),
-        color = colorResource(R.color.user_timeline_instruction_text),
+        color = colorResource(R.color.activity_feed_instruction_text),
         fontSize = 30.sp,
         fontStyle = FontStyle.Italic,
         fontWeight = FontWeight.Bold,
@@ -296,8 +295,8 @@ private fun LoadingItem() = Column(
     CircularProgressIndicator()
     Spacer(modifier = Modifier.height(10.dp))
     Text(
-        text = stringResource(id = R.string.user_timeline_loading_item_message),
-        color = colorResource(id = R.color.user_timeline_instruction_text),
+        text = stringResource(id = R.string.activity_feed_loading_item_message),
+        color = colorResource(id = R.color.activity_feed_instruction_text),
         fontSize = 15.sp
     )
 }
@@ -307,13 +306,13 @@ private fun LoadingItem() = Column(
 private fun LoadingItemPreview() = LoadingItem()
 
 @Composable
-private fun TimelineActivityItem(
+private fun FeedActivityItem(
     activity: ActivityModel,
     activityDisplayPlaceName: String,
     onClickActivityAction: (ActivityModel) -> Unit,
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
-) = TimelineItem {
+) = FeedItem {
     Column(
         modifier = Modifier.clickable {
             onClickActivityAction(activity)
@@ -336,7 +335,7 @@ private fun TimelineActivityItem(
 private fun ActivityRouteImageBox(activity: ActivityModel) =
     Box(contentAlignment = Alignment.TopStart) {
         ActivityRouteImage(activity)
-        TimelineActivityPerformanceRow(
+        ActivityPerformanceRow(
             activity,
             modifier = Modifier.padding(
                 horizontal = activityItemHorizontalPadding,
@@ -363,7 +362,7 @@ private fun createActivityFormatterList(
 private const val PERFORMANCE_VALUE_DELIM = " - "
 
 @Composable
-private fun TimelineActivityPerformanceRow(activity: ActivityModel, modifier: Modifier = Modifier) {
+private fun ActivityPerformanceRow(activity: ActivityModel, modifier: Modifier = Modifier) {
     var isExpanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val valueFormatterList = remember { createActivityFormatterList(activity.activityType) }
@@ -401,8 +400,8 @@ private fun TimelineActivityPerformanceRow(activity: ActivityModel, modifier: Mo
 
 @Preview
 @Composable
-private fun PreviewTimelineActivityItem() {
-    TimelineActivityItem(
+private fun PreviewFeedActivityItem() {
+    FeedActivityItem(
         activity = RunningActivityModel(
             activityData = ActivityDataModel(
                 id = "id",
@@ -570,7 +569,7 @@ private fun UserAvatarImage(
 }
 
 @Composable
-private fun TimelineItem(content: @Composable () -> Unit) = Box(
+private fun FeedItem(content: @Composable () -> Unit) = Box(
     modifier = Modifier.padding(
         horizontal = activityItemHorizontalMargin,
         vertical = activityItemVerticalMargin
@@ -578,7 +577,6 @@ private fun TimelineItem(content: @Composable () -> Unit) = Box(
 ) {
     Surface(
         elevation = 2.dp,
-//        shape = RoundedCornerShape(timelineItemCornerRadius),
         content = content
     )
 }

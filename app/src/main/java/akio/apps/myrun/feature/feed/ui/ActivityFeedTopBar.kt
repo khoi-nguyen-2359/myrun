@@ -1,12 +1,12 @@
-package akio.apps.myrun.feature.usertimeline.ui
+package akio.apps.myrun.feature.feed.ui
 
 import akio.apps.myrun.R
-import akio.apps.myrun.feature.base.navigation.HomeNavigationDestination
+import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppBarIconButton
 import akio.apps.myrun.feature.base.ui.AppDimensions
+import akio.apps.myrun.feature.feed.impl.ActivityFeedViewModel
 import akio.apps.myrun.feature.home.ui.HomeScreenColors
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions
-import akio.apps.myrun.feature.usertimeline.impl.UserTimelineViewModel
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,7 +38,7 @@ import androidx.navigation.NavController
 
 @Composable
 fun ActivityFeedTopBar(
-    activityUploadBadge: UserTimelineViewModel.ActivityUploadBadgeStatus?,
+    activityUploadBadge: ActivityFeedViewModel.ActivityUploadBadgeStatus?,
     navController: NavController,
     onClickUploadCompleteBadge: () -> Unit,
     modifier: Modifier = Modifier,
@@ -57,7 +57,7 @@ fun ActivityFeedTopBar(
                 ActivityUploadNotifierBadge(activityUploadBadge, onClickUploadCompleteBadge)
                 AppBarIconButton(Icons.Rounded.Settings) {
                     navController.navigate(
-                        HomeNavigationDestination.Profile.routeWithUserId(null)
+                        HomeNavDestination.Profile.routeWithUserId(null)
                     )
                 }
             }
@@ -67,15 +67,15 @@ fun ActivityFeedTopBar(
 
 @Composable
 private fun ActivityUploadNotifierBadge(
-    activityUploadBadge: UserTimelineViewModel.ActivityUploadBadgeStatus?,
+    activityUploadBadge: ActivityFeedViewModel.ActivityUploadBadgeStatus?,
     onClickUploadCompleteBadge: () -> Unit,
 ) {
     Crossfade(targetState = activityUploadBadge) {
         when (it) {
-            is UserTimelineViewModel.ActivityUploadBadgeStatus.InProgress -> {
+            is ActivityFeedViewModel.ActivityUploadBadgeStatus.InProgress -> {
                 UploadInProgressBadge(count = it.activityCount)
             }
-            UserTimelineViewModel.ActivityUploadBadgeStatus.Complete -> {
+            ActivityFeedViewModel.ActivityUploadBadgeStatus.Complete -> {
                 UploadCompleteBadge(onClickUploadCompleteBadge)
             }
             else -> {

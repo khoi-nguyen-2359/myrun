@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.base.navigation
 
 import androidx.navigation.NavType
+import androidx.navigation.compose.NamedNavArgument
 import androidx.navigation.compose.navArgument
 import kotlin.test.assertEquals
 import org.junit.Test
@@ -10,9 +11,8 @@ class NavDestinationInfoTest {
 
     @Test
     fun getRouteWithRequiredAndOptionalArguments() {
-        navDestinationInfo = object : NavDestinationInfo(
-            routeName = "defaultRouteName",
-            arguments = listOf(
+        navDestinationInfo = object : NavDestinationInfo(routeName = "defaultRouteName") {
+            override val arguments: List<NamedNavArgument> = listOf(
                 navArgument("required_arg01") {
                     type = NavType.StringType
                 },
@@ -28,7 +28,7 @@ class NavDestinationInfoTest {
                     defaultValue = "arg02"
                 }
             )
-        ) {}
+        }
 
         assertEquals(
             "defaultRouteName" +
@@ -42,10 +42,9 @@ class NavDestinationInfoTest {
 
     @Test
     fun getRouteWithoutArguments() {
-        navDestinationInfo = object : NavDestinationInfo(
-            routeName = "defaultRouteName",
-            arguments = emptyList()
-        ) {}
+        navDestinationInfo = object : NavDestinationInfo(routeName = "defaultRouteName") {
+            override val arguments: List<NamedNavArgument> = emptyList()
+        }
 
         assertEquals("defaultRouteName", navDestinationInfo.route)
     }

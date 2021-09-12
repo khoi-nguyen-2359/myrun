@@ -5,7 +5,7 @@ import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
 import akio.apps.myrun.feature.activitydetail.R
 import akio.apps.myrun.feature.activitydetail.TrackingValueFormatter
-import akio.apps.myrun.feature.base.navigation.HomeNavigationDestination
+import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
 import akio.apps.myrun.feature.base.ui.AppTheme
@@ -246,7 +246,7 @@ fun navigateToActivityMap(context: Context, encodedPolyline: String) {
 }
 
 private fun NavController.navigateToProfile(userId: String) {
-    navigate(HomeNavigationDestination.Profile.routeWithUserId(userId))
+    navigate(HomeNavDestination.Profile.routeWithUserId(userId))
 }
 
 @Composable

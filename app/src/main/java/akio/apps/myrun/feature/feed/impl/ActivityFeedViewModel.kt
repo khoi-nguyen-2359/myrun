@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.usertimeline.impl
+package akio.apps.myrun.feature.feed.impl
 
 import akio.apps.common.data.Event
 import akio.apps.common.data.LaunchCatchingDelegate
@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class UserTimelineViewModel @Inject constructor(
+class ActivityFeedViewModel @Inject constructor(
     private val activityPagingSourceFactory: ActivityPagingSourceFactory,
     private val makeActivityPlaceNameUsecase: MakeActivityPlaceNameUsecase,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,

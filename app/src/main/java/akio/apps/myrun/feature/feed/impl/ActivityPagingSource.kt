@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.usertimeline.impl
+package akio.apps.myrun.feature.feed.impl
 
 import akio.apps.common.data.Resource
 import akio.apps.myrun.data.activity.api.model.ActivityModel
