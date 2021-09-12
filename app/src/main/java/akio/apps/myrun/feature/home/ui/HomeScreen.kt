@@ -6,12 +6,11 @@ import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
+import akio.apps.myrun.feature.feed.ui.ActivityFeed
 import akio.apps.myrun.feature.home._di.DaggerHomeFeatureComponent
-import akio.apps.myrun.feature.home.navigation.HomeTabNavDestinationInfo
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.AppBarHeight
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.FabSize
 import akio.apps.myrun.feature.userhome.ui.UserHome
-import akio.apps.myrun.feature.usertimeline.ui.ActivityFeed
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,10 +45,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.LocalWindowInsets
 import kotlin.math.roundToInt
@@ -67,21 +69,20 @@ private enum class HomeNavItemInfo(
     @StringRes
     val label: Int,
     val icon: ImageVector,
-    val navInfo: HomeTabNavDestinationInfo,
+    val route: String,
 ) {
     ActivityFeed(
         label = R.string.home_nav_activity_feed_tab_label,
         icon = Icons.Sharp.Timeline,
-        navInfo = HomeTabNavDestinationInfo.ActivityFeedTab
+        route = "activityFeed"
     ),
     UserHome(
         label = R.string.home_nav_user_home_tab_label,
         icon = Icons.Sharp.Home,
-        navInfo = HomeTabNavDestinationInfo.UserHomeTab
+        route = "userHome"
     )
 }
 
-@Suppress("UNUSED_PARAMETER")
 @Composable
 fun HomeScreen(
     onClickFloatingActionButton: () -> Unit,
@@ -110,19 +111,12 @@ fun HomeScreen(
             .fillMaxSize()
             .nestedScroll(nestedScrollConnection)
     ) {
-        NavHost(
-            modifier = Modifier.fillMaxSize(),
-            navController = homeNavController,
-            startDestination = HomeTabNavDestinationInfo.ActivityFeedTab.route
-        ) {
-            addActivityFeedDestination(
-                contentPadding = PaddingValues(bottom = fabBoxHeightDp),
-                onClickExportActivityFile = onClickExportActivityFile,
-                navController = appNavController
-            )
-
-            addUserHomeDestination()
-        }
+        HomeNavHost(
+            homeNavController,
+            onClickExportActivityFile,
+            appNavController,
+            PaddingValues(bottom = fabBoxHeightDp)
+        )
         Box(
             modifier = Modifier
                 .height(fabBoxHeightDp)
@@ -139,11 +133,30 @@ fun HomeScreen(
     }
 }
 
-private fun NavGraphBuilder.addUserHomeDestination() {
-    composable(
-        route = HomeTabNavDestinationInfo.UserHomeTab.route,
-        arguments = HomeTabNavDestinationInfo.UserHomeTab.arguments
+@Composable
+private fun HomeNavHost(
+    homeNavController: NavHostController,
+    onClickExportActivityFile: (ActivityModel) -> Unit,
+    appNavController: NavController,
+    contentPaddings: PaddingValues,
+) {
+    NavHost(
+        modifier = Modifier.fillMaxSize(),
+        navController = homeNavController,
+        startDestination = HomeNavItemInfo.ActivityFeed.route
     ) {
+        addActivityFeedDestination(
+            contentPadding = contentPaddings,
+            onClickExportActivityFile = onClickExportActivityFile,
+            appNavController = appNavController
+        )
+
+        addUserHomeDestination()
+    }
+}
+
+private fun NavGraphBuilder.addUserHomeDestination() {
+    composable(route = HomeNavItemInfo.UserHome.route) {
         UserHome()
     }
 }
@@ -153,18 +166,17 @@ private fun HomeBottomNavBar(
     modifier: Modifier = Modifier,
     homeNavController: NavHostController,
 ) {
+    val currentBackstackEntry by homeNavController.currentBackStackEntryAsState()
     Column(modifier = modifier) {
         BottomNavigation {
             HomeNavItemInfo.values().forEach { itemInfo ->
+                val isSelected = currentBackstackEntry?.destination
+                    ?.hierarchy
+                    ?.any { it.route == itemInfo.route } == true
                 BottomNavigationItem(
-                    selected = true,
-                    onClick = {
-                        homeNavController.navigate(itemInfo.navInfo.route) {
-                            popUpTo(itemInfo.navInfo.route)
-                            launchSingleTop = true
-                        }
-                    },
-                    icon = { Icon(itemInfo.icon, "") },
+                    selected = isSelected,
+                    onClick = { navigateHomeDestination(homeNavController, itemInfo) },
+                    icon = { Icon(itemInfo.icon, "Home tab icon") },
                     label = { Text(text = stringResource(id = itemInfo.label)) }
                 )
             }
@@ -173,24 +185,34 @@ private fun HomeBottomNavBar(
     }
 }
 
+private fun navigateHomeDestination(
+    homeNavController: NavHostController,
+    itemInfo: HomeNavItemInfo,
+) {
+    homeNavController.navigate(itemInfo.route) {
+        popUpTo(homeNavController.graph.findStartDestination().id) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
+}
+
 private fun NavGraphBuilder.addActivityFeedDestination(
     contentPadding: PaddingValues,
     onClickExportActivityFile: (ActivityModel) -> Unit,
-    navController: NavController,
+    appNavController: NavController,
 ) {
-    composable(
-        route = HomeTabNavDestinationInfo.ActivityFeedTab.route,
-        arguments = HomeTabNavDestinationInfo.ActivityFeedTab.arguments
-    ) { backstackEntry ->
+    composable(route = HomeNavItemInfo.ActivityFeed.route) { backstackEntry ->
         val diComponent = remember { DaggerHomeFeatureComponent.factory().create() }
         val userTimelineViewModel = backstackEntry.viewModelProvider {
             diComponent.activityFeedViewModel()
         }
         ActivityFeed(
-            userTimelineViewModel = userTimelineViewModel,
+            activityFeedViewModel = userTimelineViewModel,
             contentPadding = contentPadding,
             onClickExportActivityFile = onClickExportActivityFile,
-            navController = navController
+            navController = appNavController
         )
     }
 }

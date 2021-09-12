@@ -5,7 +5,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.DaggerActivityDetailFeatureComponent
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
-import akio.apps.myrun.feature.base.navigation.HomeNavigationDestination
+import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.profile.DaggerUserProfileFeatureComponent
 import akio.apps.myrun.feature.profile.UserProfileViewModel
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
@@ -27,7 +27,7 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 @OptIn(ExperimentalAnimationApi::class)
-object HomeNavigationTransitionDefaults {
+private object AppNavTransitionDefaults {
     val enterTransition: EnterTransition = slideInHorizontally(
         initialOffsetX = { fullWidth -> fullWidth / 2 },
         animationSpec = tween(200, easing = LinearEasing)
@@ -46,14 +46,14 @@ object HomeNavigationTransitionDefaults {
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun HomeNavigationHost(
+fun AppNavHost(
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (ActivityModel) -> Unit,
 ) = ProvideWindowInsets {
     val navController = rememberAnimatedNavController()
     AnimatedNavHost(
         navController = navController,
-        startDestination = HomeNavigationDestination.Home.route
+        startDestination = HomeNavDestination.Home.route
     ) {
         addHomeDestination(
             onClickFloatingActionButton,
@@ -73,13 +73,13 @@ fun HomeNavigationHost(
 @OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.addProfileDestination(navController: NavHostController) {
     composable(
-        route = HomeNavigationDestination.Profile.route,
-        arguments = HomeNavigationDestination.Profile.arguments,
-        enterTransition = { _, _ -> HomeNavigationTransitionDefaults.enterTransition },
-        popEnterTransition = { _, _ -> HomeNavigationTransitionDefaults.popEnterTransition },
-        popExitTransition = { _, _ -> HomeNavigationTransitionDefaults.popExitTransition }
+        route = HomeNavDestination.Profile.route,
+        arguments = HomeNavDestination.Profile.arguments,
+        enterTransition = { _, _ -> AppNavTransitionDefaults.enterTransition },
+        popEnterTransition = { _, _ -> AppNavTransitionDefaults.popEnterTransition },
+        popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
     ) { backStackEntry ->
-        val userId = HomeNavigationDestination.Profile.parseUserId(backStackEntry)
+        val userId = HomeNavDestination.Profile.parseUserId(backStackEntry)
         val userProfileViewModel = backStackEntry.savedStateViewModelProvider(
             backStackEntry
         ) { handle ->
@@ -98,10 +98,10 @@ private fun NavGraphBuilder.addHomeDestination(
     navController: NavHostController,
 ) {
     composable(
-        route = HomeNavigationDestination.Home.route,
-        enterTransition = { _, _ -> HomeNavigationTransitionDefaults.enterTransition },
-        popEnterTransition = { _, _ -> HomeNavigationTransitionDefaults.popEnterTransition },
-        popExitTransition = { _, _ -> HomeNavigationTransitionDefaults.popExitTransition }
+        route = HomeNavDestination.Home.route,
+        enterTransition = { _, _ -> AppNavTransitionDefaults.enterTransition },
+        popEnterTransition = { _, _ -> AppNavTransitionDefaults.popEnterTransition },
+        popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
     ) {
         HomeScreen(
             onClickFloatingActionButton,
@@ -117,13 +117,13 @@ private fun NavGraphBuilder.addActivityDetailDestination(
     navController: NavHostController,
 ) {
     composable(
-        route = HomeNavigationDestination.ActivityDetail.route,
-        arguments = HomeNavigationDestination.ActivityDetail.arguments,
-        enterTransition = { _, _ -> HomeNavigationTransitionDefaults.enterTransition },
-        popEnterTransition = { _, _ -> HomeNavigationTransitionDefaults.popEnterTransition },
-        popExitTransition = { _, _ -> HomeNavigationTransitionDefaults.popExitTransition }
+        route = HomeNavDestination.ActivityDetail.route,
+        arguments = HomeNavDestination.ActivityDetail.arguments,
+        enterTransition = { _, _ -> AppNavTransitionDefaults.enterTransition },
+        popEnterTransition = { _, _ -> AppNavTransitionDefaults.popEnterTransition },
+        popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
     ) { navBackStackEntry ->
-        val activityId = HomeNavigationDestination.ActivityDetail.parseActivityId(navBackStackEntry)
+        val activityId = HomeNavDestination.ActivityDetail.parseActivityId(navBackStackEntry)
         val activityDetailViewModel = navBackStackEntry.savedStateViewModelProvider(
             navBackStackEntry
         ) { handle ->
