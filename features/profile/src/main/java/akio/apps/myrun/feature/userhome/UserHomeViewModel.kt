@@ -2,23 +2,40 @@ package akio.apps.myrun.feature.userhome
 
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.data.user.api.model.UserProfile
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 class UserHomeViewModel @Inject constructor(
+    private val userAuthState: UserAuthenticationState,
     private val userProfileRepository: UserProfileRepository,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
-    private val activityRepository: ActivityRepository
+    private val activityRepository: ActivityRepository,
 ) : ViewModel() {
 
     private val mutableScreenState: MutableStateFlow<ScreenState> =
         MutableStateFlow(ScreenState.StatsLoading)
     val screenState: Flow<ScreenState> = mutableScreenState
+
+    init {
+        loadInitialData()
+    }
+
+    private fun loadInitialData() = viewModelScope.launch {
+        val userId = userAuthState.requireUserAccountId()
+        val userProfile = userProfileRepository.getUserProfile(userId)
+        val userRecentPlace = userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
+        mutableScreenState.value =
+            ScreenState.createScreenState(userRecentPlace, userProfile, emptyList(), emptyList())
+    }
 
     sealed class ScreenState {
         /**
@@ -29,17 +46,17 @@ class UserHomeViewModel @Inject constructor(
         data class StatsAvailable(
             val userName: String,
             val userPhotoUrl: String?,
-            val userRecentPlace: String,
+            val userRecentPlace: PlaceIdentifier?,
             val runSummaries: List<SummaryData>,
-            val rideSummaries: List<SummaryData>
+            val rideSummaries: List<SummaryData>,
         ) : ScreenState()
 
         companion object {
             fun createScreenState(
-                userRecentPlace: String,
+                userRecentPlace: PlaceIdentifier?,
                 userProfile: UserProfile,
                 runActivityLists: List<List<ActivityModel>>,
-                rideActivityLists: List<List<ActivityModel>>
+                rideActivityLists: List<List<ActivityModel>>,
             ): StatsAvailable {
                 val runSummaryData = runActivityLists.map { runsInAPeriod ->
                     SummaryData(
@@ -66,6 +83,6 @@ class UserHomeViewModel @Inject constructor(
 
     data class SummaryData(
         val distance: Double,
-        val duration: Long
+        val duration: Long,
     )
 }
