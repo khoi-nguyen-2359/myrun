@@ -48,9 +48,7 @@ fun ActivityFeedTopBar(
             title = {
                 Text(
                     stringResource(id = R.string.user_feed_title),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = Icons.Rounded.Settings.defaultWidth)
+                    modifier = Modifier.fillMaxWidth()
                 )
             },
             actions = {

@@ -25,8 +25,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.sharp.Home
-import androidx.compose.material.icons.sharp.Timeline
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -73,12 +73,12 @@ private enum class HomeNavItemInfo(
 ) {
     ActivityFeed(
         label = R.string.home_nav_activity_feed_tab_label,
-        icon = Icons.Sharp.Timeline,
+        icon = Icons.Rounded.Timeline,
         route = "activityFeed"
     ),
     UserHome(
         label = R.string.home_nav_user_home_tab_label,
-        icon = Icons.Sharp.Home,
+        icon = Icons.Rounded.Home,
         route = "userHome"
     )
 }
@@ -126,10 +126,10 @@ fun HomeScreen(
             HomeFloatingActionButton(onClickFloatingActionButton)
         }
 
-        HomeBottomNavBar(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            homeNavController
-        )
+        Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+            HomeBottomNavBar(homeNavController)
+            NavigationBarSpacer()
+        }
     }
 }
 
@@ -151,37 +151,31 @@ private fun HomeNavHost(
             appNavController = appNavController
         )
 
-        addUserHomeDestination()
+        addUserHomeDestination(contentPaddings)
     }
 }
 
-private fun NavGraphBuilder.addUserHomeDestination() {
+private fun NavGraphBuilder.addUserHomeDestination(contentPaddings: PaddingValues) {
     composable(route = HomeNavItemInfo.UserHome.route) {
-        UserHome()
+        UserHome(contentPaddings)
     }
 }
 
 @Composable
-private fun HomeBottomNavBar(
-    modifier: Modifier = Modifier,
-    homeNavController: NavHostController,
-) {
+private fun HomeBottomNavBar(homeNavController: NavHostController) {
     val currentBackstackEntry by homeNavController.currentBackStackEntryAsState()
-    Column(modifier = modifier) {
-        BottomNavigation {
-            HomeNavItemInfo.values().forEach { itemInfo ->
-                val isSelected = currentBackstackEntry?.destination
-                    ?.hierarchy
-                    ?.any { it.route == itemInfo.route } == true
-                BottomNavigationItem(
-                    selected = isSelected,
-                    onClick = { navigateHomeDestination(homeNavController, itemInfo) },
-                    icon = { Icon(itemInfo.icon, "Home tab icon") },
-                    label = { Text(text = stringResource(id = itemInfo.label)) }
-                )
-            }
+    BottomNavigation {
+        HomeNavItemInfo.values().forEach { itemInfo ->
+            val isSelected = currentBackstackEntry?.destination
+                ?.hierarchy
+                ?.any { it.route == itemInfo.route } == true
+            BottomNavigationItem(
+                selected = isSelected,
+                onClick = { navigateHomeDestination(homeNavController, itemInfo) },
+                icon = { Icon(itemInfo.icon, "Home tab icon") },
+                label = { Text(text = stringResource(id = itemInfo.label)) }
+            )
         }
-        NavigationBarSpacer()
     }
 }
 
