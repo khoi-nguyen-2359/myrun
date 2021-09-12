@@ -27,6 +27,8 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -41,6 +43,17 @@ import coil.size.Scale
 
 @Composable
 fun UserHome(
+    userHomeViewModel: UserHomeViewModel,
+    contentPadding: PaddingValues
+) {
+    val screenState by userHomeViewModel.screenState.collectAsState(
+        initial = UserHomeViewModel.ScreenState.StatsLoading
+    )
+    UserHome(contentPadding, screenState)
+}
+
+@Composable
+private fun UserHome(
     contentPadding: PaddingValues,
     screenState: UserHomeViewModel.ScreenState = UserHomeViewModel.ScreenState.StatsLoading,
 ) {
@@ -143,7 +156,10 @@ private fun UserProfileHeader(screenState: UserHomeViewModel.ScreenState.StatsAv
         Spacer(modifier = Modifier.width(10.dp))
         Column(modifier = Modifier.weight(1f)) {
             Text(text = screenState.userName, style = MaterialTheme.typography.h6)
-            Text(text = screenState.userRecentPlace, style = MaterialTheme.typography.subtitle1)
+            Text(
+                text = screenState.userRecentPlace ?: "",
+                style = MaterialTheme.typography.subtitle1
+            )
         }
         Spacer(modifier = Modifier.width(10.dp))
         OutlinedButton(onClick = { /*TODO*/ }) {

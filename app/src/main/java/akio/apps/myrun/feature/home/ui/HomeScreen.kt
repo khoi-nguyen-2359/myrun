@@ -10,6 +10,7 @@ import akio.apps.myrun.feature.feed.ui.ActivityFeed
 import akio.apps.myrun.feature.home._di.DaggerHomeFeatureComponent
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.AppBarHeight
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.FabSize
+import akio.apps.myrun.feature.userhome._di.DaggerUserHomeFeatureComponent
 import akio.apps.myrun.feature.userhome.ui.UserHome
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
@@ -156,8 +157,12 @@ private fun HomeNavHost(
 }
 
 private fun NavGraphBuilder.addUserHomeDestination(contentPaddings: PaddingValues) {
-    composable(route = HomeNavItemInfo.UserHome.route) {
-        UserHome(contentPaddings)
+    composable(route = HomeNavItemInfo.UserHome.route) { backstackEntry ->
+        val diComponent = remember { DaggerUserHomeFeatureComponent.factory().create() }
+        val userHomeViewModel = backstackEntry.viewModelProvider {
+            diComponent.userHomeViewModel()
+        }
+        UserHome(userHomeViewModel, contentPaddings)
     }
 }
 
