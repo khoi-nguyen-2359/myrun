@@ -21,7 +21,7 @@ object HomeNavDestination {
         fun parseUserId(backStackEntry: NavBackStackEntry): String? =
             backStackEntry.arguments?.getString(userIdOptionalArg.name)
 
-        fun routeWithUserId(userId: String?) = createRouteFromArguments(
+        fun routeWithUserId(userId: String? = null) = createRouteFromArguments(
             shouldIncludeValue = true,
             listOf(NavArgumentValuePair(userIdOptionalArg, userId))
         )

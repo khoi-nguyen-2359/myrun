@@ -580,7 +580,7 @@ private fun UserProfileImageView(
 private fun PreviewUserProfileScreenSuccessForm() {
     UserProfileScreen(
         screenState = UserProfileViewModel.UserProfileScreenState.create(
-            Resource.Success(createUserProfile()), null, Resource.Success(createExternalProviders())
+            Resource.Success(createUserProfile()), Resource.Success(createExternalProviders()), null
         ),
         navController = rememberNavController(),
         {},
@@ -594,7 +594,7 @@ private fun PreviewUserProfileScreenSuccessForm() {
 private fun PreviewUserProfileScreenErrorForm() {
     UserProfileScreen(
         screenState = UserProfileViewModel.UserProfileScreenState.create(
-            Resource.Error(Exception()), null, Resource.Success(createExternalProviders())
+            Resource.Error(Exception()), Resource.Success(createExternalProviders()), null
         ),
         navController = rememberNavController(),
         {},

@@ -1,10 +1,13 @@
 package akio.apps.myrun.feature.userhome.ui
 
+import akio.apps.myrun.feature.base.navigation.HomeNavDestination
+import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
 import akio.apps.myrun.feature.base.ui.CentralLoadingView
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
 import akio.apps.myrun.feature.profile.R
 import akio.apps.myrun.feature.userhome.UserHomeViewModel
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -20,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
@@ -34,9 +38,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.size.Scale
@@ -44,16 +52,18 @@ import coil.size.Scale
 @Composable
 fun UserHome(
     userHomeViewModel: UserHomeViewModel,
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues,
+    appNavController: NavController,
 ) {
     val screenState by userHomeViewModel.screenState.collectAsState(initial = null)
-    UserHome(contentPadding, screenState ?: return)
+    UserHome(screenState ?: return, contentPadding, appNavController)
 }
 
 @Composable
 private fun UserHome(
-    contentPadding: PaddingValues,
     screenState: UserHomeViewModel.ScreenState = UserHomeViewModel.ScreenState.StatsLoading,
+    contentPadding: PaddingValues,
+    appNavController: NavController,
 ) {
     Column {
         StatusBarSpacer()
@@ -63,7 +73,7 @@ private fun UserHome(
                 CentralLoadingView(text = stringResource(id = R.string.message_loading))
             }
             is UserHomeViewModel.ScreenState.StatsAvailable -> {
-                UserHomeContent(screenState, modifier = Modifier.weight(1f))
+                UserHomeContent(screenState, modifier = Modifier.weight(1f), appNavController)
             }
         }
         Spacer(modifier = Modifier.height(contentPadding.calculateBottomPadding()))
@@ -74,10 +84,11 @@ private fun UserHome(
 fun UserHomeContent(
     screenState: UserHomeViewModel.ScreenState.StatsAvailable,
     modifier: Modifier = Modifier,
+    appNavController: NavController,
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
-        Spacer(modifier = Modifier.height(50.dp))
-        UserProfileHeader(screenState)
+        Spacer(modifier = Modifier.height(AppDimensions.screenVerticalSpacing))
+        UserProfileHeader(screenState, appNavController)
         Spacer(modifier = Modifier.height(AppDimensions.sectionVerticalSpacing))
         TrainingSummaryTable()
     }
@@ -145,7 +156,10 @@ fun TrainingSummaryProgress(text: String) = TrainingSummaryCell {
 }
 
 @Composable
-private fun UserProfileHeader(screenState: UserHomeViewModel.ScreenState.StatsAvailable) {
+private fun UserProfileHeader(
+    screenState: UserHomeViewModel.ScreenState.StatsAvailable,
+    appNavController: NavController,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)
@@ -153,15 +167,34 @@ private fun UserProfileHeader(screenState: UserHomeViewModel.ScreenState.StatsAv
         UserProfileImage(photoUrl = screenState.userPhotoUrl)
         Spacer(modifier = Modifier.width(10.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = screenState.userName, style = MaterialTheme.typography.h6)
+            Text(
+                text = screenState.userName,
+                style = MaterialTheme.typography.h6,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                overflow = TextOverflow.Ellipsis
+            )
             Text(
                 text = screenState.userRecentPlace ?: "",
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.subtitle2,
+                fontWeight = FontWeight.Normal
             )
         }
         Spacer(modifier = Modifier.width(10.dp))
-        OutlinedButton(onClick = { /*TODO*/ }) {
-            Text(text = stringResource(id = R.string.user_home_edit_profile_button))
+        OutlinedButton(
+            shape = RoundedCornerShape(3.dp),
+            onClick = {
+                appNavController.navigate(HomeNavDestination.Profile.routeWithUserId())
+            },
+            border = BorderStroke(1.dp, AppColors.primary),
+            modifier = Modifier.size(width = 50.dp, height = 30.dp),
+            contentPadding = PaddingValues(4.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.user_home_edit_profile_button),
+                style = MaterialTheme.typography.caption,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
@@ -177,7 +210,7 @@ private fun UserHomeTopBar() {
 @Composable
 fun UserProfileImage(
     photoUrl: String?,
-    imageLoadSizeDp: Dp = 75.dp,
+    imageLoadSizeDp: Dp = 60.dp,
     onClick: (() -> Unit)? = null,
 ) {
     val imageLoadSizePx = with(LocalDensity.current) { imageLoadSizeDp.roundToPx() }
@@ -204,13 +237,14 @@ fun UserProfileImage(
 @Composable
 fun PreviewUserHome() {
     UserHome(
-        contentPadding = PaddingValues(),
         screenState = UserHomeViewModel.ScreenState.StatsAvailable(
             "My Name",
             "photoUrl",
             "Saigon, Vietnam",
             listOf(),
             listOf()
-        )
+        ),
+        contentPadding = PaddingValues(),
+        rememberNavController()
     )
 }
