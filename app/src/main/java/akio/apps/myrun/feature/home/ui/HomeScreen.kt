@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.home.ui
 
 import akio.apps.common.feature.ui.px2dp
+import akio.apps.common.feature.viewmodel.savedStateViewModelProvider
 import akio.apps.common.feature.viewmodel.viewModelProvider
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.ActivityModel
@@ -158,9 +159,8 @@ private fun HomeNavHost(
 
 private fun NavGraphBuilder.addUserHomeDestination(contentPaddings: PaddingValues) {
     composable(route = HomeNavItemInfo.UserHome.route) { backstackEntry ->
-        val diComponent = remember { DaggerUserHomeFeatureComponent.factory().create() }
-        val userHomeViewModel = backstackEntry.viewModelProvider {
-            diComponent.userHomeViewModel()
+        val userHomeViewModel = backstackEntry.savedStateViewModelProvider(backstackEntry) {
+            DaggerUserHomeFeatureComponent.factory().create(it).userHomeViewModel()
         }
         UserHome(userHomeViewModel, contentPaddings)
     }

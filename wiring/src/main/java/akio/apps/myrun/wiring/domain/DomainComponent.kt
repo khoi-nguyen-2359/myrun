@@ -8,6 +8,7 @@ import akio.apps.myrun.domain.activityexport.ExportTempTcxFileUsecase
 import akio.apps.myrun.domain.authentication.PostSignInUsecase
 import akio.apps.myrun.domain.migration.AppVersionMigrationUsecase
 import akio.apps.myrun.domain.migration.task.MigrationTask10500
+import akio.apps.myrun.domain.recentplace.GetUserRecentPlaceNameUsecase
 import akio.apps.myrun.domain.recentplace.MakeActivityPlaceNameUsecase
 import akio.apps.myrun.domain.recentplace.UpdateUserRecentPlaceUsecase
 import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
@@ -60,9 +61,13 @@ interface DomainComponent {
     fun uploadActivitiesUsecase(): UploadActivitiesUsecase
     fun exchangeStravaLoginCodeUsecase(): ExchangeStravaLoginCodeUsecase
     fun updateStravaTokenUsecase(): UpdateStravaTokenUsecase
+
+    // user usecases
     fun uploadUserAvatarImageUsecase(): UploadUserAvatarImageUsecase
     fun updateUserProfileUsecase(): UpdateUserProfileUsecase
     fun getUserProfileUsecase(): GetUserProfileUsecase
+    fun getUserRecentPlaceUsecase(): GetUserRecentPlaceNameUsecase
+
     fun deauthorizeStravaUsecase(): DeauthorizeStravaUsecase
     fun getProviderTokensUsecase(): GetProviderTokensUsecase
     fun removeStravaTokenUsecase(): RemoveStravaTokenUsecase
