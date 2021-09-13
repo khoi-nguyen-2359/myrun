@@ -10,7 +10,7 @@ class FirestoreUserProfileMapper @Inject constructor() {
     /**
      * [userPhotoUrl] is generated value of the url.
      */
-    fun map(input: FirestoreUserProfile, userPhotoUrl: String?): UserProfile {
+    fun map(input: FirestoreUserProfile): UserProfile {
         val gender = when (FirestoreUserGender.parse(input.genderId)) {
             FirestoreUserGender.Male -> Gender.Male
             FirestoreUserGender.Female -> Gender.Female
@@ -22,7 +22,7 @@ class FirestoreUserProfileMapper @Inject constructor() {
                 displayName,
                 gender,
                 weight,
-                userPhotoUrl,
+                photoUrl,
                 birthdate = input.birthdate
             )
         }

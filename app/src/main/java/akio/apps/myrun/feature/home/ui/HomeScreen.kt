@@ -116,8 +116,8 @@ fun HomeScreen(
         HomeNavHost(
             homeNavController,
             onClickExportActivityFile,
-            appNavController,
-            PaddingValues(bottom = fabBoxHeightDp)
+            PaddingValues(bottom = fabBoxHeightDp),
+            appNavController
         )
         Box(
             modifier = Modifier
@@ -139,8 +139,8 @@ fun HomeScreen(
 private fun HomeNavHost(
     homeNavController: NavHostController,
     onClickExportActivityFile: (ActivityModel) -> Unit,
-    appNavController: NavController,
     contentPaddings: PaddingValues,
+    appNavController: NavController,
 ) {
     NavHost(
         modifier = Modifier.fillMaxSize(),
@@ -153,16 +153,19 @@ private fun HomeNavHost(
             appNavController = appNavController
         )
 
-        addUserHomeDestination(contentPaddings)
+        addUserHomeDestination(contentPaddings, appNavController)
     }
 }
 
-private fun NavGraphBuilder.addUserHomeDestination(contentPaddings: PaddingValues) {
+private fun NavGraphBuilder.addUserHomeDestination(
+    contentPaddings: PaddingValues,
+    appNavController: NavController
+) {
     composable(route = HomeNavItemInfo.UserHome.route) { backstackEntry ->
         val userHomeViewModel = backstackEntry.savedStateViewModelProvider(backstackEntry) {
             DaggerUserHomeFeatureComponent.factory().create(it).userHomeViewModel()
         }
-        UserHome(userHomeViewModel, contentPaddings)
+        UserHome(userHomeViewModel, contentPaddings, appNavController)
     }
 }
 

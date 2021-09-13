@@ -23,7 +23,9 @@ class UserHomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     val screenState: Flow<ScreenState> = combine(
-        getUserProfileUsecase.getUserProfileFlow().mapNotNull { it.data },
+        getUserProfileUsecase.getUserProfileFlow().mapNotNull {
+            it.data
+        },
         getUserRecentPlaceNameUsecase.getUserRecentPlaceNameFlow(),
         ::combineUserProfileAndRecentPlace
     )
@@ -37,7 +39,7 @@ class UserHomeViewModel @Inject constructor(
         return ScreenState.createScreenState(userRecentPlace, userProfile, emptyList(), emptyList())
     }
 
-    private fun SavedStateHandle.getScreenState(): ScreenState.StatsLoading =
+    private fun SavedStateHandle.getScreenState(): ScreenState =
         this[STATE_SCREEN_STATE] ?: ScreenState.StatsLoading
 
     private fun SavedStateHandle.setScreenState(screenState: ScreenState) =

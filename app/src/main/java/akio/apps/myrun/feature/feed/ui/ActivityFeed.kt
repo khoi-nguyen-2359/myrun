@@ -151,7 +151,6 @@ fun ActivityFeed(
 
         ActivityFeedTopBar(
             activityUploadBadge,
-            navController,
             { coroutineScope.launch { feedListState.animateScrollToItem(0) } },
             Modifier
                 .height(topBarHeightDp)

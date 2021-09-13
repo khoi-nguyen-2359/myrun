@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.feed.ui
 
 import akio.apps.myrun.R
-import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppBarIconButton
 import akio.apps.myrun.feature.base.ui.AppDimensions
 import akio.apps.myrun.feature.feed.impl.ActivityFeedViewModel
@@ -20,7 +19,6 @@ import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.sharp.CheckCircleOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,12 +32,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 
 @Composable
 fun ActivityFeedTopBar(
     activityUploadBadge: ActivityFeedViewModel.ActivityUploadBadgeStatus?,
-    navController: NavController,
     onClickUploadCompleteBadge: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -53,11 +49,6 @@ fun ActivityFeedTopBar(
             },
             actions = {
                 ActivityUploadNotifierBadge(activityUploadBadge, onClickUploadCompleteBadge)
-                AppBarIconButton(Icons.Rounded.Settings) {
-                    navController.navigate(
-                        HomeNavDestination.Profile.routeWithUserId(null)
-                    )
-                }
             }
         )
     }
