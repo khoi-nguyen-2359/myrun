@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.user.impl
 
+import akio.apps.common.data.Resource
 import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
@@ -8,12 +9,20 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 class FirebaseUserRecentPlaceRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : UserRecentPlaceRepository {
 
     private val recentPlaceCollection: CollectionReference
@@ -35,4 +44,30 @@ class FirebaseUserRecentPlaceRepository @Inject constructor(
                 .toObject(FirestorePlaceIdentifier::class.java)
                 ?.placeIdentifier
         }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getRecentPlaceIdentifierFlow(
+        userId: String,
+    ): Flow<Resource<out PlaceIdentifier?>> =
+        callbackFlow {
+            val listener = withContext(Dispatchers.Main.immediate) {
+                recentPlaceCollection.document(userId).addSnapshotListener { snapshot, error ->
+                    val placeIdentifier =
+                        snapshot?.toObject(FirestorePlaceIdentifier::class.java)?.placeIdentifier
+                            ?: return@addSnapshotListener
+                    trySendBlocking(Resource.Success(placeIdentifier))
+                    error?.let {
+                        trySendBlocking(Resource.Error<PlaceIdentifier>(it))
+                        close(it)
+                    }
+                }
+            }
+
+            awaitClose {
+                runBlocking(Dispatchers.Main.immediate) {
+                    listener.remove()
+                }
+            }
+        }
+            .flowOn(ioDispatcher)
 }

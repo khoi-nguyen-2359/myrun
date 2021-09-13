@@ -1,55 +1,63 @@
 package akio.apps.myrun.feature.userhome
 
-import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityModel
-import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.PlaceIdentifier
-import akio.apps.myrun.data.user.api.UserProfileRepository
-import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.data.user.api.model.UserProfile
+import akio.apps.myrun.domain.recentplace.GetUserRecentPlaceNameUsecase
+import akio.apps.myrun.domain.user.GetUserProfileUsecase
+import android.os.Parcelable
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.parcelize.Parcelize
 
 class UserHomeViewModel @Inject constructor(
-    private val userAuthState: UserAuthenticationState,
-    private val userProfileRepository: UserProfileRepository,
-    private val userRecentPlaceRepository: UserRecentPlaceRepository,
-    private val activityRepository: ActivityRepository,
+    private val savedStateHandle: SavedStateHandle,
+    private val getUserProfileUsecase: GetUserProfileUsecase,
+    private val getUserRecentPlaceNameUsecase: GetUserRecentPlaceNameUsecase,
 ) : ViewModel() {
 
-    private val mutableScreenState: MutableStateFlow<ScreenState> =
-        MutableStateFlow(ScreenState.StatsLoading)
-    val screenState: Flow<ScreenState> = mutableScreenState
+    val screenState: Flow<ScreenState> = combine(
+        getUserProfileUsecase.getUserProfileFlow().mapNotNull { it.data },
+        getUserRecentPlaceNameUsecase.getUserRecentPlaceNameFlow(),
+        ::combineUserProfileAndRecentPlace
+    )
+        .onStart { emit(savedStateHandle.getScreenState()) }
+        .onEach { savedStateHandle.setScreenState(it) }
 
-    init {
-        loadInitialData()
+    private fun combineUserProfileAndRecentPlace(
+        userProfile: UserProfile,
+        userRecentPlace: PlaceIdentifier?,
+    ): ScreenState {
+        return ScreenState.createScreenState(userRecentPlace, userProfile, emptyList(), emptyList())
     }
 
-    private fun loadInitialData() = viewModelScope.launch {
-        val userId = userAuthState.requireUserAccountId()
-        val userProfile = userProfileRepository.getUserProfile(userId)
-        val userRecentPlace = userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
-        mutableScreenState.value =
-            ScreenState.createScreenState(userRecentPlace, userProfile, emptyList(), emptyList())
-    }
+    private fun SavedStateHandle.getScreenState(): ScreenState.StatsLoading =
+        this[STATE_SCREEN_STATE] ?: ScreenState.StatsLoading
+
+    private fun SavedStateHandle.setScreenState(screenState: ScreenState) =
+        set(STATE_SCREEN_STATE, screenState)
 
     sealed class ScreenState {
         /**
          * State when user's profile and stats are loading and there's nothing to show.
          */
-        object StatsLoading : ScreenState()
+        @Parcelize
+        object StatsLoading : ScreenState(), Parcelable
 
+        @Parcelize
         data class StatsAvailable(
             val userName: String,
             val userPhotoUrl: String?,
             val userRecentPlace: PlaceIdentifier?,
             val runSummaries: List<SummaryData>,
             val rideSummaries: List<SummaryData>,
-        ) : ScreenState()
+        ) : ScreenState(), Parcelable
 
         companion object {
             fun createScreenState(
@@ -81,8 +89,13 @@ class UserHomeViewModel @Inject constructor(
         }
     }
 
+    @Parcelize
     data class SummaryData(
         val distance: Double,
         val duration: Long,
-    )
+    ) : Parcelable
+
+    companion object {
+        private const val STATE_SCREEN_STATE = "STATE_SCREEN_STATE"
+    }
 }

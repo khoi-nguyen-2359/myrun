@@ -46,10 +46,8 @@ fun UserHome(
     userHomeViewModel: UserHomeViewModel,
     contentPadding: PaddingValues
 ) {
-    val screenState by userHomeViewModel.screenState.collectAsState(
-        initial = UserHomeViewModel.ScreenState.StatsLoading
-    )
-    UserHome(contentPadding, screenState)
+    val screenState by userHomeViewModel.screenState.collectAsState(initial = null)
+    UserHome(contentPadding, screenState ?: return)
 }
 
 @Composable
