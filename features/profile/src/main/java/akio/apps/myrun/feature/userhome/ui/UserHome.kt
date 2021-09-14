@@ -4,6 +4,8 @@ import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
 import akio.apps.myrun.feature.base.ui.CentralLoadingView
+import akio.apps.myrun.feature.base.ui.ColumnSpacer
+import akio.apps.myrun.feature.base.ui.RowSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
 import akio.apps.myrun.feature.profile.R
 import akio.apps.myrun.feature.userhome.UserHomeViewModel
@@ -17,14 +19,15 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
@@ -38,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -96,54 +100,76 @@ fun UserHomeContent(
 
 @Composable
 fun TrainingSummaryTable() {
-    Column(modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)) {
-        Row {
-            OutlinedButton(onClick = { /*TODO*/ }) {
-                Text(stringResource(id = R.string.user_home_training_summary_run_activity_type))
-            }
-            Spacer(modifier = Modifier.width(5.dp))
-            OutlinedButton(onClick = { /*TODO*/ }) {
-                Text(stringResource(id = R.string.user_home_training_summary_ride_activity_type))
-            }
-        }
-        Spacer(modifier = Modifier.height(AppDimensions.rowVerticalPadding))
+    Column {
+        ColumnSpacer(height = AppDimensions.rowVerticalPadding)
+        SectionTitle(text = stringResource(id = R.string.user_home_summary_title))
         Row {
             Column(modifier = Modifier.weight(1f)) {
                 TrainingSummaryLabel(text = "\n")
+                Divider()
                 TrainingSummaryLabel(stringResource(id = R.string.user_home_summary_distance_label))
+                Divider()
                 TrainingSummaryLabel(stringResource(id = R.string.user_home_summary_pace_label))
+                Divider()
                 TrainingSummaryLabel(
                     stringResource(id = R.string.user_home_summary_activities_label)
                 )
+                Divider()
             }
             Column(modifier = Modifier.weight(1f)) {
                 TrainingSummaryLabel(stringResource(id = R.string.user_home_summary_weekly_label))
+                Divider()
                 TrainingSummaryProgress(text = "10/20")
+                Divider()
                 TrainingSummaryProgress(text = "5:00/7:00")
+                Divider()
                 TrainingSummaryProgress(text = "3/5")
+                Divider()
             }
             Column(modifier = Modifier.weight(1f)) {
                 TrainingSummaryLabel(stringResource(id = R.string.user_home_summary_monthly_label))
+                Divider()
                 TrainingSummaryProgress(text = "10/20")
+                Divider()
                 TrainingSummaryProgress(text = "5:00/7:00")
+                Divider()
                 TrainingSummaryProgress(text = "3/5")
+                Divider()
             }
         }
+        ColumnSpacer(height = AppDimensions.sectionVerticalSpacing)
+        SectionTitle(text = stringResource(id = R.string.user_home_route_section_title))
     }
 }
 
 @Composable
-fun TrainingSummaryCell(content: @Composable BoxScope.() -> Unit) = Box(
-    modifier = Modifier.padding(vertical = 4.dp),
-    content = content
+private fun SectionTitle(text: String) {
+    Text(
+        modifier = Modifier.padding(start = AppDimensions.screenHorizontalPadding),
+        text = text,
+        style = MaterialTheme.typography.h6,
+        fontWeight = FontWeight.Bold
+    )
+}
+
+@Composable
+fun TrainingSummaryCell(content: @Composable (BoxScope.() -> Unit)) = Box(
+    modifier = Modifier
+        .fillMaxWidth()
+//        .border(0.5.dp, Color.Gray.copy(alpha = 0.5f))
+        .padding(vertical = 12.dp),
+    content = content,
+    contentAlignment = Alignment.Center
 )
 
 @Composable
 fun TrainingSummaryLabel(text: String) = TrainingSummaryCell {
     Text(
         text = text,
-        style = MaterialTheme.typography.subtitle1,
-        fontWeight = FontWeight.Bold
+        style = MaterialTheme.typography.body2,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
+        textAlign = TextAlign.Center
     )
 }
 
@@ -151,7 +177,8 @@ fun TrainingSummaryLabel(text: String) = TrainingSummaryCell {
 fun TrainingSummaryProgress(text: String) = TrainingSummaryCell {
     Text(
         text = text,
-        style = MaterialTheme.typography.subtitle1
+        style = MaterialTheme.typography.body2,
+        fontSize = 16.sp,
     )
 }
 
@@ -165,7 +192,7 @@ private fun UserProfileHeader(
         modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)
     ) {
         UserProfileImage(photoUrl = screenState.userPhotoUrl)
-        Spacer(modifier = Modifier.width(10.dp))
+        RowSpacer(width = 10.dp)
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = screenState.userName,
@@ -174,13 +201,14 @@ private fun UserProfileHeader(
                 fontWeight = FontWeight.Bold,
                 overflow = TextOverflow.Ellipsis
             )
+            ColumnSpacer(height = 4.dp)
             Text(
                 text = screenState.userRecentPlace ?: "",
                 style = MaterialTheme.typography.subtitle2,
                 fontWeight = FontWeight.Normal
             )
         }
-        Spacer(modifier = Modifier.width(10.dp))
+        RowSpacer(width = 10.dp)
         OutlinedButton(
             shape = RoundedCornerShape(3.dp),
             onClick = {

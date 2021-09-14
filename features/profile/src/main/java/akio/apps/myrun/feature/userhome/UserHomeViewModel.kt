@@ -57,35 +57,35 @@ class UserHomeViewModel @Inject constructor(
             val userName: String,
             val userPhotoUrl: String?,
             val userRecentPlace: PlaceIdentifier?,
-            val runSummaries: List<SummaryData>,
-            val rideSummaries: List<SummaryData>,
+            val biWeekSummaryData: List<SummaryData>,
+            val biMonthSummaryData: List<SummaryData>
         ) : ScreenState(), Parcelable
 
         companion object {
             fun createScreenState(
                 userRecentPlace: PlaceIdentifier?,
                 userProfile: UserProfile,
-                runActivityLists: List<List<ActivityModel>>,
-                rideActivityLists: List<List<ActivityModel>>,
+                biWeekActivities: List<List<ActivityModel>>,
+                biMonthActivities: List<List<ActivityModel>>,
             ): StatsAvailable {
-                val runSummaryData = runActivityLists.map { runsInAPeriod ->
+                val biWeekSummaryData = biWeekActivities.map { weekActivities ->
                     SummaryData(
-                        distance = runsInAPeriod.sumOf { it.distance },
-                        duration = runsInAPeriod.sumOf { it.duration }
+                        distance = weekActivities.sumOf { it.distance },
+                        duration = weekActivities.sumOf { it.duration }
                     )
                 }
-                val rideSummaryData = rideActivityLists.map { ridesInAPeriod ->
+                val biMonthSummaryData = biMonthActivities.map { monthActivities ->
                     SummaryData(
-                        distance = ridesInAPeriod.sumOf { it.distance },
-                        duration = ridesInAPeriod.sumOf { it.duration }
+                        distance = monthActivities.sumOf { it.distance },
+                        duration = monthActivities.sumOf { it.duration }
                     )
                 }
                 return StatsAvailable(
                     userProfile.name,
                     userProfile.photo,
                     userRecentPlace,
-                    runSummaryData,
-                    rideSummaryData
+                    biWeekSummaryData,
+                    biMonthSummaryData
                 )
             }
         }
