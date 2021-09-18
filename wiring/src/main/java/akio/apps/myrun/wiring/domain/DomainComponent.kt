@@ -3,6 +3,7 @@ package akio.apps.myrun.wiring.domain
 import akio.apps.common.wiring.ApplicationModule
 import akio.apps.common.wiring.DispatchersModule
 import akio.apps.myrun.data.wiring.FirebaseDataModule
+import akio.apps.myrun.domain.activity.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.domain.activity.RunSplitsCalculator
 import akio.apps.myrun.domain.activityexport.ExportTempTcxFileUsecase
 import akio.apps.myrun.domain.authentication.PostSignInUsecase
@@ -53,12 +54,19 @@ interface DomainComponent {
     fun postSignInUsecase(): PostSignInUsecase
     fun updateUserRecentPlaceUsecase(): UpdateUserRecentPlaceUsecase
     fun makeActivityPlaceNameUsecase(): MakeActivityPlaceNameUsecase
+
+    // tracking
     fun clearRouteTrackingStateUsecase(): ClearRouteTrackingStateUsecase
     fun getTrackedLocationsUsecase(): GetTrackedLocationsUsecase
     fun storeTrackingActivityDataUsecase(): StoreTrackingActivityDataUsecase
+
+    // activity
     fun getUserTimelineActivitiesUsecase(): GetUserTimelineActivitiesUsecase
     fun uploadActivityFilesToStravaUsecase(): UploadActivityFilesToStravaUsecase
     fun uploadActivitiesUsecase(): UploadActivitiesUsecase
+    fun getTrainingSummaryUsecase(): GetTrainingSummaryDataUsecase
+
+    // strava
     fun exchangeStravaLoginCodeUsecase(): ExchangeStravaLoginCodeUsecase
     fun updateStravaTokenUsecase(): UpdateStravaTokenUsecase
 
