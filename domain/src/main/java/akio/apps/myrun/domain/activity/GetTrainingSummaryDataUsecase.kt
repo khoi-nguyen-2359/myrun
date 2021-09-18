@@ -2,6 +2,7 @@ package akio.apps.myrun.domain.activity
 
 import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityRepository
+import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import android.os.Parcelable
@@ -15,6 +16,7 @@ import java.util.Calendar.MONDAY
 import java.util.Calendar.MONTH
 import java.util.Calendar.SECOND
 import java.util.Calendar.YEAR
+import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -22,7 +24,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.fold
+import kotlinx.coroutines.flow.toSet
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
@@ -39,64 +41,40 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
     @OptIn(FlowPreview::class)
     suspend fun getUserTrainingSummaryData(): Map<ActivityType, TrainingSummaryTableData> =
         withContext(ioDispatcher) {
+            val biMonthRange = MonthRange(offset = 1, count = 2)
             val userId = userAuthenticationState.requireUserAccountId()
-            val timeRangeList = listOf(
-                WeekRange(offset = 1, count = 2),
-                MonthRange(offset = 1, count = 2),
-            )
-            val activityTypeList = listOf(
-                ActivityType.Running,
-                ActivityType.Cycling
-            )
-            val activityParamList: List<Pair<TimeRange, ActivityType>> =
-                timeRangeList.map { timeRange ->
-                    activityTypeList.map { activityType -> timeRange to activityType }
-                }.flatten()
-            activityParamList.asFlow()
-                .flatMapMerge { (timeRange, activityType) ->
-                    flow {
-                        val activitiesInRange = activityRepository.getActivitiesInTimeRange(
-                            userId,
-                            activityType,
-                            timeRange.millisTimeRange.first,
-                            timeRange.millisTimeRange.last
-                        )
-                        Timber.d("activitiesInRange type=$activityType, range=$timeRange")
-                        val firstHalfRange = timeRange.firstHalf()
-                        val midActivityIndex = activitiesInRange.indexOfFirst {
-                            it.startTime < firstHalfRange.millisTimeRange.last
+            val activityParamList = listOf(ActivityType.Running, ActivityType.Cycling)
+            activityParamList.asFlow().flatMapMerge { activityType ->
+                flow {
+                    val activitiesInRange = activityRepository.getActivitiesInTimeRange(
+                        userId,
+                        activityType,
+                        biMonthRange.millisTimeRange.first,
+                        biMonthRange.millisTimeRange.last
+                    )
+                    Timber.d("activitiesInRange type=$activityType, range=$biMonthRange")
+                    val thisWeekInfo = WeekRange() to mutableListOf<ActivityModel>()
+                    val lastWeekInfo = WeekRange(offset = 1) to mutableListOf<ActivityModel>()
+                    val thisMonthInfo = MonthRange() to mutableListOf<ActivityModel>()
+                    val lastMonthInfo = MonthRange(offset = 1) to mutableListOf<ActivityModel>()
+                    val timeRangeDataList =
+                        listOf(thisWeekInfo, lastWeekInfo, thisMonthInfo, lastMonthInfo)
+                    activitiesInRange.forEach { activity ->
+                        timeRangeDataList.forEach { (timeRange, activityList) ->
+                            if (activity.startTime in timeRange.millisTimeRange) {
+                                activityList.add(activity)
+                            }
                         }
-                        if (midActivityIndex == -1)
-                            return@flow
-
-                        emit(
-                            Triple(
-                                firstHalfRange,
-                                activityType,
-                                activitiesInRange.subList(midActivityIndex, activitiesInRange.size)
-                            )
-                        )
-                        emit(
-                            Triple(
-                                timeRange.secondHalf(),
-                                activityType,
-                                activitiesInRange.subList(0, midActivityIndex)
-                            )
-                        )
                     }
-                }.fold(
-                    initial = mutableMapOf(
-                        ActivityType.Running to TrainingSummaryTableData(),
-                        ActivityType.Cycling to TrainingSummaryTableData()
-                    ),
-                    { accum, (timeRange, activityType, activitiesInRange) ->
-                        val summaryTable = accum[activityType] ?: return@fold accum
+
+                    var summaryTable = TrainingSummaryTableData()
+                    timeRangeDataList.forEach { (timeRange, activityList) ->
                         val summaryData = TrainingSummaryData(
-                            distance = activitiesInRange.sumOf { it.distance },
-                            time = activitiesInRange.sumOf { it.duration },
-                            activityCount = activitiesInRange.size
+                            distance = activityList.sumOf { it.distance },
+                            time = activityList.sumOf { it.duration },
+                            activityCount = activityList.size
                         )
-                        accum[activityType] = when {
+                        summaryTable = when {
                             timeRange is WeekRange && timeRange.offset == 0 -> summaryTable.copy(
                                 thisWeekSummary = summaryData
                             )
@@ -111,9 +89,13 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
                             )
                             else -> summaryTable
                         }
-                        accum
                     }
-                )
+
+                    emit(activityType to summaryTable)
+                }
+            }
+                .toSet()
+                .toMap()
         }
 
     @Parcelize
@@ -145,7 +127,7 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
 
     class WeekRange(offset: Int = 0, count: Int = 1) : TimeRange(offset, count) {
         override val millisTimeRange: LongRange = run {
-            val calendar = Calendar.getInstance()
+            val calendar = Calendar.getInstance(TimeZone.getTimeZone("Z"))
             calendar[DAY_OF_WEEK] = MONDAY
             calendar[HOUR_OF_DAY] = 0
             calendar[MINUTE] = 0
@@ -161,7 +143,7 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
 
     class MonthRange(offset: Int = 0, count: Int = 1) : TimeRange(offset, count) {
         override val millisTimeRange: LongRange = run {
-            val calendar = Calendar.getInstance()
+            val calendar = Calendar.getInstance(TimeZone.getTimeZone("Z"))
             calendar[DAY_OF_MONTH] = 1
             calendar[HOUR_OF_DAY] = 0
             calendar[MINUTE] = 0
