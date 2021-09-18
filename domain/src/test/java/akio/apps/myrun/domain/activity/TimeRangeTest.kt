@@ -6,6 +6,7 @@ import java.util.Calendar.DAY_OF_MONTH
 import java.util.Calendar.MONDAY
 import java.util.Calendar.MONTH
 import java.util.Calendar.YEAR
+import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import org.junit.Test
@@ -121,12 +122,13 @@ class TimeRangeTest {
         return LongRange(startTime, cursorCalendar.timeInMillis)
     }
 
-    private fun createPivotCalendar(): Calendar = Calendar.getInstance().apply {
-        this[Calendar.HOUR_OF_DAY] = 0
-        this[Calendar.MINUTE] = 0
-        this[Calendar.SECOND] = 0
-        this[Calendar.MILLISECOND] = 0
-    }
+    private fun createPivotCalendar(): Calendar =
+        Calendar.getInstance(TimeZone.getTimeZone("Z")).apply {
+            this[Calendar.HOUR_OF_DAY] = 0
+            this[Calendar.MINUTE] = 0
+            this[Calendar.SECOND] = 0
+            this[Calendar.MILLISECOND] = 0
+        }
 
     private fun LocalDateTime.setMonthYear(calendar: Calendar) {
         calendar[MONTH] = monthValue - 1

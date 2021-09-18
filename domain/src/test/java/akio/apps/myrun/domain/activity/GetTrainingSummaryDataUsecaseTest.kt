@@ -43,18 +43,16 @@ class GetTrainingSummaryDataUsecaseTest {
     fun test() = testCoroutineDispatcher.runBlockingTest {
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
 
-        val biWeekRange =
-            GetTrainingSummaryDataUsecase.WeekRange(offset = 1, count = 2).millisTimeRange
-        val biMonthRange =
-            GetTrainingSummaryDataUsecase.MonthRange(offset = 1, count = 2).millisTimeRange
+        val biWeekRange = 1630886400000..1632096000000 // 2021/09/6 - 2021/09/20
+        val biMonthRange = 1627776000000..1633046400000 // 2021/08/01 - 2021/10/01
 
-        // bi week runs
+        // bi month runs
         whenever(
             mockedActivityRepository.getActivitiesInTimeRange(
                 defaultUserId,
                 ActivityType.Running,
-                biWeekRange.first,
-                biWeekRange.last
+                biMonthRange.first,
+                biMonthRange.last
             )
         ).thenReturn(
             listOf(
@@ -82,19 +80,6 @@ class GetTrainingSummaryDataUsecaseTest {
                     duration = 1L,
                     distance = 2.0
                 ),
-            )
-        )
-
-        // bi month runs
-        whenever(
-            mockedActivityRepository.getActivitiesInTimeRange(
-                defaultUserId,
-                ActivityType.Running,
-                biMonthRange.first,
-                biMonthRange.last
-            )
-        ).thenReturn(
-            listOf(
                 createActivity(
                     ActivityType.Running,
                     startTime = biMonthRange.last - 1,
@@ -118,17 +103,17 @@ class GetTrainingSummaryDataUsecaseTest {
                     startTime = biMonthRange.first + 1,
                     duration = 9,
                     distance = 10.0
-                ),
+                )
             )
         )
 
-        // bi week rides
+        // bi month rides
         whenever(
             mockedActivityRepository.getActivitiesInTimeRange(
                 defaultUserId,
                 ActivityType.Cycling,
-                biWeekRange.first,
-                biWeekRange.last
+                biMonthRange.first,
+                biMonthRange.last
             )
         ).thenReturn(
             listOf(
@@ -156,19 +141,6 @@ class GetTrainingSummaryDataUsecaseTest {
                     duration = 17,
                     distance = 18.0
                 ),
-            )
-        )
-
-        // bi month rides
-        whenever(
-            mockedActivityRepository.getActivitiesInTimeRange(
-                defaultUserId,
-                ActivityType.Cycling,
-                biMonthRange.first,
-                biMonthRange.last
-            )
-        ).thenReturn(
-            listOf(
                 createActivity(
                     ActivityType.Cycling,
                     startTime = biMonthRange.last - 1,
@@ -199,20 +171,8 @@ class GetTrainingSummaryDataUsecaseTest {
         verify(mockedActivityRepository).getActivitiesInTimeRange(
             defaultUserId,
             ActivityType.Running,
-            biWeekRange.first,
-            biWeekRange.last
-        )
-        verify(mockedActivityRepository).getActivitiesInTimeRange(
-            defaultUserId,
-            ActivityType.Running,
             biMonthRange.first,
             biMonthRange.last
-        )
-        verify(mockedActivityRepository).getActivitiesInTimeRange(
-            defaultUserId,
-            ActivityType.Cycling,
-            biWeekRange.first,
-            biWeekRange.last
         )
         verify(mockedActivityRepository).getActivitiesInTimeRange(
             defaultUserId,
@@ -243,9 +203,9 @@ class GetTrainingSummaryDataUsecaseTest {
         )
         assertEquals(
             GetTrainingSummaryDataUsecase.TrainingSummaryData(
-                distance = 30.0,
-                time = 28,
-                activityCount = 2
+                distance = 50.0,
+                time = 44,
+                activityCount = 6
             ),
             runSummary.thisMonthSummary
         )
@@ -256,6 +216,38 @@ class GetTrainingSummaryDataUsecaseTest {
                 activityCount = 2
             ),
             runSummary.lastMonthSummary
+        )
+        assertEquals(
+            GetTrainingSummaryDataUsecase.TrainingSummaryData(
+                distance = 46.0,
+                time = 44,
+                activityCount = 2
+            ),
+            rideSummary.thisWeekSummary
+        )
+        assertEquals(
+            GetTrainingSummaryDataUsecase.TrainingSummaryData(
+                distance = 38.0,
+                time = 36,
+                activityCount = 2
+            ),
+            rideSummary.lastWeekSummary
+        )
+        assertEquals(
+            GetTrainingSummaryDataUsecase.TrainingSummaryData(
+                distance = 146.0,
+                time = 140,
+                activityCount = 6
+            ),
+            rideSummary.thisMonthSummary
+        )
+        assertEquals(
+            GetTrainingSummaryDataUsecase.TrainingSummaryData(
+                distance = 54.0,
+                time = 52,
+                activityCount = 2
+            ),
+            rideSummary.lastMonthSummary
         )
     }
 
