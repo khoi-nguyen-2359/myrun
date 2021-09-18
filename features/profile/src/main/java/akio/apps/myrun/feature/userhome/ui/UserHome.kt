@@ -1,5 +1,8 @@
 package akio.apps.myrun.feature.userhome.ui
 
+import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.domain.TrackingValueConverter
+import akio.apps.myrun.domain.activity.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
@@ -36,6 +39,8 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -94,12 +99,39 @@ fun UserHomeContent(
         Spacer(modifier = Modifier.height(AppDimensions.screenVerticalSpacing))
         UserProfileHeader(screenState, appNavController)
         Spacer(modifier = Modifier.height(AppDimensions.sectionVerticalSpacing))
-        TrainingSummaryTable()
+        TrainingSummaryTable(screenState)
     }
 }
 
 @Composable
-fun TrainingSummaryTable() {
+fun TrainingSummaryTable(screenState: UserHomeViewModel.ScreenState.StatsAvailable) {
+    val selectedActivityType by remember { mutableStateOf(ActivityType.Running) }
+    val summaryData = screenState.trainingSummaryTableData[selectedActivityType] ?: return
+    val thisWeekDistance = TrackingValueConverter.DistanceKm.fromRawValue(
+        summaryData.thisWeekSummary.distance
+    )
+    val lastWeekDistance = TrackingValueConverter.DistanceKm.fromRawValue(
+        summaryData.lastWeekSummary.distance
+    )
+    val thisWeekTime = TrackingValueConverter.TimeHour.fromRawValue(
+        summaryData.thisWeekSummary.time
+    )
+    val lastWeekTime = TrackingValueConverter.TimeHour.fromRawValue(
+        summaryData.lastWeekSummary.time
+    )
+    val thisMonthDistance = TrackingValueConverter.DistanceKm.fromRawValue(
+        summaryData.thisMonthSummary.distance
+    )
+    val lastMonthDistance = TrackingValueConverter.DistanceKm.fromRawValue(
+        summaryData.lastMonthSummary.distance
+    )
+    val thisMonthTime = TrackingValueConverter.TimeHour.fromRawValue(
+        summaryData.thisMonthSummary.time
+    )
+    val lastMonthTime = TrackingValueConverter.TimeHour.fromRawValue(
+        summaryData.lastMonthSummary.time
+    )
+
     Column {
         ColumnSpacer(height = AppDimensions.rowVerticalPadding)
         SectionTitle(text = stringResource(id = R.string.user_home_summary_title))
@@ -109,7 +141,7 @@ fun TrainingSummaryTable() {
                 Divider()
                 TrainingSummaryLabel(stringResource(id = R.string.user_home_summary_distance_label))
                 Divider()
-                TrainingSummaryLabel(stringResource(id = R.string.user_home_summary_pace_label))
+                TrainingSummaryLabel(stringResource(R.string.user_home_summary_total_time_label))
                 Divider()
                 TrainingSummaryLabel(
                     stringResource(id = R.string.user_home_summary_activities_label)
@@ -119,21 +151,43 @@ fun TrainingSummaryTable() {
             Column(modifier = Modifier.weight(1f)) {
                 TrainingSummaryLabel(stringResource(id = R.string.user_home_summary_weekly_label))
                 Divider()
-                TrainingSummaryProgress(text = "10/20")
+                TrainingSummaryProgress(
+                    text = String.format("%.2f", thisWeekDistance) +
+                        " / " +
+                        String.format("%.2f", lastWeekDistance)
+                )
                 Divider()
-                TrainingSummaryProgress(text = "5:00/7:00")
+                TrainingSummaryProgress(
+                    text = String.format("%.2f", thisWeekTime) +
+                        " / " +
+                        String.format("%.2f", lastWeekTime)
+                )
                 Divider()
-                TrainingSummaryProgress(text = "3/5")
+                TrainingSummaryProgress(
+                    text = "${summaryData.thisWeekSummary.activityCount}/" +
+                        "${summaryData.lastWeekSummary.activityCount}"
+                )
                 Divider()
             }
             Column(modifier = Modifier.weight(1f)) {
                 TrainingSummaryLabel(stringResource(id = R.string.user_home_summary_monthly_label))
                 Divider()
-                TrainingSummaryProgress(text = "10/20")
+                TrainingSummaryProgress(
+                    text = String.format("%.2f", thisMonthDistance) +
+                        " / " +
+                        String.format("%.2f", lastMonthDistance)
+                )
                 Divider()
-                TrainingSummaryProgress(text = "5:00/7:00")
+                TrainingSummaryProgress(
+                    text = String.format("%.2f", thisMonthTime) +
+                        " / " +
+                        String.format("%.2f", lastMonthTime)
+                )
                 Divider()
-                TrainingSummaryProgress(text = "3/5")
+                TrainingSummaryProgress(
+                    text = "${summaryData.thisMonthSummary.activityCount}/" +
+                        "${summaryData.lastMonthSummary.activityCount}"
+                )
                 Divider()
             }
         }
@@ -269,8 +323,31 @@ fun PreviewUserHome() {
             "My Name",
             "photoUrl",
             "Saigon, Vietnam",
-            listOf(),
-            listOf()
+            mapOf(
+                ActivityType.Running to GetTrainingSummaryDataUsecase.TrainingSummaryTableData(
+                    thisWeekSummary = GetTrainingSummaryDataUsecase.TrainingSummaryData(
+                        distance = 10000.0,
+                        time = 10_800_000L,
+                        activityCount = 3
+                    ),
+                    lastWeekSummary = GetTrainingSummaryDataUsecase.TrainingSummaryData(
+                        distance = 7_000.0,
+                        time = 8_800_000L,
+                        activityCount = 2
+                    ),
+                    thisMonthSummary = GetTrainingSummaryDataUsecase.TrainingSummaryData(
+                        distance = 10000.0,
+                        time = 10_800_000L,
+                        activityCount = 3
+                    ),
+                    lastMonthSummary = GetTrainingSummaryDataUsecase.TrainingSummaryData(
+                        distance = 10000.0,
+                        time = 10_800_000L,
+                        activityCount = 3
+                    )
+                ),
+                ActivityType.Cycling to GetTrainingSummaryDataUsecase.TrainingSummaryTableData()
+            )
         ),
         contentPadding = PaddingValues(),
         rememberNavController()

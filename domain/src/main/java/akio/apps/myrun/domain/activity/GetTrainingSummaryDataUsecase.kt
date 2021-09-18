@@ -4,6 +4,7 @@ import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import android.os.Parcelable
 import java.util.Calendar
 import java.util.Calendar.DAY_OF_MONTH
 import java.util.Calendar.DAY_OF_WEEK
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.withContext
+import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 
 class GetTrainingSummaryDataUsecase @Inject constructor(
@@ -114,18 +116,20 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
                 )
         }
 
+    @Parcelize
     data class TrainingSummaryTableData(
         val thisWeekSummary: TrainingSummaryData = TrainingSummaryData(),
         val lastWeekSummary: TrainingSummaryData = TrainingSummaryData(),
         val thisMonthSummary: TrainingSummaryData = TrainingSummaryData(),
         val lastMonthSummary: TrainingSummaryData = TrainingSummaryData(),
-    )
+    ) : Parcelable
 
+    @Parcelize
     data class TrainingSummaryData(
         val distance: Double = 0.0,
         val time: Long = 0L,
         val activityCount: Int = 0,
-    )
+    ) : Parcelable
 
     abstract class TimeRange(val offset: Int, val count: Int) {
         init {
@@ -187,11 +191,6 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
             } else {
                 (sumMonth - 12) / 12
             }
-        }
-
-        companion object {
-            val ThisMonthRange: MonthRange = MonthRange()
-            val LastMonthRange: MonthRange = MonthRange(offset = 1)
         }
     }
 }

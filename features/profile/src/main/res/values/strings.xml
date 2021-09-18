@@ -36,4 +36,5 @@
     <string name="user_home_summary_monthly_label">This vs. last\nmonth</string>
     <string name="user_home_summary_title">All activities</string>
     <string name="user_home_route_section_title">Routes</string>
+    <string name="user_home_summary_total_time_label">Time (hour)</string>
 </resources>
