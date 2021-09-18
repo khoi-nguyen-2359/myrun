@@ -3,6 +3,7 @@ package akio.apps.myrun.data.activity.api
 import akio.apps.common.data.Resource
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.fitness.DataPoint
 import java.io.File
 
@@ -33,4 +34,14 @@ interface ActivityRepository {
     suspend fun getActivityResource(activityId: String): Resource<ActivityModel?>
     suspend fun getActivityLocationDataPoints(activityId: String):
         List<ActivityLocation>
+
+    /**
+     * Get activities that have start time in given time range. Sorting order is descending.
+     */
+    suspend fun getActivitiesInTimeRange(
+        userId: String,
+        activityType: ActivityType,
+        startTime: Long,
+        endTime: Long
+    ): List<ActivityModel>
 }
