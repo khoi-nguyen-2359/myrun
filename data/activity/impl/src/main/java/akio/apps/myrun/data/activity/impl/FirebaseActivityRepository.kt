@@ -5,8 +5,10 @@ import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.impl.model.FirestoreActivity
 import akio.apps.myrun.data.activity.impl.model.FirestoreActivityMapper
+import akio.apps.myrun.data.activity.impl.model.FirestoreActivityType
 import akio.apps.myrun.data.activity.impl.model.FirestoreDataPointList
 import akio.apps.myrun.data.activity.impl.model.FirestoreDataPointSerializer
 import akio.apps.myrun.data.activity.impl.model.FirestoreFloatDataPointParser
@@ -58,6 +60,27 @@ class FirebaseActivityRepository @Inject constructor(
 
         val snapshot = query.get().await()
 
+        snapshot.documents.mapNotNull { doc ->
+            val firestoreActivity = doc.toObject(FirestoreActivity::class.java)
+                ?: return@mapNotNull null
+
+            firestoreActivityMapper.map(firestoreActivity)
+        }
+    }
+
+    override suspend fun getActivitiesInTimeRange(
+        userId: String,
+        activityType: ActivityType,
+        startTime: Long,
+        endTime: Long,
+    ): List<ActivityModel> = withContext(ioDispatcher) {
+        val query = userActivityCollectionGroup.whereEqualTo("athleteInfo.userId", userId)
+            .whereEqualTo("activityType", activityType.toFsActivityType().id)
+            .orderBy("startTime", Query.Direction.DESCENDING)
+            .startAfter(endTime)
+            .endBefore(startTime)
+
+        val snapshot = query.get().await()
         snapshot.documents.mapNotNull { doc ->
             val firestoreActivity = doc.toObject(FirestoreActivity::class.java)
                 ?: return@mapNotNull null
@@ -176,6 +199,12 @@ class FirebaseActivityRepository @Inject constructor(
         Resource.Success(activityData)
     } catch (ioEx: IOException) {
         Resource.Error(ioEx)
+    }
+
+    private fun ActivityType.toFsActivityType() = when (this) {
+        ActivityType.Running -> FirestoreActivityType.Running
+        ActivityType.Cycling -> FirestoreActivityType.Cycling
+        ActivityType.Unknown -> FirestoreActivityType.Unknown
     }
 
     companion object {
