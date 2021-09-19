@@ -27,14 +27,14 @@
     <string name="user_profile_error_getting_profile">Error happened when getting profile.</string>
     <string name="user_home_title">Home</string>
     <string name="user_home_edit_profile_button">Edit</string>
-    <string name="user_home_training_summary_run_activity_type">Run</string>
-    <string name="user_home_training_summary_ride_activity_type">Ride</string>
+    <string name="user_home_training_summary_run_activity_type">Running</string>
+    <string name="user_home_training_summary_ride_activity_type">Cycling</string>
     <string name="user_home_summary_distance_label">Distance</string>
     <string name="user_home_summary_pace_label">Pace (min/km)</string>
     <string name="user_home_summary_activities_label">Activities</string>
     <string name="user_home_summary_weekly_label">This / last\nweek</string>
     <string name="user_home_summary_monthly_label">This / last\nmonth</string>
-    <string name="user_home_summary_title">All activities</string>
+    <string name="user_home_summary_title">Training summary</string>
     <string name="user_home_route_section_title">Routes</string>
     <string name="user_home_summary_total_time_label">Time</string>
 </resources>
