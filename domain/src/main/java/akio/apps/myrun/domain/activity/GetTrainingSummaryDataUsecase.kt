@@ -128,6 +128,7 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
     class WeekRange(offset: Int = 0, count: Int = 1) : TimeRange(offset, count) {
         override val millisTimeRange: LongRange = run {
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("Z"))
+            calendar.firstDayOfWeek = MONDAY
             calendar[DAY_OF_WEEK] = MONDAY
             calendar[HOUR_OF_DAY] = 0
             calendar[MINUTE] = 0
