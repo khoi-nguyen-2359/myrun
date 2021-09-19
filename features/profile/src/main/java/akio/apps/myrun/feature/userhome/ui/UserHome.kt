@@ -29,6 +29,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
@@ -39,9 +41,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -104,7 +108,7 @@ fun UserHomeContent(
 
 @Composable
 fun TrainingSummaryTable(screenState: UserHomeViewModel.ScreenState.StatsAvailable) {
-    val selectedActivityType by remember { mutableStateOf(ActivityType.Running) }
+    var selectedActivityType by rememberSaveable { mutableStateOf(ActivityType.Running) }
     val summaryData = screenState.trainingSummaryTableData[selectedActivityType] ?: return
     val thisWeekDistance = TrackingValueConverter.DistanceKm.fromRawValue(
         summaryData.thisWeekSummary.distance
@@ -133,7 +137,9 @@ fun TrainingSummaryTable(screenState: UserHomeViewModel.ScreenState.StatsAvailab
 
     Column {
         ColumnSpacer(height = AppDimensions.rowVerticalPadding)
-        SectionTitle(text = stringResource(id = R.string.user_home_summary_title))
+//        SectionTitle(text = stringResource(id = R.string.user_home_summary_title))
+//        ColumnSpacer(height = AppDimensions.rowVerticalPadding)
+        ActivityTypePane(selectedActivityType) { selectedActivityType = it }
         Column(modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)) {
             TableRow {
                 TrainingSummaryLabelCell(text = "\n")
@@ -206,7 +212,42 @@ fun TrainingSummaryTable(screenState: UserHomeViewModel.ScreenState.StatsAvailab
 }
 
 @Composable
-fun TableDivider() = Divider(thickness = 0.5.dp)
+private fun ActivityTypePane(
+    selectedActivityType: ActivityType,
+    selectActivityTypeAction: (ActivityType) -> Unit,
+) {
+    val allTypes = listOf(ActivityType.Running, ActivityType.Cycling)
+    Row(modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)) {
+        allTypes.forEach { type ->
+            val backgroundColor: Color
+            val contentColor: Color
+            if (type == selectedActivityType) {
+                backgroundColor = AppColors.primary
+                contentColor = Color.White
+            } else {
+                backgroundColor = Color.White
+                contentColor = AppColors.primary
+            }
+            val activityTypeLabel = when (type) {
+                ActivityType.Running -> R.string.user_home_training_summary_run_activity_type
+                ActivityType.Cycling -> R.string.user_home_training_summary_ride_activity_type
+                else -> 0
+            }
+            UserHomeOutlinedButton(
+                text = stringResource(id = activityTypeLabel),
+                onClick = {
+                    selectActivityTypeAction(type)
+                },
+                modifier = Modifier.padding(end = 8.dp),
+                colors = ButtonDefaults.outlinedButtonColors(backgroundColor, contentColor),
+                width = 65.dp
+            )
+        }
+    }
+}
+
+@Composable
+private fun TableDivider() = Divider(thickness = 0.5.dp)
 
 @Composable
 private fun SectionTitle(text: String) {
@@ -219,7 +260,7 @@ private fun SectionTitle(text: String) {
 }
 
 @Composable
-fun RowScope.TableCell(
+private fun RowScope.TableCell(
     modifier: Modifier = Modifier,
     content: @Composable (RowScope.() -> Unit),
 ) = Row(
@@ -232,14 +273,14 @@ fun RowScope.TableCell(
 )
 
 @Composable
-fun TableRow(content: @Composable (RowScope.() -> Unit)) = Row(
+private fun TableRow(content: @Composable (RowScope.() -> Unit)) = Row(
     modifier = Modifier.fillMaxWidth(),
     content = content,
     verticalAlignment = Alignment.CenterVertically
 )
 
 @Composable
-fun RowScope.TrainingSummaryLabelCell(
+private fun RowScope.TrainingSummaryLabelCell(
     text: String,
     textAlign: TextAlign = TextAlign.Center,
 ) = TableCell {
@@ -263,7 +304,7 @@ private fun RowScope.TrainingSummaryLabel(
 }
 
 @Composable
-fun RowScope.TrainingSummaryProgress(
+private fun RowScope.TrainingSummaryProgress(
     current: String,
     previous: String,
 ) = TableCell {
@@ -271,7 +312,9 @@ fun RowScope.TrainingSummaryProgress(
         text = current,
         style = MaterialTheme.typography.body2,
         fontSize = 16.sp,
-        modifier = Modifier.weight(1f).alignByBaseline(),
+        modifier = Modifier
+            .weight(1f)
+            .alignByBaseline(),
         textAlign = TextAlign.End,
         fontWeight = FontWeight.Bold,
 //        color = AppColors.primary
@@ -285,7 +328,9 @@ fun RowScope.TrainingSummaryProgress(
         text = previous,
         style = MaterialTheme.typography.body2,
         fontSize = 13.sp,
-        modifier = Modifier.weight(1f).alignByBaseline(),
+        modifier = Modifier
+            .weight(1f)
+            .alignByBaseline(),
         textAlign = TextAlign.Start,
 //        fontWeight = FontWeight.Bold,
 //        color = AppColors.secondary
@@ -319,21 +364,35 @@ private fun UserProfileHeader(
             )
         }
         RowSpacer(width = 10.dp)
-        OutlinedButton(
-            shape = RoundedCornerShape(3.dp),
-            onClick = {
-                appNavController.navigate(HomeNavDestination.Profile.routeWithUserId())
-            },
-            border = BorderStroke(1.dp, AppColors.primary),
-            modifier = Modifier.size(width = 50.dp, height = 30.dp),
-            contentPadding = PaddingValues(4.dp)
+        UserHomeOutlinedButton(
+            text = stringResource(id = R.string.user_home_edit_profile_button)
         ) {
-            Text(
-                text = stringResource(id = R.string.user_home_edit_profile_button),
-                style = MaterialTheme.typography.caption,
-                fontWeight = FontWeight.Bold
-            )
+            appNavController.navigate(HomeNavDestination.Profile.routeWithUserId())
         }
+    }
+}
+
+@Composable
+private fun UserHomeOutlinedButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    colors: ButtonColors = ButtonDefaults.outlinedButtonColors(),
+    width: Dp = 50.dp,
+    onClick: () -> Unit,
+) {
+    OutlinedButton(
+        shape = RoundedCornerShape(3.dp),
+        onClick = { onClick() },
+        border = BorderStroke(1.dp, AppColors.primary),
+        colors = colors,
+        modifier = modifier.size(width = width, height = 30.dp),
+        contentPadding = PaddingValues(4.dp)
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.caption,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -346,7 +405,7 @@ private fun UserHomeTopBar() {
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun UserProfileImage(
+private fun UserProfileImage(
     photoUrl: String?,
     imageLoadSizeDp: Dp = 60.dp,
     onClick: (() -> Unit)? = null,
@@ -373,7 +432,7 @@ fun UserProfileImage(
 
 @Preview(showBackground = true, backgroundColor = 0xffffff)
 @Composable
-fun PreviewUserHome() {
+private fun PreviewUserHome() {
     UserHome(
         screenState = UserHomeViewModel.ScreenState.StatsAvailable(
             "My Name",
