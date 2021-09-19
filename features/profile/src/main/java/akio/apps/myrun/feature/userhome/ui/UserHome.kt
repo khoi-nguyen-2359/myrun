@@ -15,11 +15,10 @@ import akio.apps.myrun.feature.userhome.UserHomeViewModel
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -135,66 +134,79 @@ fun TrainingSummaryTable(screenState: UserHomeViewModel.ScreenState.StatsAvailab
     Column {
         ColumnSpacer(height = AppDimensions.rowVerticalPadding)
         SectionTitle(text = stringResource(id = R.string.user_home_summary_title))
-        Row {
-            Column(modifier = Modifier.weight(1f)) {
-                TrainingSummaryLabel(text = "\n")
-                Divider()
-                TrainingSummaryLabel(stringResource(id = R.string.user_home_summary_distance_label))
-                Divider()
-                TrainingSummaryLabel(stringResource(R.string.user_home_summary_total_time_label))
-                Divider()
-                TrainingSummaryLabel(
-                    stringResource(id = R.string.user_home_summary_activities_label)
-                )
-                Divider()
+        Column(modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)) {
+            TableRow {
+                TrainingSummaryLabelCell(text = "\n")
+                TrainingSummaryLabelCell(stringResource(R.string.user_home_summary_weekly_label))
+                TrainingSummaryLabelCell(stringResource(R.string.user_home_summary_monthly_label))
             }
-            Column(modifier = Modifier.weight(1f)) {
-                TrainingSummaryLabel(stringResource(id = R.string.user_home_summary_weekly_label))
-                Divider()
+            TableDivider()
+            TableRow {
+                TableCell {
+                    TrainingSummaryLabel(
+                        stringResource(id = R.string.user_home_summary_distance_label),
+                        textAlign = TextAlign.Start
+                    )
+                    Text(
+                        text = " (km)",
+                        style = MaterialTheme.typography.caption,
+                        modifier = Modifier.alignByBaseline()
+                    )
+                }
                 TrainingSummaryProgress(
-                    text = String.format("%.2f", thisWeekDistance) +
-                        " / " +
-                        String.format("%.2f", lastWeekDistance)
+                    current = String.format("%.1f", thisWeekDistance),
+                    previous = String.format("%.1f", lastWeekDistance)
                 )
-                Divider()
                 TrainingSummaryProgress(
-                    text = String.format("%.2f", thisWeekTime) +
-                        " / " +
-                        String.format("%.2f", lastWeekTime)
+                    current = String.format("%.1f", thisMonthDistance),
+                    previous = String.format("%.1f", lastMonthDistance)
                 )
-                Divider()
-                TrainingSummaryProgress(
-                    text = "${summaryData.thisWeekSummary.activityCount}/" +
-                        "${summaryData.lastWeekSummary.activityCount}"
-                )
-                Divider()
             }
-            Column(modifier = Modifier.weight(1f)) {
-                TrainingSummaryLabel(stringResource(id = R.string.user_home_summary_monthly_label))
-                Divider()
+            TableDivider()
+            TableRow {
+                TableCell {
+                    TrainingSummaryLabel(
+                        stringResource(id = R.string.user_home_summary_total_time_label),
+                        textAlign = TextAlign.Start
+                    )
+                    Text(
+                        text = " (hour)",
+                        style = MaterialTheme.typography.caption,
+                        modifier = Modifier.alignByBaseline()
+                    )
+                }
                 TrainingSummaryProgress(
-                    text = String.format("%.2f", thisMonthDistance) +
-                        " / " +
-                        String.format("%.2f", lastMonthDistance)
+                    current = String.format("%.1f", thisWeekTime),
+                    previous = String.format("%.1f", lastWeekTime)
                 )
-                Divider()
                 TrainingSummaryProgress(
-                    text = String.format("%.2f", thisMonthTime) +
-                        " / " +
-                        String.format("%.2f", lastMonthTime)
+                    current = String.format("%.1f", thisMonthTime),
+                    previous = String.format("%.1f", lastMonthTime)
                 )
-                Divider()
-                TrainingSummaryProgress(
-                    text = "${summaryData.thisMonthSummary.activityCount}/" +
-                        "${summaryData.lastMonthSummary.activityCount}"
-                )
-                Divider()
             }
+            TableDivider()
+            TableRow {
+                TrainingSummaryLabelCell(
+                    stringResource(id = R.string.user_home_summary_activities_label),
+                    TextAlign.Start
+                )
+                TrainingSummaryProgress(
+                    current = "${summaryData.thisWeekSummary.activityCount}",
+                    previous = "${summaryData.lastWeekSummary.activityCount}"
+                )
+                TrainingSummaryProgress(
+                    current = "${summaryData.thisMonthSummary.activityCount}",
+                    previous = "${summaryData.lastMonthSummary.activityCount}"
+                )
+            }
+            TableDivider()
         }
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing)
-        SectionTitle(text = stringResource(id = R.string.user_home_route_section_title))
     }
 }
+
+@Composable
+fun TableDivider() = Divider(thickness = 0.5.dp)
 
 @Composable
 private fun SectionTitle(text: String) {
@@ -207,32 +219,76 @@ private fun SectionTitle(text: String) {
 }
 
 @Composable
-fun TrainingSummaryCell(content: @Composable (BoxScope.() -> Unit)) = Box(
-    modifier = Modifier
-        .fillMaxWidth()
-//        .border(0.5.dp, Color.Gray.copy(alpha = 0.5f))
-        .padding(vertical = 12.dp),
+fun RowScope.TableCell(
+    modifier: Modifier = Modifier,
+    content: @Composable (RowScope.() -> Unit),
+) = Row(
+    modifier = modifier
+        .weight(1f)
+        .padding(vertical = 12.dp)
+        .alignByBaseline(),
     content = content,
-    contentAlignment = Alignment.Center
+//    verticalAlignment = Alignment.Bottom,
 )
 
 @Composable
-fun TrainingSummaryLabel(text: String) = TrainingSummaryCell {
+fun TableRow(content: @Composable (RowScope.() -> Unit)) = Row(
+    modifier = Modifier.fillMaxWidth(),
+    content = content,
+    verticalAlignment = Alignment.CenterVertically
+)
+
+@Composable
+fun RowScope.TrainingSummaryLabelCell(
+    text: String,
+    textAlign: TextAlign = TextAlign.Center,
+) = TableCell {
+    TrainingSummaryLabel(text, Modifier.fillMaxWidth(), textAlign)
+}
+
+@Composable
+private fun RowScope.TrainingSummaryLabel(
+    text: String,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Center,
+) {
     Text(
         text = text,
         style = MaterialTheme.typography.body2,
         fontWeight = FontWeight.Bold,
-        fontSize = 16.sp,
-        textAlign = TextAlign.Center
+        fontSize = 15.sp,
+        textAlign = textAlign,
+        modifier = modifier.alignByBaseline()
     )
 }
 
 @Composable
-fun TrainingSummaryProgress(text: String) = TrainingSummaryCell {
+fun RowScope.TrainingSummaryProgress(
+    current: String,
+    previous: String,
+) = TableCell {
     Text(
-        text = text,
+        text = current,
         style = MaterialTheme.typography.body2,
         fontSize = 16.sp,
+        modifier = Modifier.weight(1f).alignByBaseline(),
+        textAlign = TextAlign.End,
+        fontWeight = FontWeight.Bold,
+//        color = AppColors.primary
+    )
+    Text(
+        text = " / ",
+        modifier = Modifier.alignByBaseline(),
+        fontSize = 14.sp
+    )
+    Text(
+        text = previous,
+        style = MaterialTheme.typography.body2,
+        fontSize = 13.sp,
+        modifier = Modifier.weight(1f).alignByBaseline(),
+        textAlign = TextAlign.Start,
+//        fontWeight = FontWeight.Bold,
+//        color = AppColors.secondary
     )
 }
 

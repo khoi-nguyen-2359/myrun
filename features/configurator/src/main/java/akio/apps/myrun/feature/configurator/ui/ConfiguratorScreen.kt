@@ -2,23 +2,18 @@ package akio.apps.myrun.feature.configurator.ui
 
 import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.configurator.RouteTrackingConfigurationViewModel
-import akio.apps.myrun.feature.configurator.ui.SectionSpacing.elementHorizontalPadding
 import akio.apps.myrun.feature.configurator.ui.SectionSpacing.elementVerticalPadding
+import akio.apps.myrun.feature.configurator.viewmodel.UserAuthenticationViewModel
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
-import androidx.compose.material.Checkbox
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
@@ -28,15 +23,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ConfiguratorScreen(routeTrackingViewModel: RouteTrackingConfigurationViewModel) =
+fun ConfiguratorScreen(
+    routeTrackingViewModel: RouteTrackingConfigurationViewModel,
+    userAuthenticationSectionViewModel: UserAuthenticationViewModel,
+) =
     AppTheme {
         Column(
             modifier = Modifier
@@ -44,8 +39,20 @@ fun ConfiguratorScreen(routeTrackingViewModel: RouteTrackingConfigurationViewMod
                 .padding(16.dp)
         ) {
             RouteTrackingSection(routeTrackingViewModel)
+            UserAuthenticationSection(userAuthenticationSectionViewModel)
         }
     }
+
+@Composable
+fun UserAuthenticationSection(userAuthenticationSectionViewModel: UserAuthenticationViewModel) {
+    ExpandableSection(label = "User") {
+        val userProfileState = userAuthenticationSectionViewModel.userProfileFlow.collectAsState(
+            initial = null
+        )
+        val userProfile = userProfileState.value ?: return@ExpandableSection
+        Text(text = "User ID: ${userProfile.accountId}")
+    }
+}
 
 object SectionSpacing {
     val elementVerticalPadding = 8.dp
@@ -53,7 +60,7 @@ object SectionSpacing {
 }
 
 @Composable
-private fun RouteTrackingSection(routeTrackingViewModel: RouteTrackingConfigurationViewModel) =
+private fun ExpandableSection(label: String, content: @Composable () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -75,7 +82,7 @@ private fun RouteTrackingSection(routeTrackingViewModel: RouteTrackingConfigurat
                 modifier = Modifier.padding(vertical = elementVerticalPadding)
             )
             Text(
-                text = "Route Tracking",
+                text = label,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(vertical = elementVerticalPadding)
@@ -83,89 +90,29 @@ private fun RouteTrackingSection(routeTrackingViewModel: RouteTrackingConfigurat
             )
         }
         if (isExpanded) {
-            val locationUpdateConfig by routeTrackingViewModel.locationUpdateConfigFlow
-                .collectAsState(RouteTrackingConfigurationViewModel.LocationUpdateConfiguration())
-            LocationUpdateConfiguration(
-                locationUpdateConfig,
-                onValueChanged = { value ->
-                    routeTrackingViewModel.onLocationUpdateConfigurationChanged(value)
-                }
-            )
-            ApplyButton { routeTrackingViewModel.applyChanges() }
+            content()
         }
     }
+}
 
 @Composable
-private fun LocationUpdateConfiguration(
-    config: RouteTrackingConfigurationViewModel.LocationUpdateConfiguration,
-    onValueChanged: (RouteTrackingConfigurationViewModel.LocationUpdateConfiguration) -> Unit
-) {
-    Text(text = "Location Update:", modifier = Modifier.padding(vertical = elementVerticalPadding))
-    TextField(
-        label = { Text("Update interval") },
-        value = config.updateInterval,
-        onValueChange = { value -> onValueChanged(config.copy(updateInterval = value)) },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        maxLines = 1,
-        singleLine = true
-    )
-    TextField(
-        label = { Text("Fastest update interval") },
-        value = config.fastestUpdateInterval,
-        onValueChange = { value -> onValueChanged(config.copy(fastestUpdateInterval = value)) },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        maxLines = 1,
-        singleLine = true
-    )
-    TextField(
-        label = { Text("Smallest displacement") },
-        value = config.smallestDisplacement,
-        onValueChange = { value -> onValueChanged(config.copy(smallestDisplacement = value)) },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        maxLines = 1,
-        singleLine = true
-    )
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = elementVerticalPadding)
-    ) {
-        Checkbox(
-            checked = config.isAvgAccumulationEnabled,
-            onCheckedChange = { value ->
-                onValueChanged(config.copy(isAvgAccumulationEnabled = value))
+private fun RouteTrackingSection(routeTrackingViewModel: RouteTrackingConfigurationViewModel) =
+    ExpandableSection(label = "Route Tracking") {
+        val locationUpdateConfig by routeTrackingViewModel.locationUpdateConfigFlow
+            .collectAsState(RouteTrackingConfigurationViewModel.LocationUpdateConfiguration())
+        LocationUpdateConfiguration(
+            locationUpdateConfig,
+            onValueChanged = { value ->
+                routeTrackingViewModel.onLocationUpdateConfigurationChanged(value)
             }
         )
-        Spacer(modifier = Modifier.size(elementHorizontalPadding))
-        Text(text = "Use average location accumulator")
+        ApplyButton { routeTrackingViewModel.applyChanges() }
     }
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = elementVerticalPadding)
-    ) {
-        Checkbox(
-            checked = config.isSpeedFilterEnabled,
-            onCheckedChange = { value ->
-                onValueChanged(config.copy(isSpeedFilterEnabled = value))
-            }
-        )
-        Spacer(modifier = Modifier.size(elementHorizontalPadding))
-        Text(text = "Use location speed filter")
-    }
-}
 
 @Composable
 private fun ApplyButton(onClick: () -> Unit) = Button(
     onClick = onClick,
-    modifier = Modifier.padding(vertical = elementVerticalPadding)
+    modifier = Modifier.padding(vertical = SectionSpacing.elementVerticalPadding)
 ) {
     Text(text = "Apply")
-}
-
-@Preview
-@Composable
-private fun PreviewLocationRequestConfiguration() = Column(modifier = Modifier.fillMaxWidth()) {
-    LocationUpdateConfiguration(
-        RouteTrackingConfigurationViewModel.LocationUpdateConfiguration(),
-        onValueChanged = { }
-    )
 }
