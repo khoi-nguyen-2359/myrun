@@ -41,12 +41,15 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ButtonDefaults.elevation
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -57,6 +60,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -362,7 +366,7 @@ private const val PERFORMANCE_VALUE_DELIM = " - "
 
 @Composable
 private fun ActivityPerformanceRow(activity: ActivityModel, modifier: Modifier = Modifier) {
-    var isExpanded by remember { mutableStateOf(false) }
+    var isExpanded by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     val valueFormatterList = remember { createActivityFormatterList(activity.activityType) }
     val performanceValue = remember(isExpanded) {
@@ -377,22 +381,24 @@ private fun ActivityPerformanceRow(activity: ActivityModel, modifier: Modifier =
         }
             .removeSuffix(PERFORMANCE_VALUE_DELIM)
     }
-    Surface(
-        elevation = 4.dp,
-        shape = RoundedCornerShape(4.dp),
-        modifier = modifier.clickable { isExpanded = !isExpanded }
-    ) {
 
+    OutlinedButton(
+        shape = RoundedCornerShape(3.dp),
+        onClick = { isExpanded = !isExpanded },
+        border = null,
+        colors = ButtonDefaults.outlinedButtonColors(
+            backgroundColor = Color(0xff494949),
+            contentColor = Color.White
+        ),
+        modifier = modifier.height(30.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
+        elevation = elevation(defaultElevation = 4.dp)
+    ) {
         Text(
-            modifier = Modifier
-                .background(Color(0xff494949))
-                .padding(horizontal = 8.dp, vertical = 6.dp)
-                .animateContentSize(),
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
             text = performanceValue,
-            fontSize = 13.sp,
-            textAlign = TextAlign.Center
+            style = MaterialTheme.typography.caption,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.animateContentSize()
         )
     }
 }
