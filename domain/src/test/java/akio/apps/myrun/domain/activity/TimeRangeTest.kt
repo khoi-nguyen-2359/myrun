@@ -124,6 +124,7 @@ class TimeRangeTest {
 
     private fun createPivotCalendar(): Calendar =
         Calendar.getInstance(TimeZone.getTimeZone("Z")).apply {
+            firstDayOfWeek = MONDAY
             this[Calendar.HOUR_OF_DAY] = 0
             this[Calendar.MINUTE] = 0
             this[Calendar.SECOND] = 0
