@@ -137,8 +137,6 @@ fun TrainingSummaryTable(screenState: UserHomeViewModel.ScreenState.StatsAvailab
 
     Column {
         ColumnSpacer(height = AppDimensions.rowVerticalPadding)
-//        SectionTitle(text = stringResource(id = R.string.user_home_summary_title))
-//        ColumnSpacer(height = AppDimensions.rowVerticalPadding)
         ActivityTypePane(selectedActivityType) { selectedActivityType = it }
         Column(modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)) {
             TableRow {
@@ -295,9 +293,9 @@ private fun RowScope.TrainingSummaryLabel(
 ) {
     Text(
         text = text,
-        style = MaterialTheme.typography.body2,
+        style = MaterialTheme.typography.subtitle1,
         fontWeight = FontWeight.Bold,
-        fontSize = 15.sp,
+//        fontSize = 16.sp,
         textAlign = textAlign,
         modifier = modifier.alignByBaseline()
     )
@@ -310,8 +308,8 @@ private fun RowScope.TrainingSummaryProgress(
 ) = TableCell {
     Text(
         text = current,
-        style = MaterialTheme.typography.body2,
-        fontSize = 16.sp,
+        style = MaterialTheme.typography.subtitle1,
+//        fontSize = 15.sp,
         modifier = Modifier
             .weight(1f)
             .alignByBaseline(),
@@ -326,8 +324,8 @@ private fun RowScope.TrainingSummaryProgress(
     )
     Text(
         text = previous,
-        style = MaterialTheme.typography.body2,
-        fontSize = 13.sp,
+        style = MaterialTheme.typography.caption,
+//        fontSize = 13.sp,
         modifier = Modifier
             .weight(1f)
             .alignByBaseline(),
