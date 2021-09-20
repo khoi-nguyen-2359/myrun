@@ -14,6 +14,7 @@ import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.FabSize
 import akio.apps.myrun.feature.userhome._di.DaggerUserHomeFeatureComponent
 import akio.apps.myrun.feature.userhome.ui.UserHome
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,9 +31,11 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +60,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.LocalWindowInsets
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
 object HomeScreenDimensions {
     val AppBarHeight = 56.dp
@@ -91,23 +95,51 @@ fun HomeScreen(
     onClickExportActivityFile: (ActivityModel) -> Unit,
     appNavController: NavController,
 ) = AppTheme {
+    // FAB is inactive when user selects a tab other than Feed
+    var isFabActive by remember { mutableStateOf(true) }
     val insets = LocalWindowInsets.current
     val fabBoxHeightDp = FabSize * 4 / 3 + AppBarHeight + insets.systemBars.bottom.px2dp.dp
     val fabBoxSizePx = with(LocalDensity.current) { fabBoxHeightDp.roundToPx().toFloat() }
-    var fabOffsetY by remember { mutableStateOf(0f) }
-
+    val fabOffsetY = remember { Animatable(0f) }
+    val coroutineScope = rememberCoroutineScope()
     // insets may be updated, so remember scroll connection with keys
     val nestedScrollConnection = remember(fabBoxSizePx) {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (!isFabActive) {
+                    return Offset.Zero
+                }
+
                 val delta = available.y
-                val newOffset = fabOffsetY - delta
-                fabOffsetY = newOffset.coerceIn(0f, fabBoxSizePx)
+                val targetFabOffsetY = if (delta >= 0) {
+                    // reveal (move up)
+                    0f
+                } else {
+                    // go away (move down)
+                    fabBoxSizePx
+                }
+                coroutineScope.launch {
+                    fabOffsetY.animateTo(targetFabOffsetY)
+                }
                 return Offset.Zero
             }
         }
     }
+
     val homeNavController = rememberNavController()
+    val currentBackStackEntry by homeNavController.currentBackStackEntryAsState()
+    isFabActive = currentBackStackEntry?.destination?.route == HomeNavItemInfo.ActivityFeed.route
+    // toggle FAB when switching between tabs
+    LaunchedEffect(isFabActive) {
+        when {
+            isFabActive && fabOffsetY.value != 0f -> {
+                fabOffsetY.animateTo(0f)
+            }
+            !isFabActive && fabOffsetY.value != fabBoxSizePx -> {
+                fabOffsetY.animateTo(fabBoxSizePx)
+            }
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -123,7 +155,7 @@ fun HomeScreen(
             modifier = Modifier
                 .height(fabBoxHeightDp)
                 .align(Alignment.BottomCenter)
-                .offset { IntOffset(x = 0, y = fabOffsetY.roundToInt()) }
+                .offset { IntOffset(x = 0, y = fabOffsetY.value.roundToInt()) }
         ) {
             HomeFloatingActionButton(onClickFloatingActionButton)
         }
@@ -159,7 +191,7 @@ private fun HomeNavHost(
 
 private fun NavGraphBuilder.addUserHomeDestination(
     contentPaddings: PaddingValues,
-    appNavController: NavController
+    appNavController: NavController,
 ) {
     composable(route = HomeNavItemInfo.UserHome.route) { backstackEntry ->
         val userHomeViewModel = backstackEntry.savedStateViewModelProvider(backstackEntry) {
