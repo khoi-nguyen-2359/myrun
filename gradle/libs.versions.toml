@@ -1,6 +1,8 @@
 [versions]
 agp = "7.0.2"
 ksp = "1.5.30-1.0.0"
+build-time-tracker = "0.11.1"
+
 multidex = "1.0.3"
 
 kotlin = "1.5.21"
@@ -76,6 +78,8 @@ turbine = "0.6.0"
 [libraries]
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 ksp = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp"}
+build-time-tracker = { module = "net.rdrei.android.buildtimetracker:gradle-plugin", version.ref = "build-time-tracker"}
+
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 playServicesGradlePlugin = { module = "com.google.gms:google-services", version.ref = "playServicesGradlePlugin" }
 firebaseCrashlyticsGradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "crashlyticsGradlePlugin" }
