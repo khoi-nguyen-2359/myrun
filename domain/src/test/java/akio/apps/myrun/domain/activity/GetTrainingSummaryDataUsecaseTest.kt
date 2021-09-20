@@ -43,8 +43,10 @@ class GetTrainingSummaryDataUsecaseTest {
     fun test() = testCoroutineDispatcher.runBlockingTest {
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
 
-        val biWeekRange = 1630886400000..1632096000000 // 2021/09/6 - 2021/09/20
-        val biMonthRange = 1627776000000..1633046400000 // 2021/08/01 - 2021/10/01
+        val biWeekRange =
+            GetTrainingSummaryDataUsecase.WeekRange(offset = 1, count = 2).millisTimeRange
+        val biMonthRange =
+            GetTrainingSummaryDataUsecase.MonthRange(offset = 1, count = 2).millisTimeRange
 
         // bi month runs
         whenever(
