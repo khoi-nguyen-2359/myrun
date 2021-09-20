@@ -19,6 +19,7 @@ import akio.apps.myrun.feature.feed.ui.FeedDimensions.activityItemVerticalMargin
 import akio.apps.myrun.feature.feed.ui.FeedDimensions.activityItemVerticalPadding
 import akio.apps.myrun.feature.home.ui.HomeScreenDimensions
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -114,9 +115,10 @@ fun ActivityFeed(
     onClickExportActivityFile: (ActivityModel) -> Unit,
     navController: NavController,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val insets = LocalWindowInsets.current
     val topBarHeightDp = HomeScreenDimensions.AppBarHeight + insets.systemBars.top.px2dp.dp
-    var topBarOffsetY by remember { mutableStateOf(0f) }
+    val topBarOffsetY = remember { Animatable(0f) }
     val topBarHeightPx = with(LocalDensity.current) { topBarHeightDp.roundToPx().toFloat() }
 
     // insets may be updated => top bar height changes, so remember scroll connection with keys
@@ -124,8 +126,15 @@ fun ActivityFeed(
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 val delta = available.y
-                val newOffset = topBarOffsetY + delta
-                topBarOffsetY = newOffset.coerceIn(-topBarHeightPx, 0f)
+                val targetOffset = if (delta >= 0) {
+                    0f
+                } else {
+                    -topBarHeightPx
+                }
+                coroutineScope.launch {
+                    topBarOffsetY.animateTo(targetOffset)
+                }
+
                 return Offset.Zero
             }
         }
@@ -136,7 +145,6 @@ fun ActivityFeed(
     )
 
     val feedListState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
 
     Box(
         modifier = Modifier
@@ -159,7 +167,7 @@ fun ActivityFeed(
             Modifier
                 .height(topBarHeightDp)
                 .align(Alignment.TopCenter)
-                .offset { IntOffset(x = 0, y = topBarOffsetY.roundToInt()) }
+                .offset { IntOffset(x = 0, y = topBarOffsetY.value.roundToInt()) }
                 .background(AppColors.primary)
         )
     }
