@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.statusBarsHeight
 
@@ -25,6 +24,6 @@ fun NavigationBarSpacer() {
         modifier = Modifier
             .fillMaxWidth()
             .navigationBarsHeight()
-            .background(Color.Black)
+            .background(AppColors.primarySurface())
     )
 }
