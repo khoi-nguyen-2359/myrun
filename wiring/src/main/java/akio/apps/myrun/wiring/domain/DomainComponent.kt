@@ -7,7 +7,7 @@ import akio.apps.myrun.domain.activity.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.domain.activity.RunSplitsCalculator
 import akio.apps.myrun.domain.activityexport.ExportTempTcxFileUsecase
 import akio.apps.myrun.domain.authentication.PostSignInUsecase
-import akio.apps.myrun.domain.migration.AppVersionMigrationUsecase
+import akio.apps.myrun.domain.migration.AppMigrationUsecase
 import akio.apps.myrun.domain.migration.task.MigrationTask10500
 import akio.apps.myrun.domain.recentplace.GetUserRecentPlaceNameUsecase
 import akio.apps.myrun.domain.recentplace.MakeActivityPlaceNameUsecase
@@ -83,5 +83,5 @@ interface DomainComponent {
 
     // App Migration
     fun migrationTask10500(): MigrationTask10500
-    fun appVersionMigrationUsecase(): AppVersionMigrationUsecase
+    fun appVersionMigrationUsecase(): AppMigrationUsecase
 }

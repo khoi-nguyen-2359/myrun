@@ -5,13 +5,13 @@ import akio.apps.myrun.domain.migration.task.MigrationTask10500
 import akio.apps.myrun.domain.version.AppVersion
 import javax.inject.Inject
 
-class AppVersionMigrationUsecase @Inject constructor(
+class AppMigrationUsecase @Inject constructor(
     private val appMigrationState: AppMigrationState,
     private val migrationTask10500: MigrationTask10500,
 ) {
-    suspend fun migrate(currAppVersion: AppVersion) {
+    suspend fun migrate(currAppVersion: AppVersion): Boolean {
         if (appMigrationState.isMigrationSucceeded(currAppVersion.appVersionString)) {
-            return
+            return true
         }
         var isMigrationSucceeded = true
         listOf(
@@ -36,5 +36,7 @@ class AppVersionMigrationUsecase @Inject constructor(
             currAppVersion.appVersionString,
             isMigrationSucceeded
         )
+
+        return isMigrationSucceeded
     }
 }

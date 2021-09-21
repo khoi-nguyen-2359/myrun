@@ -21,6 +21,7 @@ interface WorkerFeatureComponent {
     fun inject(uploadStravaFileWorker: UploadStravaFileWorker)
     fun inject(updateUserRecentPlaceWorker: UpdateUserRecentPlaceWorker)
     fun inject(activityUploadWorker: ActivityUploadWorker)
+    fun inject(appMigrationWorker: AppMigrationWorker)
 
     @Component.Factory
     interface Factory {
