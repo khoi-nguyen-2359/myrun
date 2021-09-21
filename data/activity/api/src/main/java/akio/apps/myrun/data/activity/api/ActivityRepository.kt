@@ -9,6 +9,7 @@ import java.io.File
 
 interface ActivityRepository {
     suspend fun getActivitiesByStartTime(
+        fixUserId: String,
         userIds: List<String>,
         startAfterTime: Long,
         limit: Int
