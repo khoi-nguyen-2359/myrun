@@ -1,13 +1,13 @@
 package akio.apps.myrun.wiring.data.user
 
-import akio.apps.myrun.data.user.api.AppVersionMigrationState
+import akio.apps.myrun.data.user.api.AppMigrationState
 import akio.apps.myrun.data.user.api.UserFollowRepository
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.data.user.impl.FirebaseUserFollowRepository
 import akio.apps.myrun.data.user.impl.FirebaseUserProfileRepository
 import akio.apps.myrun.data.user.impl.FirebaseUserRecentPlaceRepository
-import akio.apps.myrun.data.user.impl.PreferenceAppVersionMigrationState
+import akio.apps.myrun.data.user.impl.PreferenceAppMigrationState
 import dagger.Binds
 import dagger.Module
 
@@ -25,5 +25,5 @@ internal interface UserDataModule {
         UserRecentPlaceRepository
 
     @Binds
-    fun appVersionMigrationState(impl: PreferenceAppVersionMigrationState): AppVersionMigrationState
+    fun appVersionMigrationState(impl: PreferenceAppMigrationState): AppMigrationState
 }

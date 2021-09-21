@@ -1,25 +1,40 @@
 package akio.apps.myrun.domain.migration
 
-import akio.apps.myrun.data.user.api.AppVersionMigrationState
+import akio.apps.myrun.data.user.api.AppMigrationState
 import akio.apps.myrun.domain.migration.task.MigrationTask10500
-import dagger.Lazy
+import akio.apps.myrun.domain.version.AppVersion
 import javax.inject.Inject
 
 class AppVersionMigrationUsecase @Inject constructor(
-    private val appVersionMigrationState: AppVersionMigrationState,
-    private val lazyMigrationTask10500: Lazy<MigrationTask10500>
+    private val appMigrationState: AppMigrationState,
+    private val migrationTask10500: MigrationTask10500,
 ) {
-    suspend fun migrate(currVersionCode: Int) {
-        if (appVersionMigrationState.isMigrationCompleted()) {
+    suspend fun migrate(currAppVersion: AppVersion) {
+        if (appMigrationState.isMigrationSucceeded(currAppVersion.appVersionString)) {
             return
         }
+        var isMigrationSucceeded = true
         listOf(
-            lazyMigrationTask10500.get()
+            migrationTask10500
         )
-            .filter { task -> task.isApplicable(currVersionCode) }
-            .map { task -> task.migrate() }
-            .indexOf(false)
-            .takeIf { it == -1 }
-            ?.let { appVersionMigrationState.setMigrationCompleted(true) }
+            .forEach { task ->
+                var isTaskSucceeded = appMigrationState.isMigrationSucceeded(
+                    task.version.appVersionString,
+                    isSingleTask = true
+                )
+                if (!isTaskSucceeded) {
+                    isTaskSucceeded = task.migrate()
+                    appMigrationState.setMigrationSucceeded(
+                        task.version.appVersionString,
+                        isTaskSucceeded
+                    )
+                }
+                isMigrationSucceeded = isTaskSucceeded && isMigrationSucceeded
+            }
+
+        appMigrationState.setMigrationSucceeded(
+            currAppVersion.appVersionString,
+            isMigrationSucceeded
+        )
     }
 }

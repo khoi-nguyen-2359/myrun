@@ -8,6 +8,7 @@ import akio.apps.myrun._di.DaggerAppComponent
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.domain.migration.AppVersionMigrationUsecase
+import akio.apps.myrun.domain.version.AppVersion
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.configurator.ConfiguratorGate
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
@@ -79,7 +80,7 @@ class MyRunApp :
     private fun executeMigration() = ioScope.launch {
         @Suppress("DEPRECATION")
         val currVersionCode = packageManager.getPackageInfo(packageName, 0).versionCode
-        appVersionMigrationUsecase.migrate(currVersionCode)
+        appVersionMigrationUsecase.migrate(AppVersion(currVersionCode))
     }
 
     private fun initPlacesSdk() {
