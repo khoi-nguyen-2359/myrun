@@ -17,7 +17,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -183,7 +182,7 @@ class ActivityExportService : Service() {
 
     private fun createActivityDescription(activityInfo: ActivityInfo): String {
         val activityFormattedStartTime =
-            activityStartTimeFormatter.format(Date(activityInfo.startTime))
+            activityStartTimeFormatter.format(activityInfo.startTime)
         return "${activityInfo.name} on $activityFormattedStartTime"
     }
 

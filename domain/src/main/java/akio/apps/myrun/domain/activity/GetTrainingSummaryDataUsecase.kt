@@ -16,7 +16,6 @@ import java.util.Calendar.MONDAY
 import java.util.Calendar.MONTH
 import java.util.Calendar.SECOND
 import java.util.Calendar.YEAR
-import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -127,7 +126,7 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
 
     class WeekRange(offset: Int = 0, count: Int = 1) : TimeRange(offset, count) {
         override val millisTimeRange: LongRange = run {
-            val calendar = Calendar.getInstance(TimeZone.getTimeZone("Z"))
+            val calendar = Calendar.getInstance()
             calendar.firstDayOfWeek = MONDAY
             calendar[DAY_OF_WEEK] = MONDAY
             calendar[HOUR_OF_DAY] = 0
@@ -144,7 +143,7 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
 
     class MonthRange(offset: Int = 0, count: Int = 1) : TimeRange(offset, count) {
         override val millisTimeRange: LongRange = run {
-            val calendar = Calendar.getInstance(TimeZone.getTimeZone("Z"))
+            val calendar = Calendar.getInstance()
             calendar[DAY_OF_MONTH] = 1
             calendar[HOUR_OF_DAY] = 0
             calendar[MINUTE] = 0

@@ -34,6 +34,7 @@ android {
 dependencies {
     implementation(project(":common:wiring"))
     implementation(project(":data:location:api"))
+    implementation(project(":common:data"))
 
     implementation(libs.googlePlaces)
     implementation(libs.androidGoogleMap)

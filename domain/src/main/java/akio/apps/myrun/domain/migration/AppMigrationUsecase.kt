@@ -14,23 +14,20 @@ class AppMigrationUsecase @Inject constructor(
             return true
         }
         var isMigrationSucceeded = true
-        listOf(
-            migrationTask10500
-        )
-            .forEach { task ->
-                var isTaskSucceeded = appMigrationState.isMigrationSucceeded(
+        listOf(migrationTask10500).forEach { task ->
+            var isTaskSucceeded = appMigrationState.isMigrationSucceeded(
+                task.version.appVersionString,
+                isSingleTask = true
+            )
+            if (!isTaskSucceeded) {
+                isTaskSucceeded = task.migrate()
+                appMigrationState.setMigrationSucceeded(
                     task.version.appVersionString,
-                    isSingleTask = true
+                    isTaskSucceeded
                 )
-                if (!isTaskSucceeded) {
-                    isTaskSucceeded = task.migrate()
-                    appMigrationState.setMigrationSucceeded(
-                        task.version.appVersionString,
-                        isTaskSucceeded
-                    )
-                }
-                isMigrationSucceeded = isTaskSucceeded && isMigrationSucceeded
             }
+            isMigrationSucceeded = isTaskSucceeded && isMigrationSucceeded
+        }
 
         appMigrationState.setMigrationSucceeded(
             currAppVersion.appVersionString,

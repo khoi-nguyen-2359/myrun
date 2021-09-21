@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.feed.impl
 
 import akio.apps.common.data.Event
 import akio.apps.common.data.LaunchCatchingDelegate
+import akio.apps.common.data.time.Now
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
@@ -65,7 +66,7 @@ class ActivityFeedViewModel @Inject constructor(
             enablePlaceholders = false,
             prefetchDistance = PAGE_SIZE
         ),
-        initialKey = System.currentTimeMillis()
+        initialKey = Now.currentTimeMillis()
     ) { recreateActivityPagingSource() }
         .flow
         .cachedIn(viewModelScope)

@@ -49,7 +49,7 @@ class FirestoreActivityMapper @Inject constructor() {
             ?: throw IllegalArgumentException("Got invalid activity type while parsing")
     }
 
-    fun mapRev(input: ActivityModel, createdId: String, uploadedUri: Uri): FirestoreActivity {
+    fun mapRev(input: ActivityModel, createdId: String, uploadedImageUri: Uri): FirestoreActivity {
         val runData: FirestoreRunningData? = (input as? RunningActivityModel)
             ?.run { FirestoreRunningData(pace, cadence) }
 
@@ -67,7 +67,7 @@ class FirestoreActivityMapper @Inject constructor() {
                 id = createdId,
                 activityType = activityType.id,
                 name = name,
-                routeImage = uploadedUri.toString(),
+                routeImage = uploadedImageUri.toString(),
                 placeIdentifier = input.placeIdentifier,
                 startTime = startTime,
                 endTime = endTime,

@@ -14,7 +14,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import java.text.SimpleDateFormat
-import java.util.Date
 import javax.inject.Inject
 
 class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
@@ -45,7 +44,7 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
         activityStartTime: Long
     ): ForegroundInfo {
         val notificationContent =
-            "$activityName on ${activityStartTimeFormatter.format(Date(activityStartTime))}"
+            "$activityName on ${activityStartTimeFormatter.format(activityStartTime)}"
         val notificationBuilder: Notification.Builder =
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 @Suppress("DEPRECATION")

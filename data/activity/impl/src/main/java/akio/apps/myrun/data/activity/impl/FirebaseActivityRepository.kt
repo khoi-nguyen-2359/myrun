@@ -49,6 +49,7 @@ class FirebaseActivityRepository @Inject constructor(
         firebaseStorage.getReference("activity_image/$userId")
 
     override suspend fun getActivitiesByStartTime(
+        fixUserId: String,
         userIds: List<String>,
         startAfterTime: Long,
         limit: Int,
@@ -60,12 +61,8 @@ class FirebaseActivityRepository @Inject constructor(
 
         val snapshot = query.get().await()
 
-        snapshot.documents.mapNotNull { doc ->
-            val firestoreActivity = doc.toObject(FirestoreActivity::class.java)
-                ?: return@mapNotNull null
-
-            firestoreActivityMapper.map(firestoreActivity)
-        }
+        snapshot.documents.mapNotNull { it.toObject(FirestoreActivity::class.java) }
+            .map(firestoreActivityMapper::map)
     }
 
     override suspend fun getActivitiesInTimeRange(

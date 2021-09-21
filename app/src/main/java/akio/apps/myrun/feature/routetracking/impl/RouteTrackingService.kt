@@ -37,7 +37,6 @@ import android.os.IBinder
 import android.os.PowerManager
 import androidx.core.content.ContextCompat
 import com.google.maps.android.SphericalUtil
-import java.util.Calendar
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -90,8 +89,6 @@ class RouteTrackingService : Service() {
     private val routeDistanceCalculator = RouteDistanceCalculator()
 
     private var wakeLock: PowerManager.WakeLock? = null
-
-    private val now: Now = Now()
 
     override fun onCreate() {
         DaggerRouteTrackingFeatureComponent.factory().create().inject(this)
@@ -146,7 +143,7 @@ class RouteTrackingService : Service() {
         if (locationProcessingConfig.isAvgAccumulatorEnabled) {
             Timber.d("avg location accumulator, interval=${locationRequest.updateInterval}")
             locationProcessors.addProcessor(
-                AverageLocationAccumulator(locationRequest.updateInterval, Now())
+                AverageLocationAccumulator(locationRequest.updateInterval, Now)
             )
         }
     }
@@ -168,7 +165,7 @@ class RouteTrackingService : Service() {
         routeTrackingState.setInstantSpeed(processedLocations.last().speed)
 
         cacheStartLocation(processedLocations.first())
-        routeTrackingState.setLastLocationUpdateTime(now.currentMillisecond())
+        routeTrackingState.setLastLocationUpdateTime(Now.currentTimeMillis())
     }
 
     private suspend fun mapLocationUpdateToActivityLocation(
@@ -188,7 +185,7 @@ class RouteTrackingService : Service() {
     }
 
     private suspend fun getActivityElapsedTime(): Long {
-        val activityElapsedTime = now.currentMillisecond() -
+        val activityElapsedTime = Now.currentTimeMillis() -
             routeTrackingState.getTrackingStartTime() -
             routeTrackingState.getPauseDuration()
 
@@ -312,7 +309,7 @@ class RouteTrackingService : Service() {
     }
 
     private fun setRouteTrackingStartState() = mainScope.launch {
-        val startTime = Calendar.getInstance().timeInMillis
+        val startTime = Now.currentTimeMillis()
         routeTrackingState.setTrackingStatus(RouteTrackingStatus.RESUMED)
         routeTrackingState.setTrackingStartTime(startTime)
     }
@@ -329,7 +326,7 @@ class RouteTrackingService : Service() {
 
     private fun onActionPause() {
         mainScope.launch {
-            routeTrackingState.setLastPauseTime(now.currentMillisecond())
+            routeTrackingState.setLastPauseTime(Now.currentTimeMillis())
             routeTrackingState.setTrackingStatus(RouteTrackingStatus.PAUSED)
         }
 
@@ -353,7 +350,7 @@ class RouteTrackingService : Service() {
         mainScope.launch {
             routeTrackingState.setTrackingStatus(RouteTrackingStatus.RESUMED)
         }
-        addPauseDuration(now.currentMillisecond())
+        addPauseDuration(Now.currentTimeMillis())
     }
 
     /**

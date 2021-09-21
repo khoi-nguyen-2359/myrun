@@ -8,7 +8,6 @@ import akio.apps.myrun.data.activity.api.model.ActivityModel
 import android.app.Application
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -59,7 +58,7 @@ class ExportTempTcxFileUsecase @Inject constructor(
     }
 
     private fun makeFileName(activity: ActivityModel): String =
-        "${activity.activityType.name}_${timeFormatter.format(Date(activity.startTime))}.tcx"
+        "${activity.activityType.name}_${timeFormatter.format(activity.startTime)}.tcx"
 
     private suspend fun getActivityLocations(activityId: String): List<ActivityLocation> {
         return activityRepository.getActivityLocationDataPoints(activityId)

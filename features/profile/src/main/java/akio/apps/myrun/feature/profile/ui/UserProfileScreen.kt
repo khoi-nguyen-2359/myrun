@@ -87,7 +87,6 @@ import coil.compose.rememberImagePainter
 import coil.size.Scale
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 
 @Composable
 fun UserProfileScreen(
@@ -376,7 +375,7 @@ fun formatBirthdateMillis(birthdateMillis: Long): String = if (birthdateMillis =
     stringResource(id = R.string.user_profile_select_birthdate_instruction)
 } else {
     val birthdateFormatter = remember { SimpleDateFormat("MM/dd/yyyy") }
-    birthdateFormatter.format(Date(birthdateMillis))
+    birthdateFormatter.format(birthdateMillis)
 }
 
 fun showDatePicker(context: Context, userBirthdateInMillis: Long, onDateSelect: (Long) -> Unit) {

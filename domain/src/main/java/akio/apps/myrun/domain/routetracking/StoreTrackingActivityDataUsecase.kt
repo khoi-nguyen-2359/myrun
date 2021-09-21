@@ -1,6 +1,7 @@
 package akio.apps.myrun.domain.routetracking
 
 import akio.apps._base.ObjectAutoId
+import akio.apps.common.data.time.Now
 import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
@@ -66,7 +67,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         activityName: String,
         trackedLocations: List<ActivityLocation>
     ): ActivityModel {
-        val endTime = System.currentTimeMillis()
+        val endTime = Now.currentTimeMillis()
         val startTime = routeTrackingState.getTrackingStartTime()
         val duration = routeTrackingState.getTrackingDuration()
         val distance = routeTrackingState.getRouteDistance()

@@ -25,7 +25,7 @@ import akio.apps.myrun.domain.user.GetProviderTokensUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
 import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
-import akio.apps.myrun.domain.usertimeline.GetUserTimelineActivitiesUsecase
+import akio.apps.myrun.domain.usertimeline.GetFeedActivitiesUsecase
 import akio.apps.myrun.wiring.data.activity.ActivityDataModule
 import akio.apps.myrun.wiring.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.wiring.data.eapps.ExternalAppDataModule
@@ -61,7 +61,7 @@ interface DomainComponent {
     fun storeTrackingActivityDataUsecase(): StoreTrackingActivityDataUsecase
 
     // activity
-    fun getUserTimelineActivitiesUsecase(): GetUserTimelineActivitiesUsecase
+    fun getUserTimelineActivitiesUsecase(): GetFeedActivitiesUsecase
     fun uploadActivityFilesToStravaUsecase(): UploadActivityFilesToStravaUsecase
     fun uploadActivitiesUsecase(): UploadActivitiesUsecase
     fun getTrainingSummaryUsecase(): GetTrainingSummaryDataUsecase
@@ -82,6 +82,6 @@ interface DomainComponent {
     fun runSplitCalculator(): RunSplitsCalculator
 
     // App Migration
-    fun migrationTask10500(): MigrationTask10500
     fun appVersionMigrationUsecase(): AppMigrationUsecase
+    fun migrationTask10500(): MigrationTask10500
 }
