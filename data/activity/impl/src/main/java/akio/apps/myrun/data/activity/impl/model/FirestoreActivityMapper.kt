@@ -5,6 +5,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
+import akio.apps.myrun.data.activity.impl.FirebaseActivityRepository.Companion.ACTIVITY_DATA_VERSION
 import android.net.Uri
 import javax.inject.Inject
 
@@ -79,7 +80,8 @@ class FirestoreActivityMapper @Inject constructor() {
                     athleteInfo.userId,
                     athleteInfo.userName,
                     athleteInfo.userAvatar
-                )
+                ),
+                version = ACTIVITY_DATA_VERSION
             )
         }
     }

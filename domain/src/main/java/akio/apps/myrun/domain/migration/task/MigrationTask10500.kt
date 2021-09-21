@@ -1,9 +1,9 @@
 package akio.apps.myrun.domain.migration.task
 
 import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
+import akio.apps.myrun.domain.version.AppVersion
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
-import timber.log.Timber
 
 /**
  * 1.5.0 migration:
@@ -11,14 +11,13 @@ import timber.log.Timber
  */
 class MigrationTask10500 @Inject constructor(
     private val routeTrackingConfiguration: RouteTrackingConfiguration,
-) : MigrationTask(10500) {
-    override suspend fun migrate() = try {
+) : MigrationTask(AppVersion.V1_5_0) {
+    override suspend fun migrateInternal() {
         val locationProcessConfig = routeTrackingConfiguration.getLocationProcessingConfig().first()
+        if (!locationProcessConfig.isSpeedFilterEnabled) {
+            return
+        }
         val migrationConfig = locationProcessConfig.copy(isSpeedFilterEnabled = false)
         routeTrackingConfiguration.setLocationProcessingConfig(migrationConfig)
-        true
-    } catch (ex: Exception) {
-        Timber.e(ex)
-        false
     }
 }

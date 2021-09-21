@@ -219,5 +219,10 @@ class FirebaseActivityRepository @Inject constructor(
         private const val FIELD_ACTIVITY_ID = "id"
 
         private const val THUMBNAIL_SCALED_SIZE = 1024 // px
+
+        /**
+         * Data version of activity stored on firestore.
+         */
+        internal const val ACTIVITY_DATA_VERSION = 2
     }
 }
