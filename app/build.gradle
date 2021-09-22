@@ -98,9 +98,10 @@ dependencies {
 
     implementation project(':features:base')
     implementation project(':features:registration')
-    implementation project(":features:configurator")
     implementation project(":features:profile")
     implementation project(":features:activitydetail")
+
+    debugImplementation project(":features:configurator")
 
     implementation(project(':wiring'))
 
