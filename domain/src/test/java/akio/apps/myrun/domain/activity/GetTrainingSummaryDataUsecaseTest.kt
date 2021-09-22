@@ -52,7 +52,6 @@ class GetTrainingSummaryDataUsecaseTest {
         whenever(
             mockedActivityRepository.getActivitiesInTimeRange(
                 defaultUserId,
-                ActivityType.Running,
                 biMonthRange.first,
                 biMonthRange.last
             )
@@ -105,20 +104,7 @@ class GetTrainingSummaryDataUsecaseTest {
                     startTime = biMonthRange.first + 1,
                     duration = 9,
                     distance = 10.0
-                )
-            )
-        )
-
-        // bi month rides
-        whenever(
-            mockedActivityRepository.getActivitiesInTimeRange(
-                defaultUserId,
-                ActivityType.Cycling,
-                biMonthRange.first,
-                biMonthRange.last
-            )
-        ).thenReturn(
-            listOf(
+                ),
                 createActivity(
                     ActivityType.Cycling,
                     startTime = biWeekRange.last - 1,
@@ -166,19 +152,13 @@ class GetTrainingSummaryDataUsecaseTest {
                     startTime = biMonthRange.first + 1,
                     duration = 25,
                     distance = 26.0
-                ),
+                )
             )
         )
+
         val summaryTableMap = usecase.getUserTrainingSummaryData()
         verify(mockedActivityRepository).getActivitiesInTimeRange(
             defaultUserId,
-            ActivityType.Running,
-            biMonthRange.first,
-            biMonthRange.last
-        )
-        verify(mockedActivityRepository).getActivitiesInTimeRange(
-            defaultUserId,
-            ActivityType.Cycling,
             biMonthRange.first,
             biMonthRange.last
         )
