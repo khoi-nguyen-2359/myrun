@@ -19,14 +19,8 @@ import java.util.Calendar.YEAR
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.toSet
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
-import timber.log.Timber
 
 class GetTrainingSummaryDataUsecase @Inject constructor(
     private val activityRepository: ActivityRepository,
@@ -37,28 +31,25 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
     /**
      * [weekOffset]: value >= 0, indicates current week, or 1, 2, 3... week in the past.
      */
-    @OptIn(FlowPreview::class)
     suspend fun getUserTrainingSummaryData(): Map<ActivityType, TrainingSummaryTableData> =
         withContext(ioDispatcher) {
             val biMonthRange = MonthRange(offset = 1, count = 2)
             val userId = userAuthenticationState.requireUserAccountId()
-            val activityParamList = listOf(ActivityType.Running, ActivityType.Cycling)
-            activityParamList.asFlow().flatMapMerge { activityType ->
-                flow {
-                    val activitiesInRange = activityRepository.getActivitiesInTimeRange(
-                        userId,
-                        activityType,
-                        biMonthRange.millisTimeRange.first,
-                        biMonthRange.millisTimeRange.last
-                    )
-                    Timber.d("activitiesInRange type=$activityType, range=$biMonthRange")
-                    val thisWeekInfo = WeekRange() to mutableListOf<ActivityModel>()
-                    val lastWeekInfo = WeekRange(offset = 1) to mutableListOf<ActivityModel>()
-                    val thisMonthInfo = MonthRange() to mutableListOf<ActivityModel>()
-                    val lastMonthInfo = MonthRange(offset = 1) to mutableListOf<ActivityModel>()
-                    val timeRangeDataList =
-                        listOf(thisWeekInfo, lastWeekInfo, thisMonthInfo, lastMonthInfo)
-                    activitiesInRange.forEach { activity ->
+            val activitiesInRange = activityRepository.getActivitiesInTimeRange(
+                userId,
+                biMonthRange.millisTimeRange.first,
+                biMonthRange.millisTimeRange.last
+            )
+            listOf(ActivityType.Running, ActivityType.Cycling).map { activityType ->
+                val thisWeekData = WeekRange() to mutableListOf<ActivityModel>()
+                val lastWeekData = WeekRange(offset = 1) to mutableListOf<ActivityModel>()
+                val thisMonthData = MonthRange() to mutableListOf<ActivityModel>()
+                val lastMonthData = MonthRange(offset = 1) to mutableListOf<ActivityModel>()
+                val timeRangeDataList =
+                    listOf(thisWeekData, lastWeekData, thisMonthData, lastMonthData)
+                activitiesInRange
+                    .filter { it.activityType == activityType }
+                    .forEach { activity ->
                         timeRangeDataList.forEach { (timeRange, activityList) ->
                             if (activity.startTime in timeRange.millisTimeRange) {
                                 activityList.add(activity)
@@ -66,35 +57,32 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
                         }
                     }
 
-                    var summaryTable = TrainingSummaryTableData()
-                    timeRangeDataList.forEach { (timeRange, activityList) ->
-                        val summaryData = TrainingSummaryData(
-                            distance = activityList.sumOf { it.distance },
-                            time = activityList.sumOf { it.duration },
-                            activityCount = activityList.size
+                var summaryTable = TrainingSummaryTableData()
+                timeRangeDataList.forEach { (timeRange, activityList) ->
+                    val summaryData = TrainingSummaryData(
+                        distance = activityList.sumOf { it.distance },
+                        time = activityList.sumOf { it.duration },
+                        activityCount = activityList.size
+                    )
+                    summaryTable = when {
+                        timeRange is WeekRange && timeRange.offset == 0 -> summaryTable.copy(
+                            thisWeekSummary = summaryData
                         )
-                        summaryTable = when {
-                            timeRange is WeekRange && timeRange.offset == 0 -> summaryTable.copy(
-                                thisWeekSummary = summaryData
-                            )
-                            timeRange is WeekRange && timeRange.offset == 1 -> summaryTable.copy(
-                                lastWeekSummary = summaryData
-                            )
-                            timeRange is MonthRange && timeRange.offset == 0 -> summaryTable.copy(
-                                thisMonthSummary = summaryData
-                            )
-                            timeRange is MonthRange && timeRange.offset == 1 -> summaryTable.copy(
-                                lastMonthSummary = summaryData
-                            )
-                            else -> summaryTable
-                        }
+                        timeRange is WeekRange && timeRange.offset == 1 -> summaryTable.copy(
+                            lastWeekSummary = summaryData
+                        )
+                        timeRange is MonthRange && timeRange.offset == 0 -> summaryTable.copy(
+                            thisMonthSummary = summaryData
+                        )
+                        timeRange is MonthRange && timeRange.offset == 1 -> summaryTable.copy(
+                            lastMonthSummary = summaryData
+                        )
+                        else -> summaryTable
                     }
-
-                    emit(activityType to summaryTable)
                 }
-            }
-                .toSet()
-                .toMap()
+
+                activityType to summaryTable
+            }.toMap()
         }
 
     @Parcelize
