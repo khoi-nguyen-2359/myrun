@@ -67,23 +67,17 @@ class FirebaseActivityRepository @Inject constructor(
 
     override suspend fun getActivitiesInTimeRange(
         userId: String,
-        activityType: ActivityType,
         startTime: Long,
         endTime: Long,
     ): List<ActivityModel> = withContext(ioDispatcher) {
         val query = userActivityCollectionGroup.whereEqualTo("athleteInfo.userId", userId)
-            .whereEqualTo("activityType", activityType.toFsActivityType().id)
             .orderBy("startTime", Query.Direction.DESCENDING)
-            .startAfter(endTime)
-            .endBefore(startTime)
+            .startAt(endTime)
+            .endAt(startTime)
 
         val snapshot = query.get().await()
-        snapshot.documents.mapNotNull { doc ->
-            val firestoreActivity = doc.toObject(FirestoreActivity::class.java)
-                ?: return@mapNotNull null
-
-            firestoreActivityMapper.map(firestoreActivity)
-        }
+        snapshot.documents.mapNotNull { it.toObject(FirestoreActivity::class.java) }
+            .map(firestoreActivityMapper::map)
     }
 
     override suspend fun saveActivity(
