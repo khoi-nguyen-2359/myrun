@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.profile
 
+import akio.apps.common.feature.picker.PickPictureDelegate
 import akio.apps.common.feature.picker.TakePictureDelegate
 import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
 import akio.apps.myrun.feature.base.DialogDelegate
@@ -30,23 +31,13 @@ class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) 
     private val cropImageView: CropImageView by lazy { findViewById(R.id.cropImageView) }
     private val topAppBar: MaterialToolbar by lazy { findViewById(R.id.topAppBar) }
     private val takePictureButton: View by lazy { findViewById(R.id.btCamera) }
+    private val pickPictureButton: View by lazy { findViewById(R.id.btGallery) }
 
     // TODO: refactor to composable UI
-    lateinit var uploadUserAvatarImageUsecase: UploadUserAvatarImageUsecase
-
-//    private val photoSelectionDelegate = PhotoSelectionDelegate(
-//        activity = this,
-//        fragment = null,
-//        requestCodes = PhotoSelectionDelegate.RequestCodes(
-//            RC_TAKE_PHOTO_PERMISSIONS,
-//            RC_PICK_PHOTO_PERMISSIONS,
-//            RC_TAKE_PHOTO,
-//            RC_PICK_PHOTO
-//        ),
-//        eventListener = this
-//    )
+    private lateinit var uploadUserAvatarImageUsecase: UploadUserAvatarImageUsecase
 
     private val takePictureDelegate = TakePictureDelegate(this, ::presentPictureContent)
+    private val pickPictureDelegate = PickPictureDelegate(this, ::presentPictureContent)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,23 +57,11 @@ class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) 
         takePictureButton.setOnClickListener {
             takePictureDelegate.execute()
         }
-    }
 
-//    @Suppress("DEPRECATION")
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray,
-//    ) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        photoSelectionDelegate.onRequestPermissionsResult(requestCode)
-//    }
-//
-//    @Suppress("DEPRECATION")
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        photoSelectionDelegate.onActivityResult(requestCode, resultCode, data)
-//    }
+        pickPictureButton.setOnClickListener {
+            pickPictureDelegate.execute()
+        }
+    }
 
     private fun presentPictureContent(photoContentUri: Uri) {
         contentResolver.openInputStream(photoContentUri)?.use {
@@ -140,11 +119,6 @@ class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) 
         }
 
     companion object {
-        private const val RC_TAKE_PHOTO_PERMISSIONS = 1
-        private const val RC_PICK_PHOTO_PERMISSIONS = 2
-        private const val RC_TAKE_PHOTO = 3
-        private const val RC_PICK_PHOTO = 4
-
         fun launchIntent(context: Context): Intent =
             Intent(context, UploadAvatarActivity::class.java)
     }
