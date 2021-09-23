@@ -37,4 +37,6 @@
     <string name="user_home_summary_title">Training summary</string>
     <string name="user_home_route_section_title">Routes</string>
     <string name="user_home_summary_total_time_label">Time</string>
+    <string name="upload_avatar_capture_camera">Open camera</string>
+    <string name="upload_avatar_browse_gallery">Pick from gallery</string>
 </resources>
