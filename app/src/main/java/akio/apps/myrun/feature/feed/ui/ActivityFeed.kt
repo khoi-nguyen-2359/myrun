@@ -108,6 +108,8 @@ private object FeedDimensions {
     val activityItemVerticalPadding: Dp = 12.dp
 }
 
+private const val REVEAL_ANIM_THRESHOLD = 10
+
 @Composable
 fun ActivityFeed(
     activityFeedViewModel: ActivityFeedViewModel,
@@ -126,10 +128,10 @@ fun ActivityFeed(
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 val delta = available.y
-                val targetOffset = if (delta >= 0) {
-                    0f
-                } else {
-                    -topBarHeightPx
+                val targetOffset = when {
+                    delta >= REVEAL_ANIM_THRESHOLD -> 0f
+                    delta <= -REVEAL_ANIM_THRESHOLD -> -topBarHeightPx
+                    else -> return Offset.Zero
                 }
                 coroutineScope.launch {
                     topBarOffsetY.animateTo(targetOffset)
