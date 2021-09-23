@@ -1,5 +1,7 @@
 package akio.apps.myrun.feature.configurator
 
+import akio.apps.myrun.BuildConfig
+import akio.apps.myrun.R
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import android.app.Notification
 import android.app.PendingIntent
