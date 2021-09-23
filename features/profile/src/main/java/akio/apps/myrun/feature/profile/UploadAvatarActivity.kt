@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.profile
 
-import akio.apps.common.feature.picker.PhotoSelectionDelegate
+import akio.apps.common.feature.picker.TakePictureDelegate
 import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
 import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.profile.ui.CropImageView
@@ -12,7 +12,7 @@ import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
@@ -24,45 +24,35 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class UploadAvatarActivity :
-    AppCompatActivity(R.layout.activity_upload_avatar),
-    PhotoSelectionDelegate.EventListener {
+class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) {
 
     private val dialogDelegate by lazy { DialogDelegate(this) }
     private val cropImageView: CropImageView by lazy { findViewById(R.id.cropImageView) }
-    private val selectPhotoButton: Button by lazy { findViewById(R.id.select_button) }
     private val topAppBar: MaterialToolbar by lazy { findViewById(R.id.topAppBar) }
+    private val takePictureButton: View by lazy { findViewById(R.id.btCamera) }
 
     // TODO: refactor to composable UI
     lateinit var uploadUserAvatarImageUsecase: UploadUserAvatarImageUsecase
 
-    private val photoSelectionDelegate = PhotoSelectionDelegate(
-        activity = this,
-        fragment = null,
-        requestCodes = PhotoSelectionDelegate.RequestCodes(
-            RC_TAKE_PHOTO_PERMISSIONS,
-            RC_PICK_PHOTO_PERMISSIONS,
-            RC_TAKE_PHOTO,
-            RC_PICK_PHOTO
-        ),
-        eventListener = this
-    )
+//    private val photoSelectionDelegate = PhotoSelectionDelegate(
+//        activity = this,
+//        fragment = null,
+//        requestCodes = PhotoSelectionDelegate.RequestCodes(
+//            RC_TAKE_PHOTO_PERMISSIONS,
+//            RC_PICK_PHOTO_PERMISSIONS,
+//            RC_TAKE_PHOTO,
+//            RC_PICK_PHOTO
+//        ),
+//        eventListener = this
+//    )
+
+    private val takePictureDelegate = TakePictureDelegate(this, ::presentPictureContent)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         uploadUserAvatarImageUsecase =
             DaggerDomainComponent.create().uploadUserAvatarImageUsecase()
-
-        photoSelectionDelegate.showPhotoSelectionDialog(
-            getString(R.string.photo_selection_dialog_title)
-        )
-
-        selectPhotoButton.setOnClickListener {
-            photoSelectionDelegate.showPhotoSelectionDialog(
-                getString(R.string.photo_selection_dialog_title)
-            )
-        }
 
         topAppBar.setNavigationOnClickListener {
             finish()
@@ -72,25 +62,29 @@ class UploadAvatarActivity :
             cropAndUploadAvatar()
             true
         }
+
+        takePictureButton.setOnClickListener {
+            takePictureDelegate.execute()
+        }
     }
 
-    @Suppress("DEPRECATION")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        photoSelectionDelegate.onRequestPermissionsResult(requestCode)
-    }
+//    @Suppress("DEPRECATION")
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray,
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        photoSelectionDelegate.onRequestPermissionsResult(requestCode)
+//    }
+//
+//    @Suppress("DEPRECATION")
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        photoSelectionDelegate.onActivityResult(requestCode, resultCode, data)
+//    }
 
-    @Suppress("DEPRECATION")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        photoSelectionDelegate.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun onPhotoSelectionReady(photoContentUri: Uri) {
+    private fun presentPictureContent(photoContentUri: Uri) {
         contentResolver.openInputStream(photoContentUri)?.use {
             val imageBitmap = BitmapFactory.decodeStream(it)
             cropImageView.setImageBitmap(imageBitmap)
