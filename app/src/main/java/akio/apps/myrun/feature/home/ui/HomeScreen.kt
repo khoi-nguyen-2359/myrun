@@ -89,6 +89,8 @@ private enum class HomeNavItemInfo(
     )
 }
 
+private const val REVEAL_ANIM_THRESHOLD = 10
+
 @Composable
 fun HomeScreen(
     onClickFloatingActionButton: () -> Unit,
@@ -106,17 +108,15 @@ fun HomeScreen(
     val nestedScrollConnection = remember(fabBoxSizePx) {
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                val delta = available.y
                 if (!isFabActive) {
                     return Offset.Zero
                 }
 
-                val delta = available.y
-                val targetFabOffsetY = if (delta >= 0) {
-                    // reveal (move up)
-                    0f
-                } else {
-                    // go away (move down)
-                    fabBoxSizePx
+                val targetFabOffsetY = when {
+                    delta >= REVEAL_ANIM_THRESHOLD -> 0f // reveal (move up)
+                    delta <= -REVEAL_ANIM_THRESHOLD -> fabBoxSizePx // go away (move down)
+                    else -> return Offset.Zero
                 }
                 coroutineScope.launch {
                     fabOffsetY.animateTo(targetFabOffsetY)
