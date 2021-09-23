@@ -99,9 +99,10 @@ fun UserHomeContent(
     appNavController: NavController,
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
-        Spacer(modifier = Modifier.height(AppDimensions.screenVerticalSpacing))
+        ColumnSpacer(height = AppDimensions.screenVerticalSpacing)
+        ColumnSpacer(height = AppDimensions.sectionVerticalSpacing)
         UserProfileHeader(screenState, appNavController)
-        Spacer(modifier = Modifier.height(AppDimensions.sectionVerticalSpacing))
+        ColumnSpacer(height = AppDimensions.sectionVerticalSpacing * 2)
         TrainingSummaryTable(screenState)
     }
 }
@@ -136,8 +137,8 @@ fun TrainingSummaryTable(screenState: UserHomeViewModel.ScreenState.StatsAvailab
     )
 
     Column {
-        ColumnSpacer(height = AppDimensions.rowVerticalPadding)
         ActivityTypePane(selectedActivityType) { selectedActivityType = it }
+        ColumnSpacer(height = AppDimensions.rowVerticalPadding)
         Column(modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)) {
             TableRow {
                 TrainingSummaryLabelCell(text = "\n")
@@ -236,7 +237,7 @@ private fun ActivityTypePane(
                 onClick = {
                     selectActivityTypeAction(type)
                 },
-                modifier = Modifier.padding(end = 8.dp),
+                modifier = Modifier.padding(end = 12.dp),
                 colors = ButtonDefaults.outlinedButtonColors(backgroundColor, contentColor),
                 width = 65.dp
             )
