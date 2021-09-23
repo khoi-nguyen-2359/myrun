@@ -5,11 +5,11 @@ import akio.apps.common.feature.lifecycle.collectRepeatOnStarted
 import akio.apps.common.feature.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 import akio.apps.myrun.feature.base.DialogDelegate
-import akio.apps.myrun.feature.registration.databinding.ActivitySignInBinding
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -28,14 +28,13 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-class SignInActivity : AppCompatActivity() {
+class SignInActivity : AppCompatActivity(R.layout.activity_sign_in) {
+
+    private val googleButton: View by lazy { findViewById(R.id.google_button) }
+    private val facebookButton: View by lazy { findViewById(R.id.facebook_button) }
 
     private val signInVM: SignInViewModel by lazyViewModelProvider {
         DaggerSignInFeatureComponent.factory().create().signInViewModel()
-    }
-
-    private val viewBinding: ActivitySignInBinding by lazy {
-        ActivitySignInBinding.inflate(layoutInflater)
     }
 
     private val facebookCallbackManager by lazy { CallbackManager.Factory.create() }
@@ -75,18 +74,14 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        setContentView(viewBinding.root)
+        LoginManager.getInstance().registerCallback(facebookCallbackManager, fbCallback)
+        facebookButton.setOnClickListener {
+            LoginManager.getInstance()
+                .logInWithReadPermissions(this@SignInActivity, FB_LOGIN_PERMISSIONS)
+        }
 
-        viewBinding.apply {
-            LoginManager.getInstance().registerCallback(facebookCallbackManager, fbCallback)
-            facebookButton.setOnClickListener {
-                LoginManager.getInstance()
-                    .logInWithReadPermissions(this@SignInActivity, FB_LOGIN_PERMISSIONS)
-            }
-
-            googleButton.setOnClickListener {
-                startGoogleSignIn()
-            }
+        googleButton.setOnClickListener {
+            startGoogleSignIn()
         }
     }
 
