@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.profile
 
 import akio.apps.common.feature.picker.PickPictureDelegate
 import akio.apps.common.feature.picker.TakePictureDelegate
+import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
 import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.profile.ui.CropImageView
@@ -10,6 +11,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
@@ -18,6 +20,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
 import androidx.lifecycle.lifecycleScope
+import coil.Coil
+import coil.ImageLoader
+import coil.request.Disposable
+import coil.request.ImageRequest
 import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 import java.io.FileOutputStream
@@ -27,6 +33,8 @@ import kotlinx.coroutines.withContext
 
 class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) {
 
+    private var initialImageRequestDisposable: Disposable? = null
+
     private val dialogDelegate by lazy { DialogDelegate(this) }
     private val cropImageView: CropImageView by lazy { findViewById(R.id.cropImageView) }
     private val topAppBar: MaterialToolbar by lazy { findViewById(R.id.topAppBar) }
@@ -35,15 +43,21 @@ class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) 
 
     // TODO: refactor to composable UI
     private lateinit var uploadUserAvatarImageUsecase: UploadUserAvatarImageUsecase
+    private lateinit var getUserProfileUsecase: GetUserProfileUsecase
 
     private val takePictureDelegate = TakePictureDelegate(this, ::presentPictureContent)
     private val pickPictureDelegate = PickPictureDelegate(this, ::presentPictureContent)
 
+    private val imageLoader: ImageLoader by lazy { Coil.imageLoader(this) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        uploadUserAvatarImageUsecase =
-            DaggerDomainComponent.create().uploadUserAvatarImageUsecase()
+        val domainComponent = DaggerDomainComponent.create()
+        uploadUserAvatarImageUsecase = domainComponent.uploadUserAvatarImageUsecase()
+        getUserProfileUsecase = domainComponent.getUserProfileUsecase()
+
+        loadInitialUserProfilePicture()
 
         topAppBar.setNavigationOnClickListener {
             finish()
@@ -63,7 +77,24 @@ class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) 
         }
     }
 
+    private fun loadInitialUserProfilePicture() = lifecycleScope.launch {
+        val userProfilePictureUrl = getUserProfileUsecase.getUserProfileResource().data?.photo
+            ?: return@launch
+
+        val initialImageRequest = ImageRequest.Builder(this@UploadAvatarActivity)
+            .data(userProfilePictureUrl)
+            .allowConversionToBitmap(true)
+            .target { result ->
+                val bitmapDrawable = result as? BitmapDrawable ?: return@target
+                cropImageView.setImageBitmap(bitmapDrawable.bitmap)
+            }
+            .build()
+        initialImageRequestDisposable = imageLoader.enqueue(initialImageRequest)
+    }
+
     private fun presentPictureContent(photoContentUri: Uri) {
+        // to avoid the initial picture override user selected picture.
+        initialImageRequestDisposable?.dispose()
         contentResolver.openInputStream(photoContentUri)?.use {
             val imageBitmap = BitmapFactory.decodeStream(it)
             cropImageView.setImageBitmap(imageBitmap)
