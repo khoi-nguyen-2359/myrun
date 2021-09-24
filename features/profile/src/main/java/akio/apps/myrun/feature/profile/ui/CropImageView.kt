@@ -192,20 +192,20 @@ class CropImageView @JvmOverloads constructor(
     }
 
     private fun createCircleMask(width: Float, height: Float): Bitmap {
-        val paint = Paint()
-        paint.style = Paint.Style.FILL
-        paint.color = Color.BLUE
+        val centerHoleMask = Paint()
+        centerHoleMask.style = Paint.Style.FILL
+        centerHoleMask.color = Color.BLUE // just a color for the mask
 
         val bitmap = Bitmap.createBitmap(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         val radius = min(width, height) * CROP_CIRCLE_RADIUS_PERCENT
-        canvas.drawCircle(width / 2f, height / 2f, radius, paint)
+        canvas.drawCircle(width / 2f, height / 2f, radius, centerHoleMask)
 
-        val ovalPaint = Paint()
-        ovalPaint.style = Paint.Style.STROKE
-        ovalPaint.strokeWidth = 6.dp2px
-        ovalPaint.color = Color.argb(128, 162, 162, 162)
-        canvas.drawCircle(width / 2f, height / 2f, radius, ovalPaint)
+        val outlineCirclePaint = Paint()
+        outlineCirclePaint.style = Paint.Style.STROKE
+        outlineCirclePaint.strokeWidth = 6.dp2px
+        outlineCirclePaint.color = Color.argb(128, 162, 162, 162)
+        canvas.drawCircle(width / 2f, height / 2f, radius, outlineCirclePaint)
 
         return bitmap
     }
