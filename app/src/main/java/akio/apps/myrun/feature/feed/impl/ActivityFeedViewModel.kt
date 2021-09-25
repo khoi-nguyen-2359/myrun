@@ -8,6 +8,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
+import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.recentplace.MakeActivityPlaceNameUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import androidx.lifecycle.ViewModel
@@ -45,8 +46,8 @@ class ActivityFeedViewModel @Inject constructor(
     val activityUploadBadge: Flow<ActivityUploadBadgeStatus> =
         createActivityUploadBadgeStatusFlow()
 
-    val userProfilePictureUrl: Flow<String> =
-        getUserProfileUsecase.getUserProfileFlow().mapNotNull { it.data?.photo }
+    val userProfile: Flow<UserProfile> =
+        getUserProfileUsecase.getUserProfileFlow().mapNotNull { it.data }
 
     @OptIn(FlowPreview::class)
     private fun createActivityUploadBadgeStatusFlow(): Flow<ActivityUploadBadgeStatus> =

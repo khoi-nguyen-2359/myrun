@@ -6,6 +6,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityDataModel
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
+import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.feature.activitydetail.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.activitydetail.TrackingValueFormatter
 import akio.apps.myrun.feature.activitydetail.ui.ActivityRouteImage
@@ -231,9 +232,7 @@ private fun ActivityFeedItemList(
     navController: NavController,
 ) {
     Timber.d("render UserTimelineActivityList pagingItems=$lazyPagingItems")
-    val currentUserProfilePictureUrl by activityFeedViewModel.userProfilePictureUrl.collectAsState(
-        initial = null
-    )
+    val userProfile by activityFeedViewModel.userProfile.collectAsState(initial = null)
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -253,7 +252,7 @@ private fun ActivityFeedItemList(
                 FeedActivityItem(
                     activity,
                     activityDisplayPlaceName,
-                    currentUserProfilePictureUrl,
+                    userProfile,
                     { activityModel ->
                         val route = HomeNavDestination.ActivityDetail.routeWithActivityId(
                             activityModel.id
@@ -328,7 +327,7 @@ private fun LoadingItemPreview() = LoadingItem()
 private fun FeedActivityItem(
     activity: ActivityModel,
     activityDisplayPlaceName: String,
-    currentUserProfilePictureUrl: String?,
+    userProfile: UserProfile?,
     onClickActivityAction: (ActivityModel) -> Unit,
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
@@ -342,7 +341,7 @@ private fun FeedActivityItem(
         ActivityInformationView(
             activity,
             activityDisplayPlaceName,
-            currentUserProfilePictureUrl,
+            userProfile,
             onClickExportFile,
             onClickUserAvatar,
             isShareMenuVisible = true
@@ -450,7 +449,7 @@ private fun PreviewFeedActivityItem() {
         onClickActivityAction = { },
         onClickExportFile = { },
         onClickUserAvatar = { },
-        currentUserProfilePictureUrl = null,
+        userProfile = UserProfile(accountId = "userId", photo = null),
     )
 }
 
@@ -458,16 +457,16 @@ private fun PreviewFeedActivityItem() {
 private fun ActivityInformationView(
     activity: ActivityModel,
     activityDisplayPlaceName: String?,
-    currentUserProfilePictureUrl: String?,
+    userProfile: UserProfile?,
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
     isShareMenuVisible: Boolean = true,
 ) = Column(modifier = Modifier.padding(start = activityItemHorizontalPadding)) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        UserAvatarImage(currentUserProfilePictureUrl, onClickUserAvatar)
+        UserAvatarImage(userProfile?.photo, onClickUserAvatar)
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1.0f)) {
-            AthleteNameText(activity)
+            AthleteNameText(userProfile?.name.orEmpty())
             Spacer(modifier = Modifier.height(2.dp))
             ActivityTimeAndPlaceText(activity, activityDisplayPlaceName)
         }
@@ -480,8 +479,8 @@ private fun ActivityInformationView(
 }
 
 @Composable
-private fun AthleteNameText(activityDetail: ActivityModel) = Text(
-    text = activityDetail.athleteInfo.userName.orEmpty(),
+private fun AthleteNameText(userProfileName: String) = Text(
+    text = userProfileName,
     maxLines = 1,
     overflow = TextOverflow.Ellipsis,
     fontWeight = FontWeight.Bold,
@@ -572,14 +571,14 @@ private fun ActivityTimeAndPlaceText(
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun UserAvatarImage(
-    currentUserProfilePictureUrl: String?,
+    userProfilePicture: String?,
     onClickUserAvatar: () -> Unit,
 ) {
     val avatarDimension = 46.dp
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
     Image(
         painter = rememberImagePainter(
-            data = currentUserProfilePictureUrl.orEmpty(),
+            data = userProfilePicture.orEmpty(),
             builder = {
                 size(avatarSize.toInt())
                     .placeholder(R.drawable.common_avatar_placeholder_image)
