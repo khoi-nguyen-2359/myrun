@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.home
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.activityexport.ActivityExportService
-import akio.apps.myrun.feature.home.ui.HomeNavigationHost
+import akio.apps.myrun.feature.home.ui.AppNavHost
 import akio.apps.myrun.feature.routetracking.impl.LocationPermissionChecker
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
 import android.content.Context
@@ -26,7 +26,7 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            HomeNavigationHost(
+            AppNavHost(
                 onClickFloatingActionButton = ::openRouteTrackingOrCheckRequiredPermission,
                 onClickExportActivityFile = ::startActivityExportService,
             )

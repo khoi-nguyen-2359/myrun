@@ -5,8 +5,10 @@ import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.impl.model.FirestoreActivity
 import akio.apps.myrun.data.activity.impl.model.FirestoreActivityMapper
+import akio.apps.myrun.data.activity.impl.model.FirestoreActivityType
 import akio.apps.myrun.data.activity.impl.model.FirestoreDataPointList
 import akio.apps.myrun.data.activity.impl.model.FirestoreDataPointSerializer
 import akio.apps.myrun.data.activity.impl.model.FirestoreFloatDataPointParser
@@ -47,6 +49,7 @@ class FirebaseActivityRepository @Inject constructor(
         firebaseStorage.getReference("activity_image/$userId")
 
     override suspend fun getActivitiesByStartTime(
+        fixUserId: String,
         userIds: List<String>,
         startAfterTime: Long,
         limit: Int,
@@ -58,12 +61,23 @@ class FirebaseActivityRepository @Inject constructor(
 
         val snapshot = query.get().await()
 
-        snapshot.documents.mapNotNull { doc ->
-            val firestoreActivity = doc.toObject(FirestoreActivity::class.java)
-                ?: return@mapNotNull null
+        snapshot.documents.mapNotNull { it.toObject(FirestoreActivity::class.java) }
+            .map(firestoreActivityMapper::map)
+    }
 
-            firestoreActivityMapper.map(firestoreActivity)
-        }
+    override suspend fun getActivitiesInTimeRange(
+        userId: String,
+        startTime: Long,
+        endTime: Long,
+    ): List<ActivityModel> = withContext(ioDispatcher) {
+        val query = userActivityCollectionGroup.whereEqualTo("athleteInfo.userId", userId)
+            .orderBy("startTime", Query.Direction.DESCENDING)
+            .startAt(endTime)
+            .endAt(startTime)
+
+        val snapshot = query.get().await()
+        snapshot.documents.mapNotNull { it.toObject(FirestoreActivity::class.java) }
+            .map(firestoreActivityMapper::map)
     }
 
     override suspend fun saveActivity(
@@ -178,6 +192,12 @@ class FirebaseActivityRepository @Inject constructor(
         Resource.Error(ioEx)
     }
 
+    private fun ActivityType.toFsActivityType() = when (this) {
+        ActivityType.Running -> FirestoreActivityType.Running
+        ActivityType.Cycling -> FirestoreActivityType.Cycling
+        ActivityType.Unknown -> FirestoreActivityType.Unknown
+    }
+
     companion object {
         private const val PATH_USER_ACTIVITIES_COLLECTION_GROUP = "userActivities"
         private const val PATH_USERS = "users"
@@ -190,5 +210,10 @@ class FirebaseActivityRepository @Inject constructor(
         private const val FIELD_ACTIVITY_ID = "id"
 
         private const val THUMBNAIL_SCALED_SIZE = 1024 // px
+
+        /**
+         * Data version of activity stored on firestore.
+         */
+        internal const val ACTIVITY_DATA_VERSION = 2
     }
 }

@@ -5,6 +5,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
+import akio.apps.myrun.data.activity.impl.FirebaseActivityRepository.Companion.ACTIVITY_DATA_VERSION
 import android.net.Uri
 import javax.inject.Inject
 
@@ -48,7 +49,7 @@ class FirestoreActivityMapper @Inject constructor() {
             ?: throw IllegalArgumentException("Got invalid activity type while parsing")
     }
 
-    fun mapRev(input: ActivityModel, createdId: String, uploadedUri: Uri): FirestoreActivity {
+    fun mapRev(input: ActivityModel, createdId: String, uploadedImageUri: Uri): FirestoreActivity {
         val runData: FirestoreRunningData? = (input as? RunningActivityModel)
             ?.run { FirestoreRunningData(pace, cadence) }
 
@@ -66,7 +67,7 @@ class FirestoreActivityMapper @Inject constructor() {
                 id = createdId,
                 activityType = activityType.id,
                 name = name,
-                routeImage = uploadedUri.toString(),
+                routeImage = uploadedImageUri.toString(),
                 placeIdentifier = input.placeIdentifier,
                 startTime = startTime,
                 endTime = endTime,
@@ -79,7 +80,8 @@ class FirestoreActivityMapper @Inject constructor() {
                     athleteInfo.userId,
                     athleteInfo.userName,
                     athleteInfo.userAvatar
-                )
+                ),
+                version = ACTIVITY_DATA_VERSION
             )
         }
     }

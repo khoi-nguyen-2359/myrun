@@ -38,8 +38,7 @@ class FirebaseUserProfileRepository @Inject constructor(
 ) : UserProfileRepository {
 
     private fun getUserDocument(userId: String): DocumentReference {
-        return firebaseFirestore.collection(FIRESTORE_USERS_DOCUMENT)
-            .document(userId)
+        return firebaseFirestore.collection(FIRESTORE_USERS_DOCUMENT).document(userId)
     }
 
     private fun getAvatarStorage() = firebaseStorage.getReference(FIREBASE_STORAGE_USER_FOLDER)
@@ -49,12 +48,10 @@ class FirebaseUserProfileRepository @Inject constructor(
         callbackFlow {
             val listener = withContext(Dispatchers.Main.immediate) {
                 getUserDocument(userId).addSnapshotListener { snapshot, error ->
-                    snapshot?.toObject(FirestoreUser::class.java)
-                        ?.profile
-                        ?.run(firestoreUserProfileMapper::map)
-                        ?.let { userProfile ->
-                            trySendBlocking(Resource.Success(userProfile))
-                        }
+                    val fsUserProfile = snapshot?.toObject(FirestoreUser::class.java)?.profile
+                        ?: return@addSnapshotListener
+                    val userProfile = firestoreUserProfileMapper.map(fsUserProfile)
+                    trySendBlocking(Resource.Success(userProfile))
                     error?.let {
                         trySendBlocking(Resource.Error<UserProfile>(it))
                         close(it)
@@ -71,13 +68,13 @@ class FirebaseUserProfileRepository @Inject constructor(
             .flowOn(ioDispatcher)
 
     override suspend fun getUserProfile(userId: String): UserProfile = withContext(ioDispatcher) {
-        getUserDocument(userId)
-            .get()
+        val fsUserProfile = getUserDocument(userId).get()
             .await()
             .toObject(FirestoreUser::class.java)
             ?.profile
-            ?.run(firestoreUserProfileMapper::map)
             ?: throw UserProfileNotFoundError("Could not find userId $userId")
+
+        firestoreUserProfileMapper.map(fsUserProfile)
     }
 
     override suspend fun uploadUserAvatarImage(userId: String, imageFileUri: String): Uri? =

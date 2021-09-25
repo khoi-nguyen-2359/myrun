@@ -112,7 +112,7 @@ class RouteTrackingViewModel @Inject constructor(
 
     suspend fun storeActivityData(routeMapImage: Bitmap) {
         val activityType = activityType.value ?: return
-        val activityName = makeActivityName(activityType)
+        val activityName = makeNewActivityName(activityType)
         storeTrackingActivityDataUsecase(activityName, routeMapImage)
         scheduleActivitySyncIfAvailable()
         clearRouteTrackingStateUsecase.clear()
@@ -121,7 +121,7 @@ class RouteTrackingViewModel @Inject constructor(
     fun getLocationRequestConfigFlow(): Flow<LocationRequestConfig> =
         routeTrackingConfiguration.getLocationRequestConfig()
 
-    private fun makeActivityName(activityType: ActivityType): String {
+    private fun makeNewActivityName(activityType: ActivityType): String {
         val calendar = Calendar.getInstance()
         return when (calendar.get(Calendar.HOUR_OF_DAY)) {
             in 5..11 -> application.getString(

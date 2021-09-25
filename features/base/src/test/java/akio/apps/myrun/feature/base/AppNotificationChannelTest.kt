@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.base
 
-import org.junit.Assert.assertFalse
+import kotlin.test.assertFalse
 import org.junit.Test
 
 class AppNotificationChannelTest {

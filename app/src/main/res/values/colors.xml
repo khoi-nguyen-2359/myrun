@@ -10,7 +10,7 @@
     <color name="route_tracking_start_button_background_tint">#b71c1c</color>
     <color name="route_tracking_resume_button_background_tint">#00c853</color>
     <color name="common_error_text">#7f0000</color>
-    <color name="user_timeline_instruction_text">#66000000</color>
+    <color name="activity_feed_instruction_text">#66000000</color>
     <color name="greyStroke">#b34a4a4a</color>
     <color name="greyText">#4a4a4a</color>
     <color name="activity_route_map_start_marker_tint">#00c853</color>

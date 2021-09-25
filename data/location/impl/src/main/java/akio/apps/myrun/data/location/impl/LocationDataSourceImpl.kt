@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.location.impl
 
+import akio.apps.common.data.time.Now
 import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
@@ -10,7 +11,6 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
-import java.util.Calendar
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -94,7 +94,7 @@ class LocationDataSourceImpl @Inject constructor(
     private fun AndroidLocation.toLocation(): Location =
         Location(
             elapsedRealtimeNanos / 1000000,
-            Calendar.getInstance().timeInMillis,
+            Now.currentTimeMillis(),
             latitude,
             longitude,
             altitude,

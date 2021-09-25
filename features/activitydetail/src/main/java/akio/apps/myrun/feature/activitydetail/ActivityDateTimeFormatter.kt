@@ -1,8 +1,7 @@
 package akio.apps.myrun.feature.activitydetail
 
+import akio.apps.common.data.time.Now
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -12,15 +11,14 @@ class ActivityDateTimeFormatter @Inject constructor() {
     private val dateFormatter: SimpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
 
     fun formatActivityDateTime(startTime: Long): Result {
-        val calendar = Calendar.getInstance()
-        val todayDate = TimeUnit.MILLISECONDS.toDays(calendar.timeInMillis)
+        val todayDate = TimeUnit.MILLISECONDS.toDays(Now.currentTimeMillis())
         val activityDate = TimeUnit.MILLISECONDS.toDays(startTime)
-        val formattedTime = timeFormatter.format(Date(startTime))
+        val formattedTime = timeFormatter.format(startTime)
         return when {
             activityDate == todayDate -> Result.WithinToday(formattedTime)
             todayDate - activityDate == 1L -> Result.WithinYesterday(formattedTime)
             else -> {
-                val formattedDate = dateFormatter.format(Date(startTime))
+                val formattedDate = dateFormatter.format(startTime)
                 Result.FullDateTime("$formattedDate $formattedTime")
             }
         }

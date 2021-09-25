@@ -1,5 +1,5 @@
 package akio.apps.common.data.time
 
 interface TimeProvider {
-    fun currentMillisecond(): Long
+    fun currentTimeMillis(): Long
 }
