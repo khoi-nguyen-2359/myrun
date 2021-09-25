@@ -9,6 +9,7 @@ import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.domain.recentplace.MakeActivityPlaceNameUsecase
+import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -34,6 +35,7 @@ class ActivityFeedViewModel @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
     private val activityLocalStorage: ActivityLocalStorage,
     private val launchCatchingViewModel: LaunchCatchingDelegate,
+    private val getUserProfileUsecase: GetUserProfileUsecase
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingViewModel {
 
     private var activityPagingSource: ActivityPagingSource? = null
@@ -42,6 +44,9 @@ class ActivityFeedViewModel @Inject constructor(
 
     val activityUploadBadge: Flow<ActivityUploadBadgeStatus> =
         createActivityUploadBadgeStatusFlow()
+
+    val userProfilePictureUrl: Flow<String> =
+        getUserProfileUsecase.getUserProfileFlow().mapNotNull { it.data?.photo }
 
     @OptIn(FlowPreview::class)
     private fun createActivityUploadBadgeStatusFlow(): Flow<ActivityUploadBadgeStatus> =

@@ -91,6 +91,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.LocalWindowInsets
 import kotlin.math.roundToInt
@@ -230,6 +231,9 @@ private fun ActivityFeedItemList(
     navController: NavController,
 ) {
     Timber.d("render UserTimelineActivityList pagingItems=$lazyPagingItems")
+    val currentUserProfilePictureUrl by activityFeedViewModel.userProfilePictureUrl.collectAsState(
+        initial = null
+    )
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -247,7 +251,9 @@ private fun ActivityFeedItemList(
                     activityFeedViewModel.getActivityDisplayPlaceName(activity)
                 }
                 FeedActivityItem(
-                    activity, activityDisplayPlaceName,
+                    activity,
+                    activityDisplayPlaceName,
+                    currentUserProfilePictureUrl,
                     { activityModel ->
                         val route = HomeNavDestination.ActivityDetail.routeWithActivityId(
                             activityModel.id
@@ -322,6 +328,7 @@ private fun LoadingItemPreview() = LoadingItem()
 private fun FeedActivityItem(
     activity: ActivityModel,
     activityDisplayPlaceName: String,
+    currentUserProfilePictureUrl: String?,
     onClickActivityAction: (ActivityModel) -> Unit,
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
@@ -335,6 +342,7 @@ private fun FeedActivityItem(
         ActivityInformationView(
             activity,
             activityDisplayPlaceName,
+            currentUserProfilePictureUrl,
             onClickExportFile,
             onClickUserAvatar,
             isShareMenuVisible = true
@@ -441,7 +449,8 @@ private fun PreviewFeedActivityItem() {
         activityDisplayPlaceName = "activityDisplayPlaceName",
         onClickActivityAction = { },
         onClickExportFile = { },
-        onClickUserAvatar = { }
+        onClickUserAvatar = { },
+        currentUserProfilePictureUrl = null,
     )
 }
 
@@ -449,12 +458,13 @@ private fun PreviewFeedActivityItem() {
 private fun ActivityInformationView(
     activity: ActivityModel,
     activityDisplayPlaceName: String?,
+    currentUserProfilePictureUrl: String?,
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
     isShareMenuVisible: Boolean = true,
 ) = Column(modifier = Modifier.padding(start = activityItemHorizontalPadding)) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        UserAvatarImage(activityDetail = activity, onClickUserAvatar)
+        UserAvatarImage(currentUserProfilePictureUrl, onClickUserAvatar)
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1.0f)) {
             AthleteNameText(activity)
@@ -559,16 +569,17 @@ private fun ActivityTimeAndPlaceText(
     )
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun UserAvatarImage(
-    activityDetail: ActivityModel,
+    currentUserProfilePictureUrl: String?,
     onClickUserAvatar: () -> Unit,
 ) {
     val avatarDimension = 46.dp
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
     Image(
         painter = rememberImagePainter(
-            data = activityDetail.athleteInfo.userAvatar.orEmpty(),
+            data = currentUserProfilePictureUrl.orEmpty(),
             builder = {
                 size(avatarSize.toInt())
                     .placeholder(R.drawable.common_avatar_placeholder_image)
