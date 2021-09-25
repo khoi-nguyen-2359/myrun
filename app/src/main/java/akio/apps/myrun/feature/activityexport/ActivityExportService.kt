@@ -5,6 +5,7 @@ import akio.apps.myrun.R
 import akio.apps.myrun.domain.activityexport.ExportTempTcxFileUsecase
 import akio.apps.myrun.feature.activityexport._di.DaggerActivityExportFeatureComponent
 import akio.apps.myrun.feature.base.AppNotificationChannel
+import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
@@ -85,13 +86,22 @@ class ActivityExportService : Service() {
         } else {
             getString(R.string.activity_export_progress_notification_finishing)
         }
-        val notification = NotificationCompat.Builder(this, AppNotificationChannel.General.id)
+        val notificationBuilder = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            @Suppress("DEPRECATION")
+            Notification.Builder(this)
+        } else {
+            Notification.Builder(this, AppNotificationChannel.General.id)
+        }
             .setSmallIcon(R.drawable.ic_run_circle)
             .setContentTitle(getString(R.string.activity_export_progress_notification_title))
             .setContentText(notificationContentText)
             .setProgress(/*max = */0, /*progress = */0, /*indeterminate = */true)
-            .build()
-        startForeground(NOTIFICATION_ID_PROGRESS, notification)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            notificationBuilder.setForegroundServiceBehavior(
+                Notification.FOREGROUND_SERVICE_IMMEDIATE
+            )
+        }
+        startForeground(NOTIFICATION_ID_PROGRESS, notificationBuilder.build())
     }
 
     private suspend fun exportActivityList() = withContext(Dispatchers.IO) {
@@ -193,7 +203,7 @@ class ActivityExportService : Service() {
     data class ActivityInfo(
         val id: String,
         val name: String,
-        val startTime: Long
+        val startTime: Long,
     ) : Parcelable {
 
         /**
