@@ -3,7 +3,6 @@ package akio.apps.myrun.feature.activitydetail
 import akio.apps.common.feature.ui.dp2px
 import akio.apps.common.feature.ui.getColorCompat
 import akio.apps.common.feature.ui.getDrawableCompat
-import akio.apps.myrun.feature.activitydetail.databinding.ActivityActivityRouteMapBinding
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -28,11 +27,7 @@ import kotlin.coroutines.resume
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
-class ActivityRouteMapActivity : AppCompatActivity() {
-    private val viewBinding: ActivityActivityRouteMapBinding by lazy {
-        ActivityActivityRouteMapBinding.inflate(layoutInflater)
-    }
-
+class ActivityRouteMapActivity : AppCompatActivity(R.layout.activity_activity_route_map) {
     private lateinit var map: GoogleMap
 
     private val encodedPolyline: String by lazy {
@@ -43,7 +38,6 @@ class ActivityRouteMapActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(viewBinding.root)
         if (decodedPolyline.isEmpty()) {
             finish()
             return

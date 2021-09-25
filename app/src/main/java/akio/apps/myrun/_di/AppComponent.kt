@@ -3,8 +3,6 @@ package akio.apps.myrun._di
 import akio.apps.myrun.MyRunApp
 import akio.apps.myrun.wiring.data.tracking.DaggerTrackingDataComponent
 import akio.apps.myrun.wiring.data.tracking.TrackingDataComponent
-import akio.apps.myrun.wiring.domain.DaggerDomainComponent
-import akio.apps.myrun.wiring.domain.DomainComponent
 import dagger.Component
 import javax.inject.Singleton
 
@@ -12,7 +10,6 @@ import javax.inject.Singleton
 @Component(
     dependencies = [
         TrackingDataComponent::class,
-        DomainComponent::class
     ]
 )
 interface AppComponent {
@@ -23,7 +20,6 @@ interface AppComponent {
     interface Factory {
         fun create(
             trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create(),
-            domainComponent: DomainComponent = DaggerDomainComponent.create()
         ): AppComponent
     }
 

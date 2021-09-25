@@ -17,7 +17,7 @@
     <string name="user_profile_gender_name_others">Others</string>
     <string name="upload_avatar_sucess_message">Your avatar has been updated.</string>
     <string name="photo_selection_dialog_title">Select image from</string>
-    <string name="profile_crop_photo_instruction">Pinch to adjust the image. Your profile photo will be cropped within the circle</string>
+    <string name="profile_crop_photo_instruction">Pinch or move to customize your picture.</string>
     <string name="profile_crop_button">Crop</string>
     <string name="upload_avatar_title">Change avatar</string>
     <string name="user_profile_error_empty_user_name">User display name can not be blank.</string>
@@ -25,4 +25,19 @@
     <string name="message_loading">Please wait a moment …</string>
     <string name="user_profile_app_strava_unlink_dialog_message">Do you want to unlink from Strava? Your future activities won\'t be synced up.</string>
     <string name="user_profile_error_getting_profile">Error happened when getting profile.</string>
+    <string name="user_home_title">Home</string>
+    <string name="user_home_edit_profile_button">Edit</string>
+    <string name="user_home_training_summary_run_activity_type">Running</string>
+    <string name="user_home_training_summary_ride_activity_type">Cycling</string>
+    <string name="user_home_summary_distance_label">Distance</string>
+    <string name="user_home_summary_pace_label">Pace (min/km)</string>
+    <string name="user_home_summary_activities_label">Activities</string>
+    <string name="user_home_summary_weekly_label">This / last\nweek</string>
+    <string name="user_home_summary_monthly_label">This / last\nmonth</string>
+    <string name="user_home_summary_title">Training summary</string>
+    <string name="user_home_route_section_title">Routes</string>
+    <string name="user_home_summary_total_time_label">Time</string>
+    <string name="upload_avatar_capture_camera">Open camera</string>
+    <string name="upload_avatar_browse_gallery">Pick from gallery</string>
+    <string name="action_upload">Upload</string>
 </resources>

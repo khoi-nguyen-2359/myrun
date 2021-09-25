@@ -8,6 +8,7 @@ import java.io.File
 
 interface ActivityRepository {
     suspend fun getActivitiesByStartTime(
+        fixUserId: String,
         userIds: List<String>,
         startAfterTime: Long,
         limit: Int
@@ -33,4 +34,13 @@ interface ActivityRepository {
     suspend fun getActivityResource(activityId: String): Resource<ActivityModel?>
     suspend fun getActivityLocationDataPoints(activityId: String):
         List<ActivityLocation>
+
+    /**
+     * Get activities that have start time in given time range. Sorting order is descending.
+     */
+    suspend fun getActivitiesInTimeRange(
+        userId: String,
+        startTime: Long,
+        endTime: Long
+    ): List<ActivityModel>
 }

@@ -7,6 +7,9 @@ import akio.apps.myrun.data.user.impl.model.FirestoreUserProfile
 import javax.inject.Inject
 
 class FirestoreUserProfileMapper @Inject constructor() {
+    /**
+     * [userPhotoUrl] is generated value of the url.
+     */
     fun map(input: FirestoreUserProfile): UserProfile {
         val gender = when (FirestoreUserGender.parse(input.genderId)) {
             FirestoreUserGender.Male -> Gender.Male

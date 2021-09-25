@@ -1,5 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-apply from: 'appversions.gradle'
+apply from: 'app_versions.gradle'
 
 buildscript {
     repositories {
@@ -16,6 +16,8 @@ buildscript {
         classpath(libs.firebaseCrashlyticsGradle)
         classpath(libs.kotlinSerialization)
         classpath(libs.firebasePerf)
+        classpath(libs.build.time.tracker)
+//        classpath(libs.ksp)
     }
 }
 

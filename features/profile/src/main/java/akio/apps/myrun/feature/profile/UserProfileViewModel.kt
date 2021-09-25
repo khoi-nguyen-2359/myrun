@@ -43,14 +43,9 @@ class UserProfileViewModel @Inject constructor(
         combine(
             getUserProfileUsecase.getUserProfileFlow(savedStateHandle.getUserId()),
             getProviderTokensUsecase.getProviderTokensFlow(),
-            editingUserProfileFormDataMutableStateFlow
-        ) { initialUserProfileData, eappTokensResource, editingUserProfileFormData ->
-            UserProfileScreenState.create(
-                initialUserProfileData,
-                editingUserProfileFormData,
-                eappTokensResource
-            )
-        }
+            editingUserProfileFormDataMutableStateFlow,
+            UserProfileScreenState::create
+        )
 
     fun deauthorizeStrava() {
         viewModelScope.launchCatching {
@@ -121,8 +116,8 @@ class UserProfileViewModel @Inject constructor(
         companion object {
             fun create(
                 userProfileRes: Resource<UserProfile>,
-                editingFormData: UserProfileFormData?,
                 eappTokensRes: Resource<out ExternalProviders>,
+                editingFormData: UserProfileFormData?,
             ): UserProfileScreenState = when (userProfileRes) {
                 is Resource.Loading -> Loading
                 is Resource.Error -> ErrorRetry(userProfileRes.exception)

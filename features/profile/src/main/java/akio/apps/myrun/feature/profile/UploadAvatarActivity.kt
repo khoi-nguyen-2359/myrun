@@ -1,6 +1,8 @@
 package akio.apps.myrun.feature.profile
 
-import akio.apps.common.feature.picker.PhotoSelectionDelegate
+import akio.apps.common.feature.picker.PickPictureDelegate
+import akio.apps.common.feature.picker.TakePictureDelegate
+import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
 import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.profile.ui.CropImageView
@@ -9,14 +11,22 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Button
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
+import androidx.core.view.get
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import coil.Coil
+import coil.ImageLoader
+import coil.request.Disposable
+import coil.request.ImageRequest
+import coil.size.OriginalSize
 import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 import java.io.FileOutputStream
@@ -24,77 +34,89 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class UploadAvatarActivity :
-    AppCompatActivity(R.layout.activity_upload_avatar),
-    PhotoSelectionDelegate.EventListener {
+class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) {
+
+    private var initialImageRequestDisposable: Disposable? = null
 
     private val dialogDelegate by lazy { DialogDelegate(this) }
     private val cropImageView: CropImageView by lazy { findViewById(R.id.cropImageView) }
-    private val selectPhotoButton: Button by lazy { findViewById(R.id.select_button) }
     private val topAppBar: MaterialToolbar by lazy { findViewById(R.id.topAppBar) }
+    private val takePictureButton: View by lazy { findViewById(R.id.btCamera) }
+    private val pickPictureButton: View by lazy { findViewById(R.id.btGallery) }
+    private val rotateButton: View by lazy { findViewById(R.id.rotateButton) }
 
     // TODO: refactor to composable UI
-    lateinit var uploadUserAvatarImageUsecase: UploadUserAvatarImageUsecase
+    private lateinit var uploadUserAvatarImageUsecase: UploadUserAvatarImageUsecase
+    private lateinit var getUserProfileUsecase: GetUserProfileUsecase
 
-    private val photoSelectionDelegate = PhotoSelectionDelegate(
-        activity = this,
-        fragment = null,
-        requestCodes = PhotoSelectionDelegate.RequestCodes(
-            RC_TAKE_PHOTO_PERMISSIONS,
-            RC_PICK_PHOTO_PERMISSIONS,
-            RC_TAKE_PHOTO,
-            RC_PICK_PHOTO
-        ),
-        eventListener = this
-    )
+    private val takePictureDelegate = TakePictureDelegate(this, ::presentPictureContent)
+    private val pickPictureDelegate = PickPictureDelegate(this, ::presentPictureContent)
+
+    private val imageLoader: ImageLoader by lazy { Coil.imageLoader(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        uploadUserAvatarImageUsecase =
-            DaggerDomainComponent.create().uploadUserAvatarImageUsecase()
+        val domainComponent = DaggerDomainComponent.create()
+        uploadUserAvatarImageUsecase = domainComponent.uploadUserAvatarImageUsecase()
+        getUserProfileUsecase = domainComponent.getUserProfileUsecase()
 
-        photoSelectionDelegate.showPhotoSelectionDialog(
-            getString(R.string.photo_selection_dialog_title)
-        )
+        loadInitialUserProfilePicture()
 
-        selectPhotoButton.setOnClickListener {
-            photoSelectionDelegate.showPhotoSelectionDialog(
-                getString(R.string.photo_selection_dialog_title)
-            )
+        rotateButton.setOnClickListener {
+            if (cropImageView.rotation % 90 == 0f) {
+                cropImageView.animate().rotationBy(-90f)
+            }
         }
 
         topAppBar.setNavigationOnClickListener {
             finish()
         }
-
         topAppBar.setOnMenuItemClickListener {
             cropAndUploadAvatar()
             true
         }
-    }
 
-    @Suppress("DEPRECATION")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        photoSelectionDelegate.onRequestPermissionsResult(requestCode)
-    }
-
-    @Suppress("DEPRECATION")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        photoSelectionDelegate.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun onPhotoSelectionReady(photoContentUri: Uri) {
-        contentResolver.openInputStream(photoContentUri)?.use {
-            val imageBitmap = BitmapFactory.decodeStream(it)
-            cropImageView.setImageBitmap(imageBitmap)
+        takePictureButton.setOnClickListener {
+            takePictureDelegate.execute()
         }
+
+        pickPictureButton.setOnClickListener {
+            pickPictureDelegate.execute()
+        }
+    }
+
+    private fun loadInitialUserProfilePicture() = lifecycleScope.launch {
+        val userProfilePictureUrl = getUserProfileUsecase.getUserProfileResource().data?.photo
+            ?: return@launch
+
+        val initialImageRequest = ImageRequest.Builder(this@UploadAvatarActivity)
+            .data(userProfilePictureUrl)
+            .lifecycle(lifecycle)
+            .size(OriginalSize)
+            .allowConversionToBitmap(true)
+            .allowHardware(false) // don't use hardware bitmap because we need to edit it later.
+            .target { result ->
+                val bitmapDrawable = result as? BitmapDrawable ?: return@target
+                setImageBitmap(bitmapDrawable.bitmap)
+            }
+            .build()
+        initialImageRequestDisposable = imageLoader.enqueue(initialImageRequest)
+    }
+
+    private fun presentPictureContent(photoContentUri: Uri) {
+        // to avoid the initial picture override user selected picture.
+        initialImageRequestDisposable?.dispose()
+        contentResolver.openInputStream(photoContentUri)?.use {
+            setImageBitmap(BitmapFactory.decodeStream(it))
+        }
+    }
+
+    private fun setImageBitmap(imageBitmap: Bitmap) {
+        cropImageView.setImageBitmap(imageBitmap)
+        // enable edit controls
+        topAppBar.menu[0].isEnabled = true
+        rotateButton.isVisible = true
     }
 
     @Suppress("DEPRECATION") // activeNetworkInfo.isConnectedOrConnecting
@@ -146,11 +168,6 @@ class UploadAvatarActivity :
         }
 
     companion object {
-        private const val RC_TAKE_PHOTO_PERMISSIONS = 1
-        private const val RC_PICK_PHOTO_PERMISSIONS = 2
-        private const val RC_TAKE_PHOTO = 3
-        private const val RC_PICK_PHOTO = 4
-
         fun launchIntent(context: Context): Intent =
             Intent(context, UploadAvatarActivity::class.java)
     }

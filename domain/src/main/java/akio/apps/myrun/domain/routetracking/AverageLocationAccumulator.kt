@@ -42,7 +42,7 @@ class AverageLocationAccumulator(
 
     override fun process(locations: List<Location>): List<Location> {
         currentLocationBatch.addAll(locations)
-        val time = timeProvider.currentMillisecond()
+        val time = timeProvider.currentTimeMillis()
         if (time - lastDeliverTime >= accumulationPeriod) {
             return listOfNotNull(deliverNow(time))
         }
