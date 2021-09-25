@@ -17,7 +17,7 @@
     <string name="user_profile_gender_name_others">Others</string>
     <string name="upload_avatar_sucess_message">Your avatar has been updated.</string>
     <string name="photo_selection_dialog_title">Select image from</string>
-    <string name="profile_crop_photo_instruction">Pinch to adjust the image. Your profile photo will be cropped within the circle</string>
+    <string name="profile_crop_photo_instruction">Pinch or move to customize your picture.</string>
     <string name="profile_crop_button">Crop</string>
     <string name="upload_avatar_title">Change avatar</string>
     <string name="user_profile_error_empty_user_name">User display name can not be blank.</string>
@@ -39,4 +39,5 @@
     <string name="user_home_summary_total_time_label">Time</string>
     <string name="upload_avatar_capture_camera">Open camera</string>
     <string name="upload_avatar_browse_gallery">Pick from gallery</string>
+    <string name="action_upload">Upload</string>
 </resources>
