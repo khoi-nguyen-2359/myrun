@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.profile.ui
 
 import akio.apps.common.feature.ui.dp2px
 import akio.apps.common.feature.ui.toRect
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -18,21 +19,26 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import androidx.core.graphics.withRotation
 import androidx.core.view.ViewCompat
 import kotlin.math.max
 import kotlin.math.min
+import timber.log.Timber
 
+/**
+ * The idea is transforming scroll and scale gestures into translate and scale operations on the
+ * drawing source rect.
+ */
 class CropImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    companion object {
-        const val CROP_CIRCLE_RADIUS_PERCENT = 0.35f
-    }
-
     private var centerCropScale = 1f
+    private var mask: Bitmap? = null
+    private var imageBounds = RectF()
+    private var imageBitmap: Bitmap? = null
 
     private val overPaint = Paint(Paint.ANTI_ALIAS_FLAG).also {
         it.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OVER)
@@ -48,18 +54,96 @@ class CropImageView @JvmOverloads constructor(
     private val maskPaint = Paint(Paint.ANTI_ALIAS_FLAG).also {
         it.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_IN)
     }
+    private val drawSourceRect = RectF()
+    private val drawDestRect = RectF()
 
-    private var mask: Bitmap? = null
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
 
-    private var imageBounds = RectF()
-    private var imageBitmap: Bitmap? = null
+        mask?.recycle()
+        mask = createCircleMask(width.toFloat(), height.toFloat())
+        reset()
+    }
 
-    private val srcDrawRect = RectF()
-    private val destDrawRect = RectF()
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        scrollDetector.onTouchEvent(event)
+        scaleDetector.onTouchEvent(event)
+        return true
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        imageBitmap?.let {
+            canvas.drawBitmap(it, drawSourceRect.toRect(), drawDestRect, null)
+        }
+
+        mask?.let {
+            canvas.drawBitmap(it, 0f, 0f, maskPaint)
+        }
+
+        imageBitmap?.let {
+            canvas.drawBitmap(it, drawSourceRect.toRect(), drawDestRect, overPaint)
+        }
+    }
 
     fun setImageBitmap(imageBitmap: Bitmap) {
         this.imageBitmap = imageBitmap
         imageBounds = RectF(0f, 0f, imageBitmap.width.toFloat(), imageBitmap.height.toFloat())
+        reset()
+        logDebugInfo()
+    }
+
+    private fun logDebugInfo() {
+        Timber.d("reset info:")
+        Timber.d("centerCropScale=$centerCropScale")
+        Timber.d("accumulateScale=$accumulateScale")
+        Timber.d("drawSourceRect=$drawSourceRect")
+        Timber.d("drawDestRect=$drawDestRect")
+        Timber.d("rotation=$rotation")
+    }
+
+    fun crop(): Bitmap? {
+        return imageBitmap?.let { originalBitmap ->
+            // remove the center crop scale out of all calculations
+            val cropDestRect = Rect(
+                0,
+                0,
+                (drawDestRect.width() * 2 * CROP_CIRCLE_RADIUS_PERCENT / centerCropScale).toInt(),
+                (drawDestRect.height() * 2 * CROP_CIRCLE_RADIUS_PERCENT / centerCropScale).toInt()
+            )
+
+            val scaledWidth = cropDestRect.width() / accumulateScale * centerCropScale
+            val scaledHeight = cropDestRect.height() / accumulateScale * centerCropScale
+            val cropSrcRect = Rect(
+                (drawSourceRect.left + (drawSourceRect.width() - scaledWidth) / 2).toInt(),
+                (drawSourceRect.top + (drawSourceRect.height() - scaledHeight) / 2).toInt(),
+                0,
+                0
+            )
+            cropSrcRect.right = (cropSrcRect.left + scaledWidth).toInt()
+            cropSrcRect.bottom = (cropSrcRect.top + scaledHeight).toInt()
+
+            val cropBitmap = Bitmap.createBitmap(
+                cropDestRect.width(),
+                cropDestRect.height(),
+                Bitmap.Config.ARGB_8888
+            )
+            val canvas = Canvas(cropBitmap)
+            canvas.withRotation(rotation, cropDestRect.width() / 2f, cropDestRect.height() / 2f) {
+                canvas.drawBitmap(originalBitmap, cropSrcRect, cropDestRect, null)
+            }
+
+            cropBitmap
+        }
+    }
+
+    private fun reset() {
+        rotation = 0f
+        val fWidth = width.toFloat()
+        val fHeight = height.toFloat()
+        drawDestRect.set(0f, 0f, fWidth, fHeight)
+        drawSourceRect.set(0f, 0f, fWidth, fHeight)
         scaleCenterCrop()
     }
 
@@ -68,24 +152,13 @@ class CropImageView @JvmOverloads constructor(
             return
 
         centerCropScale = max(
-            destDrawRect.width() / imageBounds.width(),
-            destDrawRect.height() / imageBounds.height()
+            drawDestRect.width() / imageBounds.width(),
+            drawDestRect.height() / imageBounds.height()
         )
         scaleSrcRect(centerCropScale, 0.5f, 0.5f)
-        accScaleFactor = centerCropScale
+        accumulateScale = centerCropScale
 
         invalidate()
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-
-        val fWidth = width.toFloat()
-        val fHeight = height.toFloat()
-        destDrawRect.set(0f, 0f, fWidth, fHeight)
-        srcDrawRect.set(0f, 0f, fWidth, fHeight)
-        mask = createCircleMask(fWidth, fHeight)
-        scaleCenterCrop()
     }
 
     private val scrollDetector =
@@ -98,7 +171,7 @@ class CropImageView @JvmOverloads constructor(
                     distanceX: Float,
                     distanceY: Float
                 ): Boolean {
-                    offsetSrcRect(distanceX / accScaleFactor, distanceY / accScaleFactor)
+                    offsetSrcRect(distanceX / accumulateScale, distanceY / accumulateScale)
                     ViewCompat.postInvalidateOnAnimation(this@CropImageView)
                     return true
                 }
@@ -106,21 +179,21 @@ class CropImageView @JvmOverloads constructor(
         )
 
     private fun scaleSrcRect(scaleFactor: Float, pivotPercentX: Float, pivotPercentY: Float) {
-        val newWidth = srcDrawRect.width() / scaleFactor
-        val newHeight = srcDrawRect.height() / scaleFactor
-        srcDrawRect.set(
+        val newWidth = drawSourceRect.width() / scaleFactor
+        val newHeight = drawSourceRect.height() / scaleFactor
+        drawSourceRect.set(
             getInBoundsTranslateX(
-                srcDrawRect.left + (srcDrawRect.width() - newWidth) * pivotPercentX,
+                drawSourceRect.left + (drawSourceRect.width() - newWidth) * pivotPercentX,
                 newWidth
             ),
             getInBoundsTranslateY(
-                srcDrawRect.top + (srcDrawRect.height() - newHeight) * pivotPercentY,
+                drawSourceRect.top + (drawSourceRect.height() - newHeight) * pivotPercentY,
                 newHeight
             ),
             0f, 0f
         )
-        srcDrawRect.right = srcDrawRect.left + newWidth
-        srcDrawRect.bottom = srcDrawRect.top + newHeight
+        drawSourceRect.right = drawSourceRect.left + newWidth
+        drawSourceRect.bottom = drawSourceRect.top + newHeight
     }
 
     @Suppress("NOTHING_TO_INLINE")
@@ -132,26 +205,26 @@ class CropImageView @JvmOverloads constructor(
         max(imageBounds.top - paddingTop, min(y, imageBounds.bottom - height + paddingBottom))
 
     private fun offsetSrcRect(distanceX: Float, distanceY: Float) {
-        val curWidth = srcDrawRect.width()
-        val curHeight = srcDrawRect.height()
-        val newX = getInBoundsTranslateX(srcDrawRect.left + distanceX, curWidth)
-        val newY = getInBoundsTranslateY(srcDrawRect.top + distanceY, curHeight)
+        val curWidth = drawSourceRect.width()
+        val curHeight = drawSourceRect.height()
+        val newX = getInBoundsTranslateX(drawSourceRect.left + distanceX, curWidth)
+        val newY = getInBoundsTranslateY(drawSourceRect.top + distanceY, curHeight)
 
-        srcDrawRect.set(newX, newY, newX + curWidth, newY + curHeight)
+        drawSourceRect.set(newX, newY, newX + curWidth, newY + curHeight)
     }
 
-    private var accScaleFactor = 1f
+    private var accumulateScale = 1f
 
     private val scaleDetector =
         ScaleGestureDetector(
             context,
             object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
                 override fun onScale(detector: ScaleGestureDetector): Boolean {
-                    accScaleFactor *= detector.scaleFactor
+                    accumulateScale *= detector.scaleFactor
 
-                    val scaleFactor = if (accScaleFactor < centerCropScale) {
-                        val result = centerCropScale / (accScaleFactor / detector.scaleFactor)
-                        accScaleFactor = centerCropScale
+                    val scaleFactor = if (accumulateScale < centerCropScale) {
+                        val result = centerCropScale / (accumulateScale / detector.scaleFactor)
+                        accumulateScale = centerCropScale
                         result
                     } else {
                         detector.scaleFactor
@@ -159,8 +232,8 @@ class CropImageView @JvmOverloads constructor(
 
                     scaleSrcRect(
                         scaleFactor,
-                        detector.focusX / destDrawRect.width(),
-                        detector.focusY / destDrawRect.height()
+                        detector.focusX / drawDestRect.width(),
+                        detector.focusY / drawDestRect.height()
                     )
 
                     ViewCompat.postInvalidateOnAnimation(this@CropImageView)
@@ -170,27 +243,6 @@ class CropImageView @JvmOverloads constructor(
             }
         )
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        scrollDetector.onTouchEvent(event)
-        scaleDetector.onTouchEvent(event)
-        return true
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-        imageBitmap?.let {
-            canvas.drawBitmap(it, srcDrawRect.toRect(), destDrawRect, null)
-        }
-
-        mask?.let {
-            canvas.drawBitmap(it, 0f, 0f, maskPaint)
-        }
-
-        imageBitmap?.let {
-            canvas.drawBitmap(it, srcDrawRect.toRect(), destDrawRect, overPaint)
-        }
-    }
-
     private fun createCircleMask(width: Float, height: Float): Bitmap {
         val centerHoleMask = Paint()
         centerHoleMask.style = Paint.Style.FILL
@@ -198,6 +250,7 @@ class CropImageView @JvmOverloads constructor(
 
         val bitmap = Bitmap.createBitmap(width.toInt(), height.toInt(), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
+
         val radius = min(width, height) * CROP_CIRCLE_RADIUS_PERCENT
         canvas.drawCircle(width / 2f, height / 2f, radius, centerHoleMask)
 
@@ -210,33 +263,7 @@ class CropImageView @JvmOverloads constructor(
         return bitmap
     }
 
-    fun crop(): Bitmap? {
-        return imageBitmap?.let {
-            val cropDestRect = Rect(
-                0, 0,
-                (destDrawRect.width() * 2 * CROP_CIRCLE_RADIUS_PERCENT).toInt(),
-                (destDrawRect.height() * 2 * CROP_CIRCLE_RADIUS_PERCENT).toInt()
-            )
-
-            val scaledWidth = cropDestRect.width() / accScaleFactor
-            val scaledHeight = cropDestRect.height() / accScaleFactor
-            val cropSrcRect = Rect(
-                (srcDrawRect.left + (srcDrawRect.width() - scaledWidth) / 2).toInt(),
-                (srcDrawRect.top + (srcDrawRect.height() - scaledHeight) / 2).toInt(),
-                0, 0
-            )
-            cropSrcRect.right = (cropSrcRect.left + scaledWidth).toInt()
-            cropSrcRect.bottom = (cropSrcRect.top + scaledHeight).toInt()
-
-            val cropBitmap = Bitmap.createBitmap(
-                cropDestRect.width(),
-                cropDestRect.height(),
-                Bitmap.Config.ARGB_8888
-            )
-            val canvas = Canvas(cropBitmap)
-            canvas.drawBitmap(it, cropSrcRect, cropDestRect, null)
-
-            cropBitmap
-        }
+    companion object {
+        const val CROP_CIRCLE_RADIUS_PERCENT = 0.5f
     }
 }

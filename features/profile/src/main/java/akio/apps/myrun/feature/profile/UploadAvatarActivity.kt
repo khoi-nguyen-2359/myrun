@@ -19,11 +19,14 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
+import androidx.core.view.get
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import coil.Coil
 import coil.ImageLoader
 import coil.request.Disposable
 import coil.request.ImageRequest
+import coil.size.OriginalSize
 import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 import java.io.FileOutputStream
@@ -40,6 +43,7 @@ class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) 
     private val topAppBar: MaterialToolbar by lazy { findViewById(R.id.topAppBar) }
     private val takePictureButton: View by lazy { findViewById(R.id.btCamera) }
     private val pickPictureButton: View by lazy { findViewById(R.id.btGallery) }
+    private val rotateButton: View by lazy { findViewById(R.id.rotateButton) }
 
     // TODO: refactor to composable UI
     private lateinit var uploadUserAvatarImageUsecase: UploadUserAvatarImageUsecase
@@ -59,10 +63,15 @@ class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) 
 
         loadInitialUserProfilePicture()
 
+        rotateButton.setOnClickListener {
+            if (cropImageView.rotation % 90 == 0f) {
+                cropImageView.animate().rotationBy(-90f)
+            }
+        }
+
         topAppBar.setNavigationOnClickListener {
             finish()
         }
-
         topAppBar.setOnMenuItemClickListener {
             cropAndUploadAvatar()
             true
@@ -83,10 +92,13 @@ class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) 
 
         val initialImageRequest = ImageRequest.Builder(this@UploadAvatarActivity)
             .data(userProfilePictureUrl)
+            .lifecycle(lifecycle)
+            .size(OriginalSize)
             .allowConversionToBitmap(true)
+            .allowHardware(false) // don't use hardware bitmap because we need to edit it later.
             .target { result ->
                 val bitmapDrawable = result as? BitmapDrawable ?: return@target
-                cropImageView.setImageBitmap(bitmapDrawable.bitmap)
+                setImageBitmap(bitmapDrawable.bitmap)
             }
             .build()
         initialImageRequestDisposable = imageLoader.enqueue(initialImageRequest)
@@ -96,9 +108,15 @@ class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) 
         // to avoid the initial picture override user selected picture.
         initialImageRequestDisposable?.dispose()
         contentResolver.openInputStream(photoContentUri)?.use {
-            val imageBitmap = BitmapFactory.decodeStream(it)
-            cropImageView.setImageBitmap(imageBitmap)
+            setImageBitmap(BitmapFactory.decodeStream(it))
         }
+    }
+
+    private fun setImageBitmap(imageBitmap: Bitmap) {
+        cropImageView.setImageBitmap(imageBitmap)
+        // enable edit controls
+        topAppBar.menu[0].isEnabled = true
+        rotateButton.isVisible = true
     }
 
     @Suppress("DEPRECATION") // activeNetworkInfo.isConnectedOrConnecting
