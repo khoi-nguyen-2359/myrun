@@ -181,12 +181,12 @@ buildtimetracker {
         csv {
             output "build/times.csv"
             append true
-            header false
+            header true
         }
 
         summary {
             ordered false
-            threshold 1000
+            threshold 500
             barstyle "unicode"
             shortenTaskNames false
         }
