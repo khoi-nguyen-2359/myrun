@@ -44,6 +44,7 @@ dependencies {
     implementation(project(':features:base'))
 
     implementation(project(':wiring'))
+    implementation(project(':data:location:wiring'))
 
     implementation(project(':common:wiring'))
     implementation(project(':common:data'))

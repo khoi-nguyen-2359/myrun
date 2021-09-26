@@ -3,6 +3,8 @@ package akio.apps.myrun.feature.routetracking._di
 import akio.apps.common.wiring.ApplicationModule
 import akio.apps.common.wiring.FeatureScope
 import akio.apps.common.wiring.LaunchCatchingModule
+import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
+import akio.apps.myrun.data.location.wiring.LocationDataComponent
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingViewModel
 import akio.apps.myrun.wiring.data.activity.ActivityDataComponent
@@ -13,8 +15,6 @@ import akio.apps.myrun.wiring.data.eapps.DaggerExternalAppDataComponent
 import akio.apps.myrun.wiring.data.eapps.ExternalAppDataComponent
 import akio.apps.myrun.wiring.data.fitness.DaggerFitnessDataComponent
 import akio.apps.myrun.wiring.data.fitness.FitnessDataComponent
-import akio.apps.myrun.wiring.data.location.DaggerLocationDataComponent
-import akio.apps.myrun.wiring.data.location.LocationDataComponent
 import akio.apps.myrun.wiring.data.tracking.DaggerTrackingDataComponent
 import akio.apps.myrun.wiring.data.tracking.TrackingDataComponent
 import akio.apps.myrun.wiring.data.user.DaggerUserDataComponent
@@ -61,7 +61,7 @@ interface RouteTrackingFeatureComponent {
             fitnessDataComponent: FitnessDataComponent = DaggerFitnessDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =
                 DaggerExternalAppDataComponent.factory().create(),
-            domainComponent: DomainComponent = DaggerDomainComponent.create(),
+            domainComponent: DomainComponent = DaggerDomainComponent.factory().create(),
         ): RouteTrackingFeatureComponent
     }
 }

@@ -57,7 +57,7 @@ class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val domainComponent = DaggerDomainComponent.create()
+        val domainComponent = DaggerDomainComponent.factory().create()
         uploadUserAvatarImageUsecase = domainComponent.uploadUserAvatarImageUsecase()
         getUserProfileUsecase = domainComponent.getUserProfileUsecase()
 

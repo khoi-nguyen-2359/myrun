@@ -1,4 +1,4 @@
-package akio.apps.myrun.wiring.data.location
+package akio.apps.myrun.data.location.wiring
 
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.PlaceDataSource
@@ -14,7 +14,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module(includes = [LocationDataModule.Providers::class])
-interface LocationDataModule {
+internal interface LocationDataModule {
     @Binds
     fun locationDataSource(locationDataSourceImpl: LocationDataSourceImpl): LocationDataSource
 

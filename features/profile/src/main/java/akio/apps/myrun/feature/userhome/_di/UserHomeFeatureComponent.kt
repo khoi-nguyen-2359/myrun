@@ -24,7 +24,7 @@ interface UserHomeFeatureComponent {
     interface Factory {
         fun create(
             @BindsInstance savedStateHandle: SavedStateHandle,
-            domainComponent: DomainComponent = DaggerDomainComponent.create(),
+            domainComponent: DomainComponent = DaggerDomainComponent.factory().create(),
             activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create()
         ): UserHomeFeatureComponent
     }
