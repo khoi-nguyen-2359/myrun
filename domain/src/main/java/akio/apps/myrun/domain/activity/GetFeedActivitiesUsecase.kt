@@ -1,4 +1,4 @@
-package akio.apps.myrun.domain.usertimeline
+package akio.apps.myrun.domain.activity
 
 import akio.apps.common.data.Resource
 import akio.apps.myrun.data.activity.api.ActivityRepository

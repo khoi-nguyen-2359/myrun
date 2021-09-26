@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.activityexport
 
 import akio.apps.myrun.BuildConfig
 import akio.apps.myrun.R
-import akio.apps.myrun.domain.activityexport.ExportTempTcxFileUsecase
+import akio.apps.myrun.domain.activity.ExportTempTcxFileUsecase
 import akio.apps.myrun.feature.activityexport._di.DaggerActivityExportFeatureComponent
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import android.app.Notification

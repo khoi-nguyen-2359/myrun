@@ -1,4 +1,4 @@
-package akio.apps.myrun.domain.activityexport
+package akio.apps.myrun.domain.activity
 
 import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityRepository
