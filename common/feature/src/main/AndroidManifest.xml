@@ -1,12 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="akio.apps.common.feature">
-
-    <application>
-        <activity
-            android:name=".ui.SingleFragmentActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
-    </application>
-
-</manifest>
+<manifest package="akio.apps.common.feature" />

@@ -26,7 +26,6 @@
     <string name="activity_name_running">Run</string>
     <string name="activity_name_cycling">Ride</string>
     <string name="user_timeline_error_loading_list">There\'s an error loading activities.\nRetry.</string>
-    <string name="splash_welcome_text">Let\'s start your\nfirst activity!</string>
     <string name="sign_in_hint_mobile_number">Mobile Number</string>
     <string name="action_send_otp">Send OTP</string>
     <string name="action_confirm">Confirm</string>
@@ -70,7 +69,6 @@
     <string name="performance_speed_label">Speed</string>
     <string name="performance_cadence_label">Avg. Cadence</string>
     <string name="performance_cadence_unit">spm</string>
-    <string name="activity_feed_loading_item_message">Loading your activities…</string>
     <string name="action_retry">Retry</string>
     <string name="activity_export_error_notification_title">Activity export error</string>
     <string name="activity_export_progress_notification_title">Exporting activities</string>
@@ -89,8 +87,6 @@
     <string name="profile_logout_pending_activity_upload_warning">Your uploading activities <b>will be lost.</b></string>
     <string name="content_description_edit_profile_button">Edit Profile button</string>
     <string name="edit_user_profile_title">Edit Profile</string>
-    <string name="user_feed_title">Feed</string>
-    <string name="home_upload_progress">%1$d uploading activity</string>
     <string name="home_nav_activity_feed_tab_label">Feed</string>
     <string name="home_nav_user_home_tab_label">Home</string>
     <string-array name="user_timeline_activity_selection_items">

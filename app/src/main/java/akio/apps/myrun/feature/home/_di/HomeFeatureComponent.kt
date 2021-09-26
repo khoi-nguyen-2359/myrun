@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.home._di
 
 import akio.apps.common.wiring.LaunchCatchingModule
-import akio.apps.myrun.feature.feed.impl.ActivityFeedViewModel
 import akio.apps.myrun.feature.home.HomeViewModel
+import akio.apps.myrun.feature.home.feed.ActivityFeedViewModel
 import akio.apps.myrun.wiring.data.activity.ActivityDataComponent
 import akio.apps.myrun.wiring.data.activity.DaggerActivityDataComponent
 import akio.apps.myrun.wiring.data.authentication.AuthenticationDataComponent
