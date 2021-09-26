@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.feed.impl
 import akio.apps.common.data.Resource
 import akio.apps.common.data.time.Now
 import akio.apps.myrun.data.activity.api.model.ActivityModel
-import akio.apps.myrun.domain.usertimeline.GetFeedActivitiesUsecase
+import akio.apps.myrun.domain.activity.GetFeedActivitiesUsecase
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import javax.inject.Inject

@@ -5,9 +5,10 @@ import akio.apps.common.wiring.DispatchersModule
 import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
 import akio.apps.myrun.data.location.wiring.LocationDataComponent
 import akio.apps.myrun.data.wiring.FirebaseDataModule
+import akio.apps.myrun.domain.activity.ExportTempTcxFileUsecase
+import akio.apps.myrun.domain.activity.GetFeedActivitiesUsecase
 import akio.apps.myrun.domain.activity.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.domain.activity.RunSplitsCalculator
-import akio.apps.myrun.domain.activityexport.ExportTempTcxFileUsecase
 import akio.apps.myrun.domain.authentication.PostSignInUsecase
 import akio.apps.myrun.domain.migration.AppMigrationUsecase
 import akio.apps.myrun.domain.migration.task.MigrationTask10500
@@ -27,7 +28,6 @@ import akio.apps.myrun.domain.user.GetProviderTokensUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
 import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
-import akio.apps.myrun.domain.usertimeline.GetFeedActivitiesUsecase
 import akio.apps.myrun.wiring.data.activity.ActivityDataModule
 import akio.apps.myrun.wiring.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.wiring.data.eapps.ExternalAppDataModule
