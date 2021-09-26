@@ -32,6 +32,7 @@ android {
 dependencies {
     implementation(project(":common:wiring"))
     implementation(project(":data:wiring"))
+    implementation(project(":data:location:wiring"))
 
     api(project(":domain"))
 
@@ -47,16 +48,13 @@ dependencies {
     api(project(':data:fitness:api'))
     implementation(project(':data:fitness:impl'))
 
-    api(project(":data:location:api"))
-    implementation(project(":data:location:impl"))
-
     api(project(":data:tracking:api"))
     implementation(project(":data:tracking:impl"))
 
     api(project(":data:user:api"))
     implementation(project(":data:user:impl"))
 
-    implementation(libs.googlePlaces)
+//    implementation(libs.googlePlaces)
 
     implementation(libs.timber)
     implementation(libs.javaXInject)

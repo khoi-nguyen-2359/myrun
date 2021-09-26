@@ -36,7 +36,7 @@ interface HomeFeatureComponent {
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
-            domainComponent: DomainComponent = DaggerDomainComponent.create(),
+            domainComponent: DomainComponent = DaggerDomainComponent.factory().create(),
         ): HomeFeatureComponent
     }
 }

@@ -22,7 +22,7 @@ interface ConfiguratorComponent {
     interface Factory {
         fun create(
             trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create(),
-            domainComponent: DomainComponent = DaggerDomainComponent.create(),
+            domainComponent: DomainComponent = DaggerDomainComponent.factory().create(),
         ): ConfiguratorComponent
     }
 }

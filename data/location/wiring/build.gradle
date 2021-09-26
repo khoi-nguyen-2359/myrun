@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion project.compileSdk
+    compileSdk project.compileSdk
 
     defaultConfig {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -16,14 +16,6 @@ android {
         rc { }
     }
 
-    buildFeatures {
-        compose true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion libs.versions.compose.get()
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
@@ -32,23 +24,23 @@ android {
     kotlinOptions {
         jvmTarget = "11"
         useIR = true
+        allWarningsAsErrors = true
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
     }
 }
 
 dependencies {
-    implementation(project(":features:base"))
-    implementation(project(":common:data"))
-    implementation(project(":wiring"))
-    implementation(project(":data:location:wiring"))
+    implementation(project(":common:wiring"))
 
-    implementation(libs.androidXCore)
-    implementation(libs.androidXAppCompat)
-    implementation(libs.androidMaterial)
+    api(project(":data:location:api"))
+    implementation(project(":data:location:impl"))
 
-    implementation(libs.bundles.compose)
+    implementation(libs.googlePlaces)
+    implementation(libs.playServicesLocation)
+
+    implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.kotlinxCoroutinesPlayServices)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
-
-    testImplementation(libs.junit)
 }

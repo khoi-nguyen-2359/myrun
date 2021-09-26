@@ -24,7 +24,7 @@ interface SignInFeatureComponent {
         fun create(
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
-            domainComponent: DomainComponent = DaggerDomainComponent.create(),
+            domainComponent: DomainComponent = DaggerDomainComponent.factory().create(),
         ): SignInFeatureComponent
     }
 }

@@ -38,6 +38,7 @@ dependencies {
     implementation(project(":features:base"))
 
     implementation(project(':wiring'))
+    implementation(project(':data:location:wiring'))
 
     implementation(libs.lifecycleRuntimeKtx)
     implementation(libs.lifecycleLiveDataKtx)

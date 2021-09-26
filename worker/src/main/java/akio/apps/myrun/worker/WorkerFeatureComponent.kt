@@ -26,7 +26,7 @@ interface WorkerFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            domainComponent: DomainComponent = DaggerDomainComponent.create(),
+            domainComponent: DomainComponent = DaggerDomainComponent.factory().create(),
         ): WorkerFeatureComponent
     }
 }

@@ -1,4 +1,4 @@
-package akio.apps.myrun.wiring.data.location
+package akio.apps.myrun.data.location.wiring
 
 import akio.apps.common.wiring.ApplicationModule
 import akio.apps.common.wiring.DispatchersModule

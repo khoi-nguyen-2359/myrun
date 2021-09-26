@@ -2,6 +2,8 @@ package akio.apps.myrun.wiring.domain
 
 import akio.apps.common.wiring.ApplicationModule
 import akio.apps.common.wiring.DispatchersModule
+import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
+import akio.apps.myrun.data.location.wiring.LocationDataComponent
 import akio.apps.myrun.data.wiring.FirebaseDataModule
 import akio.apps.myrun.domain.activity.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.domain.activity.RunSplitsCalculator
@@ -29,7 +31,6 @@ import akio.apps.myrun.domain.usertimeline.GetFeedActivitiesUsecase
 import akio.apps.myrun.wiring.data.activity.ActivityDataModule
 import akio.apps.myrun.wiring.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.wiring.data.eapps.ExternalAppDataModule
-import akio.apps.myrun.wiring.data.location.LocationDataModule
 import akio.apps.myrun.wiring.data.tracking.TrackingDataModule
 import akio.apps.myrun.wiring.data.user.UserDataModule
 import dagger.Component
@@ -43,17 +44,18 @@ import dagger.Component
         AuthenticationDataModule::class,
         UserDataModule::class,
         ExternalAppDataModule::class,
-        LocationDataModule::class,
         TrackingDataModule::class,
         AuthenticationDataModule::class,
         ExternalAppDataModule::class
-    ]
+    ],
+    dependencies = [LocationDataComponent::class]
 )
 interface DomainComponent {
     fun exportTempTcxFileUsecase(): ExportTempTcxFileUsecase
     fun postSignInUsecase(): PostSignInUsecase
     fun updateUserRecentPlaceUsecase(): UpdateUserRecentPlaceUsecase
     fun makeActivityPlaceNameUsecase(): MakeActivityPlaceNameUsecase
+    fun getUserRecentPlaceUsecase(): GetUserRecentPlaceNameUsecase
 
     // tracking
     fun clearRouteTrackingStateUsecase(): ClearRouteTrackingStateUsecase
@@ -74,7 +76,6 @@ interface DomainComponent {
     fun uploadUserAvatarImageUsecase(): UploadUserAvatarImageUsecase
     fun updateUserProfileUsecase(): UpdateUserProfileUsecase
     fun getUserProfileUsecase(): GetUserProfileUsecase
-    fun getUserRecentPlaceUsecase(): GetUserRecentPlaceNameUsecase
 
     fun deauthorizeStravaUsecase(): DeauthorizeStravaUsecase
     fun getProviderTokensUsecase(): GetProviderTokensUsecase
@@ -84,4 +85,11 @@ interface DomainComponent {
     // App Migration
     fun appVersionMigrationUsecase(): AppMigrationUsecase
     fun migrationTask10500(): MigrationTask10500
+
+    @Component.Factory
+    interface Factory {
+        fun create(
+            locationDataComponent: LocationDataComponent = DaggerLocationDataComponent.create(),
+        ): DomainComponent
+    }
 }
