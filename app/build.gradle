@@ -99,7 +99,8 @@ dependencies {
     implementation project(':features:base')
     implementation project(':features:registration')
     implementation project(":features:profile")
-    implementation project(":features:activitydetail")
+    implementation project(":features:home")
+    implementation project(":features:activity")
 
     debugImplementation project(":features:configurator")
 

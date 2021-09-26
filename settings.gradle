@@ -29,6 +29,7 @@ include(":test")
 include ':features:profile'
 include ':worker'
 include ':wiring'
-include ':features:activitydetail'
+include ':features:activity'
 include ':data:location:wiring'
 include ':features:route'
+include ':features:home'

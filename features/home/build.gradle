@@ -1,13 +1,15 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 android {
     compileSdk project.compileSdk
 
     defaultConfig {
-        minSdk project.minSdk
+        minSdkVersion project.minSdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -39,11 +41,25 @@ android {
 }
 
 dependencies {
-    implementation(project(":common:feature"))
-    implementation(project(":domain"))
-    implementation(project(":data:activity:api"))
-    implementation(libs.androidXAppCompat)
+    implementation(project(':common:feature'))
+    implementation(project(':features:base'))
+    implementation(project(':wiring'))
+    implementation(project(':data:location:wiring'))
+    implementation(project(':common:data'))
+    implementation(project(':common:wiring'))
+
     implementation(libs.bundles.compose)
+    implementation(libs.accompanistPlaceholder)
     implementation(libs.accompanistInsets)
-    testImplementation(libs.kotlinTest)
+    implementation(libs.coilCompose)
+//
+//    implementation(libs.androidXAppCompat)
+    implementation(libs.timber)
+//    implementation(libs.lifecycleViewModelKtx)
+//
+//    implementation(libs.androidMapUtils)
+//    implementation(libs.androidGoogleMap)
+
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="activity_details_loading_message">Loading your activity…</string>
+    <string name="activity_details_loading_error">Loading error. Please tap to retry.</string>
+    <string name="activity_details_run_splits_caption">Splits</string>
+    <string name="activity_detail_split_km_column">Km</string>
+    <string name="activity_detail_split_pace_column">Pace</string>
+</resources>

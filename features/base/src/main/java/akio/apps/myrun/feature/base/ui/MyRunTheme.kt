@@ -23,6 +23,9 @@ object AppColors {
 }
 
 object AppDimensions {
+    val AppBarHeight = 56.dp
+    val FabSize = 56.dp
+
     val iconButtonPadding = 16.dp
     val screenVerticalSpacing: Dp = 16.dp
     val screenHorizontalPadding: Dp = 16.dp
