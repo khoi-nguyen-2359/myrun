@@ -5,12 +5,14 @@ import akio.apps.myrun.data.location.api.PlaceDataSource
 import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.location.api.model.PlaceAddressComponent
 import akio.apps.myrun.data.location.api.model.PlaceDetails
+import akio.apps.myrun.data.location.api.model.PlaceSuggestion
 import android.annotation.SuppressLint
 import android.app.Application
 import android.location.Address
 import android.location.Geocoder
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.Lazy
@@ -126,6 +128,20 @@ class GooglePlaceDataSource @Inject constructor(
             addressComponent.types.find { addressType -> sortingOrder[addressType] != null }
                 ?.let { addressType -> sortingOrder[addressType] }
                 ?: Int.MAX_VALUE
+        }
+    }
+
+    override suspend fun getPlaceSuggestions(query: String): List<PlaceSuggestion> {
+        val request = FindAutocompletePredictionsRequest.builder()
+            .setQuery(query)
+            .build()
+        val response = placesClient.findAutocompletePredictions(request).await()
+        return response.autocompletePredictions.map { prediction ->
+            PlaceSuggestion(
+                prediction.placeId,
+                placeName = prediction.getPrimaryText(null).toString(),
+                placeInformation = prediction.getSecondaryText(null).toString()
+            )
         }
     }
 
