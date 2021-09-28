@@ -106,6 +106,7 @@ dependencies {
 
     implementation(project(':wiring'))
     implementation(project(':data:location:wiring'))
+    implementation(project(':data:activity:wiring'))
 
     implementation project(':common:feature')
     implementation project(':common:wiring')

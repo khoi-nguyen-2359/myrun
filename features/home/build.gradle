@@ -43,8 +43,11 @@ android {
 dependencies {
     implementation(project(':common:feature'))
     implementation(project(':features:base'))
+
     implementation(project(':wiring'))
     implementation(project(':data:location:wiring'))
+    implementation(project(':data:activity:wiring'))
+
     implementation(project(':common:data'))
     implementation(project(':common:wiring'))
 

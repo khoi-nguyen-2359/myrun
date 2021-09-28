@@ -2,6 +2,8 @@ package akio.apps.myrun.wiring.domain
 
 import akio.apps.common.wiring.ApplicationModule
 import akio.apps.common.wiring.DispatchersModule
+import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
+import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
 import akio.apps.myrun.data.location.wiring.LocationDataComponent
 import akio.apps.myrun.data.wiring.FirebaseDataModule
@@ -28,7 +30,6 @@ import akio.apps.myrun.domain.user.GetProviderTokensUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
 import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
-import akio.apps.myrun.wiring.data.activity.ActivityDataModule
 import akio.apps.myrun.wiring.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.wiring.data.eapps.ExternalAppDataModule
 import akio.apps.myrun.wiring.data.tracking.TrackingDataModule
@@ -38,7 +39,6 @@ import dagger.Component
 @Component(
     modules = [
         ApplicationModule::class,
-        ActivityDataModule::class,
         DispatchersModule::class,
         FirebaseDataModule::class,
         AuthenticationDataModule::class,
@@ -48,7 +48,10 @@ import dagger.Component
         AuthenticationDataModule::class,
         ExternalAppDataModule::class
     ],
-    dependencies = [LocationDataComponent::class]
+    dependencies = [
+        LocationDataComponent::class,
+        ActivityDataComponent::class
+    ]
 )
 interface DomainComponent {
     fun exportTempTcxFileUsecase(): ExportTempTcxFileUsecase
@@ -90,6 +93,7 @@ interface DomainComponent {
     interface Factory {
         fun create(
             locationDataComponent: LocationDataComponent = DaggerLocationDataComponent.create(),
+            activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create()
         ): DomainComponent
     }
 }

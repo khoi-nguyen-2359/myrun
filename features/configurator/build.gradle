@@ -38,8 +38,10 @@ android {
 dependencies {
     implementation(project(":features:base"))
     implementation(project(":common:data"))
+
     implementation(project(":wiring"))
     implementation(project(":data:location:wiring"))
+    implementation(project(":data:activity:wiring"))
 
     implementation(libs.androidXCore)
     implementation(libs.androidXAppCompat)

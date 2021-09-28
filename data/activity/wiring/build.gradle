@@ -8,7 +8,7 @@ android {
     compileSdk project.compileSdk
 
     defaultConfig {
-        minSdk project.minSdk
+        minSdk = project.minSdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -27,36 +27,24 @@ android {
         jvmTarget = "11"
         useIR = true
         allWarningsAsErrors = true
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
     }
 }
 
 dependencies {
-    implementation(project(":common:feature"))
-    implementation(project(":common:data"))
     implementation(project(":common:wiring"))
+    implementation(project(":data:wiring"))
 
-    implementation(project(":features:base"))
+    api(project(":data:activity:api"))
+    implementation(project(":data:activity:impl"))
 
-    implementation(project(':wiring'))
-    implementation(project(':data:location:wiring'))
-    implementation(project(':data:activity:wiring'))
-
-    implementation(libs.lifecycleRuntimeKtx)
-    implementation(libs.lifecycleLiveDataKtx)
-    implementation(libs.lifecycleViewModelKtx)
-    implementation(libs.javaXInject)
-
+    implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.kotlinxCoroutinesPlayServices)
+
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebaseFirestoreKtx)
+    implementation(libs.firebaseStorageKtx)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
-
-    // social sign in
-    implementation(libs.playServicesAuth)
-    implementation(libs.facebookLogin)
-
-    implementation(libs.constraintLayout)
-    implementation(libs.androidMaterial)
-
-    implementation(libs.timber)
 }
