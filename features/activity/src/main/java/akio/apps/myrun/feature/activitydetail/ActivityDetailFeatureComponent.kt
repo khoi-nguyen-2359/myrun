@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.activitydetail
 
-import akio.apps.myrun.wiring.data.activity.ActivityDataComponent
-import akio.apps.myrun.wiring.data.activity.DaggerActivityDataComponent
+import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
+import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.wiring.data.authentication.AuthenticationDataComponent
 import akio.apps.myrun.wiring.data.authentication.DaggerAuthenticationDataComponent
 import akio.apps.myrun.wiring.data.user.DaggerUserDataComponent

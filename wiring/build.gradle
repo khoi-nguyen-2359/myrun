@@ -33,6 +33,7 @@ dependencies {
     implementation(project(":common:wiring"))
     implementation(project(":data:wiring"))
     implementation(project(":data:location:wiring"))
+    implementation(project(":data:activity:wiring"))
 
     api(project(":domain"))
 

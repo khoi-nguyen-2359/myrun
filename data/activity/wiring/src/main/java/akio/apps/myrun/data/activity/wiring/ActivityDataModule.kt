@@ -1,4 +1,4 @@
-package akio.apps.myrun.wiring.data.activity
+package akio.apps.myrun.data.activity.wiring
 
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.ActivityRepository

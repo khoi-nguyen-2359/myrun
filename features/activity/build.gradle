@@ -43,8 +43,11 @@ dependencies {
     implementation(project(':common:feature'))
     implementation(project(':features:base'))
     implementation(project(':features:home'))
+
     implementation(project(':wiring'))
     implementation(project(':data:location:wiring'))
+    implementation(project(':data:activity:wiring'))
+
     implementation(project(':common:data'))
 
     implementation(libs.constraintLayout)

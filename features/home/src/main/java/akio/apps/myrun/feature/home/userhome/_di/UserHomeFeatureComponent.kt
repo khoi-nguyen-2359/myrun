@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.home.userhome._di
 
 import akio.apps.common.wiring.FeatureScope
+import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
+import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.feature.home.userhome.UserHomeViewModel
-import akio.apps.myrun.wiring.data.activity.ActivityDataComponent
-import akio.apps.myrun.wiring.data.activity.DaggerActivityDataComponent
 import akio.apps.myrun.wiring.domain.DaggerDomainComponent
 import akio.apps.myrun.wiring.domain.DomainComponent
 import androidx.lifecycle.SavedStateHandle
