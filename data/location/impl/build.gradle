@@ -38,6 +38,7 @@ dependencies {
 
     implementation(libs.googlePlaces)
     implementation(libs.androidGoogleMap)
+    implementation(libs.androidMapUtils)
 
     implementation(libs.timber)
     implementation(libs.dagger)
