@@ -8,9 +8,7 @@ import akio.apps.common.feature.lifecycle.observe
 import akio.apps.common.feature.ui.dp2px
 import akio.apps.common.feature.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.R
-import akio.apps.myrun._base.utils.LatLngBoundsBuilder
 import akio.apps.myrun._base.utils.LocationServiceChecker
-import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
@@ -591,6 +589,10 @@ class RouteTrackingActivity(
     override fun onActivityTypeSelected(activityType: ActivityType) {
         routeTrackingViewModel.onSelectActivityType(activityType)
     }
+
+    private fun Location.toGmsLatLng(): LatLng = LatLng(latitude, longitude)
+
+    private fun ActivityLocation.toGmsLatLng(): LatLng = LatLng(latitude, longitude)
 
     enum class CameraMovement {
         /**

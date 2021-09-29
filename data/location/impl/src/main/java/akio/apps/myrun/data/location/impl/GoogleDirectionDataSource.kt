@@ -11,8 +11,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-private typealias GmsLatLng = com.google.android.gms.maps.model.LatLng
-
 class GoogleDirectionDataSource @Inject constructor(
     private val googleMapDirectionApi: GoogleMapDirectionApi,
     private val googleMapApiKey: GoogleMapApiKey,
@@ -73,9 +71,6 @@ class GoogleDirectionDataSource @Inject constructor(
         Timber.d("simplified waypoints size = ${simplifiedWaypoints.size}")
         return simplifiedWaypoints
     }
-
-    private fun LatLng.toGmsLatLng(): GmsLatLng = GmsLatLng(latitude, longitude)
-    private fun GmsLatLng.toLatLng(): LatLng = LatLng(latitude, longitude)
 
     companion object {
         // limit of google direction api

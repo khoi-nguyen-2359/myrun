@@ -4,7 +4,6 @@ import akio.apps.common.data.time.Now
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.StatsPresentations
 import akio.apps.myrun._base.utils.flowTimer
-import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
@@ -36,6 +35,7 @@ import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import androidx.core.content.ContextCompat
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -216,8 +216,9 @@ class RouteTrackingService : Service() {
             }
             computeLengthLocations.addAll(locations)
 
-            val locationUpdateDistance =
-                SphericalUtil.computeLength(computeLengthLocations.map { it.toGmsLatLng() })
+            val locationUpdateDistance = SphericalUtil.computeLength(
+                computeLengthLocations.map { LatLng(it.latitude, it.longitude) }
+            )
 
             // remember last location of this batch for later computing
             lastComputeLengthLocation = locations.lastOrNull()
