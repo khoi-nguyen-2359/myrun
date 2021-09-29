@@ -3,8 +3,8 @@ package akio.apps.myrun.domain.routetracking
 import akio.apps._base.ObjectAutoId
 import akio.apps.common.data.time.Now
 import akio.apps.common.wiring.NamedIoDispatcher
-import akio.apps.myrun._base.utils.toGmsLatLng
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
+import akio.apps.myrun.data.activity.api.getLatLng
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityModel
@@ -13,11 +13,11 @@ import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
+import akio.apps.myrun.data.location.api.PolyUtil
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.domain.TrackingValueConverter
 import android.graphics.Bitmap
-import com.google.maps.android.PolyUtil
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
@@ -34,6 +34,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
     private val activityLocalStorage: ActivityLocalStorage,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val objectAutoId: ObjectAutoId,
+    private val polyUtil: PolyUtil,
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
     suspend operator fun invoke(activityName: String, routeImageBitmap: Bitmap) =
@@ -71,7 +72,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         val startTime = routeTrackingState.getTrackingStartTime()
         val duration = routeTrackingState.getTrackingDuration()
         val distance = routeTrackingState.getRouteDistance()
-        val encodedPolyline = PolyUtil.encode(trackedLocations.map { it.toGmsLatLng() })
+        val encodedPolyline = polyUtil.encode(trackedLocations.map { it.getLatLng() })
         val placeIdentifier = routeTrackingState.getPlaceIdentifier()
         val activityType = routeTrackingState.getActivityType()
         val activityData = ActivityDataModel(

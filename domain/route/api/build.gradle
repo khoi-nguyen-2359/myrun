@@ -7,8 +7,6 @@ android {
     compileSdk project.compileSdk
 
     defaultConfig {
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -29,8 +27,5 @@ android {
 }
 
 dependencies {
-    implementation(project(':data:fitness:api'))
-    implementation(project(':data:location:api'))
-    implementation project(path: ':common:data')
-    implementation(libs.kotlinxCoroutinesCore)
+    implementation project(":data:location:api")
 }
