@@ -1,19 +1,29 @@
 package akio.apps.myrun.domain.activity
 
-import akio.apps.myrun._base.utils.GmsLatLng
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
-import com.google.maps.android.SphericalUtil
+import akio.apps.myrun.data.location.api.SphericalUtil
+import akio.apps.myrun.data.location.api.model.LatLng
 import kotlin.test.assertEquals
 import org.junit.Before
 import org.junit.Test
+
+private typealias GmsSphericalUtil = com.google.maps.android.SphericalUtil
+private typealias GmsLatLng = com.google.android.gms.maps.model.LatLng
 
 class RunSplitsCalculatorTest {
     private lateinit var runSplitsCalculator: RunSplitsCalculator
     private val originLatLng: GmsLatLng = GmsLatLng(0.0, 0.0)
 
+    private val mockedSphericalUtil: SphericalUtil = object : SphericalUtil {
+        override fun computeDistanceBetween(
+            p1: LatLng,
+            p2: LatLng,
+        ): Double = GmsSphericalUtil.computeDistanceBetween(p1.toGmsLatLng(), p2.toGmsLatLng())
+    }
+
     @Before
     fun setup() {
-        runSplitsCalculator = RunSplitsCalculator()
+        runSplitsCalculator = RunSplitsCalculator(mockedSphericalUtil)
     }
 
     @Test
@@ -97,7 +107,7 @@ class RunSplitsCalculatorTest {
      * On the line of origin(0,0) with heading=0.0, choose a point from origin an offset=[offset]
      */
     private fun createNextStopFromOrigin(locationTime: Long, offset: Double): ActivityLocation {
-        val destination = SphericalUtil.computeOffset(originLatLng, offset, 0.0)
+        val destination = GmsSphericalUtil.computeOffset(originLatLng, offset, 0.0)
         return ActivityLocation(
             elapsedTime = locationTime,
             latitude = destination.latitude,
@@ -106,4 +116,6 @@ class RunSplitsCalculatorTest {
             speed = 0.0
         )
     }
+
+    private fun LatLng.toGmsLatLng(): GmsLatLng = GmsLatLng(latitude, longitude)
 }
