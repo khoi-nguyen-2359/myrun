@@ -2,10 +2,10 @@ package akio.apps.myrun.feature.profile
 
 import akio.apps.common.wiring.FeatureScope
 import akio.apps.common.wiring.LaunchCatchingModule
+import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
+import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
 import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
-import akio.apps.myrun.wiring.data.authentication.AuthenticationDataComponent
-import akio.apps.myrun.wiring.data.authentication.DaggerAuthenticationDataComponent
 import akio.apps.myrun.wiring.data.user.DaggerUserDataComponent
 import akio.apps.myrun.wiring.data.user.UserDataComponent
 import dagger.Component

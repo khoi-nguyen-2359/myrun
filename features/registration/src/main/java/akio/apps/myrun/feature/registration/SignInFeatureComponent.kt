@@ -2,8 +2,8 @@ package akio.apps.myrun.feature.registration
 
 import akio.apps.common.wiring.FeatureScope
 import akio.apps.common.wiring.LaunchCatchingModule
-import akio.apps.myrun.wiring.data.authentication.AuthenticationDataComponent
-import akio.apps.myrun.wiring.data.authentication.DaggerAuthenticationDataComponent
+import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
+import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.wiring.domain.DaggerDomainComponent
 import akio.apps.myrun.wiring.domain.DomainComponent
 import dagger.Component

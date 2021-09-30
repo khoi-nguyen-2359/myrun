@@ -34,14 +34,9 @@ dependencies {
     implementation(project(":data:wiring"))
     implementation(project(":data:location:wiring"))
     implementation(project(":data:activity:wiring"))
+    implementation(project(":data:authentication:wiring"))
 
     api(project(":domain"))
-
-    api(project(":data:authentication:api"))
-    implementation(project(":data:authentication:impl"))
-
-    api(project(':data:activity:api'))
-    implementation(project(':data:activity:impl'))
 
     api(project(':data:eapps:api'))
     implementation(project(':data:eapps:impl'))

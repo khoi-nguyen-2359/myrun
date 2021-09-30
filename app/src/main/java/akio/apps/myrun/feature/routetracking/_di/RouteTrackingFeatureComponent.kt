@@ -5,12 +5,12 @@ import akio.apps.common.wiring.FeatureScope
 import akio.apps.common.wiring.LaunchCatchingModule
 import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
 import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
+import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
+import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
 import akio.apps.myrun.data.location.wiring.LocationDataComponent
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingViewModel
-import akio.apps.myrun.wiring.data.authentication.AuthenticationDataComponent
-import akio.apps.myrun.wiring.data.authentication.DaggerAuthenticationDataComponent
 import akio.apps.myrun.wiring.data.eapps.DaggerExternalAppDataComponent
 import akio.apps.myrun.wiring.data.eapps.ExternalAppDataComponent
 import akio.apps.myrun.wiring.data.fitness.DaggerFitnessDataComponent
