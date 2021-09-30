@@ -3,10 +3,10 @@ package akio.apps.myrun.feature.home._di
 import akio.apps.common.wiring.LaunchCatchingModule
 import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
 import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
+import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
+import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.feature.home.HomeViewModel
 import akio.apps.myrun.feature.home.feed.ActivityFeedViewModel
-import akio.apps.myrun.wiring.data.authentication.AuthenticationDataComponent
-import akio.apps.myrun.wiring.data.authentication.DaggerAuthenticationDataComponent
 import akio.apps.myrun.wiring.data.user.DaggerUserDataComponent
 import akio.apps.myrun.wiring.data.user.UserDataComponent
 import akio.apps.myrun.wiring.domain.DaggerDomainComponent

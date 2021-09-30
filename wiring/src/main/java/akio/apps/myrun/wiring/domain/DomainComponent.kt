@@ -4,6 +4,8 @@ import akio.apps.common.wiring.ApplicationModule
 import akio.apps.common.wiring.DispatchersModule
 import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
 import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
+import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
+import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
 import akio.apps.myrun.data.location.wiring.LocationDataComponent
 import akio.apps.myrun.data.wiring.FirebaseDataModule
@@ -30,7 +32,6 @@ import akio.apps.myrun.domain.user.GetProviderTokensUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
 import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
-import akio.apps.myrun.wiring.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.wiring.data.eapps.ExternalAppDataModule
 import akio.apps.myrun.wiring.data.tracking.TrackingDataModule
 import akio.apps.myrun.wiring.data.user.UserDataModule
@@ -41,16 +42,15 @@ import dagger.Component
         ApplicationModule::class,
         DispatchersModule::class,
         FirebaseDataModule::class,
-        AuthenticationDataModule::class,
         UserDataModule::class,
         ExternalAppDataModule::class,
         TrackingDataModule::class,
-        AuthenticationDataModule::class,
         ExternalAppDataModule::class
     ],
     dependencies = [
         LocationDataComponent::class,
-        ActivityDataComponent::class
+        ActivityDataComponent::class,
+        AuthenticationDataComponent::class
     ]
 )
 interface DomainComponent {
@@ -93,7 +93,9 @@ interface DomainComponent {
     interface Factory {
         fun create(
             locationDataComponent: LocationDataComponent = DaggerLocationDataComponent.create(),
-            activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create()
+            activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create(),
+            authDataComponent: AuthenticationDataComponent =
+                DaggerAuthenticationDataComponent.create()
         ): DomainComponent
     }
 }
