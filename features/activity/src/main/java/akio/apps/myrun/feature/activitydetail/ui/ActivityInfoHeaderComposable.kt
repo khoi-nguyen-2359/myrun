@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import timber.log.Timber
 
@@ -115,6 +116,7 @@ private fun ActivityTimeAndPlaceText(
     )
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun UserAvatarImage(
     activityDetail: ActivityModel,

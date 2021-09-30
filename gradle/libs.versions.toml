@@ -5,7 +5,7 @@ build-time-tracker = "0.11.1"
 
 multidex = "1.0.3"
 
-kotlin = "1.5.21"
+kotlin = "1.5.30"
 coroutines = "1.5.1"
 kotlinSerialization = "1.2.1"
 
@@ -24,7 +24,7 @@ lifecycle = "2.4.0-beta01"
 splashScreen = "1.0.0-alpha01"
 
 # compose
-compose = "1.0.2"
+compose = "1.0.3"
 composeConstraintLayout = "1.0.0-beta02"
 pagingCompose = "1.0.0-alpha12"
 accompanist = "0.17.0"
