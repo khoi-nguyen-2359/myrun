@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.base.navigation
 
-import androidx.navigation.compose.NamedNavArgument
+import androidx.navigation.NamedNavArgument
 
 abstract class NavDestinationInfo(protected val routeName: String) {
     open val arguments: List<NamedNavArgument> = emptyList()

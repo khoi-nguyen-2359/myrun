@@ -1,4 +1,4 @@
-package akio.apps.myrun.wiring.data.user
+package akio.apps.myrun.data.user.wiring
 
 import akio.apps.myrun.data.user.api.AppMigrationState
 import akio.apps.myrun.data.user.api.UserFollowRepository
@@ -8,8 +8,27 @@ import akio.apps.myrun.data.user.impl.FirebaseUserFollowRepository
 import akio.apps.myrun.data.user.impl.FirebaseUserProfileRepository
 import akio.apps.myrun.data.user.impl.FirebaseUserRecentPlaceRepository
 import akio.apps.myrun.data.user.impl.PreferenceAppMigrationState
+import akio.apps.myrun.data.wiring.ApplicationModule
+import akio.apps.myrun.data.wiring.DispatchersModule
+import akio.apps.myrun.data.wiring.FirebaseDataModule
 import dagger.Binds
+import dagger.Component
 import dagger.Module
+
+@Component(
+    modules = [
+        UserDataModule::class,
+        FirebaseDataModule::class,
+        DispatchersModule::class,
+        ApplicationModule::class
+    ]
+)
+interface UserDataComponent {
+    fun userRecentPlaceRepository(): UserRecentPlaceRepository
+    fun userFollowRepository(): UserFollowRepository
+    fun userProfileRepository(): UserProfileRepository
+    fun appMigrationState(): AppMigrationState
+}
 
 @Module
 internal interface UserDataModule {
