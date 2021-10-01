@@ -4,6 +4,8 @@ import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
 import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
+import akio.apps.myrun.data.eapps.wiring.DaggerExternalAppDataComponent
+import akio.apps.myrun.data.eapps.wiring.ExternalAppDataComponent
 import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
 import akio.apps.myrun.data.location.wiring.LocationDataComponent
 import akio.apps.myrun.data.tracking.wiring.DaggerTrackingDataComponent
@@ -36,7 +38,6 @@ import akio.apps.myrun.domain.user.GetProviderTokensUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
 import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
-import akio.apps.myrun.wiring.data.eapps.ExternalAppDataModule
 import dagger.Component
 
 @Component(
@@ -44,15 +45,14 @@ import dagger.Component
         ApplicationModule::class,
         DispatchersModule::class,
         FirebaseDataModule::class,
-        ExternalAppDataModule::class,
-        ExternalAppDataModule::class
     ],
     dependencies = [
         LocationDataComponent::class,
         ActivityDataComponent::class,
         AuthenticationDataComponent::class,
         UserDataComponent::class,
-        TrackingDataComponent::class
+        TrackingDataComponent::class,
+        ExternalAppDataComponent::class
     ]
 )
 interface DomainComponent {
@@ -100,6 +100,8 @@ interface DomainComponent {
                 DaggerAuthenticationDataComponent.create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
             trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create(),
+            externalAppDataComponent: ExternalAppDataComponent =
+                DaggerExternalAppDataComponent.factory().create()
         ): DomainComponent
     }
 }

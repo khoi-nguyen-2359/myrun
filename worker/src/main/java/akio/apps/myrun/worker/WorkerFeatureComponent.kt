@@ -10,8 +10,8 @@ import dagger.Component
 @akio.apps.myrun.data.wiring.FeatureScope
 @Component(
     modules = [
-        akio.apps.myrun.data.wiring.LaunchCatchingModule::class,
-        akio.apps.myrun.data.wiring.DispatchersModule::class
+        LaunchCatchingModule::class,
+        DispatchersModule::class
     ],
     dependencies = [
         DomainComponent::class

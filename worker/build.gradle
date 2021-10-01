@@ -38,6 +38,7 @@ dependencies {
     implementation(project(':data:authentication:wiring'))
     implementation(project(':data:user:wiring'))
     implementation(project(':data:tracking:wiring'))
+    implementation(project(':data:eapps:wiring'))
 
     implementation(project(":feature:common"))
 
