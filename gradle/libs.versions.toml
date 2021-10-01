@@ -20,15 +20,14 @@ dataStore = "1.0.0"
 workManager = "2.7.0-beta01"
 paging = "3.0.1"
 room = "2.3.0"
-lifecycle = "2.4.0-beta01"
-splashScreen = "1.0.0-alpha01"
+lifecycle = "2.4.0-rc01"
+splashScreen = "1.0.0-alpha02"
 
 # compose
 compose = "1.0.3"
-composeConstraintLayout = "1.0.0-beta02"
-pagingCompose = "1.0.0-alpha12"
-accompanist = "0.17.0"
-composeNavigation = "2.4.0-alpha09"
+pagingCompose = "1.0.0-alpha13"
+accompanist = "0.19.0"
+composeNavigation = "2.4.0-alpha10"
 
 # google play services: https://developers.google.com/android/guides/releases
 playServicesGradlePlugin = "4.3.10"  # https://developers.google.com/android/guides/google-services-plugin
