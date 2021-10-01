@@ -5,6 +5,7 @@ import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.DataPoint
 import akio.apps.myrun.data.activity.impl.model.FirestoreActivity
 import akio.apps.myrun.data.activity.impl.model.FirestoreActivityMapper
 import akio.apps.myrun.data.activity.impl.model.FirestoreActivityType
@@ -14,7 +15,6 @@ import akio.apps.myrun.data.activity.impl.model.FirestoreFloatDataPointParser
 import akio.apps.myrun.data.activity.impl.model.FirestoreIntegerDataPointParser
 import akio.apps.myrun.data.activity.impl.model.FirestoreLocationDataPointParser
 import akio.apps.myrun.data.base.FirebaseStorageUtils
-import akio.apps.myrun.data.fitness.DataPoint
 import akio.apps.myrun.data.wiring.NamedIoDispatcher
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference

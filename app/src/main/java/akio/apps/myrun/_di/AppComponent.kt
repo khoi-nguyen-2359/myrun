@@ -1,8 +1,8 @@
 package akio.apps.myrun._di
 
 import akio.apps.myrun.MyRunApp
-import akio.apps.myrun.wiring.data.tracking.DaggerTrackingDataComponent
-import akio.apps.myrun.wiring.data.tracking.TrackingDataComponent
+import akio.apps.myrun.data.tracking.wiring.DaggerTrackingDataComponent
+import akio.apps.myrun.data.tracking.wiring.TrackingDataComponent
 import dagger.Component
 import javax.inject.Singleton
 

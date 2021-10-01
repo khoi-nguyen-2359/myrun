@@ -39,11 +39,12 @@ dependencies {
     implementation(project(":feature:common"))
     implementation(project(":data:common"))
 
-    implementation(project(":wiring"))
+    implementation(project(':wiring'))
     implementation(project(":data:location:wiring"))
     implementation(project(":data:activity:wiring"))
     implementation(project(":data:authentication:wiring"))
     implementation(project(":data:user:wiring"))
+    implementation(project(':data:tracking:wiring'))
 
     implementation(libs.androidXCore)
     implementation(libs.androidXAppCompat)

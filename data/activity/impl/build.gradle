@@ -33,7 +33,6 @@ android {
 
 dependencies {
     implementation(project(':data:activity:api'))
-    implementation(project(':data:fitness:api'))
     implementation(project(':data:wiring'))
     implementation(project(':data:common'))
 
