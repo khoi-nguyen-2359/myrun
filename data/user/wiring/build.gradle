@@ -8,7 +8,6 @@ android {
     compileSdk project.compileSdk
 
     defaultConfig {
-        minSdk project.minSdk
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -26,25 +25,26 @@ android {
         jvmTarget = "11"
         useIR = true
         allWarningsAsErrors = true
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
     }
 }
 
 dependencies {
-    implementation(project(":data:wiring"))
+    implementation(project(':data:wiring'))
 
-    implementation(project(':wiring'))
-    implementation(project(':data:location:wiring'))
-    implementation(project(':data:activity:wiring'))
-    implementation(project(':data:authentication:wiring'))
-    implementation(project(':data:user:wiring'))
+    api(project(':data:user:api'))
+    implementation(project(':data:user:impl'))
 
-    implementation(project(":feature:common"))
+    // app migration
+    implementation(libs.dataStore)
 
-    implementation(libs.workManager)
-    implementation(libs.guava) // to resolve error 'cannot access ListenableFuture' in work manager
+    implementation(libs.kotlinxCoroutinesCore)
 
-    implementation(libs.okHttp)
-    implementation(libs.timber)
+    implementation platform(libs.firebaseBom)
+    implementation(libs.firebaseFirestoreKtx)
+    implementation(libs.firebaseStorageKtx)
+
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
+
 }

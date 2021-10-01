@@ -47,6 +47,7 @@ dependencies {
     implementation(project(':data:location:wiring'))
     implementation(project(':data:activity:wiring'))
     implementation(project(':data:authentication:wiring'))
+    implementation(project(':data:user:wiring'))
 
     implementation(project(':data:common'))
 

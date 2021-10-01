@@ -6,6 +6,8 @@ import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
 import akio.apps.myrun.data.location.wiring.LocationDataComponent
+import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
+import akio.apps.myrun.data.user.wiring.UserDataComponent
 import akio.apps.myrun.data.wiring.ApplicationModule
 import akio.apps.myrun.data.wiring.LaunchCatchingModule
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
@@ -16,8 +18,6 @@ import akio.apps.myrun.wiring.data.fitness.DaggerFitnessDataComponent
 import akio.apps.myrun.wiring.data.fitness.FitnessDataComponent
 import akio.apps.myrun.wiring.data.tracking.DaggerTrackingDataComponent
 import akio.apps.myrun.wiring.data.tracking.TrackingDataComponent
-import akio.apps.myrun.wiring.data.user.DaggerUserDataComponent
-import akio.apps.myrun.wiring.data.user.UserDataComponent
 import akio.apps.myrun.wiring.domain.DaggerDomainComponent
 import akio.apps.myrun.wiring.domain.DomainComponent
 import akio.apps.myrun.worker.ActivityUploadWorker

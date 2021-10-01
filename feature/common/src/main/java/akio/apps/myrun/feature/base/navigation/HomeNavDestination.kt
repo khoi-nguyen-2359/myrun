@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.base.navigation
 
+import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
-import androidx.navigation.compose.NamedNavArgument
-import androidx.navigation.compose.navArgument
+import androidx.navigation.navArgument
 
 object HomeNavDestination {
 
