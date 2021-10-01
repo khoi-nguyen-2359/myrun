@@ -5,11 +5,9 @@ plugins {
 }
 
 android {
-    compileSdkVersion project.compileSdk
+    compileSdk project.compileSdk
 
     defaultConfig {
-        minSdk project.minSdk
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -22,6 +20,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
         useIR = true
@@ -31,8 +30,22 @@ android {
 }
 
 dependencies {
-    implementation project(":data:location:api")
-    implementation project(":domain:route:api")
+    implementation(project(":data:wiring"))
+    implementation(project(":data:authentication:wiring"))
 
-    implementation(libs.javaXInject)
+    api(project(":data:eapps:api"))
+    implementation(project(":data:eapps:impl"))
+
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebaseFirestoreKtx)
+
+    implementation(libs.dataStore)
+    implementation(libs.timber)
+
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
+
+    implementation(libs.okHttp)
+    implementation(libs.retrofit)
+    implementation(libs.retrofitGsonConverter)
 }

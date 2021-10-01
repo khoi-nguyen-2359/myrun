@@ -1,6 +1,8 @@
-package akio.apps.myrun.wiring.data.eapps
+package akio.apps.myrun.data.eapps.wiring
 
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
+import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.eapps.api.StravaDataRepository
 import akio.apps.myrun.data.eapps.api.StravaTokenRepository
@@ -10,15 +12,41 @@ import akio.apps.myrun.data.eapps.impl.StravaAuthenticator
 import akio.apps.myrun.data.eapps.impl.StravaDataRepositoryImpl
 import akio.apps.myrun.data.eapps.impl.StravaTokenRepositoryImpl
 import akio.apps.myrun.data.eapps.impl.model.StravaTokenRefreshMapper
+import akio.apps.myrun.data.wiring.ApplicationModule
+import akio.apps.myrun.data.wiring.FirebaseDataModule
 import akio.apps.myrun.data.wiring.NetworkModule
 import com.google.gson.Gson
 import dagger.Binds
+import dagger.Component
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
+@Component(
+    modules = [
+        ExternalAppDataModule::class,
+        FirebaseDataModule::class,
+        NetworkModule::class,
+        ApplicationModule::class
+    ],
+    dependencies = [AuthenticationDataComponent::class]
+)
+interface ExternalAppDataComponent {
+    fun stravaTokenRepository(): StravaTokenRepository
+    fun externalAppRepository(): ExternalAppProvidersRepository
+    fun stravaDataRepository(): StravaDataRepository
+
+    @Component.Factory
+    interface Factory {
+        fun create(
+            authenticationDataComponent: AuthenticationDataComponent =
+                DaggerAuthenticationDataComponent.create(),
+        ): ExternalAppDataComponent
+    }
+}
 
 @Module(
     includes = [
