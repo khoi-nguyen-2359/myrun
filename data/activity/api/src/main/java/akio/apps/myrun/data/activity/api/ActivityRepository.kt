@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.activity.api
 
-import akio.apps.common.data.Resource
+import akio.apps.myrun.data.Resource
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.fitness.DataPoint
@@ -11,7 +11,7 @@ interface ActivityRepository {
         fixUserId: String,
         userIds: List<String>,
         startAfterTime: Long,
-        limit: Int
+        limit: Int,
     ): List<ActivityModel>
 
     /**
@@ -22,7 +22,7 @@ interface ActivityRepository {
         routeBitmapFile: File,
         speedDataPoints: List<DataPoint<Float>>,
         locationDataPoints: List<ActivityLocation>,
-        stepCadenceDataPoints: List<DataPoint<Int>>?
+        stepCadenceDataPoints: List<DataPoint<Int>>?,
     ): String
 
     suspend fun getActivity(activityId: String): ActivityModel?
@@ -41,6 +41,6 @@ interface ActivityRepository {
     suspend fun getActivitiesInTimeRange(
         userId: String,
         startTime: Long,
-        endTime: Long
+        endTime: Long,
     ): List<ActivityModel>
 }

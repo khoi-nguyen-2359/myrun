@@ -1,8 +1,6 @@
 package akio.apps.myrun.domain.routetracking
 
 import akio.apps._base.ObjectAutoId
-import akio.apps.common.data.time.Now
-import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.getLatLng
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
@@ -14,8 +12,10 @@ import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.api.PolyUtil
+import akio.apps.myrun.data.time.Now
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
+import akio.apps.myrun.data.wiring.NamedIoDispatcher
 import akio.apps.myrun.domain.TrackingValueConverter
 import android.graphics.Bitmap
 import javax.inject.Inject
@@ -35,7 +35,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val objectAutoId: ObjectAutoId,
     private val polyUtil: PolyUtil,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(activityName: String, routeImageBitmap: Bitmap) =
         withContext(ioDispatcher) {
@@ -66,7 +66,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         userId: String,
         activityId: String,
         activityName: String,
-        trackedLocations: List<ActivityLocation>
+        trackedLocations: List<ActivityLocation>,
     ): ActivityModel {
         val endTime = Now.currentTimeMillis()
         val startTime = routeTrackingState.getTrackingStartTime()

@@ -1,10 +1,10 @@
 package akio.apps.myrun.domain.activity
 
-import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.wiring.NamedIoDispatcher
 import android.os.Parcelable
 import java.util.Calendar
 import java.util.Calendar.DAY_OF_MONTH

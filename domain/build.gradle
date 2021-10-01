@@ -39,8 +39,8 @@ dependencies {
     implementation project(":data:authentication:api")
     implementation project(":data:eapps:api")
 
-    implementation project(":common:data")
-    implementation project(":common:wiring")
+    implementation project(":data:common")
+    implementation project(":data:wiring")
 
     implementation(libs.androidMapUtils)
     implementation(libs.androidGoogleMap)

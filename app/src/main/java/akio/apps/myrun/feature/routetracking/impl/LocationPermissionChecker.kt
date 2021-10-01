@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.routetracking.impl
 
-import akio.apps.common.feature.permissions.AppPermissions
 import akio.apps.myrun.R
+import akio.apps.myrun.feature.base.permissions.AppPermissions
 import android.content.pm.PackageManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog

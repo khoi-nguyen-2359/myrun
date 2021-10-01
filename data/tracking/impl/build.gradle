@@ -39,7 +39,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":common:wiring"))
+    implementation(project(":data:wiring"))
     implementation(project(":data:tracking:api"))
     implementation(project(":data:location:api"))
     implementation(project(":data:activity:api"))

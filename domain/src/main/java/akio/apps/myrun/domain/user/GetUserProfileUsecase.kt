@@ -1,6 +1,6 @@
 package akio.apps.myrun.domain.user
 
-import akio.apps.common.data.Resource
+import akio.apps.myrun.data.Resource
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.model.UserProfile

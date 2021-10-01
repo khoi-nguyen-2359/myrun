@@ -28,6 +28,6 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':common:data')
+    implementation(project(':data:common'))
     implementation(libs.kotlinxCoroutinesCore)
 }

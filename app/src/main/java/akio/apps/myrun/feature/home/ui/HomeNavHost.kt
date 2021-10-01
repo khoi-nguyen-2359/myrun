@@ -1,11 +1,11 @@
 package akio.apps.myrun.feature.home.ui
 
-import akio.apps.common.feature.viewmodel.savedStateViewModelProvider
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.DaggerActivityDetailFeatureComponent
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
+import akio.apps.myrun.feature.base.viewmodel.savedStateViewModelProvider
 import akio.apps.myrun.feature.profile.DaggerUserProfileFeatureComponent
 import akio.apps.myrun.feature.profile.UserProfileViewModel
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen

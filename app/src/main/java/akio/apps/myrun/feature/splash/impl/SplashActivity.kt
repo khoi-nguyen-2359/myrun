@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.splash.impl
 
-import akio.apps.common.feature.lifecycle.collectEventRepeatOnStarted
-import akio.apps.common.feature.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 import akio.apps.myrun.feature.base.DialogDelegate
+import akio.apps.myrun.feature.base.lifecycle.collectEventRepeatOnStarted
+import akio.apps.myrun.feature.base.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.feature.home.HomeActivity
 import akio.apps.myrun.feature.registration.SignInActivity
 import akio.apps.myrun.feature.splash._di.DaggerSplashFeatureComponent

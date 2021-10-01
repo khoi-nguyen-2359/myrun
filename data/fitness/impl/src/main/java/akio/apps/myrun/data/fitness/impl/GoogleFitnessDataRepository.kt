@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.fitness.impl
 
-import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.fitness.FitnessDataRepository
 import android.app.Application
 import androidx.annotation.VisibleForTesting
@@ -21,7 +20,7 @@ import timber.log.Timber
 
 class GoogleFitnessDataRepository @Inject constructor(
     private val application: Application,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @akio.apps.myrun.data.wiring.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : FitnessDataRepository {
 
     private val fitnessOptions
@@ -65,7 +64,7 @@ class GoogleFitnessDataRepository @Inject constructor(
         endTimeInSec: Long,
         bucketTimeInSec: Long,
         dataType: DataType,
-        aggregateType: DataType? = dataType.aggregateType
+        aggregateType: DataType? = dataType.aggregateType,
     ): List<DataPoint> = withContext(ioDispatcher) {
         try {
             val readRequest = DataReadRequest.Builder()
@@ -117,7 +116,7 @@ class GoogleFitnessDataRepository @Inject constructor(
     override suspend fun getSpeedDataPoints(
         startTime: Long,
         endTime: Long,
-        interval: Long
+        interval: Long,
     ): List<akio.apps.myrun.data.fitness.DataPoint<Float>> = withContext(ioDispatcher) {
         val speedDataPoints = readFitnessData(
             startTime,
@@ -138,7 +137,7 @@ class GoogleFitnessDataRepository @Inject constructor(
     override suspend fun getSteppingCadenceDataPoints(
         startTime: Long,
         endTime: Long,
-        interval: Long
+        interval: Long,
     ): List<akio.apps.myrun.data.fitness.DataPoint<Int>> = withContext(ioDispatcher) {
         val cadenceDataPoints =
             readFitnessData(startTime, endTime, interval, DataType.TYPE_STEP_COUNT_CADENCE)
@@ -176,7 +175,7 @@ class GoogleFitnessDataRepository @Inject constructor(
     override suspend fun getHeartRateDataPoints(
         startTime: Long,
         endTime: Long,
-        interval: Long
+        interval: Long,
     ): List<akio.apps.myrun.data.fitness.DataPoint<Int>> = withContext(ioDispatcher) {
         val heartRateDataPoints = readFitnessData(
             startTime,

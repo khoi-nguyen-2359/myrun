@@ -1,8 +1,8 @@
 package akio.apps.myrun.wiring.data.fitness
 
-import akio.apps.common.wiring.ApplicationModule
-import akio.apps.common.wiring.DispatchersModule
 import akio.apps.myrun.data.fitness.FitnessDataRepository
+import akio.apps.myrun.data.wiring.ApplicationModule
+import akio.apps.myrun.data.wiring.DispatchersModule
 import akio.apps.myrun.data.wiring.FirebaseDataModule
 import dagger.Component
 

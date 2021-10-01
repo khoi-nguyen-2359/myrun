@@ -1,13 +1,13 @@
 package akio.apps.myrun.wiring.domain
 
-import akio.apps.common.wiring.ApplicationModule
-import akio.apps.common.wiring.DispatchersModule
 import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
 import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
 import akio.apps.myrun.data.location.wiring.LocationDataComponent
+import akio.apps.myrun.data.wiring.ApplicationModule
+import akio.apps.myrun.data.wiring.DispatchersModule
 import akio.apps.myrun.data.wiring.FirebaseDataModule
 import akio.apps.myrun.domain.activity.ExportTempTcxFileUsecase
 import akio.apps.myrun.domain.activity.GetFeedActivitiesUsecase
@@ -95,7 +95,7 @@ interface DomainComponent {
             locationDataComponent: LocationDataComponent = DaggerLocationDataComponent.create(),
             activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create(),
             authDataComponent: AuthenticationDataComponent =
-                DaggerAuthenticationDataComponent.create()
+                DaggerAuthenticationDataComponent.create(),
         ): DomainComponent
     }
 }

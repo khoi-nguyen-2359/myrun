@@ -1,13 +1,13 @@
 package akio.apps.myrun.data.user.api
 
-import akio.apps.common.data.Resource
+import akio.apps.myrun.data.Resource
 import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.data.user.api.model.UserProfile
 import android.net.Uri
 import kotlinx.coroutines.flow.Flow
 
 interface UserProfileRepository {
-    fun getUserProfileFlow(userId: String): Flow<Resource<UserProfile>>
+    fun getUserProfileFlow(userId: String): Flow<akio.apps.myrun.data.Resource<UserProfile>>
     suspend fun getUserProfile(userId: String): UserProfile
 
     /**

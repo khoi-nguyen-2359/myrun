@@ -1,10 +1,10 @@
 package akio.apps.myrun.domain.activity
 
-import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.wiring.NamedIoDispatcher
 import android.app.Application
 import java.io.File
 import java.text.SimpleDateFormat

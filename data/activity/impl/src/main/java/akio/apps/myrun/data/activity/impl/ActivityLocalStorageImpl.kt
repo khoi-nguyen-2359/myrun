@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.activity.impl
 
-import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
@@ -48,7 +47,7 @@ preferencesDataStore("ActivityLocalStorageImpl")
 class ActivityLocalStorageImpl @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @akio.apps.myrun.data.wiring.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ActivityLocalStorage {
 
     private val prefDataStore: DataStore<Preferences> = application.prefDataStore
@@ -72,7 +71,7 @@ class ActivityLocalStorageImpl @Inject constructor(
     override suspend fun storeActivityData(
         activity: ActivityModel,
         locations: List<ActivityLocation>,
-        routeBitmap: Bitmap
+        routeBitmap: Bitmap,
     ) = withContext(ioDispatcher) {
         Timber.d("==== [START] STORE ACTIVITY DATA =====")
         val activityDirectory = createActivityStorageDirectory(activity.id)
@@ -106,7 +105,7 @@ class ActivityLocalStorageImpl @Inject constructor(
 
     override suspend fun storeActivitySyncData(
         activityModel: ActivityModel,
-        activityLocations: List<ActivityLocation>
+        activityLocations: List<ActivityLocation>,
     ) = withContext(ioDispatcher) {
         Timber.d("==== [START] STORE ACTIVITY SYNC DATA =====")
         val activitySyncDirectory = createActivitySyncDirectory(activityModel.id)
@@ -137,7 +136,7 @@ class ActivityLocalStorageImpl @Inject constructor(
     }
 
     private suspend fun loadActivityStorageData(
-        activityId: String
+        activityId: String,
     ): ActivityStorageData = withContext(ioDispatcher) {
         val activityDirectory = createActivityStorageDirectory(activityId)
         val activityModelDeferred = async {
@@ -190,7 +189,7 @@ class ActivityLocalStorageImpl @Inject constructor(
         }
 
     private fun deserializeActivityLocation(
-        flattenList: List<Double>
+        flattenList: List<Double>,
     ): List<ActivityLocation> = flattenList.chunked(4).flatMap {
         listOf(
             ActivityLocation(
@@ -322,13 +321,13 @@ class ActivityLocalStorageImpl @Inject constructor(
         val storageDir: File,
         val infoFile: File,
         val locationsFile: File,
-        val routeBitmapFile: File
+        val routeBitmapFile: File,
     )
 
     data class ActivitySyncDirectory(
         val syncDir: File,
         val infoFile: File,
-        val tcxFile: File
+        val tcxFile: File,
     )
 
     companion object {

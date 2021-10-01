@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.googlefit
 
-import akio.apps.common.feature.permissions.PermissionUtils
 import akio.apps.myrun._base.permissions.RequiredPermissionsDelegate
+import akio.apps.myrun.feature.base.permissions.PermissionUtils
 import android.Manifest
 import android.app.Activity
 import android.os.Build
@@ -22,7 +22,7 @@ class GoogleFitLinkingDelegate {
         activity: Activity,
         rcActivityRecognitionPermission: Int,
         rcFitnessDataPermission: Int,
-        fragment: Fragment? = null
+        fragment: Fragment? = null,
     ) {
         if (isGoogleFitLinked(activity)) {
             return

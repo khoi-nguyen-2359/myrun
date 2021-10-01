@@ -31,7 +31,7 @@ android {
 dependencies {
     implementation project(':data:eapps:api')
     implementation project(':data:authentication:api')
-    implementation project(':common:data')
+    implementation project(':data:common')
 
     implementation(libs.kotlinxCoroutinesPlayServices)
 
