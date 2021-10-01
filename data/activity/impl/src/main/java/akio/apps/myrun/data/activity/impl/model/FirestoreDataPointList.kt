@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.activity.impl.model
 
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
-import akio.apps.myrun.data.fitness.DataPoint
+import akio.apps.myrun.data.activity.api.model.DataPoint
 import com.google.firebase.firestore.PropertyName
 import java.util.concurrent.TimeUnit
 

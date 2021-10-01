@@ -44,8 +44,18 @@ dependencies {
     implementation(project(":data:location:api"))
     implementation(project(":data:activity:api"))
 
+    implementation(libs.kotlinxCoroutinesPlayServices)
+
+    implementation(libs.playServicesAuth)
+    implementation(libs.playServicesFitness)
+
     implementation(libs.roomKtx)
     kapt(libs.roomCompiler)
+
+    implementation(libs.timber)
+
     implementation(libs.javaXInject)
     implementation(libs.dataStore)
+
+    testImplementation(libs.junit)
 }

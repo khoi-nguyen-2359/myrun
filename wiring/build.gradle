@@ -35,17 +35,12 @@ dependencies {
     implementation(project(":data:activity:wiring"))
     implementation(project(":data:authentication:wiring"))
     implementation(project(":data:user:wiring"))
+    implementation(project(":data:tracking:wiring"))
 
     api(project(":domain"))
 
     api(project(':data:eapps:api'))
     implementation(project(':data:eapps:impl'))
-
-    api(project(':data:fitness:api'))
-    implementation(project(':data:fitness:impl'))
-
-    api(project(":data:tracking:api"))
-    implementation(project(":data:tracking:impl"))
 
     api(project(":data:user:api"))
     implementation(project(":data:user:impl"))

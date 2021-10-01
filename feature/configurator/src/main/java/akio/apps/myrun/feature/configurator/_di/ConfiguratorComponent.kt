@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.configurator._di
 
+import akio.apps.myrun.data.tracking.wiring.DaggerTrackingDataComponent
+import akio.apps.myrun.data.tracking.wiring.TrackingDataComponent
 import akio.apps.myrun.feature.configurator.RouteTrackingConfigurationViewModel
 import akio.apps.myrun.feature.configurator.viewmodel.UserAuthenticationViewModel
-import akio.apps.myrun.wiring.data.tracking.DaggerTrackingDataComponent
-import akio.apps.myrun.wiring.data.tracking.TrackingDataComponent
 import akio.apps.myrun.wiring.domain.DaggerDomainComponent
 import akio.apps.myrun.wiring.domain.DomainComponent
 import dagger.Component
