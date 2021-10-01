@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.user.api
 
-import akio.apps.common.data.Resource
+import akio.apps.myrun.data.Resource
 import kotlinx.coroutines.flow.Flow
 
 typealias PlaceIdentifier = String

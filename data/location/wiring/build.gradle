@@ -30,7 +30,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":common:wiring"))
     implementation(project(":data:wiring"))
 
     api(project(":data:location:api"))

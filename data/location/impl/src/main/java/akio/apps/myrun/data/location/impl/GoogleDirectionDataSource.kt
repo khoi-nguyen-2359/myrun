@@ -1,10 +1,10 @@
 package akio.apps.myrun.data.location.impl
 
-import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.location.api.DirectionDataSource
 import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.location.impl.model.GoogleMapApiKey
 import akio.apps.myrun.data.location.impl.model.MapApiStatus
+import akio.apps.myrun.data.wiring.NamedIoDispatcher
 import com.google.maps.android.PolyUtil
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,7 +19,7 @@ class GoogleDirectionDataSource @Inject constructor(
 ) : DirectionDataSource {
 
     override suspend fun getWalkingDirections(
-        waypoints: List<LatLng>
+        waypoints: List<LatLng>,
     ): List<LatLng> = withContext(ioDispatcher) {
         if (waypoints.size < 2)
             return@withContext waypoints

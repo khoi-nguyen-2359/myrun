@@ -1,7 +1,7 @@
 package akio.apps.myrun.domain.routetracking
 
-import akio.apps.common.data.time.TimeProvider
 import akio.apps.myrun.data.location.api.model.Location
+import akio.apps.myrun.data.time.TimeProvider
 import androidx.annotation.VisibleForTesting
 
 class AverageLocationAccumulator(

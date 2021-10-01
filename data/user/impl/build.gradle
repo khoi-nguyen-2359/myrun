@@ -29,10 +29,9 @@ android {
 }
 
 dependencies {
-    implementation project(":data:base")
+    implementation project(":data:common")
     implementation(project(':data:user:api'))
-    implementation(project(':common:data'))
-    implementation(project(':common:wiring'))
+    implementation(project(':data:wiring'))
 
     // app migration
     implementation(libs.dataStore)

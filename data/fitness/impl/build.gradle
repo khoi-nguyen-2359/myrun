@@ -30,7 +30,7 @@ android {
 
 dependencies {
     implementation project(":data:fitness:api")
-    implementation(project(":common:wiring"))
+    implementation(project(":data:wiring"))
 
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.kotlinxCoroutinesPlayServices)

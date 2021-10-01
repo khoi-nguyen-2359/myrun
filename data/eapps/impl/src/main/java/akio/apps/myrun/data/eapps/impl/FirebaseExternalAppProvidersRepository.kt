@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.eapps.impl
 
-import akio.apps.common.data.Resource
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import akio.apps.myrun.data.eapps.api.model.ExternalProviders
@@ -54,8 +53,8 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getExternalProvidersFlow(
-        accountId: String
-    ): Flow<Resource<out ExternalProviders>> =
+        accountId: String,
+    ): Flow<akio.apps.myrun.data.Resource<out ExternalProviders>> =
         callbackFlow {
             val providerTokenDocument = getProviderTokenDocument(accountId)
             try {
@@ -66,9 +65,9 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
 
                 setStravaSyncEnabled(cached?.strava != null)
 
-                send(Resource.Loading(cached))
+                send(akio.apps.myrun.data.Resource.Loading(cached))
             } catch (ex: Exception) {
-                send(Resource.Loading(null))
+                send(akio.apps.myrun.data.Resource.Loading(null))
             }
 
             val listener = providerTokenDocument.addSnapshotListener { snapshot, error ->
@@ -79,9 +78,9 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
                     CoroutineScope(Dispatchers.IO).launch {
                         setStravaSyncEnabled(providers.strava != null)
                     }
-                    trySendBlocking(Resource.Success(providers))
+                    trySendBlocking(akio.apps.myrun.data.Resource.Success(providers))
                 } else {
-                    trySendBlocking(Resource.Error<ExternalProviders>(error))
+                    trySendBlocking(akio.apps.myrun.data.Resource.Error<ExternalProviders>(error))
                 }
             }
 

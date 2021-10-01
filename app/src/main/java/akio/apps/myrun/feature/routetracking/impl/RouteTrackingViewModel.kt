@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.routetracking.impl
 
-import akio.apps.common.data.LaunchCatchingDelegate
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.flowTimer
+import akio.apps.myrun.data.LaunchCatchingDelegate
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
@@ -47,7 +47,7 @@ class RouteTrackingViewModel @Inject constructor(
     private val authenticationState: UserAuthenticationState,
     private val locationDataSource: LocationDataSource,
     private val routeTrackingConfiguration: RouteTrackingConfiguration,
-    private val launchCatchingDelegate: LaunchCatchingDelegate
+    private val launchCatchingDelegate: LaunchCatchingDelegate,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
     // TODO: Will refactor this screen to Composable

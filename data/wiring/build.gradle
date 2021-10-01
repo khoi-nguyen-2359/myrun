@@ -30,7 +30,10 @@ android {
 }
 
 dependencies {
-    implementation(project(":common:wiring"))
+    implementation(project(':data:common'))
+
+    implementation(libs.lifecycleViewModelKtx)
+    implementation(libs.kotlinxCoroutinesCore)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)

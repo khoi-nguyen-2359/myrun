@@ -30,15 +30,14 @@ android {
 }
 
 dependencies {
-    implementation(project(":common:wiring"))
-    implementation(project(":common:data"))
+    implementation(project(":data:wiring"))
 
     implementation(project(':wiring'))
     implementation(project(':data:location:wiring'))
     implementation(project(':data:activity:wiring'))
     implementation(project(':data:authentication:wiring'))
 
-    implementation(project(":features:base"))
+    implementation(project(":feature:common"))
 
     implementation(libs.workManager)
     implementation(libs.guava) // to resolve error 'cannot access ListenableFuture' in work manager

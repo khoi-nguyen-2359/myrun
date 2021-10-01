@@ -1,8 +1,8 @@
 package akio.apps.myrun.data.tracking.impl
 
-import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
+import akio.apps.myrun.data.wiring.NamedIoDispatcher
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

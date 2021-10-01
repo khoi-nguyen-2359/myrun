@@ -29,8 +29,7 @@ android {
 
 dependencies {
     implementation(project(":data:authentication:api"))
-
-    implementation(project(":common:data"))
+    implementation(project(":data:common"))
 
     implementation(libs.kotlinxCoroutinesCore)
 }

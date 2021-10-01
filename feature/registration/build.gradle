@@ -1,0 +1,62 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdk project.compileSdk
+
+    defaultConfig {
+        minSdk project.minSdk
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        rc { }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+        useIR = true
+        allWarningsAsErrors = true
+    }
+}
+
+dependencies {
+    implementation(project(":data:common"))
+    implementation(project(":data:wiring"))
+
+    implementation(project(":feature:common"))
+
+    implementation(project(':wiring'))
+    implementation(project(':data:location:wiring'))
+    implementation(project(':data:activity:wiring'))
+    implementation(project(':data:authentication:wiring'))
+
+    implementation(libs.lifecycleRuntimeKtx)
+    implementation(libs.lifecycleLiveDataKtx)
+    implementation(libs.lifecycleViewModelKtx)
+    implementation(libs.javaXInject)
+
+    implementation(libs.kotlinxCoroutinesPlayServices)
+
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
+
+    // social sign in
+    implementation(libs.playServicesAuth)
+    implementation(libs.facebookLogin)
+
+    implementation(libs.constraintLayout)
+    implementation(libs.androidMaterial)
+
+    implementation(libs.timber)
+}

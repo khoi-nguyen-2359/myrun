@@ -1,14 +1,9 @@
 package akio.apps.myrun.feature.routetracking.impl
 
-import akio.apps.common.data.LaunchCatchingDelegate
-import akio.apps.common.data.LaunchCatchingDelegateImpl
-import akio.apps.common.feature.lifecycle.collectEventRepeatOnStarted
-import akio.apps.common.feature.lifecycle.collectRepeatOnStarted
-import akio.apps.common.feature.lifecycle.observe
-import akio.apps.common.feature.ui.dp2px
-import akio.apps.common.feature.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.R
 import akio.apps.myrun._base.utils.LocationServiceChecker
+import akio.apps.myrun.data.LaunchCatchingDelegate
+import akio.apps.myrun.data.LaunchCatchingDelegateImpl
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
@@ -18,6 +13,11 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.PAUSED
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.RESUMED
 import akio.apps.myrun.databinding.ActivityRouteTrackingBinding
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
+import akio.apps.myrun.feature.base.lifecycle.collectEventRepeatOnStarted
+import akio.apps.myrun.feature.base.lifecycle.collectRepeatOnStarted
+import akio.apps.myrun.feature.base.lifecycle.observe
+import akio.apps.myrun.feature.base.ui.dp2px
+import akio.apps.myrun.feature.base.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.feature.home.HomeActivity
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.feature.routetracking.ui.StopDialogOptionId
@@ -246,7 +246,7 @@ class RouteTrackingActivity(
 
     private fun setCameraMovementAndUpdateUi(
         expectedMode: CameraMovement,
-        animate: Boolean = true
+        animate: Boolean = true,
     ) {
         val prevCameraMovement = this.cameraMovement
         this.cameraMovement = expectedMode
@@ -308,7 +308,7 @@ class RouteTrackingActivity(
     private fun recenterMap(
         latLngBounds: LatLngBounds,
         cameraViewPortSize: Size,
-        animate: Boolean
+        animate: Boolean,
     ) {
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(
             latLngBounds,

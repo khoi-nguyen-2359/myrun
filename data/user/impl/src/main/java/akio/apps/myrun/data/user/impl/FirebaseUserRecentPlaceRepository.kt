@@ -1,10 +1,10 @@
 package akio.apps.myrun.data.user.impl
 
-import akio.apps.common.data.Resource
-import akio.apps.common.wiring.NamedIoDispatcher
+import akio.apps.myrun.data.Resource
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.data.user.impl.model.FirestorePlaceIdentifier
+import akio.apps.myrun.data.wiring.NamedIoDispatcher
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject

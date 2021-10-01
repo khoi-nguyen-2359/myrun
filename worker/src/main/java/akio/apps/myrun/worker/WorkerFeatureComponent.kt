@@ -1,17 +1,17 @@
 package akio.apps.myrun.worker
 
-import akio.apps.common.wiring.DispatchersModule
-import akio.apps.common.wiring.FeatureScope
-import akio.apps.common.wiring.LaunchCatchingModule
+import akio.apps.myrun.data.wiring.DispatchersModule
+import akio.apps.myrun.data.wiring.FeatureScope
+import akio.apps.myrun.data.wiring.LaunchCatchingModule
 import akio.apps.myrun.wiring.domain.DaggerDomainComponent
 import akio.apps.myrun.wiring.domain.DomainComponent
 import dagger.Component
 
-@FeatureScope
+@akio.apps.myrun.data.wiring.FeatureScope
 @Component(
     modules = [
-        LaunchCatchingModule::class,
-        DispatchersModule::class
+        akio.apps.myrun.data.wiring.LaunchCatchingModule::class,
+        akio.apps.myrun.data.wiring.DispatchersModule::class
     ],
     dependencies = [
         DomainComponent::class

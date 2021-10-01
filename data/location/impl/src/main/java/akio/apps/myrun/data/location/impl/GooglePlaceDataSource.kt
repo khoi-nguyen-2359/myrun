@@ -1,11 +1,11 @@
 package akio.apps.myrun.data.location.impl
 
-import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.location.api.PlaceDataSource
 import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.location.api.model.PlaceAddressComponent
 import akio.apps.myrun.data.location.api.model.PlaceDetails
 import akio.apps.myrun.data.location.api.model.PlaceSuggestion
+import akio.apps.myrun.data.wiring.NamedIoDispatcher
 import android.annotation.SuppressLint
 import android.app.Application
 import android.location.Address
@@ -28,7 +28,7 @@ class GooglePlaceDataSource @Inject constructor(
      */
     private val placesClientLazy: Lazy<PlacesClient>,
     private val application: Application,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : PlaceDataSource {
 
     private val placesClient by lazy { placesClientLazy.get() }
@@ -63,7 +63,7 @@ class GooglePlaceDataSource @Inject constructor(
 
     override suspend fun getAddressFromLocation(
         lat: Double,
-        lng: Double
+        lng: Double,
     ): List<PlaceAddressComponent> {
         val geoCoder = Geocoder(application, Locale.US)
         val addresses = geoCoder.getFromLocation(lat, lng, Int.MAX_VALUE)
@@ -113,7 +113,7 @@ class GooglePlaceDataSource @Inject constructor(
 
     override suspend fun getRecentPlaceAddressFromLocation(
         lat: Double,
-        lng: Double
+        lng: Double,
     ): List<PlaceAddressComponent> {
         val sortingOrder = mutableMapOf<String, Int>()
         getRecentPlaceAddressSortingOrder()

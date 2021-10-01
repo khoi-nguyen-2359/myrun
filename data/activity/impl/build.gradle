@@ -34,9 +34,8 @@ android {
 dependencies {
     implementation(project(':data:activity:api'))
     implementation(project(':data:fitness:api'))
-    implementation(project(':common:wiring'))
-    implementation(project(':common:data'))
-    implementation(project(':data:base'))
+    implementation(project(':data:wiring'))
+    implementation(project(':data:common'))
 
     implementation(libs.javaXInject)
 

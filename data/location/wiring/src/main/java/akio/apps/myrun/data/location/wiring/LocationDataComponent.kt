@@ -1,7 +1,5 @@
 package akio.apps.myrun.data.location.wiring
 
-import akio.apps.common.wiring.ApplicationModule
-import akio.apps.common.wiring.DispatchersModule
 import akio.apps.myrun.data.location.api.DirectionDataSource
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.PlaceDataSource
@@ -14,6 +12,8 @@ import akio.apps.myrun.data.location.impl.LocationDataSourceImpl
 import akio.apps.myrun.data.location.impl.PolyUtilImpl
 import akio.apps.myrun.data.location.impl.SphericalUtilImpl
 import akio.apps.myrun.data.location.impl.model.GoogleMapApiKey
+import akio.apps.myrun.data.wiring.ApplicationModule
+import akio.apps.myrun.data.wiring.DispatchersModule
 import akio.apps.myrun.data.wiring.NetworkModule
 import android.app.Application
 import com.google.android.gms.location.FusedLocationProviderClient

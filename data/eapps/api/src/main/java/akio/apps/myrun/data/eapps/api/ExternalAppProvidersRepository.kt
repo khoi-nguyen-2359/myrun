@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.eapps.api
 
-import akio.apps.common.data.Resource
+import akio.apps.myrun.data.Resource
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import akio.apps.myrun.data.eapps.api.model.ExternalProviders
 import kotlinx.coroutines.flow.Flow

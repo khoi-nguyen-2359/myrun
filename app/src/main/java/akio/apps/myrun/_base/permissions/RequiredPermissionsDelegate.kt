@@ -1,8 +1,8 @@
 package akio.apps.myrun._base.permissions
 
 import akio.apps._base.utils.GoogleSignInPermissionUtils
-import akio.apps.common.feature.permissions.PermissionUtils
 import akio.apps.myrun.R
+import akio.apps.myrun.feature.base.permissions.PermissionUtils
 import android.app.Activity
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
