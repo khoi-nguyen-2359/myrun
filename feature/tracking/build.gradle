@@ -53,7 +53,6 @@ dependencies {
     implementation(project(':domain:common'))
     implementation(project(':domain:activity'))
     implementation(project(':domain:tracking'))
-//    implementation(project(':domain:user'))
 
     implementation(project(':feature:common'))
     implementation(project(':worker'))
@@ -77,4 +76,13 @@ dependencies {
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
+
+    testImplementation(testFixtures(project(':test')))
+    testImplementation(libs.bundles.testCoroutine)
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinTest)
+    testImplementation(libs.androidXCoreTesting)
+    testImplementation(libs.mockitoCore)
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.kotlinReflect)
 }
