@@ -45,11 +45,15 @@ class GetTrainingSummaryDataUsecaseTest {
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
 
         val biWeekRange =
-            akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase.WeekRange(offset = 1,
-                count = 2).millisTimeRange
+            GetTrainingSummaryDataUsecase.WeekRange(
+                offset = 1,
+                count = 2
+            ).millisTimeRange
         val biMonthRange =
-            akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase.MonthRange(offset = 1,
-                count = 2).millisTimeRange
+            GetTrainingSummaryDataUsecase.MonthRange(
+                offset = 1,
+                count = 2
+            ).millisTimeRange
 
         // bi month runs
         whenever(

@@ -2,6 +2,7 @@ package akio.apps.myrun.domain.tracking
 
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.time.TimeProvider
+import akio.apps.myrun.domain.tracking.impl.AverageLocationAccumulator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -12,7 +13,7 @@ import org.mockito.kotlin.whenever
 @ExperimentalCoroutinesApi
 class AverageLocationAccumulatorTest {
 
-    private lateinit var locationProcessorContainer: akio.apps.myrun.domain.tracking.impl.AverageLocationAccumulator
+    private lateinit var locationProcessorContainer: AverageLocationAccumulator
 
     private val accumulationPeriod = 2000L
     private lateinit var mockedTimeProvider: TimeProvider
@@ -21,8 +22,10 @@ class AverageLocationAccumulatorTest {
     fun setup() {
         mockedTimeProvider = mock()
         locationProcessorContainer =
-            akio.apps.myrun.domain.tracking.impl.AverageLocationAccumulator(accumulationPeriod,
-                mockedTimeProvider)
+            AverageLocationAccumulator(
+                accumulationPeriod,
+                mockedTimeProvider
+            )
     }
 
     @Test

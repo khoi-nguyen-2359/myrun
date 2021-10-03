@@ -5,8 +5,8 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase
-import akio.apps.myrun.domain.user.impl.GetUserRecentPlaceNameUsecase
 import akio.apps.myrun.domain.user.impl.GetUserProfileUsecase
+import akio.apps.myrun.domain.user.impl.GetUserRecentPlaceNameUsecase
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -25,7 +25,7 @@ class UserHomeViewModel @Inject constructor(
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val getUserRecentPlaceNameUsecase: GetUserRecentPlaceNameUsecase,
     private val getTrainingSummaryDataUsecase: GetTrainingSummaryDataUsecase,
-    private val activityLocalStorage: ActivityLocalStorage
+    private val activityLocalStorage: ActivityLocalStorage,
 ) : ViewModel() {
 
     val screenState: Flow<ScreenState> = combine(

@@ -35,7 +35,8 @@ interface WorkerFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            trackingDomainComponent: TrackingDomainComponent = DaggerTrackingDomainComponent.factory().create(),
+            trackingDomainComponent: TrackingDomainComponent =
+                DaggerTrackingDomainComponent.factory().create(),
             stravaDomainComponent: StravaDomainComponent =
                 DaggerStravaDomainComponent.factory().create(),
             userDomainComponent: UserDomainComponent = DaggerUserDomainComponent.factory().create(),

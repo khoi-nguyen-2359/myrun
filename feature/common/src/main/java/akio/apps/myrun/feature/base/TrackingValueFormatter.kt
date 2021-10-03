@@ -73,7 +73,7 @@ sealed class TrackingValueFormatter<T : Number>(
             getFormattedValue(activity.duration)
 
         override fun getFormattedValue(value: Long): String {
-            val hour = akio.apps.myrun.domain.common.TrackingValueConverter.TimeHour.fromRawValue(value)
+            val hour = TrackingValueConverter.TimeHour.fromRawValue(value)
             val min = (hour - hour.toInt()) * 60
             val sec = (min - min.toInt()) * 60
             return if (hour < 1) {

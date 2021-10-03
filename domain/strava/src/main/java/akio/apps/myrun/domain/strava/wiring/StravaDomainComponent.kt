@@ -34,7 +34,8 @@ interface StravaDomainComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            externalAppDataComponent: ExternalAppDataComponent = DaggerExternalAppDataComponent.factory().create(),
+            externalAppDataComponent: ExternalAppDataComponent =
+                DaggerExternalAppDataComponent.factory().create(),
             activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create(),
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create()
