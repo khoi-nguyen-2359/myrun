@@ -2,14 +2,13 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'kotlin-parcelize'
 }
 
 android {
     compileSdk project.compileSdk
 
     defaultConfig {
-        minSdkVersion project.minSdk
+        minSdk project.minSdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -41,8 +40,6 @@ android {
 }
 
 dependencies {
-    implementation(project(':data:wiring'))
-    implementation(project(':data:common'))
     implementation(project(':data:location:wiring'))
     implementation(project(':data:activity:wiring'))
     implementation(project(':data:authentication:wiring'))
@@ -50,23 +47,34 @@ dependencies {
     implementation(project(':data:tracking:wiring'))
     implementation(project(':data:eapps:wiring'))
 
-    implementation(project(':domain:user'))
-    implementation(project(':domain:strava'))
+    implementation(project(':data:common'))
+    implementation(project(':data:wiring'))
+
+    implementation(project(':domain:common'))
+    implementation(project(':domain:activity'))
+    implementation(project(':domain:tracking'))
+//    implementation(project(':domain:user'))
 
     implementation(project(':feature:common'))
     implementation(project(':worker'))
 
-    implementation(libs.workManager) // still needed when using module 'worker'
+    implementation(libs.playServicesLocation)
+    implementation(libs.kotlinxCoroutinesPlayServices)
 
-    implementation(libs.androidMaterial)
     implementation(libs.constraintLayout)
+    implementation(libs.androidMaterial)
+
     implementation(libs.bundles.compose)
-    implementation(libs.accompanistInsets)
-    implementation(libs.coilCompose)
 
     implementation(libs.androidXAppCompat)
     implementation(libs.timber)
+
     implementation(libs.lifecycleViewModelKtx)
+    implementation(libs.lifecycleLiveDataKtx)
+
+    implementation(libs.androidMapUtils)
+    implementation(libs.androidGoogleMap)
+
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
 }
