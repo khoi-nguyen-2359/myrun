@@ -2,12 +2,16 @@ package akio.apps.myrun.domain.user
 
 import akio.apps.myrun.data.Resource
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.authentication.api.model.UserAccount
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.UserProfile
+import akio.apps.myrun.domain.user.impl.GetUserProfileUsecase
+import app.cash.turbine.test
 import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
@@ -37,7 +41,7 @@ class GetUserProfileUsecaseTest {
     private val defaultDisplayName = "defaultDisplayName"
     private val defaultPhotoUrl = "defaultPhotoUrl"
 
-    lateinit var testee: akio.apps.myrun.domain.user.impl.GetUserProfileUsecase
+    lateinit var testee: GetUserProfileUsecase
 
     private val testCoroutineDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
 
@@ -46,8 +50,10 @@ class GetUserProfileUsecaseTest {
         mockedUserProfileRepository = mock()
         mockedUserAuthenticationState = mock()
         MockitoAnnotations.openMocks(this)
-        testee = akio.apps.myrun.domain.user.impl.GetUserProfileUsecase(mockedUserProfileRepository,
-            mockedUserAuthenticationState)
+        testee = GetUserProfileUsecase(
+            mockedUserProfileRepository,
+            mockedUserAuthenticationState
+        )
     }
 
     @Test
@@ -71,8 +77,8 @@ class GetUserProfileUsecaseTest {
         verify(mockedUserProfileRepository).getUserProfileFlow(defaultUserId)
     }
 
-    private fun createUserAccount(): akio.apps.myrun.data.authentication.api.model.UserAccount {
-        return akio.apps.myrun.data.authentication.api.model.UserAccount(
+    private fun createUserAccount(): UserAccount {
+        return UserAccount(
             defaultUserId,
             defaultEmail,
             defaultDisplayName,

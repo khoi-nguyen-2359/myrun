@@ -57,7 +57,8 @@ interface RouteTrackingFeatureComponent {
             locationDataComponent: LocationDataComponent = DaggerLocationDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =
                 DaggerExternalAppDataComponent.factory().create(),
-            trackingDomainComponent: TrackingDomainComponent = DaggerTrackingDomainComponent.factory().create(),
+            trackingDomainComponent: TrackingDomainComponent =
+                DaggerTrackingDomainComponent.factory().create(),
         ): RouteTrackingFeatureComponent
     }
 }

@@ -1,6 +1,5 @@
 package akio.apps.myrun.domain.tracking.impl
 
-import akio.apps.myrun.domain.common.ObjectAutoId
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.getLatLng
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
@@ -16,6 +15,7 @@ import akio.apps.myrun.data.time.Now
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.wiring.NamedIoDispatcher
+import akio.apps.myrun.domain.common.ObjectAutoId
 import akio.apps.myrun.domain.common.TrackingValueConverter
 import android.graphics.Bitmap
 import javax.inject.Inject

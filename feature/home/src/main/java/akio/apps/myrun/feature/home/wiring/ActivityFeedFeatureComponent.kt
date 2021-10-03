@@ -37,7 +37,8 @@ internal interface ActivityFeedFeatureComponent {
             activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create(),
             activityDomainComponent: ActivityDomainComponent =
                 DaggerActivityDomainComponent.factory().create(),
-            authenticationDataComponent: AuthenticationDataComponent = DaggerAuthenticationDataComponent.create(),
+            authenticationDataComponent: AuthenticationDataComponent =
+                DaggerAuthenticationDataComponent.create(),
             userDomainComponent: UserDomainComponent = DaggerUserDomainComponent.factory().create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create()
         ): ActivityFeedFeatureComponent

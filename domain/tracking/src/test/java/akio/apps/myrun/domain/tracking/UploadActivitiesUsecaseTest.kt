@@ -9,6 +9,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserProfileRepository
+import akio.apps.myrun.domain.tracking.impl.UploadActivitiesUsecase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -27,7 +28,7 @@ class UploadActivitiesUsecaseTest {
     private lateinit var mockedAuthenticationState: UserAuthenticationState
     private lateinit var mockedActivityLocalStorage: ActivityLocalStorage
     private lateinit var mockedActivityRepository: ActivityRepository
-    private lateinit var uploadActivitiesUsecase: akio.apps.myrun.domain.tracking.impl.UploadActivitiesUsecase
+    private lateinit var uploadActivitiesUsecase: UploadActivitiesUsecase
 
     @Before
     fun setup() {
@@ -35,7 +36,7 @@ class UploadActivitiesUsecaseTest {
         mockedActivityLocalStorage = mock()
         mockedAuthenticationState = mock()
         mockedUserProfileRepository = mock()
-        uploadActivitiesUsecase = akio.apps.myrun.domain.tracking.impl.UploadActivitiesUsecase(
+        uploadActivitiesUsecase = UploadActivitiesUsecase(
             mockedAuthenticationState,
             mockedActivityRepository,
             mockedActivityLocalStorage,

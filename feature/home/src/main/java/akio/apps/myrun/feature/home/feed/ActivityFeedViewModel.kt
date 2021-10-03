@@ -8,8 +8,8 @@ import akio.apps.myrun.data.time.Now
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.data.user.api.model.UserProfile
-import akio.apps.myrun.domain.user.impl.PlaceNameSelector
 import akio.apps.myrun.domain.user.impl.GetUserProfileUsecase
+import akio.apps.myrun.domain.user.impl.PlaceNameSelector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager

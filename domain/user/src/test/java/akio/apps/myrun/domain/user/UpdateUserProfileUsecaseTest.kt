@@ -33,8 +33,10 @@ class UpdateUserProfileUsecaseTest {
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
-        testee = akio.apps.myrun.domain.user.impl.UpdateUserProfileUsecase(userProfileRepository,
-            userAuthenticationState)
+        testee = akio.apps.myrun.domain.user.impl.UpdateUserProfileUsecase(
+            userProfileRepository,
+            userAuthenticationState
+        )
     }
 
     @Test
