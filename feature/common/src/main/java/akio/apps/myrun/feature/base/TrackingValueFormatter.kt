@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.base
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
-import akio.apps.myrun.domain.TrackingValueConverter
+import akio.apps.myrun.domain.common.TrackingValueConverter
 import android.content.Context
 import androidx.annotation.StringRes
 
@@ -73,7 +73,7 @@ sealed class TrackingValueFormatter<T : Number>(
             getFormattedValue(activity.duration)
 
         override fun getFormattedValue(value: Long): String {
-            val hour = TrackingValueConverter.TimeHour.fromRawValue(value)
+            val hour = akio.apps.myrun.domain.common.TrackingValueConverter.TimeHour.fromRawValue(value)
             val min = (hour - hour.toInt()) * 60
             val sec = (min - min.toInt()) * 60
             return if (hour < 1) {

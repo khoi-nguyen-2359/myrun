@@ -1,0 +1,57 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+}
+
+android {
+    compileSdkVersion project.compileSdk
+
+    defaultConfig {
+        minSdk project.minSdk
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        rc { }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
+        useIR = true
+        allWarningsAsErrors = true
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
+    }
+}
+
+dependencies {
+    implementation project(":data:eapps:wiring")
+    implementation project(":data:user:wiring")
+    implementation project(":data:location:wiring")
+    implementation project(":data:tracking:wiring")
+    implementation project(":data:user:wiring")
+    implementation project(":data:activity:wiring")
+    implementation project(":data:authentication:wiring")
+    implementation project(":data:wiring")
+    implementation project(":data:common")
+
+    implementation project(":domain:common")
+
+    implementation(libs.kotlinxCoroutinesCore)
+
+    implementation(libs.timber)
+
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
+
+    testImplementation(libs.bundles.testCoroutine)
+    testImplementation(libs.kotlinTest)
+    testImplementation(libs.mockitoKotlin)
+}

@@ -43,7 +43,7 @@ android {
 dependencies {
     implementation(project(':feature:common'))
 
-    implementation(project(':wiring'))
+
     implementation(project(':data:location:wiring'))
     implementation(project(':data:activity:wiring'))
     implementation(project(':data:authentication:wiring'))
@@ -53,6 +53,9 @@ dependencies {
 
     implementation(project(':data:wiring'))
     implementation(project(':data:common'))
+
+    implementation(project(':domain:user'))
+    implementation(project(':domain:strava'))
 
     implementation(project(':worker'))
     implementation(libs.workManager) // still needed when using module 'worker'

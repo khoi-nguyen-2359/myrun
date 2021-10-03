@@ -5,12 +5,13 @@ import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.user.api.model.UserProfile
-import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
+import akio.apps.myrun.domain.activity.impl.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.base.TrackingValueFormatter
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
 import akio.apps.myrun.feature.base.ui.px2dp
+import akio.apps.myrun.feature.base.viewmodel.viewModelProvider
 import akio.apps.myrun.feature.home.R
 import akio.apps.myrun.feature.home.feed.ActivityFeedViewModel
 import akio.apps.myrun.feature.home.feed.ui.FeedColors.listBackground
@@ -18,6 +19,7 @@ import akio.apps.myrun.feature.home.feed.ui.FeedDimensions.activityItemHorizonta
 import akio.apps.myrun.feature.home.feed.ui.FeedDimensions.activityItemHorizontalPadding
 import akio.apps.myrun.feature.home.feed.ui.FeedDimensions.activityItemVerticalMargin
 import akio.apps.myrun.feature.home.feed.ui.FeedDimensions.activityItemVerticalPadding
+import akio.apps.myrun.feature.home.wiring.DaggerActivityFeedFeatureComponent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Image
@@ -86,6 +88,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -113,6 +116,25 @@ private const val REVEAL_ANIM_THRESHOLD = 10
 
 @Composable
 fun ActivityFeed(
+    navController: NavController,
+    backStackEntry: NavBackStackEntry,
+    contentPadding: PaddingValues,
+    onClickExportActivityFile: (ActivityModel) -> Unit,
+) {
+    val diComponent = remember { DaggerActivityFeedFeatureComponent.factory().create() }
+    val userTimelineViewModel = backStackEntry.viewModelProvider {
+        diComponent.feedViewModel()
+    }
+    ActivityFeed(
+        userTimelineViewModel,
+        contentPadding = contentPadding,
+        onClickExportActivityFile = onClickExportActivityFile,
+        navController = navController
+    )
+}
+
+@Composable
+private fun ActivityFeed(
     activityFeedViewModel: ActivityFeedViewModel,
     contentPadding: PaddingValues,
     onClickExportActivityFile: (ActivityModel) -> Unit,

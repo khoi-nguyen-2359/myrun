@@ -6,11 +6,11 @@ import akio.apps.myrun.data.eapps.api.model.ExternalProviders
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.data.user.api.model.UserProfile
-import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
-import akio.apps.myrun.domain.strava.RemoveStravaTokenUsecase
-import akio.apps.myrun.domain.user.GetProviderTokensUsecase
-import akio.apps.myrun.domain.user.GetUserProfileUsecase
-import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
+import akio.apps.myrun.domain.strava.impl.DeauthorizeStravaUsecase
+import akio.apps.myrun.domain.strava.impl.RemoveStravaTokenUsecase
+import akio.apps.myrun.domain.user.impl.GetProviderTokensUsecase
+import akio.apps.myrun.domain.user.impl.GetUserProfileUsecase
+import akio.apps.myrun.domain.user.impl.UpdateUserProfileUsecase
 import akio.apps.myrun.worker.UploadStravaFileWorker
 import android.app.Application
 import androidx.lifecycle.SavedStateHandle

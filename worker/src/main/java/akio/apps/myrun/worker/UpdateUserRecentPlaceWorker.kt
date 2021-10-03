@@ -1,6 +1,6 @@
 package akio.apps.myrun.worker
 
-import akio.apps.myrun.domain.recentplace.UpdateUserRecentPlaceUsecase
+import akio.apps.myrun.domain.user.impl.UpdateUserRecentPlaceUsecase
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker

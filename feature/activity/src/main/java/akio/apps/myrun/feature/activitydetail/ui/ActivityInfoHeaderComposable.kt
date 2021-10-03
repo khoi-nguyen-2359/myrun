@@ -4,7 +4,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityDataModel
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
-import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
+import akio.apps.myrun.domain.activity.impl.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.activity.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

@@ -7,11 +7,7 @@ import akio.apps.myrun.feature.base.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.base.ui.px2dp
-import akio.apps.myrun.feature.base.viewmodel.savedStateViewModelProvider
-import akio.apps.myrun.feature.base.viewmodel.viewModelProvider
-import akio.apps.myrun.feature.home._di.DaggerHomeFeatureComponent
 import akio.apps.myrun.feature.home.feed.ui.ActivityFeed
-import akio.apps.myrun.feature.home.userhome._di.DaggerUserHomeFeatureComponent
 import akio.apps.myrun.feature.home.userhome.ui.UserHome
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
@@ -184,10 +180,7 @@ private fun NavGraphBuilder.addUserHomeDestination(
     appNavController: NavController,
 ) {
     composable(route = HomeNavItemInfo.UserHome.route) { backstackEntry ->
-        val userHomeViewModel = backstackEntry.savedStateViewModelProvider(backstackEntry) {
-            DaggerUserHomeFeatureComponent.factory().create(it).userHomeViewModel()
-        }
-        UserHome(userHomeViewModel, contentPaddings, appNavController)
+        UserHome(appNavController, backstackEntry, contentPaddings)
     }
 }
 
@@ -228,15 +221,11 @@ private fun NavGraphBuilder.addActivityFeedDestination(
     appNavController: NavController,
 ) {
     composable(route = HomeNavItemInfo.ActivityFeed.route) { backstackEntry ->
-        val diComponent = remember { DaggerHomeFeatureComponent.factory().create() }
-        val userTimelineViewModel = backstackEntry.viewModelProvider {
-            diComponent.activityFeedViewModel()
-        }
         ActivityFeed(
-            activityFeedViewModel = userTimelineViewModel,
+            appNavController,
+            backstackEntry,
             contentPadding = contentPadding,
-            onClickExportActivityFile = onClickExportActivityFile,
-            navController = appNavController
+            onClickExportActivityFile = onClickExportActivityFile
         )
     }
 }

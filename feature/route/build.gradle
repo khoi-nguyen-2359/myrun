@@ -37,7 +37,7 @@ dependencies {
     implementation(project(':data:common'))
     implementation(project(':feature:common'))
 
-    implementation(project(':domain:route:wiring'))
+    implementation(project(':domain:route'))
     implementation(project(':data:location:wiring'))
 
     implementation(libs.androidXAppCompat)

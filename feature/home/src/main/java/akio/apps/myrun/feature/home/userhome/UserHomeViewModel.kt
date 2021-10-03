@@ -4,9 +4,9 @@ import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.model.UserProfile
-import akio.apps.myrun.domain.activity.GetTrainingSummaryDataUsecase
-import akio.apps.myrun.domain.recentplace.GetUserRecentPlaceNameUsecase
-import akio.apps.myrun.domain.user.GetUserProfileUsecase
+import akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase
+import akio.apps.myrun.domain.user.impl.GetUserRecentPlaceNameUsecase
+import akio.apps.myrun.domain.user.impl.GetUserProfileUsecase
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

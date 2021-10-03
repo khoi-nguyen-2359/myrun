@@ -17,10 +17,10 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.data.tracking.api.model.LocationProcessingConfig
-import akio.apps.myrun.domain.routetracking.AverageLocationAccumulator
-import akio.apps.myrun.domain.routetracking.ClearRouteTrackingStateUsecase
-import akio.apps.myrun.domain.routetracking.LocationProcessorContainer
-import akio.apps.myrun.domain.routetracking.LocationSpeedFilter
+import akio.apps.myrun.domain.tracking.impl.AverageLocationAccumulator
+import akio.apps.myrun.domain.tracking.impl.ClearRouteTrackingStateUsecase
+import akio.apps.myrun.domain.tracking.impl.LocationProcessorContainer
+import akio.apps.myrun.domain.tracking.impl.LocationSpeedFilter
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.routetracking._di.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.worker.UpdateUserRecentPlaceWorker

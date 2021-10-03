@@ -8,6 +8,7 @@ import akio.apps.myrun.data.eapps.api.model.RunningApp
 import akio.apps.myrun.data.eapps.api.model.StravaAthlete
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.UserProfile
+import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppBarIconButton
 import akio.apps.myrun.feature.base.ui.AppBarTextButton
 import akio.apps.myrun.feature.base.ui.AppColors
@@ -19,10 +20,12 @@ import akio.apps.myrun.feature.base.ui.ErrorDialog
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.base.ui.ProgressDialog
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
+import akio.apps.myrun.feature.base.viewmodel.savedStateViewModelProvider
 import akio.apps.myrun.feature.profile.LinkStravaDelegate
 import akio.apps.myrun.feature.profile.R
 import akio.apps.myrun.feature.profile.UploadAvatarActivity
 import akio.apps.myrun.feature.profile.UserProfileViewModel
+import akio.apps.myrun.feature.profile.wiring.DaggerUserProfileFeatureComponent
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
@@ -79,6 +82,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
@@ -88,7 +92,20 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 
 @Composable
-fun UserProfileScreen(
+fun UserProfileScreen(navController: NavController, backStackEntry: NavBackStackEntry) {
+    val userId = HomeNavDestination.Profile.parseUserId(backStackEntry)
+    val userProfileViewModel = backStackEntry.savedStateViewModelProvider(
+        backStackEntry
+    ) { handle ->
+        DaggerUserProfileFeatureComponent.factory()
+            .create(UserProfileViewModel.setInitialSavedState(handle, userId))
+            .userProfileViewModel()
+    }
+    UserProfileScreen(navController, userProfileViewModel)
+}
+
+@Composable
+private fun UserProfileScreen(
     navController: NavController,
     userProfileViewModel: UserProfileViewModel,
 ) = AppTheme {

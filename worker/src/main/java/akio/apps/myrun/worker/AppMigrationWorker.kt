@@ -1,7 +1,7 @@
 package akio.apps.myrun.worker
 
-import akio.apps.myrun.domain.migration.AppMigrationUsecase
-import akio.apps.myrun.domain.version.AppVersion
+import akio.apps.myrun.domain.migration.impl.AppMigrationUsecase
+import akio.apps.myrun.domain.common.AppVersion
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy

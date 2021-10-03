@@ -5,7 +5,7 @@ import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.location.api.model.PlaceDetails
-import akio.apps.myrun.domain.route.api.RoutePlottingUsecase
+import akio.apps.myrun.domain.route.impl.RoutePlottingUsecase
 import akio.apps.myrun.feature.route.model.DirectionEditingState
 import android.util.Log
 import androidx.lifecycle.LiveData
