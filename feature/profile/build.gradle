@@ -41,8 +41,8 @@ android {
 }
 
 dependencies {
-    implementation(project(':feature:common'))
-
+    implementation(project(':data:wiring'))
+    implementation(project(':data:common'))
 
     implementation(project(':data:location:wiring'))
     implementation(project(':data:activity:wiring'))
@@ -51,13 +51,12 @@ dependencies {
     implementation(project(':data:tracking:wiring'))
     implementation(project(':data:eapps:wiring'))
 
-    implementation(project(':data:wiring'))
-    implementation(project(':data:common'))
-
     implementation(project(':domain:user'))
     implementation(project(':domain:strava'))
 
     implementation(project(':worker'))
+    implementation(project(':feature:common'))
+
     implementation(libs.workManager) // still needed when using module 'worker'
 
     implementation(libs.androidMaterial)

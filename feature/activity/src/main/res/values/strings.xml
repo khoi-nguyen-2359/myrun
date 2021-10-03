@@ -5,4 +5,10 @@
     <string name="activity_details_run_splits_caption">Splits</string>
     <string name="activity_detail_split_km_column">Km</string>
     <string name="activity_detail_split_pace_column">Pace</string>
+    <string name="activity_export_progress_notification_remaining">%1$d remaining</string>
+    <string name="activity_export_progress_notification_finishing">Finishing</string>
+    <string name="activity_export_progress_notification_title">Exporting activities</string>
+    <string name="activity_export_error_notification_title">Activity export error</string>
+    <string name="activity_export_send_tracklog_title">Send tracklog of %1$s</string>
+    <string name="activity_export_success_notification_title">Your tracklog was exported. Tap to share it.</string>
 </resources>

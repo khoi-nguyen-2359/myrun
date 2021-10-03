@@ -4,6 +4,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
+import akio.apps.myrun.feature.activitydetail.wiring.DaggerActivityDetailFeatureComponent
 import akio.apps.myrun.feature.base.TrackingValueFormatter
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppColors
@@ -13,6 +14,7 @@ import akio.apps.myrun.feature.base.ui.CentralAnnouncementView
 import akio.apps.myrun.feature.base.ui.CentralLoadingView
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
+import akio.apps.myrun.feature.base.viewmodel.savedStateViewModelProvider
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -53,10 +55,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 
 @Composable
 fun ActivityDetailScreen(
+    navController: NavController,
+    navBackStackEntry: NavBackStackEntry,
+    onClickExportFile: (ActivityModel) -> Unit,
+) {
+    val activityId = HomeNavDestination.ActivityDetail.parseActivityId(navBackStackEntry)
+    val activityDetailViewModel = navBackStackEntry.savedStateViewModelProvider(
+        navBackStackEntry
+    ) { handle ->
+        DaggerActivityDetailFeatureComponent.factory()
+            .create(ActivityDetailViewModel.setInitialSavedState(handle, activityId))
+            .activityDetailsViewModel()
+    }
+    ActivityDetailScreen(activityDetailViewModel, onClickExportFile, navController)
+}
+
+@Composable
+private fun ActivityDetailScreen(
     activityDetailViewModel: ActivityDetailViewModel,
     onClickExportFile: (ActivityModel) -> Unit,
     navController: NavController,

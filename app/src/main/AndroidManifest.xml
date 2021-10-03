@@ -79,7 +79,7 @@
             android:foregroundServiceType="location" />
 
         <service
-            android:name=".feature.activityexport.ActivityExportService"
+            android:name=".feature.activitydetail.ActivityExportService"
             android:enabled="true"
             android:exported="false" />
 

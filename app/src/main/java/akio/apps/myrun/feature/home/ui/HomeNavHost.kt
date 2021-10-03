@@ -1,11 +1,8 @@
 package akio.apps.myrun.feature.home.ui
 
 import akio.apps.myrun.data.activity.api.model.ActivityModel
-import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
-import akio.apps.myrun.feature.activitydetail.DaggerActivityDetailFeatureComponent
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
-import akio.apps.myrun.feature.base.viewmodel.savedStateViewModelProvider
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -113,18 +110,10 @@ private fun NavGraphBuilder.addActivityDetailDestination(
         popEnterTransition = { _, _ -> AppNavTransitionDefaults.popEnterTransition },
         popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
     ) { navBackStackEntry ->
-        val activityId = HomeNavDestination.ActivityDetail.parseActivityId(navBackStackEntry)
-        val activityDetailViewModel = navBackStackEntry.savedStateViewModelProvider(
-            navBackStackEntry
-        ) { handle ->
-            DaggerActivityDetailFeatureComponent.factory()
-                .create(ActivityDetailViewModel.setInitialSavedState(handle, activityId))
-                .activityDetailsViewModel()
-        }
         ActivityDetailScreen(
-            activityDetailViewModel = activityDetailViewModel,
-            onClickExportFile = onClickExportFile,
-            navController
+            navController,
+            navBackStackEntry,
+            onClickExportFile = onClickExportFile
         )
     }
 }

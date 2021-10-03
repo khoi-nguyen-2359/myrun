@@ -70,13 +70,7 @@
     <string name="performance_cadence_label">Avg. Cadence</string>
     <string name="performance_cadence_unit">spm</string>
     <string name="action_retry">Retry</string>
-    <string name="activity_export_error_notification_title">Activity export error</string>
-    <string name="activity_export_progress_notification_title">Exporting activities</string>
-    <string name="activity_export_progress_notification_remaining">%1$d remaining</string>
-    <string name="activity_export_success_notification_title">Your tracklog was exported. Tap to share it.</string>
-    <string name="activity_export_send_tracklog_title">Send tracklog of %1$s</string>
     <string name="action_send">Send</string>
-    <string name="activity_export_progress_notification_finishing">Finishing</string>
     <string name="route_tracking_save_activity">Finish and save activity</string>
     <string name="route_tracking_discard_activity">Discard activity</string>
     <string name="activity_upload_notification_title">Uploading your activity</string>
