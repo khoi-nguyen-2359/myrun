@@ -3,18 +3,27 @@ package akio.apps.myrun.worker
 import akio.apps.myrun.data.wiring.DispatchersModule
 import akio.apps.myrun.data.wiring.FeatureScope
 import akio.apps.myrun.data.wiring.LaunchCatchingModule
-import akio.apps.myrun.wiring.domain.DaggerDomainComponent
-import akio.apps.myrun.wiring.domain.DomainComponent
+import akio.apps.myrun.domain.migration.wiring.AppMigrationDomainComponent
+import akio.apps.myrun.domain.migration.wiring.DaggerAppMigrationDomainComponent
+import akio.apps.myrun.domain.strava.wiring.DaggerStravaDomainComponent
+import akio.apps.myrun.domain.strava.wiring.StravaDomainComponent
+import akio.apps.myrun.domain.tracking.wiring.DaggerTrackingDomainComponent
+import akio.apps.myrun.domain.tracking.wiring.TrackingDomainComponent
+import akio.apps.myrun.domain.user.wiring.DaggerUserDomainComponent
+import akio.apps.myrun.domain.user.wiring.UserDomainComponent
 import dagger.Component
 
-@akio.apps.myrun.data.wiring.FeatureScope
+@FeatureScope
 @Component(
     modules = [
         LaunchCatchingModule::class,
         DispatchersModule::class
     ],
     dependencies = [
-        DomainComponent::class
+        StravaDomainComponent::class,
+        UserDomainComponent::class,
+        AppMigrationDomainComponent::class,
+        TrackingDomainComponent::class
     ]
 )
 interface WorkerFeatureComponent {
@@ -26,7 +35,12 @@ interface WorkerFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            domainComponent: DomainComponent = DaggerDomainComponent.factory().create(),
+            trackingDomainComponent: TrackingDomainComponent = DaggerTrackingDomainComponent.factory().create(),
+            stravaDomainComponent: StravaDomainComponent =
+                DaggerStravaDomainComponent.factory().create(),
+            userDomainComponent: UserDomainComponent = DaggerUserDomainComponent.factory().create(),
+            appMigrationDomainComponent: AppMigrationDomainComponent =
+                DaggerAppMigrationDomainComponent.factory().create()
         ): WorkerFeatureComponent
     }
 }

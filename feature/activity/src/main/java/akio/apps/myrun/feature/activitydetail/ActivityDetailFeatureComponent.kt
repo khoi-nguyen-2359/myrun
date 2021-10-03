@@ -6,8 +6,10 @@ import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
 import akio.apps.myrun.data.user.wiring.UserDataComponent
-import akio.apps.myrun.wiring.domain.DaggerDomainComponent
-import akio.apps.myrun.wiring.domain.DomainComponent
+import akio.apps.myrun.domain.activity.wiring.ActivityDomainComponent
+import akio.apps.myrun.domain.activity.wiring.DaggerActivityDomainComponent
+import akio.apps.myrun.domain.user.wiring.DaggerUserDomainComponent
+import akio.apps.myrun.domain.user.wiring.UserDomainComponent
 import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Component
@@ -15,9 +17,10 @@ import dagger.Component
 @Component(
     dependencies = [
         ActivityDataComponent::class,
+        ActivityDomainComponent::class,
         AuthenticationDataComponent::class,
         UserDataComponent::class,
-        DomainComponent::class
+        UserDomainComponent::class
     ]
 )
 interface ActivityDetailFeatureComponent {
@@ -32,7 +35,9 @@ interface ActivityDetailFeatureComponent {
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
-            domainComponent: DomainComponent = DaggerDomainComponent.factory().create(),
+            activityDomainComponent: ActivityDomainComponent =
+                DaggerActivityDomainComponent.factory().create(),
+            userDomainComponent: UserDomainComponent = DaggerUserDomainComponent.factory().create()
         ): ActivityDetailFeatureComponent
     }
 }

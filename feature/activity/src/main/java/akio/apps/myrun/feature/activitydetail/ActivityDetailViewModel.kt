@@ -6,8 +6,8 @@ import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
-import akio.apps.myrun.domain.activity.RunSplitsCalculator
-import akio.apps.myrun.domain.recentplace.MakeActivityPlaceNameUsecase
+import akio.apps.myrun.domain.activity.impl.RunSplitsCalculator
+import akio.apps.myrun.domain.user.impl.PlaceNameSelector
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,7 +22,7 @@ class ActivityDetailViewModel @Inject constructor(
     private val activityRepository: ActivityRepository,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
     private val userAuthenticationState: UserAuthenticationState,
-    private val makeActivityPlaceNameUsecase: MakeActivityPlaceNameUsecase,
+    private val placeNameSelector: akio.apps.myrun.domain.user.impl.PlaceNameSelector,
     private val runSplitsCalculator: RunSplitsCalculator,
 ) : ViewModel() {
 
@@ -34,7 +34,7 @@ class ActivityDetailViewModel @Inject constructor(
             val userId = userAuthenticationState.requireUserAccountId()
             val userPlaceIdentifier =
                 userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
-            val placeName = makeActivityPlaceNameUsecase(
+            val placeName = placeNameSelector(
                 activityResource.data?.placeIdentifier,
                 userPlaceIdentifier
             )

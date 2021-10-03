@@ -5,6 +5,7 @@ import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.base.lifecycle.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.base.lifecycle.collectRepeatOnStarted
 import akio.apps.myrun.feature.base.viewmodel.lazyViewModelProvider
+import akio.apps.myrun.feature.profile.wiring.DaggerLinkStravaComponent
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast

@@ -1,6 +1,6 @@
 package akio.apps.myrun._base.utils
 
-import akio.apps.myrun.domain.TrackingValueConverter
+import akio.apps.myrun.domain.common.TrackingValueConverter
 
 object StatsPresentations {
     fun getDisplayTrackingDistance(distance: Double): String =

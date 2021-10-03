@@ -22,6 +22,7 @@ paging = "3.0.1"
 room = "2.3.0"
 lifecycle = "2.4.0-rc01"
 splashScreen = "1.0.0-alpha02"
+androidx-annotation = "1.2.0"
 
 # compose
 compose = "1.0.3"
@@ -88,6 +89,7 @@ viewBinding = { module = "androidx.databinding:viewbinding", version.ref = "agp"
 multidex = { module = "com.android.support:multidex", version.ref = "multidex" }
 androidXCore = { module = "androidx.core:core-ktx", version.ref = "androidXCore" }
 androidXAppCompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompat" }
+androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
 androidMaterial = { module = "com.google.android.material:material", version.ref = "androidMaterial" }
 constraintLayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout" }
 paging = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }

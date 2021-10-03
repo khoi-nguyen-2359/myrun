@@ -1,6 +1,6 @@
 package akio.apps.myrun.worker
 
-import akio.apps.myrun.domain.routetracking.UploadActivitiesUsecase
+import akio.apps.myrun.domain.tracking.impl.UploadActivitiesUsecase
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import android.app.Notification
 import android.content.Context

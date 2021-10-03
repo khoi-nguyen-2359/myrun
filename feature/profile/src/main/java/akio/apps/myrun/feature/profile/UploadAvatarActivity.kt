@@ -1,12 +1,12 @@
 package akio.apps.myrun.feature.profile
 
-import akio.apps.myrun.domain.user.GetUserProfileUsecase
-import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
+import akio.apps.myrun.domain.user.impl.GetUserProfileUsecase
+import akio.apps.myrun.domain.user.impl.UploadUserAvatarImageUsecase
 import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.base.picker.PickPictureDelegate
 import akio.apps.myrun.feature.base.picker.TakePictureDelegate
 import akio.apps.myrun.feature.profile.ui.CropImageView
-import akio.apps.myrun.wiring.domain.DaggerDomainComponent
+import akio.apps.myrun.feature.profile.wiring.DaggerUploadAvatarFeatureComponent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -30,6 +30,7 @@ import coil.size.OriginalSize
 import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -46,8 +47,12 @@ class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) 
     private val rotateButton: View by lazy { findViewById(R.id.rotateButton) }
 
     // TODO: refactor to composable UI
-    private lateinit var uploadUserAvatarImageUsecase: UploadUserAvatarImageUsecase
-    private lateinit var getUserProfileUsecase: GetUserProfileUsecase
+
+    @Inject
+    lateinit var uploadUserAvatarImageUsecase: UploadUserAvatarImageUsecase
+
+    @Inject
+    lateinit var getUserProfileUsecase: GetUserProfileUsecase
 
     private val takePictureDelegate = TakePictureDelegate(this, ::presentPictureContent)
     private val pickPictureDelegate = PickPictureDelegate(this, ::presentPictureContent)
@@ -57,9 +62,10 @@ class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val domainComponent = DaggerDomainComponent.factory().create()
-        uploadUserAvatarImageUsecase = domainComponent.uploadUserAvatarImageUsecase()
-        getUserProfileUsecase = domainComponent.getUserProfileUsecase()
+        val domainComponent = DaggerUploadAvatarFeatureComponent.factory().create()
+        domainComponent.inject(this)
+//        uploadUserAvatarImageUsecase = domainComponent.uploadUserAvatarImageUsecase()
+//        getUserProfileUsecase = domainComponent.getUserProfileUsecase()
 
         loadInitialUserProfilePicture()
 

@@ -41,30 +41,29 @@ android {
 }
 
 dependencies {
-    implementation(project(':feature:common'))
-
-    implementation(project(':wiring'))
-    implementation(project(':data:location:wiring'))
     implementation(project(':data:activity:wiring'))
     implementation(project(':data:authentication:wiring'))
     implementation(project(':data:user:wiring'))
-    implementation(project(':data:tracking:wiring'))
+    implementation(project(':data:location:wiring'))
     implementation(project(':data:eapps:wiring'))
+    implementation(project(':data:location:wiring'))
+    implementation(project(':data:tracking:wiring'))
 
     implementation(project(':data:common'))
     implementation(project(':data:wiring'))
+
+    implementation(project(':domain:activity'))
+    implementation(project(':domain:user'))
+    implementation(project(':domain:common'))
+
+    implementation(project(':feature:common'))
 
     implementation(libs.bundles.compose)
     implementation(libs.accompanistPlaceholder)
     implementation(libs.accompanistInsets)
     implementation(libs.coilCompose)
-//
-//    implementation(libs.androidXAppCompat)
+
     implementation(libs.timber)
-//    implementation(libs.lifecycleViewModelKtx)
-//
-//    implementation(libs.androidMapUtils)
-//    implementation(libs.androidGoogleMap)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)

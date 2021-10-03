@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.home.userhome.ui
 
 import akio.apps.myrun.data.activity.api.model.ActivityType
-import akio.apps.myrun.domain.TrackingValueConverter
-import akio.apps.myrun.domain.activity.GetTrainingSummaryDataUsecase
+import akio.apps.myrun.domain.common.TrackingValueConverter
+import akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
@@ -10,8 +10,10 @@ import akio.apps.myrun.feature.base.ui.CentralLoadingView
 import akio.apps.myrun.feature.base.ui.ColumnSpacer
 import akio.apps.myrun.feature.base.ui.RowSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
+import akio.apps.myrun.feature.base.viewmodel.savedStateViewModelProvider
 import akio.apps.myrun.feature.home.R
 import akio.apps.myrun.feature.home.userhome.UserHomeViewModel
+import akio.apps.myrun.feature.home.wiring.DaggerUserHomeFeatureComponent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -55,6 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
@@ -63,6 +66,18 @@ import coil.size.Scale
 
 @Composable
 fun UserHome(
+    appNavController: NavController,
+    backStackEntry: NavBackStackEntry,
+    contentPadding: PaddingValues
+) {
+    val userHomeViewModel = backStackEntry.savedStateViewModelProvider(backStackEntry) {
+        DaggerUserHomeFeatureComponent.factory().create(it).userHomeViewModel()
+    }
+    UserHome(userHomeViewModel, contentPadding, appNavController)
+}
+
+@Composable
+private fun UserHome(
     userHomeViewModel: UserHomeViewModel,
     contentPadding: PaddingValues,
     appNavController: NavController,

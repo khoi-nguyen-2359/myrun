@@ -1,6 +1,6 @@
 package akio.apps.myrun.worker
 
-import akio.apps.myrun.domain.strava.UploadActivityFilesToStravaUsecase
+import akio.apps.myrun.domain.strava.impl.UploadActivityFilesToStravaUsecase
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker

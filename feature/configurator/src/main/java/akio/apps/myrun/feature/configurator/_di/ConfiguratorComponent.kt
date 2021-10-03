@@ -2,16 +2,16 @@ package akio.apps.myrun.feature.configurator._di
 
 import akio.apps.myrun.data.tracking.wiring.DaggerTrackingDataComponent
 import akio.apps.myrun.data.tracking.wiring.TrackingDataComponent
+import akio.apps.myrun.domain.user.wiring.DaggerUserDomainComponent
+import akio.apps.myrun.domain.user.wiring.UserDomainComponent
 import akio.apps.myrun.feature.configurator.RouteTrackingConfigurationViewModel
 import akio.apps.myrun.feature.configurator.viewmodel.UserAuthenticationViewModel
-import akio.apps.myrun.wiring.domain.DaggerDomainComponent
-import akio.apps.myrun.wiring.domain.DomainComponent
 import dagger.Component
 
 @Component(
     dependencies = [
         TrackingDataComponent::class,
-        DomainComponent::class
+        UserDomainComponent::class
     ]
 )
 interface ConfiguratorComponent {
@@ -22,7 +22,7 @@ interface ConfiguratorComponent {
     interface Factory {
         fun create(
             trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create(),
-            domainComponent: DomainComponent = DaggerDomainComponent.factory().create(),
+            userDomainComponent: UserDomainComponent = DaggerUserDomainComponent.factory().create()
         ): ConfiguratorComponent
     }
 }

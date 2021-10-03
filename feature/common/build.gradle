@@ -41,7 +41,7 @@ android {
 dependencies {
     implementation(project(":data:common"))
     implementation(project(":data:activity:api"))
-    implementation(project(":domain"))
+    implementation(project(":domain:common"))
 
     implementation(libs.androidXAppCompat)
     implementation(libs.bundles.compose)
