@@ -115,6 +115,7 @@ dependencies {
     implementation project(":feature:profile")
     implementation project(":feature:home")
     implementation project(":feature:activity")
+    implementation project(":feature:tracking")
     debugImplementation project(":feature:configurator")
 
     implementation(libs.workManager) // still needed when using module 'worker'

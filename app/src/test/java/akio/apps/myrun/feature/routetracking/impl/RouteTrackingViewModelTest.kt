@@ -11,6 +11,7 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.STOPPED
 import akio.apps.myrun.domain.tracking.impl.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.tracking.impl.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.tracking.impl.StoreTrackingActivityDataUsecase
+import akio.apps.myrun.feature.tracking.RouteTrackingViewModel
 import akio.apps.test.whenBlocking
 import android.app.Application
 import kotlinx.coroutines.ExperimentalCoroutinesApi

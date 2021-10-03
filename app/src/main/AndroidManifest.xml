@@ -42,7 +42,7 @@
         </provider>
 
         <activity
-            android:name=".feature.routetracking.impl.RouteTrackingActivity"
+            android:name=".feature.tracking.RouteTrackingActivity"
             android:theme="@style/AppTheme.SemiTransparentSystemBars"
             android:screenOrientation="portrait"
             android:exported="false" />
@@ -73,7 +73,7 @@
             android:value="@string/google_api_key" />
 
         <service
-            android:name=".feature.routetracking.impl.RouteTrackingService"
+            android:name=".feature.tracking.RouteTrackingService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location" />

@@ -1,15 +1,12 @@
 package akio.apps.myrun.feature.activitydetail
 
 import akio.apps.common.feature.ui.getColorCompat
-import akio.apps.common.feature.ui.getDrawableCompat
 import akio.apps.myrun.feature.activity.R
+import akio.apps.myrun.feature.base.BitmapUtils.createDrawableBitmap
 import akio.apps.myrun.feature.base.ui.dp2px
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
-import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -126,21 +123,5 @@ class ActivityRouteMapActivity : AppCompatActivity(R.layout.activity_activity_ro
         fun createLaunchIntent(context: Context, encodedPolyline: String): Intent =
             Intent(context, ActivityRouteMapActivity::class.java)
                 .putExtra(EXT_ENCODED_POLYLINE, encodedPolyline)
-
-        fun createDrawableBitmap(
-            context: Context,
-            @DrawableRes drawableResId: Int,
-        ): Bitmap? {
-            val drawable = context.getDrawableCompat(drawableResId) ?: return null
-            drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
-            val bitmap = Bitmap.createBitmap(
-                drawable.intrinsicWidth,
-                drawable.intrinsicHeight,
-                Bitmap.Config.ARGB_8888
-            )
-            val canvas = Canvas(bitmap)
-            drawable.draw(canvas)
-            return bitmap
-        }
     }
 }

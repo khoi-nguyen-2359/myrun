@@ -4,8 +4,8 @@ import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.activitydetail.ActivityExportService
 import akio.apps.myrun.feature.home.ui.AppNavHost
-import akio.apps.myrun.feature.routetracking.impl.LocationPermissionChecker
-import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
+import akio.apps.myrun.feature.tracking.LocationPermissionChecker
+import akio.apps.myrun.feature.tracking.RouteTrackingActivity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
