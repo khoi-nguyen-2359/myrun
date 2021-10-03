@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.routetracking.impl
+package akio.apps.myrun.feature.tracking.impl
 
 import akio.apps._base.InstantTaskExecutorTest
 import akio.apps.myrun.data.LaunchCatchingDelegateImpl

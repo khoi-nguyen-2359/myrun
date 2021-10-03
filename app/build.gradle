@@ -98,16 +98,9 @@ dependencies {
 
     implementation project(':data:wiring')
     implementation project(':data:common')
-    implementation(project(':data:location:wiring'))
-    implementation(project(':data:activity:wiring'))
     implementation(project(':data:authentication:wiring'))
-    implementation(project(':data:user:wiring'))
     implementation(project(':data:tracking:wiring'))
-    implementation(project(':data:eapps:wiring'))
-
-    implementation(project(':domain:common'))
-    implementation(project(':domain:user'))
-    implementation(project(':domain:tracking'))
+    implementation(project(':data:activity:api'))
 
     implementation project(':worker')
     implementation project(':feature:common')
@@ -130,15 +123,11 @@ dependencies {
 
     implementation(libs.androidXCore)
     implementation(libs.androidXAppCompat)
-    implementation(libs.androidMaterial)
-    implementation(libs.constraintLayout)
-    implementation(libs.paging)
     implementation(libs.fragment)
     implementation(libs.activity)
     implementation(libs.splashScreen)
 
     implementation(libs.lifecycleRuntimeKtx)
-    implementation(libs.lifecycleLiveDataKtx)
     implementation(libs.lifecycleViewModelKtx)
     implementation(libs.lifecycleCommonJava8)
     implementation(libs.lifecycleProcess)
@@ -153,12 +142,7 @@ dependencies {
     implementation(libs.playServicesAuth)
     implementation(libs.playServicesFitness)
 
-    implementation platform(libs.firebaseBom)
     implementation(libs.bundles.crashlytics)
-    implementation(libs.firebasePerfKtx)
-
-    implementation(libs.androidMapUtils)
-    implementation(libs.androidGoogleMap)
 
     implementation(libs.timber)
 
