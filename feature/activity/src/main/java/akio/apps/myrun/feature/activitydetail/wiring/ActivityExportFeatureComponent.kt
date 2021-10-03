@@ -1,18 +1,16 @@
-package akio.apps.myrun.feature.activityexport._di
+package akio.apps.myrun.feature.activitydetail.wiring
 
-import akio.apps.myrun.data.wiring.FeatureScope
 import akio.apps.myrun.domain.activity.wiring.ActivityDomainComponent
 import akio.apps.myrun.domain.activity.wiring.DaggerActivityDomainComponent
-import akio.apps.myrun.feature.activityexport.ActivityExportService
+import akio.apps.myrun.feature.activitydetail.ActivityExportService
 import dagger.Component
 
-@FeatureScope
 @Component(
     dependencies = [
         ActivityDomainComponent::class
     ]
 )
-interface ActivityExportFeatureComponent {
+internal interface ActivityExportFeatureComponent {
     fun inject(activityExportService: ActivityExportService)
 
     @Component.Factory

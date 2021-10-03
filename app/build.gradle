@@ -106,7 +106,6 @@ dependencies {
     implementation(project(':data:eapps:wiring'))
 
     implementation(project(':domain:common'))
-    implementation(project(':domain:activity'))
     implementation(project(':domain:user'))
     implementation(project(':domain:tracking'))
 

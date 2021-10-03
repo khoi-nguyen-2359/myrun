@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.activitydetail
+package akio.apps.myrun.feature.activitydetail.wiring
 
 import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
 import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
@@ -10,6 +10,7 @@ import akio.apps.myrun.domain.activity.wiring.ActivityDomainComponent
 import akio.apps.myrun.domain.activity.wiring.DaggerActivityDomainComponent
 import akio.apps.myrun.domain.user.wiring.DaggerUserDomainComponent
 import akio.apps.myrun.domain.user.wiring.UserDomainComponent
+import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Component
@@ -23,7 +24,7 @@ import dagger.Component
         UserDomainComponent::class
     ]
 )
-interface ActivityDetailFeatureComponent {
+internal interface ActivityDetailFeatureComponent {
     fun activityDetailsViewModel(): ActivityDetailViewModel
 
     @Component.Factory

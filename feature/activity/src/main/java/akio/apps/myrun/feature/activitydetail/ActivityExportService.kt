@@ -1,9 +1,8 @@
-package akio.apps.myrun.feature.activityexport
+package akio.apps.myrun.feature.activitydetail
 
-import akio.apps.myrun.BuildConfig
-import akio.apps.myrun.R
 import akio.apps.myrun.domain.activity.impl.ExportTempTcxFileUsecase
-import akio.apps.myrun.feature.activityexport._di.DaggerActivityExportFeatureComponent
+import akio.apps.myrun.feature.activity.R
+import akio.apps.myrun.feature.activitydetail.wiring.DaggerActivityExportFeatureComponent
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import android.app.Notification
 import android.app.PendingIntent
@@ -156,7 +155,7 @@ class ActivityExportService : Service() {
             createActivityDescription(activityInfo)
         val shareFileContentUri = FileProvider.getUriForFile(
             this,
-            BuildConfig.APPLICATION_ID,
+            this.packageName,
             exportedFile
         )
         val pendingIntentFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

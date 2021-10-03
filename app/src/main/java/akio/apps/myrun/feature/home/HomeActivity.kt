@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.home
 
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.ActivityModel
-import akio.apps.myrun.feature.activityexport.ActivityExportService
+import akio.apps.myrun.feature.activitydetail.ActivityExportService
 import akio.apps.myrun.feature.home.ui.AppNavHost
 import akio.apps.myrun.feature.routetracking.impl.LocationPermissionChecker
 import akio.apps.myrun.feature.routetracking.impl.RouteTrackingActivity
