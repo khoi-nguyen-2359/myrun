@@ -1,14 +1,15 @@
 package akio.apps.myrun
 
-import akio.apps.myrun._base.utils.CrashReportTree
-import akio.apps.myrun._base.utils.MyDebugTree
-import akio.apps.myrun._di.AppComponent
-import akio.apps.myrun._di.DaggerAppComponent
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
+import akio.apps.myrun.data.wiring.ApplicationModule
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.configurator.ConfiguratorGate
 import akio.apps.myrun.feature.tracking.RouteTrackingService
+import akio.apps.myrun.log.CrashReportTree
+import akio.apps.myrun.log.MyDebugTree
+import akio.apps.myrun.wiring.AppComponent
+import akio.apps.myrun.wiring.DaggerAppComponent
 import akio.apps.myrun.worker.AppMigrationWorker
 import akio.apps.myrun.worker.UpdateUserRecentPlaceWorker
 import android.app.Application
@@ -52,7 +53,7 @@ class MyRunApp :
     override fun onCreate() {
         super<Application>.onCreate()
 
-        akio.apps.myrun.data.wiring.ApplicationModule.application = this
+        ApplicationModule.application = this
 
         // create all notification channels at app startup.
         AppNotificationChannel.values().forEach { it.createChannelCompat(this) }

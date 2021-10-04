@@ -1,4 +1,4 @@
-package akio.apps.myrun._base.utils
+package akio.apps.myrun.feature.googlefit
 
 import android.app.Activity
 import android.content.Context

@@ -1,4 +1,4 @@
-package akio.apps.myrun._di
+package akio.apps.myrun.wiring
 
 import akio.apps.myrun.MyRunApp
 import akio.apps.myrun.data.tracking.wiring.DaggerTrackingDataComponent

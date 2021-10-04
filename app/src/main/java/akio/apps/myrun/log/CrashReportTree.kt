@@ -1,4 +1,4 @@
-package akio.apps.myrun._base.utils
+package akio.apps.myrun.log
 
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
