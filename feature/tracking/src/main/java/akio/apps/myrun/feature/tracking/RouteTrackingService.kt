@@ -1,6 +1,5 @@
 package akio.apps.myrun.feature.tracking
 
-import akio.apps.myrun._base.utils.flowTimer
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
@@ -21,6 +20,7 @@ import akio.apps.myrun.domain.tracking.impl.LocationProcessorContainer
 import akio.apps.myrun.domain.tracking.impl.LocationSpeedFilter
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.tracking.wiring.DaggerRouteTrackingFeatureComponent
+import akio.apps.myrun.log.flowTimer
 import akio.apps.myrun.worker.UpdateUserRecentPlaceWorker
 import android.annotation.SuppressLint
 import android.app.ActivityManager

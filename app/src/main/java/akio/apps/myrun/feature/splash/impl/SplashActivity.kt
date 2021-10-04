@@ -6,7 +6,7 @@ import akio.apps.myrun.feature.base.lifecycle.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.base.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.feature.home.HomeActivity
 import akio.apps.myrun.feature.registration.SignInActivity
-import akio.apps.myrun.feature.splash._di.DaggerSplashFeatureComponent
+import akio.apps.myrun.feature.splash.wiring.DaggerSplashFeatureComponent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle

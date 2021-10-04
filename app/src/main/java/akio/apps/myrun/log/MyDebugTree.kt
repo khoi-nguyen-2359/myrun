@@ -1,4 +1,4 @@
-package akio.apps.myrun._base.utils
+package akio.apps.myrun.log
 
 import akio.apps.myrun.MyRunApp
 import akio.apps.myrun.R

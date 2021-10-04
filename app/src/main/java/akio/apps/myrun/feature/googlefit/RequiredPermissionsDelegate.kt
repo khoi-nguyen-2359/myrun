@@ -1,7 +1,6 @@
-package akio.apps.myrun._base.permissions
+package akio.apps.myrun.feature.googlefit
 
 import akio.apps.myrun.R
-import akio.apps.myrun._base.utils.GoogleSignInPermissionUtils
 import akio.apps.myrun.feature.base.permissions.PermissionUtils
 import android.app.Activity
 import android.content.Context
@@ -22,7 +21,7 @@ class RequiredPermissionsDelegate {
         activity: Activity,
         fragment: Fragment? = null,
     ): Boolean {
-        RequiredPermissionsDelegate.requestPermissions(
+        Companion.requestPermissions(
             permissions,
             rcPermissions,
             activity,

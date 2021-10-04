@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.splash._di
+package akio.apps.myrun.feature.splash.wiring
 
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent

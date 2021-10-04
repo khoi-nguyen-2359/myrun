@@ -111,9 +111,9 @@ dependencies {
     implementation project(":feature:tracking")
     debugImplementation project(":feature:configurator")
 
-    implementation(libs.workManager) // still needed when using module 'worker'
+    implementation(libs.workManager) // to config work manager in application class
 
-    implementation(libs.googlePlaces)
+    implementation(libs.googlePlaces)   // to init place sdk in application class
 
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.kotlinxCoroutinesPlayServices)
@@ -123,18 +123,11 @@ dependencies {
 
     implementation(libs.androidXCore)
     implementation(libs.androidXAppCompat)
-    implementation(libs.fragment)
-    implementation(libs.activity)
     implementation(libs.splashScreen)
 
-    implementation(libs.lifecycleRuntimeKtx)
-    implementation(libs.lifecycleViewModelKtx)
-    implementation(libs.lifecycleCommonJava8)
     implementation(libs.lifecycleProcess)
 
     implementation(libs.bundles.compose)
-    implementation(libs.coilCompose)
-    implementation(libs.accompanistPlaceholder)
     implementation(libs.accompanistInsets)
 
     implementation(libs.multidex)
@@ -150,22 +143,7 @@ dependencies {
         debugImplementation(libs.leakCanary)
     }
 
-    testImplementation(testFixtures(project(':test')))
-    testImplementation(libs.bundles.testCoroutine)
-    testImplementation(libs.junit)
     testImplementation(libs.kotlinTest)
-    testImplementation(libs.androidXCoreTesting)
-    testImplementation(libs.mockitoCore)
-    testImplementation(libs.mockitoKotlin)
-    testImplementation(libs.kotlinReflect)
-    kaptAndroidTest(libs.daggerCompiler)
-    androidTestImplementation(libs.mockitoAndroid)
-    androidTestImplementation(libs.androidXTestRunner)
-    androidTestImplementation(libs.espressoCore)
-    androidTestImplementation(libs.espressoContrib)
-    androidTestImplementation(libs.androidXTestRules)
-    androidTestImplementation(libs.androidXJunit)
-    androidTestImplementation(libs.uiAutomator)
 }
 
 buildtimetracker {
