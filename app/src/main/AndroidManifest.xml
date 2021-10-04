@@ -48,6 +48,12 @@
             android:exported="false" />
 
         <activity
+            android:name=".feature.route.ui.DrawRouteActivity"
+            android:theme="@style/AppTheme.SemiTransparentSystemBars"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+
+        <activity
             android:name=".feature.splash.impl.SplashActivity"
             android:theme="@style/AppTheme.SplashScreen"
             android:screenOrientation="portrait"

@@ -47,6 +47,7 @@
     <string name="action_pause">Pause</string>
     <string name="action_stop">Stop</string>
     <string name="action_resume">Resume</string>
+    <string name="action_delete">Delete</string>
 
     <string name="alert_permissions_rationale_message">You should give application enough permissions to select a picture.</string>
     <string name="alert_permissions_missing_message">Application doesn\'t have enough permissions to select a picture.</string>
