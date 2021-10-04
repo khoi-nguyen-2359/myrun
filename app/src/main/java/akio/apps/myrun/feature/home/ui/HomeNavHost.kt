@@ -44,6 +44,7 @@ private object AppNavTransitionDefaults {
 fun AppNavHost(
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (ActivityModel) -> Unit,
+    openRoutePlanningAction: () -> Unit
 ) = ProvideWindowInsets {
     val navController = rememberAnimatedNavController()
     AnimatedNavHost(
@@ -51,9 +52,10 @@ fun AppNavHost(
         startDestination = HomeNavDestination.Home.route
     ) {
         addHomeDestination(
+            navController,
             onClickFloatingActionButton,
             onClickExportActivityFile,
-            navController
+            openRoutePlanningAction
         )
 
         addProfileDestination(navController)
@@ -80,9 +82,10 @@ private fun NavGraphBuilder.addProfileDestination(navController: NavHostControll
 
 @OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.addHomeDestination(
+    navController: NavHostController,
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (ActivityModel) -> Unit,
-    navController: NavHostController,
+    openRoutePlanningAction: () -> Unit
 ) {
     composable(
         route = HomeNavDestination.Home.route,
@@ -91,9 +94,10 @@ private fun NavGraphBuilder.addHomeDestination(
         popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
     ) {
         HomeScreen(
+            navController,
             onClickFloatingActionButton,
             onClickExportActivityFile,
-            navController
+            openRoutePlanningAction
         )
     }
 }

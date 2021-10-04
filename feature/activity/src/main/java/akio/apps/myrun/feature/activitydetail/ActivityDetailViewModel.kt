@@ -22,7 +22,7 @@ class ActivityDetailViewModel @Inject constructor(
     private val activityRepository: ActivityRepository,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
     private val userAuthenticationState: UserAuthenticationState,
-    private val placeNameSelector: akio.apps.myrun.domain.user.impl.PlaceNameSelector,
+    private val placeNameSelector: PlaceNameSelector,
     private val runSplitsCalculator: RunSplitsCalculator,
 ) : ViewModel() {
 

@@ -109,6 +109,7 @@ dependencies {
     implementation project(":feature:home")
     implementation project(":feature:activity")
     implementation project(":feature:tracking")
+    implementation project(":feature:route")
     debugImplementation project(":feature:configurator")
 
     implementation(libs.workManager) // to config work manager in application class

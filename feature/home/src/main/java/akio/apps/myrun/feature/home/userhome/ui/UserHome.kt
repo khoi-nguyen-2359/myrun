@@ -4,6 +4,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.domain.common.TrackingValueConverter
 import akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
+import akio.apps.myrun.feature.base.ui.AppBarIconButton
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
 import akio.apps.myrun.feature.base.ui.CentralLoadingView
@@ -39,6 +40,8 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -68,12 +71,13 @@ import coil.size.Scale
 fun UserHome(
     appNavController: NavController,
     backStackEntry: NavBackStackEntry,
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues,
+    openRoutePlanningAction: () -> Unit
 ) {
     val userHomeViewModel = backStackEntry.savedStateViewModelProvider(backStackEntry) {
         DaggerUserHomeFeatureComponent.factory().create(it).userHomeViewModel()
     }
-    UserHome(userHomeViewModel, contentPadding, appNavController)
+    UserHome(userHomeViewModel, contentPadding, appNavController, openRoutePlanningAction)
 }
 
 @Composable
@@ -81,9 +85,10 @@ private fun UserHome(
     userHomeViewModel: UserHomeViewModel,
     contentPadding: PaddingValues,
     appNavController: NavController,
+    openRoutePlanningAction: () -> Unit
 ) {
     val screenState by userHomeViewModel.screenState.collectAsState(initial = null)
-    UserHome(screenState ?: return, contentPadding, appNavController)
+    UserHome(screenState ?: return, contentPadding, appNavController, openRoutePlanningAction)
 }
 
 @Composable
@@ -91,10 +96,11 @@ private fun UserHome(
     screenState: UserHomeViewModel.ScreenState = UserHomeViewModel.ScreenState.StatsLoading,
     contentPadding: PaddingValues,
     appNavController: NavController,
+    openRoutePlanningAction: () -> Unit
 ) {
     Column {
         StatusBarSpacer()
-        UserHomeTopBar()
+        UserHomeTopBar(openRoutePlanningAction)
         when (screenState) {
             UserHomeViewModel.ScreenState.StatsLoading -> {
                 CentralLoadingView(text = stringResource(id = R.string.message_loading))
@@ -411,9 +417,12 @@ private fun UserHomeOutlinedButton(
 }
 
 @Composable
-private fun UserHomeTopBar() {
+private fun UserHomeTopBar(openRoutePlanningAction: () -> Unit) {
     TopAppBar(
-        title = { Text(text = stringResource(id = R.string.user_home_title)) }
+        title = { Text(text = stringResource(id = R.string.user_home_title)) },
+        actions = {
+            AppBarIconButton(iconImageVector = Icons.Rounded.Add, onClick = openRoutePlanningAction)
+        }
     )
 }
 
@@ -480,5 +489,5 @@ private fun PreviewUserHome() {
         ),
         contentPadding = PaddingValues(),
         rememberNavController()
-    )
+    ) { }
 }

@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.route._di
+package akio.apps.myrun.feature.route.wiring
 
 import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
 import akio.apps.myrun.data.location.wiring.LocationDataComponent

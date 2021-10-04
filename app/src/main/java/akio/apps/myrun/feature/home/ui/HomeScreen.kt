@@ -79,9 +79,10 @@ private const val REVEAL_ANIM_THRESHOLD = 10
 
 @Composable
 fun HomeScreen(
+    appNavController: NavController,
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (ActivityModel) -> Unit,
-    appNavController: NavController,
+    openRoutePlanningAction: () -> Unit
 ) = AppTheme {
     // FAB is inactive when user selects a tab other than Feed
     var isFabActive by remember { mutableStateOf(true) }
@@ -135,7 +136,8 @@ fun HomeScreen(
             homeNavController,
             onClickExportActivityFile,
             PaddingValues(bottom = fabBoxHeightDp),
-            appNavController
+            appNavController,
+            openRoutePlanningAction
         )
         Box(
             modifier = Modifier
@@ -159,6 +161,7 @@ private fun HomeNavHost(
     onClickExportActivityFile: (ActivityModel) -> Unit,
     contentPaddings: PaddingValues,
     appNavController: NavController,
+    openRoutePlanningAction: () -> Unit
 ) {
     NavHost(
         modifier = Modifier.fillMaxSize(),
@@ -171,16 +174,17 @@ private fun HomeNavHost(
             appNavController = appNavController
         )
 
-        addUserHomeDestination(contentPaddings, appNavController)
+        addUserHomeDestination(contentPaddings, appNavController, openRoutePlanningAction)
     }
 }
 
 private fun NavGraphBuilder.addUserHomeDestination(
     contentPaddings: PaddingValues,
     appNavController: NavController,
+    openRoutePlanningAction: () -> Unit,
 ) {
     composable(route = HomeNavItemInfo.UserHome.route) { backstackEntry ->
-        UserHome(appNavController, backstackEntry, contentPaddings)
+        UserHome(appNavController, backstackEntry, contentPaddings, openRoutePlanningAction)
     }
 }
 

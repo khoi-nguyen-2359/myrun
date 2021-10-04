@@ -11,9 +11,9 @@ import akio.apps.myrun.feature.base.ui.dp2px
 import akio.apps.myrun.feature.base.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.feature.route.DrawRouteViewModel
 import akio.apps.myrun.feature.route.R
-import akio.apps.myrun.feature.route._di.DaggerRouteFeatureComponent
 import akio.apps.myrun.feature.route.model.DirectionEditingState
 import akio.apps.myrun.feature.route.model.Route
+import akio.apps.myrun.feature.route.wiring.DaggerRouteFeatureComponent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
