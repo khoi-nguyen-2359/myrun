@@ -50,3 +50,9 @@ inline fun <reified T : ViewModel> ViewModelStoreOwner.savedStateViewModelProvid
     )
     return viewModelProvider[T::class.java]
 }
+
+@Suppress("UNCHECKED_CAST")
+inline fun <reified T : ViewModel> ViewModelStoreOwner.lazySavedStateViewModelProvider(
+    savedStateOwner: SavedStateRegistryOwner,
+    noinline viewModelFactory: (SavedStateHandle) -> T,
+): Lazy<T> = lazy { savedStateViewModelProvider(savedStateOwner, viewModelFactory) }

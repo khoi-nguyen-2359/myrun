@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.activitydetail
 
-import akio.apps.common.feature.ui.getColorCompat
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.base.BitmapUtils.createDrawableBitmap
-import akio.apps.myrun.feature.base.ui.dp2px
+import akio.apps.myrun.feature.base.ext.dp2px
+import akio.apps.myrun.feature.base.ext.getColorCompat
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle

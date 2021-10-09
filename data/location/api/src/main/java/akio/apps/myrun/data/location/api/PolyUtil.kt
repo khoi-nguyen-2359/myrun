@@ -4,4 +4,5 @@ import akio.apps.myrun.data.location.api.model.LatLng
 
 interface PolyUtil {
     fun encode(path: List<LatLng>): String
+    fun decode(encPath: String): List<LatLng>
 }

@@ -41,6 +41,8 @@ android {
 dependencies {
     implementation(project(":data:common"))
     implementation(project(":data:activity:api"))
+    implementation(project(":data:location:api"))
+    implementation(project(":data:route:api"))
     implementation(project(":domain:common"))
 
     implementation(libs.androidXAppCompat)
@@ -48,6 +50,8 @@ dependencies {
     implementation(libs.accompanistInsets)
 
     implementation(libs.lifecycleRuntimeKtx)
+
+    implementation(libs.androidGoogleMap)
     
     testImplementation(libs.kotlinTest)
 }
