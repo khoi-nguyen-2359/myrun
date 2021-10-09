@@ -41,7 +41,6 @@ dependencies {
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.kotlinxCoroutinesPlayServices)
 
-
     implementation(libs.okHttp)
     implementation(libs.retrofit)
     implementation(libs.retrofitGsonConverter)

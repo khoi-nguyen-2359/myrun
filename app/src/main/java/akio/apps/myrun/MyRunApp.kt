@@ -74,7 +74,7 @@ class MyRunApp :
     }
 
     private fun initPlacesSdk() {
-        Places.initialize(applicationContext, getString(R.string.google_api_key))
+        Places.initialize(applicationContext, getString(R.string.google_direction_api_key))
     }
 
     override fun onStart(owner: LifecycleOwner) {

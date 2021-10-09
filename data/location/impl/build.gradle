@@ -50,5 +50,8 @@ dependencies {
 
     implementation(libs.playServicesLocation)
 
-    implementation(libs.retrofitGsonConverter)
+    implementation(libs.okHttp)
+    implementation(libs.retrofit)
+
+
 }

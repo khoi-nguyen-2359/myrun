@@ -10,10 +10,11 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.PAUSED
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.RESUMED
 import akio.apps.myrun.feature.base.BitmapUtils.createDrawableBitmap
+import akio.apps.myrun.feature.base.ext.dp2px
 import akio.apps.myrun.feature.base.lifecycle.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.base.lifecycle.collectRepeatOnStarted
 import akio.apps.myrun.feature.base.lifecycle.observe
-import akio.apps.myrun.feature.base.ui.dp2px
+import akio.apps.myrun.feature.base.map.LatLngBoundsBuilder
 import akio.apps.myrun.feature.base.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.feature.tracking.ui.ActivitySettingsView
 import akio.apps.myrun.feature.tracking.ui.RouteTrackingStatsView
@@ -552,7 +553,7 @@ class RouteTrackingActivity(
             }
     }
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint("MissingPermission", "PotentialBehaviorOverride")
     private fun initMapView(map: GoogleMap) {
         this.mapView = map
         map.apply {

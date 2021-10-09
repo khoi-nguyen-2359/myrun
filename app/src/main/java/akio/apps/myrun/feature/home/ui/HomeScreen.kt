@@ -2,11 +2,11 @@ package akio.apps.myrun.feature.home.ui
 
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.feature.base.ext.px2dp
 import akio.apps.myrun.feature.base.ui.AppDimensions.AppBarHeight
 import akio.apps.myrun.feature.base.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
-import akio.apps.myrun.feature.base.ui.px2dp
 import akio.apps.myrun.feature.home.feed.ui.ActivityFeed
 import akio.apps.myrun.feature.home.userhome.ui.UserHome
 import androidx.annotation.StringRes

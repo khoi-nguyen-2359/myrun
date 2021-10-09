@@ -1,11 +1,11 @@
 package akio.apps.myrun.data.location.impl
 
 import akio.apps.myrun.data.location.api.DirectionDataSource
+import akio.apps.myrun.data.location.api.PolyUtil
 import akio.apps.myrun.data.location.api.model.LatLng
-import akio.apps.myrun.data.location.impl.model.GoogleMapApiKey
+import akio.apps.myrun.data.location.impl.model.GoogleMapDirectionApiKey
 import akio.apps.myrun.data.location.impl.model.MapApiStatus
 import akio.apps.myrun.data.wiring.NamedIoDispatcher
-import com.google.maps.android.PolyUtil
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -13,9 +13,10 @@ import timber.log.Timber
 
 class GoogleDirectionDataSource @Inject constructor(
     private val googleMapDirectionApi: GoogleMapDirectionApi,
-    private val googleMapApiKey: GoogleMapApiKey,
+    private val googleMapDirectionApiKey: GoogleMapDirectionApiKey,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
+    private val polyUtil: PolyUtil
 ) : DirectionDataSource {
 
     override suspend fun getWalkingDirections(
@@ -29,15 +30,13 @@ class GoogleDirectionDataSource @Inject constructor(
         val originQuery = "${origin.latitude},${origin.longitude}"
         val destinationOrigin = "${destination.latitude},${destination.longitude}"
         val simplified = simplifyWaypoints(waypoints)
-        val encodedWaypoint = PolyUtil.encode(
-            simplified.map { it.toGmsLatLng() }
-        )
+        val encodedWaypoint = polyUtil.encode(simplified)
         val encodedWaypointParam = "enc:$encodedWaypoint:"
         val response = googleMapDirectionApi.getWalkingDirections(
             originQuery,
             destinationOrigin,
             encodedWaypointParam,
-            googleMapApiKey.value
+            googleMapDirectionApiKey.value
         )
 
         if (response.status != MapApiStatus.OK) {
@@ -46,7 +45,7 @@ class GoogleDirectionDataSource @Inject constructor(
 
         val defaultRoute = response.routes.first()
 
-        PolyUtil.decode(defaultRoute.overviewPolyline.points).map { it.toLatLng() }
+        polyUtil.decode(defaultRoute.overviewPolyline.points)
     }
 
     private fun simplifyWaypoints(drawnWaypoints: List<LatLng>): List<LatLng> {

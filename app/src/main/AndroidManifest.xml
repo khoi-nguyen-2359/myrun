@@ -48,7 +48,7 @@
             android:exported="false" />
 
         <activity
-            android:name=".feature.route.ui.DrawRouteActivity"
+            android:name=".feature.route.ui.RoutePlanningActivity"
             android:theme="@style/AppTheme.SemiTransparentSystemBars"
             android:screenOrientation="portrait"
             android:exported="false" />
@@ -76,7 +76,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_api_key" />
+            android:value="@string/google_direction_api_key" />
 
         <service
             android:name=".feature.tracking.RouteTrackingService"

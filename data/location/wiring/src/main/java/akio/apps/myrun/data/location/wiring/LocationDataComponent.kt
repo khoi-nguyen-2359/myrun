@@ -11,7 +11,7 @@ import akio.apps.myrun.data.location.impl.GooglePlaceDataSource
 import akio.apps.myrun.data.location.impl.LocationDataSourceImpl
 import akio.apps.myrun.data.location.impl.PolyUtilImpl
 import akio.apps.myrun.data.location.impl.SphericalUtilImpl
-import akio.apps.myrun.data.location.impl.model.GoogleMapApiKey
+import akio.apps.myrun.data.location.impl.model.GoogleMapDirectionApiKey
 import akio.apps.myrun.data.wiring.ApplicationModule
 import akio.apps.myrun.data.wiring.DispatchersModule
 import akio.apps.myrun.data.wiring.NetworkModule
@@ -86,7 +86,9 @@ internal interface LocationDataModule {
         }
 
         @Provides
-        fun googleMapApiKey(application: Application): GoogleMapApiKey =
-            GoogleMapApiKey(value = application.getString(R.string.google_api_key))
+        fun googleDirectionApiKey(application: Application): GoogleMapDirectionApiKey =
+            GoogleMapDirectionApiKey(
+                value = application.getString(R.string.google_direction_api_key)
+            )
     }
 }

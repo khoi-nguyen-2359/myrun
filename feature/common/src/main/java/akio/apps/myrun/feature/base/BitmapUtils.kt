@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.base
 
-import akio.apps.common.feature.ui.getDrawableCompat
+import akio.apps.myrun.feature.base.ext.getDrawableCompat
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas

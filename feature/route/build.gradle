@@ -38,9 +38,9 @@ dependencies {
     implementation(project(':feature:common'))
 
     implementation(project(':domain:route'))
-    implementation(project(':data:location:wiring'))
 
     implementation(libs.androidXAppCompat)
+    implementation(libs.activity)
     implementation(libs.constraintLayout)
     implementation(libs.androidMaterial)
 
@@ -51,4 +51,6 @@ dependencies {
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
+
+    testImplementation(libs.kotlinTest)
 }

@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.route.ui
 
-import akio.apps.myrun.feature.base.ui.dp2px
-import akio.apps.myrun.feature.base.ui.toRect
+import akio.apps.myrun.feature.base.ext.dp2px
+import akio.apps.myrun.feature.base.ext.toRect
 import akio.apps.myrun.feature.route.R
 import android.content.Context
 import android.graphics.Canvas
