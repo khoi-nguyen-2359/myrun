@@ -11,7 +11,7 @@ interface RouteTrackingState {
     suspend fun setRouteDistance(distance: Double)
     suspend fun getRouteDistance(): Double
     suspend fun setTrackingStartTime(startTime: Long)
-    suspend fun getTrackingStartTime(): Long
+    suspend fun getTrackingStartTime(): Long?
     suspend fun setInstantSpeed(currentSpeed: Double)
     suspend fun getInstantSpeed(): Double
 

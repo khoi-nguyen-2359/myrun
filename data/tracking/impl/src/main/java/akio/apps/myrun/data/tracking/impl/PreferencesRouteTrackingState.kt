@@ -45,13 +45,11 @@ class PreferencesRouteTrackingState @Inject constructor(
     }
 
     override suspend fun setTrackingStartTime(startTime: Long) {
-        prefDataStore.edit { state ->
-            state[KEY_TRACKING_START_TIME] = startTime
-        }
+        prefDataStore.edit { state -> state[KEY_TRACKING_START_TIME] = startTime }
     }
 
-    override suspend fun getTrackingStartTime(): Long = prefDataStore.data
-        .map { data -> data[KEY_TRACKING_START_TIME] ?: 0L }
+    override suspend fun getTrackingStartTime(): Long? = prefDataStore.data
+        .map { data -> data[KEY_TRACKING_START_TIME] }
         .first()
 
     override suspend fun getRouteDistance(): Double = prefDataStore.data
