@@ -81,7 +81,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
             activityName,
             routeImage = "", // local storage does not include
             placeIdentifier,
-            startTime,
+            startTime ?: endTime - duration,
             endTime,
             duration,
             distance,
