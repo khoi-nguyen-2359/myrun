@@ -84,6 +84,11 @@ class RouteTrackingService : Service() {
     // Cached values to avoid getting from storage in event listeners
     private var cachedStartLocation: Location? = null
 
+    /**
+     * Store a version of activity start time to avoid missing value in concurrent accesses.
+     */
+    private var cachedStartTime: Long = 0
+
     private val routeDistanceCalculator = RouteDistanceCalculator()
 
     private var wakeLock: PowerManager.WakeLock? = null
@@ -184,12 +189,17 @@ class RouteTrackingService : Service() {
 
     private suspend fun getActivityElapsedTime(): Long {
         val activityElapsedTime = Now.currentTimeMillis() -
-            routeTrackingState.getTrackingStartTime() -
+            getTrackingStartTime() -
             routeTrackingState.getPauseDuration()
 
         Timber.d("activityElapsedTime = $activityElapsedTime")
 
         return activityElapsedTime
+    }
+
+    private suspend fun getTrackingStartTime(): Long {
+        cachedStartTime = routeTrackingState.getTrackingStartTime() ?: cachedStartTime
+        return cachedStartTime
     }
 
     private suspend fun cacheStartLocation(firstOfBatch: Location) {
@@ -299,7 +309,7 @@ class RouteTrackingService : Service() {
     private fun onActionStart() {
         Timber.d("onActionStart")
         UpdateUserRecentPlaceWorker.enqueueImmediately(this)
-        setRouteTrackingStartState()
+        setRouteTrackingStartState(Now.currentTimeMillis())
         startTrackingTimer()
         notifyTrackingNotification()
         requestLocationUpdates()
@@ -307,10 +317,18 @@ class RouteTrackingService : Service() {
         acquireWakeLock()
     }
 
-    private fun setRouteTrackingStartState() = mainScope.launch {
-        val startTime = Now.currentTimeMillis()
-        routeTrackingState.setTrackingStatus(RouteTrackingStatus.RESUMED)
-        routeTrackingState.setTrackingStartTime(startTime)
+    private fun setRouteTrackingStartState(startTime: Long) {
+        setTrackingStartTime(startTime)
+        mainScope.launch {
+            routeTrackingState.setTrackingStatus(RouteTrackingStatus.RESUMED)
+        }
+    }
+
+    private fun setTrackingStartTime(startTime: Long) {
+        cachedStartTime = startTime
+        mainScope.launch {
+            routeTrackingState.setTrackingStartTime(startTime)
+        }
     }
 
     private fun startTrackingTimer() {
