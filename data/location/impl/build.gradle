@@ -40,6 +40,8 @@ dependencies {
     implementation(libs.androidGoogleMap)
     implementation(libs.androidMapUtils)
 
+    implementation(libs.mapbox.java.services)
+
     implementation(libs.timber)
     implementation(libs.dagger)
 
@@ -53,5 +55,5 @@ dependencies {
     implementation(libs.okHttp)
     implementation(libs.retrofit)
 
-
+    testImplementation(libs.kotlinTest)
 }

@@ -35,6 +35,8 @@ dependencies {
     api(project(":data:location:api"))
     implementation(project(":data:location:impl"))
 
+    implementation(libs.mapbox.java.services)
+
     implementation(libs.googlePlaces)
     implementation(libs.playServicesLocation)
 

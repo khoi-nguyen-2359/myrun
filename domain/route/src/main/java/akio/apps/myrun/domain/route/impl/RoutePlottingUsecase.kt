@@ -14,8 +14,9 @@ class RoutePlottingUsecase @Inject constructor(
         addingWaypoints: List<LatLng>,
         currentRoute: List<LatLng>,
     ): List<LatLng> {
-        if (addingWaypoints.size < 2)
+        if (addingWaypoints.size < 2) {
             return currentRoute
+        }
 
         val linkMode = detectLinkMode(addingWaypoints, currentRoute)
         val directionWaypoints = makeDirectionWaypoints(addingWaypoints, currentRoute, linkMode)
@@ -44,7 +45,7 @@ class RoutePlottingUsecase @Inject constructor(
             addAll(0, currentRoute)
         }
 
-        else -> currentRoute
+        else -> directionResult
     }
 
     private fun makeDirectionWaypoints(
@@ -81,8 +82,8 @@ class RoutePlottingUsecase @Inject constructor(
         drawnWaypoints: List<LatLng>,
         currentWaypoints: List<LatLng>,
     ): DirectionLinkMode {
-        if (currentWaypoints.isEmpty() || drawnWaypoints.isEmpty()) {
-            return DirectionLinkMode.None
+        if (currentWaypoints.isEmpty()) {
+            return DirectionLinkMode.Replace
         }
 
         val currentHead = currentWaypoints.first()
@@ -103,7 +104,7 @@ class RoutePlottingUsecase @Inject constructor(
             head2tailDistance -> DirectionLinkMode.Prepend
             tail2headDistance -> DirectionLinkMode.Append
             tail2tailDistance -> DirectionLinkMode.ReversedAppend
-            else -> DirectionLinkMode.None
+            else -> DirectionLinkMode.Replace
         }
     }
 
@@ -112,6 +113,6 @@ class RoutePlottingUsecase @Inject constructor(
         Append, // adding new waypoints at the end of current route
         ReversedPrepend, // reverse new waypoints against the plotting direction, then prepend
         ReversedAppend, // reverse new waypoints against the plotting direction, then append
-        None // can't link
+        Replace // use the adding waypoints entirely over the current route, for the first plotting
     }
 }
