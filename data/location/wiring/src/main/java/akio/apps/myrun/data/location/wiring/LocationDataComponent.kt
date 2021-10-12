@@ -5,13 +5,14 @@ import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.PlaceDataSource
 import akio.apps.myrun.data.location.api.PolyUtil
 import akio.apps.myrun.data.location.api.SphericalUtil
-import akio.apps.myrun.data.location.impl.GoogleDirectionDataSource
 import akio.apps.myrun.data.location.impl.GoogleMapDirectionApi
 import akio.apps.myrun.data.location.impl.GooglePlaceDataSource
 import akio.apps.myrun.data.location.impl.LocationDataSourceImpl
+import akio.apps.myrun.data.location.impl.MapBoxDirectionDataSource
 import akio.apps.myrun.data.location.impl.PolyUtilImpl
 import akio.apps.myrun.data.location.impl.SphericalUtilImpl
 import akio.apps.myrun.data.location.impl.model.GoogleMapDirectionApiKey
+import akio.apps.myrun.data.location.impl.model.MapBoxAccessToken
 import akio.apps.myrun.data.wiring.ApplicationModule
 import akio.apps.myrun.data.wiring.DispatchersModule
 import akio.apps.myrun.data.wiring.NetworkModule
@@ -54,7 +55,7 @@ internal interface LocationDataModule {
 
     @Binds
     fun directionDataSource(
-        googleDirectionDataSource: GoogleDirectionDataSource,
+        mapBoxDirectionDataSource: MapBoxDirectionDataSource,
     ): DirectionDataSource
 
     @Binds
@@ -87,8 +88,10 @@ internal interface LocationDataModule {
 
         @Provides
         fun googleDirectionApiKey(application: Application): GoogleMapDirectionApiKey =
-            GoogleMapDirectionApiKey(
-                value = application.getString(R.string.google_direction_api_key)
-            )
+            GoogleMapDirectionApiKey(application.getString(R.string.google_direction_api_key))
+
+        @Provides
+        fun mapBoxAccessToken(application: Application): MapBoxAccessToken =
+            MapBoxAccessToken(application.getString(R.string.mapbox_access_token))
     }
 }

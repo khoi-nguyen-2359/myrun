@@ -1,5 +1,5 @@
 [versions]
-agp = "7.0.2"
+agp = "7.0.3"
 ksp = "1.5.30-1.0.0"
 build-time-tracker = "0.11.1"
 
@@ -75,6 +75,9 @@ uiAutomator = "2.2.0"
 espresso = "3.4.0"
 turbine = "0.6.0"
 
+# mapbox
+mapbox-java = "5.8.0"
+
 [libraries]
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 ksp = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp"}
@@ -149,6 +152,9 @@ playServicesGcm = { module = "com.google.android.gms:play-services-gcm", version
 androidMapUtils = { module = "com.google.maps.android:android-maps-utils", version.ref = "androidMapUtils" }
 androidGoogleMap = { module = "com.google.android.gms:play-services-maps", version.ref = "androidGoogleMap" }
 googlePlaces = { module = "com.google.android.libraries.places:places", version.ref = "googlePlaces" }
+
+# mapbox
+mapbox-java-services = { module = "com.mapbox.mapboxsdk:mapbox-sdk-services", version.ref = "mapbox-java" }
 
 # room
 roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
