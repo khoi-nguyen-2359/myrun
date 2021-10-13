@@ -31,9 +31,6 @@ class RoutePlanningViewModel @Inject constructor(
     private val routeRepository: RouteRepository,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
-//    private val _routePlaceDetails = MutableLiveData<PlaceDetails>()
-//    val routePlaceDetails: LiveData<PlaceDetails> = _routePlaceDetails
-
     private val _routeDrawingMode: MutableStateFlow<RouteDrawingMode> =
         MutableStateFlow(RouteDrawingMode.Review)
     val routeDrawingMode: Flow<RouteDrawingMode> = _routeDrawingMode
