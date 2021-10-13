@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.route.ui
 
 import akio.apps.myrun.data.location.api.model.LatLng
+import akio.apps.myrun.feature.base.BitmapUtils
 import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.base.ext.dp2px
 import akio.apps.myrun.feature.base.ext.extra
@@ -17,6 +18,7 @@ import akio.apps.myrun.feature.route.wiring.DaggerRoutePlanningFeatureComponent
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.Region
@@ -77,6 +79,10 @@ class RoutePlanningActivity :
     }
 
     private val dialogDelegate: DialogDelegate = DialogDelegate(this)
+
+    private val waypointMarkerIconBitmap: Bitmap? by lazy {
+        BitmapUtils.createDrawableBitmap(this, R.drawable.ic_route_plotting_coordinate_dot)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -267,8 +273,13 @@ class RoutePlanningActivity :
     private fun createWaypointMarker(position: GmsLatLng): MarkerOptions {
         return MarkerOptions()
             .position(position)
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.waypoint_pin))
+            .apply {
+                waypointMarkerIconBitmap?.let {
+                    icon(BitmapDescriptorFactory.fromBitmap(it))
+                }
+            }
             .draggable(true)
+            .anchor(0.5f, 0.5f)
             .visible(map.cameraPosition.zoom >= MAP_DEFAULT_ZOOM_LEVEL)
     }
 
@@ -410,7 +421,7 @@ class RoutePlanningActivity :
             .startCap(RoundCap())
             .endCap(RoundCap())
             .color(ContextCompat.getColor(context, R.color.route_painting))
-            .width(5.dp2px)
+            .width(4.dp2px)
     }
 
     fun getBoundaryWaypoint(endPoint: GmsLatLng, secondPoint: GmsLatLng): GmsLatLng {

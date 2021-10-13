@@ -27,6 +27,8 @@ class MapBoxDirectionDataSource @Inject constructor(
             .accessToken(mapBoxAccessToken.value)
             .profile(DirectionsCriteria.PROFILE_WALKING)
             .steps(false)
+            .tidy(true)
+            .overview(DirectionsCriteria.OVERVIEW_SIMPLIFIED)
             .geometries(DirectionsCriteria.GEOMETRY_POLYLINE)
             .coordinates(
                 waypointQuantityReducer.reduce(waypoints, MAX_MAP_MATCHING_API_WAYPOINT)
@@ -42,6 +44,6 @@ class MapBoxDirectionDataSource @Inject constructor(
 
     companion object {
         // limit of mapbox map matching API
-        private const val MAX_MAP_MATCHING_API_WAYPOINT = 10
+        private const val MAX_MAP_MATCHING_API_WAYPOINT = 100
     }
 }
