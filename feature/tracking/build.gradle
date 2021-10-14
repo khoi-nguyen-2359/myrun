@@ -15,7 +15,9 @@ android {
     }
 
     buildTypes {
-        rc { }
+        rc {
+            debuggable true
+        }
     }
 
     buildFeatures {

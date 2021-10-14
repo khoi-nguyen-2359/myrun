@@ -12,7 +12,9 @@ android {
     }
 
     buildTypes {
-        rc { }
+        rc {
+            debuggable true
+        }
     }
 
     compileOptions {
