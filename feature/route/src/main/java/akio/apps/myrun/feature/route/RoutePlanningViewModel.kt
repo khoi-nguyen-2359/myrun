@@ -6,14 +6,12 @@ import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.route.api.RouteRepository
 import akio.apps.myrun.data.route.api.model.RouteModel
 import akio.apps.myrun.domain.route.impl.RoutePlottingUsecase
-import akio.apps.myrun.feature.base.map.LatLngBoundsBuilder
-import akio.apps.myrun.feature.base.map.toGmsLatLng
+import akio.apps.myrun.feature.base.map.toLatLng
 import akio.apps.myrun.feature.route.model.RoutePlottingState
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.model.LatLngBounds
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,15 +64,18 @@ class RoutePlanningViewModel @Inject constructor(
      * Flow that emits the first screen state which contains route waypoints data that can be built
      * a boundary.
      */
-    suspend fun getInitialMapViewBounds(): LatLngBounds? =
+    suspend fun getInitialMapViewBoundCoordinates(): List<LatLng> =
         _screenState.filterIsInstance<ScreenState.RoutePlotting>()
             .map {
                 val waypoints = it.plottingState.getCurrentState()
-                val builder = LatLngBoundsBuilder().include(waypoints)
                 if (waypoints.isEmpty()) {
-                    locationDataSource.getLastLocation()?.toGmsLatLng()?.let(builder::include)
+                    locationDataSource.getLastLocation()
+                        ?.toLatLng()
+                        ?.let(::listOf)
+                        ?: emptyList()
+                } else {
+                    waypoints
                 }
-                builder.build()
             }
             .first()
 
