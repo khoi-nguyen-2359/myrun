@@ -10,7 +10,6 @@ import akio.apps.myrun.feature.base.lifecycle.collectRepeatOnStarted
 import akio.apps.myrun.feature.base.map.GmsLatLng
 import akio.apps.myrun.feature.base.map.toGmsLatLng
 import akio.apps.myrun.feature.base.map.toLatLng
-import akio.apps.myrun.feature.base.map.toPoint
 import akio.apps.myrun.feature.base.viewmodel.lazySavedStateViewModelProvider
 import akio.apps.myrun.feature.route.R
 import akio.apps.myrun.feature.route.RoutePlanningViewModel
@@ -29,9 +28,12 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.JointType
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
@@ -39,14 +41,12 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.RoundCap
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.maps.android.PolyUtil
-import com.mapbox.maps.EdgeInsets
-import com.mapbox.maps.MapView
-import com.mapbox.maps.Style
-import com.mapbox.maps.plugin.locationcomponent.location
+import kotlin.coroutines.resume
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 
-class RoutePlanningActivity :
-    AppCompatActivity(R.layout.activity_draw_route),
+class RoutePlanningActivityObsolete :
+    AppCompatActivity(R.layout.activity_draw_route_obsolete),
     GoogleMap.OnMarkerDragListener,
     GoogleMap.OnMapClickListener,
     RoutePaintingView.EventListener,
@@ -61,8 +61,6 @@ class RoutePlanningActivity :
     private val undoButton: View by lazy { findViewById(R.id.undo_button) }
     private val redoButton: View by lazy { findViewById(R.id.redo_button) }
     private val eraseButton: View by lazy { findViewById(R.id.erase_button) }
-    private val mapView: MapView by lazy { findViewById(R.id.map_view) }
-
     private val routePaintingView: RoutePaintingView by lazy {
         findViewById(R.id.route_painting_view)
     }
@@ -70,6 +68,7 @@ class RoutePlanningActivity :
 
     private var directionPolyline: Polyline? = null
     private val directionMarkers = mutableListOf<Marker>()
+    private lateinit var map: GoogleMap
 
     private val viewModel: RoutePlanningViewModel by lazySavedStateViewModelProvider(
         savedStateOwner = this
@@ -92,21 +91,26 @@ class RoutePlanningActivity :
         initMap()
     }
 
-    private fun initMap() = mapView.getMapboxMap().loadStyleUri(Style.MAPBOX_STREETS) {
-        mapView.location.updateSettings {
-            enabled = false
+    @SuppressLint("PotentialBehaviorOverride")
+    private fun initMap() = lifecycleScope.launch {
+        map = suspendCancellableCoroutine { continuation ->
+            (supportFragmentManager.findFragmentById(R.id.draw_route_map) as? SupportMapFragment)
+                ?.getMapAsync { googleMap ->
+                    runOnUiThread {
+                        continuation.resume(googleMap)
+                    }
+                }
         }
 
-        initMapCamera()
-        initObservers()
+        map.setOnMarkerDragListener(this@RoutePlanningActivityObsolete)
+        map.setOnMapClickListener(this@RoutePlanningActivityObsolete)
+        map.setOnMarkerClickListener(this@RoutePlanningActivityObsolete)
+        map.setOnPolylineClickListener(this@RoutePlanningActivityObsolete)
+        map.setOnMapLongClickListener(this@RoutePlanningActivityObsolete)
+        map.setOnInfoWindowClickListener(this@RoutePlanningActivityObsolete)
+        map.setOnCameraIdleListener(this@RoutePlanningActivityObsolete)
 
-        map.setOnMarkerDragListener(this@RoutePlanningActivity)
-        map.setOnMapClickListener(this@RoutePlanningActivity)
-        map.setOnMarkerClickListener(this@RoutePlanningActivity)
-        map.setOnPolylineClickListener(this@RoutePlanningActivity)
-        map.setOnMapLongClickListener(this@RoutePlanningActivity)
-        map.setOnInfoWindowClickListener(this@RoutePlanningActivity)
-        map.setOnCameraIdleListener(this@RoutePlanningActivity)
+        map.uiSettings.isMyLocationButtonEnabled = false
 
         map.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
             override fun getInfoContents(p0: Marker): View? {
@@ -114,10 +118,20 @@ class RoutePlanningActivity :
             }
 
             override fun getInfoWindow(p0: Marker): View {
-                return LayoutInflater.from(this@RoutePlanningActivity)
+                return LayoutInflater.from(this@RoutePlanningActivityObsolete)
                     .inflate(R.layout.create_route_delete_waypoint_info_window, null)
             }
         })
+
+        map.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(
+                this@RoutePlanningActivityObsolete,
+                R.raw.google_map_styles
+            )
+        )
+
+        initMapCamera(map)
+        initObservers()
     }
 
     private fun initObservers() {
@@ -153,7 +167,7 @@ class RoutePlanningActivity :
     }
 
     private fun initViews() {
-        routePaintingView.eventListener = this@RoutePlanningActivity
+        routePaintingView.eventListener = this@RoutePlanningActivityObsolete
         topBar.setNavigationOnClickListener { finish() }
 
         saveButton.setOnClickListener { openSelectCheckpoint() }
@@ -208,15 +222,19 @@ class RoutePlanningActivity :
         eraseButton.isSelected = false
     }
 
-    private fun initMapCamera() = lifecycleScope.launch {
-        val map = mapView.getMapboxMap()
-        val boundCoordinates = viewModel.getInitialMapViewBoundCoordinates()
-        val boundPadding = 50.dp2px.toDouble()
-        val cameraOptions = map.cameraForCoordinates(
-            boundCoordinates.map { it.toPoint() },
-            padding = EdgeInsets(boundPadding, boundPadding, boundPadding, boundPadding)
-        )
-        map.setCamera(cameraOptions)
+    private fun initMapCamera(map: GoogleMap) {
+        lifecycleScope.launch {
+            val initMapViewBounds = viewModel.getInitialMapViewBoundCoordinates() ?: return@launch
+            val displayMetrics = application.resources.displayMetrics
+            map.moveCamera(
+                CameraUpdateFactory.newLatLngBounds(
+                    initMapViewBounds,
+                    displayMetrics.widthPixels,
+                    displayMetrics.heightPixels,
+                    50.dp2px.toInt()
+                )
+            )
+        }
     }
 
     override fun onFinishRouteDrawing(routePoints: List<PointF>) {
@@ -408,7 +426,7 @@ class RoutePlanningActivity :
 
     fun getBoundaryWaypoint(endPoint: GmsLatLng, secondPoint: GmsLatLng): GmsLatLng {
         val a = (endPoint.latitude - secondPoint.latitude) /
-                (endPoint.longitude - secondPoint.longitude)
+            (endPoint.longitude - secondPoint.longitude)
         val b = endPoint.latitude - a * endPoint.longitude
         return if (endPoint.longitude <= secondPoint.longitude &&
             endPoint.latitude >= secondPoint.latitude
@@ -472,10 +490,10 @@ class RoutePlanningActivity :
         private const val MAP_DEFAULT_ZOOM_LEVEL = 18f
 
         fun addNewRouteIntent(context: Context): Intent =
-            Intent(context, RoutePlanningActivity::class.java)
+            Intent(context, RoutePlanningActivityObsolete::class.java)
 
         fun editRouteIntent(context: Context, routeId: String): Intent {
-            val intent = Intent(context, RoutePlanningActivity::class.java)
+            val intent = Intent(context, RoutePlanningActivityObsolete::class.java)
             intent.putExtra(EXT_ROUTE_ID, routeId)
             return intent
         }
