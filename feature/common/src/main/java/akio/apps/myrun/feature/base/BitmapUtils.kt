@@ -1,17 +1,17 @@
 package akio.apps.myrun.feature.base
 
-import akio.apps.myrun.feature.base.ext.getDrawableCompat
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import androidx.annotation.DrawableRes
+import androidx.appcompat.content.res.AppCompatResources
 
 object BitmapUtils {
     fun createDrawableBitmap(
         context: Context,
         @DrawableRes drawableResId: Int,
     ): Bitmap? {
-        val drawable = context.getDrawableCompat(drawableResId) ?: return null
+        val drawable = AppCompatResources.getDrawable(context, drawableResId) ?: return null
         drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
         val bitmap = Bitmap.createBitmap(
             drawable.intrinsicWidth,

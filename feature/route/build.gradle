@@ -46,8 +46,8 @@ dependencies {
     implementation(libs.constraintLayout)
     implementation(libs.androidMaterial)
 
-//    implementation(libs.androidMapUtils)
-//    implementation(libs.androidGoogleMap)
+    implementation(libs.androidMapUtils)
+    implementation(libs.androidGoogleMap)
 
     implementation(libs.mapbox.maps)
 
