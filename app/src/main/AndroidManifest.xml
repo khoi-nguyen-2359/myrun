@@ -48,7 +48,7 @@
             android:exported="false" />
 
         <activity
-            android:name=".feature.route.ui.RoutePlanningActivityObsolete"
+            android:name=".feature.route.ui.RoutePlanningActivity"
             android:theme="@style/AppTheme.SemiTransparentSystemBars"
             android:screenOrientation="portrait"
             android:exported="false" />
