@@ -133,6 +133,21 @@ class RoutePlanningViewModel @Inject constructor(
         }
     }
 
+    fun eraseCoordinates(erasingCoordinates: List<LatLng>) {
+        val routePlottingScreenState =
+            (_screenState.value as? ScreenState.RoutePlotting)
+                ?: return
+        val remainCoordinates = routePlottingScreenState.plottingState.getCurrentState()
+            .toMutableList()
+            .apply {
+                removeAll(erasingCoordinates)
+            }
+        val screenState = routePlottingScreenState.copy(
+            plottingState = routePlottingScreenState.plottingState.record(remainCoordinates)
+        )
+        _screenState.value = screenState
+    }
+
     fun recordDirectionState(waypoints: List<LatLng>) {
         val routePlottingScreenState =
             (_screenState.value as? ScreenState.RoutePlotting)

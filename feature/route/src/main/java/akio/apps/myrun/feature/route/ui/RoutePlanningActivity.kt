@@ -5,6 +5,7 @@ import akio.apps.myrun.feature.base.BitmapUtils
 import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.base.ext.dp2px
 import akio.apps.myrun.feature.base.ext.extra
+import akio.apps.myrun.feature.base.ext.getColorCompat
 import akio.apps.myrun.feature.base.lifecycle.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.base.lifecycle.collectRepeatOnStarted
 import akio.apps.myrun.feature.base.map.toLatLng
@@ -22,23 +23,23 @@ import android.graphics.Region
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.MaterialToolbar
+import com.mapbox.geojson.Feature
+import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.MapView
 import com.mapbox.maps.ScreenCoordinate
 import com.mapbox.maps.Style
+import com.mapbox.maps.extension.style.layers.addLayer
+import com.mapbox.maps.extension.style.layers.generated.lineLayer
 import com.mapbox.maps.extension.style.layers.properties.generated.IconAnchor
+import com.mapbox.maps.extension.style.layers.properties.generated.LineCap
 import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin
-import com.mapbox.maps.plugin.annotation.annotations
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotationManager
+import com.mapbox.maps.extension.style.sources.addSource
+import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
-import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationManager
-import com.mapbox.maps.plugin.annotation.generated.PolylineAnnotationOptions
-import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
-import com.mapbox.maps.plugin.annotation.generated.createPolylineAnnotationManager
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.scalebar.scalebar
 import kotlinx.coroutines.launch
@@ -54,8 +55,7 @@ class RoutePlanningActivity :
     private val eraseButton: View by lazy { findViewById(R.id.erase_button) }
     private val mapView: MapView by lazy { findViewById(R.id.map_view) }
 
-    private lateinit var mapLineManager: PolylineAnnotationManager
-    private lateinit var mapPointManager: PointAnnotationManager
+    private var routeLineSourceData: LineString = LineString.fromLngLats(emptyList())
 
     private val routePaintingView: RoutePaintingView by lazy {
         findViewById(R.id.route_painting_view)
@@ -81,6 +81,15 @@ class RoutePlanningActivity :
             )
     }
 
+    private fun createRouteCoordinateMarkerBitmap(): Bitmap {
+        return BitmapUtils.createDrawableBitmap(this, R.drawable.ic_route_plotting_coordinate_dot)
+            ?: Bitmap.createBitmap(
+                1 /* width*/,
+                1 /* height */,
+                Bitmap.Config.ARGB_8888
+            )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -93,9 +102,6 @@ class RoutePlanningActivity :
             enabled = false
         }
         mapView.scalebar.enabled = false
-
-        mapLineManager = mapView.annotations.createPolylineAnnotationManager(mapView)
-        mapPointManager = mapView.annotations.createPointAnnotationManager(mapView)
 
         initMapCamera()
         initObservers()
@@ -235,25 +241,28 @@ class RoutePlanningActivity :
         redoButton.isEnabled = stateManagerInfo.currentIndex < stateManagerInfo.stateData.size - 1
     }
 
-    private fun drawDirectionResult(polylineLatLongs: List<LatLng>) {
-        val polylineMapboxPoints = polylineLatLongs.map { it.toPoint() }
+    private fun drawDirectionResult(polylineLatLngs: List<LatLng>) {
+        val polylinePoints = polylineLatLngs.map { it.toPoint() }
 
-        // reset polylines
-        mapLineManager.deleteAll()
-        val polylineOptions = PolylineAnnotationOptions()
-            .withPoints(polylineMapboxPoints)
-            .withLineJoin(LineJoin.ROUND)
-            .withLineColor(ContextCompat.getColor(this, R.color.route_painting))
-            .withLineWidth(4.dp2px.toDouble())
-        mapLineManager.create(polylineOptions)
-
-        // reset markers
-        mapPointManager.deleteAll()
-        polylineMapboxPoints.forEach { point ->
-            val pointMarker = createMarker(point)
-            mapPointManager.create(pointMarker)
-            // TODO: check visibility on zoom level
-        }
+        val mapStyle = mapView.getMapboxMap().getStyle()
+            ?: return
+        mapStyle.removeStyleLayer(MAP_ROUTE_LINE_LAYER_ID)
+        mapStyle.removeStyleSource(MAP_ROUTE_LINE_SOURCE_ID)
+        mapStyle.addSource(
+            geoJsonSource(MAP_ROUTE_LINE_SOURCE_ID) {
+                routeLineSourceData = LineString.fromLngLats(polylinePoints)
+                feature(Feature.fromGeometry(routeLineSourceData))
+            }
+        )
+        mapStyle.addLayer(
+            lineLayer(MAP_ROUTE_LINE_LAYER_ID, MAP_ROUTE_LINE_SOURCE_ID) {
+                lineDasharray(listOf(0.01, 1.5))
+                lineCap(LineCap.ROUND)
+                lineJoin(LineJoin.ROUND)
+                lineWidth(3.dp2px.toDouble())
+                lineColor(getColorCompat(R.color.route_painting))
+            }
+        )
     }
 
     private fun createMarker(mapBoxPoint: Point): PointAnnotationOptions = PointAnnotationOptions()
@@ -367,25 +376,14 @@ class RoutePlanningActivity :
     override fun onFinishRouteErasing(erasingRegion: Region) {
         startReviewing()
         val map = mapView.getMapboxMap()
-        val erasingPointAnnotations = mapPointManager.annotations
-            .filter { pointAnnotation ->
-                val screenCoordinate = map.pixelForCoordinate(pointAnnotation.point)
+        val erasingPoints = routeLineSourceData.coordinates()
+            .filter { point ->
+                val screenCoordinate = map.pixelForCoordinate(point)
                 erasingRegion.contains(screenCoordinate.x.toInt(), screenCoordinate.y.toInt())
             }
 
-        if (erasingPointAnnotations.isEmpty()) {
-            return
-        }
-
-        mapPointManager.delete(erasingPointAnnotations)
-        mapLineManager.annotations.forEach {
-            it.points = it.points.toMutableList().apply {
-                removeAll(erasingPointAnnotations.map { annotation -> annotation.point })
-            }
-        }
-
-        if (erasingPointAnnotations.isNotEmpty()) {
-            viewModel.recordDirectionState(erasingPointAnnotations.map { it.point.toLatLng() })
+        if (erasingPoints.isNotEmpty()) {
+            viewModel.eraseCoordinates(erasingPoints.map { it.toLatLng() })
         }
     }
 
@@ -453,6 +451,9 @@ class RoutePlanningActivity :
     companion object {
         private const val EXT_ROUTE_ID = "EXT_ROUTE_ID"
         private const val MAP_DEFAULT_ZOOM_LEVEL = 18f
+        private const val MAP_COORDINATE_SOURCE = "MAP_COORDINATE_SOURCE"
+        private const val MAP_ROUTE_LINE_SOURCE_ID = "MAP_ROUTE_POLYLINE_SOURCE_ID"
+        private const val MAP_ROUTE_LINE_LAYER_ID = "MAP_ROUTE_POLYLINE_LAYER_ID"
 
         fun addNewRouteIntent(context: Context): Intent =
             Intent(context, RoutePlanningActivity::class.java)
