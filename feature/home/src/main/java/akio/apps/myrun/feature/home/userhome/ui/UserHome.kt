@@ -416,13 +416,14 @@ private fun UserHomeOutlinedButton(
     }
 }
 
+@Suppress("UNUSED_PARAMETER")
 @Composable
 private fun UserHomeTopBar(openRoutePlanningAction: () -> Unit) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.user_home_title)) },
-        actions = {
-            AppBarIconButton(iconImageVector = Icons.Rounded.Add, onClick = openRoutePlanningAction)
-        }
+//        actions = {
+//            AppBarIconButton(iconImageVector = Icons.Rounded.Add, onClick = openRoutePlanningAction)
+//        }
     )
 }
 
