@@ -37,7 +37,6 @@ interface TrackingDataComponent {
 
 @Module(includes = [TrackingDataModule.Providers::class])
 internal interface TrackingDataModule {
-
     @Binds
     fun routeTrackingLocationRepo(repositoryImpl: RouteTrackingLocationRepositoryImpl):
         RouteTrackingLocationRepository

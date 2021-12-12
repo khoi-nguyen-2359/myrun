@@ -33,7 +33,7 @@ android {
 
 dependencies {
     implementation(project(":data:location:api"))
-    implementation(project(":data:activity:api"))
+    implementation(project(":domain:activity:api"))
 
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.androidXAppCompat)

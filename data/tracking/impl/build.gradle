@@ -44,7 +44,7 @@ dependencies {
     implementation(project(":data:wiring"))
     implementation(project(":data:tracking:api"))
     implementation(project(":data:location:api"))
-    implementation(project(":data:activity:api"))
+    implementation(project(":domain:activity:api"))
 
     implementation(libs.kotlinxCoroutinesPlayServices)
 
@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.playServicesFitness)
 
     implementation(libs.roomKtx)
+    implementation(libs.roomRuntime)
     kapt(libs.roomCompiler)
 
     implementation(libs.timber)

@@ -33,7 +33,7 @@ android {
 
 dependencies {
     implementation(project(":data:wiring"))
-    implementation(project(":data:activity:wiring"))
+    implementation(project(":domain:activity:wiring"))
     implementation(project(":data:location:wiring"))
     implementation(project(":data:tracking:wiring"))
     implementation(project(":data:user:wiring"))

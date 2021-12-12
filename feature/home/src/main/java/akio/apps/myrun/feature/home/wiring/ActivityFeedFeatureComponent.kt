@@ -1,7 +1,5 @@
 package akio.apps.myrun.feature.home.wiring
 
-import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
-import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
@@ -18,7 +16,6 @@ import dagger.Component
 @FeatureScope
 @Component(
     dependencies = [
-        ActivityDataComponent::class,
         ActivityDomainComponent::class,
         AuthenticationDataComponent::class,
         UserDomainComponent::class,
@@ -34,7 +31,6 @@ internal interface ActivityFeedFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create(),
             activityDomainComponent: ActivityDomainComponent =
                 DaggerActivityDomainComponent.factory().create(),
             authenticationDataComponent: AuthenticationDataComponent =

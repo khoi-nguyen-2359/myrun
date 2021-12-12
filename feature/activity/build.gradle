@@ -45,13 +45,13 @@ android {
 dependencies {
     implementation(project(':data:common'))
     implementation(project(':data:location:wiring'))
-    implementation(project(':data:activity:wiring'))
+    implementation(project(':domain:activity:wiring'))
     implementation(project(':data:authentication:wiring'))
     implementation(project(':data:user:wiring'))
     implementation(project(':data:tracking:wiring'))
     implementation(project(':data:eapps:wiring'))
 
-    implementation(project(':domain:activity'))
+    implementation(project(':domain:activity:wiring'))
     implementation(project(':domain:user'))
 
     implementation(project(':feature:common'))

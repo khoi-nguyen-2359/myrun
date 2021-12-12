@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.tracking.api
 
-import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.location.api.model.Location
+import akio.apps.myrun.domain.activity.api.model.ActivityType
 import kotlinx.coroutines.flow.Flow
 
 interface RouteTrackingState {

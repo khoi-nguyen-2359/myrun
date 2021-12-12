@@ -1,12 +1,12 @@
 package akio.apps.myrun.domain.user
 
-import akio.apps.myrun.data.activity.api.ActivityRepository
-import akio.apps.myrun.data.activity.api.model.ActivityDataModel
-import akio.apps.myrun.data.activity.api.model.ActivityModel
-import akio.apps.myrun.data.activity.api.model.ActivityType
-import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
-import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.domain.activity.api.ActivityRepository
+import akio.apps.myrun.domain.activity.api.model.ActivityDataModel
+import akio.apps.myrun.domain.activity.api.model.ActivityModel
+import akio.apps.myrun.domain.activity.api.model.ActivityType
+import akio.apps.myrun.domain.activity.api.model.CyclingActivityModel
+import akio.apps.myrun.domain.activity.api.model.RunningActivityModel
 import akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -22,7 +22,7 @@ import org.mockito.kotlin.whenever
 @OptIn(ExperimentalCoroutinesApi::class)
 class GetTrainingSummaryDataUsecaseTest {
 
-    private lateinit var usecase: akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase
+    private lateinit var usecase: GetTrainingSummaryDataUsecase
     private lateinit var mockedActivityRepository: ActivityRepository
     private lateinit var mockedUserAuthenticationState: UserAuthenticationState
     private val testCoroutineDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
@@ -33,7 +33,7 @@ class GetTrainingSummaryDataUsecaseTest {
     fun setup() {
         mockedActivityRepository = mock()
         mockedUserAuthenticationState = mock()
-        usecase = akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase(
+        usecase = GetTrainingSummaryDataUsecase(
             mockedActivityRepository,
             mockedUserAuthenticationState,
             testCoroutineDispatcher
@@ -175,7 +175,7 @@ class GetTrainingSummaryDataUsecaseTest {
         assertNotNull(runSummary)
         assertNotNull(rideSummary)
         assertEquals(
-            akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase.TrainingSummaryData(
+            GetTrainingSummaryDataUsecase.TrainingSummaryData(
                 distance = 14.0,
                 time = 12,
                 activityCount = 2
@@ -183,7 +183,7 @@ class GetTrainingSummaryDataUsecaseTest {
             runSummary.thisWeekSummary
         )
         assertEquals(
-            akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase.TrainingSummaryData(
+            GetTrainingSummaryDataUsecase.TrainingSummaryData(
                 distance = 6.0,
                 time = 4,
                 activityCount = 2
@@ -191,7 +191,7 @@ class GetTrainingSummaryDataUsecaseTest {
             runSummary.lastWeekSummary
         )
         assertEquals(
-            akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase.TrainingSummaryData(
+            GetTrainingSummaryDataUsecase.TrainingSummaryData(
                 distance = 50.0,
                 time = 44,
                 activityCount = 6
@@ -199,7 +199,7 @@ class GetTrainingSummaryDataUsecaseTest {
             runSummary.thisMonthSummary
         )
         assertEquals(
-            akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase.TrainingSummaryData(
+            GetTrainingSummaryDataUsecase.TrainingSummaryData(
                 distance = 22.0,
                 time = 20,
                 activityCount = 2
@@ -207,7 +207,7 @@ class GetTrainingSummaryDataUsecaseTest {
             runSummary.lastMonthSummary
         )
         assertEquals(
-            akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase.TrainingSummaryData(
+            GetTrainingSummaryDataUsecase.TrainingSummaryData(
                 distance = 46.0,
                 time = 44,
                 activityCount = 2
@@ -215,7 +215,7 @@ class GetTrainingSummaryDataUsecaseTest {
             rideSummary.thisWeekSummary
         )
         assertEquals(
-            akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase.TrainingSummaryData(
+            GetTrainingSummaryDataUsecase.TrainingSummaryData(
                 distance = 38.0,
                 time = 36,
                 activityCount = 2
@@ -223,7 +223,7 @@ class GetTrainingSummaryDataUsecaseTest {
             rideSummary.lastWeekSummary
         )
         assertEquals(
-            akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase.TrainingSummaryData(
+            GetTrainingSummaryDataUsecase.TrainingSummaryData(
                 distance = 146.0,
                 time = 140,
                 activityCount = 6
@@ -231,7 +231,7 @@ class GetTrainingSummaryDataUsecaseTest {
             rideSummary.thisMonthSummary
         )
         assertEquals(
-            akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase.TrainingSummaryData(
+            GetTrainingSummaryDataUsecase.TrainingSummaryData(
                 distance = 54.0,
                 time = 52,
                 activityCount = 2

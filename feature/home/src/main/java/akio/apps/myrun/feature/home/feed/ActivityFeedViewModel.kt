@@ -1,13 +1,14 @@
 package akio.apps.myrun.feature.home.feed
 
 import akio.apps.myrun.data.LaunchCatchingDelegate
-import akio.apps.myrun.data.activity.api.ActivityLocalStorage
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.time.Now
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.data.user.api.model.UserProfile
+import akio.apps.myrun.domain.activity.api.ActivityDateTimeFormatter
+import akio.apps.myrun.domain.activity.api.ActivityLocalStorage
+import akio.apps.myrun.domain.activity.api.model.ActivityModel
 import akio.apps.myrun.domain.user.impl.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.impl.PlaceNameSelector
 import androidx.lifecycle.ViewModel
@@ -36,6 +37,7 @@ class ActivityFeedViewModel @Inject constructor(
     private val activityLocalStorage: ActivityLocalStorage,
     private val launchCatchingViewModel: LaunchCatchingDelegate,
     private val getUserProfileUsecase: GetUserProfileUsecase,
+    val activityDateTimeFormatter: ActivityDateTimeFormatter
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingViewModel {
 
     private var activityPagingSource: ActivityPagingSource? = null

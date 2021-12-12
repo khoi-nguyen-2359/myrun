@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.home.ui
 
 import akio.apps.myrun.R
-import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.domain.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.base.ext.px2dp
 import akio.apps.myrun.feature.base.ui.AppDimensions.AppBarHeight
 import akio.apps.myrun.feature.base.ui.AppDimensions.FabSize

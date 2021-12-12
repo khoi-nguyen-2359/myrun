@@ -1,14 +1,14 @@
 package akio.apps.myrun.domain.tracking
 
-import akio.apps.myrun.data.activity.api.ActivityLocalStorage
-import akio.apps.myrun.data.activity.api.ActivityRepository
-import akio.apps.myrun.data.activity.api.model.ActivityDataModel
-import akio.apps.myrun.data.activity.api.model.ActivityModel
-import akio.apps.myrun.data.activity.api.model.ActivityStorageData
-import akio.apps.myrun.data.activity.api.model.ActivityType
-import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserProfileRepository
+import akio.apps.myrun.domain.activity.api.ActivityLocalStorage
+import akio.apps.myrun.domain.activity.api.ActivityRepository
+import akio.apps.myrun.domain.activity.api.model.ActivityDataModel
+import akio.apps.myrun.domain.activity.api.model.ActivityModel
+import akio.apps.myrun.domain.activity.api.model.ActivityStorageData
+import akio.apps.myrun.domain.activity.api.model.ActivityType
+import akio.apps.myrun.domain.activity.api.model.RunningActivityModel
 import akio.apps.myrun.domain.tracking.impl.UploadActivitiesUsecase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow

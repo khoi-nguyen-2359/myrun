@@ -6,7 +6,7 @@ build-time-tracker = "0.11.1"
 multidex = "1.0.3"
 
 kotlin = "1.5.31"
-coroutines = "1.5.1"
+coroutines = "1.5.2"
 kotlinSerialization = "1.2.1"
 
 # jetpack: https://developer.android.com/jetpack/androidx/versions/all-channel

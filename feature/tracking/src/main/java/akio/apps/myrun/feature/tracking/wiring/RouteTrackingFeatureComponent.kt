@@ -1,7 +1,5 @@
 package akio.apps.myrun.feature.tracking.wiring
 
-import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
-import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.eapps.wiring.DaggerExternalAppDataComponent
@@ -15,6 +13,8 @@ import akio.apps.myrun.data.user.wiring.UserDataComponent
 import akio.apps.myrun.data.wiring.ApplicationModule
 import akio.apps.myrun.data.wiring.FeatureScope
 import akio.apps.myrun.data.wiring.LaunchCatchingModule
+import akio.apps.myrun.domain.activity.wiring.ActivityDomainComponent
+import akio.apps.myrun.domain.activity.wiring.DaggerActivityDomainComponent
 import akio.apps.myrun.domain.tracking.wiring.DaggerTrackingDomainComponent
 import akio.apps.myrun.domain.tracking.wiring.TrackingDomainComponent
 import akio.apps.myrun.feature.tracking.RouteTrackingService
@@ -28,7 +28,7 @@ import dagger.Component
         LaunchCatchingModule::class
     ],
     dependencies = [
-        ActivityDataComponent::class,
+        ActivityDomainComponent::class,
         UserDataComponent::class,
         AuthenticationDataComponent::class,
         TrackingDataComponent::class,
@@ -45,7 +45,8 @@ interface RouteTrackingFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create(),
+            activityDomainComponent: ActivityDomainComponent =
+                DaggerActivityDomainComponent.factory().create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),

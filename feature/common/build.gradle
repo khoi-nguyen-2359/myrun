@@ -42,7 +42,7 @@ android {
 
 dependencies {
     implementation(project(":data:common"))
-    implementation(project(":data:activity:api"))
+    implementation(project(":domain:activity:api"))
     implementation(project(":data:location:api"))
     implementation(project(":data:route:api"))
     implementation(project(":domain:common"))

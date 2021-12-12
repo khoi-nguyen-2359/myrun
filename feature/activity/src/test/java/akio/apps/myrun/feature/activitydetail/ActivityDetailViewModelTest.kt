@@ -1,10 +1,10 @@
 package akio.apps.myrun.feature.activitydetail
 
-import akio.apps.myrun.data.activity.api.ActivityRepository
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
-import akio.apps.myrun.domain.activity.impl.RunSplitsCalculator
+import akio.apps.myrun.domain.activity.api.ActivityRepository
+import akio.apps.myrun.domain.activity.api.RunSplitsCalculator
+import akio.apps.myrun.domain.activity.api.model.ActivityModel
 import akio.apps.test.whenBlocking
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test

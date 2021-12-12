@@ -1,11 +1,9 @@
 package akio.apps.myrun.feature.home.feed.ui
 
-import akio.apps.myrun.data.activity.api.model.ActivityDataModel
-import akio.apps.myrun.data.activity.api.model.ActivityModel
-import akio.apps.myrun.data.activity.api.model.ActivityType
-import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.user.api.model.UserProfile
-import akio.apps.myrun.domain.activity.impl.ActivityDateTimeFormatter
+import akio.apps.myrun.domain.activity.api.ActivityDateTimeFormatter
+import akio.apps.myrun.domain.activity.api.model.ActivityModel
+import akio.apps.myrun.domain.activity.api.model.ActivityType
 import akio.apps.myrun.feature.base.TrackingValueFormatter
 import akio.apps.myrun.feature.base.ext.px2dp
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
@@ -99,7 +97,6 @@ import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.LocalWindowInsets
 import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 private object FeedColors {
     val listBackground: Color = Color.White
@@ -214,7 +211,8 @@ fun ActivityFeed(
     navController: NavController,
 ) {
     val lazyPagingItems = activityFeedViewModel.myActivityList.collectAsLazyPagingItems()
-    Timber.d("feed source load state ${lazyPagingItems.loadState.source}")
+    // Timber.d("feed source load state ${lazyPagingItems.loadState.source}")
+    // Timber.d("feed source first item start time ${lazyPagingItems.itemSnapshotList.firstOrNull()?.startTime}")
     val isLoadingInitialData by activityFeedViewModel.isLoadingInitialData.collectAsState(
         initial = false
     )
@@ -252,7 +250,6 @@ private fun ActivityFeedItemList(
     onClickExportActivityFile: (ActivityModel) -> Unit,
     navController: NavController,
 ) {
-    Timber.d("render UserTimelineActivityList pagingItems=$lazyPagingItems")
     val userProfile by activityFeedViewModel.userProfile.collectAsState(initial = null)
     LazyColumn(
         modifier = Modifier
@@ -271,6 +268,7 @@ private fun ActivityFeedItemList(
                     activityFeedViewModel.getActivityDisplayPlaceName(activity)
                 }
                 FeedActivityItem(
+                    activityFeedViewModel.activityDateTimeFormatter,
                     activity,
                     activityDisplayPlaceName,
                     userProfile,
@@ -346,6 +344,7 @@ private fun LoadingItemPreview() = LoadingItem()
 
 @Composable
 private fun FeedActivityItem(
+    activityDateTimeFormatter: ActivityDateTimeFormatter,
     activity: ActivityModel,
     activityDisplayPlaceName: String,
     userProfile: UserProfile?,
@@ -360,6 +359,7 @@ private fun FeedActivityItem(
     ) {
         Spacer(modifier = Modifier.height(activityItemVerticalPadding))
         ActivityInformationView(
+            activityDateTimeFormatter,
             activity,
             activityDisplayPlaceName,
             userProfile,
@@ -441,41 +441,44 @@ private fun ActivityPerformanceRow(activity: ActivityModel, modifier: Modifier =
     }
 }
 
-@Preview
+/**
+ * @Preview
 @Composable
 private fun PreviewFeedActivityItem() {
-    FeedActivityItem(
-        activity = RunningActivityModel(
-            activityData = ActivityDataModel(
-                id = "id",
-                activityType = ActivityType.Running,
-                name = "Evening Run",
-                routeImage = "http://example.com",
-                placeIdentifier = null,
-                startTime = System.currentTimeMillis(),
-                endTime = 2000L,
-                duration = 1000L,
-                distance = 1234.0,
-                encodedPolyline = "",
-                athleteInfo = ActivityModel.AthleteInfo(
-                    userId = "id",
-                    userName = "Khoi Nguyen",
-                    userAvatar = "userAvatar"
-                )
-            ),
-            pace = 12.34,
-            cadence = 160
-        ),
-        activityDisplayPlaceName = "activityDisplayPlaceName",
-        onClickActivityAction = { },
-        onClickExportFile = { },
-        onClickUserAvatar = { },
-        userProfile = UserProfile(accountId = "userId", photo = null),
-    )
+FeedActivityItem(
+activity = RunningActivityModel(
+activityData = ActivityDataModel(
+id = "id",
+activityType = ActivityType.Running,
+name = "Evening Run",
+routeImage = "http://example.com",
+placeIdentifier = null,
+startTime = System.currentTimeMillis(),
+endTime = 2000L,
+duration = 1000L,
+distance = 1234.0,
+encodedPolyline = "",
+athleteInfo = ActivityModel.AthleteInfo(
+userId = "id",
+userName = "Khoi Nguyen",
+userAvatar = "userAvatar"
+)
+),
+pace = 12.34,
+cadence = 160
+),
+activityDisplayPlaceName = "activityDisplayPlaceName",
+onClickActivityAction = { },
+onClickExportFile = { },
+onClickUserAvatar = { },
+userProfile = UserProfile(accountId = "userId", photo = null),
+)
 }
+ */
 
 @Composable
 private fun ActivityInformationView(
+    activityDateTimeFormatter: ActivityDateTimeFormatter,
     activity: ActivityModel,
     activityDisplayPlaceName: String?,
     userProfile: UserProfile?,
@@ -489,7 +492,7 @@ private fun ActivityInformationView(
         Column(modifier = Modifier.weight(1.0f)) {
             AthleteNameText(userProfile?.name.orEmpty())
             Spacer(modifier = Modifier.height(2.dp))
-            ActivityTimeAndPlaceText(activity, activityDisplayPlaceName)
+            ActivityTimeAndPlaceText(activityDateTimeFormatter, activity, activityDisplayPlaceName)
         }
         if (isShareMenuVisible) {
             ActivityShareMenu(onClickExportFile)
@@ -551,15 +554,15 @@ private fun ActivityShareMenu(
 
 @Composable
 private fun ActivityTimeAndPlaceText(
+    activityDateTimeFormatter: ActivityDateTimeFormatter,
     activityDetail: ActivityModel,
     activityDisplayPlaceName: String?,
 ) {
-    val activityDateTimeFormatter = remember(::ActivityDateTimeFormatter)
     val activityFormattedStartTime =
         remember { activityDateTimeFormatter.formatActivityDateTime(activityDetail.startTime) }
     val context = LocalContext.current
     val startTimeText = remember {
-        Timber.d("making startTimeText")
+//        Timber.d("making startTimeText")
         when (activityFormattedStartTime) {
             is ActivityDateTimeFormatter.Result.WithinToday -> context.getString(
                 R.string.item_activity_time_today,
@@ -573,7 +576,7 @@ private fun ActivityTimeAndPlaceText(
                 activityFormattedStartTime.formattedValue
         }
     }
-    Timber.d("startTimeText=$startTimeText")
+//    Timber.d("startTimeText=$startTimeText")
     val timeAndPlaceText = remember {
         if (activityDisplayPlaceName.isNullOrEmpty()) {
             startTimeText
