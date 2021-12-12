@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.home.userhome
 
-import akio.apps.myrun.data.activity.api.ActivityLocalStorage
-import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.model.UserProfile
+import akio.apps.myrun.domain.activity.api.ActivityLocalStorage
+import akio.apps.myrun.domain.activity.api.model.ActivityType
 import akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.domain.user.impl.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.impl.GetUserRecentPlaceNameUsecase

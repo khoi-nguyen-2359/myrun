@@ -7,17 +7,17 @@ interface FitnessDataRepository {
         startTime: Long,
         endTime: Long,
         interval: Long
-    ): List<akio.apps.myrun.data.activity.api.model.DataPoint<Float>>
+    ): List<akio.apps.myrun.domain.activity.api.model.DataPoint<Float>>
 
     suspend fun getSteppingCadenceDataPoints(
         startTime: Long,
         endTime: Long,
         interval: Long
-    ): List<akio.apps.myrun.data.activity.api.model.DataPoint<Int>>
+    ): List<akio.apps.myrun.domain.activity.api.model.DataPoint<Int>>
 
     suspend fun getHeartRateDataPoints(
         startTime: Long,
         endTime: Long,
         interval: Long
-    ): List<akio.apps.myrun.data.activity.api.model.DataPoint<Int>>
+    ): List<akio.apps.myrun.domain.activity.api.model.DataPoint<Int>>
 }

@@ -1,12 +1,13 @@
 package akio.apps.myrun.feature.activitydetail
 
 import akio.apps.myrun.data.Resource
-import akio.apps.myrun.data.activity.api.ActivityRepository
-import akio.apps.myrun.data.activity.api.model.ActivityModel
-import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
-import akio.apps.myrun.domain.activity.impl.RunSplitsCalculator
+import akio.apps.myrun.domain.activity.api.ActivityDateTimeFormatter
+import akio.apps.myrun.domain.activity.api.ActivityRepository
+import akio.apps.myrun.domain.activity.api.RunSplitsCalculator
+import akio.apps.myrun.domain.activity.api.model.ActivityModel
+import akio.apps.myrun.domain.activity.api.model.ActivityType
 import akio.apps.myrun.domain.user.impl.PlaceNameSelector
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -24,6 +25,7 @@ class ActivityDetailViewModel @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
     private val placeNameSelector: PlaceNameSelector,
     private val runSplitsCalculator: RunSplitsCalculator,
+    val activityDateTimeFormatter: ActivityDateTimeFormatter
 ) : ViewModel() {
 
     private val activityDetailsMutableStateFlow: MutableStateFlow<Resource<ActivityModel>> =
@@ -68,7 +70,8 @@ class ActivityDetailViewModel @Inject constructor(
     }
 
     private fun SavedStateHandle.getActivityId(): String =
-        get<String>(SAVED_STATE_ACTIVITY_ID) ?: ""
+        get<String>(SAVED_STATE_ACTIVITY_ID)
+            ?: ""
 
     class ActivityNotFoundException : Exception()
 

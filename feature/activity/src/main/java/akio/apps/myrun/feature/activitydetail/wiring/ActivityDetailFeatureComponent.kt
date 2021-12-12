@@ -1,7 +1,5 @@
 package akio.apps.myrun.feature.activitydetail.wiring
 
-import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
-import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
@@ -17,7 +15,6 @@ import dagger.Component
 
 @Component(
     dependencies = [
-        ActivityDataComponent::class,
         ActivityDomainComponent::class,
         AuthenticationDataComponent::class,
         UserDataComponent::class,
@@ -31,8 +28,6 @@ internal interface ActivityDetailFeatureComponent {
     interface Factory {
         fun create(
             @BindsInstance savedStateHandle: SavedStateHandle,
-            activityDataComponent: ActivityDataComponent =
-                DaggerActivityDataComponent.create(),
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),

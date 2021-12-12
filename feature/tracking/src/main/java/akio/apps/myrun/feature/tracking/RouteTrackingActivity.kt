@@ -2,13 +2,13 @@ package akio.apps.myrun.feature.tracking
 
 import akio.apps.myrun.data.LaunchCatchingDelegate
 import akio.apps.myrun.data.LaunchCatchingDelegateImpl
-import akio.apps.myrun.data.activity.api.model.ActivityLocation
-import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.PAUSED
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.RESUMED
+import akio.apps.myrun.domain.activity.api.model.ActivityLocation
+import akio.apps.myrun.domain.activity.api.model.ActivityType
 import akio.apps.myrun.feature.base.BitmapUtils.createDrawableBitmap
 import akio.apps.myrun.feature.base.ext.dp2px
 import akio.apps.myrun.feature.base.lifecycle.collectEventRepeatOnStarted

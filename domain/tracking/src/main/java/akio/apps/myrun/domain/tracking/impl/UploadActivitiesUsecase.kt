@@ -1,12 +1,12 @@
 package akio.apps.myrun.domain.tracking.impl
 
-import akio.apps.myrun.data.activity.api.ActivityLocalStorage
-import akio.apps.myrun.data.activity.api.ActivityRepository
-import akio.apps.myrun.data.activity.api.model.ActivityModel
-import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
-import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserProfileRepository
+import akio.apps.myrun.domain.activity.api.ActivityLocalStorage
+import akio.apps.myrun.domain.activity.api.ActivityRepository
+import akio.apps.myrun.domain.activity.api.model.ActivityModel
+import akio.apps.myrun.domain.activity.api.model.CyclingActivityModel
+import akio.apps.myrun.domain.activity.api.model.RunningActivityModel
 import javax.inject.Inject
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.catch

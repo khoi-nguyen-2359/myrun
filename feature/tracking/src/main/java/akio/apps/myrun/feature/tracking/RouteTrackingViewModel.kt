@@ -1,8 +1,6 @@
 package akio.apps.myrun.feature.tracking
 
 import akio.apps.myrun.data.LaunchCatchingDelegate
-import akio.apps.myrun.data.activity.api.model.ActivityLocation
-import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
@@ -12,6 +10,8 @@ import akio.apps.myrun.data.location.api.model.LocationRequestConfig
 import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
+import akio.apps.myrun.domain.activity.api.model.ActivityLocation
+import akio.apps.myrun.domain.activity.api.model.ActivityType
 import akio.apps.myrun.domain.tracking.impl.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.tracking.impl.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.tracking.impl.StoreTrackingActivityDataUsecase

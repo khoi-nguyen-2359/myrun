@@ -1,10 +1,7 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
-import akio.apps.myrun.data.activity.api.model.ActivityDataModel
-import akio.apps.myrun.data.activity.api.model.ActivityModel
-import akio.apps.myrun.data.activity.api.model.ActivityType
-import akio.apps.myrun.data.activity.api.model.RunningActivityModel
-import akio.apps.myrun.domain.activity.impl.ActivityDateTimeFormatter
+import akio.apps.myrun.domain.activity.api.ActivityDateTimeFormatter
+import akio.apps.myrun.domain.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.activity.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -27,7 +24,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
@@ -35,6 +31,7 @@ import timber.log.Timber
 
 @Composable
 fun ActivityInfoHeaderView(
+    activityDateTimeFormatter: ActivityDateTimeFormatter,
     activityDetail: ActivityModel,
     activityDisplayPlaceName: String?,
     onClickUserAvatar: () -> Unit,
@@ -50,7 +47,11 @@ fun ActivityInfoHeaderView(
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1.0f)) {
             AthleteNameText(activityDetail)
-            ActivityTimeAndPlaceText(activityDetail, activityDisplayPlaceName)
+            ActivityTimeAndPlaceText(
+                activityDetail,
+                activityDisplayPlaceName,
+                activityDateTimeFormatter
+            )
         }
     }
     Spacer(modifier = Modifier.size(6.dp))
@@ -80,8 +81,8 @@ private fun ActivityNameText(activityDetail: ActivityModel) = Text(
 private fun ActivityTimeAndPlaceText(
     activityDetail: ActivityModel,
     activityDisplayPlaceName: String?,
+    activityDateTimeFormatter: ActivityDateTimeFormatter,
 ) {
-    val activityDateTimeFormatter = remember(::ActivityDateTimeFormatter)
     val activityFormattedStartTime =
         remember { activityDateTimeFormatter.formatActivityDateTime(activityDetail.startTime) }
     val context = LocalContext.current
@@ -141,29 +142,31 @@ private fun UserAvatarImage(
     )
 }
 
+/**
 @Composable
 @Preview(showBackground = true, showSystemUi = true)
 private fun PreviewActivityInfoHeader() = ActivityInfoHeaderView(
-    activityDetail = RunningActivityModel(
-        activityData = ActivityDataModel(
-            id = "id",
-            activityType = ActivityType.Running,
-            name = "Evening Run",
-            routeImage = "http://example.com",
-            placeIdentifier = null,
-            startTime = System.currentTimeMillis(),
-            endTime = 2000L,
-            duration = 1000L,
-            distance = 100.0,
-            encodedPolyline = "",
-            athleteInfo = ActivityModel.AthleteInfo(
-                userId = "id",
-                userName = "Khoi Nguyen",
-                userAvatar = "userAvatar"
-            )
-        ),
-        pace = 1.0,
-        cadence = 160
-    ),
-    activityDisplayPlaceName = "California, Santa Clara County, San Jose"
+activityDetail = RunningActivityModel(
+activityData = ActivityDataModel(
+id = "id",
+activityType = ActivityType.Running,
+name = "Evening Run",
+routeImage = "http://example.com",
+placeIdentifier = null,
+startTime = System.currentTimeMillis(),
+endTime = 2000L,
+duration = 1000L,
+distance = 100.0,
+encodedPolyline = "",
+athleteInfo = ActivityModel.AthleteInfo(
+userId = "id",
+userName = "Khoi Nguyen",
+userAvatar = "userAvatar"
+)
+),
+pace = 1.0,
+cadence = 160
+),
+activityDisplayPlaceName = "California, Santa Clara County, San Jose"
 ) {}
+ */

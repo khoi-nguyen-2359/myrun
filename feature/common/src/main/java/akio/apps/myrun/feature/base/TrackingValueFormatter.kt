@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.base
 
-import akio.apps.myrun.data.activity.api.model.ActivityModel
-import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
-import akio.apps.myrun.data.activity.api.model.RunningActivityModel
+import akio.apps.myrun.domain.activity.api.model.ActivityModel
+import akio.apps.myrun.domain.activity.api.model.CyclingActivityModel
+import akio.apps.myrun.domain.activity.api.model.RunningActivityModel
 import akio.apps.myrun.domain.common.TrackingValueConverter
 import android.content.Context
 import androidx.annotation.StringRes

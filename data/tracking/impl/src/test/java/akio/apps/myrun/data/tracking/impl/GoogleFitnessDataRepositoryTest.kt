@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.tracking.impl
 
-import akio.apps.myrun.data.activity.api.model.DataPoint
+import akio.apps.myrun.domain.activity.api.model.DataPoint
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

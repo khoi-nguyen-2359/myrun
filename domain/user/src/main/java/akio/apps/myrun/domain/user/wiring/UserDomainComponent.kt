@@ -1,7 +1,5 @@
 package akio.apps.myrun.domain.user.wiring
 
-import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
-import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.eapps.wiring.DaggerExternalAppDataComponent
@@ -14,6 +12,8 @@ import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
 import akio.apps.myrun.data.user.wiring.UserDataComponent
 import akio.apps.myrun.data.wiring.ApplicationModule
 import akio.apps.myrun.data.wiring.DispatchersModule
+import akio.apps.myrun.domain.activity.wiring.ActivityDomainComponent
+import akio.apps.myrun.domain.activity.wiring.DaggerActivityDomainComponent
 import akio.apps.myrun.domain.user.impl.GetProviderTokensUsecase
 import akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.domain.user.impl.GetUserProfileUsecase
@@ -27,7 +27,7 @@ import dagger.Component
 
 @Component(
     dependencies = [
-        ActivityDataComponent::class,
+        ActivityDomainComponent::class,
         UserDataComponent::class,
         AuthenticationDataComponent::class,
         ExternalAppDataComponent::class,
@@ -40,22 +40,23 @@ import dagger.Component
     ]
 )
 interface UserDomainComponent {
-    fun GetProviderTokensUsecase(): GetProviderTokensUsecase
-    fun GetTrainingSummaryDataUsecase(): GetTrainingSummaryDataUsecase
-    fun GetUserProfileUsecase(): GetUserProfileUsecase
-    fun PostSignInUsecase(): PostSignInUsecase
-    fun UpdateUserProfileUsecase(): UpdateUserProfileUsecase
-    fun UploadUserAvatarImageUsecase(): UploadUserAvatarImageUsecase
-    fun GetUserRecentPlaceNameUsecase(): GetUserRecentPlaceNameUsecase
-    fun PlaceNameSelector(): PlaceNameSelector
-    fun UpdateUserRecentPlaceUsecase(): UpdateUserRecentPlaceUsecase
+    fun getProviderTokensUsecase(): GetProviderTokensUsecase
+    fun getTrainingSummaryDataUsecase(): GetTrainingSummaryDataUsecase
+    fun getUserProfileUsecase(): GetUserProfileUsecase
+    fun postSignInUsecase(): PostSignInUsecase
+    fun updateUserProfileUsecase(): UpdateUserProfileUsecase
+    fun uploadUserAvatarImageUsecase(): UploadUserAvatarImageUsecase
+    fun getUserRecentPlaceNameUsecase(): GetUserRecentPlaceNameUsecase
+    fun placeNameSelector(): PlaceNameSelector
+    fun updateUserRecentPlaceUsecase(): UpdateUserRecentPlaceUsecase
 
     @Component.Factory
     interface Factory {
         fun create(
             externalAppDataComponent: ExternalAppDataComponent =
                 DaggerExternalAppDataComponent.factory().create(),
-            activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create(),
+            activityDataComponent: ActivityDomainComponent =
+                DaggerActivityDomainComponent.factory().create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),

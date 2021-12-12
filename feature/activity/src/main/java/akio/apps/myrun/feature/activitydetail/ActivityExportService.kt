@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.activitydetail
 
-import akio.apps.myrun.domain.activity.impl.ExportTempTcxFileUsecase
+import akio.apps.myrun.domain.activity.api.ExportTempTcxFileUsecase
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.activitydetail.wiring.DaggerActivityExportFeatureComponent
 import akio.apps.myrun.feature.base.AppNotificationChannel

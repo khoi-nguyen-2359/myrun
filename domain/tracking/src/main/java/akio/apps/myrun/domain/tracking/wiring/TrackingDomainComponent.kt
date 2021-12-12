@@ -1,7 +1,5 @@
 package akio.apps.myrun.domain.tracking.wiring
 
-import akio.apps.myrun.data.activity.wiring.ActivityDataComponent
-import akio.apps.myrun.data.activity.wiring.DaggerActivityDataComponent
 import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.eapps.wiring.DaggerExternalAppDataComponent
@@ -13,6 +11,8 @@ import akio.apps.myrun.data.tracking.wiring.TrackingDataComponent
 import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
 import akio.apps.myrun.data.user.wiring.UserDataComponent
 import akio.apps.myrun.data.wiring.DispatchersModule
+import akio.apps.myrun.domain.activity.wiring.ActivityDomainComponent
+import akio.apps.myrun.domain.activity.wiring.DaggerActivityDomainComponent
 import akio.apps.myrun.domain.tracking.impl.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.tracking.impl.GetTrackedLocationsUsecase
 import akio.apps.myrun.domain.tracking.impl.StoreTrackingActivityDataUsecase
@@ -27,7 +27,7 @@ import dagger.Component
         TrackingDataComponent::class,
         LocationDataComponent::class,
         UserDataComponent::class,
-        ActivityDataComponent::class,
+        ActivityDomainComponent::class,
         AuthenticationDataComponent::class,
         ExternalAppDataComponent::class
     ]
@@ -44,7 +44,8 @@ interface TrackingDomainComponent {
             trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create(),
             locationDataComponent: LocationDataComponent = DaggerLocationDataComponent.create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
-            activityDataComponent: ActivityDataComponent = DaggerActivityDataComponent.create(),
+            activityDomainComponent: ActivityDomainComponent =
+                DaggerActivityDomainComponent.factory().create(),
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =

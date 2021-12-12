@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.home.ui
 
-import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.domain.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen

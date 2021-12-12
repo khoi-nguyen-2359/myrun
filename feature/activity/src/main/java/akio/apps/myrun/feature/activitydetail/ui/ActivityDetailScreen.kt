@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
-import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.domain.activity.api.ActivityDateTimeFormatter
+import akio.apps.myrun.domain.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
@@ -85,6 +86,7 @@ private fun ActivityDetailScreen(
         initial = ActivityDetailViewModel.ActivityDetailScreenState.FullScreenLoading
     )
     ActivityDetailScreen(
+        activityDetailViewModel.activityDateTimeFormatter,
         screenState,
         navController,
         onClickExportFile
@@ -95,6 +97,7 @@ private fun ActivityDetailScreen(
 
 @Composable
 private fun ActivityDetailScreen(
+    activityDateTimeFormatter: ActivityDateTimeFormatter,
     screenState: ActivityDetailViewModel.ActivityDetailScreenState,
     navController: NavController,
     onClickExportFile: (ActivityModel) -> Unit,
@@ -122,6 +125,7 @@ private fun ActivityDetailScreen(
             }
             is ActivityDetailViewModel.ActivityDetailScreenState.DataAvailable -> {
                 ActivityDetailDataContainer(
+                    activityDateTimeFormatter,
                     screenState,
                     navController,
                     modifier = Modifier
@@ -138,6 +142,7 @@ private fun ActivityDetailScreen(
 
 @Composable
 private fun ActivityDetailDataContainer(
+    activityDateTimeFormatter: ActivityDateTimeFormatter,
     screenState: ActivityDetailViewModel.ActivityDetailScreenState.DataAvailable,
     navController: NavController,
     modifier: Modifier = Modifier,
@@ -146,6 +151,7 @@ private fun ActivityDetailDataContainer(
     Box(modifier = modifier) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             ActivityInfoHeaderView(
+                activityDateTimeFormatter,
                 screenState.activityData,
                 screenState.activityPlaceName
             ) {

@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.tracking.api
 
-import akio.apps.myrun.data.activity.api.model.ActivityLocation
+import akio.apps.myrun.domain.activity.api.model.ActivityLocation
 
 interface RouteTrackingLocationRepository {
     suspend fun insert(trackingLocations: List<ActivityLocation>)
