@@ -267,9 +267,12 @@ private fun ActivityFeedItemList(
                 val activityDisplayPlaceName = remember {
                     activityFeedViewModel.getActivityDisplayPlaceName(activity)
                 }
+                val activityFormattedStartTime = remember {
+                    activityFeedViewModel.getFormattedStartTime(activity)
+                }
                 FeedActivityItem(
-                    activityFeedViewModel.activityDateTimeFormatter,
                     activity,
+                    activityFormattedStartTime,
                     activityDisplayPlaceName,
                     userProfile,
                     { activityModel ->
@@ -344,8 +347,8 @@ private fun LoadingItemPreview() = LoadingItem()
 
 @Composable
 private fun FeedActivityItem(
-    activityDateTimeFormatter: ActivityDateTimeFormatter,
     activity: ActivityModel,
+    activityFormattedStartTime: ActivityDateTimeFormatter.Result,
     activityDisplayPlaceName: String,
     userProfile: UserProfile?,
     onClickActivityAction: (ActivityModel) -> Unit,
@@ -359,8 +362,8 @@ private fun FeedActivityItem(
     ) {
         Spacer(modifier = Modifier.height(activityItemVerticalPadding))
         ActivityInformationView(
-            activityDateTimeFormatter,
             activity,
+            activityFormattedStartTime,
             activityDisplayPlaceName,
             userProfile,
             onClickExportFile,
@@ -478,8 +481,8 @@ userProfile = UserProfile(accountId = "userId", photo = null),
 
 @Composable
 private fun ActivityInformationView(
-    activityDateTimeFormatter: ActivityDateTimeFormatter,
     activity: ActivityModel,
+    activityFormattedStartTime: ActivityDateTimeFormatter.Result,
     activityDisplayPlaceName: String?,
     userProfile: UserProfile?,
     onClickExportFile: () -> Unit,
@@ -492,7 +495,7 @@ private fun ActivityInformationView(
         Column(modifier = Modifier.weight(1.0f)) {
             AthleteNameText(userProfile?.name.orEmpty())
             Spacer(modifier = Modifier.height(2.dp))
-            ActivityTimeAndPlaceText(activityDateTimeFormatter, activity, activityDisplayPlaceName)
+            ActivityTimeAndPlaceText(activityFormattedStartTime, activityDisplayPlaceName)
         }
         if (isShareMenuVisible) {
             ActivityShareMenu(onClickExportFile)
@@ -554,15 +557,11 @@ private fun ActivityShareMenu(
 
 @Composable
 private fun ActivityTimeAndPlaceText(
-    activityDateTimeFormatter: ActivityDateTimeFormatter,
-    activityDetail: ActivityModel,
+    activityFormattedStartTime: ActivityDateTimeFormatter.Result,
     activityDisplayPlaceName: String?,
 ) {
-    val activityFormattedStartTime =
-        remember { activityDateTimeFormatter.formatActivityDateTime(activityDetail.startTime) }
     val context = LocalContext.current
     val startTimeText = remember {
-//        Timber.d("making startTimeText")
         when (activityFormattedStartTime) {
             is ActivityDateTimeFormatter.Result.WithinToday -> context.getString(
                 R.string.item_activity_time_today,
@@ -576,7 +575,6 @@ private fun ActivityTimeAndPlaceText(
                 activityFormattedStartTime.formattedValue
         }
     }
-//    Timber.d("startTimeText=$startTimeText")
     val timeAndPlaceText = remember {
         if (activityDisplayPlaceName.isNullOrEmpty()) {
             startTimeText

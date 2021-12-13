@@ -2,8 +2,10 @@ package akio.apps.myrun.feature.activitydetail
 
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
+import akio.apps.myrun.domain.activity.api.ActivityDateTimeFormatter
 import akio.apps.myrun.domain.activity.api.ActivityRepository
 import akio.apps.myrun.domain.activity.api.RunSplitsCalculator
+import akio.apps.myrun.domain.activity.api.model.ActivityLocation
 import akio.apps.myrun.domain.activity.api.model.ActivityModel
 import akio.apps.test.whenBlocking
 import androidx.lifecycle.SavedStateHandle
@@ -33,6 +35,8 @@ class ActivityDetailViewModelTest {
     private lateinit var mockedActivityRepository: ActivityRepository
     private lateinit var mockedUserAuthenticationState: UserAuthenticationState
     private lateinit var mockedUserRecentPlaceRepository: UserRecentPlaceRepository
+    private lateinit var mockedRunSplitsCalculator: RunSplitsCalculator
+    private lateinit var mockedActivityDateTimeFormatter: ActivityDateTimeFormatter
 
     private val testCoroutineDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
 
@@ -45,6 +49,8 @@ class ActivityDetailViewModelTest {
         mockedActivityRepository = mock()
         mockedUserAuthenticationState = mock()
         mockedUserRecentPlaceRepository = mock()
+        mockedRunSplitsCalculator = mock()
+        mockedActivityDateTimeFormatter = mock()
     }
 
     private fun initActivityDetailViewModel(
@@ -55,7 +61,8 @@ class ActivityDetailViewModelTest {
         mockedUserRecentPlaceRepository,
         mockedUserAuthenticationState,
         mock(),
-        RunSplitsCalculator()
+        mockedRunSplitsCalculator,
+        mockedActivityDateTimeFormatter
     )
 
     @After
@@ -66,11 +73,21 @@ class ActivityDetailViewModelTest {
 
     @Test
     fun testViewModelInitialization_Success() = testCoroutineDispatcher.runBlockingTest {
-        val activityModel = mock<ActivityModel>()
+        val activityStartTime = 1234L
+        val activityModel = mock<ActivityModel> {
+            on { startTime }.thenReturn(activityStartTime)
+        }
+        val locationDataPoints = mock<List<ActivityLocation>>()
 
         whenBlocking(mockedActivityRepository) { getActivity(defaultActivityId) }
             .thenReturn(activityModel)
+        whenever(mockedActivityRepository.getActivityLocationDataPoints(defaultActivityId))
+            .thenReturn(locationDataPoints)
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
+        whenever(mockedRunSplitsCalculator.createRunSplits(locationDataPoints))
+            .thenReturn(emptyList())
+        whenever(mockedActivityDateTimeFormatter.formatActivityDateTime(activityStartTime))
+            .thenReturn(mock())
 
         viewModel =
             initActivityDetailViewModel(
@@ -96,11 +113,16 @@ class ActivityDetailViewModelTest {
     fun testLoadActivityDetails_Success() = testCoroutineDispatcher.runBlockingTest {
         testViewModelInitialization_Success()
 
-        val activityModel = mock<ActivityModel>()
+        val activityStartTime = 1234L
+        val activityModel = mock<ActivityModel> {
+            on { startTime }.thenReturn(activityStartTime)
+        }
 
         whenBlocking(mockedActivityRepository) { getActivity(defaultActivityId) }
             .thenReturn(activityModel)
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
+        whenever(mockedActivityDateTimeFormatter.formatActivityDateTime(activityStartTime))
+            .thenReturn(mock())
 
         viewModel.activityDetailScreenStateFlow.test {
             awaitItem() // skip last emitted Item
