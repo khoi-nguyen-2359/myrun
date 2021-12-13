@@ -55,7 +55,7 @@ interface ActivityDomainComponent {
             locationDataComponent: LocationDataComponent = DaggerLocationDataComponent.create(),
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
             authenticationDataComponent: AuthenticationDataComponent =
-                DaggerAuthenticationDataComponent.create()
+                DaggerAuthenticationDataComponent.create(),
         ): ActivityDomainComponent
     }
 }
@@ -72,10 +72,14 @@ internal interface ActivityComponentModule {
     fun activityLocalStorage(storageImpl: ActivityLocalStorageImpl): ActivityLocalStorage
 
     @Binds
-    fun getFeedActivitiesUsecase(usecaseImpl: GetFeedActivitiesUsecaseImpl): GetFeedActivitiesUsecase
+    fun getFeedActivitiesUsecase(
+        usecaseImpl: GetFeedActivitiesUsecaseImpl
+    ): GetFeedActivitiesUsecase
 
     @Binds
-    fun exportTempTcxFileUsecase(usecaseImpl: ExportTempTcxFileUsecaseImpl): ExportTempTcxFileUsecase
+    fun exportTempTcxFileUsecase(
+        usecaseImpl: ExportTempTcxFileUsecaseImpl
+    ): ExportTempTcxFileUsecase
 
     @Binds
     fun runSplitsCalculator(usecaseImpl: RunSplitsCalculatorImpl): RunSplitsCalculator

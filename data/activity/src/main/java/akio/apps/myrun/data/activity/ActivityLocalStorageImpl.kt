@@ -1,6 +1,10 @@
 package akio.apps.myrun.data.activity
 
 import akio.apps.myrun.data.activity.model.AthleteInfo
+import akio.apps.myrun.data.activity.model.CyclingTrackingActivityInfo
+import akio.apps.myrun.data.activity.model.RunningTrackingActivityInfo
+import akio.apps.myrun.data.activity.model.TrackingActivityInfo
+import akio.apps.myrun.data.activity.model.TrackingActivityInfoData
 import akio.apps.myrun.domain.activity.api.ActivityLocalStorage
 import akio.apps.myrun.domain.activity.api.ActivityTcxFileWriter
 import akio.apps.myrun.domain.activity.api.model.ActivityDataModel
@@ -11,10 +15,6 @@ import akio.apps.myrun.domain.activity.api.model.ActivitySyncData
 import akio.apps.myrun.domain.activity.api.model.ActivityType
 import akio.apps.myrun.domain.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.domain.activity.api.model.RunningActivityModel
-import akio.apps.myrun.data.activity.model.CyclingTrackingActivityInfo
-import akio.apps.myrun.data.activity.model.RunningTrackingActivityInfo
-import akio.apps.myrun.data.activity.model.TrackingActivityInfo
-import akio.apps.myrun.data.activity.model.TrackingActivityInfoData
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
