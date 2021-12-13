@@ -37,7 +37,7 @@ class ActivityFeedViewModel @Inject constructor(
     private val activityLocalStorage: ActivityLocalStorage,
     private val launchCatchingViewModel: LaunchCatchingDelegate,
     private val getUserProfileUsecase: GetUserProfileUsecase,
-    val activityDateTimeFormatter: ActivityDateTimeFormatter
+    private val activityDateTimeFormatter: ActivityDateTimeFormatter,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingViewModel {
 
     private var activityPagingSource: ActivityPagingSource? = null
@@ -108,8 +108,12 @@ class ActivityFeedViewModel @Inject constructor(
         activityPagingSource?.invalidate()
     }
 
+    fun getFormattedStartTime(activity: ActivityModel): ActivityDateTimeFormatter.Result =
+        activityDateTimeFormatter.formatActivityDateTime(activity.startTime)
+
     fun getActivityDisplayPlaceName(activity: ActivityModel): String {
-        val activityPlaceIdentifier = activity.placeIdentifier ?: return ""
+        val activityPlaceIdentifier = activity.placeIdentifier
+            ?: return ""
         val activityId = activity.id
         var placeName = mapActivityIdToPlaceName[activityId]
         if (placeName != null) {
@@ -119,7 +123,8 @@ class ActivityFeedViewModel @Inject constructor(
         placeName = placeNameSelector(
             activityPlaceIdentifier,
             userRecentPlaceIdentifier
-        ) ?: ""
+        )
+            ?: ""
         mapActivityIdToPlaceName[activityId] = placeName
 
         return placeName

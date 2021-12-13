@@ -25,7 +25,7 @@ class ActivityDetailViewModel @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
     private val placeNameSelector: PlaceNameSelector,
     private val runSplitsCalculator: RunSplitsCalculator,
-    val activityDateTimeFormatter: ActivityDateTimeFormatter
+    private val activityDateTimeFormatter: ActivityDateTimeFormatter,
 ) : ViewModel() {
 
     private val activityDetailsMutableStateFlow: MutableStateFlow<Resource<ActivityModel>> =
@@ -34,23 +34,24 @@ class ActivityDetailViewModel @Inject constructor(
     val activityDetailScreenStateFlow: Flow<ActivityDetailScreenState> =
         activityDetailsMutableStateFlow.map { activityResource ->
             val userId = userAuthenticationState.requireUserAccountId()
-            val userPlaceIdentifier =
-                userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
-            val placeName = placeNameSelector(
-                activityResource.data?.placeIdentifier,
-                userPlaceIdentifier
+            val userPlaceIdentifier = userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
+            val placeName =
+                placeNameSelector(activityResource.data?.placeIdentifier, userPlaceIdentifier)
+            val runSplits = if (activityResource is Resource.Success &&
+                activityResource.data.activityType == ActivityType.Running
+            ) {
+                val locations =
+                    activityRepository.getActivityLocationDataPoints(activityResource.data.id)
+                runSplitsCalculator.createRunSplits(locations)
+            } else {
+                emptyList()
+            }
+            ActivityDetailScreenState.create(
+                activityResource,
+                activityDateTimeFormatter,
+                placeName,
+                runSplits
             )
-            val runSplits =
-                if (activityResource is Resource.Success &&
-                    activityResource.data.activityType == ActivityType.Running
-                ) {
-                    val locations =
-                        activityRepository.getActivityLocationDataPoints(activityResource.data.id)
-                    runSplitsCalculator.createRunSplits(locations)
-                } else {
-                    emptyList()
-                }
-            ActivityDetailScreenState.create(activityResource, placeName, runSplits)
         }
 
     init {
@@ -83,6 +84,7 @@ class ActivityDetailViewModel @Inject constructor(
         class DataAvailable(
             val activityData: ActivityModel,
             val activityPlaceName: String?,
+            val activityFormattedStartTime: ActivityDateTimeFormatter.Result,
             val runSplits: List<Double>,
             val isStillLoading: Boolean,
         ) : ActivityDetailScreenState()
@@ -90,19 +92,23 @@ class ActivityDetailViewModel @Inject constructor(
         companion object {
             fun create(
                 activityDetailResource: Resource<ActivityModel>,
+                activityDateTimeFormatter: ActivityDateTimeFormatter,
                 activityPlaceName: String?,
                 runSplits: List<Double>,
             ): ActivityDetailScreenState {
                 val activityData = activityDetailResource.data
                 return when {
-                    activityData == null && activityDetailResource is Resource.Loading ->
-                        FullScreenLoading
-                    activityData == null && activityDetailResource is Resource.Error ->
-                        ErrorAndRetry
+                    activityData == null &&
+                        activityDetailResource is Resource.Loading -> FullScreenLoading
+                    activityData == null &&
+                        activityDetailResource is Resource.Error -> ErrorAndRetry
                     activityData != null -> {
                         DataAvailable(
                             activityData,
                             activityPlaceName,
+                            activityDateTimeFormatter.formatActivityDateTime(
+                                activityData.startTime
+                            ),
                             runSplits,
                             isStillLoading = activityDetailResource is Resource.Loading
                         )
