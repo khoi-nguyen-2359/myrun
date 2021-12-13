@@ -1,9 +1,9 @@
 package akio.apps.myrun.domain.activity.impl
 
-import akio.apps.myrun.domain.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.location.api.SphericalUtil
 import akio.apps.myrun.domain.activity.api.RunSplitsCalculator
 import akio.apps.myrun.domain.activity.api.getLatLng
+import akio.apps.myrun.domain.activity.api.model.ActivityLocation
 import akio.apps.myrun.domain.common.TrackingValueConverter
 import javax.inject.Inject
 import timber.log.Timber
@@ -15,7 +15,8 @@ class RunSplitsCalculatorImpl @Inject constructor(
         locationDataPoints: List<ActivityLocation>,
     ): List<Double> {
         var splitDistance = 0.0
-        var prevLocation = locationDataPoints.firstOrNull() ?: return emptyList()
+        var prevLocation = locationDataPoints.firstOrNull()
+            ?: return emptyList()
         var splitTime = 0.0
         val splits = mutableListOf<Double>()
         locationDataPoints.forEach { currLocation ->
