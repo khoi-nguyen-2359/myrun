@@ -40,7 +40,7 @@ dependencies {
     implementation(project(':domain:activity:wiring'))
     implementation(project(':data:user:wiring'))
     implementation(project(':data:location:wiring'))
-    implementation(project(':data:tracking:wiring'))
+    implementation(project(':domain:tracking:wiring'))
 
     implementation(project(':domain:user'))
 

@@ -1,8 +1,8 @@
 package akio.apps.myrun
 
-import akio.apps.myrun.data.tracking.api.RouteTrackingState
-import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.data.wiring.ApplicationModule
+import akio.apps.myrun.domain.tracking.api.RouteTrackingState
+import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.configurator.ConfiguratorGate
 import akio.apps.myrun.feature.tracking.RouteTrackingService

@@ -6,14 +6,14 @@ import akio.apps.myrun.data.eapps.wiring.DaggerExternalAppDataComponent
 import akio.apps.myrun.data.eapps.wiring.ExternalAppDataComponent
 import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
 import akio.apps.myrun.data.location.wiring.LocationDataComponent
-import akio.apps.myrun.data.tracking.wiring.DaggerTrackingDataComponent
-import akio.apps.myrun.data.tracking.wiring.TrackingDataComponent
 import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
 import akio.apps.myrun.data.user.wiring.UserDataComponent
 import akio.apps.myrun.data.wiring.ApplicationModule
 import akio.apps.myrun.data.wiring.DispatchersModule
 import akio.apps.myrun.domain.activity.wiring.ActivityDomainComponent
 import akio.apps.myrun.domain.activity.wiring.DaggerActivityDomainComponent
+import akio.apps.myrun.domain.tracking.wiring.DaggerTrackingDomainComponent
+import akio.apps.myrun.domain.tracking.wiring.TrackingDomainComponent
 import akio.apps.myrun.domain.user.impl.GetProviderTokensUsecase
 import akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.domain.user.impl.GetUserProfileUsecase
@@ -32,7 +32,7 @@ import dagger.Component
         AuthenticationDataComponent::class,
         ExternalAppDataComponent::class,
         LocationDataComponent::class,
-        TrackingDataComponent::class
+        TrackingDomainComponent::class
     ],
     modules = [
         DispatchersModule::class,
@@ -61,7 +61,8 @@ interface UserDomainComponent {
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
             locationDataComponent: LocationDataComponent = DaggerLocationDataComponent.create(),
-            trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create()
+            trackingDataComponent: TrackingDomainComponent = DaggerTrackingDomainComponent.factory()
+                .create(),
         ): UserDomainComponent
     }
 }

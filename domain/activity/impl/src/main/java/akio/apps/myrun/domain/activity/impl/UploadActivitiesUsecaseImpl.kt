@@ -1,0 +1,70 @@
+package akio.apps.myrun.domain.activity.impl
+
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.domain.activity.api.UploadActivitiesUsecase
+import akio.apps.myrun.data.user.api.UserProfileRepository
+import akio.apps.myrun.domain.activity.api.ActivityLocalStorage
+import akio.apps.myrun.domain.activity.api.ActivityRepository
+import akio.apps.myrun.domain.activity.api.model.ActivityModel
+import akio.apps.myrun.domain.activity.api.model.CyclingActivityModel
+import akio.apps.myrun.domain.activity.api.model.RunningActivityModel
+import javax.inject.Inject
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+
+class UploadActivitiesUsecaseImpl @Inject constructor(
+    private val authenticationState: UserAuthenticationState,
+    private val activityRepository: ActivityRepository,
+    private val activityLocalStorage: ActivityLocalStorage,
+    private val userProfileRepository: UserProfileRepository,
+) : UploadActivitiesUsecase {
+    @OptIn(InternalCoroutinesApi::class)
+    override suspend fun uploadAll(onUploadActivityStarted: ((ActivityModel) -> Unit)?): Boolean {
+        var isCompleted = true
+        activityLocalStorage.loadAllActivityStorageDataFlow()
+            .catch { isCompleted = false }
+            .collect { storageData ->
+                val activityModel = updateAthleteInfo(storageData.activityModel)
+                onUploadActivityStarted?.invoke(activityModel)
+                activityRepository.saveActivity(
+                    activityModel,
+                    storageData.routeBitmapFile,
+                    speedDataPoints = emptyList(),
+                    locationDataPoints = storageData.locationDataPoints,
+                    stepCadenceDataPoints = emptyList()
+                )
+                activityLocalStorage.deleteActivityData(activityModel.id)
+            }
+
+        return isCompleted
+    }
+
+    private suspend fun updateAthleteInfo(activityModel: ActivityModel): ActivityModel {
+        val userId = authenticationState.requireUserAccountId()
+        val userProfile = userProfileRepository.getUserProfile(userId)
+        return when (activityModel) {
+            is RunningActivityModel ->
+                activityModel.copy(
+                    activityData = activityModel.activityData.copy(
+                        athleteInfo = ActivityModel.AthleteInfo(
+                            userId,
+                            userProfile.name,
+                            userProfile.photo
+                        )
+                    )
+                )
+            is CyclingActivityModel ->
+                activityModel.copy(
+                    activityData = activityModel.activityData.copy(
+                        athleteInfo = ActivityModel.AthleteInfo(
+                            userId,
+                            userProfile.name,
+                            userProfile.photo
+                        )
+                    )
+                )
+            else -> activityModel
+        }
+    }
+}

@@ -7,14 +7,14 @@ import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.location.api.model.LocationRequestConfig
-import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
-import akio.apps.myrun.data.tracking.api.RouteTrackingState
-import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.domain.activity.api.model.ActivityLocation
 import akio.apps.myrun.domain.activity.api.model.ActivityType
-import akio.apps.myrun.domain.tracking.impl.ClearRouteTrackingStateUsecase
-import akio.apps.myrun.domain.tracking.impl.GetTrackedLocationsUsecase
-import akio.apps.myrun.domain.tracking.impl.StoreTrackingActivityDataUsecase
+import akio.apps.myrun.domain.tracking.api.ClearRouteTrackingStateUsecase
+import akio.apps.myrun.domain.tracking.api.RouteTrackingConfiguration
+import akio.apps.myrun.domain.tracking.api.RouteTrackingLocationRepository
+import akio.apps.myrun.domain.tracking.api.RouteTrackingState
+import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus
+import akio.apps.myrun.domain.tracking.api.StoreTrackingActivityDataUsecase
 import akio.apps.myrun.feature.tracking.model.RouteTrackingStats
 import akio.apps.myrun.log.flowTimer
 import akio.apps.myrun.worker.UploadStravaFileWorker
@@ -39,11 +39,11 @@ import timber.log.Timber
 
 class RouteTrackingViewModel @Inject constructor(
     private val application: Application,
-    private val getTrackedLocationsUsecase: GetTrackedLocationsUsecase,
     private val routeTrackingState: RouteTrackingState,
     private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase,
     private val storeTrackingActivityDataUsecase: StoreTrackingActivityDataUsecase,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
+    private val routeTrackingLocationRepository: RouteTrackingLocationRepository,
     private val authenticationState: UserAuthenticationState,
     private val locationDataSource: LocationDataSource,
     private val routeTrackingConfiguration: RouteTrackingConfiguration,
@@ -111,7 +111,8 @@ class RouteTrackingViewModel @Inject constructor(
     }
 
     suspend fun storeActivityData(routeMapImage: Bitmap) {
-        val activityType = activityType.value ?: return
+        val activityType = activityType.value
+            ?: return
         val activityName = makeNewActivityName(activityType)
         storeTrackingActivityDataUsecase(activityName, routeMapImage)
         scheduleActivitySyncIfAvailable()
@@ -151,7 +152,7 @@ class RouteTrackingViewModel @Inject constructor(
             RouteTrackingStats(getRouteDistance(), getInstantSpeed(), getTrackingDuration())
         }
 
-        val batch = getTrackedLocationsUsecase.getTrackedLocations(processedLocationCount)
+        val batch = routeTrackingLocationRepository.getTrackedLocations(processedLocationCount)
         if (batch.isNotEmpty()) {
             Timber.tag(LOG_TAG_LOCATION)
                 .d("[RouteTrackingViewModel] notifyLatestDataUpdate: ${batch.size}")

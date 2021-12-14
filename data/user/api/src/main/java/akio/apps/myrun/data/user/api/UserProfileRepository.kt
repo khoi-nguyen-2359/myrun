@@ -7,7 +7,7 @@ import android.net.Uri
 import kotlinx.coroutines.flow.Flow
 
 interface UserProfileRepository {
-    fun getUserProfileFlow(userId: String): Flow<akio.apps.myrun.data.Resource<UserProfile>>
+    fun getUserProfileFlow(userId: String): Flow<Resource<UserProfile>>
     suspend fun getUserProfile(userId: String): UserProfile
 
     /**

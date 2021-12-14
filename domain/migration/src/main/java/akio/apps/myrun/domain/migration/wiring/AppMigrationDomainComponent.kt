@@ -1,16 +1,16 @@
 package akio.apps.myrun.domain.migration.wiring
 
-import akio.apps.myrun.data.tracking.wiring.DaggerTrackingDataComponent
-import akio.apps.myrun.data.tracking.wiring.TrackingDataComponent
 import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
 import akio.apps.myrun.data.user.wiring.UserDataComponent
 import akio.apps.myrun.domain.migration.impl.AppMigrationUsecase
+import akio.apps.myrun.domain.tracking.wiring.DaggerTrackingDomainComponent
+import akio.apps.myrun.domain.tracking.wiring.TrackingDomainComponent
 import dagger.Component
 
 @Component(
     dependencies = [
         UserDataComponent::class,
-        TrackingDataComponent::class
+        TrackingDomainComponent::class
     ]
 )
 interface AppMigrationDomainComponent {
@@ -20,7 +20,8 @@ interface AppMigrationDomainComponent {
     interface Factory {
         fun create(
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
-            trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create()
+            trackingDataComponent: TrackingDomainComponent = DaggerTrackingDomainComponent.factory()
+                .create(),
         ): AppMigrationDomainComponent
     }
 }

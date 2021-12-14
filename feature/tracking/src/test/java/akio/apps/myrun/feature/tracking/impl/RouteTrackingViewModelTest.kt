@@ -5,12 +5,12 @@ import akio.apps.myrun.data.LaunchCatchingDelegateImpl
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.api.LocationDataSource
-import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
-import akio.apps.myrun.data.tracking.api.RouteTrackingState
-import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.STOPPED
-import akio.apps.myrun.domain.tracking.impl.ClearRouteTrackingStateUsecase
-import akio.apps.myrun.domain.tracking.impl.GetTrackedLocationsUsecase
-import akio.apps.myrun.domain.tracking.impl.StoreTrackingActivityDataUsecase
+import akio.apps.myrun.domain.tracking.api.ClearRouteTrackingStateUsecase
+import akio.apps.myrun.domain.tracking.api.RouteTrackingConfiguration
+import akio.apps.myrun.domain.tracking.api.RouteTrackingLocationRepository
+import akio.apps.myrun.domain.tracking.api.RouteTrackingState
+import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus.STOPPED
+import akio.apps.myrun.domain.tracking.api.StoreTrackingActivityDataUsecase
 import akio.apps.myrun.feature.tracking.RouteTrackingViewModel
 import akio.apps.test.whenBlocking
 import android.app.Application
@@ -20,7 +20,7 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
 
@@ -33,14 +33,11 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
     @Mock
     lateinit var mockedExternalAppProvidersRepository: ExternalAppProvidersRepository
 
-    @Mock
-    lateinit var mockedClearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
+    private lateinit var mockedClearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
+    private lateinit var mockedRouteTrackingLocationRepository: RouteTrackingLocationRepository
 
     @Mock
     lateinit var mockedRouteTrackingState: RouteTrackingState
-
-    @Mock
-    lateinit var mockedGetTrackedLocationsUsecase: GetTrackedLocationsUsecase
 
     @Mock
     lateinit var mockedStoreTrackingActivityDataUsecase: StoreTrackingActivityDataUsecase
@@ -58,7 +55,7 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
 
     @Before
     fun setup() {
-        MockitoAnnotations.openMocks(this)
+        mockedClearRouteTrackingStateUsecase = mock()
     }
 
     @Test
@@ -84,11 +81,11 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
 
     private fun createViewModel() = RouteTrackingViewModel(
         mockedAppContext,
-        mockedGetTrackedLocationsUsecase,
         mockedRouteTrackingState,
         mockedClearRouteTrackingStateUsecase,
         mockedStoreTrackingActivityDataUsecase,
         mockedExternalAppProvidersRepository,
+        mockedRouteTrackingLocationRepository,
         mockedAuthenticationState,
         mockedLocationDataSource,
         mockedRouteTrackingConfiguration,

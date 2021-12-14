@@ -46,7 +46,7 @@ dependencies {
     implementation(project(':domain:activity:wiring'))
     implementation(project(':data:authentication:wiring'))
     implementation(project(':data:user:wiring'))
-    implementation(project(':data:tracking:wiring'))
+    implementation(project(':domain:tracking:wiring'))
     implementation(project(':data:eapps:wiring'))
 
     implementation(project(':data:common'))
@@ -54,7 +54,7 @@ dependencies {
 
     implementation(project(':domain:common'))
     implementation(project(':domain:activity:wiring'))
-    implementation(project(':domain:tracking'))
+    implementation(project(':domain:tracking:wiring'))
 
     implementation(project(':feature:common'))
     implementation(project(':worker'))

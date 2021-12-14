@@ -3,9 +3,9 @@ package akio.apps.myrun.domain.user.impl
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.PlaceDataSource
-import akio.apps.myrun.data.tracking.api.RouteTrackingState
-import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
+import akio.apps.myrun.domain.tracking.api.RouteTrackingState
+import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus
 import java.io.IOException
 import javax.inject.Inject
 
@@ -18,8 +18,10 @@ class UpdateUserRecentPlaceUsecase @Inject constructor(
     private val placeIdentifierConverter: PlaceIdentifierConverter,
 ) {
     suspend operator fun invoke(): Result {
-        val userId = userAuthenticationState.getUserAccountId() ?: return Result.InvalidUser
-        val lastLocation = locationDataSource.getLastLocation() ?: return Result.LocationUnavailable
+        val userId = userAuthenticationState.getUserAccountId()
+            ?: return Result.InvalidUser
+        val lastLocation = locationDataSource.getLastLocation()
+            ?: return Result.LocationUnavailable
 
         try {
             val sortedAddressTexts = placeDataSource.getRecentPlaceAddressFromLocation(

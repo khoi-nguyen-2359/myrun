@@ -19,10 +19,12 @@ import akio.apps.myrun.domain.activity.api.ActivityTcxFileWriter
 import akio.apps.myrun.domain.activity.api.ExportTempTcxFileUsecase
 import akio.apps.myrun.domain.activity.api.GetFeedActivitiesUsecase
 import akio.apps.myrun.domain.activity.api.RunSplitsCalculator
+import akio.apps.myrun.domain.activity.api.UploadActivitiesUsecase
 import akio.apps.myrun.domain.activity.impl.ActivityDateTimeFormatterImpl
 import akio.apps.myrun.domain.activity.impl.ExportTempTcxFileUsecaseImpl
 import akio.apps.myrun.domain.activity.impl.GetFeedActivitiesUsecaseImpl
 import akio.apps.myrun.domain.activity.impl.RunSplitsCalculatorImpl
+import akio.apps.myrun.domain.activity.impl.UploadActivitiesUsecaseImpl
 import dagger.Binds
 import dagger.Component
 import dagger.Module
@@ -43,6 +45,7 @@ import dagger.Module
 interface ActivityDomainComponent {
     fun getFeedActivitiesUsecase(): GetFeedActivitiesUsecase
     fun exportTempTcxFileUsecase(): ExportTempTcxFileUsecase
+    fun uploadActivitiesUsecase(): UploadActivitiesUsecase
     fun runSplitsCalculator(): RunSplitsCalculator
     fun activityDateTimeFormatter(): ActivityDateTimeFormatter
     fun activityLocalStorage(): ActivityLocalStorage
@@ -73,13 +76,18 @@ internal interface ActivityComponentModule {
 
     @Binds
     fun getFeedActivitiesUsecase(
-        usecaseImpl: GetFeedActivitiesUsecaseImpl
+        usecaseImpl: GetFeedActivitiesUsecaseImpl,
     ): GetFeedActivitiesUsecase
 
     @Binds
     fun exportTempTcxFileUsecase(
-        usecaseImpl: ExportTempTcxFileUsecaseImpl
+        usecaseImpl: ExportTempTcxFileUsecaseImpl,
     ): ExportTempTcxFileUsecase
+
+    @Binds
+    fun uploadActivitiesUsecase(
+        impl: UploadActivitiesUsecaseImpl,
+    ): UploadActivitiesUsecase
 
     @Binds
     fun runSplitsCalculator(usecaseImpl: RunSplitsCalculatorImpl): RunSplitsCalculator

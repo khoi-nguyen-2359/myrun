@@ -35,7 +35,7 @@ dependencies {
     implementation(project(":data:wiring"))
     implementation(project(":domain:activity:wiring"))
     implementation(project(":data:location:wiring"))
-    implementation(project(":data:tracking:wiring"))
+    implementation(project(":domain:tracking:wiring"))
     implementation(project(":data:user:wiring"))
     implementation(project(":data:authentication:wiring"))
     implementation(project(":data:eapps:wiring"))
@@ -44,7 +44,7 @@ dependencies {
     implementation(project(':domain:strava'))
     implementation(project(':domain:user'))
     implementation(project(':domain:migration'))
-    implementation(project(':domain:tracking'))
+    implementation(project(':domain:tracking:wiring'))
 
     implementation(project(":feature:common"))
 
