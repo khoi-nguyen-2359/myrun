@@ -24,6 +24,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
         useIR = true
@@ -34,10 +35,14 @@ android {
 
 dependencies {
     implementation project(":data:user:wiring")
-    implementation project(":data:tracking:wiring")
+    implementation project(":data:location:wiring")
+    implementation project(":data:authentication:wiring")
+    implementation project(":data:eapps:wiring")
     implementation project(":data:common")
 
     implementation project(":domain:common")
+    implementation project(":domain:tracking:wiring")
+    implementation project(":domain:activity:wiring")
 
     implementation(libs.kotlinxCoroutinesCore)
 

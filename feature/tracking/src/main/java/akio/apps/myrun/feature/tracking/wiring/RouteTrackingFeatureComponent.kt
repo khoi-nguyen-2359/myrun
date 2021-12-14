@@ -6,8 +6,6 @@ import akio.apps.myrun.data.eapps.wiring.DaggerExternalAppDataComponent
 import akio.apps.myrun.data.eapps.wiring.ExternalAppDataComponent
 import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
 import akio.apps.myrun.data.location.wiring.LocationDataComponent
-import akio.apps.myrun.data.tracking.wiring.DaggerTrackingDataComponent
-import akio.apps.myrun.data.tracking.wiring.TrackingDataComponent
 import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
 import akio.apps.myrun.data.user.wiring.UserDataComponent
 import akio.apps.myrun.data.wiring.ApplicationModule
@@ -31,7 +29,6 @@ import dagger.Component
         ActivityDomainComponent::class,
         UserDataComponent::class,
         AuthenticationDataComponent::class,
-        TrackingDataComponent::class,
         ExternalAppDataComponent::class,
         LocationDataComponent::class,
         TrackingDomainComponent::class,
@@ -50,7 +47,6 @@ interface RouteTrackingFeatureComponent {
             userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.create(),
-            trackingDataComponent: TrackingDataComponent = DaggerTrackingDataComponent.create(),
             locationDataComponent: LocationDataComponent = DaggerLocationDataComponent.create(),
             externalAppDataComponent: ExternalAppDataComponent =
                 DaggerExternalAppDataComponent.factory().create(),

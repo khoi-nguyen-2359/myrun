@@ -6,18 +6,18 @@ import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.location.api.model.LocationRequestConfig
 import akio.apps.myrun.data.time.Now
-import akio.apps.myrun.data.tracking.api.FitnessDataRepository
-import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
-import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
-import akio.apps.myrun.data.tracking.api.RouteTrackingState
-import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
-import akio.apps.myrun.data.tracking.api.model.LocationProcessingConfig
 import akio.apps.myrun.domain.activity.api.model.ActivityLocation
 import akio.apps.myrun.domain.activity.api.model.ActivityType
-import akio.apps.myrun.domain.tracking.impl.AverageLocationAccumulator
-import akio.apps.myrun.domain.tracking.impl.ClearRouteTrackingStateUsecase
-import akio.apps.myrun.domain.tracking.impl.LocationProcessorContainer
-import akio.apps.myrun.domain.tracking.impl.LocationSpeedFilter
+import akio.apps.myrun.domain.tracking.api.ClearRouteTrackingStateUsecase
+import akio.apps.myrun.domain.tracking.api.FitnessDataRepository
+import akio.apps.myrun.domain.tracking.api.RouteTrackingConfiguration
+import akio.apps.myrun.domain.tracking.api.RouteTrackingLocationRepository
+import akio.apps.myrun.domain.tracking.api.RouteTrackingState
+import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus
+import akio.apps.myrun.domain.tracking.api.locationprocessor.AverageLocationAccumulator
+import akio.apps.myrun.domain.tracking.api.locationprocessor.LocationProcessorContainer
+import akio.apps.myrun.domain.tracking.api.locationprocessor.LocationSpeedFilter
+import akio.apps.myrun.domain.tracking.api.model.LocationProcessingConfig
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.tracking.wiring.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.log.flowTimer
@@ -175,7 +175,8 @@ class RouteTrackingService : Service() {
         locations: List<Location>,
     ): List<ActivityLocation> {
         val activityElapsedTime = getActivityElapsedTime()
-        val firstLocationTime = locations.firstOrNull()?.elapsedTime ?: return emptyList()
+        val firstLocationTime = locations.firstOrNull()?.elapsedTime
+            ?: return emptyList()
         return locations.map { location ->
             ActivityLocation(
                 activityElapsedTime + location.elapsedTime - firstLocationTime,
@@ -198,7 +199,8 @@ class RouteTrackingService : Service() {
     }
 
     private suspend fun getTrackingStartTime(): Long {
-        cachedStartTime = routeTrackingState.getTrackingStartTime() ?: cachedStartTime
+        cachedStartTime = routeTrackingState.getTrackingStartTime()
+            ?: cachedStartTime
         return cachedStartTime
     }
 

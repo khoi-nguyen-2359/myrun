@@ -1,7 +1,7 @@
 package akio.apps.myrun.domain.migration.impl.task
 
-import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.domain.common.AppVersion
+import akio.apps.myrun.domain.tracking.api.RouteTrackingConfiguration
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 

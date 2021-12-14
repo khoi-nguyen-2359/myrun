@@ -5,6 +5,7 @@ import akio.apps.myrun.data.activity.model.CyclingTrackingActivityInfo
 import akio.apps.myrun.data.activity.model.RunningTrackingActivityInfo
 import akio.apps.myrun.data.activity.model.TrackingActivityInfo
 import akio.apps.myrun.data.activity.model.TrackingActivityInfoData
+import akio.apps.myrun.data.wiring.NamedIoDispatcher
 import akio.apps.myrun.domain.activity.api.ActivityLocalStorage
 import akio.apps.myrun.domain.activity.api.ActivityTcxFileWriter
 import akio.apps.myrun.domain.activity.api.model.ActivityDataModel
@@ -47,7 +48,7 @@ preferencesDataStore("ActivityLocalStorageImpl")
 class ActivityLocalStorageImpl @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
-    @akio.apps.myrun.data.wiring.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ActivityLocalStorage {
     private val prefDataStore: DataStore<Preferences> = application.prefDataStore
     private val protoBuf = ProtoBuf {

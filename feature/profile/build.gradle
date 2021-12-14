@@ -49,7 +49,7 @@ dependencies {
     implementation(project(':domain:activity:wiring'))
     implementation(project(':data:authentication:wiring'))
     implementation(project(':data:user:wiring'))
-    implementation(project(':data:tracking:wiring'))
+    implementation(project(':domain:tracking:wiring'))
     implementation(project(':data:eapps:wiring'))
 
     implementation(project(':domain:user'))

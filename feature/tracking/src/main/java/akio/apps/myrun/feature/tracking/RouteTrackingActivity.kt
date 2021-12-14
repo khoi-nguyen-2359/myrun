@@ -4,11 +4,11 @@ import akio.apps.myrun.data.LaunchCatchingDelegate
 import akio.apps.myrun.data.LaunchCatchingDelegateImpl
 import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.model.Location
-import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
-import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.PAUSED
-import akio.apps.myrun.data.tracking.api.RouteTrackingStatus.RESUMED
 import akio.apps.myrun.domain.activity.api.model.ActivityLocation
 import akio.apps.myrun.domain.activity.api.model.ActivityType
+import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus
+import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus.PAUSED
+import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus.RESUMED
 import akio.apps.myrun.feature.base.BitmapUtils.createDrawableBitmap
 import akio.apps.myrun.feature.base.ext.dp2px
 import akio.apps.myrun.feature.base.lifecycle.collectEventRepeatOnStarted
@@ -351,16 +351,17 @@ class RouteTrackingActivity(
             val appendedPolypoints = currentPolyline.points.toMutableList()
             appendedPolypoints.addAll(batch.map { it.toGmsLatLng() })
             currentPolyline.points = appendedPolypoints
-        } ?: run {
-            val polyline = PolylineOptions()
-                .addAll(batch.map { LatLng(it.latitude, it.longitude) })
-                .jointType(JointType.ROUND)
-                .startCap(RoundCap())
-                .endCap(RoundCap())
-                .color(ContextCompat.getColor(this, R.color.route_tracking_polyline))
-                .width(3.dp2px)
-            routePolyline = mapView.addPolyline(polyline)
         }
+            ?: run {
+                val polyline = PolylineOptions()
+                    .addAll(batch.map { LatLng(it.latitude, it.longitude) })
+                    .jointType(JointType.ROUND)
+                    .startCap(RoundCap())
+                    .endCap(RoundCap())
+                    .color(ContextCompat.getColor(this, R.color.route_tracking_polyline))
+                    .width(3.dp2px)
+                routePolyline = mapView.addPolyline(polyline)
+            }
 
         drawnLocationCount += batch.size
     }
@@ -467,7 +468,8 @@ class RouteTrackingActivity(
             mapView.snapshot { mapSnapshot ->
                 continuation.resume(mapSnapshot)
             }
-        } ?: return null
+        }
+            ?: return null
 
         val routeImage = withContext(Dispatchers.IO) {
             Bitmap.createBitmap(
@@ -488,7 +490,8 @@ class RouteTrackingActivity(
     private suspend fun drawRouteImage(cameraViewPortSize: Size): Bitmap {
         val mapViewBitmap = trackingMapView.drawToBitmap()
         val mapProjection = mapView.projection
-        val mapPolypoints = routePolyline?.points ?: emptyList()
+        val mapPolypoints = routePolyline?.points
+            ?: emptyList()
         val routeImage = withContext(Dispatchers.IO) {
             val canvas = Canvas(mapViewBitmap)
             canvas.drawColor(Color.parseColor("#e5e5e5"))

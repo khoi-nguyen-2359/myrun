@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.tracking.ui
 
 import akio.apps.myrun.data.location.api.model.Location
-import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
+import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.tracking.R

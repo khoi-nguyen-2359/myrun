@@ -5,8 +5,7 @@ include(':feature:registration')
 include(':feature:configurator')
 include(":libs:routeparser")
 include(":app")
-include(':data:tracking:api')
-include(':data:tracking:impl')
+include(':data:tracking')
 include(':data:location:api')
 include(':data:location:impl')
 include(':data:user:api')
@@ -28,13 +27,13 @@ include ':feature:home'
 include ':domain:route'
 include ':data:authentication:wiring'
 include ':data:user:wiring'
-include ':data:tracking:wiring'
+include ':domain:tracking:wiring'
 include ':data:eapps:wiring'
 include ':domain:common'
 include ':domain:user'
 include ':domain:strava'
 include ':domain:migration'
-include ':domain:tracking'
+include ':domain:tracking:impl'
 include ':feature:tracking'
 include ':data:route:api'
 include ':data:route:wiring'
@@ -42,3 +41,4 @@ include ':data:route:impl'
 include ':domain:activity:api'
 include ':domain:activity:impl'
 include ':domain:activity:wiring'
+include ':domain:tracking:api'
