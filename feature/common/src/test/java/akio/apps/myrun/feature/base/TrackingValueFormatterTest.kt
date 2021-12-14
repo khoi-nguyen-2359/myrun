@@ -1,6 +1,5 @@
-package akio.apps.myrun.feature.activitydetail.ui
+package akio.apps.myrun.feature.base
 
-import akio.apps.myrun.feature.base.TrackingValueFormatter
 import org.junit.Assert.assertNull
 import org.junit.Test
 
