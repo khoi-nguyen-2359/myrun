@@ -7,7 +7,6 @@ import java.util.Calendar.DAY_OF_MONTH
 import java.util.Calendar.MONDAY
 import java.util.Calendar.MONTH
 import java.util.Calendar.YEAR
-import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import org.junit.Test
@@ -124,7 +123,7 @@ class TimeRangeTest {
     }
 
     private fun createPivotCalendar(): Calendar =
-        Calendar.getInstance(TimeZone.getTimeZone("Z")).apply {
+        Calendar.getInstance().apply {
             firstDayOfWeek = MONDAY
             this[Calendar.HOUR_OF_DAY] = 0
             this[Calendar.MINUTE] = 0
