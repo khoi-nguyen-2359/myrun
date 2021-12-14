@@ -137,7 +137,7 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
             calendar[MINUTE] = 0
             calendar[SECOND] = 0
             calendar[MILLISECOND] = 0
-            calendar.minusMonth(offset)
+            calendar.plusMonth(-offset)
             val startRange = calendar.timeInMillis
             calendar.plusMonth(count)
             LongRange(startRange, calendar.timeInMillis)
@@ -146,21 +146,10 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
         override fun instantiate(offset: Int, count: Int): MonthRange = MonthRange(offset, count)
 
         private fun Calendar.plusMonth(count: Int) {
-            assert(count >= 0)
-            val sumMonth = this[MONTH] + count
+            val monthCount = this[YEAR] * 12 + this[MONTH]
+            val sumMonth = monthCount + count
             this[MONTH] = sumMonth % 12
-            this[YEAR] += sumMonth / 12
-        }
-
-        private fun Calendar.minusMonth(count: Int) {
-            assert(count >= 0)
-            val sumMonth = this[MONTH] - count
-            this[MONTH] = (sumMonth % 12 + 12) % 12
-            this[YEAR] += if (sumMonth >= 0) {
-                0
-            } else {
-                (sumMonth - 12) / 12
-            }
+            this[YEAR] = sumMonth / 12
         }
     }
 }
