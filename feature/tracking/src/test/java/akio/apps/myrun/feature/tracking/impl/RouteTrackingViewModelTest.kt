@@ -19,43 +19,34 @@ import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mock
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
 
 @ExperimentalCoroutinesApi
 class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
-
-    @Mock
-    lateinit var mockedAuthenticationState: UserAuthenticationState
-
-    @Mock
-    lateinit var mockedExternalAppProvidersRepository: ExternalAppProvidersRepository
-
+    private lateinit var mockedAuthenticationState: UserAuthenticationState
+    private lateinit var mockedExternalAppProvidersRepository: ExternalAppProvidersRepository
     private lateinit var mockedClearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
     private lateinit var mockedRouteTrackingLocationRepository: RouteTrackingLocationRepository
-
-    @Mock
-    lateinit var mockedRouteTrackingState: RouteTrackingState
-
-    @Mock
-    lateinit var mockedStoreTrackingActivityDataUsecase: StoreTrackingActivityDataUsecase
-
-    @Mock
-    lateinit var mockedAppContext: Application
-
-    @Mock
-    lateinit var mockedLocationDataSource: LocationDataSource
-
-    @Mock
-    lateinit var mockedRouteTrackingConfiguration: RouteTrackingConfiguration
-
-    lateinit var testee: RouteTrackingViewModel
+    private lateinit var mockedRouteTrackingState: RouteTrackingState
+    private lateinit var mockedStoreTrackingActivityDataUsecase: StoreTrackingActivityDataUsecase
+    private lateinit var mockedAppContext: Application
+    private lateinit var mockedLocationDataSource: LocationDataSource
+    private lateinit var mockedRouteTrackingConfiguration: RouteTrackingConfiguration
+    private lateinit var testee: RouteTrackingViewModel
 
     @Before
     fun setup() {
+        mockedAuthenticationState = mock()
+        mockedExternalAppProvidersRepository = mock()
         mockedClearRouteTrackingStateUsecase = mock()
+        mockedRouteTrackingLocationRepository = mock()
+        mockedRouteTrackingState = mock()
+        mockedStoreTrackingActivityDataUsecase = mock()
+        mockedAppContext = mock()
+        mockedLocationDataSource = mock()
+        mockedRouteTrackingConfiguration = mock()
     }
 
     @Test

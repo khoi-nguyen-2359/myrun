@@ -89,7 +89,7 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.kotlinTest)
     testImplementation(libs.androidXCoreTesting)
-    testImplementation(libs.mockitoCore)
     testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.mockito.inline)
     testImplementation(libs.kotlinReflect)
 }
