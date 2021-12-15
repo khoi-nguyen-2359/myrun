@@ -6,6 +6,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
+import akio.apps.myrun.domain.activity.RunSplitsCalculator
 import akio.apps.test.whenBlocking
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
