@@ -1,16 +1,16 @@
 package akio.apps.myrun.feature.tracking.impl
 
 import akio.apps._base.InstantTaskExecutorTest
-import akio.apps.myrun.data.LaunchCatchingDelegateImpl
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.api.LocationDataSource
-import akio.apps.myrun.domain.tracking.api.ClearRouteTrackingStateUsecase
-import akio.apps.myrun.domain.tracking.api.RouteTrackingConfiguration
-import akio.apps.myrun.domain.tracking.api.RouteTrackingLocationRepository
-import akio.apps.myrun.domain.tracking.api.RouteTrackingState
-import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus.STOPPED
-import akio.apps.myrun.domain.tracking.api.StoreTrackingActivityDataUsecase
+import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
+import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
+import akio.apps.myrun.data.tracking.api.RouteTrackingState
+import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus.STOPPED
+import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegateImpl
+import akio.apps.myrun.domain.tracking.ClearRouteTrackingStateUsecase
+import akio.apps.myrun.domain.tracking.StoreTrackingActivityDataUsecase
 import akio.apps.myrun.feature.tracking.RouteTrackingViewModel
 import akio.apps.test.whenBlocking
 import android.app.Application

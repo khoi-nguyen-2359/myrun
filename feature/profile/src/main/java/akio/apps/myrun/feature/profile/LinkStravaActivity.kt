@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.profile
 
-import akio.apps.myrun.data.Event
+import akio.apps.myrun.domain.launchcatching.Event
 import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.base.lifecycle.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.base.lifecycle.collectRepeatOnStarted
@@ -23,7 +23,7 @@ class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.EventListener
     private val linkStravaDelegate by lazy { LinkStravaDelegate(this, this) }
 
     private val linkStravaViewModel: LinkStravaViewModel by lazyViewModelProvider {
-        DaggerLinkStravaComponent.factory().create().linkStravaViewModel()
+        DaggerLinkStravaComponent.factory().create(application).linkStravaViewModel()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

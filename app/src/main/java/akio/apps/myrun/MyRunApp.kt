@@ -1,8 +1,7 @@
 package akio.apps.myrun
 
-import akio.apps.myrun.data.wiring.ApplicationModule
-import akio.apps.myrun.domain.tracking.api.RouteTrackingState
-import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus
+import akio.apps.myrun.data.tracking.api.RouteTrackingState
+import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.configurator.ConfiguratorGate
 import akio.apps.myrun.feature.tracking.RouteTrackingService
@@ -39,7 +38,7 @@ class MyRunApp :
     private lateinit var appComponent: AppComponent
     override fun getAppComponent(): AppComponent {
         if (!::appComponent.isInitialized) {
-            appComponent = DaggerAppComponent.factory().create()
+            appComponent = DaggerAppComponent.factory().create(this)
         }
         return appComponent
     }
@@ -52,8 +51,6 @@ class MyRunApp :
 
     override fun onCreate() {
         super<Application>.onCreate()
-
-        ApplicationModule.application = this
 
         // create all notification channels at app startup.
         AppNotificationChannel.values().forEach { it.createChannelCompat(this) }

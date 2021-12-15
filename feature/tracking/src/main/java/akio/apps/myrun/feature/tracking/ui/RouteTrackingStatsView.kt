@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.tracking.ui
 
-import akio.apps.myrun.domain.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.feature.tracking.R
 import akio.apps.myrun.feature.tracking.StatsPresentations
 import akio.apps.myrun.feature.tracking.model.RouteTrackingStats

@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.profile.ui
 
 import akio.apps.common.feature.ui.filterFloatTextField
+import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import akio.apps.myrun.data.eapps.api.model.ExternalProviders
 import akio.apps.myrun.data.eapps.api.model.ProviderToken
@@ -27,6 +28,7 @@ import akio.apps.myrun.feature.profile.UploadAvatarActivity
 import akio.apps.myrun.feature.profile.UserProfileViewModel
 import akio.apps.myrun.feature.profile.wiring.DaggerUserProfileFeatureComponent
 import android.annotation.SuppressLint
+import android.app.Application
 import android.app.DatePickerDialog
 import android.content.Context
 import androidx.compose.foundation.Image
@@ -93,12 +95,13 @@ import java.util.Calendar
 
 @Composable
 fun UserProfileScreen(navController: NavController, backStackEntry: NavBackStackEntry) {
+    val application = LocalContext.current.applicationContext as Application
     val userId = HomeNavDestination.Profile.parseUserId(backStackEntry)
     val userProfileViewModel = backStackEntry.savedStateViewModelProvider(
         backStackEntry
     ) { handle ->
         DaggerUserProfileFeatureComponent.factory()
-            .create(UserProfileViewModel.setInitialSavedState(handle, userId))
+            .create(application, UserProfileViewModel.setInitialSavedState(handle, userId))
             .userProfileViewModel()
     }
     UserProfileScreen(navController, userProfileViewModel)
@@ -595,8 +598,8 @@ private fun UserProfileImageView(
 private fun PreviewUserProfileScreenSuccessForm() {
     UserProfileScreen(
         screenState = UserProfileViewModel.UserProfileScreenState.create(
-            akio.apps.myrun.data.Resource.Success(createUserProfile()),
-            akio.apps.myrun.data.Resource.Success(createExternalProviders()),
+            Resource.Success(createUserProfile()),
+            Resource.Success(createExternalProviders()),
             null
         ),
         navController = rememberNavController(),
@@ -611,8 +614,8 @@ private fun PreviewUserProfileScreenSuccessForm() {
 private fun PreviewUserProfileScreenErrorForm() {
     UserProfileScreen(
         screenState = UserProfileViewModel.UserProfileScreenState.create(
-            akio.apps.myrun.data.Resource.Error(Exception()),
-            akio.apps.myrun.data.Resource.Success(createExternalProviders()),
+            Resource.Error(Exception()),
+            Resource.Success(createExternalProviders()),
             null
         ),
         navController = rememberNavController(),

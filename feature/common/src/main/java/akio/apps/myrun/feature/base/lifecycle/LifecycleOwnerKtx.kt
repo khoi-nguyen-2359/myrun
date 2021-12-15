@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.base.lifecycle
 
-import akio.apps.myrun.data.Event
+import akio.apps.myrun.domain.launchcatching.Event
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData

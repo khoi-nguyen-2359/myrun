@@ -1,38 +1,30 @@
 package akio.apps.myrun.feature.tracking.wiring
 
-import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
-import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
-import akio.apps.myrun.data.eapps.wiring.DaggerExternalAppDataComponent
-import akio.apps.myrun.data.eapps.wiring.ExternalAppDataComponent
-import akio.apps.myrun.data.location.wiring.DaggerLocationDataComponent
-import akio.apps.myrun.data.location.wiring.LocationDataComponent
-import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
-import akio.apps.myrun.data.user.wiring.UserDataComponent
-import akio.apps.myrun.data.wiring.ApplicationModule
-import akio.apps.myrun.data.wiring.FeatureScope
-import akio.apps.myrun.data.wiring.LaunchCatchingModule
-import akio.apps.myrun.domain.activity.wiring.ActivityDomainComponent
-import akio.apps.myrun.domain.activity.wiring.DaggerActivityDomainComponent
-import akio.apps.myrun.domain.tracking.wiring.DaggerTrackingDomainComponent
-import akio.apps.myrun.domain.tracking.wiring.TrackingDomainComponent
+import akio.apps.myrun.data.activity.ActivityDataModule
+import akio.apps.myrun.data.authentication.AuthenticationDataModule
+import akio.apps.myrun.data.eapps.ExternalAppDataModule
+import akio.apps.myrun.data.location.LocationDataModule
+import akio.apps.myrun.data.tracking.TrackingDataModule
+import akio.apps.myrun.data.user.UserDataModule
+import akio.apps.myrun.domain.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.tracking.RouteTrackingService
 import akio.apps.myrun.feature.tracking.RouteTrackingViewModel
+import akio.apps.myrun.wiring.common.FeatureScope
+import android.app.Application
+import dagger.BindsInstance
 import dagger.Component
 
 @FeatureScope
 @Component(
     modules = [
-        ApplicationModule::class,
-        LaunchCatchingModule::class
+        LaunchCatchingModule::class,
+        AuthenticationDataModule::class,
+        ExternalAppDataModule::class,
+        LocationDataModule::class,
+        UserDataModule::class,
+        ActivityDataModule::class,
+        TrackingDataModule::class
     ],
-    dependencies = [
-        ActivityDomainComponent::class,
-        UserDataComponent::class,
-        AuthenticationDataComponent::class,
-        ExternalAppDataComponent::class,
-        LocationDataComponent::class,
-        TrackingDomainComponent::class,
-    ]
 )
 interface RouteTrackingFeatureComponent {
     fun routeTrackingViewModel(): RouteTrackingViewModel
@@ -42,16 +34,7 @@ interface RouteTrackingFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            activityDomainComponent: ActivityDomainComponent =
-                DaggerActivityDomainComponent.factory().create(),
-            userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
-            authenticationDataComponent: AuthenticationDataComponent =
-                DaggerAuthenticationDataComponent.create(),
-            locationDataComponent: LocationDataComponent = DaggerLocationDataComponent.create(),
-            externalAppDataComponent: ExternalAppDataComponent =
-                DaggerExternalAppDataComponent.factory().create(),
-            trackingDomainComponent: TrackingDomainComponent =
-                DaggerTrackingDomainComponent.factory().create(),
+            @BindsInstance application: Application,
         ): RouteTrackingFeatureComponent
     }
 }

@@ -1,6 +1,7 @@
 package akio.apps.myrun.worker
 
-import akio.apps.myrun.domain.user.impl.UpdateUserRecentPlaceUsecase
+import akio.apps.myrun.domain.user.UpdateUserRecentPlaceUsecase
+import android.app.Application
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -23,7 +24,7 @@ class UpdateUserRecentPlaceWorker(
     lateinit var updateUserRecentPlaceUsecase: UpdateUserRecentPlaceUsecase
 
     init {
-        DaggerWorkerFeatureComponent.factory().create().inject(this)
+        DaggerWorkerFeatureComponent.factory().create(appContext as Application).inject(this)
     }
 
     override suspend fun doWork(): Result = when (updateUserRecentPlaceUsecase.invoke()) {

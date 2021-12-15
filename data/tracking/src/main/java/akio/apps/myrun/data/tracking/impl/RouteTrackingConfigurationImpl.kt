@@ -1,8 +1,8 @@
 package akio.apps.myrun.data.tracking.impl
 
 import akio.apps.myrun.data.location.api.model.LocationRequestConfig
-import akio.apps.myrun.domain.tracking.api.RouteTrackingConfiguration
-import akio.apps.myrun.domain.tracking.api.model.LocationProcessingConfig
+import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
+import akio.apps.myrun.data.tracking.api.model.LocationProcessingConfig
 import android.app.Application
 import android.content.Context
 import androidx.datastore.core.DataStore

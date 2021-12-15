@@ -2,9 +2,9 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
-    id 'kotlin-parcelize'
     id 'com.google.firebase.firebase-perf'
     id "build-time-tracker"
 }
@@ -90,16 +90,19 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation project(':data:wiring')
-    implementation project(':data:common')
-    implementation(project(':data:authentication:wiring'))
-    implementation(project(':data:location:wiring'))
-    implementation(project(':data:user:wiring'))
-    implementation(project(':data:eapps:wiring'))
-    implementation(project(':domain:tracking:wiring'))
-    implementation(project(':domain:activity:wiring'))
+    implementation project(':data:firebase')
+    implementation(libs.firebaseBom)
+    implementation(libs.firebasePerfKtx)
+    implementation(libs.firebaseAuthKtx)
+
+    implementation(project(':data:authentication'))
+    implementation(project(':data:tracking'))
 
     implementation project(':worker')
+
+    implementation(project(':data:api'))
+    implementation project(':domain')
+
     implementation project(':feature:common')
     implementation project(':feature:registration')
     implementation project(":feature:profile")
@@ -114,7 +117,6 @@ dependencies {
     implementation(libs.googlePlaces)   // to init place sdk in application class
 
     implementation(libs.kotlinxCoroutinesCore)
-    implementation(libs.kotlinxCoroutinesPlayServices)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
@@ -129,12 +131,6 @@ dependencies {
     implementation(libs.accompanistInsets)
 
     implementation(libs.multidex)
-
-    implementation(libs.playServicesAuth)
-    implementation(libs.playServicesFitness)
-
-    implementation(libs.firebaseBom)
-    implementation(libs.firebasePerfKtx)
 
     implementation(libs.bundles.crashlytics)
 

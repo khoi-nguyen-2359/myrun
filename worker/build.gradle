@@ -32,21 +32,27 @@ android {
 }
 
 dependencies {
-    implementation(project(":data:wiring"))
-    implementation(project(":domain:activity:wiring"))
-    implementation(project(":data:location:wiring"))
-    implementation(project(":domain:tracking:wiring"))
-    implementation(project(":data:user:wiring"))
-    implementation(project(":data:authentication:wiring"))
-    implementation(project(":data:eapps:wiring"))
+    implementation(project(":wiring:common"))
+    implementation(project(":data:activity"))
+    implementation(project(":data:tracking"))
+    implementation(project(":data:user"))
+    implementation(project(":data:authentication"))
+    implementation(project(":data:eapps"))
 
-    implementation(project(':domain:common'))
-    implementation(project(':domain:strava'))
-    implementation(project(':domain:user'))
-    implementation(project(':domain:migration'))
-    implementation(project(':domain:tracking:wiring'))
+    implementation(project(':data:api'))
+    implementation(project(':domain'))
 
     implementation(project(":feature:common"))
+
+    implementation(project(":data:firebase"))
+    implementation(libs.firebaseBom)
+    implementation(libs.firebaseAuthKtx)
+    implementation(libs.firebaseFirestoreKtx)
+    implementation(libs.firebaseStorageKtx)
+
+    implementation(project(":data:location"))
+    implementation(libs.playServicesLocation)
+    implementation(libs.googlePlaces)
 
     implementation(libs.workManager)
     implementation(libs.guava) // to resolve error 'cannot access ListenableFuture' in work manager

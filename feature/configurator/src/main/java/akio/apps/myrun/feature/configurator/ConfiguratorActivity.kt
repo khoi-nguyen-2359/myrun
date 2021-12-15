@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 class ConfiguratorActivity : AppCompatActivity() {
 
     private val configuratorComponent: ConfiguratorComponent by lazy {
-        DaggerConfiguratorComponent.factory().create()
+        DaggerConfiguratorComponent.factory().create(application)
     }
 
     private val routeTrackingViewModel: RouteTrackingConfigurationViewModel by lazy {

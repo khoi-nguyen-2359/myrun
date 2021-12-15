@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.profile
 
-import akio.apps.myrun.domain.user.impl.GetUserProfileUsecase
-import akio.apps.myrun.domain.user.impl.UploadUserAvatarImageUsecase
+import akio.apps.myrun.domain.user.GetUserProfileUsecase
+import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
 import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.base.picker.PickPictureDelegate
 import akio.apps.myrun.feature.base.picker.TakePictureDelegate

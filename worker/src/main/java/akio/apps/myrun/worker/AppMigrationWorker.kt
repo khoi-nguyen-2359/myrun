@@ -1,7 +1,8 @@
 package akio.apps.myrun.worker
 
-import akio.apps.myrun.domain.common.AppVersion
-import akio.apps.myrun.domain.migration.impl.AppMigrationUsecase
+import akio.apps.myrun.domain.migration.AppMigrationUsecase
+import akio.apps.myrun.domain.migration.AppVersion
+import android.app.Application
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
@@ -22,7 +23,7 @@ class AppMigrationWorker(
     lateinit var appMigrationUsecase: AppMigrationUsecase
 
     init {
-        DaggerWorkerFeatureComponent.factory().create().inject(this)
+        DaggerWorkerFeatureComponent.factory().create(appContext as Application).inject(this)
     }
 
     override suspend fun doWork(): Result {

@@ -1,6 +1,7 @@
 package akio.apps.myrun.data.activity.model
 
-import akio.apps.myrun.domain.activity.api.model.ActivityLocation
+import akio.apps.myrun.data.activity.api.model.ActivityLocation
+import akio.apps.myrun.data.activity.impl.model.FirestoreLocationDataPointParser
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test

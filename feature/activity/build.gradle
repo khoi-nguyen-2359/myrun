@@ -43,16 +43,18 @@ android {
 }
 
 dependencies {
-    implementation(project(':data:common'))
-    implementation(project(':data:location:wiring'))
-    implementation(project(':domain:activity:wiring'))
-    implementation(project(':data:authentication:wiring'))
-    implementation(project(':data:user:wiring'))
-    implementation(project(':domain:tracking:wiring'))
-    implementation(project(':data:eapps:wiring'))
+    implementation(project(':data:firebase'))
+    implementation(libs.bundles.firebase.data)
 
-    implementation(project(':domain:activity:wiring'))
-    implementation(project(':domain:user'))
+    implementation(project(':wiring:common'))
+    implementation(project(':data:location'))
+    implementation(project(':data:activity'))
+    implementation(project(':data:authentication'))
+    implementation(project(':data:user'))
+    implementation(project(':data:eapps'))
+
+    implementation(project(':data:api'))
+    implementation(project(':domain'))
 
     implementation(project(':feature:common'))
 

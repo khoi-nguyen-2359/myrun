@@ -1,14 +1,14 @@
 package akio.apps.myrun.feature.tracking
 
-import akio.apps.myrun.data.LaunchCatchingDelegate
-import akio.apps.myrun.data.LaunchCatchingDelegateImpl
+import akio.apps.myrun.data.activity.api.model.ActivityLocation
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.model.Location
-import akio.apps.myrun.domain.activity.api.model.ActivityLocation
-import akio.apps.myrun.domain.activity.api.model.ActivityType
-import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus
-import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus.PAUSED
-import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus.RESUMED
+import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
+import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus.PAUSED
+import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus.RESUMED
+import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegate
+import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegateImpl
 import akio.apps.myrun.feature.base.BitmapUtils.createDrawableBitmap
 import akio.apps.myrun.feature.base.ext.dp2px
 import akio.apps.myrun.feature.base.lifecycle.collectEventRepeatOnStarted
@@ -79,7 +79,7 @@ class RouteTrackingActivity(
     private val dialogDelegate by lazy { akio.apps.myrun.feature.base.DialogDelegate(this) }
 
     private val routeTrackingViewModel: RouteTrackingViewModel by lazyViewModelProvider {
-        DaggerRouteTrackingFeatureComponent.factory().create().routeTrackingViewModel()
+        DaggerRouteTrackingFeatureComponent.factory().create(application).routeTrackingViewModel()
     }
 
     private lateinit var mapView: GoogleMap

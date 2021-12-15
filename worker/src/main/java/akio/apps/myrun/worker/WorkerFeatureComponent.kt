@@ -1,30 +1,26 @@
 package akio.apps.myrun.worker
 
-import akio.apps.myrun.data.wiring.DispatchersModule
-import akio.apps.myrun.data.wiring.FeatureScope
-import akio.apps.myrun.data.wiring.LaunchCatchingModule
-import akio.apps.myrun.domain.migration.wiring.AppMigrationDomainComponent
-import akio.apps.myrun.domain.migration.wiring.DaggerAppMigrationDomainComponent
-import akio.apps.myrun.domain.strava.wiring.DaggerStravaDomainComponent
-import akio.apps.myrun.domain.strava.wiring.StravaDomainComponent
-import akio.apps.myrun.domain.tracking.wiring.DaggerTrackingDomainComponent
-import akio.apps.myrun.domain.tracking.wiring.TrackingDomainComponent
-import akio.apps.myrun.domain.user.wiring.DaggerUserDomainComponent
-import akio.apps.myrun.domain.user.wiring.UserDomainComponent
+import akio.apps.myrun.data.activity.ActivityDataModule
+import akio.apps.myrun.data.authentication.AuthenticationDataModule
+import akio.apps.myrun.data.eapps.ExternalAppDataModule
+import akio.apps.myrun.data.location.LocationDataModule
+import akio.apps.myrun.data.tracking.TrackingDataModule
+import akio.apps.myrun.data.user.UserDataModule
+import akio.apps.myrun.wiring.common.FeatureScope
+import android.app.Application
+import dagger.BindsInstance
 import dagger.Component
 
 @FeatureScope
 @Component(
     modules = [
-        LaunchCatchingModule::class,
-        DispatchersModule::class
+        AuthenticationDataModule::class,
+        ExternalAppDataModule::class,
+        LocationDataModule::class,
+        UserDataModule::class,
+        ActivityDataModule::class,
+        TrackingDataModule::class
     ],
-    dependencies = [
-        StravaDomainComponent::class,
-        UserDomainComponent::class,
-        AppMigrationDomainComponent::class,
-        TrackingDomainComponent::class
-    ]
 )
 interface WorkerFeatureComponent {
     fun inject(uploadStravaFileWorker: UploadStravaFileWorker)
@@ -35,13 +31,7 @@ interface WorkerFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            trackingDomainComponent: TrackingDomainComponent =
-                DaggerTrackingDomainComponent.factory().create(),
-            stravaDomainComponent: StravaDomainComponent =
-                DaggerStravaDomainComponent.factory().create(),
-            userDomainComponent: UserDomainComponent = DaggerUserDomainComponent.factory().create(),
-            appMigrationDomainComponent: AppMigrationDomainComponent =
-                DaggerAppMigrationDomainComponent.factory().create()
+            @BindsInstance application: Application,
         ): WorkerFeatureComponent
     }
 }

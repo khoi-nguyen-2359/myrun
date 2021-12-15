@@ -1,19 +1,20 @@
 package akio.apps.myrun.feature.profile.wiring
 
-import akio.apps.myrun.data.wiring.FeatureScope
-import akio.apps.myrun.data.wiring.LaunchCatchingModule
-import akio.apps.myrun.domain.strava.wiring.DaggerStravaDomainComponent
-import akio.apps.myrun.domain.strava.wiring.StravaDomainComponent
+import akio.apps.myrun.data.authentication.AuthenticationDataModule
+import akio.apps.myrun.data.eapps.ExternalAppDataModule
+import akio.apps.myrun.domain.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.profile.LinkStravaViewModel
+import akio.apps.myrun.wiring.common.FeatureScope
+import android.app.Application
+import dagger.BindsInstance
 import dagger.Component
 
 @FeatureScope
 @Component(
     modules = [
-        LaunchCatchingModule::class
-    ],
-    dependencies = [
-        StravaDomainComponent::class
+        LaunchCatchingModule::class,
+        AuthenticationDataModule::class,
+        ExternalAppDataModule::class
     ]
 )
 interface LinkStravaComponent {
@@ -22,8 +23,7 @@ interface LinkStravaComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            stravaDomainComponent: StravaDomainComponent =
-                DaggerStravaDomainComponent.factory().create()
+            @BindsInstance application: Application,
         ): LinkStravaComponent
     }
 }
