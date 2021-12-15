@@ -67,7 +67,9 @@ class RoutePlanningActivity :
     ) { savedStateHandle ->
         val routeId: String? = extra(EXT_ROUTE_ID, null)
         RoutePlanningViewModel.saveArguments(savedStateHandle, routeId)
-        DaggerRoutePlanningFeatureComponent.factory().create(savedStateHandle).drawRouteViewModel()
+        DaggerRoutePlanningFeatureComponent.factory()
+            .create(application, savedStateHandle)
+            .drawRouteViewModel()
     }
 
     private val dialogDelegate: DialogDelegate = DialogDelegate(this)

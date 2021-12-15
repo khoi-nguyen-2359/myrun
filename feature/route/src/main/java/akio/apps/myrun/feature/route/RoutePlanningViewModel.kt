@@ -1,11 +1,11 @@
 package akio.apps.myrun.feature.route
 
-import akio.apps.myrun.data.LaunchCatchingDelegate
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.route.api.RouteRepository
 import akio.apps.myrun.data.route.api.model.RouteModel
-import akio.apps.myrun.domain.route.impl.RoutePlottingUsecase
+import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegate
+import akio.apps.myrun.domain.route.RoutePlottingUsecase
 import akio.apps.myrun.feature.base.map.toLatLng
 import akio.apps.myrun.feature.route.model.RoutePlottingState
 import android.os.Parcelable
@@ -52,10 +52,12 @@ class RoutePlanningViewModel @Inject constructor(
             _screenState.value = ScreenState.LoadingRoute
             routeRepository.getRouteDetail(routeId)
         }
-        val initWaypoints = initRouteDetail?.waypoints ?: emptyList()
+        val initWaypoints = initRouteDetail?.waypoints
+            ?: emptyList()
         _screenState.value =
             ScreenState.RoutePlotting(
-                initRouteDetail?.routeModel?.toEditingRouteInfo() ?: EditingRouteInfo(),
+                initRouteDetail?.routeModel?.toEditingRouteInfo()
+                    ?: EditingRouteInfo(),
                 RoutePlottingState.createFromRoute(initWaypoints)
             )
     }

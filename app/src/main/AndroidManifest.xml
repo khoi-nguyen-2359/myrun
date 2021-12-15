@@ -54,7 +54,7 @@
             android:exported="false" />
 
         <activity
-            android:name=".feature.splash.impl.SplashActivity"
+            android:name=".feature.splash.SplashActivity"
             android:theme="@style/AppTheme.SplashScreen"
             android:screenOrientation="portrait"
             android:exported="true">

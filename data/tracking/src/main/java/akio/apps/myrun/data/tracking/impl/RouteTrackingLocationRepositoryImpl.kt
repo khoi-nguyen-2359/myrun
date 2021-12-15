@@ -1,15 +1,16 @@
 package akio.apps.myrun.data.tracking.impl
 
-import akio.apps.myrun.domain.tracking.api.RouteTrackingLocationRepository
-import akio.apps.myrun.data.wiring.NamedIoDispatcher
-import akio.apps.myrun.domain.activity.api.model.ActivityLocation
+import akio.apps.myrun.data.activity.api.model.ActivityLocation
+import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
+import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
 class RouteTrackingLocationRepositoryImpl @Inject constructor(
     private val routeTrackingLocationDao: RouteTrackingLocationDao,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : RouteTrackingLocationRepository {
 
     override suspend fun insert(trackingLocations: List<ActivityLocation>): Unit =

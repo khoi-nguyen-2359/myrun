@@ -1,24 +1,20 @@
 package akio.apps.myrun.feature.activitydetail.wiring
 
-import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
-import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
-import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
-import akio.apps.myrun.data.user.wiring.UserDataComponent
-import akio.apps.myrun.domain.activity.wiring.ActivityDomainComponent
-import akio.apps.myrun.domain.activity.wiring.DaggerActivityDomainComponent
-import akio.apps.myrun.domain.user.wiring.DaggerUserDomainComponent
-import akio.apps.myrun.domain.user.wiring.UserDomainComponent
+import akio.apps.myrun.data.activity.ActivityDataModule
+import akio.apps.myrun.data.authentication.AuthenticationDataModule
+import akio.apps.myrun.data.location.LocationDataModule
+import akio.apps.myrun.data.user.UserDataModule
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Component
 
 @Component(
-    dependencies = [
-        ActivityDomainComponent::class,
-        AuthenticationDataComponent::class,
-        UserDataComponent::class,
-        UserDomainComponent::class
+    modules = [
+        AuthenticationDataModule::class,
+        LocationDataModule::class,
+        UserDataModule::class,
+        ActivityDataModule::class
     ]
 )
 internal interface ActivityDetailFeatureComponent {
@@ -28,12 +24,6 @@ internal interface ActivityDetailFeatureComponent {
     interface Factory {
         fun create(
             @BindsInstance savedStateHandle: SavedStateHandle,
-            authenticationDataComponent: AuthenticationDataComponent =
-                DaggerAuthenticationDataComponent.create(),
-            userDataComponent: UserDataComponent = DaggerUserDataComponent.create(),
-            activityDomainComponent: ActivityDomainComponent =
-                DaggerActivityDomainComponent.factory().create(),
-            userDomainComponent: UserDomainComponent = DaggerUserDomainComponent.factory().create()
         ): ActivityDetailFeatureComponent
     }
 }

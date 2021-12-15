@@ -1,28 +1,22 @@
 package akio.apps.myrun.feature.home.wiring
 
-import akio.apps.myrun.data.authentication.wiring.AuthenticationDataComponent
-import akio.apps.myrun.data.authentication.wiring.DaggerAuthenticationDataComponent
-import akio.apps.myrun.data.user.wiring.DaggerUserDataComponent
-import akio.apps.myrun.data.user.wiring.UserDataComponent
-import akio.apps.myrun.data.wiring.FeatureScope
-import akio.apps.myrun.data.wiring.LaunchCatchingModule
-import akio.apps.myrun.domain.activity.wiring.ActivityDomainComponent
-import akio.apps.myrun.domain.activity.wiring.DaggerActivityDomainComponent
-import akio.apps.myrun.domain.user.wiring.DaggerUserDomainComponent
-import akio.apps.myrun.domain.user.wiring.UserDomainComponent
+import akio.apps.myrun.data.activity.ActivityDataModule
+import akio.apps.myrun.data.authentication.AuthenticationDataModule
+import akio.apps.myrun.data.user.UserDataModule
+import akio.apps.myrun.domain.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.home.feed.ActivityFeedViewModel
+import akio.apps.myrun.wiring.common.FeatureScope
+import android.app.Application
+import dagger.BindsInstance
 import dagger.Component
 
 @FeatureScope
 @Component(
-    dependencies = [
-        ActivityDomainComponent::class,
-        AuthenticationDataComponent::class,
-        UserDomainComponent::class,
-        UserDataComponent::class
-    ],
     modules = [
-        LaunchCatchingModule::class
+        LaunchCatchingModule::class,
+        AuthenticationDataModule::class,
+        UserDataModule::class,
+        ActivityDataModule::class
     ]
 )
 internal interface ActivityFeedFeatureComponent {
@@ -31,12 +25,7 @@ internal interface ActivityFeedFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            activityDomainComponent: ActivityDomainComponent =
-                DaggerActivityDomainComponent.factory().create(),
-            authenticationDataComponent: AuthenticationDataComponent =
-                DaggerAuthenticationDataComponent.create(),
-            userDomainComponent: UserDomainComponent = DaggerUserDomainComponent.factory().create(),
-            userDataComponent: UserDataComponent = DaggerUserDataComponent.create()
+            @BindsInstance application: Application,
         ): ActivityFeedFeatureComponent
     }
 }

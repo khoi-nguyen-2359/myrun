@@ -35,11 +35,14 @@ android {
 }
 
 dependencies {
-    implementation(project(':data:wiring'))
-    implementation(project(':data:common'))
+    implementation(project(':wiring:common'))
+    implementation(project(':data:firebase'))
+    implementation(project(':data:location'))
+    implementation(project(':data:route'))
     implementation(project(':feature:common'))
 
-    implementation(project(':domain:route'))
+    implementation(project(':data:api'))
+    implementation(project(':domain'))
 
     implementation(libs.androidXAppCompat)
     implementation(libs.activity)
@@ -48,6 +51,9 @@ dependencies {
 
     implementation(libs.androidMapUtils)
     implementation(libs.androidGoogleMap)
+
+    implementation(libs.playServicesLocation)
+    implementation(libs.googlePlaces)
 
     implementation(libs.mapbox.maps)
 

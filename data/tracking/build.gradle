@@ -41,10 +41,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":data:wiring"))
-    implementation(project(":domain:tracking:api"))
-    implementation(project(":data:location:api"))
-    implementation(project(":domain:activity:api"))
+    implementation(project(":data:api"))
+    implementation(project(":data:firebase"))
+    implementation(project(":wiring:common"))
 
     implementation(libs.kotlinxCoroutinesPlayServices)
 
@@ -57,7 +56,9 @@ dependencies {
 
     implementation(libs.timber)
 
-    implementation(libs.javaXInject)
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
+
     implementation(libs.dataStore)
 
     testImplementation(libs.junit)

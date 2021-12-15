@@ -1,9 +1,9 @@
 package akio.apps.myrun.data.tracking.impl
 
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.location.api.model.Location
-import akio.apps.myrun.domain.tracking.api.RouteTrackingState
-import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus
-import akio.apps.myrun.domain.activity.api.model.ActivityType
+import akio.apps.myrun.data.tracking.api.RouteTrackingState
+import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
 import android.app.Application
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -33,7 +33,10 @@ class PreferencesRouteTrackingState @Inject constructor(
         .first()
 
     override fun getTrackingStatusFlow(): Flow<@RouteTrackingStatus Int> = prefDataStore.data
-        .map { data -> data[KEY_TRACKING_STATUS] ?: RouteTrackingStatus.STOPPED }
+        .map { data ->
+            data[KEY_TRACKING_STATUS]
+                ?: RouteTrackingStatus.STOPPED
+        }
         .distinctUntilChanged() // or it will fire whenever prefDataStore.data change
 
     override suspend fun setTrackingStatus(@RouteTrackingStatus status: Int) {
@@ -53,7 +56,10 @@ class PreferencesRouteTrackingState @Inject constructor(
         .first()
 
     override suspend fun getRouteDistance(): Double = prefDataStore.data
-        .map { state -> state[KEY_ROUTE_DISTANCE] ?: 0f }
+        .map { state ->
+            state[KEY_ROUTE_DISTANCE]
+                ?: 0f
+        }
         .first()
         .toDouble()
 
@@ -64,7 +70,10 @@ class PreferencesRouteTrackingState @Inject constructor(
     }
 
     override suspend fun getTrackingDuration(): Long = prefDataStore.data
-        .map { state -> state[KEY_TRACKING_DURATION] ?: 0L }
+        .map { state ->
+            state[KEY_TRACKING_DURATION]
+                ?: 0L
+        }
         .first()
 
     override suspend fun getLastPauseTime(): Long? = prefDataStore.data
@@ -82,7 +91,10 @@ class PreferencesRouteTrackingState @Inject constructor(
     }
 
     override suspend fun getPauseDuration(): Long = prefDataStore.data
-        .map { state -> state[KEY_PAUSE_DURATION] ?: 0L }
+        .map { state ->
+            state[KEY_PAUSE_DURATION]
+                ?: 0L
+        }
         .first()
 
     override suspend fun setPauseDuration(duration: Long) {
@@ -98,7 +110,10 @@ class PreferencesRouteTrackingState @Inject constructor(
         .first()
 
     override suspend fun getInstantSpeed(): Double = prefDataStore.data
-        .map { data -> data[KEY_CURRENT_SPEED] ?: 0f }
+        .map { data ->
+            data[KEY_CURRENT_SPEED]
+                ?: 0f
+        }
         .first()
         .toDouble()
 
@@ -141,7 +156,8 @@ class PreferencesRouteTrackingState @Inject constructor(
         val lat = data[KEY_START_LOCATION_LAT]
         val lng = data[KEY_START_LOCATION_LNG]
         val alt = data[KEY_START_LOCATION_ALT]
-        val speed = data[KEY_START_LOCATION_SPEED] ?: 0
+        val speed = data[KEY_START_LOCATION_SPEED]
+            ?: 0
         if (elapsedTime == null || time == null || lat == null || lng == null || alt == null)
             null
         else

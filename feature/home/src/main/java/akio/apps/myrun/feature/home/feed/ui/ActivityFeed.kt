@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.home.feed.ui
 
+import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.user.api.model.UserProfile
-import akio.apps.myrun.domain.activity.api.ActivityDateTimeFormatter
-import akio.apps.myrun.domain.activity.api.model.ActivityModel
-import akio.apps.myrun.domain.activity.api.model.ActivityType
+import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.base.TrackingValueFormatter
 import akio.apps.myrun.feature.base.ext.px2dp
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
@@ -18,6 +18,7 @@ import akio.apps.myrun.feature.home.feed.ui.FeedDimensions.activityItemHorizonta
 import akio.apps.myrun.feature.home.feed.ui.FeedDimensions.activityItemVerticalMargin
 import akio.apps.myrun.feature.home.feed.ui.FeedDimensions.activityItemVerticalPadding
 import akio.apps.myrun.feature.home.wiring.DaggerActivityFeedFeatureComponent
+import android.app.Application
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Image
@@ -118,7 +119,8 @@ fun ActivityFeed(
     contentPadding: PaddingValues,
     onClickExportActivityFile: (ActivityModel) -> Unit,
 ) {
-    val diComponent = remember { DaggerActivityFeedFeatureComponent.factory().create() }
+    val application = LocalContext.current.applicationContext as Application
+    val diComponent = remember { DaggerActivityFeedFeatureComponent.factory().create(application) }
     val userTimelineViewModel = backStackEntry.viewModelProvider {
         diComponent.feedViewModel()
     }

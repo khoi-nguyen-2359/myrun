@@ -1,16 +1,17 @@
 package akio.apps.myrun.feature.home.feed
 
-import akio.apps.myrun.data.LaunchCatchingDelegate
+import akio.apps.myrun.data.activity.api.ActivityLocalStorage
+import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.time.Now
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.data.user.api.model.UserProfile
-import akio.apps.myrun.domain.activity.api.ActivityDateTimeFormatter
-import akio.apps.myrun.domain.activity.api.ActivityLocalStorage
-import akio.apps.myrun.domain.activity.api.model.ActivityModel
-import akio.apps.myrun.domain.user.impl.GetUserProfileUsecase
-import akio.apps.myrun.domain.user.impl.PlaceNameSelector
+import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
+import akio.apps.myrun.domain.launchcatching.Event
+import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegate
+import akio.apps.myrun.domain.user.GetUserProfileUsecase
+import akio.apps.myrun.domain.user.PlaceNameSelector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -133,7 +134,7 @@ class ActivityFeedViewModel @Inject constructor(
     private fun loadInitialData() =
         viewModelScope.launchCatching(
             progressStateFlow = isLoadingInitialDataMutable,
-            errorStateFlow = MutableStateFlow(akio.apps.myrun.data.Event(null))
+            errorStateFlow = MutableStateFlow(Event(null))
         ) {
             val userId = userAuthenticationState.getUserAccountId()
             if (userId != null) {

@@ -1,8 +1,8 @@
 package akio.apps.myrun.data.activitysharing.entity
 
-import akio.apps.myrun.data.activity.model.AthleteInfo
-import akio.apps.myrun.data.activity.model.RunningTrackingActivityInfo
-import akio.apps.myrun.data.activity.model.TrackingActivityInfoData
+import akio.apps.myrun.data.activity.impl.model.AthleteInfo
+import akio.apps.myrun.data.activity.impl.model.RunningTrackingActivityInfo
+import akio.apps.myrun.data.activity.impl.model.TrackingActivityInfoData
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray

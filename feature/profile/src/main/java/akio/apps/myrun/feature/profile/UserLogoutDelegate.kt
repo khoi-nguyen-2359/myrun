@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.profile
 
-import akio.apps.myrun.domain.user.impl.LogoutUsecase
+import akio.apps.myrun.domain.user.LogoutUsecase
 import android.content.Context
 import timber.log.Timber
 

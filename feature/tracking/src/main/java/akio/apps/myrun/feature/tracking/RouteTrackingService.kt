@@ -1,23 +1,23 @@
 package akio.apps.myrun.feature.tracking
 
+import akio.apps.myrun.data.activity.api.model.ActivityLocation
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.location.api.model.LocationRequestConfig
 import akio.apps.myrun.data.time.Now
-import akio.apps.myrun.domain.activity.api.model.ActivityLocation
-import akio.apps.myrun.domain.activity.api.model.ActivityType
-import akio.apps.myrun.domain.tracking.api.ClearRouteTrackingStateUsecase
-import akio.apps.myrun.domain.tracking.api.FitnessDataRepository
-import akio.apps.myrun.domain.tracking.api.RouteTrackingConfiguration
-import akio.apps.myrun.domain.tracking.api.RouteTrackingLocationRepository
-import akio.apps.myrun.domain.tracking.api.RouteTrackingState
-import akio.apps.myrun.domain.tracking.api.RouteTrackingStatus
-import akio.apps.myrun.domain.tracking.api.locationprocessor.AverageLocationAccumulator
-import akio.apps.myrun.domain.tracking.api.locationprocessor.LocationProcessorContainer
-import akio.apps.myrun.domain.tracking.api.locationprocessor.LocationSpeedFilter
-import akio.apps.myrun.domain.tracking.api.model.LocationProcessingConfig
+import akio.apps.myrun.data.tracking.api.FitnessDataRepository
+import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
+import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
+import akio.apps.myrun.data.tracking.api.RouteTrackingState
+import akio.apps.myrun.data.tracking.api.model.LocationProcessingConfig
+import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
+import akio.apps.myrun.domain.tracking.ClearRouteTrackingStateUsecase
+import akio.apps.myrun.domain.tracking.locationprocessor.AverageLocationAccumulator
+import akio.apps.myrun.domain.tracking.locationprocessor.LocationProcessorContainer
+import akio.apps.myrun.domain.tracking.locationprocessor.LocationSpeedFilter
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.tracking.wiring.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.log.flowTimer
@@ -94,7 +94,7 @@ class RouteTrackingService : Service() {
     private var wakeLock: PowerManager.WakeLock? = null
 
     override fun onCreate() {
-        DaggerRouteTrackingFeatureComponent.factory().create().inject(this)
+        DaggerRouteTrackingFeatureComponent.factory().create(application).inject(this)
         super.onCreate()
         AppNotificationChannel.TrackingService.createChannelCompat(this)
         trackUserAuthenticationState()

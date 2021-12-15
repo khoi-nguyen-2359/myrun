@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
-import akio.apps.myrun.domain.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity

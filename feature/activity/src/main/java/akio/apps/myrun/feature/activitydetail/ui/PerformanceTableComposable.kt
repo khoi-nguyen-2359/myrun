@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
-import akio.apps.myrun.domain.activity.api.model.ActivityDataModel
-import akio.apps.myrun.domain.activity.api.model.ActivityModel
-import akio.apps.myrun.domain.activity.api.model.ActivityType
-import akio.apps.myrun.domain.activity.api.model.RunningActivityModel
+import akio.apps.myrun.data.activity.api.model.ActivityDataModel
+import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.base.TrackingValueFormatter
 import akio.apps.myrun.feature.base.ui.AppDimensions

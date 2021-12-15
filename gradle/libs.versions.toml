@@ -81,14 +81,14 @@ mapbox-maps = "10.0.0"
 
 [libraries]
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-ksp = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp"}
-build-time-tracker = { module = "net.rdrei.android.buildtimetracker:gradle-plugin", version.ref = "build-time-tracker"}
+ksp = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+build-time-tracker = { module = "net.rdrei.android.buildtimetracker:gradle-plugin", version.ref = "build-time-tracker" }
 
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 playServicesGradlePlugin = { module = "com.google.gms:google-services", version.ref = "playServicesGradlePlugin" }
 firebaseCrashlyticsGradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "crashlyticsGradlePlugin" }
 firebasePerf = { module = "com.google.firebase:perf-plugin", version.ref = "firebasePerf" }
-viewBinding = { module = "androidx.databinding:viewbinding", version.ref = "agp"}
+viewBinding = { module = "androidx.databinding:viewbinding", version.ref = "agp" }
 
 multidex = { module = "com.android.support:multidex", version.ref = "multidex" }
 androidXCore = { module = "androidx.core:core-ktx", version.ref = "androidXCore" }
@@ -227,4 +227,5 @@ compose = [
 ]
 crashlytics = ["firebaseCrashlyticsKtx", "firebaseAnalyticsKtx"]
 #placesDeps = [ "googlePlaces" ]
-testCoroutine = [ "kotlinXCoroutinesTest", "turbine" ]
+testCoroutine = ["kotlinXCoroutinesTest", "turbine"]
+firebase-data = ["firebaseBom", "firebaseAuthKtx", "firebaseFirestoreKtx", "firebaseStorageKtx"]

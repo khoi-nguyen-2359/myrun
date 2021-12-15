@@ -1,7 +1,8 @@
 package akio.apps.myrun.data.tracking.impl
 
-import akio.apps.myrun.domain.tracking.api.FitnessDataRepository
-import akio.apps.myrun.domain.activity.api.model.DataPoint
+import akio.apps.myrun.data.activity.api.model.DataPoint
+import akio.apps.myrun.data.tracking.api.FitnessDataRepository
+import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import android.app.Application
 import androidx.annotation.VisibleForTesting
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -22,7 +23,8 @@ private typealias GmsDataPoint = com.google.android.gms.fitness.data.DataPoint
 
 class GoogleFitnessDataRepository @Inject constructor(
     private val application: Application,
-    @akio.apps.myrun.data.wiring.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : FitnessDataRepository {
 
     private val fitnessOptions

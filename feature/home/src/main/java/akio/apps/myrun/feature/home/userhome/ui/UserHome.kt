@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.home.userhome.ui
 
-import akio.apps.myrun.domain.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.domain.common.TrackingValueConverter
-import akio.apps.myrun.domain.user.impl.GetTrainingSummaryDataUsecase
+import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
@@ -14,6 +14,7 @@ import akio.apps.myrun.feature.base.viewmodel.savedStateViewModelProvider
 import akio.apps.myrun.feature.home.R
 import akio.apps.myrun.feature.home.userhome.UserHomeViewModel
 import akio.apps.myrun.feature.home.wiring.DaggerUserHomeFeatureComponent
+import android.app.Application
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -48,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -69,10 +71,11 @@ fun UserHome(
     appNavController: NavController,
     backStackEntry: NavBackStackEntry,
     contentPadding: PaddingValues,
-    openRoutePlanningAction: () -> Unit
+    openRoutePlanningAction: () -> Unit,
 ) {
+    val application = LocalContext.current.applicationContext as Application
     val userHomeViewModel = backStackEntry.savedStateViewModelProvider(backStackEntry) {
-        DaggerUserHomeFeatureComponent.factory().create(it).userHomeViewModel()
+        DaggerUserHomeFeatureComponent.factory().create(application, it).userHomeViewModel()
     }
     UserHome(userHomeViewModel, contentPadding, appNavController, openRoutePlanningAction)
 }
@@ -82,7 +85,7 @@ private fun UserHome(
     userHomeViewModel: UserHomeViewModel,
     contentPadding: PaddingValues,
     appNavController: NavController,
-    openRoutePlanningAction: () -> Unit
+    openRoutePlanningAction: () -> Unit,
 ) {
     val screenState by userHomeViewModel.screenState.collectAsState(initial = null)
     UserHome(screenState ?: return, contentPadding, appNavController, openRoutePlanningAction)
@@ -93,7 +96,7 @@ private fun UserHome(
     screenState: UserHomeViewModel.ScreenState = UserHomeViewModel.ScreenState.StatsLoading,
     contentPadding: PaddingValues,
     appNavController: NavController,
-    openRoutePlanningAction: () -> Unit
+    openRoutePlanningAction: () -> Unit,
 ) {
     Column {
         StatusBarSpacer()
@@ -128,7 +131,8 @@ fun UserHomeContent(
 @Composable
 fun TrainingSummaryTable(screenState: UserHomeViewModel.ScreenState.StatsAvailable) {
     var selectedActivityType by rememberSaveable { mutableStateOf(ActivityType.Running) }
-    val summaryData = screenState.trainingSummaryTableData[selectedActivityType] ?: return
+    val summaryData = screenState.trainingSummaryTableData[selectedActivityType]
+        ?: return
     val thisWeekDistance = TrackingValueConverter.DistanceKm.fromRawValue(
         summaryData.thisWeekSummary.distance
     )
@@ -375,7 +379,8 @@ private fun UserProfileHeader(
             )
             ColumnSpacer(height = 4.dp)
             Text(
-                text = screenState.userRecentPlace ?: "",
+                text = screenState.userRecentPlace
+                    ?: "",
                 style = MaterialTheme.typography.subtitle2,
                 fontWeight = FontWeight.Normal
             )

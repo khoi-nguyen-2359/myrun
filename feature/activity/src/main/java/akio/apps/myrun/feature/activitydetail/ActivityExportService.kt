@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.activitydetail
 
-import akio.apps.myrun.domain.activity.api.ExportTempTcxFileUsecase
+import akio.apps.myrun.domain.activity.ExportTempTcxFileUsecase
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.activitydetail.wiring.DaggerActivityExportFeatureComponent
 import akio.apps.myrun.feature.base.AppNotificationChannel
@@ -48,7 +48,7 @@ class ActivityExportService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        DaggerActivityExportFeatureComponent.factory().create().inject(this)
+        DaggerActivityExportFeatureComponent.factory().create(application).inject(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -105,7 +105,8 @@ class ActivityExportService : Service() {
 
     private suspend fun exportActivityList() = withContext(Dispatchers.IO) {
         while (true) {
-            val activityInfo = activityInfoQueue.peek() ?: break
+            val activityInfo = activityInfoQueue.peek()
+                ?: break
             val exportedFile = exportTempTcxFileUsecase(activityInfo.id)
             // reduce the queue at this place for correct counter on the progress notification
             // message

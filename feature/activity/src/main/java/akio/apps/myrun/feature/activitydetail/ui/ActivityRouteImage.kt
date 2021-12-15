@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
-import akio.apps.myrun.domain.activity.api.model.ActivityDataModel
-import akio.apps.myrun.domain.activity.api.model.ActivityModel
-import akio.apps.myrun.domain.activity.api.model.ActivityType
-import akio.apps.myrun.domain.activity.api.model.RunningActivityModel
+import akio.apps.myrun.data.activity.api.model.ActivityDataModel
+import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.aspectRatio

@@ -1,13 +1,12 @@
 package akio.apps.myrun.feature.profile.wiring
 
-import akio.apps.myrun.data.wiring.ApplicationModule
-import akio.apps.myrun.data.wiring.FeatureScope
-import akio.apps.myrun.data.wiring.LaunchCatchingModule
-import akio.apps.myrun.domain.strava.wiring.DaggerStravaDomainComponent
-import akio.apps.myrun.domain.strava.wiring.StravaDomainComponent
-import akio.apps.myrun.domain.user.wiring.DaggerUserDomainComponent
-import akio.apps.myrun.domain.user.wiring.UserDomainComponent
+import akio.apps.myrun.data.authentication.AuthenticationDataModule
+import akio.apps.myrun.data.eapps.ExternalAppDataModule
+import akio.apps.myrun.data.user.UserDataModule
+import akio.apps.myrun.domain.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.profile.UserProfileViewModel
+import akio.apps.myrun.wiring.common.FeatureScope
+import android.app.Application
 import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Component
@@ -16,12 +15,10 @@ import dagger.Component
 @Component(
     modules = [
         LaunchCatchingModule::class,
-        ApplicationModule::class
+        AuthenticationDataModule::class,
+        ExternalAppDataModule::class,
+        UserDataModule::class
     ],
-    dependencies = [
-        UserDomainComponent::class,
-        StravaDomainComponent::class
-    ]
 )
 internal interface UserProfileFeatureComponent {
     fun userProfileViewModel(): UserProfileViewModel
@@ -29,10 +26,8 @@ internal interface UserProfileFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
+            @BindsInstance application: Application,
             @BindsInstance savedStateHandle: SavedStateHandle,
-            userDomainComponent: UserDomainComponent = DaggerUserDomainComponent.factory().create(),
-            stravaDomainComponent: StravaDomainComponent =
-                DaggerStravaDomainComponent.factory().create()
         ): UserProfileFeatureComponent
     }
 }

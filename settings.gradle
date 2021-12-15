@@ -6,39 +6,20 @@ include(':feature:configurator')
 include(":libs:routeparser")
 include(":app")
 include(':data:tracking')
-include(':data:location:api')
-include(':data:location:impl')
-include(':data:user:api')
-include ':data:user:impl'
-include ':data:common'
-include ':data:wiring'
+include(':data:location')
+include ':data:user'
+include ':data:firebase'
+include ':wiring:common'
 include ':data:activity'
-include ':data:authentication:api'
-include ':data:authentication:impl'
-include ':data:eapps:api'
-include ':data:eapps:impl'
+include ':data:authentication'
+include ':data:eapps'
 include(":test")
 include ':feature:profile'
 include ':worker'
 include ':feature:activity'
-include ':data:location:wiring'
 include ':feature:route'
 include ':feature:home'
-include ':domain:route'
-include ':data:authentication:wiring'
-include ':data:user:wiring'
-include ':domain:tracking:wiring'
-include ':data:eapps:wiring'
-include ':domain:common'
-include ':domain:user'
-include ':domain:strava'
-include ':domain:migration'
-include ':domain:tracking:impl'
 include ':feature:tracking'
-include ':data:route:api'
-include ':data:route:wiring'
-include ':data:route:impl'
-include ':domain:activity:api'
-include ':domain:activity:impl'
-include ':domain:activity:wiring'
-include ':domain:tracking:api'
+include ':data:route'
+include ':domain'
+include ':data:api'

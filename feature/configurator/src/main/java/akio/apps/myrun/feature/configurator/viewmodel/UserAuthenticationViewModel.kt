@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.configurator.viewmodel
 
 import akio.apps.myrun.data.user.api.model.UserProfile
-import akio.apps.myrun.domain.user.impl.GetUserProfileUsecase
+import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import androidx.lifecycle.ViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

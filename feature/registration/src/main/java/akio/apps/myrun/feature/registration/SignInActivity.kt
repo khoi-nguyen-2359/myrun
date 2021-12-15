@@ -34,7 +34,7 @@ class SignInActivity : AppCompatActivity(R.layout.activity_sign_in) {
     private val facebookButton: View by lazy { findViewById(R.id.facebook_button) }
 
     private val signInVM: SignInViewModel by lazyViewModelProvider {
-        DaggerSignInFeatureComponent.factory().create().signInViewModel()
+        DaggerSignInFeatureComponent.factory().create(application).signInViewModel()
     }
 
     private val facebookCallbackManager by lazy { CallbackManager.Factory.create() }

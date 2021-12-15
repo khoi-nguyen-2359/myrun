@@ -1,15 +1,18 @@
 package akio.apps.myrun.wiring
 
 import akio.apps.myrun.MyRunApp
-import akio.apps.myrun.domain.tracking.wiring.DaggerTrackingDomainComponent
-import akio.apps.myrun.domain.tracking.wiring.TrackingDomainComponent
+import akio.apps.myrun.data.tracking.TrackingDataModule
+// import akio.apps.myrun.domain.tracking.TrackingDomainModule
+import android.app.Application
+import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
 @Component(
-    dependencies = [
-        TrackingDomainComponent::class,
+    modules = [
+        // TrackingDomainModule::class,
+        TrackingDataModule::class
     ]
 )
 interface AppComponent {
@@ -19,8 +22,7 @@ interface AppComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            trackingDataComponent: TrackingDomainComponent =
-                DaggerTrackingDomainComponent.factory().create(),
+            @BindsInstance application: Application
         ): AppComponent
     }
 
