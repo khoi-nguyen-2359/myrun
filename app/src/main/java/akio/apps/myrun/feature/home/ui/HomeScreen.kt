@@ -1,18 +1,14 @@
 package akio.apps.myrun.feature.home.ui
 
-import akio.apps.common.feature.ui.px2dp
-import akio.apps.common.feature.viewmodel.savedStateViewModelProvider
-import akio.apps.common.feature.viewmodel.viewModelProvider
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.feature.base.ext.px2dp
+import akio.apps.myrun.feature.base.ui.AppDimensions.AppBarHeight
+import akio.apps.myrun.feature.base.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
-import akio.apps.myrun.feature.feed.ui.ActivityFeed
-import akio.apps.myrun.feature.home._di.DaggerHomeFeatureComponent
-import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.AppBarHeight
-import akio.apps.myrun.feature.home.ui.HomeScreenDimensions.FabSize
-import akio.apps.myrun.feature.userhome._di.DaggerUserHomeFeatureComponent
-import akio.apps.myrun.feature.userhome.ui.UserHome
+import akio.apps.myrun.feature.home.feed.ui.ActivityFeed
+import akio.apps.myrun.feature.home.userhome.ui.UserHome
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.Box
@@ -40,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -61,15 +56,6 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.LocalWindowInsets
 import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
-
-object HomeScreenDimensions {
-    val AppBarHeight = 56.dp
-    val FabSize = 56.dp
-}
-
-object HomeScreenColors {
-    val uploadingBadgeContentColor = Color(0xffffffff)
-}
 
 private enum class HomeNavItemInfo(
     @StringRes
@@ -93,9 +79,10 @@ private const val REVEAL_ANIM_THRESHOLD = 10
 
 @Composable
 fun HomeScreen(
+    appNavController: NavController,
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (ActivityModel) -> Unit,
-    appNavController: NavController,
+    openRoutePlanningAction: () -> Unit
 ) = AppTheme {
     // FAB is inactive when user selects a tab other than Feed
     var isFabActive by remember { mutableStateOf(true) }
@@ -149,7 +136,8 @@ fun HomeScreen(
             homeNavController,
             onClickExportActivityFile,
             PaddingValues(bottom = fabBoxHeightDp),
-            appNavController
+            appNavController,
+            openRoutePlanningAction
         )
         Box(
             modifier = Modifier
@@ -173,6 +161,7 @@ private fun HomeNavHost(
     onClickExportActivityFile: (ActivityModel) -> Unit,
     contentPaddings: PaddingValues,
     appNavController: NavController,
+    openRoutePlanningAction: () -> Unit
 ) {
     NavHost(
         modifier = Modifier.fillMaxSize(),
@@ -185,19 +174,17 @@ private fun HomeNavHost(
             appNavController = appNavController
         )
 
-        addUserHomeDestination(contentPaddings, appNavController)
+        addUserHomeDestination(contentPaddings, appNavController, openRoutePlanningAction)
     }
 }
 
 private fun NavGraphBuilder.addUserHomeDestination(
     contentPaddings: PaddingValues,
     appNavController: NavController,
+    openRoutePlanningAction: () -> Unit,
 ) {
     composable(route = HomeNavItemInfo.UserHome.route) { backstackEntry ->
-        val userHomeViewModel = backstackEntry.savedStateViewModelProvider(backstackEntry) {
-            DaggerUserHomeFeatureComponent.factory().create(it).userHomeViewModel()
-        }
-        UserHome(userHomeViewModel, contentPaddings, appNavController)
+        UserHome(appNavController, backstackEntry, contentPaddings, openRoutePlanningAction)
     }
 }
 
@@ -238,15 +225,11 @@ private fun NavGraphBuilder.addActivityFeedDestination(
     appNavController: NavController,
 ) {
     composable(route = HomeNavItemInfo.ActivityFeed.route) { backstackEntry ->
-        val diComponent = remember { DaggerHomeFeatureComponent.factory().create() }
-        val userTimelineViewModel = backstackEntry.viewModelProvider {
-            diComponent.activityFeedViewModel()
-        }
         ActivityFeed(
-            activityFeedViewModel = userTimelineViewModel,
+            appNavController,
+            backstackEntry,
             contentPadding = contentPadding,
-            onClickExportActivityFile = onClickExportActivityFile,
-            navController = appNavController
+            onClickExportActivityFile = onClickExportActivityFile
         )
     }
 }

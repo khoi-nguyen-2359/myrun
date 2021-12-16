@@ -40,13 +40,14 @@ class UploadActivityFilesToStravaUsecaseTest {
         mockedExternalAppProvidersRepository = mock()
         mockedStravaDataRepository = mock()
         mockedActivityLocalStorage = mock()
-        uploadActivityFilesToStravaUsecase = UploadActivityFilesToStravaUsecase(
-            mockedUserAuthenticateState,
-            mockedExternalAppProvidersRepository,
-            mockedStravaDataRepository,
-            mockedActivityLocalStorage,
-            testDispatcher
-        )
+        uploadActivityFilesToStravaUsecase =
+            UploadActivityFilesToStravaUsecase(
+                mockedUserAuthenticateState,
+                mockedExternalAppProvidersRepository,
+                mockedStravaDataRepository,
+                mockedActivityLocalStorage,
+                testDispatcher
+            )
     }
 
     @Test

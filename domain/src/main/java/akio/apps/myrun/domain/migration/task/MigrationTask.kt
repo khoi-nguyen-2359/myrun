@@ -1,6 +1,6 @@
 package akio.apps.myrun.domain.migration.task
 
-import akio.apps.myrun.domain.version.AppVersion
+import akio.apps.myrun.domain.migration.AppVersion
 import timber.log.Timber
 
 abstract class MigrationTask(val version: AppVersion) {

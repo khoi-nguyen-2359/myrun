@@ -14,7 +14,9 @@ android {
     }
 
     buildTypes {
-        rc { }
+        rc {
+            debuggable true
+        }
     }
 
     compileOptions {
@@ -30,17 +32,32 @@ android {
 }
 
 dependencies {
-    implementation(project(":common:wiring"))
-    implementation(project(":common:data"))
-    implementation(project(':wiring'))
+    implementation(project(":wiring:common"))
+    implementation(project(":feature:common"))
 
-    implementation(project(":features:base"))
+    implementation(project(':data:api'))
+    implementation(project(':domain'))
+
+    implementation(project(":data:activity"))
+    implementation(project(":data:tracking"))
+    implementation(project(":data:user"))
+    implementation(project(":data:authentication"))
+    implementation(project(":data:eapps"))
+
+    implementation(project(":data:firebase"))
+    implementation(libs.bundles.firebase.data)
+
+    implementation(project(":data:location"))
+    implementation(libs.playServicesLocation)
+    implementation(libs.googlePlaces)
 
     implementation(libs.workManager)
     implementation(libs.guava) // to resolve error 'cannot access ListenableFuture' in work manager
 
     implementation(libs.okHttp)
+
     implementation(libs.timber)
+
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
 }

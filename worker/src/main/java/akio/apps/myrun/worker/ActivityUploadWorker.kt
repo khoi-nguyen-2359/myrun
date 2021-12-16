@@ -1,7 +1,8 @@
 package akio.apps.myrun.worker
 
-import akio.apps.myrun.domain.routetracking.UploadActivitiesUsecase
+import akio.apps.myrun.domain.activity.UploadActivitiesUsecase
 import akio.apps.myrun.feature.base.AppNotificationChannel
+import android.app.Application
 import android.app.Notification
 import android.content.Context
 import android.os.Build
@@ -25,7 +26,7 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
     private val activityStartTimeFormatter = SimpleDateFormat("MMM dd, yyyy")
 
     init {
-        DaggerWorkerFeatureComponent.factory().create().inject(this)
+        DaggerWorkerFeatureComponent.factory().create(appContext as Application).inject(this)
     }
 
     override suspend fun doWork(): Result {
@@ -41,7 +42,7 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
 
     private fun createForegroundInfo(
         activityName: String,
-        activityStartTime: Long
+        activityStartTime: Long,
     ): ForegroundInfo {
         val notificationContent =
             "$activityName on ${activityStartTimeFormatter.format(activityStartTime)}"

@@ -1,21 +1,26 @@
 package akio.apps.myrun.worker
 
-import akio.apps.common.wiring.DispatchersModule
-import akio.apps.common.wiring.FeatureScope
-import akio.apps.common.wiring.LaunchCatchingModule
-import akio.apps.myrun.wiring.domain.DaggerDomainComponent
-import akio.apps.myrun.wiring.domain.DomainComponent
+import akio.apps.myrun.data.activity.ActivityDataModule
+import akio.apps.myrun.data.authentication.AuthenticationDataModule
+import akio.apps.myrun.data.eapps.ExternalAppDataModule
+import akio.apps.myrun.data.location.LocationDataModule
+import akio.apps.myrun.data.tracking.TrackingDataModule
+import akio.apps.myrun.data.user.UserDataModule
+import akio.apps.myrun.wiring.common.FeatureScope
+import android.app.Application
+import dagger.BindsInstance
 import dagger.Component
 
 @FeatureScope
 @Component(
     modules = [
-        LaunchCatchingModule::class,
-        DispatchersModule::class
+        AuthenticationDataModule::class,
+        ExternalAppDataModule::class,
+        LocationDataModule::class,
+        UserDataModule::class,
+        ActivityDataModule::class,
+        TrackingDataModule::class
     ],
-    dependencies = [
-        DomainComponent::class
-    ]
 )
 interface WorkerFeatureComponent {
     fun inject(uploadStravaFileWorker: UploadStravaFileWorker)
@@ -26,7 +31,7 @@ interface WorkerFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            domainComponent: DomainComponent = DaggerDomainComponent.create(),
+            @BindsInstance application: Application,
         ): WorkerFeatureComponent
     }
 }

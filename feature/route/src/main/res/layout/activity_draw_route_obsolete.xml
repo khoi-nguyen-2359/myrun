@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationIconTint="@android:color/white"
+        app:title="@string/draw_route_title"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/draw_route_map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@id/topbar" />
+
+    <akio.apps.myrun.feature.route.ui.RoutePaintingView
+        android:id="@+id/route_painting_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@id/topbar" />
+
+    <ImageView
+        android:id="@+id/undo_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/create_route_action_button_horizontal_margin"
+        android:layout_marginRight="@dimen/create_route_action_button_horizontal_margin"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/undo_button_selector"
+        app:layout_constraintBottom_toTopOf="@+id/save_button"
+        app:layout_constraintEnd_toStartOf="@+id/redo_button"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/redo_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/create_route_action_button_horizontal_margin"
+        android:layout_marginRight="@dimen/create_route_action_button_horizontal_margin"
+        android:background="@drawable/redo_button_selector"
+        app:layout_constraintBottom_toBottomOf="@+id/undo_button"
+        app:layout_constraintEnd_toStartOf="@+id/draw_button"
+        app:layout_constraintStart_toEndOf="@+id/undo_button" />
+
+    <ImageView
+        android:id="@+id/draw_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/create_route_action_button_horizontal_margin"
+        android:layout_marginRight="@dimen/create_route_action_button_horizontal_margin"
+        android:background="@drawable/draw_button_selector"
+        app:layout_constraintBottom_toBottomOf="@+id/redo_button"
+        app:layout_constraintEnd_toStartOf="@+id/erase_button"
+        app:layout_constraintStart_toEndOf="@+id/redo_button" />
+
+    <ImageView
+        android:id="@+id/erase_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/create_route_action_button_horizontal_margin"
+        android:layout_marginRight="@dimen/create_route_action_button_horizontal_margin"
+        android:background="@drawable/erase_button_selector"
+        app:layout_constraintBottom_toBottomOf="@+id/draw_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@+id/draw_button" />
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:text="@string/action_next"
+        app:layout_constraintBottom_toBottomOf="@id/draw_route_map"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
