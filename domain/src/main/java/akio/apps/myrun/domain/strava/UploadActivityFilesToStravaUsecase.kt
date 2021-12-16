@@ -1,10 +1,10 @@
 package akio.apps.myrun.domain.strava
 
-import akio.apps.common.wiring.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.eapps.api.StravaDataRepository
+import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.catch
@@ -17,12 +17,11 @@ class UploadActivityFilesToStravaUsecase @Inject constructor(
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val stravaDataRepository: StravaDataRepository,
     private val activityLocalStorage: ActivityLocalStorage,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) {
     suspend fun uploadAll(): Boolean = withContext(ioDispatcher) {
         val userAccountId = userAuthenticationState.requireUserAccountId()
         val stravaToken = externalAppProvidersRepository.getStravaProviderToken(userAccountId)
-
         var isComplete = true
         if (stravaToken != null) {
             activityLocalStorage.loadAllActivitySyncDataFlow()

@@ -1,5 +1,6 @@
 package akio.apps.myrun.domain
 
+import akio.apps.myrun.domain.common.TrackingValueConverter
 import org.junit.Assert.assertNull
 import org.junit.Test
 

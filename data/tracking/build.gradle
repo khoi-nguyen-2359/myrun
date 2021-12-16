@@ -1,0 +1,65 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+//    id "com.google.devtools.ksp"
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 31
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+
+    buildTypes {
+        rc {
+            debuggable true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+        useIR = true
+        allWarningsAsErrors = true
+    }
+}
+
+dependencies {
+    implementation(project(":data:api"))
+    implementation(project(":data:firebase"))
+    implementation(project(":wiring:common"))
+
+    implementation(libs.kotlinxCoroutinesPlayServices)
+
+    implementation(libs.playServicesAuth)
+    implementation(libs.playServicesFitness)
+
+    implementation(libs.roomKtx)
+    implementation(libs.roomRuntime)
+    kapt(libs.roomCompiler)
+
+    implementation(libs.timber)
+
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
+
+    implementation(libs.dataStore)
+
+    testImplementation(libs.junit)
+}

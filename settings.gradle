@@ -1,32 +1,25 @@
 enableFeaturePreview("VERSION_CATALOGS")
 rootProject.name = "My Run"
-include(':features:base')
-include(':features:registration')
-include(':features:configurator')
+include(':feature:common')
+include(':feature:registration')
+include(':feature:configurator')
 include(":libs:routeparser")
-include(":domain")
 include(":app")
-include(':common:feature')
-include(':common:wiring')
-include(':data:tracking:api')
-include(':data:tracking:impl')
-include(':data:location:api')
-include(':data:location:impl')
-include(':data:user:api')
-include ':data:user:impl'
-include ':common:data'
-include ':data:base'
-include ':data:wiring'
-include ':data:activity:api'
-include ':data:activity:impl'
-include ':data:authentication:api'
-include ':data:authentication:impl'
-include ':data:eapps:api'
-include ':data:eapps:impl'
-include ':data:fitness:api'
-include ':data:fitness:impl'
+include(':data:tracking')
+include(':data:location')
+include ':data:user'
+include ':data:firebase'
+include ':wiring:common'
+include ':data:activity'
+include ':data:authentication'
+include ':data:eapps'
 include(":test")
-include ':features:profile'
+include ':feature:profile'
 include ':worker'
-include ':wiring'
-include ':features:activitydetail'
+include ':feature:activity'
+include ':feature:route'
+include ':feature:home'
+include ':feature:tracking'
+include ':data:route'
+include ':domain'
+include ':data:api'

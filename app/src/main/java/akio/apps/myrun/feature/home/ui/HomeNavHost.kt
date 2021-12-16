@@ -1,13 +1,8 @@
 package akio.apps.myrun.feature.home.ui
 
-import akio.apps.common.feature.viewmodel.savedStateViewModelProvider
 import akio.apps.myrun.data.activity.api.model.ActivityModel
-import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
-import akio.apps.myrun.feature.activitydetail.DaggerActivityDetailFeatureComponent
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
-import akio.apps.myrun.feature.profile.DaggerUserProfileFeatureComponent
-import akio.apps.myrun.feature.profile.UserProfileViewModel
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -49,6 +44,7 @@ private object AppNavTransitionDefaults {
 fun AppNavHost(
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (ActivityModel) -> Unit,
+    openRoutePlanningAction: () -> Unit
 ) = ProvideWindowInsets {
     val navController = rememberAnimatedNavController()
     AnimatedNavHost(
@@ -56,9 +52,10 @@ fun AppNavHost(
         startDestination = HomeNavDestination.Home.route
     ) {
         addHomeDestination(
+            navController,
             onClickFloatingActionButton,
             onClickExportActivityFile,
-            navController
+            openRoutePlanningAction
         )
 
         addProfileDestination(navController)
@@ -79,23 +76,16 @@ private fun NavGraphBuilder.addProfileDestination(navController: NavHostControll
         popEnterTransition = { _, _ -> AppNavTransitionDefaults.popEnterTransition },
         popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
     ) { backStackEntry ->
-        val userId = HomeNavDestination.Profile.parseUserId(backStackEntry)
-        val userProfileViewModel = backStackEntry.savedStateViewModelProvider(
-            backStackEntry
-        ) { handle ->
-            DaggerUserProfileFeatureComponent.factory()
-                .create(UserProfileViewModel.setInitialSavedState(handle, userId))
-                .userProfileViewModel()
-        }
-        UserProfileScreen(navController, userProfileViewModel)
+        UserProfileScreen(navController, backStackEntry)
     }
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.addHomeDestination(
+    navController: NavHostController,
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (ActivityModel) -> Unit,
-    navController: NavHostController,
+    openRoutePlanningAction: () -> Unit
 ) {
     composable(
         route = HomeNavDestination.Home.route,
@@ -104,9 +94,10 @@ private fun NavGraphBuilder.addHomeDestination(
         popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
     ) {
         HomeScreen(
+            navController,
             onClickFloatingActionButton,
             onClickExportActivityFile,
-            navController
+            openRoutePlanningAction
         )
     }
 }
@@ -123,18 +114,10 @@ private fun NavGraphBuilder.addActivityDetailDestination(
         popEnterTransition = { _, _ -> AppNavTransitionDefaults.popEnterTransition },
         popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
     ) { navBackStackEntry ->
-        val activityId = HomeNavDestination.ActivityDetail.parseActivityId(navBackStackEntry)
-        val activityDetailViewModel = navBackStackEntry.savedStateViewModelProvider(
-            navBackStackEntry
-        ) { handle ->
-            DaggerActivityDetailFeatureComponent.factory()
-                .create(ActivityDetailViewModel.setInitialSavedState(handle, activityId))
-                .activityDetailsViewModel()
-        }
         ActivityDetailScreen(
-            activityDetailViewModel = activityDetailViewModel,
-            onClickExportFile = onClickExportFile,
-            navController
+            navController,
+            navBackStackEntry,
+            onClickExportFile = onClickExportFile
         )
     }
 }

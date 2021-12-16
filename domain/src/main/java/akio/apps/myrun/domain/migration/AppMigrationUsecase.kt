@@ -2,7 +2,6 @@ package akio.apps.myrun.domain.migration
 
 import akio.apps.myrun.data.user.api.AppMigrationState
 import akio.apps.myrun.domain.migration.task.MigrationTask10500
-import akio.apps.myrun.domain.version.AppVersion
 import javax.inject.Inject
 
 class AppMigrationUsecase @Inject constructor(

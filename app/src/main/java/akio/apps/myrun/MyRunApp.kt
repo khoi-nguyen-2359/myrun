@@ -1,15 +1,14 @@
 package akio.apps.myrun
 
-import akio.apps._base.utils.CrashReportTree
-import akio.apps._base.utils.MyDebugTree
-import akio.apps.common.wiring.ApplicationModule
-import akio.apps.myrun._di.AppComponent
-import akio.apps.myrun._di.DaggerAppComponent
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
-import akio.apps.myrun.data.tracking.api.RouteTrackingStatus
+import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.configurator.ConfiguratorGate
-import akio.apps.myrun.feature.routetracking.impl.RouteTrackingService
+import akio.apps.myrun.feature.tracking.RouteTrackingService
+import akio.apps.myrun.log.CrashReportTree
+import akio.apps.myrun.log.MyDebugTree
+import akio.apps.myrun.wiring.AppComponent
+import akio.apps.myrun.wiring.DaggerAppComponent
 import akio.apps.myrun.worker.AppMigrationWorker
 import akio.apps.myrun.worker.UpdateUserRecentPlaceWorker
 import android.app.Application
@@ -39,7 +38,7 @@ class MyRunApp :
     private lateinit var appComponent: AppComponent
     override fun getAppComponent(): AppComponent {
         if (!::appComponent.isInitialized) {
-            appComponent = DaggerAppComponent.factory().create()
+            appComponent = DaggerAppComponent.factory().create(this)
         }
         return appComponent
     }
@@ -52,8 +51,6 @@ class MyRunApp :
 
     override fun onCreate() {
         super<Application>.onCreate()
-
-        ApplicationModule.application = this
 
         // create all notification channels at app startup.
         AppNotificationChannel.values().forEach { it.createChannelCompat(this) }
@@ -74,7 +71,7 @@ class MyRunApp :
     }
 
     private fun initPlacesSdk() {
-        Places.initialize(applicationContext, getString(R.string.google_api_key))
+        Places.initialize(applicationContext, getString(R.string.google_direction_api_key))
     }
 
     override fun onStart(owner: LifecycleOwner) {

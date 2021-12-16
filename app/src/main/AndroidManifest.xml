@@ -42,13 +42,19 @@
         </provider>
 
         <activity
-            android:name=".feature.routetracking.impl.RouteTrackingActivity"
+            android:name=".feature.tracking.RouteTrackingActivity"
             android:theme="@style/AppTheme.SemiTransparentSystemBars"
             android:screenOrientation="portrait"
             android:exported="false" />
 
         <activity
-            android:name=".feature.splash.impl.SplashActivity"
+            android:name=".feature.route.ui.RoutePlanningActivity"
+            android:theme="@style/AppTheme.SemiTransparentSystemBars"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+
+        <activity
+            android:name=".feature.splash.SplashActivity"
             android:theme="@style/AppTheme.SplashScreen"
             android:screenOrientation="portrait"
             android:exported="true">
@@ -70,16 +76,16 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_api_key" />
+            android:value="@string/google_direction_api_key" />
 
         <service
-            android:name=".feature.routetracking.impl.RouteTrackingService"
+            android:name=".feature.tracking.RouteTrackingService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location" />
 
         <service
-            android:name=".feature.activityexport.ActivityExportService"
+            android:name=".feature.activitydetail.ActivityExportService"
             android:enabled="true"
             android:exported="false" />
 

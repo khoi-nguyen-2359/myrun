@@ -1,11 +1,12 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'kotlin-kapt'
     id 'kotlin-parcelize'
 }
 
 android {
-    compileSdkVersion project.compileSdk
+    compileSdk project.compileSdk
 
     defaultConfig {
         minSdk project.minSdk
@@ -15,13 +16,16 @@ android {
     }
 
     buildTypes {
-        rc { }
+        rc {
+            debuggable true
+        }
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
         useIR = true
@@ -31,30 +35,22 @@ android {
 }
 
 dependencies {
-    // data
-    implementation project(":data:location:api")
-    implementation project(":data:tracking:api")
-    implementation project(":data:user:api")
-    implementation project(":data:activity:api")
-    implementation project(":data:authentication:api")
-    implementation project(":data:eapps:api")
+    implementation(project(":data:api"))
+    implementation(project(":wiring:common"))
 
-    implementation project(":common:data")
-    implementation project(":common:wiring")
-
-    implementation(libs.androidMapUtils)
-    implementation(libs.androidGoogleMap)
-
-    implementation(libs.timber)
-    implementation(libs.javaXInject)
+    implementation(libs.androidx.annotation)
 
     implementation(libs.kotlinxCoroutinesCore)
 
-    testImplementation(testFixtures(project(':test')))
-    testImplementation(libs.bundles.testCoroutine)
-    testImplementation(libs.kotlinTest)
-    testImplementation(libs.mockitoKotlin)
-    testImplementation(libs.kotlinReflect)
+    implementation(libs.timber)
 
-    androidTestImplementation(libs.androidXJunit)
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinReflect)
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.kotlinTest)
+    testImplementation(libs.kotlinXCoroutinesTest)
+    testImplementation(libs.turbine)
 }

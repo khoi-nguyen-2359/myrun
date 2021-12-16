@@ -1,0 +1,66 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlinx-serialization'
+}
+
+android {
+    compileSdk project.compileSdk
+
+    defaultConfig {
+        minSdk = project.minSdk
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        rc {
+            debuggable true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+        useIR = true
+        allWarningsAsErrors = true
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
+    }
+}
+
+dependencies {
+    implementation(project(':data:api'))
+
+    implementation(project(':data:firebase'))
+    implementation(libs.firebaseFirestoreKtx)
+    implementation(libs.firebaseStorageKtx)
+
+    implementation(project(':wiring:common'))
+
+    implementation(libs.javaXInject)
+
+    implementation(libs.kotlinxSerializationProtoBuf)
+
+    implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.kotlinxCoroutinesPlayServices)
+
+    implementation(libs.tcxzPot)
+
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
+
+    implementation(libs.androidGoogleMap)
+    implementation(libs.androidMapUtils)
+
+    implementation(libs.timber)
+
+    implementation(libs.dataStore)
+
+    implementation(libs.junit)
+}

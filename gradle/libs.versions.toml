@@ -1,12 +1,12 @@
 [versions]
-agp = "7.0.2"
+agp = "7.0.3"
 ksp = "1.5.30-1.0.0"
 build-time-tracker = "0.11.1"
 
 multidex = "1.0.3"
 
-kotlin = "1.5.21"
-coroutines = "1.5.1"
+kotlin = "1.5.31"
+coroutines = "1.5.2"
 kotlinSerialization = "1.2.1"
 
 # jetpack: https://developer.android.com/jetpack/androidx/versions/all-channel
@@ -17,18 +17,18 @@ fragment = "1.3.6"
 constraintLayout = "2.1.0"
 androidMaterial = "1.4.0"
 dataStore = "1.0.0"
-workManager = "2.7.0-beta01"
+workManager = "2.7.1"
 paging = "3.0.1"
 room = "2.3.0"
-lifecycle = "2.4.0-beta01"
-splashScreen = "1.0.0-alpha01"
+lifecycle = "2.4.0"
+splashScreen = "1.0.0-alpha02"
+androidx-annotation = "1.2.0"
 
 # compose
-compose = "1.0.2"
-composeConstraintLayout = "1.0.0-beta02"
-pagingCompose = "1.0.0-alpha12"
-accompanist = "0.17.0"
-composeNavigation = "2.4.0-alpha09"
+compose = "1.0.5"
+pagingCompose = "1.0.0-alpha14"
+accompanist = "0.20.2"
+composeNavigation = "2.4.0-beta02"
 
 # google play services: https://developers.google.com/android/guides/releases
 playServicesGradlePlugin = "4.3.10"  # https://developers.google.com/android/guides/google-services-plugin
@@ -52,7 +52,7 @@ guava = "30.1.1-android"
 okhttp = "4.9.1"
 gson = "2.8.6"
 retrofit = "2.9.0"
-dagger = "2.38.1"
+dagger = "2.39.1"
 timber = "4.7.1"
 glide = "4.12.0"
 coil = "1.3.0"
@@ -75,20 +75,25 @@ uiAutomator = "2.2.0"
 espresso = "3.4.0"
 turbine = "0.6.0"
 
+# mapbox
+mapbox-java = "5.8.0"
+mapbox-maps = "10.0.0"
+
 [libraries]
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-ksp = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp"}
-build-time-tracker = { module = "net.rdrei.android.buildtimetracker:gradle-plugin", version.ref = "build-time-tracker"}
+ksp = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+build-time-tracker = { module = "net.rdrei.android.buildtimetracker:gradle-plugin", version.ref = "build-time-tracker" }
 
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 playServicesGradlePlugin = { module = "com.google.gms:google-services", version.ref = "playServicesGradlePlugin" }
 firebaseCrashlyticsGradle = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "crashlyticsGradlePlugin" }
 firebasePerf = { module = "com.google.firebase:perf-plugin", version.ref = "firebasePerf" }
-viewBinding = { module = "androidx.databinding:viewbinding", version.ref = "agp"}
+viewBinding = { module = "androidx.databinding:viewbinding", version.ref = "agp" }
 
 multidex = { module = "com.android.support:multidex", version.ref = "multidex" }
 androidXCore = { module = "androidx.core:core-ktx", version.ref = "androidXCore" }
 androidXAppCompat = { module = "androidx.appcompat:appcompat", version.ref = "appCompat" }
+androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
 androidMaterial = { module = "com.google.android.material:material", version.ref = "androidMaterial" }
 constraintLayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintLayout" }
 paging = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
@@ -149,6 +154,10 @@ androidMapUtils = { module = "com.google.maps.android:android-maps-utils", versi
 androidGoogleMap = { module = "com.google.android.gms:play-services-maps", version.ref = "androidGoogleMap" }
 googlePlaces = { module = "com.google.android.libraries.places:places", version.ref = "googlePlaces" }
 
+# mapbox
+mapbox-java-services = { module = "com.mapbox.mapboxsdk:mapbox-sdk-services", version.ref = "mapbox-java" }
+mapbox-maps = { module = "com.mapbox.maps:android", version.ref = "mapbox-maps" }
+
 # room
 roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
 roomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
@@ -192,8 +201,11 @@ junit = { module = "junit:junit", version.ref = "junit" }
 kotlinTest = { module = "org.jetbrains.kotlin:kotlin-test" }
 kotlinXCoroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 androidXCoreTesting = { module = "androidx.arch.core:core-testing", version.ref = "androidXCoreTesting" }
+
 mockitoCore = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockitoKotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoKotlin" }
+
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 mockitoAndroid = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
 androidXTestRunner = { module = "androidx.test:runner", version.ref = "androidXTestRunner" }
@@ -218,4 +230,5 @@ compose = [
 ]
 crashlytics = ["firebaseCrashlyticsKtx", "firebaseAnalyticsKtx"]
 #placesDeps = [ "googlePlaces" ]
-testCoroutine = [ "kotlinXCoroutinesTest", "turbine" ]
+testCoroutine = ["kotlinXCoroutinesTest", "turbine"]
+firebase-data = ["firebaseAuthKtx", "firebaseFirestoreKtx", "firebaseStorageKtx"]

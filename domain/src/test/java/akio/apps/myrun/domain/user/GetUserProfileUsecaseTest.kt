@@ -1,7 +1,8 @@
 package akio.apps.myrun.domain.user
 
-import akio.apps.common.data.Resource
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.authentication.api.model.UserAccount
+import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.UserProfile
@@ -48,7 +49,10 @@ class GetUserProfileUsecaseTest {
         mockedUserProfileRepository = mock()
         mockedUserAuthenticationState = mock()
         MockitoAnnotations.openMocks(this)
-        testee = GetUserProfileUsecase(mockedUserProfileRepository, mockedUserAuthenticationState)
+        testee = GetUserProfileUsecase(
+            mockedUserProfileRepository,
+            mockedUserAuthenticationState
+        )
     }
 
     @Test
@@ -72,8 +76,8 @@ class GetUserProfileUsecaseTest {
         verify(mockedUserProfileRepository).getUserProfileFlow(defaultUserId)
     }
 
-    private fun createUserAccount(): akio.apps.myrun.data.authentication.api.model.UserAccount {
-        return akio.apps.myrun.data.authentication.api.model.UserAccount(
+    private fun createUserAccount(): UserAccount {
+        return UserAccount(
             defaultUserId,
             defaultEmail,
             defaultDisplayName,

@@ -2,17 +2,11 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
-    id 'kotlin-parcelize'
     id 'com.google.firebase.firebase-perf'
     id "build-time-tracker"
-}
-
-File localPropsFile = project.rootProject.file('local.properties')
-Properties localProps = new Properties()
-if (localPropsFile.exists()) {
-    localProps.load(localPropsFile.newDataInputStream())
 }
 
 android {
@@ -36,9 +30,9 @@ android {
             keyPassword 'myrundebugkeyv2'
         }
         rc {
-            def path = localProps.getProperty('signing.rc.path') ?: "invalid"
-            def password = localProps.getProperty('signing.rc.password')
-            def alias = localProps.getProperty('signing.rc.alias')
+            def path = project.localProps['signing.rc.path'] ?: "invalid"
+            def password = project.localProps['signing.rc.password']
+            def alias = project.localProps['signing.rc.alias']
             storeFile file(path)
             storePassword password
             keyAlias alias
@@ -96,61 +90,48 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation project(':features:base')
-    implementation project(':features:registration')
-    implementation project(":features:profile")
-    implementation project(":features:activitydetail")
+    implementation(project(':data:api'))
+    implementation project(':domain')
 
-    debugImplementation project(":features:configurator")
+    implementation project(':data:firebase')
+    implementation(libs.firebasePerfKtx)
+    implementation(libs.firebaseAuthKtx)
 
-    implementation(project(':wiring'))
-
-    implementation project(':common:feature')
-    implementation project(':common:wiring')
-    implementation project(':common:data')
+    implementation(project(':data:authentication'))
+    implementation(project(':data:tracking'))
 
     implementation project(':worker')
-    implementation(libs.workManager) // still needed when using module 'worker'
 
-    implementation(libs.googlePlaces)
+    implementation project(':feature:common')
+    implementation project(':feature:registration')
+    implementation project(":feature:profile")
+    implementation project(":feature:home")
+    implementation project(":feature:activity")
+    implementation project(":feature:tracking")
+    implementation project(":feature:route")
+    debugImplementation project(":feature:configurator")
+
+    implementation(libs.workManager) // to config work manager in application class
+
+    implementation(libs.googlePlaces)   // to init place sdk in application class
 
     implementation(libs.kotlinxCoroutinesCore)
-    implementation(libs.kotlinxCoroutinesPlayServices)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
 
     implementation(libs.androidXCore)
     implementation(libs.androidXAppCompat)
-    implementation(libs.androidMaterial)
-    implementation(libs.constraintLayout)
-    implementation(libs.paging)
-    implementation(libs.fragment)
-    implementation(libs.activity)
     implementation(libs.splashScreen)
 
-    implementation(libs.lifecycleRuntimeKtx)
-    implementation(libs.lifecycleLiveDataKtx)
-    implementation(libs.lifecycleViewModelKtx)
-    implementation(libs.lifecycleCommonJava8)
     implementation(libs.lifecycleProcess)
 
     implementation(libs.bundles.compose)
-    implementation(libs.coilCompose)
-    implementation(libs.accompanistPlaceholder)
     implementation(libs.accompanistInsets)
 
     implementation(libs.multidex)
 
-    implementation(libs.playServicesAuth)
-    implementation(libs.playServicesFitness)
-
-    implementation platform(libs.firebaseBom)
     implementation(libs.bundles.crashlytics)
-    implementation(libs.firebasePerfKtx)
-
-    implementation(libs.androidMapUtils)
-    implementation(libs.androidGoogleMap)
 
     implementation(libs.timber)
 
@@ -158,22 +139,7 @@ dependencies {
         debugImplementation(libs.leakCanary)
     }
 
-    testImplementation(testFixtures(project(':test')))
-    testImplementation(libs.bundles.testCoroutine)
-    testImplementation(libs.junit)
     testImplementation(libs.kotlinTest)
-    testImplementation(libs.androidXCoreTesting)
-    testImplementation(libs.mockitoCore)
-    testImplementation(libs.mockitoKotlin)
-    testImplementation(libs.kotlinReflect)
-    kaptAndroidTest(libs.daggerCompiler)
-    androidTestImplementation(libs.mockitoAndroid)
-    androidTestImplementation(libs.androidXTestRunner)
-    androidTestImplementation(libs.espressoCore)
-    androidTestImplementation(libs.espressoContrib)
-    androidTestImplementation(libs.androidXTestRules)
-    androidTestImplementation(libs.androidXJunit)
-    androidTestImplementation(libs.uiAutomator)
 }
 
 buildtimetracker {
@@ -181,12 +147,12 @@ buildtimetracker {
         csv {
             output "build/times.csv"
             append true
-            header false
+            header true
         }
 
         summary {
             ordered false
-            threshold 1000
+            threshold 500
             barstyle "unicode"
             shortenTaskNames false
         }
