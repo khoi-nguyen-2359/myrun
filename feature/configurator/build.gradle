@@ -38,8 +38,11 @@ android {
 }
 
 dependencies {
-    implementation(project(":data:firebase"))
-    implementation(libs.bundles.firebase.data)
+    implementation(project(':wiring:common'))
+    implementation(project(":feature:common"))
+
+    implementation(project(':data:api'))
+    implementation(project(':domain'))
 
     implementation(project(':data:location'))
     implementation(project(':data:tracking'))
@@ -47,11 +50,8 @@ dependencies {
     implementation(project(':data:eapps'))
     implementation(project(':data:authentication'))
 
-    implementation(project(':data:api'))
-    implementation(project(':domain'))
-    implementation(project(':wiring:common'))
-
-    implementation(project(":feature:common"))
+    implementation(project(":data:firebase"))
+    implementation(libs.bundles.firebase.data)
 
     implementation(libs.androidXCore)
     implementation(libs.androidXAppCompat)

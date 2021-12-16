@@ -1,12 +1,12 @@
 package akio.apps.myrun.domain.user
 
-import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi

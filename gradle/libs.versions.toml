@@ -231,4 +231,4 @@ compose = [
 crashlytics = ["firebaseCrashlyticsKtx", "firebaseAnalyticsKtx"]
 #placesDeps = [ "googlePlaces" ]
 testCoroutine = ["kotlinXCoroutinesTest", "turbine"]
-firebase-data = ["firebaseBom", "firebaseAuthKtx", "firebaseFirestoreKtx", "firebaseStorageKtx"]
+firebase-data = ["firebaseAuthKtx", "firebaseFirestoreKtx", "firebaseStorageKtx"]

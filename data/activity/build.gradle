@@ -36,8 +36,12 @@ android {
 
 dependencies {
     implementation(project(':data:api'))
-    implementation(project(':wiring:common'))
+
     implementation(project(':data:firebase'))
+    implementation(libs.firebaseFirestoreKtx)
+    implementation(libs.firebaseStorageKtx)
+
+    implementation(project(':wiring:common'))
 
     implementation(libs.javaXInject)
 
@@ -45,10 +49,6 @@ dependencies {
 
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.kotlinxCoroutinesPlayServices)
-
-    implementation(platform(libs.firebaseBom))
-    implementation(libs.firebaseFirestoreKtx)
-    implementation(libs.firebaseStorageKtx)
 
     implementation(libs.tcxzPot)
 

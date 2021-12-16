@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.user.impl
 
-import akio.apps.myrun.data.firebase.FirebaseStorageUtils
 import akio.apps.myrun.data.common.Resource
+import akio.apps.myrun.data.firebase.FirebaseStorageUtils
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.ProfileEditData
