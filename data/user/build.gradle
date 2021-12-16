@@ -33,7 +33,11 @@ android {
 
 dependencies {
     implementation project(":data:api")
+
     implementation project(":data:firebase")
+    implementation(libs.firebaseFirestoreKtx)
+    implementation(libs.firebaseStorageKtx)
+
     implementation project(":wiring:common")
 
     // app migration
@@ -42,9 +46,6 @@ dependencies {
     implementation(libs.kotlinxCoroutinesPlayServices)
     implementation(libs.kotlinxCoroutinesCore)
     implementation(libs.javaXInject)
-    implementation platform(libs.firebaseBom)
-    implementation(libs.firebaseFirestoreKtx)
-    implementation(libs.firebaseStorageKtx)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)

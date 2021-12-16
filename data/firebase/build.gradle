@@ -38,9 +38,7 @@ dependencies {
     kapt(libs.daggerCompiler)
 
     implementation platform(libs.firebaseBom)
-    implementation(libs.firebaseFirestoreKtx)
-    implementation(libs.firebaseStorageKtx)
-    implementation(libs.firebaseAuthKtx)
+    implementation(libs.bundles.firebase.data)
 
     implementation(libs.timber)
 }

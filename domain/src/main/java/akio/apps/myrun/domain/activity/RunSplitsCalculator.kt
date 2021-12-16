@@ -2,7 +2,6 @@ package akio.apps.myrun.domain.activity
 
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.location.api.SphericalUtil
-import akio.apps.myrun.domain.activity.api.getLatLng
 import akio.apps.myrun.domain.common.TrackingValueConverter
 import javax.inject.Inject
 import timber.log.Timber

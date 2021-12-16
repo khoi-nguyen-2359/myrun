@@ -33,14 +33,11 @@ android {
 
 dependencies {
     implementation(project(':data:api'))
+
     implementation(project(":data:firebase"))
+    implementation(libs.bundles.firebase.data)
 
     implementation(libs.kotlinxCoroutinesCore)
-
-    implementation(platform(libs.firebaseBom))
-    implementation(libs.firebaseAuthKtx)
-    implementation(libs.firebaseFirestoreKtx)
-    implementation(libs.firebaseStorageKtx)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)

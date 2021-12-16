@@ -1,9 +1,9 @@
 package akio.apps.myrun.data.activity.api
 
-import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.DataPoint
+import akio.apps.myrun.data.common.Resource
 import java.io.File
 
 interface ActivityRepository {

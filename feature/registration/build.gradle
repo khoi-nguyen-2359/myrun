@@ -34,23 +34,21 @@ android {
 
 dependencies {
     implementation(project(":wiring:common"))
-    implementation(project(':data:authentication'))
-    implementation(project(':data:eapps'))
-    implementation(project(':data:user'))
-    implementation(project(':data:location'))
+    implementation(project(":feature:common"))
 
     implementation(project(':data:api'))
     implementation(project(':domain'))
 
-    implementation(project(":feature:common"))
+    implementation(project(':data:authentication'))
+    implementation(project(':data:eapps'))
+    implementation(project(':data:user'))
+
+    implementation(project(":data:firebase"))
+    implementation(libs.bundles.firebase.data)
 
     implementation(libs.lifecycleRuntimeKtx)
     implementation(libs.lifecycleLiveDataKtx)
     implementation(libs.lifecycleViewModelKtx)
-    implementation(libs.javaXInject)
-
-    implementation(project(":data:firebase"))
-    implementation(libs.bundles.firebase.data)
 
     implementation(libs.kotlinxCoroutinesPlayServices)
 

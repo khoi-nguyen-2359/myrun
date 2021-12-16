@@ -1,9 +1,9 @@
 package akio.apps.myrun.domain.strava
 
+import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.eapps.api.StravaDataRepository
-import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher

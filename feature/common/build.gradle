@@ -42,7 +42,6 @@ android {
 
 dependencies {
     implementation(project(":data:api"))
-    implementation(project(":data:firebase"))
     implementation(project(":domain"))
 
     implementation(libs.androidXAppCompat)

@@ -3,9 +3,9 @@ package akio.apps.myrun.domain.user
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.PlaceDataSource
-import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
+import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import java.io.IOException
 import javax.inject.Inject
 
