@@ -41,7 +41,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":data:api"))
     implementation(project(":domain"))
 
     implementation(libs.androidXAppCompat)
