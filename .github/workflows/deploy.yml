@@ -2,8 +2,8 @@ name: Deploy
 
 on:
   push:
-    tags:
-      - release-[0-9]+.[0-9]+.[0-9]+
+    branches:
+      - release/[0-9]+.[0-9]+.[0-9]+
 
 jobs:
   deploy:
@@ -62,5 +62,12 @@ jobs:
           packageName: akio.apps.myrun
           releaseFile: app/build/outputs/bundle/release/app-release.aab
           track: alpha
-          whatsNewDirectory: distribution/whatsnew
+          whatsNewDirectory: distribution
           mappingFile: app/build/outputs/mapping/release/mapping.txt
+
+      - name: Tag Release
+        run: |
+          version_name=${GITHUB_REF##*/}
+          echo "Tagging release with tag $version_name"
+          git tag $version_name release/$version_name
+          git push origin --tags
