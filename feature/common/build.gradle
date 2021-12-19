@@ -43,6 +43,7 @@ android {
 dependencies {
     implementation(project(":domain"))
 
+    implementation(libs.androidMaterial)
     implementation(libs.androidXAppCompat)
     implementation(libs.bundles.compose)
     implementation(libs.accompanistInsets)

@@ -1,5 +1,4 @@
 <resources>
-    <string name="route_tracking_time_label">Time</string>
     <string name="common_time_unit">minute</string>
     <string name="error_permission_settings_disabled">Please grant permissions in app settings</string>
     <string name="action_open_settings">Open settings</string>
