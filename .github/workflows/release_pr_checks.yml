@@ -2,7 +2,8 @@ name: Release PR Checks
 
 on:
   pull_request:
-    branches: [ release/ ]
+    branches:
+      - release/**
 
 jobs:
   lint:
