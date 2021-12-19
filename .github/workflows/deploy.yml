@@ -70,3 +70,5 @@ jobs:
           packageName: akio.apps.myrun
           releaseFile: app/build/outputs/bundle/release/app-release.aab
           track: alpha
+          whatsNewDirectory: distribution/whatsnew
+          mappingFile: app/build/outputs/mapping/release/mapping.txt
