@@ -46,7 +46,6 @@ dependencies {
     implementation(project(':wiring:common'))
     implementation(project(':feature:common'))
 
-    implementation(project(':data:api'))
     implementation(project(':domain'))
 
     implementation(project(':data:authentication'))

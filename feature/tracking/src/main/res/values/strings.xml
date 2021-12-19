@@ -9,4 +9,5 @@
     <string name="location_permission_rationale_message">Your activity route is tracked in <b>precise locations</b>. Please grant the permission first.</string>
     <string name="route_tracking_save_activity">Finish and save activity</string>
     <string name="route_tracking_discard_activity">Discard activity</string>
+    <string name="route_tracking_time_label">Time</string>
 </resources>
