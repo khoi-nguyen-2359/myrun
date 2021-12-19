@@ -139,6 +139,7 @@ dependencies {
     }
 
     testImplementation(libs.kotlinTest)
+    testImplementation(project(":feature:configurator"))
 }
 
 buildtimetracker {
