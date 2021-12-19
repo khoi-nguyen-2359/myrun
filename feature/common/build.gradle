@@ -41,9 +41,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":data:api"))
     implementation(project(":domain"))
 
+    implementation(libs.androidMaterial)
     implementation(libs.androidXAppCompat)
     implementation(libs.bundles.compose)
     implementation(libs.accompanistInsets)
