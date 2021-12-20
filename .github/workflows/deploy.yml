@@ -65,9 +65,27 @@ jobs:
           whatsNewDirectory: distribution
           mappingFile: app/build/outputs/mapping/release/mapping.txt
 
-      - name: Tag Release
-        run: |
+  tag:
+    name: Tag Release
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
           version_name=${GITHUB_REF##*/}
           echo "Tagging release with tag $version_name"
           git tag $version_name release/$version_name
           git push origin --tags
+
+  pr:
+    name: Pull Request On Develop
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v2
+      - uses: repo-sync/pull-request@v2
+        with:
+          destination_branch: "develop"
+          pr_title: "Pulling ${{ github.ref }} into master"
+          pr_label: "Auto-PR"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
