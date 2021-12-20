@@ -51,10 +51,10 @@ jobs:
         uses: r0adkll/sign-android-release@v1
         with:
           releaseDirectory: app/build/outputs/bundle/release
-          signingKeyBase64: $KEYSTORE_BASE64
-          alias: $SIGNING_KEY_ALIAS
-          keyStorePassword: $SIGNING_KEY_PWD
-          keyPassword: $SIGNING_KEY_PWD
+          signingKeyBase64: ${{ KEYSTORE_BASE64 }}
+          alias: ${{ SIGNING_KEY_ALIAS }}
+          keyStorePassword: ${{ SIGNING_KEY_PWD }}
+          keyPassword: ${{ SIGNING_KEY_PWD }}
 
       - name: Create service_account.json
         run: echo '${{ secrets.DEPLOY_SERVICE_ACCOUNT_PRIVATE_KEY }}' > service_account.json
