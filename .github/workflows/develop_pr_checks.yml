@@ -2,17 +2,18 @@ name: Develop PR Checks
 
 on:
   pull_request:
-    branches: [ develop ]
+    branches:
+      - develop
 
 jobs:
   lint:
     name: Lint
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
 
-      - name: "Install ktlint"
+      - name: Install ktlint
         uses: nbadal/action-ktlint-setup@v1
 
       - run: ktlint
@@ -20,7 +21,7 @@ jobs:
 
   build:
     name: Build & Test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout the code

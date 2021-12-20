@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy Alpha
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
 
 jobs:
   deploy:
-    name: Deploy
-    runs-on: ubuntu-20.04
+    name: Deploy Alpha
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout The Code
@@ -86,6 +86,6 @@ jobs:
       - uses: repo-sync/pull-request@v2
         with:
           destination_branch: "develop"
-          pr_title: "Pulling ${{ github.ref }} into master"
+          pr_title: "Pulling ${{ github.ref }} into develop"
           pr_label: "Auto-PR"
           github_token: ${{ secrets.GITHUB_TOKEN }}
