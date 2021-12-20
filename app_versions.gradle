@@ -1,6 +1,6 @@
 project.ext {
-    versionName = "1.7.0"
-    versionCode = 1_07_00
+    versionName = "1.7.2"
+    versionCode = 1_07_02
     appId = "akio.apps.myrun"
     minSdk = 21
     targetSdk = 30
