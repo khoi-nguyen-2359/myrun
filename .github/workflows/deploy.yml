@@ -61,7 +61,7 @@ jobs:
           serviceAccountJson: service_account.json
           packageName: akio.apps.myrun
           releaseFile: app/build/outputs/bundle/release/app-release.aab
-          track: alpha
+          track: beta
           whatsNewDirectory: distribution
           mappingFile: app/build/outputs/mapping/release/mapping.txt
 
