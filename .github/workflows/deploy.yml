@@ -2,8 +2,8 @@ name: Deploy
 
 on:
   push:
-    branches:
-      - release/[0-9]+.[0-9]+.[0-9]+
+    tags:
+      - release-[0-9]+.[0-9]+.[0-9]+
 
 jobs:
   deploy:
@@ -40,6 +40,9 @@ jobs:
       - name: Bundle Release
         run: bash ./gradlew bundleRelease
 
+      - name: Run Release Unit Tests
+        run: bash ./gradlew testReleaseUnitTest
+
       - name: Sign Release
         env:
           KEYSTORE_BASE64: ${{ secrets.RELEASE_PLAY_STORE_UPLOAD_KEY }}
@@ -52,13 +55,6 @@ jobs:
           alias: $SIGNING_KEY_ALIAS
           keyStorePassword: $SIGNING_KEY_PWD
           keyPassword: $SIGNING_KEY_PWD
-
-      - name: Tag Release
-        run: |
-          version_name=${GITHUB_REF##*/}
-          echo "Tagging release with tag $version_name"
-          git tag $version_name release/$version_name
-          git push origin --tags
 
       - name: Create service_account.json
         run: echo '${{ secrets.DEPLOY_SERVICE_ACCOUNT_PRIVATE_KEY }}' > service_account.json
