@@ -76,6 +76,9 @@ class RouteTrackingActivity(
     private var hasMapCameraBeenIdled: Boolean = false
     private var isMapCameraMoving: Boolean = false
 
+    // first camera move will instantly jump to the current location, no animation (map first load)
+    private var isFirstCameraMoveFinished: Boolean = false
+
     private val dialogDelegate by lazy { akio.apps.myrun.feature.base.DialogDelegate(this) }
 
     private val routeTrackingViewModel: RouteTrackingViewModel by lazyViewModelProvider {
@@ -191,7 +194,10 @@ class RouteTrackingActivity(
         )
     }
 
-    private fun updateStickyCamera(locationUpdate: List<Location>, animate: Boolean = true) {
+    private fun updateStickyCamera(
+        locationUpdate: List<Location>,
+        animate: Boolean = isFirstCameraMoveFinished
+    ) {
         Timber.d("Sticky Camera $cameraMovement")
         if (isMapCameraMoving) {
             return
@@ -215,6 +221,8 @@ class RouteTrackingActivity(
             else -> {
             } // do nothing
         }
+
+        isFirstCameraMoveFinished = true
     }
 
     private fun recenterZoomOutMap(location: Location, animate: Boolean) {
@@ -565,13 +573,11 @@ class RouteTrackingActivity(
                 hasMapCameraBeenIdled = true
                 isMapCameraMoving = false
             }
-            setOnCameraMoveStartedListener {
-                isMapCameraMoving = true
-            }
             setOnCameraMoveStartedListener { reason ->
                 if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
                     setCameraMovementAndUpdateUi(CameraMovement.None, false)
                 }
+                isMapCameraMoving = true
             }
             setOnMarkerClickListener { true } // avoid camera movement on marker click event
             isMyLocationEnabled = true
