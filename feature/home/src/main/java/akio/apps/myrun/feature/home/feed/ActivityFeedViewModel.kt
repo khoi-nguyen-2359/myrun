@@ -3,7 +3,6 @@ package akio.apps.myrun.feature.home.feed
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
-import akio.apps.myrun.data.time.Now
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.data.user.api.model.UserProfile
@@ -74,7 +73,8 @@ class ActivityFeedViewModel @Inject constructor(
             enablePlaceholders = false,
             prefetchDistance = PAGE_SIZE
         ),
-        initialKey = Now.currentTimeMillis()
+        // do not pass initial key as timestamp because initialKey is reused in invalidating!
+        // initialKey = Now.currentTimeMillis()
     ) { recreateActivityPagingSource() }
         .flow
         .cachedIn(viewModelScope)

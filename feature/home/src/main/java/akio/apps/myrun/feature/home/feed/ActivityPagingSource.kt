@@ -15,7 +15,7 @@ class ActivityPagingSource @Inject constructor(
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, ActivityModel> {
         val startAfter = params.key ?: Now.currentTimeMillis()
         val resource = getFeedActivitiesUsecase.getUserTimelineActivity(startAfter, params.loadSize)
-        Timber.d("feed resource startAfter=$startAfter, size=${resource.data?.size ?: 0}")
+        Timber.d("feed resource paramKey=${params.key} startAfter=$startAfter")
         return when (resource) {
             is Resource.Success ->
                 LoadResult.Page(
