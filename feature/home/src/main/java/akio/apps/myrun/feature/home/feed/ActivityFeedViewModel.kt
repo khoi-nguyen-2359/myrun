@@ -74,7 +74,8 @@ class ActivityFeedViewModel @Inject constructor(
             enablePlaceholders = false,
             prefetchDistance = PAGE_SIZE
         ),
-        initialKey = Now.currentTimeMillis()
+        // do not pass initial key as timestamp because initialKey is reused in invalidating!
+        // initialKey = Now.currentTimeMillis()
     ) { recreateActivityPagingSource() }
         .flow
         .cachedIn(viewModelScope)
