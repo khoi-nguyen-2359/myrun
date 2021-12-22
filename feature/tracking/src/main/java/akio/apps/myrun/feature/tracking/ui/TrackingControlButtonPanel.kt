@@ -38,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -61,8 +62,9 @@ fun TrackingControlButtonPanel(
     val trackingStatus by routeTrackingViewModel.trackingStatus.observeAsState()
     // when entering the screen, initial location may not be available if location is not ready yet,
     // so use flow to get the location when it is ready.
-    val initialLocation by routeTrackingViewModel.getLastLocationFlow()
-        .collectAsState(initial = null)
+    val initialLocation by produceState<Location?>(initialValue = null, producer = {
+        value = routeTrackingViewModel.getLatestLocation()
+    })
     val stickyCameraMode by routeTrackingViewModel.stickyCameraButtonState.collectAsState()
     TrackingControlButtonPanel(
         stickyCameraMode,

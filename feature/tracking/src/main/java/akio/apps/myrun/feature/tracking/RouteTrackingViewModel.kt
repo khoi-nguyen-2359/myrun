@@ -31,9 +31,9 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -55,8 +55,8 @@ class RouteTrackingViewModel @Inject constructor(
     val stickyCameraButtonState: MutableStateFlow<RouteTrackingActivity.CameraMovement> =
         MutableStateFlow(RouteTrackingActivity.CameraMovement.StickyBounds)
 
-    fun getLastLocationFlow(): Flow<Location> =
-        locationDataSource.getLastLocationFlow()
+    suspend fun getLatestLocation(): Location =
+        locationUpdateFlow.takeWhile { it.isNotEmpty() }.first().first()
 
     private val _trackingLocationBatch = MutableLiveData<List<ActivityLocation>>()
     val trackingLocationBatch: LiveData<List<ActivityLocation>> =
@@ -81,9 +81,7 @@ class RouteTrackingViewModel @Inject constructor(
 
     @OptIn(FlowPreview::class)
     val locationUpdateFlow: Flow<List<Location>> =
-        getLocationRequestConfigFlow()
-            .flatMapConcat(locationDataSource::getLocationUpdate)
-            .onStart { emit(getLastLocationFlow().toList()) }
+        getLocationRequestConfigFlow().flatMapConcat(locationDataSource::getLocationUpdate)
 
     fun resumeDataUpdates() {
         if (trackingStatus.value == RouteTrackingStatus.RESUMED) {

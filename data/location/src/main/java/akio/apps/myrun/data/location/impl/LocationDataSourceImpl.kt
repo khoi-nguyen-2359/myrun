@@ -56,10 +56,6 @@ class LocationDataSourceImpl @Inject constructor(
     override fun getLocationUpdate(request: LocationRequestConfig): Flow<List<Location>> =
         callbackFlow {
             Timber.d("=== [START] Get location update config=$request")
-            getLastLocation()?.let { lastLocation ->
-                trySend(listOf(lastLocation))
-            }
-
             val callback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
                     Timber.tag(LOG_TAG_LOCATION).d(
