@@ -261,7 +261,7 @@ class RouteTrackingActivity(
         this.cameraMovement = expectedMode
         // move right after set mode value
         lifecycleScope.launch {
-            val lastLocation = routeTrackingViewModel.getLastLocationFlow().first()
+            val lastLocation = routeTrackingViewModel.getLatestLocation()
             updateStickyCamera(listOf(lastLocation), animate)
         }
         val cameraButtonState = when (expectedMode) {
