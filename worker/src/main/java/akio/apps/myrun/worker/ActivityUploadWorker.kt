@@ -6,6 +6,7 @@ import android.app.Application
 import android.app.Notification
 import android.content.Context
 import android.os.Build
+import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
@@ -15,6 +16,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
@@ -80,6 +82,7 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
                 .build()
 
             val workRequest = OneTimeWorkRequestBuilder<ActivityUploadWorker>()
+                .setBackoffCriteria(BackoffPolicy.LINEAR, 1 /* backoffDelay */, TimeUnit.MINUTES)
                 .setConstraints(constraints)
                 .build()
             WorkManager.getInstance(context)
