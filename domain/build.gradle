@@ -50,6 +50,7 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.kotlinReflect)
     testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.mockito.inline)
     testImplementation(libs.kotlinTest)
     testImplementation(libs.kotlinXCoroutinesTest)
     testImplementation(libs.turbine)

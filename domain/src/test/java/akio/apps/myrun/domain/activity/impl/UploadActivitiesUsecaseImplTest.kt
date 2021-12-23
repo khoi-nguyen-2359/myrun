@@ -8,8 +8,10 @@ import akio.apps.myrun.data.activity.api.model.ActivityStorageData
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.location.api.PlaceDataSource
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.domain.activity.UploadActivitiesUsecase
+import akio.apps.myrun.domain.user.PlaceIdentifierConverter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -29,6 +31,8 @@ class UploadActivitiesUsecaseImplTest {
     private lateinit var mockedActivityLocalStorage: ActivityLocalStorage
     private lateinit var mockedActivityRepository: ActivityRepository
     private lateinit var uploadActivitiesUsecase: UploadActivitiesUsecase
+    private lateinit var mockedPlaceDataSource: PlaceDataSource
+    private lateinit var mockedPlaceIdentifierConverter: PlaceIdentifierConverter
 
     @Before
     fun setup() {
@@ -36,11 +40,15 @@ class UploadActivitiesUsecaseImplTest {
         mockedActivityLocalStorage = mock()
         mockedAuthenticationState = mock()
         mockedUserProfileRepository = mock()
+        mockedPlaceDataSource = mock()
+        mockedPlaceIdentifierConverter = mock()
         uploadActivitiesUsecase = UploadActivitiesUsecase(
             mockedAuthenticationState,
             mockedActivityRepository,
             mockedActivityLocalStorage,
-            mockedUserProfileRepository
+            mockedUserProfileRepository,
+            mockedPlaceDataSource,
+            mockedPlaceIdentifierConverter
         )
     }
 
