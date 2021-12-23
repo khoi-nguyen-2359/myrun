@@ -27,13 +27,14 @@ class UpdateUserRecentPlaceWorker(
         DaggerWorkerFeatureComponent.factory().create(appContext as Application).inject(this)
     }
 
-    override suspend fun doWork(): Result = when (updateUserRecentPlaceUsecase.invoke()) {
-        UpdateUserRecentPlaceUsecase.Result.InvalidUser -> Result.failure()
-        UpdateUserRecentPlaceUsecase.Result.LocationUnavailable,
-        UpdateUserRecentPlaceUsecase.Result.IOFailure,
-        -> Result.retry()
-        UpdateUserRecentPlaceUsecase.Result.Success -> Result.success()
-    }
+    override suspend fun doWork(): Result =
+        when (updateUserRecentPlaceUsecase.updateUserRecentPlace()) {
+            UpdateUserRecentPlaceUsecase.Result.InvalidUser -> Result.failure()
+            UpdateUserRecentPlaceUsecase.Result.LocationUnavailable,
+            UpdateUserRecentPlaceUsecase.Result.IOFailure,
+            -> Result.retry()
+            UpdateUserRecentPlaceUsecase.Result.Success -> Result.success()
+        }
 
     companion object {
         private const val UNIQUE_WORK_NAME = "routetracking.UpdateUserRecentPlaceWorker"
