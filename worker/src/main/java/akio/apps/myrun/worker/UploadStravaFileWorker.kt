@@ -3,6 +3,7 @@ package akio.apps.myrun.worker
 import akio.apps.myrun.domain.strava.UploadActivityFilesToStravaUsecase
 import android.app.Application
 import android.content.Context
+import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
@@ -10,12 +11,13 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import timber.log.Timber
 
 class UploadStravaFileWorker(
     appContext: Context,
-    params: WorkerParameters
+    params: WorkerParameters,
 ) : CoroutineWorker(appContext, params) {
 
     @Inject
@@ -46,6 +48,7 @@ class UploadStravaFileWorker(
 
             val workRequest = OneTimeWorkRequestBuilder<UploadStravaFileWorker>()
                 .setConstraints(constraints)
+                .setBackoffCriteria(BackoffPolicy.LINEAR, 1 /* backoffDelay */, TimeUnit.HOURS)
                 .build()
             WorkManager.getInstance(context)
                 .enqueueUniqueWork(UNIQUE_WORK_NAME, ExistingWorkPolicy.KEEP, workRequest)
