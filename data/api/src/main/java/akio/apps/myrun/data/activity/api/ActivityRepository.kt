@@ -32,8 +32,7 @@ interface ActivityRepository {
      * case.
      */
     suspend fun getActivityResource(activityId: String): Resource<ActivityModel?>
-    suspend fun getActivityLocationDataPoints(activityId: String):
-        List<ActivityLocation>
+    suspend fun getActivityLocationDataPoints(activityId: String): List<ActivityLocation>
 
     /**
      * Get activities that have start time in given time range. Sorting order is descending.

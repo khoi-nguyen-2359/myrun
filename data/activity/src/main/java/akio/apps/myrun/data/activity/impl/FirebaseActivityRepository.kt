@@ -15,6 +15,7 @@ import akio.apps.myrun.data.activity.impl.model.FirestoreIntegerDataPointParser
 import akio.apps.myrun.data.activity.impl.model.FirestoreLocationDataPointParser
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.firebase.FirebaseStorageUtils
+import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,7 +35,7 @@ class FirebaseActivityRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage,
     private val firestoreActivityMapper: FirestoreActivityMapper,
-    @akio.apps.myrun.wiring.common.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ActivityRepository {
 
     private val userActivityCollectionGroup: Query
@@ -69,7 +70,7 @@ class FirebaseActivityRepository @Inject constructor(
         startTime: Long,
         endTime: Long,
     ): List<ActivityModel> = withContext(ioDispatcher) {
-        val query = userActivityCollectionGroup.whereEqualTo("athleteInfo.userId", userId)
+        val query = getUserActivityCollection(userId)
             .orderBy("startTime", Query.Direction.DESCENDING)
             .startAt(endTime)
             .endAt(startTime)
