@@ -74,7 +74,7 @@ jobs:
       - run: |
           version_name=${GITHUB_REF##*/}
           echo "Tagging release with tag $version_name"
-          git tag $version_name release/$version_name
+          git tag $version_name deploy/$version_name
           git push origin --tags
 
   pr:
