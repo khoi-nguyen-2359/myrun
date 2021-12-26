@@ -2,8 +2,9 @@ package akio.apps.myrun.domain.user
 
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.AthleteInfo
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
@@ -244,7 +245,7 @@ class GetTrainingSummaryDataUsecaseTest {
         startTime: Long,
         duration: Long,
         distance: Double,
-    ): ActivityModel = when (activityType) {
+    ): BaseActivityModel = when (activityType) {
         ActivityType.Running -> RunningActivityModel(
             ActivityDataModel(
                 "id",
@@ -257,7 +258,7 @@ class GetTrainingSummaryDataUsecaseTest {
                 duration = duration,
                 distance = distance,
                 "encodedPolyline",
-                ActivityModel.AthleteInfo("userId", "userName", "userAvatar")
+                AthleteInfo("userId", "userName", "userAvatar")
             ),
             pace = 0.0,
             cadence = 0
@@ -274,7 +275,7 @@ class GetTrainingSummaryDataUsecaseTest {
                 duration = duration,
                 distance = distance,
                 "encodedPolyline",
-                ActivityModel.AthleteInfo("userId", "userName", "userAvatar")
+                AthleteInfo("userId", "userName", "userAvatar")
             ),
             speed = 0.0
         )

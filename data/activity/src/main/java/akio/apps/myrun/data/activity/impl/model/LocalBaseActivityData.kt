@@ -3,11 +3,11 @@ package akio.apps.myrun.data.activity.impl.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-sealed interface TrackingActivityInfo {
+interface LocalBaseActivityData {
     val id: String
 
     // user info
-    val athleteInfo: AthleteInfo
+    val athleteInfo: LocalAthleteInfo
 
     // info
     val activityType: String
@@ -26,17 +26,17 @@ sealed interface TrackingActivityInfo {
 }
 
 @Serializable
-data class AthleteInfo(
+data class LocalAthleteInfo(
     @SerialName("userId")
     val userId: String,
     @SerialName("userName")
     val userName: String?,
     @SerialName("userAvatar")
-    val userAvatar: String?
+    val userAvatar: String?,
 )
 
 @Serializable
-data class TrackingActivityInfoData(
+data class LocalActivityData(
     override val id: String,
 
     // info
@@ -53,22 +53,29 @@ data class TrackingActivityInfoData(
     override val encodedPolyline: String,
 
     // user info
-    override val athleteInfo: AthleteInfo
-) : TrackingActivityInfo
+    override val athleteInfo: LocalAthleteInfo,
+) : LocalBaseActivityData
 
 @Serializable
-data class RunningTrackingActivityInfo(
-    val activityData: TrackingActivityInfoData,
+sealed class LocalBaseActivity(
+    // Set a name for serializer to differentiate with the extended class's field.
+    @SerialName("LocalBaseActivity_activityData")
+    open val activityData: LocalActivityData,
+) : LocalBaseActivityData by activityData
+
+@Serializable
+data class LocalRunningActivity(
+    override val activityData: LocalActivityData,
 
     // stats
     val pace: Double,
-    val cadence: Int
-) : TrackingActivityInfo by activityData
+    val cadence: Int,
+) : LocalBaseActivity(activityData)
 
 @Serializable
-data class CyclingTrackingActivityInfo(
-    val activityData: TrackingActivityInfoData,
+data class LocalCyclingActivity(
+    override val activityData: LocalActivityData,
 
     // stats
     val speed: Double,
-) : TrackingActivityInfo by activityData
+) : LocalBaseActivity(activityData)

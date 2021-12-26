@@ -3,8 +3,9 @@ package akio.apps.myrun.domain.tracking
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.AthleteInfo
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
@@ -67,7 +68,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         activityId: String,
         activityName: String,
         trackedLocations: List<ActivityLocation>,
-    ): ActivityModel {
+    ): BaseActivityModel {
         val endTime = Now.currentTimeMillis()
         val startTime = routeTrackingState.getTrackingStartTime()
         val duration = routeTrackingState.getTrackingDuration()
@@ -87,7 +88,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
             duration,
             distance,
             encodedPolyline,
-            ActivityModel.AthleteInfo(userId = userId) // local storage does not include
+            AthleteInfo(userId = userId) // local storage does not include
         )
         return when (activityType) {
             ActivityType.Running -> {

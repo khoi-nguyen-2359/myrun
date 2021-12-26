@@ -1,8 +1,8 @@
 package akio.apps.myrun.domain.user
 
 import akio.apps.myrun.data.activity.api.ActivityRepository
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import android.os.Parcelable
@@ -41,10 +41,10 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
                 biMonthRange.millisTimeRange.last
             )
             listOf(ActivityType.Running, ActivityType.Cycling).map { activityType ->
-                val thisWeekData = WeekRange() to mutableListOf<ActivityModel>()
-                val lastWeekData = WeekRange(offset = 1) to mutableListOf<ActivityModel>()
-                val thisMonthData = MonthRange() to mutableListOf<ActivityModel>()
-                val lastMonthData = MonthRange(offset = 1) to mutableListOf<ActivityModel>()
+                val thisWeekData = WeekRange() to mutableListOf<BaseActivityModel>()
+                val lastWeekData = WeekRange(offset = 1) to mutableListOf<BaseActivityModel>()
+                val thisMonthData = MonthRange() to mutableListOf<BaseActivityModel>()
+                val lastMonthData = MonthRange(offset = 1) to mutableListOf<BaseActivityModel>()
                 val timeRangeDataList =
                     listOf(thisWeekData, lastWeekData, thisMonthData, lastMonthData)
                 activitiesInRange

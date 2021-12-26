@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.activitydetail
 
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
-import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
@@ -74,7 +74,7 @@ class ActivityDetailViewModelTest {
     @Test
     fun testViewModelInitialization_Success() = testCoroutineDispatcher.runBlockingTest {
         val activityStartTime = 1234L
-        val activityModel = mock<ActivityModel> {
+        val activityModel = mock<BaseActivityModel> {
             on { startTime }.thenReturn(activityStartTime)
         }
         val locationDataPoints = mock<List<ActivityLocation>>()
@@ -114,7 +114,7 @@ class ActivityDetailViewModelTest {
         testViewModelInitialization_Success()
 
         val activityStartTime = 1234L
-        val activityModel = mock<ActivityModel> {
+        val activityModel = mock<BaseActivityModel> {
             on { startTime }.thenReturn(activityStartTime)
         }
 

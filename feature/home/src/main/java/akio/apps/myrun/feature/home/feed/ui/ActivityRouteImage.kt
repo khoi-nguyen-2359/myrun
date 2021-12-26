@@ -1,8 +1,9 @@
 package akio.apps.myrun.feature.home.feed.ui
 
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.AthleteInfo
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -25,7 +26,7 @@ private const val ACTIVITY_ROUTE_IMAGE_RATIO = 1.5f
 @OptIn(coil.annotation.ExperimentalCoilApi::class)
 @Composable
 fun ActivityRouteImage(
-    activity: ActivityModel,
+    activity: BaseActivityModel,
     imageRatio: Float = ACTIVITY_ROUTE_IMAGE_RATIO,
     onClickAction: (() -> Unit)? = null,
 ) {
@@ -75,7 +76,7 @@ private fun PreviewActivityRouteImage() = ActivityRouteImage(
             duration = 1000L,
             distance = 100.0,
             encodedPolyline = "",
-            athleteInfo = ActivityModel.AthleteInfo(
+            athleteInfo = AthleteInfo(
                 userId = "id",
                 userName = "Khoi Nguyen",
                 userAvatar = "userAvatar"

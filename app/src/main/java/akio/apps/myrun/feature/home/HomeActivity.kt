@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.home
 
 import akio.apps.myrun.R
-import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activitydetail.ActivityExportService
 import akio.apps.myrun.feature.home.ui.AppNavHost
 import akio.apps.myrun.feature.route.ui.RoutePlanningActivity
@@ -40,7 +40,7 @@ class HomeActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun startActivityExportService(activity: ActivityModel) {
+    private fun startActivityExportService(activity: BaseActivityModel) {
         val intent = ActivityExportService.createAddActivityIntent(
             this,
             ActivityExportService.ActivityInfo(

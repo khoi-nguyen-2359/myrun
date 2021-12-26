@@ -1,6 +1,11 @@
 package akio.apps.myrun.data.activity.api.model
 
-interface ActivityModel {
+/**
+ * This interface is for common data fields of an activity.
+ * Declare it as internal because it is only used as property delegation for concrete activity
+ * data model classes.
+ */
+internal interface BaseActivityDataModel {
     val id: String
 
     // user info
@@ -20,10 +25,4 @@ interface ActivityModel {
 
     // data points
     val encodedPolyline: String
-
-    data class AthleteInfo(
-        val userId: String = "",
-        val userName: String? = null,
-        val userAvatar: String? = null
-    )
 }

@@ -1,8 +1,9 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.AthleteInfo
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.base.TrackingValueFormatter
@@ -28,7 +29,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun PerformanceTableComposable(
-    activity: ActivityModel,
+    activity: BaseActivityModel,
     modifier: Modifier = Modifier,
 ) = Column(modifier) {
     val trackingValueFormatterList = createActivityFormatterList(activity)
@@ -54,7 +55,9 @@ fun PerformanceTableComposable(
     }
 }
 
-private fun createActivityFormatterList(activity: ActivityModel): List<TrackingValueFormatter<*>> =
+private fun createActivityFormatterList(
+    activity: BaseActivityModel
+): List<TrackingValueFormatter<*>> =
     when (activity.activityType) {
         ActivityType.Running -> listOf(
             TrackingValueFormatter.DistanceKm,
@@ -71,7 +74,7 @@ private fun createActivityFormatterList(activity: ActivityModel): List<TrackingV
 
 @Composable
 private fun RowScope.PerformedResultCellComposable(
-    activity: ActivityModel,
+    activity: BaseActivityModel,
     valueFormatter: TrackingValueFormatter<*>,
 ) = Column(
     horizontalAlignment = Alignment.CenterHorizontally,
@@ -109,7 +112,7 @@ private fun PreviewTable() {
                 duration = 1000L,
                 distance = 100.0,
                 encodedPolyline = "",
-                athleteInfo = ActivityModel.AthleteInfo(
+                athleteInfo = AthleteInfo(
                     userId = "id",
                     userName = "Khoi Nguyen",
                     userAvatar = "userAvatar"

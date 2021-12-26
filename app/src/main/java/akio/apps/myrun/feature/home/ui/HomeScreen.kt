@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.home.ui
 
 import akio.apps.myrun.R
-import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.base.ext.px2dp
 import akio.apps.myrun.feature.base.ui.AppDimensions.AppBarHeight
 import akio.apps.myrun.feature.base.ui.AppDimensions.FabSize
@@ -81,7 +81,7 @@ private const val REVEAL_ANIM_THRESHOLD = 10
 fun HomeScreen(
     appNavController: NavController,
     onClickFloatingActionButton: () -> Unit,
-    onClickExportActivityFile: (ActivityModel) -> Unit,
+    onClickExportActivityFile: (BaseActivityModel) -> Unit,
     openRoutePlanningAction: () -> Unit
 ) = AppTheme {
     // FAB is inactive when user selects a tab other than Feed
@@ -158,7 +158,7 @@ fun HomeScreen(
 @Composable
 private fun HomeNavHost(
     homeNavController: NavHostController,
-    onClickExportActivityFile: (ActivityModel) -> Unit,
+    onClickExportActivityFile: (BaseActivityModel) -> Unit,
     contentPaddings: PaddingValues,
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit
@@ -221,7 +221,7 @@ private fun navigateHomeDestination(
 
 private fun NavGraphBuilder.addActivityFeedDestination(
     contentPadding: PaddingValues,
-    onClickExportActivityFile: (ActivityModel) -> Unit,
+    onClickExportActivityFile: (BaseActivityModel) -> Unit,
     appNavController: NavController,
 ) {
     composable(route = HomeNavItemInfo.ActivityFeed.route) { backstackEntry ->

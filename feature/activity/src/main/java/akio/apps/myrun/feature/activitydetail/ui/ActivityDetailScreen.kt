@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
-import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
@@ -62,7 +62,7 @@ import androidx.navigation.NavController
 fun ActivityDetailScreen(
     navController: NavController,
     navBackStackEntry: NavBackStackEntry,
-    onClickExportFile: (ActivityModel) -> Unit,
+    onClickExportFile: (BaseActivityModel) -> Unit,
 ) {
     val activityId = HomeNavDestination.ActivityDetail.parseActivityId(navBackStackEntry)
     val activityDetailViewModel = navBackStackEntry.savedStateViewModelProvider(
@@ -78,7 +78,7 @@ fun ActivityDetailScreen(
 @Composable
 private fun ActivityDetailScreen(
     activityDetailViewModel: ActivityDetailViewModel,
-    onClickExportFile: (ActivityModel) -> Unit,
+    onClickExportFile: (BaseActivityModel) -> Unit,
     navController: NavController,
 ) = AppTheme {
     val screenState by activityDetailViewModel.activityDetailScreenStateFlow.collectAsState(
@@ -97,7 +97,7 @@ private fun ActivityDetailScreen(
 private fun ActivityDetailScreen(
     screenState: ActivityDetailViewModel.ActivityDetailScreenState,
     navController: NavController,
-    onClickExportFile: (ActivityModel) -> Unit,
+    onClickExportFile: (BaseActivityModel) -> Unit,
     onActivityDetailLoadRetry: () -> Unit,
 ) {
     Column {
@@ -275,7 +275,7 @@ private fun NavController.navigateToProfile(userId: String) {
 private fun ActivityDetailTopBar(
     screenState: ActivityDetailViewModel.ActivityDetailScreenState,
     onClickBackButton: () -> Unit,
-    onClickExportFile: (ActivityModel) -> Unit,
+    onClickExportFile: (BaseActivityModel) -> Unit,
 ) {
     val topBarTitle =
         (screenState as? ActivityDetailViewModel.ActivityDetailScreenState.DataAvailable)
