@@ -4,7 +4,7 @@ import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.location.api.model.LocationRequestConfig
-import akio.apps.myrun.data.time.Now
+import akio.apps.myrun.wiring.common.Now
 import android.annotation.SuppressLint
 import android.os.Looper
 import com.google.android.gms.location.FusedLocationProviderClient

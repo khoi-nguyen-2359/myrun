@@ -2,8 +2,8 @@ package akio.apps.myrun.feature.home.feed
 
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.common.Resource
-import akio.apps.myrun.data.time.Now
 import akio.apps.myrun.domain.activity.GetFeedActivitiesUsecase
+import akio.apps.myrun.wiring.common.Now
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import javax.inject.Inject
