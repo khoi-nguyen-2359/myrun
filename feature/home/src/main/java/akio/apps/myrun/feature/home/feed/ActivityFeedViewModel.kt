@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.home.feed
 
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
-import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
@@ -67,7 +67,7 @@ class ActivityFeedViewModel @Inject constructor(
             // there are 2 collectors so use shareIn
             .shareIn(viewModelScope, replay = 1, started = SharingStarted.WhileSubscribed())
 
-    val myActivityList: Flow<PagingData<ActivityModel>> = Pager(
+    val myActivityList: Flow<PagingData<BaseActivityModel>> = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
             enablePlaceholders = false,
@@ -109,10 +109,10 @@ class ActivityFeedViewModel @Inject constructor(
         activityPagingSource?.invalidate()
     }
 
-    fun getFormattedStartTime(activity: ActivityModel): ActivityDateTimeFormatter.Result =
+    fun getFormattedStartTime(activity: BaseActivityModel): ActivityDateTimeFormatter.Result =
         activityDateTimeFormatter.formatActivityDateTime(activity.startTime)
 
-    fun getActivityDisplayPlaceName(activity: ActivityModel): String {
+    fun getActivityDisplayPlaceName(activity: BaseActivityModel): String {
         val activityPlaceIdentifier = activity.placeIdentifier
             ?: return ""
         val activityId = activity.id

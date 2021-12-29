@@ -3,20 +3,21 @@ package akio.apps.myrun.domain.tracking
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.AthleteInfo
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.api.PolyUtil
-import akio.apps.myrun.data.time.Now
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.domain.activity.getLatLng
 import akio.apps.myrun.domain.common.ObjectAutoId
 import akio.apps.myrun.domain.common.TrackingValueConverter
 import akio.apps.myrun.wiring.common.NamedIoDispatcher
+import akio.apps.myrun.wiring.common.Now
 import android.graphics.Bitmap
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -67,7 +68,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         activityId: String,
         activityName: String,
         trackedLocations: List<ActivityLocation>,
-    ): ActivityModel {
+    ): BaseActivityModel {
         val endTime = Now.currentTimeMillis()
         val startTime = routeTrackingState.getTrackingStartTime()
         val duration = routeTrackingState.getTrackingDuration()
@@ -87,7 +88,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
             duration,
             distance,
             encodedPolyline,
-            ActivityModel.AthleteInfo(userId = userId) // local storage does not include
+            AthleteInfo(userId = userId) // local storage does not include
         )
         return when (activityType) {
             ActivityType.Running -> {

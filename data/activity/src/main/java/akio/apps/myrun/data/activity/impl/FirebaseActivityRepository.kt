@@ -2,12 +2,10 @@ package akio.apps.myrun.data.activity.impl
 
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
-import akio.apps.myrun.data.activity.api.model.ActivityModel
-import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.DataPoint
 import akio.apps.myrun.data.activity.impl.model.FirestoreActivity
 import akio.apps.myrun.data.activity.impl.model.FirestoreActivityMapper
-import akio.apps.myrun.data.activity.impl.model.FirestoreActivityType
 import akio.apps.myrun.data.activity.impl.model.FirestoreDataPointList
 import akio.apps.myrun.data.activity.impl.model.FirestoreDataPointSerializer
 import akio.apps.myrun.data.activity.impl.model.FirestoreFloatDataPointParser
@@ -15,6 +13,7 @@ import akio.apps.myrun.data.activity.impl.model.FirestoreIntegerDataPointParser
 import akio.apps.myrun.data.activity.impl.model.FirestoreLocationDataPointParser
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.firebase.FirebaseStorageUtils
+import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,7 +33,7 @@ class FirebaseActivityRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage,
     private val firestoreActivityMapper: FirestoreActivityMapper,
-    @akio.apps.myrun.wiring.common.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ActivityRepository {
 
     private val userActivityCollectionGroup: Query
@@ -52,7 +51,7 @@ class FirebaseActivityRepository @Inject constructor(
         userIds: List<String>,
         startAfterTime: Long,
         limit: Int,
-    ): List<ActivityModel> = withContext(ioDispatcher) {
+    ): List<BaseActivityModel> = withContext(ioDispatcher) {
         val query = userActivityCollectionGroup.whereIn("athleteInfo.userId", userIds)
             .orderBy("startTime", Query.Direction.DESCENDING)
             .startAfter(startAfterTime)
@@ -68,8 +67,8 @@ class FirebaseActivityRepository @Inject constructor(
         userId: String,
         startTime: Long,
         endTime: Long,
-    ): List<ActivityModel> = withContext(ioDispatcher) {
-        val query = userActivityCollectionGroup.whereEqualTo("athleteInfo.userId", userId)
+    ): List<BaseActivityModel> = withContext(ioDispatcher) {
+        val query = getUserActivityCollection(userId)
             .orderBy("startTime", Query.Direction.DESCENDING)
             .startAt(endTime)
             .endAt(startTime)
@@ -80,7 +79,7 @@ class FirebaseActivityRepository @Inject constructor(
     }
 
     override suspend fun saveActivity(
-        activity: ActivityModel,
+        activity: BaseActivityModel,
         routeBitmapFile: File,
         speedDataPoints: List<DataPoint<Float>>,
         locationDataPoints: List<ActivityLocation>,
@@ -176,7 +175,7 @@ class FirebaseActivityRepository @Inject constructor(
 
     override suspend fun getActivity(
         activityId: String,
-    ): ActivityModel? = withContext(ioDispatcher) {
+    ): BaseActivityModel? = withContext(ioDispatcher) {
         val snapshot = userActivityCollectionGroup.whereEqualTo("id", activityId).get().await()
         snapshot.documents
             .getOrNull(0)
@@ -184,17 +183,13 @@ class FirebaseActivityRepository @Inject constructor(
             ?.let(firestoreActivityMapper::map)
     }
 
-    override suspend fun getActivityResource(activityId: String): Resource<ActivityModel?> = try {
+    override suspend fun getActivityResource(
+        activityId: String
+    ): Resource<BaseActivityModel?> = try {
         val activityData = getActivity(activityId)
         Resource.Success(activityData)
     } catch (ioEx: IOException) {
         Resource.Error(ioEx)
-    }
-
-    private fun ActivityType.toFsActivityType() = when (this) {
-        ActivityType.Running -> FirestoreActivityType.Running
-        ActivityType.Cycling -> FirestoreActivityType.Cycling
-        ActivityType.Unknown -> FirestoreActivityType.Unknown
     }
 
     companion object {

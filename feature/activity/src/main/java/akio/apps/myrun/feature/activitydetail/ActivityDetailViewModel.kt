@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.activitydetail
 
 import akio.apps.myrun.data.activity.api.ActivityRepository
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
@@ -28,7 +28,7 @@ class ActivityDetailViewModel @Inject constructor(
     private val activityDateTimeFormatter: ActivityDateTimeFormatter,
 ) : ViewModel() {
 
-    private val activityDetailsMutableStateFlow: MutableStateFlow<Resource<ActivityModel>> =
+    private val activityDetailsMutableStateFlow: MutableStateFlow<Resource<BaseActivityModel>> =
         MutableStateFlow(Resource.Loading())
 
     val activityDetailScreenStateFlow: Flow<ActivityDetailScreenState> =
@@ -82,7 +82,7 @@ class ActivityDetailViewModel @Inject constructor(
         object UnknownState : ActivityDetailScreenState()
 
         class DataAvailable(
-            val activityData: ActivityModel,
+            val activityData: BaseActivityModel,
             val activityPlaceName: String?,
             val activityFormattedStartTime: ActivityDateTimeFormatter.Result,
             val runSplits: List<Double>,
@@ -91,7 +91,7 @@ class ActivityDetailViewModel @Inject constructor(
 
         companion object {
             fun create(
-                activityDetailResource: Resource<ActivityModel>,
+                activityDetailResource: Resource<BaseActivityModel>,
                 activityDateTimeFormatter: ActivityDateTimeFormatter,
                 activityPlaceName: String?,
                 runSplits: List<Double>,

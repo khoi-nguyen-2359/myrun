@@ -1,8 +1,9 @@
 package akio.apps.myrun.data.activity.impl.model
 
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.AthleteInfo
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.activity.impl.FirebaseActivityRepository
@@ -10,11 +11,11 @@ import android.net.Uri
 import javax.inject.Inject
 
 class FirestoreActivityMapper @Inject constructor() {
-    fun map(input: FirestoreActivity): ActivityModel {
+    fun map(input: FirestoreActivity): BaseActivityModel {
         val activityType = when (FirestoreActivityType.fromId(input.activityType)) {
             FirestoreActivityType.Running -> ActivityType.Running
             FirestoreActivityType.Cycling -> ActivityType.Cycling
-            else -> ActivityType.Unknown
+            FirestoreActivityType.Unknown -> ActivityType.Unknown
         }
         val activityData = with(input) {
             ActivityDataModel(
@@ -28,7 +29,7 @@ class FirestoreActivityMapper @Inject constructor() {
                 duration,
                 distance,
                 encodedPolyline,
-                ActivityModel.AthleteInfo(
+                AthleteInfo(
                     athleteInfo.userId,
                     athleteInfo.userName,
                     athleteInfo.userAvatar
@@ -49,7 +50,11 @@ class FirestoreActivityMapper @Inject constructor() {
             ?: throw IllegalArgumentException("Got invalid activity type while parsing")
     }
 
-    fun mapRev(input: ActivityModel, createdId: String, uploadedImageUri: Uri): FirestoreActivity {
+    fun mapRev(
+        input: BaseActivityModel,
+        createdId: String,
+        uploadedImageUri: Uri,
+    ): FirestoreActivity {
         val runData: FirestoreRunningData? = (input as? RunningActivityModel)
             ?.run { FirestoreRunningData(pace, cadence) }
         val cyclingData: FirestoreCyclingData? = (input as? CyclingActivityModel)
@@ -57,7 +62,7 @@ class FirestoreActivityMapper @Inject constructor() {
         val activityType = when (input.activityType) {
             ActivityType.Running -> FirestoreActivityType.Running
             ActivityType.Cycling -> FirestoreActivityType.Cycling
-            else -> FirestoreActivityType.Unknown
+            ActivityType.Unknown -> FirestoreActivityType.Unknown
         }
 
         return with(input) {

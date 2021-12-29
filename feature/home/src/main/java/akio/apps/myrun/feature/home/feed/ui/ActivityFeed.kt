@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.home.feed.ui
 
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.base.TrackingValueFormatter
@@ -117,7 +117,7 @@ fun ActivityFeed(
     navController: NavController,
     backStackEntry: NavBackStackEntry,
     contentPadding: PaddingValues,
-    onClickExportActivityFile: (ActivityModel) -> Unit,
+    onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
     val application = LocalContext.current.applicationContext as Application
     val diComponent = remember { DaggerActivityFeedFeatureComponent.factory().create(application) }
@@ -136,7 +136,7 @@ fun ActivityFeed(
 private fun ActivityFeed(
     activityFeedViewModel: ActivityFeedViewModel,
     contentPadding: PaddingValues,
-    onClickExportActivityFile: (ActivityModel) -> Unit,
+    onClickExportActivityFile: (BaseActivityModel) -> Unit,
     navController: NavController,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -209,7 +209,7 @@ fun ActivityFeed(
     activityFeedViewModel: ActivityFeedViewModel,
     contentPadding: PaddingValues,
     feedListState: LazyListState,
-    onClickExportActivityFile: (ActivityModel) -> Unit,
+    onClickExportActivityFile: (BaseActivityModel) -> Unit,
     navController: NavController,
 ) {
     val lazyPagingItems = activityFeedViewModel.myActivityList.collectAsLazyPagingItems()
@@ -248,8 +248,8 @@ private fun ActivityFeedItemList(
     activityFeedViewModel: ActivityFeedViewModel,
     contentPadding: PaddingValues,
     feedListState: LazyListState,
-    lazyPagingItems: LazyPagingItems<ActivityModel>,
-    onClickExportActivityFile: (ActivityModel) -> Unit,
+    lazyPagingItems: LazyPagingItems<BaseActivityModel>,
+    onClickExportActivityFile: (BaseActivityModel) -> Unit,
     navController: NavController,
 ) {
     val userProfile by activityFeedViewModel.userProfile.collectAsState(initial = null)
@@ -349,11 +349,11 @@ private fun LoadingItemPreview() = LoadingItem()
 
 @Composable
 private fun FeedActivityItem(
-    activity: ActivityModel,
+    activity: BaseActivityModel,
     activityFormattedStartTime: ActivityDateTimeFormatter.Result,
     activityDisplayPlaceName: String,
     userProfile: UserProfile?,
-    onClickActivityAction: (ActivityModel) -> Unit,
+    onClickActivityAction: (BaseActivityModel) -> Unit,
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
 ) = FeedItem {
@@ -378,7 +378,7 @@ private fun FeedActivityItem(
 }
 
 @Composable
-private fun ActivityRouteImageBox(activity: ActivityModel) =
+private fun ActivityRouteImageBox(activity: BaseActivityModel) =
     Box(contentAlignment = Alignment.TopStart) {
         ActivityRouteImage(activity)
         ActivityPerformanceRow(
@@ -408,7 +408,7 @@ private fun createActivityFormatterList(
 private const val PERFORMANCE_VALUE_DELIM = " - "
 
 @Composable
-private fun ActivityPerformanceRow(activity: ActivityModel, modifier: Modifier = Modifier) {
+private fun ActivityPerformanceRow(activity: BaseActivityModel, modifier: Modifier = Modifier) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     val valueFormatterList = remember { createActivityFormatterList(activity.activityType) }
@@ -483,7 +483,7 @@ userProfile = UserProfile(accountId = "userId", photo = null),
 
 @Composable
 private fun ActivityInformationView(
-    activity: ActivityModel,
+    activity: BaseActivityModel,
     activityFormattedStartTime: ActivityDateTimeFormatter.Result,
     activityDisplayPlaceName: String?,
     userProfile: UserProfile?,
@@ -518,7 +518,7 @@ private fun AthleteNameText(userProfileName: String) = Text(
 
 @Composable
 private fun ActivityNameText(
-    activityDetail: ActivityModel,
+    activityDetail: BaseActivityModel,
     modifier: Modifier = Modifier,
 ) = Text(
     text = activityDetail.name,

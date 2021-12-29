@@ -1,8 +1,9 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.AthleteInfo
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.activity.R
@@ -35,7 +36,7 @@ import timber.log.Timber
 
 @Composable
 fun ActivityInfoHeaderView(
-    activityDetail: ActivityModel,
+    activityDetail: BaseActivityModel,
     activityFormattedStartTime: ActivityDateTimeFormatter.Result,
     activityDisplayPlaceName: String?,
     onClickUserAvatar: () -> Unit,
@@ -62,7 +63,7 @@ fun ActivityInfoHeaderView(
 }
 
 @Composable
-private fun AthleteNameText(activityDetail: ActivityModel) = Text(
+private fun AthleteNameText(activityDetail: BaseActivityModel) = Text(
     text = activityDetail.athleteInfo.userName.orEmpty(),
     maxLines = 1,
     overflow = TextOverflow.Ellipsis,
@@ -71,7 +72,7 @@ private fun AthleteNameText(activityDetail: ActivityModel) = Text(
 )
 
 @Composable
-private fun ActivityNameText(activityDetail: ActivityModel) = Text(
+private fun ActivityNameText(activityDetail: BaseActivityModel) = Text(
     text = activityDetail.name,
     modifier = Modifier
         .fillMaxWidth()
@@ -120,7 +121,7 @@ private fun ActivityTimeAndPlaceText(
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun UserAvatarImage(
-    activityDetail: ActivityModel,
+    activityDetail: BaseActivityModel,
     onClickUserAvatar: () -> Unit,
 ) {
     val avatarDimension = 46.dp
@@ -157,7 +158,7 @@ private fun PreviewActivityInfoHeader() = ActivityInfoHeaderView(
             duration = 1000L,
             distance = 100.0,
             encodedPolyline = "",
-            athleteInfo = ActivityModel.AthleteInfo(
+            athleteInfo = AthleteInfo(
                 userId = "id",
                 userName = "Khoi Nguyen",
                 userAvatar = "userAvatar"

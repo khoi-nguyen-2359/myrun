@@ -1,10 +1,12 @@
 package akio.apps.myrun.domain.user
 
 import akio.apps.myrun.data.activity.api.ActivityRepository
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.wiring.common.NamedIoDispatcher
+import akio.apps.myrun.wiring.common.Now
+import akio.apps.myrun.wiring.common.TimeProvider
 import android.os.Parcelable
 import java.util.Calendar
 import java.util.Calendar.DAY_OF_MONTH
@@ -26,14 +28,15 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
     private val activityRepository: ActivityRepository,
     private val userAuthenticationState: UserAuthenticationState,
     @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    private val timeProvider: TimeProvider = Now
 ) {
-
     /**
      * [weekOffset]: value >= 0, indicates current week, or 1, 2, 3... week in the past.
      */
     suspend fun getUserTrainingSummaryData(): Map<ActivityType, TrainingSummaryTableData> =
         withContext(ioDispatcher) {
-            val biMonthRange = MonthRange(offset = 1, count = 2)
+            val currentTime = timeProvider.currentTimeMillis()
+            val biMonthRange = MonthRange(offset = 1, count = 2, currentTime)
             val userId = userAuthenticationState.requireUserAccountId()
             val activitiesInRange = activityRepository.getActivitiesInTimeRange(
                 userId,
@@ -41,10 +44,14 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
                 biMonthRange.millisTimeRange.last
             )
             listOf(ActivityType.Running, ActivityType.Cycling).map { activityType ->
-                val thisWeekData = WeekRange() to mutableListOf<ActivityModel>()
-                val lastWeekData = WeekRange(offset = 1) to mutableListOf<ActivityModel>()
-                val thisMonthData = MonthRange() to mutableListOf<ActivityModel>()
-                val lastMonthData = MonthRange(offset = 1) to mutableListOf<ActivityModel>()
+                val thisWeekData =
+                    WeekRange(time = currentTime) to mutableListOf<BaseActivityModel>()
+                val lastWeekData =
+                    WeekRange(offset = 1, time = currentTime) to mutableListOf<BaseActivityModel>()
+                val thisMonthData =
+                    MonthRange(time = currentTime) to mutableListOf<BaseActivityModel>()
+                val lastMonthData =
+                    MonthRange(offset = 1, time = currentTime) to mutableListOf<BaseActivityModel>()
                 val timeRangeDataList =
                     listOf(thisWeekData, lastWeekData, thisMonthData, lastMonthData)
                 activitiesInRange
@@ -100,7 +107,11 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
         val activityCount: Int = 0,
     ) : Parcelable
 
-    abstract class TimeRange(val offset: Int, val count: Int) {
+    abstract class TimeRange(
+        val offset: Int,
+        val count: Int,
+        protected val time: Long,
+    ) {
         init {
             assert(offset >= 0)
             assert(count >= 0)
@@ -112,9 +123,11 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
         abstract fun instantiate(offset: Int, count: Int): TimeRange
     }
 
-    class WeekRange(offset: Int = 0, count: Int = 1) : TimeRange(offset, count) {
+    class WeekRange(offset: Int = 0, count: Int = 1, time: Long = Now.currentTimeMillis()) :
+        TimeRange(offset, count, time) {
         override val millisTimeRange: LongRange = run {
             val calendar = Calendar.getInstance()
+            calendar.timeInMillis = time
             calendar.firstDayOfWeek = MONDAY
             calendar[DAY_OF_WEEK] = MONDAY
             calendar[HOUR_OF_DAY] = 0
@@ -129,9 +142,11 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
         override fun instantiate(offset: Int, count: Int): WeekRange = WeekRange(offset, count)
     }
 
-    class MonthRange(offset: Int = 0, count: Int = 1) : TimeRange(offset, count) {
+    class MonthRange(offset: Int = 0, count: Int = 1, time: Long = Now.currentTimeMillis()) :
+        TimeRange(offset, count, time) {
         override val millisTimeRange: LongRange = run {
             val calendar = Calendar.getInstance()
+            calendar.timeInMillis = time
             calendar[DAY_OF_MONTH] = 1
             calendar[HOUR_OF_DAY] = 0
             calendar[MINUTE] = 0

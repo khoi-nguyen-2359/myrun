@@ -2,8 +2,8 @@ package akio.apps.myrun.data.activity.impl
 
 import akio.apps.myrun.data.activity.api.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import com.sweetzpot.tcxzpot.Activities
@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 class ActivityTcxFileWriterImpl @Inject constructor() : ActivityTcxFileWriter {
     override suspend fun writeTcxFile(
-        activity: ActivityModel,
+        activity: BaseActivityModel,
         locations: List<ActivityLocation>,
         cadences: List<Int>,
         outputFile: File,
@@ -43,7 +43,8 @@ class ActivityTcxFileWriterImpl @Inject constructor() : ActivityTcxFileWriter {
         val startDate = Date(activity.startTime)
         val sportType = when (activity.activityType) {
             ActivityType.Running -> Sport.RUNNING
-            else -> Sport.BIKING
+            ActivityType.Cycling -> Sport.BIKING
+            else -> Sport.OTHER
         }
         var lastLocation: ActivityLocation? = locations.firstOrNull()
         var currentDistance = 0.0

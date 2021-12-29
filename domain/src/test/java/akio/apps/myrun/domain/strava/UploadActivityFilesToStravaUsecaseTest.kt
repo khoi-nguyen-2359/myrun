@@ -2,9 +2,9 @@ package akio.apps.myrun.domain.strava
 
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivitySyncData
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
@@ -92,7 +92,7 @@ class UploadActivityFilesToStravaUsecaseTest {
                     duration = 1000L,
                     distance = 10.0,
                     "encodedPolyline",
-                    ActivityModel.AthleteInfo("userId", "userName", "userAvatar")
+                    AthleteInfo("userId", "userName", "userAvatar")
                 ),
                 pace = 4.0,
                 cadence = 0

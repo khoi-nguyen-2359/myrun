@@ -4,17 +4,18 @@ import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
-import akio.apps.myrun.data.activity.api.model.ActivityModel
 import akio.apps.myrun.data.activity.api.model.ActivityStorageData
 import akio.apps.myrun.data.activity.api.model.ActivitySyncData
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.AthleteInfo
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
-import akio.apps.myrun.data.activity.impl.model.AthleteInfo
-import akio.apps.myrun.data.activity.impl.model.CyclingTrackingActivityInfo
-import akio.apps.myrun.data.activity.impl.model.RunningTrackingActivityInfo
-import akio.apps.myrun.data.activity.impl.model.TrackingActivityInfo
-import akio.apps.myrun.data.activity.impl.model.TrackingActivityInfoData
+import akio.apps.myrun.data.activity.impl.model.LocalActivityData
+import akio.apps.myrun.data.activity.impl.model.LocalAthleteInfo
+import akio.apps.myrun.data.activity.impl.model.LocalBaseActivity
+import akio.apps.myrun.data.activity.impl.model.LocalCyclingActivity
+import akio.apps.myrun.data.activity.impl.model.LocalRunningActivity
 import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import android.app.Application
 import android.content.Context
@@ -55,23 +56,23 @@ class ActivityLocalStorageImpl @Inject constructor(
     private val protoBuf = ProtoBuf {
         val module = SerializersModule {
             polymorphic(
-                TrackingActivityInfo::class,
-                RunningTrackingActivityInfo::class,
-                RunningTrackingActivityInfo.serializer()
+                LocalBaseActivity::class,
+                LocalRunningActivity::class,
+                LocalRunningActivity.serializer()
             )
             polymorphic(
-                TrackingActivityInfo::class,
-                CyclingTrackingActivityInfo::class,
-                CyclingTrackingActivityInfo.serializer()
+                LocalBaseActivity::class,
+                LocalCyclingActivity::class,
+                LocalCyclingActivity.serializer()
             )
         }
         serializersModule = module
     }
 
     override suspend fun storeActivityData(
-        activity: ActivityModel,
+        activity: BaseActivityModel,
         locations: List<ActivityLocation>,
-        routeBitmap: Bitmap,
+        routeBitmap: Bitmap
     ) = withContext(ioDispatcher) {
         Timber.d("==== [START] STORE ACTIVITY DATA =====")
         val activityDirectory = createActivityStorageDirectory(activity.id)
@@ -101,7 +102,7 @@ class ActivityLocalStorageImpl @Inject constructor(
     }
 
     override suspend fun storeActivitySyncData(
-        activityModel: ActivityModel,
+        activityModel: BaseActivityModel,
         activityLocations: List<ActivityLocation>,
     ) = withContext(ioDispatcher) {
         Timber.d("==== [START] STORE ACTIVITY SYNC DATA =====")
@@ -138,7 +139,7 @@ class ActivityLocalStorageImpl @Inject constructor(
         val activityDirectory = createActivityStorageDirectory(activityId)
         val activityModelDeferred = async {
             val activityInfoBytes = activityDirectory.infoFile.bufferedReadByteArray()
-            val activityInfo = protoBuf.decodeFromByteArray<TrackingActivityInfo>(activityInfoBytes)
+            val activityInfo = protoBuf.decodeFromByteArray<LocalBaseActivity>(activityInfoBytes)
             activityInfo.toActivity()
         }
         val locationsDeferred = async {
@@ -236,7 +237,7 @@ class ActivityLocalStorageImpl @Inject constructor(
     private fun loadActivitySyncData(activityId: String): ActivitySyncData {
         val activitySyncDirectory = createActivitySyncDirectory(activityId)
         val infoBytes = activitySyncDirectory.infoFile.bufferedReadByteArray()
-        val activityInfo = protoBuf.decodeFromByteArray<TrackingActivityInfo>(infoBytes)
+        val activityInfo = protoBuf.decodeFromByteArray<LocalBaseActivity>(infoBytes)
         val activityModel = activityInfo.toActivity()
         return ActivitySyncData(activityModel, activitySyncDirectory.tcxFile)
     }
@@ -263,10 +264,35 @@ class ActivityLocalStorageImpl @Inject constructor(
     private fun createActivitySyncRootDir(): File =
         File("${application.filesDir}/$PATH_SYNC_DIR")
 
-    private fun ActivityModel.toActivityInfo(): TrackingActivityInfo {
-        val trackingInfoData = TrackingActivityInfoData(
+    private fun BaseActivityModel.toActivityInfo(): LocalBaseActivity {
+        val trackingInfoData = LocalActivityData(
             id,
             activityType.identity,
+            name,
+            routeImage,
+            placeIdentifier,
+            startTime,
+            endTime,
+            duration,
+            distance,
+            encodedPolyline,
+            LocalAthleteInfo(
+                athleteInfo.userId,
+                athleteInfo.userName,
+                athleteInfo.userAvatar
+            )
+        )
+
+        return when (this) {
+            is RunningActivityModel -> LocalRunningActivity(trackingInfoData, pace, cadence)
+            is CyclingActivityModel -> LocalCyclingActivity(trackingInfoData, speed)
+        }
+    }
+
+    private fun LocalBaseActivity.toActivity(): BaseActivityModel {
+        val activityData = ActivityDataModel(
+            id,
+            ActivityType.from(activityType),
             name,
             routeImage,
             placeIdentifier,
@@ -283,39 +309,8 @@ class ActivityLocalStorageImpl @Inject constructor(
         )
 
         return when (this) {
-            is RunningActivityModel ->
-                RunningTrackingActivityInfo(trackingInfoData, pace, cadence)
-            is CyclingActivityModel ->
-                CyclingTrackingActivityInfo(trackingInfoData, speed)
-            else -> throw Exception("")
-        }
-    }
-
-    private fun TrackingActivityInfo.toActivity(): ActivityModel {
-        val activityData = ActivityDataModel(
-            id,
-            ActivityType.from(activityType),
-            name,
-            routeImage,
-            placeIdentifier,
-            startTime,
-            endTime,
-            duration,
-            distance,
-            encodedPolyline,
-            ActivityModel.AthleteInfo(
-                athleteInfo.userId,
-                athleteInfo.userName,
-                athleteInfo.userAvatar
-            )
-        )
-
-        return when (this) {
-            is RunningTrackingActivityInfo ->
-                RunningActivityModel(activityData, pace, cadence)
-            is CyclingTrackingActivityInfo ->
-                CyclingActivityModel(activityData, speed)
-            else -> throw Exception("")
+            is LocalRunningActivity -> RunningActivityModel(activityData, pace, cadence)
+            is LocalCyclingActivity -> CyclingActivityModel(activityData, speed)
         }
     }
 

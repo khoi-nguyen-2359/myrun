@@ -1,7 +1,7 @@
 package akio.apps.myrun.domain.activity
 
 import akio.apps.myrun.data.activity.api.ActivityRepository
-import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.user.api.UserFollowRepository
@@ -15,7 +15,7 @@ class GetFeedActivitiesUsecase @Inject constructor(
     suspend fun getUserTimelineActivity(
         startAfter: Long,
         count: Int,
-    ): Resource<List<ActivityModel>> = try {
+    ): Resource<List<BaseActivityModel>> = try {
         val userAccountId = userAuthenticationState.requireUserAccountId()
 
         val userIds = userFollowRepository.getUserFollowings(userAccountId).toMutableList()

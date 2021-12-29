@@ -7,7 +7,6 @@ import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.location.api.model.LocationRequestConfig
-import akio.apps.myrun.data.time.Now
 import akio.apps.myrun.data.tracking.api.FitnessDataRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
@@ -21,6 +20,7 @@ import akio.apps.myrun.domain.tracking.locationprocessor.LocationSpeedFilter
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.tracking.wiring.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.log.flowTimer
+import akio.apps.myrun.wiring.common.Now
 import akio.apps.myrun.worker.UpdateUserRecentPlaceWorker
 import android.annotation.SuppressLint
 import android.app.ActivityManager

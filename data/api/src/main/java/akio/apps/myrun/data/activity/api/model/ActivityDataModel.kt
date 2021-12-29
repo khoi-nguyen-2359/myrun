@@ -21,5 +21,5 @@ data class ActivityDataModel(
     override val encodedPolyline: String,
 
     // user info
-    override val athleteInfo: ActivityModel.AthleteInfo
-) : ActivityModel
+    override val athleteInfo: AthleteInfo
+) : BaseActivityDataModel

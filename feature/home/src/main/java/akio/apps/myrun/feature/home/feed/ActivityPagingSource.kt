@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.home.feed
 
-import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.common.Resource
-import akio.apps.myrun.data.time.Now
 import akio.apps.myrun.domain.activity.GetFeedActivitiesUsecase
+import akio.apps.myrun.wiring.common.Now
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import javax.inject.Inject
@@ -11,8 +11,8 @@ import timber.log.Timber
 
 class ActivityPagingSource @Inject constructor(
     private val getFeedActivitiesUsecase: GetFeedActivitiesUsecase,
-) : PagingSource<Long, ActivityModel>() {
-    override suspend fun load(params: LoadParams<Long>): LoadResult<Long, ActivityModel> {
+) : PagingSource<Long, BaseActivityModel>() {
+    override suspend fun load(params: LoadParams<Long>): LoadResult<Long, BaseActivityModel> {
         val startAfter = params.key ?: Now.currentTimeMillis()
         val resource = getFeedActivitiesUsecase.getUserTimelineActivity(startAfter, params.loadSize)
         Timber.d("feed resource paramKey=${params.key} startAfter=$startAfter")
@@ -28,7 +28,7 @@ class ActivityPagingSource @Inject constructor(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Long, ActivityModel>): Long? = null
+    override fun getRefreshKey(state: PagingState<Long, BaseActivityModel>): Long? = null
 }
 
 class ActivityPagingSourceFactory @Inject constructor(

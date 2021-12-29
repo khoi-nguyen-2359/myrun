@@ -3,7 +3,8 @@ package akio.apps.myrun.domain.activity
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
-import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.AthleteInfo
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
@@ -24,7 +25,7 @@ class UploadActivitiesUsecase @Inject constructor(
     private val placeIdentifierConverter: PlaceIdentifierConverter,
 ) {
     @OptIn(InternalCoroutinesApi::class)
-    suspend fun uploadAll(onUploadActivityStarted: ((ActivityModel) -> Unit)? = null): Boolean {
+    suspend fun uploadAll(onUploadActivityStarted: ((BaseActivityModel) -> Unit)? = null): Boolean {
         var isCompleted = true
         activityLocalStorage.loadAllActivityStorageDataFlow()
             .catch { isCompleted = false }
@@ -48,41 +49,23 @@ class UploadActivitiesUsecase @Inject constructor(
     }
 
     private suspend fun fillInMissingActivityInfo(
-        activityModel: ActivityModel,
+        activityModel: BaseActivityModel,
         startPoint: ActivityLocation,
-    ): ActivityModel {
+    ): BaseActivityModel {
         val userId = authenticationState.requireUserAccountId()
         val userProfile = userProfileRepository.getUserProfile(userId)
         val sortedAddressTexts = placeDataSource.getRecentPlaceAddressFromLocation(
             startPoint.latitude,
             startPoint.longitude
         )
-        val placeIdentifier =
+        val activityData = activityModel.activityData.copy(
+            athleteInfo = AthleteInfo(userId, userProfile.name, userProfile.photo),
+            placeIdentifier =
             placeIdentifierConverter.fromAddressNameList(sortedAddressTexts.map { it.name })
+        )
         return when (activityModel) {
-            is RunningActivityModel ->
-                activityModel.copy(
-                    activityData = activityModel.activityData.copy(
-                        athleteInfo = ActivityModel.AthleteInfo(
-                            userId,
-                            userProfile.name,
-                            userProfile.photo
-                        ),
-                        placeIdentifier = placeIdentifier
-                    ),
-                )
-            is CyclingActivityModel ->
-                activityModel.copy(
-                    activityData = activityModel.activityData.copy(
-                        athleteInfo = ActivityModel.AthleteInfo(
-                            userId,
-                            userProfile.name,
-                            userProfile.photo
-                        ),
-                        placeIdentifier = placeIdentifier
-                    )
-                )
-            else -> activityModel
+            is RunningActivityModel -> activityModel.copy(activityData)
+            is CyclingActivityModel -> activityModel.copy(activityData)
         }
     }
 }

@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.base
 
-import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.domain.common.TrackingValueConverter
@@ -21,7 +21,7 @@ sealed class TrackingValueFormatter<T : Number>(
 
     fun getLabel(context: Context): String = context.getString(labelResId)
 
-    abstract fun getFormattedValue(activity: ActivityModel): String
+    abstract fun getFormattedValue(activity: BaseActivityModel): String
     abstract fun getFormattedValue(value: T): String
 
     object DistanceKm :
@@ -30,7 +30,7 @@ sealed class TrackingValueFormatter<T : Number>(
             R.string.route_tracking_distance_label,
             R.string.performance_unit_distance_km
         ) {
-        override fun getFormattedValue(activity: ActivityModel): String =
+        override fun getFormattedValue(activity: BaseActivityModel): String =
             getFormattedValue(activity.distance)
 
         override fun getFormattedValue(value: Double): String =
@@ -42,7 +42,7 @@ sealed class TrackingValueFormatter<T : Number>(
         R.string.route_tracking_pace_label,
         R.string.performance_unit_pace_min_per_km
     ) {
-        override fun getFormattedValue(activity: ActivityModel): String =
+        override fun getFormattedValue(activity: BaseActivityModel): String =
             getFormattedValue((activity as? RunningActivityModel)?.pace ?: 0.0)
 
         override fun getFormattedValue(value: Double): String {
@@ -58,7 +58,7 @@ sealed class TrackingValueFormatter<T : Number>(
             R.string.route_tracking_speed_label,
             R.string.performance_unit_speed
         ) {
-        override fun getFormattedValue(activity: ActivityModel): String =
+        override fun getFormattedValue(activity: BaseActivityModel): String =
             getFormattedValue((activity as? CyclingActivityModel)?.speed ?: 0.0)
 
         override fun getFormattedValue(value: Double): String = String.format("%.2f", value)
@@ -69,7 +69,7 @@ sealed class TrackingValueFormatter<T : Number>(
             "DurationHourMinuteSecond",
             R.string.performance_duration_label
         ) {
-        override fun getFormattedValue(activity: ActivityModel): String =
+        override fun getFormattedValue(activity: BaseActivityModel): String =
             getFormattedValue(activity.duration)
 
         override fun getFormattedValue(value: Long): String {

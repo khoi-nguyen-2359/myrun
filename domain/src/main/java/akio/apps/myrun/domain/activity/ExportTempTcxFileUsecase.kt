@@ -3,7 +3,7 @@ package akio.apps.myrun.domain.activity
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
-import akio.apps.myrun.data.activity.api.model.ActivityModel
+import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import android.app.Application
 import java.io.File
@@ -58,7 +58,7 @@ class ExportTempTcxFileUsecase @Inject constructor(
         storeFile
     }
 
-    private fun makeFileName(activity: ActivityModel): String =
+    private fun makeFileName(activity: BaseActivityModel): String =
         "${activity.activityType.name}_${timeFormatter.format(activity.startTime)}.tcx"
 
     private suspend fun getActivityLocations(activityId: String): List<ActivityLocation> {
