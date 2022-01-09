@@ -3,7 +3,9 @@ package akio.apps.myrun.feature.home.userhome.ui
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.domain.common.TrackingValueConverter
 import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
+import akio.apps.myrun.feature.base.BuildConfig
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
+import akio.apps.myrun.feature.base.ui.AppBarIconButton
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
 import akio.apps.myrun.feature.base.ui.CentralLoadingView
@@ -40,6 +42,8 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -423,9 +427,14 @@ private fun UserHomeOutlinedButton(
 private fun UserHomeTopBar(openRoutePlanningAction: () -> Unit) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.user_home_title)) },
-//        actions = {
-//            AppBarIconButton(iconImageVector = Icons.Rounded.Add, onClick = openRoutePlanningAction)
-//        }
+        actions = {
+            if (BuildConfig.DEBUG) {
+                AppBarIconButton(
+                    iconImageVector = Icons.Rounded.Add,
+                    onClick = openRoutePlanningAction
+                )
+            }
+        }
     )
 }
 

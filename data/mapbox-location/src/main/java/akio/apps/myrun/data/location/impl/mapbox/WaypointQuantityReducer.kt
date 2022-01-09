@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.location.impl
+package akio.apps.myrun.data.location.impl.mapbox
 
 import akio.apps.myrun.data.location.api.model.LatLng
 import javax.inject.Inject

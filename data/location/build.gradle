@@ -39,11 +39,11 @@ dependencies {
     implementation(project(":data:firebase"))
     implementation(project(":wiring:common"))
 
+    debugApi(project(":data:mapbox-location"))
+
     implementation(libs.googlePlaces)
     implementation(libs.androidGoogleMap)
     implementation(libs.androidMapUtils)
-
-    implementation(libs.mapbox.java.services)
 
     implementation(libs.timber)
 
@@ -57,6 +57,7 @@ dependencies {
 
     implementation(libs.okHttp)
     implementation(libs.retrofit)
+    implementation(libs.retrofitGsonConverter)
 
     testImplementation(libs.kotlinTest)
 }

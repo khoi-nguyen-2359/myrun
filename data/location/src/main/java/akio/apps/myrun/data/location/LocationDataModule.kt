@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.location
 
-import akio.apps.myrun.data.location.api.DirectionDataSource
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.PlaceDataSource
 import akio.apps.myrun.data.location.api.PolyUtil
@@ -8,11 +7,9 @@ import akio.apps.myrun.data.location.api.SphericalUtil
 import akio.apps.myrun.data.location.impl.GoogleMapDirectionApi
 import akio.apps.myrun.data.location.impl.GooglePlaceDataSource
 import akio.apps.myrun.data.location.impl.LocationDataSourceImpl
-import akio.apps.myrun.data.location.impl.MapBoxDirectionDataSource
 import akio.apps.myrun.data.location.impl.PolyUtilImpl
 import akio.apps.myrun.data.location.impl.SphericalUtilImpl
 import akio.apps.myrun.data.location.impl.model.GoogleMapDirectionApiKey
-import akio.apps.myrun.data.location.impl.model.MapBoxAccessToken
 import akio.apps.myrun.wiring.common.NetworkModule
 import android.app.Application
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -27,18 +24,19 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-@Module(includes = [LocationDataModule.Providers::class, NetworkModule::class])
+@Module(
+    includes = [
+        LocationDataModule.Providers::class,
+        DirectionDataModule::class,
+        NetworkModule::class
+    ]
+)
 interface LocationDataModule {
     @Binds
     fun locationDataSource(locationDataSourceImpl: LocationDataSourceImpl): LocationDataSource
 
     @Binds
     fun placeDataSource(googlePlaceDataSource: GooglePlaceDataSource): PlaceDataSource
-
-    @Binds
-    fun directionDataSource(
-        mapBoxDirectionDataSource: MapBoxDirectionDataSource,
-    ): DirectionDataSource
 
     @Binds
     fun sphericalUtil(sphericalUtil: SphericalUtilImpl): SphericalUtil
@@ -71,9 +69,5 @@ interface LocationDataModule {
         @Provides
         fun googleDirectionApiKey(application: Application): GoogleMapDirectionApiKey =
             GoogleMapDirectionApiKey(application.getString(R.string.google_direction_api_key))
-
-        @Provides
-        fun mapBoxAccessToken(application: Application): MapBoxAccessToken =
-            MapBoxAccessToken(application.getString(R.string.mapbox_access_token))
     }
 }

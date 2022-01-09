@@ -1,13 +1,15 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
-    compileSdk project.compileSdk
+    compileSdk 31
 
     defaultConfig {
-        minSdk project.minSdk
+        minSdk 21
+        targetSdk 31
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -17,14 +19,6 @@ android {
         rc {
             debuggable true
         }
-    }
-
-    buildFeatures {
-        compose true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion libs.versions.compose.get()
     }
 
     compileOptions {
@@ -41,21 +35,18 @@ android {
 }
 
 dependencies {
-    implementation(project(":domain"))
+    implementation(project(":data:api"))
+    implementation(project(":wiring:common"))
 
-    implementation(libs.androidMaterial)
-    implementation(libs.androidXAppCompat)
-    implementation(libs.bundles.compose)
-    implementation(libs.accompanistInsets)
-
-    implementation(libs.lifecycleRuntimeKtx)
-
-    implementation(libs.androidGoogleMap)
+    implementation(libs.mapbox.java.services)
 
     implementation(libs.timber)
 
-    implementation(libs.javaXInject)
+    implementation(libs.kotlinxCoroutinesPlayServices)
+    implementation(libs.kotlinxCoroutinesCore)
+
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
 
     testImplementation(libs.kotlinTest)
-    testImplementation(libs.kotlinReflect)
 }

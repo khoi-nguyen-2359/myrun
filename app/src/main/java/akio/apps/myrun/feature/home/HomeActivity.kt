@@ -4,7 +4,7 @@ import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activitydetail.ActivityExportService
 import akio.apps.myrun.feature.home.ui.AppNavHost
-import akio.apps.myrun.feature.route.ui.RoutePlanningActivity
+import akio.apps.myrun.feature.route.RoutePlanningFacade
 import akio.apps.myrun.feature.tracking.LocationPermissionChecker
 import akio.apps.myrun.feature.tracking.RouteTrackingActivity
 import android.content.Context
@@ -30,14 +30,9 @@ class HomeActivity : AppCompatActivity() {
             AppNavHost(
                 onClickFloatingActionButton = ::openRouteTrackingOrCheckRequiredPermission,
                 onClickExportActivityFile = ::startActivityExportService,
-                openRoutePlanningAction = ::openRoutePlanning
+                openRoutePlanningAction = { RoutePlanningFacade.startRoutePlanning(this) }
             )
         }
-    }
-
-    private fun openRoutePlanning() {
-        val intent = RoutePlanningActivity.addNewRouteIntent(this)
-        startActivity(intent)
     }
 
     private fun startActivityExportService(activity: BaseActivityModel) {
