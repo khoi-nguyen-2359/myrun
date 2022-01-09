@@ -56,7 +56,7 @@
     <string name="action_retry">Retry</string>
     <string name="action_send">Send</string>
     <string name="activity_upload_notification_title">Uploading your activity</string>
-    <string name="location_permission_is_missing_error">Feature is not available without required permissions.</string>
+    <string name="location_permission_is_missing_error">Activity tracking is not available without required permissions.</string>
     <string name="profile_logout_pending_activity_upload_warning">Your uploading activities <b>will be lost.</b></string>
     <string name="content_description_edit_profile_button">Edit Profile button</string>
     <string name="edit_user_profile_title">Edit Profile</string>

@@ -52,8 +52,8 @@ class HomeActivity : AppCompatActivity() {
         ContextCompat.startForegroundService(this, intent)
     }
 
+    // Check location permissions -> allow user to open tracking screen.
     private fun openRouteTrackingOrCheckRequiredPermission() {
-        // onCreate: check location permissions -> check location service availability -> allow user to use this screen
         if (locationPermissionChecker.isGranted()) {
             openRouteTracking()
             return

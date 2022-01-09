@@ -25,7 +25,7 @@ class RouteTrackingConfigurationViewModel @Inject constructor(
     val locationUpdateConfigFlow: Flow<LocationUpdateConfiguration> = locationUpdateConfigState
 
     init {
-        routeTrackingConfiguration.getLocationRequestConfig()
+        routeTrackingConfiguration.getLocationRequestConfigFlow()
             .combine(
                 routeTrackingConfiguration.getLocationProcessingConfig()
             ) { locationRequestConfig, locationProcessingConfig ->
