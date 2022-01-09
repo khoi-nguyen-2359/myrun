@@ -35,6 +35,7 @@ class MapBoxDirectionDataSource @Inject constructor(
                     .map { Point.fromLngLat(it.longitude, it.latitude) }
             )
             .build()
+
         mapMatchingRequest.enableDebug(true)
         val responseBody = mapMatchingRequest.executeCall().body()
         val geometry = responseBody?.matchings()?.firstOrNull()?.geometry()

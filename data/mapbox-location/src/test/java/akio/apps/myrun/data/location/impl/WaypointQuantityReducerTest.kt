@@ -1,6 +1,7 @@
 package akio.apps.myrun.data.location.impl
 
 import akio.apps.myrun.data.location.api.model.LatLng
+import akio.apps.myrun.data.location.impl.mapbox.WaypointQuantityReducer
 import kotlin.test.assertEquals
 import org.junit.Test
 
