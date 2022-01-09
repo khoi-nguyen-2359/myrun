@@ -8,12 +8,12 @@ import akio.apps.myrun.feature.base.ext.extra
 import akio.apps.myrun.feature.base.ext.getColorCompat
 import akio.apps.myrun.feature.base.lifecycle.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.base.lifecycle.collectRepeatOnStarted
-import akio.apps.myrun.feature.base.map.toLatLng
-import akio.apps.myrun.feature.base.map.toPoint
 import akio.apps.myrun.feature.base.viewmodel.lazySavedStateViewModelProvider
 import akio.apps.myrun.feature.route.R
 import akio.apps.myrun.feature.route.RoutePlanningViewModel
 import akio.apps.myrun.feature.route.model.RoutePlottingState
+import akio.apps.myrun.feature.route.model.toLatLng
+import akio.apps.myrun.feature.route.model.toPoint
 import akio.apps.myrun.feature.route.wiring.DaggerRoutePlanningFeatureComponent
 import android.content.Context
 import android.content.Intent

@@ -116,7 +116,7 @@ class RouteTrackingService : Service() {
 
     @SuppressLint("MissingPermission")
     private fun requestLocationUpdates() = mainScope.launch {
-        val locationRequest = routeTrackingConfiguration.getLocationRequestConfig().first()
+        val locationRequest = routeTrackingConfiguration.getLocationRequestConfig()
         val locationProcessingConfig =
             routeTrackingConfiguration.getLocationProcessingConfig().first()
         configureLocationProcessors(locationRequest, locationProcessingConfig)
@@ -291,7 +291,7 @@ class RouteTrackingService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent == null) {
             mainScope.launch {
-                // service restarted after process is killed
+                // service restarts after process was killed
                 if (routeTrackingState.getTrackingStatus() == RouteTrackingStatus.RESUMED) {
                     onActionResume(true)
                 }

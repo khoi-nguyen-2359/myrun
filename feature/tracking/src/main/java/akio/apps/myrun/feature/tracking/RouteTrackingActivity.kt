@@ -102,8 +102,8 @@ class RouteTrackingActivity(
     private val locationPermissionChecker: LocationPermissionChecker =
         LocationPermissionChecker(activity = this)
 
+    // check location permissions -> check location service availability -> allow user to use this screen
     private val requisiteJobs = lifecycleScope.launchWhenCreated {
-        // onCreate: check location permissions -> check location service availability -> allow user to use this screen
         val requestConfig = routeTrackingViewModel.getLocationRequestConfigFlow().first()
         val missingRequiredPermission =
             !locationPermissionChecker.check() || !locationServiceChecker.check(requestConfig)

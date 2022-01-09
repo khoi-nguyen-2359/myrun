@@ -51,7 +51,6 @@ dependencies {
     implementation(libs.lifecycleRuntimeKtx)
 
     implementation(libs.androidGoogleMap)
-    implementation(libs.mapbox.maps)
 
     implementation(libs.timber)
 

@@ -118,7 +118,7 @@ class RouteTrackingViewModel @Inject constructor(
     }
 
     fun getLocationRequestConfigFlow(): Flow<LocationRequestConfig> =
-        routeTrackingConfiguration.getLocationRequestConfig()
+        routeTrackingConfiguration.getLocationRequestConfigFlow()
 
     private fun makeNewActivityName(activityType: ActivityType): String {
         val calendar = Calendar.getInstance()

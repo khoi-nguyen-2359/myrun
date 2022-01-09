@@ -14,6 +14,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private val Context.prefDataStore: DataStore<Preferences> by
@@ -23,8 +24,10 @@ class RouteTrackingConfigurationImpl @Inject constructor(application: Applicatio
     RouteTrackingConfiguration {
 
     private val prefDataStore = application.prefDataStore
+    override suspend fun getLocationRequestConfig(): LocationRequestConfig =
+        getLocationRequestConfigFlow().first()
 
-    override fun getLocationRequestConfig(): Flow<LocationRequestConfig> =
+    override fun getLocationRequestConfigFlow(): Flow<LocationRequestConfig> =
         prefDataStore.data.map { data ->
             LocationRequestConfig(
                 updateInterval = data[LOCATION_UPDATE_INTERVAL_KEY] ?: LOCATION_UPDATE_INTERVAL,

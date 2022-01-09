@@ -60,6 +60,8 @@ dependencies {
 
     implementation(libs.lifecycleViewModelKtx)
 
+    implementation(libs.okHttp)
+
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
 
