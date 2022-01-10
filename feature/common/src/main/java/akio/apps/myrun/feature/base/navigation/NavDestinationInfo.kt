@@ -3,7 +3,8 @@ package akio.apps.myrun.feature.base.navigation
 import androidx.navigation.NamedNavArgument
 
 abstract class NavDestinationInfo(protected val routeName: String) {
-    open val arguments: List<NamedNavArgument> = emptyList()
+    open val argumentAdapters: List<NamedNavArgumentAdapter> = emptyList()
+    val arguments: List<NamedNavArgument> by lazy { argumentAdapters.map { it.namedArgument } }
     val route: String by lazy {
         createRouteFromArguments(shouldIncludeValue = false, arguments.map(::NavArgumentValuePair))
     }
@@ -50,9 +51,4 @@ abstract class NavDestinationInfo(protected val routeName: String) {
         }
         return routeBuilder.toString()
     }
-
-    class NavArgumentValuePair(
-        val argument: NamedNavArgument,
-        val value: Any? = argument.argument.defaultValue
-    )
 }
