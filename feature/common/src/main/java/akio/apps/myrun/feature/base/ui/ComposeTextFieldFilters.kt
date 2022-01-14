@@ -1,4 +1,4 @@
-package akio.apps.common.feature.ui
+package akio.apps.myrun.feature.base.ui
 
 fun filterFloatTextField(lastValue: String, editValue: String): String = when {
     editValue.isEmpty() -> ""

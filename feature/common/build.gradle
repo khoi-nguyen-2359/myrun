@@ -57,5 +57,7 @@ dependencies {
     implementation(libs.javaXInject)
 
     testImplementation(libs.kotlinTest)
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.mockito.inline)
     testImplementation(libs.kotlinReflect)
 }

@@ -64,7 +64,10 @@ fun ActivityDetailScreen(
     navBackStackEntry: NavBackStackEntry,
     onClickExportFile: (BaseActivityModel) -> Unit,
 ) {
-    val activityId = HomeNavDestination.ActivityDetail.parseActivityId(navBackStackEntry)
+    val activityId =
+        HomeNavDestination.ActivityDetail.activityIdRequiredArg.parseValueInBackStackEntry(
+            navBackStackEntry
+        )
     val activityDetailViewModel = navBackStackEntry.savedStateViewModelProvider(
         navBackStackEntry
     ) { handle ->

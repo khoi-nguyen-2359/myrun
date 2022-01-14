@@ -1,10 +1,12 @@
 package akio.apps.myrun.feature.base.navigation
 
-import androidx.navigation.NamedNavArgument
+import android.os.Bundle
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import kotlin.test.assertEquals
 import org.junit.Test
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
 class NavDestinationInfoTest {
     private lateinit var navDestinationInfo: NavDestinationInfo
@@ -12,18 +14,17 @@ class NavDestinationInfoTest {
     @Test
     fun getRouteWithRequiredAndOptionalArguments() {
         navDestinationInfo = object : NavDestinationInfo(routeName = "defaultRouteName") {
-            override val arguments: List<NamedNavArgument> = listOf(
-                navArgument("required_arg01") {
+            override val argumentAdapters: List<NamedNavArgumentAdapter> = listOf(
+                RequiredNamedNavArgument("required_arg01") {
                     type = NavType.StringType
                 },
-                navArgument("optional_arg01") {
-                    type = NavType.StringType
-                    nullable = true
-                },
-                navArgument("required_arg02") {
+                OptionalNamedNavArgument("optional_arg01") {
                     type = NavType.StringType
                 },
-                navArgument("optional_arg02") {
+                RequiredNamedNavArgument("required_arg02") {
+                    type = NavType.StringType
+                },
+                OptionalNamedNavArgument("optional_arg02") {
                     type = NavType.StringType
                     defaultValue = "arg02"
                 }
@@ -43,9 +44,39 @@ class NavDestinationInfoTest {
     @Test
     fun getRouteWithoutArguments() {
         navDestinationInfo = object : NavDestinationInfo(routeName = "defaultRouteName") {
-            override val arguments: List<NamedNavArgument> = emptyList()
+            override val argumentAdapters: List<NamedNavArgumentAdapter> = emptyList()
         }
 
         assertEquals("defaultRouteName", navDestinationInfo.route)
+    }
+
+    @Test
+    fun testRequiredNamedNavArgument_parseValueInBackStackEntry() {
+        val arg = RequiredNamedNavArgument("required_arg") {
+            nullable = true // to test whether this value is ignored for required argument
+        }
+        val argumentBundle = mock<Bundle> {
+            on { getString("required_arg") }.thenReturn("required_arg_value")
+        }
+        val navBackStackEntry = mock<NavBackStackEntry>()
+        whenever(navBackStackEntry.arguments).thenReturn(argumentBundle)
+        val parsedValue = arg.parseValueInBackStackEntry(navBackStackEntry)
+        assertEquals("required_arg_value", parsedValue)
+        assertEquals(false, arg.namedArgument.argument.isNullable)
+    }
+
+    @Test
+    fun testOptionalNamedNavArgument_parseValueInBackStackEntry() {
+        val arg = OptionalNamedNavArgument("optional_arg") {
+            nullable = false // to test whether this value is ignored for required argument
+        }
+        val argumentBundle = mock<Bundle> {
+            on { getString("optional_arg") }.thenReturn(null)
+        }
+        val navBackStackEntry = mock<NavBackStackEntry>()
+        whenever(navBackStackEntry.arguments).thenReturn(argumentBundle)
+        val parsedValue = arg.parseValueInBackStackEntry(navBackStackEntry)
+        assertEquals(null, parsedValue)
+        assertEquals(true, arg.namedArgument.argument.isNullable)
     }
 }

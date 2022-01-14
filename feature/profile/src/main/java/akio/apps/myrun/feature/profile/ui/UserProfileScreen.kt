@@ -1,6 +1,5 @@
 package akio.apps.myrun.feature.profile.ui
 
-import akio.apps.common.feature.ui.filterFloatTextField
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import akio.apps.myrun.data.eapps.api.model.ExternalProviders
@@ -21,6 +20,7 @@ import akio.apps.myrun.feature.base.ui.ErrorDialog
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.base.ui.ProgressDialog
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
+import akio.apps.myrun.feature.base.ui.filterFloatTextField
 import akio.apps.myrun.feature.base.viewmodel.savedStateViewModelProvider
 import akio.apps.myrun.feature.profile.LinkStravaDelegate
 import akio.apps.myrun.feature.profile.R
@@ -96,7 +96,9 @@ import java.util.Calendar
 @Composable
 fun UserProfileScreen(navController: NavController, backStackEntry: NavBackStackEntry) {
     val application = LocalContext.current.applicationContext as Application
-    val userId = HomeNavDestination.Profile.parseUserId(backStackEntry)
+    val userId = HomeNavDestination.Profile.userIdOptionalArg.parseValueInBackStackEntry(
+        backStackEntry
+    )
     val userProfileViewModel = backStackEntry.savedStateViewModelProvider(
         backStackEntry
     ) { handle ->
