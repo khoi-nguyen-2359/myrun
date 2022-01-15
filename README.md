@@ -3,5 +3,5 @@
 [![Develop PR Checks](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/develop_pr_checks.yml/badge.svg)](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/develop_pr_checks.yml)
 
 Wiki:
-1. [Build variants](https://github.com/khoi-nguyen-2359/myrun/wiki/Build-variant-setup)
+1. [Build variants](https://github.com/khoi-nguyen-2359/myrun/wiki/Build-variants)
 2. [Project modules](https://github.com/khoi-nguyen-2359/myrun/wiki/Project-modules)
