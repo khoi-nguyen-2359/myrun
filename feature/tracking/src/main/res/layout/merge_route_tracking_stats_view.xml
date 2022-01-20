@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:paddingVertical="10dp"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout">
+
+    <TextView
+        android:id="@+id/distance_label_text_view"
+        style="@style/RouteTrackingInfoLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/route_tracking_distance_label"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/speed_label_text_view"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/speed_label_text_view"
+        style="@style/RouteTrackingInfoLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/route_tracking_pace_label"
+        app:layout_constraintEnd_toStartOf="@+id/time_label_text_view"
+        app:layout_constraintStart_toEndOf="@+id/distance_label_text_view" />
+
+    <TextView
+        android:id="@+id/time_label_text_view"
+        style="@style/RouteTrackingInfoLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_page_vertical_padding"
+        android:text="@string/route_tracking_time_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/speed_label_text_view" />
+
+    <TextView
+        android:id="@+id/distance_text_view"
+        style="@style/RouteTrackingInfoValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="--"
+        app:layout_constraintTop_toBottomOf="@id/distance_label_text_view"
+        app:layout_constraintEnd_toStartOf="@+id/speed_text_view"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/speed_text_view"
+        style="@style/RouteTrackingInfoValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="--"
+        app:layout_constraintTop_toBottomOf="@id/speed_label_text_view"
+        app:layout_constraintEnd_toStartOf="@+id/time_text_view"
+        app:layout_constraintStart_toEndOf="@+id/distance_text_view" />
+
+    <TextView
+        android:id="@+id/time_text_view"
+        style="@style/RouteTrackingInfoValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        app:layout_constraintTop_toBottomOf="@id/time_label_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/speed_text_view" />
+
+    <TextView
+        android:id="@+id/distance_unit_text_view"
+        style="@style/RouteTrackingUnitLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/performance_unit_distance_km"
+        app:layout_constraintTop_toBottomOf="@id/distance_text_view"
+        app:layout_constraintEnd_toEndOf="@id/distance_label_text_view"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/distance_label_text_view"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <TextView
+        android:id="@+id/speed_unit_text_view"
+        style="@style/RouteTrackingUnitLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/common_speed_unit"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/speed_label_text_view"
+        app:layout_constraintEnd_toEndOf="@id/speed_label_text_view"
+        tools:layout_editor_absoluteY="16dp" />
+
+</merge>

@@ -1,19 +1,23 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+    id 'com.google.firebase.firebase-perf'
+    id "build-time-tracker"
+}
 
 android {
-    compileSdkVersion Versions.compileSdk
+    compileSdkVersion project.compileSdk
 
     defaultConfig {
-        applicationId "akio.apps.myrun"
-        minSdkVersion Versions.minSdk
-        targetSdkVersion Versions.targetSdk
-        versionCode Versions.versionCode
-        versionName Versions.versionName
+        applicationId project.appId
+        minSdkVersion project.minSdk
+        targetSdkVersion project.targetSdk
+        versionCode project.versionCode
+        versionName project.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -25,6 +29,15 @@ android {
             keyAlias = 'myrun_debug_key_v2'
             keyPassword 'myrundebugkeyv2'
         }
+        rc {
+            def path = project.localProps['signing.rc.path'] ?: "invalid"
+            def password = project.localProps['signing.rc.password']
+            def alias = project.localProps['signing.rc.alias']
+            storeFile file(path)
+            storePassword password
+            keyAlias alias
+            keyPassword password
+        }
     }
 
     buildTypes {
@@ -35,9 +48,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
-        internal {
+        rc {
             initWith release
             debuggable true
+            signingConfig signingConfigs.rc
         }
 
         debug {
@@ -49,97 +63,104 @@ android {
 
     buildFeatures {
         viewBinding true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
     }
 
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
+        useIR = true
+        allWarningsAsErrors = true
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
     }
-}
 
-androidExtensions {
-    experimental = true
+    lintOptions {
+        disable 'NullSafeMutableLiveData' // bypass this bug https://issuetracker.google.com/issues/169249668
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$Versions.kotlin"
 
-    implementation "androidx.appcompat:appcompat:$Versions.appCompat"
-    implementation "androidx.constraintlayout:constraintlayout:$Versions.constraintLayout"
-    implementation "androidx.paging:paging-runtime-ktx:$Versions.paging"
-    implementation "androidx.fragment:fragment-ktx:$Versions.fragment"
-    implementation "androidx.activity:activity-ktx:$Versions.activity"
-    implementation "androidx.work:work-runtime-ktx:$Versions.workManager"
-    implementation "com.google.android.material:material:$Versions.androidMaterial"
-    implementation "com.android.support:multidex:$Versions.multidex"
+    implementation project(':domain')
 
-    implementation "com.squareup.okhttp3:okhttp:$Versions.okhttp"
-    implementation "com.squareup.okhttp3:logging-interceptor:$Versions.okhttp"
+    implementation project(':data:firebase')
+    implementation(libs.firebasePerfKtx)
+    implementation(libs.firebaseAuthKtx)
 
-    implementation "com.squareup.retrofit2:retrofit:$Versions.retrofit"
-    implementation "com.squareup.retrofit2:converter-gson:$Versions.retrofit"
+    implementation(project(':data:authentication'))
+    implementation(project(':data:tracking'))
 
-    implementation "com.google.dagger:dagger-android:$Versions.dagger"
-    implementation "com.google.dagger:dagger-android-support:$Versions.dagger"
-    kapt "com.google.dagger:dagger-compiler:$Versions.dagger"
-    kapt "com.google.dagger:dagger-android-processor:$Versions.dagger"
+    implementation project(':worker')
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$Versions.coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$Versions.coroutines"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$Versions.coroutines"
+    implementation project(':feature:common')
+    implementation project(':feature:registration')
+    implementation project(":feature:profile")
+    implementation project(":feature:home")
+    implementation project(":feature:activity")
+    implementation project(":feature:tracking")
 
-    implementation "com.google.android.gms:play-services-maps:$Versions.playServicesMap"
-    implementation "com.google.android.gms:play-services-location:$Versions.playServicesLocation"
-    implementation "com.google.android.gms:play-services-auth:$Versions.playServicesAuth"
-    implementation "com.google.android.gms:play-services-fitness:$Versions.playServicesFitness"
+    debugImplementation project(":feature:route")
+    debugImplementation project(":feature:configurator")
 
-    implementation "com.google.android.libraries.places:places:$Versions.places"
-    implementation "com.google.maps.android:android-maps-utils:$Versions.androidMapUtils"
+    implementation(libs.workManager) // to config work manager in application class
 
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$Versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-extensions:$Versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$Versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$Versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-common-java8:$Versions.lifecycle"
+    implementation(libs.googlePlaces)   // to init place sdk in application class
 
-    implementation platform("com.google.firebase:firebase-bom:$Versions.firebaseBom")
-    implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.firebase:firebase-firestore-ktx'
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation(libs.kotlinxCoroutinesCore)
 
-    implementation "com.jakewharton.timber:timber:$Versions.timber"
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
 
-    implementation "com.github.bumptech.glide:glide:$Versions.glide"
-    kapt "com.github.bumptech.glide:compiler:$Versions.glide"
+    implementation(libs.androidXCore)
+    implementation(libs.androidXAppCompat)
+    implementation(libs.splashScreen)
 
-    implementation "androidx.room:room-runtime:$Versions.room"
-    kapt "androidx.room:room-compiler:$Versions.room"
-    implementation "androidx.room:room-ktx:$Versions.room"
+    implementation(libs.lifecycleProcess)
 
-    implementation "androidx.datastore:datastore-preferences:$Versions.dataStore"
+    implementation(libs.bundles.compose)
+    implementation(libs.accompanistInsets)
 
-    implementation "com.facebook.android:facebook-login:$Versions.facebookSdk"
+    implementation(libs.multidex)
 
-    implementation "com.sweetzpot.tcxzpot:lib:$Versions.tcxzPot"
+    implementation(libs.bundles.crashlytics)
 
-    testImplementation "junit:junit:$Versions.junit"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$Versions.coroutinesTest"
-    testImplementation "androidx.arch.core:core-testing:$Versions.androidXCoreTesting"
-    testImplementation "org.mockito:mockito-core:$Versions.mockitoCore"
+    implementation(libs.timber)
 
-    kaptAndroidTest "com.google.dagger:dagger-compiler:$Versions.dagger"
-    androidTestImplementation "org.mockito:mockito-android:$Versions.mockitoAndroid"
-    androidTestImplementation "androidx.test:runner:$Versions.androidXTestRunner"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$Versions.espresso"
-    androidTestImplementation "androidx.test.espresso:espresso-contrib:$Versions.espresso"
-    androidTestImplementation "androidx.test:rules:$Versions.androidXTestRules"
-    androidTestImplementation "androidx.test.ext:junit:$Versions.androidXJunit"
-    androidTestImplementation "androidx.test.uiautomator:uiautomator:$Versions.uiAutomator"
+    if (localProps.getProperty("leakcanary.enabled", "1") == "1") {
+        debugImplementation(libs.leakCanary)
+    }
+
+    testImplementation(libs.kotlinTest)
+    testImplementation(project(":feature:configurator"))
+    testImplementation(project(":feature:route"))
+}
+
+buildtimetracker {
+    reporters {
+        csv {
+            output "build/times.csv"
+            append true
+            header true
+        }
+
+        summary {
+            ordered false
+            threshold 500
+            barstyle "unicode"
+            shortenTaskNames false
+        }
+
+        csvSummary {
+            csv "build/times.csv"
+        }
+    }
 }

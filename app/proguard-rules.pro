@@ -13,12 +13,12 @@
 #}
 
 # Glide
--keep public class * implements com.bumptech.glide.module.GlideModule
--keep public class * extends com.bumptech.glide.module.AppGlideModule
--keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
-  **[] $VALUES;
-  public *;
-}
+#-keep public class * implements com.bumptech.glide.module.GlideModule
+#-keep public class * extends com.bumptech.glide.module.AppGlideModule
+#-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+#  **[] $VALUES;
+#  public *;
+#}
 
 # Crashlytics
 ## for producing readable crash reports
@@ -58,3 +58,40 @@
 }
 
 ##---------------End: proguard configuration for Gson  ----------
+
+# Google Map v3 Beta
+-keep,allowoptimization class com.google.android.gms.maps.** { *; }
+
+-keepattributes *Annotation*, InnerClasses
+
+##---------------Begin: proguard configuration for Kotlin Serialization  ----------
+-dontnote kotlinx.serialization.AnnotationsKt # core serialization annotations
+
+# kotlinx-serialization-json specific. Add this if you have java.lang.NoClassDefFoundError kotlinx.serialization.json.JsonObjectSerializer
+-keepclassmembers class kotlinx.serialization.json.** {
+    *** Companion;
+}
+-keepclasseswithmembers class kotlinx.serialization.json.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+-keep,includedescriptorclasses class akio.apps.myrun.**$$serializer { *; }
+-keepclassmembers class akio.apps.myrun.** {
+    *** Companion;
+}
+-keepclasseswithmembers class akio.apps.myrun.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
+
+##---------------End: proguard configuration for Kotlin Serialization  ----------
+
+##--- Added from the build generated missing rules
+-dontwarn org.bouncycastle.jsse.BCSSLParameters
+-dontwarn org.bouncycastle.jsse.BCSSLSocket
+-dontwarn org.bouncycastle.jsse.provider.BouncyCastleJsseProvider
+-dontwarn org.conscrypt.Conscrypt$Version
+-dontwarn org.conscrypt.Conscrypt
+-dontwarn org.conscrypt.ConscryptHostnameVerifier
+-dontwarn org.openjsse.javax.net.ssl.SSLParameters
+-dontwarn org.openjsse.javax.net.ssl.SSLSocket
+-dontwarn org.openjsse.net.ssl.OpenJSSE

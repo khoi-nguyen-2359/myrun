@@ -1,0 +1,65 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdkVersion project.compileSdk
+
+    defaultConfig {
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        rc {
+            debuggable true
+        }
+    }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+        useIR = true
+    }
+}
+
+dependencies {
+    implementation(project(':wiring:common'))
+    implementation(project(":feature:common"))
+
+    implementation(project(':domain'))
+
+    implementation(project(':data:location'))
+    implementation(project(':data:tracking'))
+    implementation(project(':data:user'))
+    implementation(project(':data:eapps'))
+    implementation(project(':data:authentication'))
+
+    implementation(project(":data:firebase"))
+    implementation(libs.bundles.firebase.data)
+
+    implementation(libs.androidXCore)
+    implementation(libs.androidXAppCompat)
+    implementation(libs.androidMaterial)
+
+    implementation(libs.bundles.compose)
+
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
+
+    testImplementation(libs.junit)
+}

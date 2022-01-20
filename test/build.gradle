@@ -1,0 +1,17 @@
+plugins {
+    id 'java-library'
+    id 'kotlin'
+    id 'java-test-fixtures'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+dependencies {
+    implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.mockitoCore)
+    testFixturesImplementation(libs.kotlinxCoroutinesCore)
+    testFixturesImplementation(libs.mockitoCore)
+}

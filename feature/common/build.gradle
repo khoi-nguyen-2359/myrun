@@ -1,0 +1,63 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdk project.compileSdk
+
+    defaultConfig {
+        minSdk project.minSdk
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        rc {
+            debuggable true
+        }
+    }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.compose.get()
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+        useIR = true
+        allWarningsAsErrors = true
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
+    }
+}
+
+dependencies {
+    implementation(project(":domain"))
+
+    implementation(libs.androidMaterial)
+    implementation(libs.androidXAppCompat)
+    implementation(libs.bundles.compose)
+    implementation(libs.accompanistInsets)
+
+    implementation(libs.lifecycleRuntimeKtx)
+
+    implementation(libs.androidGoogleMap)
+
+    implementation(libs.timber)
+
+    implementation(libs.javaXInject)
+
+    testImplementation(libs.kotlinTest)
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.kotlinReflect)
+}

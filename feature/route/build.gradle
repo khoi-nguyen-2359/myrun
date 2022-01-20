@@ -1,0 +1,69 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdk project.compileSdk
+
+    defaultConfig {
+        minSdkVersion project.minSdk
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        rc {
+            debuggable true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+        useIR = true
+        allWarningsAsErrors = true
+        freeCompilerArgs += ["-Xopt-in=kotlin.RequiresOptIn"]
+    }
+}
+
+dependencies {
+    implementation(project(':wiring:common'))
+    implementation(project(':feature:common'))
+
+    implementation(project(':domain'))
+
+    implementation(project(':data:location'))
+    implementation(project(':data:route'))
+
+    implementation(libs.androidXAppCompat)
+    implementation(libs.activity)
+    implementation(libs.constraintLayout)
+    implementation(libs.androidMaterial)
+
+    implementation(libs.androidMapUtils)
+    implementation(libs.androidGoogleMap)
+
+    implementation(libs.playServicesLocation)
+    implementation(libs.googlePlaces)
+
+    implementation(libs.mapbox.maps)
+
+    implementation(libs.timber)
+
+    implementation(libs.lifecycleViewModelKtx)
+
+    implementation(libs.okHttp)
+
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
+
+    testImplementation(libs.kotlinTest)
+}

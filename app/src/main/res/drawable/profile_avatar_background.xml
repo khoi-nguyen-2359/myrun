@@ -7,5 +7,5 @@
     </item>
     <item
         android:drawable="@drawable/ic_photo_camera"
-        android:gravity="center" />
+        android:gravity="bottom|end" />
 </layer-list>

@@ -29,16 +29,35 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:networkSecurityConfig="@xml/network_security_config"
-        >
+        android:networkSecurityConfig="@xml/network_security_config">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <activity
-            android:name=".feature.routetracking.impl.RouteTrackingActivity"
-            android:screenOrientation="portrait" />
+            android:name=".feature.tracking.RouteTrackingActivity"
+            android:theme="@style/AppTheme.SemiTransparentSystemBars"
+            android:screenOrientation="portrait"
+            android:exported="false" />
 
         <activity
-            android:name=".feature.splash.impl.SplashActivity"
-            android:screenOrientation="portrait">
+            android:name=".feature.route.ui.RoutePlanningActivity"
+            android:theme="@style/AppTheme.SemiTransparentSystemBars"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+
+        <activity
+            android:name=".feature.splash.SplashActivity"
+            android:theme="@style/AppTheme.SplashScreen"
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -46,81 +65,47 @@
         </activity>
 
         <activity
-            android:name=".feature.home.impl.HomeActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:windowSoftInputMode="adjustPan"
-            android:name=".feature.signin.impl.SignInActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name="akio.apps._base.ui.SingleFragmentActivity"
-            android:screenOrientation="portrait" />
-
-        <activity android:name=".feature.cropavatar.CropAvatarActivity"
+            android:name=".feature.home.HomeActivity"
+            android:theme="@style/AppTheme.SemiTransparentSystemBars"
             android:screenOrientation="portrait"
-            />
+            android:exported="false" />
 
-        <activity android:name=".feature.editprofile.impl.EditProfileActivity"/>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_sdk_key" />
+            android:value="@string/google_direction_api_key" />
 
         <service
-            android:name=".feature.routetracking.impl.RouteTrackingService"
+            android:name=".feature.tracking.RouteTrackingService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location" />
 
-        <!--        Facebook Login -->
+        <service
+            android:name=".feature.activitydetail.ActivityExportService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- Firebase Android perf library debug log -->
         <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
+            android:name="firebase_performance_logcat_enabled"
+            android:value="true" />
 
-        <activity
-            android:name="com.facebook.FacebookActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />
-        <activity
-            android:name="com.facebook.CustomTabActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="@string/fb_login_protocol_scheme" />
-            </intent-filter>
-        </activity>
-
-        <!--        Facebook Login -->
-
-        <activity android:name=".feature.strava.impl.LinkStravaActivity"
-            android:theme="@style/TransparentAppCompat"
-            android:launchMode="singleTask"
-            >
-            <!-- for Strava callback intent -->
-            <intent-filter>
-                <data
-                    android:host="@string/strava_callback_host"
-                    android:scheme="@string/app_scheme" />
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-            </intent-filter>
-        </activity>
-
-        <!--        Remove the default initializer of WorkManager -->
-        <!--        https://developer.android.com/topic/libraries/architecture/workmanager/advanced/custom-configuration#remove-default-->
+        <!-- Disable some initializers of android.startup -->
         <provider
-            android:name="androidx.work.impl.WorkManagerInitializer"
-            android:authorities="${applicationId}.workmanager-init"
-            tools:node="remove" />
-
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <!-- Remove work manager initializer because we init WM in MyRunApp -->
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
     </application>
 
 </manifest>
