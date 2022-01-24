@@ -5,3 +5,4 @@
 Wiki:
 1. [Build variants](https://github.com/khoi-nguyen-2359/myrun/wiki/Build-variants)
 2. [Project modules](https://github.com/khoi-nguyen-2359/myrun/wiki/Project-modules)
+3. [Workflows](https://github.com/khoi-nguyen-2359/myrun/wiki/Workflows)
