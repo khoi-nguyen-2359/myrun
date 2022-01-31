@@ -9,6 +9,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -25,11 +26,7 @@ class UploadActivityFilesToStravaUsecase @Inject constructor(
         var isComplete = true
         if (stravaToken != null) {
             activityLocalStorage.loadAllActivitySyncDataFlow()
-                .catch { exception ->
-                    isComplete = false
-                    Timber.e(exception)
-                }
-                .collect { syncData ->
+                .onEach { syncData ->
                     stravaDataRepository.saveActivity(
                         stravaToken,
                         syncData.activityModel.name,
@@ -37,6 +34,11 @@ class UploadActivityFilesToStravaUsecase @Inject constructor(
                     )
                     activityLocalStorage.deleteActivitySyncData(syncData.activityModel.id)
                 }
+                .catch { exception ->
+                    isComplete = false
+                    Timber.e(exception)
+                }
+                .collect()
         }
 
         isComplete

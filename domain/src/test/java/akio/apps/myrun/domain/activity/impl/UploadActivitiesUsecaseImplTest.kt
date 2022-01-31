@@ -62,7 +62,7 @@ class UploadActivitiesUsecaseImplTest {
         assertFalse(result)
     }
 
-    @Test(expected = Exception::class)
+    @Test
     fun testUploadAll_UploadExceptionCase() = runBlockingTest {
         val activityStorageData = createActivityStorageData()
         val storageDataFlow = flowOf(activityStorageData)

@@ -15,8 +15,8 @@ import javax.inject.Inject
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 
 class UploadActivitiesUsecase @Inject constructor(
     private val authenticationState: UserAuthenticationState,
@@ -45,7 +45,10 @@ class UploadActivitiesUsecase @Inject constructor(
                 )
                 activityLocalStorage.deleteActivityData(activityModel.id)
             }
-            .catch { isCompleted = false }
+            .catch { exception ->
+                isCompleted = false
+                Timber.e(exception)
+            }
             .collect()
 
         return isCompleted
