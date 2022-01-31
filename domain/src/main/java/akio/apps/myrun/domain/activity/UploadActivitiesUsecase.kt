@@ -15,6 +15,8 @@ import javax.inject.Inject
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 
 class UploadActivitiesUsecase @Inject constructor(
     private val authenticationState: UserAuthenticationState,
@@ -28,9 +30,8 @@ class UploadActivitiesUsecase @Inject constructor(
     suspend fun uploadAll(onUploadActivityStarted: ((BaseActivityModel) -> Unit)? = null): Boolean {
         var isCompleted = true
         activityLocalStorage.loadAllActivityStorageDataFlow()
-            .catch { isCompleted = false }
-            .collect { storageData ->
-                val activityModel = fillInMissingActivityInfo(
+            .onEach { storageData ->
+                val activityModel = fulfillActivityInfo(
                     storageData.activityModel,
                     storageData.locationDataPoints.first()
                 )
@@ -44,11 +45,20 @@ class UploadActivitiesUsecase @Inject constructor(
                 )
                 activityLocalStorage.deleteActivityData(activityModel.id)
             }
+            .catch { exception ->
+                isCompleted = false
+                Timber.e(exception)
+            }
+            .collect()
 
         return isCompleted
     }
 
-    private suspend fun fillInMissingActivityInfo(
+    /**
+     * An activity may miss some data when starting (due to no network). This method
+     * gathers all data before uploading.
+     */
+    private suspend fun fulfillActivityInfo(
         activityModel: BaseActivityModel,
         startPoint: ActivityLocation,
     ): BaseActivityModel {

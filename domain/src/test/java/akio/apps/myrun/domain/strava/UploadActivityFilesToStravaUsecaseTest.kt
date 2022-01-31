@@ -63,7 +63,7 @@ class UploadActivityFilesToStravaUsecaseTest {
         assertFalse(result)
     }
 
-    @Test(expected = Exception::class)
+    @Test
     fun uploadAll_UploadDataExceptionCase() = testDispatcher.runBlockingTest {
         whenever(mockedUserAuthenticateState.requireUserAccountId()).thenReturn("userId")
         val stravaToken = createStravaToken()
