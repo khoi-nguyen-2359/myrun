@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    name: Upload release bundle
+    name: Upload Release Bundle
     runs-on: ubuntu-latest
     environment: production
     
@@ -38,11 +38,11 @@ jobs:
           base64 -d -i loc_credentials.xml.b64 > data/location/src/release/res/values/credentials.xml
           touch local.properties & echo -e "mapbox.downloads.token=$MAPBOX_DOWNLOAD_TOKEN" >> local.properties
 
+      - name: Run Unit Tests
+        run: bash ./gradlew testReleaseUnitTest
+
       - name: Bundle Release
         run: bash ./gradlew bundleRelease
-
-      - name: Run Release Unit Tests
-        run: bash ./gradlew testReleaseUnitTest
 
       - name: Sign Release
         uses: r0adkll/sign-android-release@v1
