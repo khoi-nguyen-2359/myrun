@@ -1,6 +1,7 @@
 package akio.apps.myrun.domain.activity
 
 import akio.apps.myrun.wiring.common.TimeProvider
+import java.text.SimpleDateFormat
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Before
@@ -12,6 +13,8 @@ class ActivityDateTimeFormatterTest {
     private lateinit var formatter: ActivityDateTimeFormatter
     private lateinit var mockedTimeProvider: TimeProvider
     private val rawOffset = 25200000 // GMT+7
+    private val timeFormatter: SimpleDateFormat = SimpleDateFormat("h:mm a")
+    private val dateFormatter: SimpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
 
     @Before
     fun setup() {
@@ -27,9 +30,10 @@ class ActivityDateTimeFormatterTest {
             1640451540000 + rawOffset
         )
         // 25/12/2021 11:58 PM GMT+7
-        val result = formatter.formatActivityDateTime(1640451480000)
+        val activityStartTime = 1640451480000
+        val result = formatter.formatActivityDateTime(activityStartTime)
         assertTrue(result is ActivityDateTimeFormatter.Result.WithinToday)
-        assertEquals("11:58 PM", result.formattedValue)
+        assertEquals(timeFormatter.format(activityStartTime), result.formattedValue)
     }
 
     @Test
@@ -39,9 +43,10 @@ class ActivityDateTimeFormatterTest {
             1640451660000 + rawOffset
         )
         // 25/12/2021 11:58 PM GMT+7
-        val result = formatter.formatActivityDateTime(1640451480000)
+        val activityStartTime = 1640451480000
+        val result = formatter.formatActivityDateTime(activityStartTime)
         assertTrue(result is ActivityDateTimeFormatter.Result.WithinYesterday)
-        assertEquals("11:58 PM", result.formattedValue)
+        assertEquals(timeFormatter.format(activityStartTime), result.formattedValue)
     }
 
     @Test
@@ -51,9 +56,10 @@ class ActivityDateTimeFormatterTest {
             1640537880000 + rawOffset
         )
         // 25/12/2021 11:58 PM GMT+7
-        val result = formatter.formatActivityDateTime(1640451480000)
+        val activityStartTime = 1640451480000
+        val result = formatter.formatActivityDateTime(activityStartTime)
         assertTrue(result is ActivityDateTimeFormatter.Result.WithinYesterday)
-        assertEquals("11:58 PM", result.formattedValue)
+        assertEquals(timeFormatter.format(activityStartTime), result.formattedValue)
     }
 
     @Test
@@ -63,9 +69,10 @@ class ActivityDateTimeFormatterTest {
             1640537880000 + rawOffset
         )
         // 26/12/2021 12:01 AM GMT+7
+        val activityStartTime = 1640451660000
         val result = formatter.formatActivityDateTime(1640451660000)
         assertTrue(result is ActivityDateTimeFormatter.Result.WithinToday)
-        assertEquals("12:01 AM", result.formattedValue)
+        assertEquals(timeFormatter.format(activityStartTime), result.formattedValue)
     }
 
     @Test
@@ -75,8 +82,12 @@ class ActivityDateTimeFormatterTest {
             1640538060000 + rawOffset
         )
         // 25/12/2021 11:58 PM GMT+7
+        val activityStartTime = 1640451480000
         val result = formatter.formatActivityDateTime(1640451480000)
         assertTrue(result is ActivityDateTimeFormatter.Result.FullDateTime)
-        assertEquals("25/12/2021 11:58 PM", result.formattedValue)
+        assertEquals(
+            "${dateFormatter.format(activityStartTime)} ${timeFormatter.format(activityStartTime)}",
+            result.formattedValue
+        )
     }
 }
