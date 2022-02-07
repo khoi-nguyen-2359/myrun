@@ -15,15 +15,12 @@ Status
 [![Release](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/release_pr_checks.yml/badge.svg)](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/release_pr_checks.yml)
 [![Deploy](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/deploy.yml/badge.svg)](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/deploy.yml)
 
-Features
+Highlights
 ---
-- Track device's GPS location and display the route on map.
-- Keep activity history on server and present as a feed on Android app.
-- Activity details: map view, spliting pace for each KMs.
-- Activity summary to compare between weeks, months.
-- Export TCX files and share.
-- Upload activities to Strava.
-- User profile management.
+- Use Jetpack Compose and MVVM to build a unidirectional data flow UI.
+- Make use of persistent storage and WorkManager to create a better offline user experience.
+- Use Android foreground service for run tracking operations.
+- Apply CI/CD using Github Action.
 
 Tech stack
 ---
