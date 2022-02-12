@@ -5,7 +5,9 @@ import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.PlaceIdentifier
+import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
@@ -21,11 +23,9 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
@@ -46,6 +46,7 @@ internal class ActivityFeedViewModel @Inject constructor(
     private val launchCatchingViewModel: LaunchCatchingDelegate,
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val activityDateTimeFormatter: ActivityDateTimeFormatter,
+    private val userPreferences: UserPreferences,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingViewModel {
@@ -60,6 +61,28 @@ internal class ActivityFeedViewModel @Inject constructor(
 
     val userProfile: Flow<UserProfile> =
         getUserProfileUsecase.getUserProfileFlow().mapNotNull { it.data }.flowOn(ioDispatcher)
+
+    val preferredSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystem()
+
+    private fun createActivityUploadBadgeStatusFlow(): Flow<ActivityUploadBadgeStatus> =
+        activityLocalStorage.getActivityStorageDataCountFlow()
+            .distinctUntilChanged()
+            .onEach {
+                if (it > 0) {
+                    setUploadBadgeDismissed(false)
+                }
+            }
+            .combine(isUploadBadgeDismissedFlow) { localActivityCount, isUploadBadgeDismissed ->
+                when {
+                    localActivityCount > 0 ->
+                        ActivityUploadBadgeStatus.InProgress(localActivityCount)
+                    localActivityCount == 0 && !isUploadBadgeDismissed ->
+                        ActivityUploadBadgeStatus.Complete
+                    else -> ActivityUploadBadgeStatus.Hidden
+                }
+            }
+            // convert to shared flow for multiple collectors
+            .shareIn(viewModelScope, replay = 1, started = SharingStarted.WhileSubscribed())
 
     val myActivityList: Flow<PagingData<BaseActivityModel>> = Pager(
         config = PagingConfig(
@@ -121,27 +144,6 @@ internal class ActivityFeedViewModel @Inject constructor(
         Timber.d("reloadFeedData")
         activityPagingSource?.invalidate()
     }
-
-    @OptIn(FlowPreview::class)
-    private fun createActivityUploadBadgeStatusFlow(): Flow<ActivityUploadBadgeStatus> =
-        activityLocalStorage.getActivityStorageDataCountFlow()
-            .distinctUntilChanged()
-            .onEach {
-                if (it > 0) {
-                    setUploadBadgeDismissed(false)
-                }
-            }
-            .combine(isUploadBadgeDismissedFlow) { localActivityCount, isUploadBadgeDismissed ->
-                when {
-                    localActivityCount > 0 ->
-                        ActivityUploadBadgeStatus.InProgress(localActivityCount)
-                    localActivityCount == 0 && !isUploadBadgeDismissed ->
-                        ActivityUploadBadgeStatus.Complete
-                    else -> ActivityUploadBadgeStatus.Hidden
-                }
-            }
-            // convert to shared flow for multiple collectors
-            .shareIn(viewModelScope, replay = 1, started = SharingStarted.WhileSubscribed())
 
     private fun recreateActivityPagingSource(): ActivityPagingSource =
         activityPagingSourceFactory.createPagingSource().also {

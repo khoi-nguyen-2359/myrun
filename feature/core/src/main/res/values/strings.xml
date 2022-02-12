@@ -18,9 +18,12 @@
     <string name="route_tracking_pace_label">Pace</string>
     <string name="route_tracking_distance_label">Distance</string>
     <string name="performance_duration_label">Time</string>
-    <string name="performance_unit_speed">km/h</string>
+    <string name="performance_unit_speed_km_per_hour">km/h</string>
+    <string name="performance_unit_speed_mi_per_hour">mi/h</string>
     <string name="performance_unit_pace_min_per_km">/km</string>
+    <string name="performance_unit_pace_min_per_mile">/mi</string>
     <string name="performance_unit_distance_km">km</string>
+    <string name="performance_unit_distance_mi">mi</string>
     <string name="common_speed_unit">km/h</string>
 
     <string name="activity_name_running">Run</string>

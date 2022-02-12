@@ -1,12 +1,14 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
-import akio.apps.myrun.feature.TrackingValueFormatter
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
 import akio.apps.myrun.feature.activitydetail.di.DaggerActivityDetailFeatureComponent
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
+import akio.apps.myrun.feature.core.measurement.TrackValueFormatPreference
+import akio.apps.myrun.feature.core.measurement.TrackValueFormatter
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
@@ -146,6 +148,9 @@ private fun ActivityDetailDataContainer(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val trackValueFormatterPreference = remember(screenState.preferredSystem) {
+        TrackValueFormatter.createFormatterPreference(screenState.preferredSystem)
+    }
     Box(modifier = modifier) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             ActivityInfoHeaderView(
@@ -158,11 +163,12 @@ private fun ActivityDetailDataContainer(
             ActivityRouteImage(screenState.activityData) {
                 navigateToActivityMap(context, screenState.activityData.encodedPolyline)
             }
-            PerformanceTableComposable(screenState.activityData)
-            if (screenState.runSplits.size > 1) {
+            PerformanceTableComposable(screenState.activityData, trackValueFormatterPreference)
+            if (screenState.runSplits.isNotEmpty()) {
                 RunSplitsTable(
                     screenState.runSplits,
                     screenState.activityData.distance,
+                    trackValueFormatterPreference,
                     modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)
                 )
             }
@@ -182,10 +188,13 @@ private fun ActivityDetailDataContainer(
 fun RunSplitsTable(
     runSplits: List<Double>,
     totalDistance: Double,
+    trackValueFormatPreference: TrackValueFormatPreference,
     modifier: Modifier = Modifier,
 ) {
     val fastestPace = runSplits.minOrNull()
         ?: return
+    val (distanceFormatter, paceFormatter, _, _) = trackValueFormatPreference
+    val context = LocalContext.current
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(AppDimensions.sectionVerticalSpacing))
         Text(
@@ -199,14 +208,14 @@ fun RunSplitsTable(
         val progressColumnWeight = 10f
         Row {
             Text(
-                text = stringResource(id = R.string.activity_detail_split_km_column).uppercase(),
+                text = distanceFormatter.getUnit(context).uppercase(),
                 modifier = Modifier.weight(kmColumnWeight),
                 style = MaterialTheme.typography.overline,
                 fontWeight = FontWeight.Bold,
                 color = Color.Gray.copy(alpha = 0.5f)
             )
             Text(
-                text = stringResource(id = R.string.activity_detail_split_pace_column).uppercase(),
+                text = stringResource(paceFormatter.labelResId).uppercase(),
                 modifier = Modifier.weight(paceColumnWeight),
                 style = MaterialTheme.typography.overline,
                 fontWeight = FontWeight.Bold,
@@ -221,17 +230,16 @@ fun RunSplitsTable(
         )
         Spacer(modifier = Modifier.height(4.dp))
         runSplits.forEachIndexed { index, splitPace ->
-            Row(
-                modifier = Modifier.padding(vertical = 1.dp)
-            ) {
-                val kmLabel = formatKmLabel(index, runSplits, totalDistance)
+            Row(modifier = Modifier.padding(vertical = 1.dp)) {
+                val distanceLabel =
+                    formatDistanceLabel(index, runSplits, distanceFormatter, totalDistance)
                 Text(
-                    text = kmLabel,
+                    text = distanceLabel,
                     modifier = Modifier.weight(kmColumnWeight),
                     style = MaterialTheme.typography.caption
                 )
                 Text(
-                    text = TrackingValueFormatter.PaceMinutePerKm.getFormattedValue(splitPace),
+                    text = paceFormatter.getFormattedValue(splitPace),
                     modifier = Modifier.weight(paceColumnWeight),
                     style = MaterialTheme.typography.caption
                 )
@@ -250,25 +258,29 @@ fun RunSplitsTable(
     }
 }
 
-private fun formatKmLabel(
+private fun formatDistanceLabel(
     index: Int,
     runSplits: List<Double>,
+    distanceFormatter: TrackValueFormatter<Double>,
     totalDistance: Double,
-): String {
-    if (index == runSplits.size - 1) {
-        val rounded = String.format("%.1f", (totalDistance % 1000) / 1000)
-        if (rounded != "1.0") {
-            return rounded
-        }
+) = if (index == runSplits.size - 1) {
+    val converted = distanceFormatter.converter.fromRawValue(totalDistance)
+    val rounded = String.format("%.1f", converted - converted.toInt())
+    if (rounded == "1.0") {
+        "${index + 1}"
+    } else {
+        rounded
     }
-    return "${index + 1}"
+} else {
+    (index + 1).toString()
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffff)
 @Composable
 fun PreviewRunSplitsTable() = RunSplitsTable(
     runSplits = listOf(6.4, 6.15, 6.0, 5.8, 5.6, 5.5, 7.0),
-    6700.0
+    6700.0,
+    TrackValueFormatter.createFormatterPreference(MeasureSystem.Default)
 )
 
 fun navigateToActivityMap(context: Context, encodedPolyline: String) {

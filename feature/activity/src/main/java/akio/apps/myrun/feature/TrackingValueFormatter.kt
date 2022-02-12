@@ -3,7 +3,7 @@ package akio.apps.myrun.feature
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
-import akio.apps.myrun.domain.common.TrackingValueConverter
+import akio.apps.myrun.data.user.api.TrackValueConverter
 import akio.apps.myrun.feature.core.R
 import android.content.Context
 import androidx.annotation.StringRes
@@ -35,7 +35,7 @@ sealed class TrackingValueFormatter<T : Number>(
             getFormattedValue(activity.distance)
 
         override fun getFormattedValue(value: Double): String =
-            String.format("%.2f", TrackingValueConverter.DistanceKm.fromRawValue(value))
+            String.format("%.2f", TrackValueConverter.DistanceKm.fromRawValue(value))
     }
 
     object PaceMinutePerKm : TrackingValueFormatter<Double>(
@@ -57,7 +57,7 @@ sealed class TrackingValueFormatter<T : Number>(
         TrackingValueFormatter<Double>(
             "SpeedKmPerHour",
             R.string.route_tracking_speed_label,
-            R.string.performance_unit_speed
+            R.string.performance_unit_speed_km_per_hour
         ) {
         override fun getFormattedValue(activity: BaseActivityModel): String =
             getFormattedValue((activity as? CyclingActivityModel)?.speed ?: 0.0)
@@ -74,7 +74,7 @@ sealed class TrackingValueFormatter<T : Number>(
             getFormattedValue(activity.duration)
 
         override fun getFormattedValue(value: Long): String {
-            val hour = TrackingValueConverter.TimeHour.fromRawValue(value)
+            val hour = TrackValueConverter.TimeHour.fromRawValue(value)
             val min = (hour - hour.toInt()) * 60
             val sec = (min - min.toInt()) * 60
             return if (hour < 1) {

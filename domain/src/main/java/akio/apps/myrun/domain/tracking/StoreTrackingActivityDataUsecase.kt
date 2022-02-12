@@ -14,9 +14,9 @@ import akio.apps.myrun.data.eapps.api.StravaTokenRepository
 import akio.apps.myrun.data.location.api.PolyUtil
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
+import akio.apps.myrun.data.user.api.TrackValueConverter
 import akio.apps.myrun.domain.activity.getLatLng
 import akio.apps.myrun.domain.common.ObjectAutoId
-import akio.apps.myrun.domain.common.TrackingValueConverter
 import android.graphics.Bitmap
 import javax.inject.Inject
 import kotlinx.coroutines.async
@@ -88,18 +88,15 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         )
         return when (activityType) {
             ActivityType.Running -> {
-                val pace = if (distance == 0.0) {
-                    0.0
-                } else {
-                    TrackingValueConverter.TimeMinute.fromRawValue(duration) /
-                        TrackingValueConverter.DistanceKm.fromRawValue(distance)
-                }
+                val pace =
+                    TrackValueConverter.TimeMinute.fromRawValue(duration) /
+                        TrackValueConverter.DistanceKm.fromRawValue(distance)
                 RunningActivityModel(activityData, pace, cadence = 0)
             }
             ActivityType.Cycling -> {
                 val speed =
-                    TrackingValueConverter.DistanceKm.fromRawValue(distance) /
-                        TrackingValueConverter.TimeHour.fromRawValue(duration)
+                    TrackValueConverter.DistanceKm.fromRawValue(distance) /
+                        TrackValueConverter.TimeHour.fromRawValue(duration)
                 CyclingActivityModel(activityData, speed)
             }
             else -> throw UnsupportedOperationException(

@@ -5,12 +5,14 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
-import akio.apps.myrun.feature.TrackingValueFormatter
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.ktx.px2dp
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
+import akio.apps.myrun.feature.core.measurement.TrackValueFormatPreference
+import akio.apps.myrun.feature.core.measurement.TrackValueFormatter
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
@@ -265,6 +267,9 @@ private fun ActivityFeedItemList(
     navController: NavController,
 ) {
     val userProfile by activityFeedViewModel.userProfile.collectAsState(initial = null)
+    val preferredUnitSystem by activityFeedViewModel.preferredSystem.collectAsState(
+        initial = MeasureSystem.Default
+    )
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -289,6 +294,7 @@ private fun ActivityFeedItemList(
                     activityFormattedStartTime,
                     activityDisplayPlaceName,
                     userProfile,
+                    preferredUnitSystem,
                     { activityModel ->
                         val route = HomeNavDestination.ActivityDetail.routeWithActivityId(
                             activityModel.id
@@ -361,6 +367,7 @@ private fun FeedActivityItem(
     activityFormattedStartTime: ActivityDateTimeFormatter.Result,
     activityDisplayPlaceName: String,
     userProfile: UserProfile?,
+    preferredSystem: MeasureSystem,
     onClickActivityAction: (BaseActivityModel) -> Unit,
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
@@ -381,34 +388,38 @@ private fun FeedActivityItem(
             isShareMenuVisible = true
         )
         Spacer(modifier = Modifier.height(8.dp))
-        ActivityRouteImageBox(activity)
+        ActivityRouteImageBox(activity, preferredSystem)
     }
 }
 
 @Composable
-private fun ActivityRouteImageBox(activity: BaseActivityModel) =
-    Box(contentAlignment = Alignment.TopStart) {
-        ActivityRouteImage(activity)
-        ActivityPerformanceRow(
-            activity,
-            modifier = Modifier.padding(
-                horizontal = activityItemHorizontalPadding,
-                vertical = activityItemVerticalPadding
-            )
+private fun ActivityRouteImageBox(
+    activity: BaseActivityModel,
+    preferredSystem: MeasureSystem,
+) = Box(contentAlignment = Alignment.TopStart) {
+    ActivityRouteImage(activity)
+    ActivityPerformanceRow(
+        activity,
+        preferredSystem,
+        modifier = Modifier.padding(
+            horizontal = activityItemHorizontalPadding,
+            vertical = activityItemVerticalPadding
         )
-    }
+    )
+}
 
 private fun createActivityFormatterList(
     activityType: ActivityType,
-): List<TrackingValueFormatter<*>> =
+    trackValueFormatPreference: TrackValueFormatPreference,
+): List<TrackValueFormatter<*>> =
     when (activityType) {
         ActivityType.Running -> listOf(
-            TrackingValueFormatter.DistanceKm,
-            TrackingValueFormatter.PaceMinutePerKm
+            trackValueFormatPreference.distanceFormatter,
+            trackValueFormatPreference.paceFormatter
         )
         ActivityType.Cycling -> listOf(
-            TrackingValueFormatter.DistanceKm,
-            TrackingValueFormatter.SpeedKmPerHour
+            trackValueFormatPreference.distanceFormatter,
+            trackValueFormatPreference.speedFormatter
         )
         else -> emptyList()
     }
@@ -416,10 +427,18 @@ private fun createActivityFormatterList(
 private const val PERFORMANCE_VALUE_DELIM = " - "
 
 @Composable
-private fun ActivityPerformanceRow(activity: BaseActivityModel, modifier: Modifier = Modifier) {
+private fun ActivityPerformanceRow(
+    activity: BaseActivityModel,
+    measureSystem: MeasureSystem,
+    modifier: Modifier = Modifier,
+) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
-    val valueFormatterList = remember { createActivityFormatterList(activity.activityType) }
+    val valueFormatterList = remember(measureSystem) {
+        val trackValueFormatterPreference =
+            TrackValueFormatter.createFormatterPreference(measureSystem)
+        createActivityFormatterList(activity.activityType, trackValueFormatterPreference)
+    }
     val performanceValue = remember(isExpanded) {
         valueFormatterList.foldIndexed("") { index, acc, performedResultFormatter ->
             val formattedValue = performedResultFormatter.getFormattedValue(activity)
@@ -646,7 +665,8 @@ private fun PreviewFeedActivityItem() {
         onClickExportFile = { },
         onClickUserAvatar = { },
         userProfile = UserProfile(accountId = "userId", photo = null),
-        activityFormattedStartTime = ActivityDateTimeFormatter.Result.FullDateTime("dd/mm/yyyy")
+        activityFormattedStartTime = ActivityDateTimeFormatter.Result.FullDateTime("dd/mm/yyyy"),
+        preferredSystem = MeasureSystem.Default
     )
 }
 

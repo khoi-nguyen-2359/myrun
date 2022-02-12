@@ -41,6 +41,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":data:api"))
+
     implementation(libs.androidmaterial)
     implementation(libs.androidx.appcompat)
     implementation(libs.bundles.compose)
