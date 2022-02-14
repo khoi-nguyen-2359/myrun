@@ -19,6 +19,7 @@ internal class RouteTrackingStatsView @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val distanceTextView: TextView by lazy { findViewById(R.id.distance_text_view) }
+    private val distanceUnitTextView: TextView by lazy { findViewById(R.id.distance_unit_text_view) }
     private val timeTextView: TextView by lazy { findViewById(R.id.time_text_view) }
     private val speedTextView: TextView by lazy { findViewById(R.id.speed_text_view) }
     private val speedLabelTextView: TextView by lazy { findViewById(R.id.speed_label_text_view) }
@@ -61,15 +62,15 @@ internal class RouteTrackingStatsView @JvmOverloads constructor(
                 speedUnitTextView.setText(speedFormatter.unitResId ?: 0)
                 speedFormatter::getFormattedValue
             }
-            else -> throw Exception("INvalid activity type")
+            else -> throw Exception("Invalid activity type")
         }
     }
 
     fun update(stats: RouteTrackingStats) {
-        distanceTextView.text =
-            trackValueFormatPreference.distanceFormatter.getFormattedValue(stats.distance)
-        timeTextView.text =
-            trackValueFormatPreference.durationFormatter.getFormattedValue(stats.duration)
+        val (distanceFormatter, _, _, durationFormatter) = trackValueFormatPreference
+        distanceUnitTextView.text = distanceFormatter.getUnit(context)
+        distanceTextView.text = distanceFormatter.getFormattedValue(stats.distance)
+        timeTextView.text = durationFormatter.getFormattedValue(stats.duration)
         speedTextView.text = speedPresenter?.invoke(stats.speed)
     }
 }
