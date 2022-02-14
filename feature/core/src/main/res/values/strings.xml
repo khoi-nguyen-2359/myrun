@@ -25,6 +25,9 @@
     <string name="performance_unit_distance_km">km</string>
     <string name="performance_unit_distance_mi">mi</string>
     <string name="common_speed_unit">km/h</string>
+    <string name="user_profile_unit_weight_kg">kg</string>
+    <string name="user_profile_unit_weight_label">Weight</string>
+    <string name="user_profile_unit_weight_lbs">lbs</string>
 
     <string name="activity_name_running">Run</string>
     <string name="activity_name_cycling">Ride</string>

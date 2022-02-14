@@ -20,7 +20,7 @@ import akio.apps.myrun.domain.tracking.locationprocessor.LocationProcessorContai
 import akio.apps.myrun.domain.tracking.locationprocessor.LocationSpeedFilter
 import akio.apps.myrun.feature.core.AppNotificationChannel
 import akio.apps.myrun.feature.core.flowTimer
-import akio.apps.myrun.feature.core.measurement.TrackValueFormatter
+import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.tracking.di.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.worker.UpdateUserRecentPlaceWorker
 import android.annotation.SuppressLint
@@ -257,7 +257,7 @@ class RouteTrackingService : Service() {
     private fun notifyTrackingNotification() = mainScope.launch {
         val preferredSystem = userPreferences.getMeasureSystem().first()
         val (distanceFormatter, _, _, durationFormatter) =
-            TrackValueFormatter.createFormatterPreference(preferredSystem)
+            UnitFormatterSetFactory.createUnitFormatterSet(preferredSystem)
         val notificationIntent = RouteTrackingActivity.launchIntent(this@RouteTrackingService)
         val intentFlag = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             PendingIntent.FLAG_UPDATE_CURRENT

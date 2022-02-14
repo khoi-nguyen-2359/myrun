@@ -15,7 +15,7 @@ import akio.apps.myrun.feature.core.ktx.dp2px
 import akio.apps.myrun.feature.core.ktx.lazyViewModelProvider
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegateImpl
-import akio.apps.myrun.feature.core.measurement.TrackValueFormatter
+import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.tracking.di.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.feature.tracking.ui.ActivitySettingsView
 import akio.apps.myrun.feature.tracking.ui.RouteTrackingStatsView
@@ -121,8 +121,8 @@ class RouteTrackingActivity(
             lifecycleScope.launch {
                 val preferredSystem =
                     routeTrackingViewModel.userPreferences.getMeasureSystem().first()
-                trackValueFormatPreference =
-                    TrackValueFormatter.createFormatterPreference(preferredSystem)
+                trackUnitFormatterSet =
+                    UnitFormatterSetFactory.createUnitFormatterSet(preferredSystem)
             }
         }
     }

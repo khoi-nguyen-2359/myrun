@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.userstats.ui
 
 import akio.apps.myrun.data.activity.api.model.ActivityType
-import akio.apps.myrun.data.user.api.TrackValueConverter
+import akio.apps.myrun.data.user.api.UnitConverter
 import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.feature.activity.BuildConfig
 import akio.apps.myrun.feature.activity.R
@@ -145,28 +145,28 @@ private fun TrainingSummaryTable(screenState: UserStatsViewModel.ScreenState.Sta
     var selectedActivityType by rememberSaveable { mutableStateOf(ActivityType.Running) }
     val summaryData = screenState.trainingSummaryTableData[selectedActivityType]
         ?: return
-    val thisWeekDistance = TrackValueConverter.DistanceKm.fromRawValue(
+    val thisWeekDistance = UnitConverter.DistanceKm.fromRawValue(
         summaryData.thisWeekSummary.distance
     )
-    val lastWeekDistance = TrackValueConverter.DistanceKm.fromRawValue(
+    val lastWeekDistance = UnitConverter.DistanceKm.fromRawValue(
         summaryData.lastWeekSummary.distance
     )
-    val thisWeekTime = TrackValueConverter.TimeHour.fromRawValue(
+    val thisWeekTime = UnitConverter.TimeHour.fromRawValue(
         summaryData.thisWeekSummary.time
     )
-    val lastWeekTime = TrackValueConverter.TimeHour.fromRawValue(
+    val lastWeekTime = UnitConverter.TimeHour.fromRawValue(
         summaryData.lastWeekSummary.time
     )
-    val thisMonthDistance = TrackValueConverter.DistanceKm.fromRawValue(
+    val thisMonthDistance = UnitConverter.DistanceKm.fromRawValue(
         summaryData.thisMonthSummary.distance
     )
-    val lastMonthDistance = TrackValueConverter.DistanceKm.fromRawValue(
+    val lastMonthDistance = UnitConverter.DistanceKm.fromRawValue(
         summaryData.lastMonthSummary.distance
     )
-    val thisMonthTime = TrackValueConverter.TimeHour.fromRawValue(
+    val thisMonthTime = UnitConverter.TimeHour.fromRawValue(
         summaryData.thisMonthSummary.time
     )
-    val lastMonthTime = TrackValueConverter.TimeHour.fromRawValue(
+    val lastMonthTime = UnitConverter.TimeHour.fromRawValue(
         summaryData.lastMonthSummary.time
     )
 

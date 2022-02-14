@@ -7,8 +7,10 @@ import akio.apps.myrun.data.eapps.api.model.ProviderToken
 import akio.apps.myrun.data.eapps.api.model.RunningApp
 import akio.apps.myrun.data.eapps.api.model.StravaAthlete
 import akio.apps.myrun.data.user.api.model.Gender
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
+import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppBarIconButton
 import akio.apps.myrun.feature.core.ui.AppBarTextButton
@@ -114,18 +116,20 @@ private fun UserProfileScreen(
 ) = AppTheme {
     val screenState by userProfileViewModel.screenStateFlow
         .collectAsState(initial = UserProfileViewModel.ScreenState.Loading)
+    val preferredSystem by userProfileViewModel.preferredSystem
+        .collectAsState(initial = MeasureSystem.Metric)
     UserProfileScreen(
         screenState,
         navController,
+        preferredSystem,
         onConfirmToUnlinkStrava = { userProfileViewModel.deauthorizeStrava() },
         onClickSaveUserProfile = {
             userProfileViewModel.updateUserProfile()
             navController.popBackStack()
-        },
-        onFormDataChanged = { editedFormData ->
-            userProfileViewModel.onFormDataChanged(editedFormData)
         }
-    )
+    ) { editedFormData ->
+        userProfileViewModel.onFormDataChanged(editedFormData)
+    }
 
     // overlay things
     val isInProgress by userProfileViewModel.isLaunchCatchingInProgress.collectAsState()
@@ -143,6 +147,7 @@ private fun UserProfileScreen(
 private fun UserProfileScreen(
     screenState: UserProfileViewModel.ScreenState,
     navController: NavController,
+    preferredSystem: MeasureSystem,
     onConfirmToUnlinkStrava: () -> Unit,
     onClickSaveUserProfile: () -> Unit,
     onFormDataChanged: (UserProfileViewModel.UserProfileFormData) -> Unit,
@@ -175,6 +180,7 @@ private fun UserProfileScreen(
                     UserProfileForm(
                         screenState.editingFormData,
                         screenState.stravaLinkingState,
+                        preferredSystem,
                         onConfirmToUnlinkStrava,
                         onFormDataChanged
                     )
@@ -198,10 +204,13 @@ private fun BoxScope.UserProfileLoadingIndicator() {
 private fun UserProfileForm(
     formData: UserProfileViewModel.UserProfileFormData,
     stravaLinkingState: UserProfileViewModel.StravaLinkingState,
+    preferredSystem: MeasureSystem,
     onConfirmToUnlinkStrava: () -> Unit,
     onUserProfileFormDataChanged: (UserProfileViewModel.UserProfileFormData) -> Unit,
 ) {
     val context = LocalContext.current
+    val bodyWeightUnitFormatter =
+        UnitFormatterSetFactory.createBodyWeightUnitFormatter(preferredSystem)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.verticalScroll(rememberScrollState())
@@ -247,13 +256,16 @@ private fun UserProfileForm(
         // gender
         UserProfileGenderTextField(formData, onUserProfileFormDataChanged)
 
+        val formattedWeight = bodyWeightUnitFormatter.getFormattedValue(formData.weight)
+        val label = bodyWeightUnitFormatter.getLabel(context)
+        val unit = bodyWeightUnitFormatter.getUnit(context)
         UserProfileTextField(
-            label = stringResource(id = R.string.user_profile_hint_weight),
-            value = formData.weight,
+            label = "$label ($unit)",
+            value = formattedWeight,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             onValueChange = { editWeight ->
-                val selectedWeight = filterFloatTextField(formData.weight, editWeight)
-                onUserProfileFormDataChanged(formData.copy(weight = selectedWeight))
+                val selectedWeight = filterFloatTextField(formattedWeight, editWeight)
+                onUserProfileFormDataChanged(formData.copy(weight = selectedWeight.toFloat()))
             }
         )
 
@@ -604,10 +616,10 @@ private fun PreviewUserProfileScreenSuccessForm() {
             null
         ),
         navController = rememberNavController(),
-        {},
+        MeasureSystem.Metric,
         {},
         {}
-    )
+    ) {}
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
@@ -620,10 +632,10 @@ private fun PreviewUserProfileScreenErrorForm() {
             null
         ),
         navController = rememberNavController(),
-        {},
+        MeasureSystem.Metric,
         {},
         {}
-    )
+    ) {}
 }
 
 private fun createExternalProviders() =

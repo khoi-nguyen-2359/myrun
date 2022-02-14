@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.core.measurement
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
-import akio.apps.myrun.data.user.api.TrackValueConverter
+import akio.apps.myrun.data.user.api.UnitConverter
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.feature.core.R
 import android.content.Context
@@ -15,7 +15,7 @@ import androidx.annotation.StringRes
 sealed class TrackValueFormatter<R : Number>(
     @StringRes val labelResId: Int,
     @StringRes val unitResId: Int? = null,
-    val converter: TrackValueConverter<R, Double>,
+    val converter: UnitConverter<R, Double>,
 ) {
 
     fun getUnit(context: Context): String = if (unitResId != null) {
@@ -31,7 +31,7 @@ sealed class TrackValueFormatter<R : Number>(
 
     private sealed class Distance(
         unitResId: Int? = null,
-        converter: TrackValueConverter<Double, Double>,
+        converter: UnitConverter<Double, Double>,
     ) : TrackValueFormatter<Double>(
         R.string.route_tracking_distance_label,
         unitResId,
@@ -43,7 +43,7 @@ sealed class TrackValueFormatter<R : Number>(
 
     private object DistanceKm : Distance(
         R.string.performance_unit_distance_km,
-        TrackValueConverter.DistanceKm
+        UnitConverter.DistanceKm
     ) {
         override fun getFormattedValue(activity: BaseActivityModel): String =
             getFormattedValue(activity.distance)
@@ -51,7 +51,7 @@ sealed class TrackValueFormatter<R : Number>(
 
     private object DistanceMile : Distance(
         R.string.performance_unit_distance_mi,
-        TrackValueConverter.DistanceMile
+        UnitConverter.DistanceMile
     ) {
         override fun getFormattedValue(activity: BaseActivityModel): String =
             getFormattedValue(activity.distance)
@@ -59,7 +59,7 @@ sealed class TrackValueFormatter<R : Number>(
 
     private sealed class PaceMinute(
         unitResId: Int? = null,
-        converter: TrackValueConverter<Double, Double>,
+        converter: UnitConverter<Double, Double>,
     ) : TrackValueFormatter<Double>(R.string.route_tracking_pace_label, unitResId, converter) {
         override fun getFormattedValue(value: Double): String {
             val intMinute = value.toInt()
@@ -70,7 +70,7 @@ sealed class TrackValueFormatter<R : Number>(
 
     private object PaceMinutePerKm : PaceMinute(
         R.string.performance_unit_pace_min_per_km,
-        TrackValueConverter.DoubleRaw
+        UnitConverter.DoubleRaw
     ) {
         override fun getFormattedValue(activity: BaseActivityModel): String {
             val rawValue = (activity as? RunningActivityModel)?.pace ?: 0.0
@@ -80,7 +80,7 @@ sealed class TrackValueFormatter<R : Number>(
 
     private object PaceMinutePerMile : PaceMinute(
         R.string.performance_unit_pace_min_per_mile,
-        TrackValueConverter.PaceMinutePerMile
+        UnitConverter.PaceMinutePerMile
     ) {
         override fun getFormattedValue(activity: BaseActivityModel): String {
             val rawValue = (activity as? RunningActivityModel)?.pace ?: 0.0
@@ -90,7 +90,7 @@ sealed class TrackValueFormatter<R : Number>(
 
     private sealed class SpeedPerHour(
         unitResId: Int? = null,
-        converter: TrackValueConverter<Double, Double>,
+        converter: UnitConverter<Double, Double>,
     ) : TrackValueFormatter<Double>(
         R.string.route_tracking_speed_label,
         unitResId,
@@ -101,7 +101,7 @@ sealed class TrackValueFormatter<R : Number>(
 
     private object SpeedKmPerHour : SpeedPerHour(
         R.string.performance_unit_speed_km_per_hour,
-        TrackValueConverter.DoubleRaw
+        UnitConverter.DoubleRaw
     ) {
         override fun getFormattedValue(activity: BaseActivityModel): String {
             val rawValue = (activity as? CyclingActivityModel)?.speed ?: 0.0
@@ -111,7 +111,7 @@ sealed class TrackValueFormatter<R : Number>(
 
     private object SpeedMilePerHour : SpeedPerHour(
         R.string.performance_unit_speed_mi_per_hour,
-        TrackValueConverter.SpeedMilePerHour
+        UnitConverter.SpeedMilePerHour
     ) {
         override fun getFormattedValue(activity: BaseActivityModel): String {
             val rawValue = (activity as? CyclingActivityModel)?.speed ?: 0.0
@@ -122,7 +122,7 @@ sealed class TrackValueFormatter<R : Number>(
     private object DurationHourMinuteSecond : TrackValueFormatter<Long>(
         R.string.performance_duration_label,
         unitResId = null,
-        TrackValueConverter.TimeHour
+        UnitConverter.TimeHour
     ) {
         override fun getFormattedValue(activity: BaseActivityModel): String =
             getFormattedValue(activity.duration)

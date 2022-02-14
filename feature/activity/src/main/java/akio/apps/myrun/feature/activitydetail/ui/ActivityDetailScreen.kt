@@ -7,8 +7,9 @@ import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
 import akio.apps.myrun.feature.activitydetail.di.DaggerActivityDetailFeatureComponent
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
-import akio.apps.myrun.feature.core.measurement.TrackValueFormatPreference
-import akio.apps.myrun.feature.core.measurement.TrackValueFormatter
+import akio.apps.myrun.feature.core.measurement.TrackUnitFormatter
+import akio.apps.myrun.feature.core.measurement.TrackUnitFormatterSet
+import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
@@ -149,7 +150,7 @@ private fun ActivityDetailDataContainer(
 ) {
     val context = LocalContext.current
     val trackValueFormatterPreference = remember(screenState.preferredSystem) {
-        TrackValueFormatter.createFormatterPreference(screenState.preferredSystem)
+        UnitFormatterSetFactory.createUnitFormatterSet(screenState.preferredSystem)
     }
     Box(modifier = modifier) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
@@ -188,12 +189,12 @@ private fun ActivityDetailDataContainer(
 fun RunSplitsTable(
     runSplits: List<Double>,
     totalDistance: Double,
-    trackValueFormatPreference: TrackValueFormatPreference,
+    trackUnitFormatterSet: TrackUnitFormatterSet,
     modifier: Modifier = Modifier,
 ) {
     val fastestPace = runSplits.minOrNull()
         ?: return
-    val (distanceFormatter, paceFormatter, _, _) = trackValueFormatPreference
+    val (distanceFormatter, paceFormatter, _, _) = trackUnitFormatterSet
     val context = LocalContext.current
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(AppDimensions.sectionVerticalSpacing))
@@ -261,7 +262,7 @@ fun RunSplitsTable(
 private fun formatDistanceLabel(
     index: Int,
     runSplits: List<Double>,
-    distanceFormatter: TrackValueFormatter<Double>,
+    distanceFormatter: TrackUnitFormatter.DistanceUnitFormatter,
     totalDistance: Double,
 ) = if (index == runSplits.size - 1) {
     val converted = distanceFormatter.converter.fromRawValue(totalDistance)
@@ -280,7 +281,7 @@ private fun formatDistanceLabel(
 fun PreviewRunSplitsTable() = RunSplitsTable(
     runSplits = listOf(6.4, 6.15, 6.0, 5.8, 5.6, 5.5, 7.0),
     6700.0,
-    TrackValueFormatter.createFormatterPreference(MeasureSystem.Default)
+    UnitFormatterSetFactory.createUnitFormatterSet(MeasureSystem.Default)
 )
 
 fun navigateToActivityMap(context: Context, encodedPolyline: String) {

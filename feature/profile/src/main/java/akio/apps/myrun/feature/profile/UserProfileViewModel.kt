@@ -3,7 +3,9 @@ package akio.apps.myrun.feature.profile
 import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.eapps.api.model.ExternalProviders
+import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.model.Gender
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
@@ -32,10 +34,12 @@ internal class UserProfileViewModel @Inject constructor(
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
     private val updateUserProfileUsecase: UpdateUserProfileUsecase,
-
+    private val userPreferences: UserPreferences,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
+
+    val preferredSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystem()
 
     /**
      * Presents the data of editing values in input fields. Null means no initial data fetched,
@@ -79,14 +83,14 @@ internal class UserProfileViewModel @Inject constructor(
         val name = get<String>(SAVED_STATE_USER_NAME) ?: return null
         val birthdate = get<Long>(SAVED_STATE_USER_BIRTHDATE) ?: return null
         val genderIdentity = get<Int>(SAVED_STATE_USER_GENDER) ?: return null
-        val weight = get<String>(SAVED_STATE_USER_WEIGHT) ?: return null
+        val weight = get<Float>(SAVED_STATE_USER_WEIGHT) ?: return null
         val photoUrl = get<String>(SAVED_STATE_USER_PHOTO_URL) ?: return null
         return UserProfileFormData(
             name,
             photoUrl,
             birthdate,
             Gender.create(genderIdentity),
-            weight
+            weight,
         )
     }
 
@@ -133,7 +137,9 @@ internal class UserProfileViewModel @Inject constructor(
                         else -> StravaLinkingState.Unknown
                     }
                     FormState(
-                        editingFormData ?: UserProfileFormData.create(userProfileRes.data),
+                        editingFormData ?: UserProfileFormData.create(
+                            userProfileRes.data,
+                        ),
                         stravaLinkingState
                     )
                 }
@@ -141,19 +147,19 @@ internal class UserProfileViewModel @Inject constructor(
         }
     }
 
-    data class UserProfileFormData constructor(
+    data class UserProfileFormData(
         val name: String,
         val photoUrl: String?,
         val birthdate: Long,
         val gender: Gender,
-        val weight: String,
+        val weight: Float,
     ) {
         fun makeProfileEditData(): ProfileEditData {
             return ProfileEditData(
                 displayName = name,
                 birthdate = birthdate,
                 gender = gender,
-                weight = weight.toFloatOrNull()
+                weight = weight
             )
         }
 
@@ -167,7 +173,7 @@ internal class UserProfileViewModel @Inject constructor(
                 photoUrl = userProfile.photo,
                 birthdate = userProfile.birthdate,
                 gender = userProfile.gender,
-                weight = userProfile.weight.toString()
+                weight = userProfile.weight,
             )
         }
     }

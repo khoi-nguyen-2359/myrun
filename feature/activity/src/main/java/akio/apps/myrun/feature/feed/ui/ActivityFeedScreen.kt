@@ -11,8 +11,9 @@ import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.ktx.px2dp
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
-import akio.apps.myrun.feature.core.measurement.TrackValueFormatPreference
-import akio.apps.myrun.feature.core.measurement.TrackValueFormatter
+import akio.apps.myrun.feature.core.measurement.TrackUnitFormatter
+import akio.apps.myrun.feature.core.measurement.TrackUnitFormatterSet
+import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
@@ -410,16 +411,16 @@ private fun ActivityRouteImageBox(
 
 private fun createActivityFormatterList(
     activityType: ActivityType,
-    trackValueFormatPreference: TrackValueFormatPreference,
-): List<TrackValueFormatter<*>> =
+    trackUnitFormatterSet: TrackUnitFormatterSet,
+): List<TrackUnitFormatter<*>> =
     when (activityType) {
         ActivityType.Running -> listOf(
-            trackValueFormatPreference.distanceFormatter,
-            trackValueFormatPreference.paceFormatter
+            trackUnitFormatterSet.distanceFormatter,
+            trackUnitFormatterSet.paceFormatter
         )
         ActivityType.Cycling -> listOf(
-            trackValueFormatPreference.distanceFormatter,
-            trackValueFormatPreference.speedFormatter
+            trackUnitFormatterSet.distanceFormatter,
+            trackUnitFormatterSet.speedFormatter
         )
         else -> emptyList()
     }
@@ -436,7 +437,7 @@ private fun ActivityPerformanceRow(
     val context = LocalContext.current
     val valueFormatterList = remember(measureSystem) {
         val trackValueFormatterPreference =
-            TrackValueFormatter.createFormatterPreference(measureSystem)
+            UnitFormatterSetFactory.createUnitFormatterSet(measureSystem)
         createActivityFormatterList(activity.activityType, trackValueFormatterPreference)
     }
     val performanceValue = remember(isExpanded) {
