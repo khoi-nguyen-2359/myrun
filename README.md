@@ -20,7 +20,7 @@ Highlights
 - Use Jetpack Compose and MVVM to build a unidirectional data flow UI.
 - Make use of persistent storage and WorkManager to create a better offline user experience.
 - Use Android foreground service for run tracking operations.
-- Apply CI/CD using Github Action.
+- Apply CI/CD using Github Action to automate code quality checks and deploy process.
 
 Tech stack
 ---
@@ -29,8 +29,13 @@ Tech stack
 - Dagger 2
 - Jetpack: Room, DataStore, WorkManager, Compose.
 - Firebase: Firestore, Storage, Authentication, Cloud function, Crashlytics.
-- Android foreground service
+- Android foreground service.
 - Google Map, Map Box.
+
+Why I'm making this
+---
+- Learning purpose: I can not change my company project's architecture back and forth like a boss at here 😎
+- Sample of my daily work (beside my resume 🧾)
 
 Wiki
 ---
