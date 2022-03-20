@@ -8,7 +8,7 @@ import akio.apps.myrun.feature.base.ext.extra
 import akio.apps.myrun.feature.base.ext.getColorCompat
 import akio.apps.myrun.feature.base.lifecycle.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.base.lifecycle.collectRepeatOnStarted
-import akio.apps.myrun.feature.base.viewmodel.lazySavedStateViewModelProvider
+import akio.apps.myrun.feature.base.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.feature.route.R
 import akio.apps.myrun.feature.route.RoutePlanningViewModel
 import akio.apps.myrun.feature.route.model.RoutePlottingState
@@ -62,9 +62,7 @@ class RoutePlanningActivity :
     }
     private val topBar: MaterialToolbar by lazy { findViewById(R.id.topbar) }
 
-    private val viewModel: RoutePlanningViewModel by lazySavedStateViewModelProvider(
-        savedStateOwner = this
-    ) { savedStateHandle ->
+    private val viewModel: RoutePlanningViewModel by lazyViewModelProvider { savedStateHandle ->
         val routeId: String? = extra(EXT_ROUTE_ID, null)
         RoutePlanningViewModel.saveArguments(savedStateHandle, routeId)
         DaggerRoutePlanningFeatureComponent.factory()

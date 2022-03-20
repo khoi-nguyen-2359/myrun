@@ -14,7 +14,7 @@ import akio.apps.myrun.feature.base.ui.CentralAnnouncementView
 import akio.apps.myrun.feature.base.ui.CentralLoadingView
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
-import akio.apps.myrun.feature.base.viewmodel.savedStateViewModelProvider
+import akio.apps.myrun.feature.base.viewmodel.rememberViewModelProvider
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -68,9 +68,7 @@ fun ActivityDetailScreen(
         HomeNavDestination.ActivityDetail.activityIdRequiredArg.parseValueInBackStackEntry(
             navBackStackEntry
         )
-    val activityDetailViewModel = navBackStackEntry.savedStateViewModelProvider(
-        navBackStackEntry
-    ) { handle ->
+    val activityDetailViewModel = navBackStackEntry.rememberViewModelProvider { handle ->
         DaggerActivityDetailFeatureComponent.factory()
             .create(ActivityDetailViewModel.setInitialSavedState(handle, activityId))
             .activityDetailsViewModel()

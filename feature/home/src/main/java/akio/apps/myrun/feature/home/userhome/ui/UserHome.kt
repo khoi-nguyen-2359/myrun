@@ -12,7 +12,7 @@ import akio.apps.myrun.feature.base.ui.CentralLoadingView
 import akio.apps.myrun.feature.base.ui.ColumnSpacer
 import akio.apps.myrun.feature.base.ui.RowSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
-import akio.apps.myrun.feature.base.viewmodel.savedStateViewModelProvider
+import akio.apps.myrun.feature.base.viewmodel.rememberViewModelProvider
 import akio.apps.myrun.feature.home.R
 import akio.apps.myrun.feature.home.userhome.UserHomeViewModel
 import akio.apps.myrun.feature.home.wiring.DaggerUserHomeFeatureComponent
@@ -78,7 +78,7 @@ fun UserHome(
     openRoutePlanningAction: () -> Unit,
 ) {
     val application = LocalContext.current.applicationContext as Application
-    val userHomeViewModel = backStackEntry.savedStateViewModelProvider(backStackEntry) {
+    val userHomeViewModel = backStackEntry.rememberViewModelProvider {
         DaggerUserHomeFeatureComponent.factory().create(application, it).userHomeViewModel()
     }
     UserHome(userHomeViewModel, contentPadding, appNavController, openRoutePlanningAction)

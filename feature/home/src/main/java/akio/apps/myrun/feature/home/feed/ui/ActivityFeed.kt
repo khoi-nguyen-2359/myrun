@@ -9,7 +9,7 @@ import akio.apps.myrun.feature.base.ext.px2dp
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
-import akio.apps.myrun.feature.base.viewmodel.viewModelProvider
+import akio.apps.myrun.feature.base.viewmodel.rememberViewModelProvider
 import akio.apps.myrun.feature.home.R
 import akio.apps.myrun.feature.home.feed.ActivityFeedViewModel
 import akio.apps.myrun.feature.home.feed.ui.FeedColors.listBackground
@@ -120,16 +120,10 @@ fun ActivityFeed(
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
     val application = LocalContext.current.applicationContext as Application
-    val diComponent = remember { DaggerActivityFeedFeatureComponent.factory().create(application) }
-    val userTimelineViewModel = backStackEntry.viewModelProvider {
-        diComponent.feedViewModel()
+    val activityFeedViewModel = backStackEntry.rememberViewModelProvider {
+        DaggerActivityFeedFeatureComponent.factory().create(application).feedViewModel()
     }
-    ActivityFeed(
-        userTimelineViewModel,
-        contentPadding = contentPadding,
-        onClickExportActivityFile = onClickExportActivityFile,
-        navController = navController
-    )
+    ActivityFeed(activityFeedViewModel, contentPadding, onClickExportActivityFile, navController)
 }
 
 @Composable
@@ -213,8 +207,6 @@ fun ActivityFeed(
     navController: NavController,
 ) {
     val lazyPagingItems = activityFeedViewModel.myActivityList.collectAsLazyPagingItems()
-    // Timber.d("feed source load state ${lazyPagingItems.loadState.source}")
-    // Timber.d("feed source first item start time ${lazyPagingItems.itemSnapshotList.firstOrNull()?.startTime}")
     val isLoadingInitialData by activityFeedViewModel.isLoadingInitialData.collectAsState(
         initial = false
     )

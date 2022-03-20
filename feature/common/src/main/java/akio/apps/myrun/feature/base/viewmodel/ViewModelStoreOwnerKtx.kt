@@ -1,42 +1,21 @@
 package akio.apps.myrun.feature.base.viewmodel
 
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisallowComposableCalls
+import androidx.compose.runtime.remember
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.NavBackStackEntry
 import androidx.savedstate.SavedStateRegistryOwner
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified T : ViewModel> ViewModelStoreOwner.lazyViewModelProvider(
-    noinline viewModelFactory: () -> T,
-): Lazy<T> = lazy {
-    val viewModelProvider = ViewModelProvider(
-        this,
-        object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T = viewModelFactory() as T
-        }
-    )
-    viewModelProvider[T::class.java]
-}
-
-@Suppress("UNCHECKED_CAST")
 inline fun <reified T : ViewModel> ViewModelStoreOwner.viewModelProvider(
-    noinline viewModelFactory: () -> T,
-): T {
-    val viewModelProvider = ViewModelProvider(
-        this,
-        object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T = viewModelFactory() as T
-        }
-    )
-    return viewModelProvider[T::class.java]
-}
-
-@Suppress("UNCHECKED_CAST")
-inline fun <reified T : ViewModel> ViewModelStoreOwner.savedStateViewModelProvider(
     savedStateOwner: SavedStateRegistryOwner,
-    noinline viewModelFactory: (SavedStateHandle) -> T,
+    crossinline viewModelFactory: (SavedStateHandle) -> T,
 ): T {
     val viewModelProvider = ViewModelProvider(
         this,
@@ -52,7 +31,18 @@ inline fun <reified T : ViewModel> ViewModelStoreOwner.savedStateViewModelProvid
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified T : ViewModel> ViewModelStoreOwner.lazySavedStateViewModelProvider(
-    savedStateOwner: SavedStateRegistryOwner,
-    noinline viewModelFactory: (SavedStateHandle) -> T,
-): Lazy<T> = lazy { savedStateViewModelProvider(savedStateOwner, viewModelFactory) }
+inline fun <reified T : ViewModel> AppCompatActivity.lazyViewModelProvider(
+    crossinline viewModelFactory: (SavedStateHandle) -> T,
+): Lazy<T> = lazy { viewModelProvider(this, viewModelFactory) }
+
+/**
+ * Use [remember] to avoid re-creating view model provider during recomposition, even though the
+ * provided view model is always a same instance.
+ */
+@Suppress("UNCHECKED_CAST")
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.rememberViewModelProvider(
+    crossinline viewModelFactory: @DisallowComposableCalls (SavedStateHandle) -> T,
+): T = remember(this) {
+    this.viewModelProvider(this, viewModelFactory)
+}

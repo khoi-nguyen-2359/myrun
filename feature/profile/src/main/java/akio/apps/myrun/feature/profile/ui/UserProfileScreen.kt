@@ -21,7 +21,7 @@ import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.base.ui.ProgressDialog
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
 import akio.apps.myrun.feature.base.ui.filterFloatTextField
-import akio.apps.myrun.feature.base.viewmodel.savedStateViewModelProvider
+import akio.apps.myrun.feature.base.viewmodel.rememberViewModelProvider
 import akio.apps.myrun.feature.profile.LinkStravaDelegate
 import akio.apps.myrun.feature.profile.R
 import akio.apps.myrun.feature.profile.UploadAvatarActivity
@@ -99,9 +99,7 @@ fun UserProfileScreen(navController: NavController, backStackEntry: NavBackStack
     val userId = HomeNavDestination.Profile.userIdOptionalArg.parseValueInBackStackEntry(
         backStackEntry
     )
-    val userProfileViewModel = backStackEntry.savedStateViewModelProvider(
-        backStackEntry
-    ) { handle ->
+    val userProfileViewModel = backStackEntry.rememberViewModelProvider { handle ->
         DaggerUserProfileFeatureComponent.factory()
             .create(application, UserProfileViewModel.setInitialSavedState(handle, userId))
             .userProfileViewModel()
