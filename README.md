@@ -42,3 +42,15 @@ Wiki
 1. [Build setup](https://github.com/khoi-nguyen-2359/myrun/wiki/Build-setup)
 2. [Project modules](https://github.com/khoi-nguyen-2359/myrun/wiki/Project-modules)
 3. [Workflows](https://github.com/khoi-nguyen-2359/myrun/wiki/Workflows)
+
+Learning stuff
+---
+1. Modularization on Android
+- [Build a modular Android app architecture (Google I/O'19)](https://www.youtube.com/watch?v=PZBg5DIzNww)
+- [ANDROID AT SCALE @SQUARE](https://www.droidcon.com/2019/11/15/android-at-scale-square/)
+
+2. WorkManager
+- [WorkManager: Beyond the basics (Android Dev Summit '19)](https://www.youtube.com/watch?v=Bz0z694SrEE)
+
+3. Structured concurrency
+- [Coroutine Context and Scope](https://elizarov.medium.com/coroutine-context-and-scope-c8b255d59055)
