@@ -1,10 +1,10 @@
-package akio.apps.myrun.feature.configurator._di
+package akio.apps.myrun.feature.configurator.di
 
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.data.tracking.TrackingDataModule
 import akio.apps.myrun.data.user.UserDataModule
-import akio.apps.myrun.feature.configurator.RouteTrackingConfigurationViewModel
-import akio.apps.myrun.feature.configurator.viewmodel.UserAuthenticationViewModel
+import akio.apps.myrun.feature.configurator.viewmodel.RouteTrackingSectionViewModel
+import akio.apps.myrun.feature.configurator.viewmodel.UserAuthenticationSectionViewModel
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
@@ -17,8 +17,8 @@ import dagger.Component
     ]
 )
 interface ConfiguratorComponent {
-    fun routeTrackingConfigurationViewModel(): RouteTrackingConfigurationViewModel
-    fun userAuthenticationViewModel(): UserAuthenticationViewModel
+    fun routeTrackingSectionViewModel(): RouteTrackingSectionViewModel
+    fun userAuthenticationViewModel(): UserAuthenticationSectionViewModel
 
     @Component.Factory
     interface Factory {

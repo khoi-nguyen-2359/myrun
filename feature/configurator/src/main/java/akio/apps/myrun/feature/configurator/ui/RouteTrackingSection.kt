@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.configurator.ui
 
-import akio.apps.myrun.feature.configurator.RouteTrackingConfigurationViewModel
+import akio.apps.myrun.feature.configurator.viewmodel.RouteTrackingSectionViewModel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,8 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun LocationUpdateConfiguration(
-    config: RouteTrackingConfigurationViewModel.LocationUpdateConfiguration,
-    onValueChanged: (RouteTrackingConfigurationViewModel.LocationUpdateConfiguration) -> Unit,
+    config: RouteTrackingSectionViewModel.LocationUpdateConfiguration,
+    onValueChanged: (RouteTrackingSectionViewModel.LocationUpdateConfiguration) -> Unit,
 ) {
     Text(
         text = "Location Update:",
@@ -78,11 +78,11 @@ fun LocationUpdateConfiguration(
     }
 }
 
-@Preview
+@Preview(showSystemUi = true, showBackground = true, backgroundColor = 0xffffff)
 @Composable
 private fun PreviewLocationRequestConfiguration() = Column(modifier = Modifier.fillMaxWidth()) {
     LocationUpdateConfiguration(
-        RouteTrackingConfigurationViewModel.LocationUpdateConfiguration(),
+        RouteTrackingSectionViewModel.LocationUpdateConfiguration(),
         onValueChanged = { }
     )
 }

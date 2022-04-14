@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.configurator
+package akio.apps.myrun.feature.configurator.viewmodel
 
 import akio.apps.myrun.data.location.api.model.LocationRequestConfig
 import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class RouteTrackingConfigurationViewModel @Inject constructor(
+class RouteTrackingSectionViewModel @Inject constructor(
     private val routeTrackingConfiguration: RouteTrackingConfiguration,
 ) : ViewModel() {
 

@@ -7,7 +7,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
 
-class UserAuthenticationViewModel @Inject constructor(
+class UserAuthenticationSectionViewModel @Inject constructor(
     private val getUserProfileUsecase: GetUserProfileUsecase,
 ) : ViewModel() {
     val userProfileFlow: Flow<UserProfile> =
