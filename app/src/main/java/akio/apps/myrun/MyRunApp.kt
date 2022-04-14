@@ -3,7 +3,7 @@ package akio.apps.myrun
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
 import akio.apps.myrun.feature.base.AppNotificationChannel
-import akio.apps.myrun.feature.configurator.ConfiguratorGate
+import akio.apps.myrun.feature.configurator.ConfiguratorFacade
 import akio.apps.myrun.feature.tracking.RouteTrackingService
 import akio.apps.myrun.log.CrashReportTree
 import akio.apps.myrun.log.MyDebugTree
@@ -65,7 +65,7 @@ class MyRunApp :
 
         UpdateUserRecentPlaceWorker.enqueueDaily(this)
 
-        ConfiguratorGate.notifyInDebugMode(this)
+        ConfiguratorFacade.notifyInDebugMode(this)
 
         AppMigrationWorker.enqueue(this)
     }

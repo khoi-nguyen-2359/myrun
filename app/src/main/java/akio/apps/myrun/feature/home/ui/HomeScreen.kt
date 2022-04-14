@@ -7,8 +7,8 @@ import akio.apps.myrun.feature.base.ui.AppDimensions.AppBarHeight
 import akio.apps.myrun.feature.base.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
-import akio.apps.myrun.feature.home.feed.ui.ActivityFeed
-import akio.apps.myrun.feature.home.userhome.ui.UserHome
+import akio.apps.myrun.feature.home.feed.ui.ActivityFeedScreen
+import akio.apps.myrun.feature.home.userstats.ui.UserStatsScreen
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.Box
@@ -24,7 +24,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -68,10 +68,10 @@ private enum class HomeNavItemInfo(
         icon = Icons.Rounded.Timeline,
         route = "activityFeed"
     ),
-    UserHome(
-        label = R.string.home_nav_user_home_tab_label,
-        icon = Icons.Rounded.Home,
-        route = "userHome"
+    UserStats(
+        label = R.string.home_nav_user_stats_tab_label,
+        icon = Icons.Rounded.BarChart,
+        route = "userStats"
     )
 }
 
@@ -174,17 +174,17 @@ private fun HomeNavHost(
             appNavController = appNavController
         )
 
-        addUserHomeDestination(contentPaddings, appNavController, openRoutePlanningAction)
+        addUserStatsDestination(contentPaddings, appNavController, openRoutePlanningAction)
     }
 }
 
-private fun NavGraphBuilder.addUserHomeDestination(
+private fun NavGraphBuilder.addUserStatsDestination(
     contentPaddings: PaddingValues,
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
 ) {
-    composable(route = HomeNavItemInfo.UserHome.route) { backstackEntry ->
-        UserHome(appNavController, backstackEntry, contentPaddings, openRoutePlanningAction)
+    composable(route = HomeNavItemInfo.UserStats.route) { backstackEntry ->
+        UserStatsScreen(appNavController, backstackEntry, contentPaddings, openRoutePlanningAction)
     }
 }
 
@@ -225,7 +225,7 @@ private fun NavGraphBuilder.addActivityFeedDestination(
     appNavController: NavController,
 ) {
     composable(route = HomeNavItemInfo.ActivityFeed.route) { backstackEntry ->
-        ActivityFeed(
+        ActivityFeedScreen(
             appNavController,
             backstackEntry,
             contentPadding = contentPadding,

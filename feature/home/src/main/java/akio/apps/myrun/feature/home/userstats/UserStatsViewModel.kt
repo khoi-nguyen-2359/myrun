@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.home.userhome
+package akio.apps.myrun.feature.home.userstats
 
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.ActivityType
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.parcelize.Parcelize
 
-class UserHomeViewModel @Inject constructor(
+class UserStatsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val getUserRecentPlaceNameUsecase: GetUserRecentPlaceNameUsecase,

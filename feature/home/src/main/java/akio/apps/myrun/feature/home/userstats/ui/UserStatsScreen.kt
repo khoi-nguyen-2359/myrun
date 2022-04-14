@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.home.userhome.ui
+package akio.apps.myrun.feature.home.userstats.ui
 
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.domain.common.TrackingValueConverter
@@ -14,8 +14,8 @@ import akio.apps.myrun.feature.base.ui.RowSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
 import akio.apps.myrun.feature.base.viewmodel.rememberViewModelProvider
 import akio.apps.myrun.feature.home.R
-import akio.apps.myrun.feature.home.userhome.UserHomeViewModel
-import akio.apps.myrun.feature.home.userhome.di.DaggerUserHomeFeatureComponent
+import akio.apps.myrun.feature.home.userstats.UserStatsViewModel
+import akio.apps.myrun.feature.home.userstats.di.DaggerUserStatsFeatureComponent
 import android.app.Application
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -71,46 +71,46 @@ import coil.compose.rememberImagePainter
 import coil.size.Scale
 
 @Composable
-fun UserHome(
+fun UserStatsScreen(
     appNavController: NavController,
     backStackEntry: NavBackStackEntry,
     contentPadding: PaddingValues,
     openRoutePlanningAction: () -> Unit,
 ) {
     val application = LocalContext.current.applicationContext as Application
-    val userHomeViewModel = backStackEntry.rememberViewModelProvider {
-        DaggerUserHomeFeatureComponent.factory().create(application, it).userHomeViewModel()
+    val userStatsViewModel = backStackEntry.rememberViewModelProvider {
+        DaggerUserStatsFeatureComponent.factory().create(application, it).userStatsViewModel()
     }
-    UserHome(userHomeViewModel, contentPadding, appNavController, openRoutePlanningAction)
+    UserStatsScreen(userStatsViewModel, contentPadding, appNavController, openRoutePlanningAction)
 }
 
 @Composable
-private fun UserHome(
-    userHomeViewModel: UserHomeViewModel,
+private fun UserStatsScreen(
+    userStatsViewModel: UserStatsViewModel,
     contentPadding: PaddingValues,
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
 ) {
-    val screenState by userHomeViewModel.screenState.collectAsState(initial = null)
-    UserHome(screenState ?: return, contentPadding, appNavController, openRoutePlanningAction)
+    val screenState by userStatsViewModel.screenState.collectAsState(initial = null)
+    UserStatsScreen(screenState ?: return, contentPadding, appNavController, openRoutePlanningAction)
 }
 
 @Composable
-private fun UserHome(
-    screenState: UserHomeViewModel.ScreenState = UserHomeViewModel.ScreenState.StatsLoading,
+private fun UserStatsScreen(
+    screenState: UserStatsViewModel.ScreenState = UserStatsViewModel.ScreenState.StatsLoading,
     contentPadding: PaddingValues,
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
 ) {
     Column {
         StatusBarSpacer()
-        UserHomeTopBar(openRoutePlanningAction)
+        UserStatsTopBar(openRoutePlanningAction)
         when (screenState) {
-            UserHomeViewModel.ScreenState.StatsLoading -> {
+            UserStatsViewModel.ScreenState.StatsLoading -> {
                 CentralLoadingView(text = stringResource(id = R.string.message_loading))
             }
-            is UserHomeViewModel.ScreenState.StatsAvailable -> {
-                UserHomeContent(screenState, modifier = Modifier.weight(1f), appNavController)
+            is UserStatsViewModel.ScreenState.StatsAvailable -> {
+                UserStatsContent(screenState, modifier = Modifier.weight(1f), appNavController)
             }
         }
         Spacer(modifier = Modifier.height(contentPadding.calculateBottomPadding()))
@@ -118,8 +118,8 @@ private fun UserHome(
 }
 
 @Composable
-fun UserHomeContent(
-    screenState: UserHomeViewModel.ScreenState.StatsAvailable,
+fun UserStatsContent(
+    screenState: UserStatsViewModel.ScreenState.StatsAvailable,
     modifier: Modifier = Modifier,
     appNavController: NavController,
 ) {
@@ -133,7 +133,7 @@ fun UserHomeContent(
 }
 
 @Composable
-fun TrainingSummaryTable(screenState: UserHomeViewModel.ScreenState.StatsAvailable) {
+fun TrainingSummaryTable(screenState: UserStatsViewModel.ScreenState.StatsAvailable) {
     var selectedActivityType by rememberSaveable { mutableStateOf(ActivityType.Running) }
     val summaryData = screenState.trainingSummaryTableData[selectedActivityType]
         ?: return
@@ -258,7 +258,7 @@ private fun ActivityTypePane(
                 ActivityType.Cycling -> R.string.user_home_training_summary_ride_activity_type
                 else -> 0
             }
-            UserHomeOutlinedButton(
+            UserStatsOutlinedButton(
                 text = stringResource(id = activityTypeLabel),
                 onClick = {
                     selectActivityTypeAction(type)
@@ -364,7 +364,7 @@ private fun RowScope.TrainingSummaryProgress(
 
 @Composable
 private fun UserProfileHeader(
-    screenState: UserHomeViewModel.ScreenState.StatsAvailable,
+    screenState: UserStatsViewModel.ScreenState.StatsAvailable,
     appNavController: NavController,
 ) {
     Row(
@@ -390,7 +390,7 @@ private fun UserProfileHeader(
             )
         }
         RowSpacer(width = 10.dp)
-        UserHomeOutlinedButton(
+        UserStatsOutlinedButton(
             text = stringResource(id = R.string.user_home_edit_profile_button)
         ) {
             appNavController.navigate(HomeNavDestination.Profile.routeWithUserId())
@@ -399,7 +399,7 @@ private fun UserProfileHeader(
 }
 
 @Composable
-private fun UserHomeOutlinedButton(
+private fun UserStatsOutlinedButton(
     text: String,
     modifier: Modifier = Modifier,
     colors: ButtonColors = ButtonDefaults.outlinedButtonColors(),
@@ -424,9 +424,9 @@ private fun UserHomeOutlinedButton(
 
 @Suppress("UNUSED_PARAMETER")
 @Composable
-private fun UserHomeTopBar(openRoutePlanningAction: () -> Unit) {
+private fun UserStatsTopBar(openRoutePlanningAction: () -> Unit) {
     TopAppBar(
-        title = { Text(text = stringResource(id = R.string.user_home_title)) },
+        title = { Text(text = stringResource(id = R.string.home_nav_user_stats_tab_label)) },
         actions = {
             if (BuildConfig.DEBUG) {
                 AppBarIconButton(
@@ -467,9 +467,9 @@ private fun UserProfileImage(
 
 @Preview(showBackground = true, backgroundColor = 0xffffff)
 @Composable
-private fun PreviewUserHome() {
-    UserHome(
-        screenState = UserHomeViewModel.ScreenState.StatsAvailable(
+private fun PreviewUserStats() {
+    UserStatsScreen(
+        screenState = UserStatsViewModel.ScreenState.StatsAvailable(
             "My Name",
             "photoUrl",
             "Saigon, Vietnam",

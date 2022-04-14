@@ -1,9 +1,9 @@
-package akio.apps.myrun.feature.home.userhome.di
+package akio.apps.myrun.feature.home.userstats.di
 
 import akio.apps.myrun.data.activity.ActivityDataModule
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.data.user.UserDataModule
-import akio.apps.myrun.feature.home.userhome.UserHomeViewModel
+import akio.apps.myrun.feature.home.userstats.UserStatsViewModel
 import akio.apps.myrun.wiring.common.DispatchersModule
 import akio.apps.myrun.wiring.common.FeatureScope
 import android.app.Application
@@ -20,14 +20,14 @@ import dagger.Component
         ActivityDataModule::class
     ],
 )
-internal interface UserHomeFeatureComponent {
-    fun userHomeViewModel(): UserHomeViewModel
+internal interface UserStatsFeatureComponent {
+    fun userStatsViewModel(): UserStatsViewModel
 
     @Component.Factory
     interface Factory {
         fun create(
             @BindsInstance application: Application,
             @BindsInstance savedStateHandle: SavedStateHandle,
-        ): UserHomeFeatureComponent
+        ): UserStatsFeatureComponent
     }
 }

@@ -45,7 +45,7 @@ fun ActivityFeedTopBar(
         TopAppBar(
             title = {
                 Text(
-                    stringResource(id = R.string.user_feed_title),
+                    stringResource(id = R.string.home_nav_activity_feed_tab_label),
                     modifier = Modifier.fillMaxWidth()
                 )
             },

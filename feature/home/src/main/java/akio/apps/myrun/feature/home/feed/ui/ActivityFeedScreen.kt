@@ -113,7 +113,7 @@ private object ActivityFeedDimensions {
 private const val REVEAL_ANIM_THRESHOLD = 10
 
 @Composable
-fun ActivityFeed(
+fun ActivityFeedScreen(
     navController: NavController,
     backStackEntry: NavBackStackEntry,
     contentPadding: PaddingValues,
@@ -123,11 +123,11 @@ fun ActivityFeed(
     val activityFeedViewModel = backStackEntry.rememberViewModelProvider {
         DaggerActivityFeedFeatureComponent.factory().create(application).feedViewModel()
     }
-    ActivityFeed(activityFeedViewModel, contentPadding, onClickExportActivityFile, navController)
+    ActivityFeedScreen(activityFeedViewModel, contentPadding, onClickExportActivityFile, navController)
 }
 
 @Composable
-private fun ActivityFeed(
+private fun ActivityFeedScreen(
     activityFeedViewModel: ActivityFeedViewModel,
     contentPadding: PaddingValues,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
@@ -169,7 +169,7 @@ private fun ActivityFeed(
             .fillMaxSize()
             .nestedScroll(nestedScrollConnection)
     ) {
-        ActivityFeed(
+        ActivityFeedScreen(
             activityFeedViewModel = activityFeedViewModel,
             contentPadding = contentPadding.clone(
                 top = contentPadding.calculateTopPadding() + topBarHeightDp
@@ -199,7 +199,7 @@ private fun PaddingValues.clone(
 ): PaddingValues = PaddingValues(start, top, end, bottom)
 
 @Composable
-fun ActivityFeed(
+fun ActivityFeedScreen(
     activityFeedViewModel: ActivityFeedViewModel,
     contentPadding: PaddingValues,
     feedListState: LazyListState,

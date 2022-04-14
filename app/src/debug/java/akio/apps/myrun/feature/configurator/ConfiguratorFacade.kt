@@ -12,10 +12,9 @@ import androidx.annotation.VisibleForTesting
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
-object ConfiguratorGate {
+object ConfiguratorFacade {
 
-    @VisibleForTesting
-    const val CONFIGURATOR_ACTIVITY_NAME =
+    private const val CONFIGURATOR_ACTIVITY_NAME =
         "akio.apps.myrun.feature.configurator.ConfiguratorActivity"
     private val NOTIFICATION_ID = AppNotificationChannel.Debug.nextNotificationStaticId()
 
