@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.route.wiring
 
 import akio.apps.myrun.data.location.LocationDataModule
-import akio.apps.myrun.data.route.RouteDataModule
+import akio.apps.myrun.data.route.RouteDataComponent
 import akio.apps.myrun.domain.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.route.RoutePlanningViewModel
 import akio.apps.myrun.wiring.common.DispatchersModule
@@ -14,9 +14,9 @@ import dagger.Component
     modules = [
         LaunchCatchingModule::class,
         LocationDataModule::class,
-        DispatchersModule::class,
-        RouteDataModule::class
-    ]
+        DispatchersModule::class
+    ],
+    dependencies = [RouteDataComponent::class]
 )
 interface RoutePlanningFeatureComponent {
     fun drawRouteViewModel(): RoutePlanningViewModel
@@ -26,6 +26,7 @@ interface RoutePlanningFeatureComponent {
         fun create(
             @BindsInstance application: Application,
             @BindsInstance savedStateHandle: SavedStateHandle,
+            routeDataComponent: RouteDataComponent
         ): RoutePlanningFeatureComponent
     }
 }
