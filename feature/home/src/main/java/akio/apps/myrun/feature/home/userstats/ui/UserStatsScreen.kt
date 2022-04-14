@@ -91,8 +91,15 @@ private fun UserStatsScreen(
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
 ) {
-    val screenState by userStatsViewModel.screenState.collectAsState(initial = null)
-    UserStatsScreen(screenState ?: return, contentPadding, appNavController, openRoutePlanningAction)
+    val screenState by userStatsViewModel.screenState.collectAsState(
+        initial = UserStatsViewModel.ScreenState.StatsLoading
+    )
+    UserStatsScreen(
+        screenState,
+        contentPadding,
+        appNavController,
+        openRoutePlanningAction
+    )
 }
 
 @Composable

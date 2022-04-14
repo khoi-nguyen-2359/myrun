@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.splash.wiring
+package akio.apps.myrun.feature.splash.di
 
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.domain.launchcatching.LaunchCatchingModule

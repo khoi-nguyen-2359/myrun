@@ -1,8 +1,9 @@
-package akio.apps.myrun.feature.home.ui
+package akio.apps.myrun.feature.main
 
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
+import akio.apps.myrun.feature.home.HomeScreen
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -41,10 +42,10 @@ private object AppNavTransitionDefaults {
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun AppNavHost(
+fun MainNavHost(
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
-    openRoutePlanningAction: () -> Unit
+    openRoutePlanningAction: () -> Unit,
 ) = ProvideWindowInsets {
     val navController = rememberAnimatedNavController()
     AnimatedNavHost(
@@ -85,7 +86,7 @@ private fun NavGraphBuilder.addHomeDestination(
     navController: NavHostController,
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
-    openRoutePlanningAction: () -> Unit
+    openRoutePlanningAction: () -> Unit,
 ) {
     composable(
         route = HomeNavDestination.Home.route,

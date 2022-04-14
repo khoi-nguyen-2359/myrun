@@ -65,7 +65,7 @@
         </activity>
 
         <activity
-            android:name=".feature.home.HomeActivity"
+            android:name=".feature.main.MainActivity"
             android:theme="@style/AppTheme.SemiTransparentSystemBars"
             android:screenOrientation="portrait"
             android:exported="false" />

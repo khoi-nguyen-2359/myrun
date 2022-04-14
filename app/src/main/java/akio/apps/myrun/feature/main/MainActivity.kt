@@ -1,9 +1,8 @@
-package akio.apps.myrun.feature.home
+package akio.apps.myrun.feature.main
 
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activitydetail.ActivityExportService
-import akio.apps.myrun.feature.home.ui.AppNavHost
 import akio.apps.myrun.feature.route.RoutePlanningFacade
 import akio.apps.myrun.feature.tracking.LocationPermissionChecker
 import akio.apps.myrun.feature.tracking.RouteTrackingActivity
@@ -18,7 +17,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
-class HomeActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     private val locationPermissionChecker: LocationPermissionChecker =
         LocationPermissionChecker(activity = this)
@@ -27,7 +26,7 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
-            AppNavHost(
+            MainNavHost(
                 onClickFloatingActionButton = ::openRouteTrackingOrCheckRequiredPermission,
                 onClickExportActivityFile = ::startActivityExportService,
                 openRoutePlanningAction = { RoutePlanningFacade.startRoutePlanning(this) }
@@ -58,7 +57,7 @@ class HomeActivity : AppCompatActivity() {
             val missingRequiredPermission = !locationPermissionChecker.check()
             if (missingRequiredPermission) {
                 Toast.makeText(
-                    this@HomeActivity,
+                    this@MainActivity,
                     R.string.location_permission_is_missing_error,
                     Toast.LENGTH_SHORT
                 ).show()
@@ -72,7 +71,7 @@ class HomeActivity : AppCompatActivity() {
     private fun openRouteTracking() = startActivity(RouteTrackingActivity.launchIntent(this))
 
     companion object {
-        fun clearTaskIntent(context: Context): Intent = Intent(context, HomeActivity::class.java)
+        fun clearTaskIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
     }
 }
