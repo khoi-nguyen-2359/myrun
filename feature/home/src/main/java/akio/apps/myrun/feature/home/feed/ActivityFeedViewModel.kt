@@ -80,7 +80,7 @@ class ActivityFeedViewModel @Inject constructor(
         .cachedIn(viewModelScope)
 
     private fun recreateActivityPagingSource(): ActivityPagingSource =
-        activityPagingSourceFactory().also {
+        activityPagingSourceFactory.createPagingSource().also {
             Timber.d("recreateActivityPagingSource")
             activityPagingSource = it
         }

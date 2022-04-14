@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-private object HomeScreenColors {
+private object ActivityFeedTopBarColors {
     val uploadingBadgeContentColor = Color(0xffffffff)
 }
 
@@ -91,13 +91,13 @@ private fun UploadInProgressBadge(count: Int) {
                 .fillMaxWidth()
                 .height(2.dp)
                 .align(Alignment.BottomCenter),
-            color = HomeScreenColors.uploadingBadgeContentColor
+            color = ActivityFeedTopBarColors.uploadingBadgeContentColor
         )
         Text(
             text = "$count",
             fontWeight = FontWeight.Black,
             fontSize = 11.sp,
-            color = HomeScreenColors.uploadingBadgeContentColor
+            color = ActivityFeedTopBarColors.uploadingBadgeContentColor
         )
         DropdownMenu(
             modifier = Modifier

@@ -12,11 +12,11 @@ import akio.apps.myrun.feature.base.ui.AppDimensions
 import akio.apps.myrun.feature.base.viewmodel.rememberViewModelProvider
 import akio.apps.myrun.feature.home.R
 import akio.apps.myrun.feature.home.feed.ActivityFeedViewModel
-import akio.apps.myrun.feature.home.feed.ui.FeedColors.listBackground
-import akio.apps.myrun.feature.home.feed.ui.FeedDimensions.activityItemHorizontalMargin
-import akio.apps.myrun.feature.home.feed.ui.FeedDimensions.activityItemHorizontalPadding
-import akio.apps.myrun.feature.home.feed.ui.FeedDimensions.activityItemVerticalMargin
-import akio.apps.myrun.feature.home.feed.ui.FeedDimensions.activityItemVerticalPadding
+import akio.apps.myrun.feature.home.feed.ui.ActivityFeedColors.listBackground
+import akio.apps.myrun.feature.home.feed.ui.ActivityFeedDimensions.activityItemHorizontalMargin
+import akio.apps.myrun.feature.home.feed.ui.ActivityFeedDimensions.activityItemHorizontalPadding
+import akio.apps.myrun.feature.home.feed.ui.ActivityFeedDimensions.activityItemVerticalMargin
+import akio.apps.myrun.feature.home.feed.ui.ActivityFeedDimensions.activityItemVerticalPadding
 import akio.apps.myrun.feature.home.wiring.DaggerActivityFeedFeatureComponent
 import android.app.Application
 import androidx.compose.animation.animateContentSize
@@ -99,11 +99,11 @@ import com.google.accompanist.insets.LocalWindowInsets
 import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 
-private object FeedColors {
+private object ActivityFeedColors {
     val listBackground: Color = Color.White
 }
 
-private object FeedDimensions {
+private object ActivityFeedDimensions {
     val activityItemHorizontalMargin: Dp = 0.dp
     val activityItemVerticalMargin: Dp = 12.dp
     val activityItemHorizontalPadding: Dp = 16.dp

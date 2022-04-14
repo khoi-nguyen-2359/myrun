@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.home.wiring
+package akio.apps.myrun.feature.home.feed.di
 
 import akio.apps.myrun.data.activity.ActivityDataModule
 import akio.apps.myrun.data.authentication.AuthenticationDataModule

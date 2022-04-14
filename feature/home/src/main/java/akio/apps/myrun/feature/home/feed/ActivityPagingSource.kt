@@ -34,6 +34,6 @@ class ActivityPagingSource @Inject constructor(
 class ActivityPagingSourceFactory @Inject constructor(
     private val getFeedActivitiesUsecase: GetFeedActivitiesUsecase,
 ) {
-    operator fun invoke(): ActivityPagingSource =
+    fun createPagingSource(): ActivityPagingSource =
         ActivityPagingSource(getFeedActivitiesUsecase)
 }
