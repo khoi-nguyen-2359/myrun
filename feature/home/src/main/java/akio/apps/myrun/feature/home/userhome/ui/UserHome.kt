@@ -15,7 +15,7 @@ import akio.apps.myrun.feature.base.ui.StatusBarSpacer
 import akio.apps.myrun.feature.base.viewmodel.rememberViewModelProvider
 import akio.apps.myrun.feature.home.R
 import akio.apps.myrun.feature.home.userhome.UserHomeViewModel
-import akio.apps.myrun.feature.home.wiring.DaggerUserHomeFeatureComponent
+import akio.apps.myrun.feature.home.userhome.di.DaggerUserHomeFeatureComponent
 import android.app.Application
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
