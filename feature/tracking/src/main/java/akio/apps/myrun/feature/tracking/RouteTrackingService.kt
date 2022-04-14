@@ -18,8 +18,8 @@ import akio.apps.myrun.domain.tracking.locationprocessor.AverageLocationAccumula
 import akio.apps.myrun.domain.tracking.locationprocessor.LocationProcessorContainer
 import akio.apps.myrun.domain.tracking.locationprocessor.LocationSpeedFilter
 import akio.apps.myrun.feature.base.AppNotificationChannel
+import akio.apps.myrun.feature.base.flowTimer
 import akio.apps.myrun.feature.tracking.wiring.DaggerRouteTrackingFeatureComponent
-import akio.apps.myrun.log.flowTimer
 import akio.apps.myrun.wiring.common.Now
 import akio.apps.myrun.worker.UpdateUserRecentPlaceWorker
 import android.annotation.SuppressLint

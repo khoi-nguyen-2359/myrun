@@ -1,7 +1,8 @@
-package akio.apps.myrun.feature.base.map
+package akio.apps.myrun.feature.tracking.utils
 
-import akio.apps.myrun.data.location.api.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+
+private typealias GmsLatLng = com.google.android.gms.maps.model.LatLng
 
 class LatLngBoundsBuilder {
     private val internalBuilder: LatLngBounds.Builder = LatLngBounds.builder()
@@ -10,13 +11,6 @@ class LatLngBoundsBuilder {
     fun include(gmsLatLng: GmsLatLng): LatLngBoundsBuilder {
         internalBuilder.include(gmsLatLng)
         isEmpty = false
-        return this
-    }
-
-    fun include(latLngs: List<LatLng>): LatLngBoundsBuilder {
-        latLngs.forEach {
-            include(it.toGmsLatLng())
-        }
         return this
     }
 

@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.route.model
 
 import akio.apps.myrun.data.location.api.model.LatLng
-import akio.apps.myrun.feature.base.map.LatLngBoundsBuilder
 import android.os.Parcelable
 import com.google.maps.android.SphericalUtil
 import kotlinx.parcelize.Parcelize
@@ -27,13 +26,13 @@ class Route(
         }
     )
 
-    fun getBoundary(): LatLngBoundsBuilder =
-        waypoints.map {
-            com.google.android.gms.maps.model.LatLng(
-                it.latitude,
-                it.longitude
-            )
-        }.foldRight(LatLngBoundsBuilder(), { curr, acc -> acc.include(curr) })
+    // fun getBoundary(): LatLngBoundsBuilder =
+    //     waypoints.map {
+    //         com.google.android.gms.maps.model.LatLng(
+    //             it.latitude,
+    //             it.longitude
+    //         )
+    //     }.foldRight(LatLngBoundsBuilder(), { curr, acc -> acc.include(curr) })
 
     fun getStartPoint(): LatLng {
         return waypoints.firstOrNull()

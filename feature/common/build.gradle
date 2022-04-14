@@ -50,8 +50,6 @@ dependencies {
 
     implementation(libs.lifecycleRuntimeKtx)
 
-    implementation(libs.androidGoogleMap)
-
     implementation(libs.timber)
 
     implementation(libs.javaXInject)

@@ -10,11 +10,10 @@ import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus.RESUMED
 import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegateImpl
 import akio.apps.myrun.feature.base.BitmapUtils.createDrawableBitmap
-import akio.apps.myrun.feature.base.ext.dp2px
-import akio.apps.myrun.feature.base.lifecycle.collectEventRepeatOnStarted
-import akio.apps.myrun.feature.base.lifecycle.collectRepeatOnStarted
-import akio.apps.myrun.feature.base.lifecycle.observe
-import akio.apps.myrun.feature.base.map.LatLngBoundsBuilder
+import akio.apps.myrun.feature.base.ktx.collectEventRepeatOnStarted
+import akio.apps.myrun.feature.base.ktx.collectRepeatOnStarted
+import akio.apps.myrun.feature.base.ktx.dp2px
+import akio.apps.myrun.feature.base.ktx.observe
 import akio.apps.myrun.feature.base.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.feature.tracking.ui.ActivitySettingsView
 import akio.apps.myrun.feature.tracking.ui.RouteTrackingStatsView
@@ -22,6 +21,7 @@ import akio.apps.myrun.feature.tracking.ui.StopDialogOptionId
 import akio.apps.myrun.feature.tracking.ui.StopOptionsDialog
 import akio.apps.myrun.feature.tracking.ui.TrackingControlButtonPanel
 import akio.apps.myrun.feature.tracking.ui.TrackingControlButtonType
+import akio.apps.myrun.feature.tracking.utils.LatLngBoundsBuilder
 import akio.apps.myrun.feature.tracking.wiring.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.worker.ActivityUploadWorker
 import android.annotation.SuppressLint

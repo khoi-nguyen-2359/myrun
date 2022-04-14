@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.base.lifecycle
+package akio.apps.myrun.feature.base.ktx
 
 import akio.apps.myrun.domain.launchcatching.Event
 import androidx.lifecycle.Lifecycle

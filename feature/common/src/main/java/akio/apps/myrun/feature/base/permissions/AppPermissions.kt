@@ -4,7 +4,8 @@ import android.Manifest
 
 object AppPermissions {
     const val preciseLocationPermission: String = Manifest.permission.ACCESS_FINE_LOCATION
-    const val approximateLocationPermission: String = Manifest.permission.ACCESS_COARSE_LOCATION
+    private const val approximateLocationPermission: String =
+        Manifest.permission.ACCESS_COARSE_LOCATION
 
     // From Android 12, location permission always include this couple:
     val locationPermissions = arrayOf(preciseLocationPermission, approximateLocationPermission)
@@ -14,6 +15,4 @@ object AppPermissions {
         Manifest.permission.CAMERA
     )
     val pickPhotoPermissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-    val appLaunchPermissions =
-        arrayOf(*locationPermissions, *takePhotoPermissions, *pickPhotoPermissions)
 }

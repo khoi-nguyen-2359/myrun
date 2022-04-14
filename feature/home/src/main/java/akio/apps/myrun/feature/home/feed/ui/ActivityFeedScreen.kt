@@ -5,7 +5,7 @@ import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.base.TrackingValueFormatter
-import akio.apps.myrun.feature.base.ext.px2dp
+import akio.apps.myrun.feature.base.ktx.px2dp
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
@@ -123,7 +123,12 @@ fun ActivityFeedScreen(
     val activityFeedViewModel = backStackEntry.rememberViewModelProvider {
         DaggerActivityFeedFeatureComponent.factory().create(application).feedViewModel()
     }
-    ActivityFeedScreen(activityFeedViewModel, contentPadding, onClickExportActivityFile, navController)
+    ActivityFeedScreen(
+        activityFeedViewModel,
+        contentPadding,
+        onClickExportActivityFile,
+        navController
+    )
 }
 
 @Composable

@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 
 abstract class PictureSelectionDelegate<Input>(
     protected val activity: AppCompatActivity,
-    protected val permissions: Array<String>
+    private val permissions: Array<String>
 ) {
     private val requestPermissionsLauncher =
         activity.registerForActivityResult(
