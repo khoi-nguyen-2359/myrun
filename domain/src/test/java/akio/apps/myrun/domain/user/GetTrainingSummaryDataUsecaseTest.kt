@@ -8,7 +8,7 @@ import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
-import akio.apps.myrun.wiring.common.TimeProvider
+import akio.apps.myrun.domain.time.TimeProvider
 import java.util.TimeZone
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

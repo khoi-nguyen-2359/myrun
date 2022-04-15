@@ -17,7 +17,6 @@ import akio.apps.myrun.domain.activity.getLatLng
 import akio.apps.myrun.domain.common.ObjectAutoId
 import akio.apps.myrun.domain.common.TrackingValueConverter
 import akio.apps.myrun.wiring.common.NamedIoDispatcher
-import akio.apps.myrun.wiring.common.Now
 import android.graphics.Bitmap
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -70,7 +69,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         activityName: String,
         trackedLocations: List<ActivityLocation>,
     ): BaseActivityModel {
-        val endTime = Now.currentTimeMillis()
+        val endTime = System.currentTimeMillis()
         val startTime = routeTrackingState.getTrackingStartTime()
         val duration = routeTrackingState.getTrackingDuration()
         val distance = routeTrackingState.getRouteDistance()

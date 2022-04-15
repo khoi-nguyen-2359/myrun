@@ -4,7 +4,6 @@ import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.location.api.model.LocationRequestConfig
-import akio.apps.myrun.wiring.common.Now
 import android.annotation.SuppressLint
 import android.os.Looper
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -90,7 +89,7 @@ class LocationDataSourceImpl @Inject constructor(
     private fun AndroidLocation.toLocation(): Location =
         Location(
             elapsedRealtimeNanos / 1000000,
-            Now.currentTimeMillis(),
+            System.currentTimeMillis(),
             latitude,
             longitude,
             altitude,
