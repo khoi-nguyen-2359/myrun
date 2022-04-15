@@ -18,5 +18,6 @@ class DeauthorizeStravaUsecase @Inject constructor(
             ?: return
 
         stravaTokenRepository.deauthorizeToken(stravaToken.accessToken)
+        externalAppProvidersRepository.removeStravaProvider(userAccountId)
     }
 }

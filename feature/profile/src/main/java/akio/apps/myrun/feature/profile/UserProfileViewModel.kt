@@ -7,7 +7,6 @@ import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
-import akio.apps.myrun.domain.strava.RemoveStravaTokenUsecase
 import akio.apps.myrun.domain.user.GetProviderTokensUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
@@ -27,7 +26,6 @@ class UserProfileViewModel @Inject constructor(
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val getProviderTokensUsecase: GetProviderTokensUsecase,
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
-    private val removeStravaTokenUsecase: RemoveStravaTokenUsecase,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
     private val updateUserProfileUsecase: UpdateUserProfileUsecase,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
@@ -50,7 +48,6 @@ class UserProfileViewModel @Inject constructor(
     fun deauthorizeStrava() {
         viewModelScope.launchCatching {
             deauthorizeStravaUsecase.deauthorizeStrava()
-            removeStravaTokenUsecase.removeStravaToken()
 
             UploadStravaFileWorker.clear(application)
         }
