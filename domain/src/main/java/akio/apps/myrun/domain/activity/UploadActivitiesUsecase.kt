@@ -8,14 +8,19 @@ import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.location.api.PlaceDataSource
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.domain.user.PlaceIdentifierConverter
 import javax.inject.Inject
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
 
 class UploadActivitiesUsecase @Inject constructor(
@@ -26,33 +31,27 @@ class UploadActivitiesUsecase @Inject constructor(
     private val placeDataSource: PlaceDataSource,
     private val placeIdentifierConverter: PlaceIdentifierConverter,
 ) {
-    @OptIn(InternalCoroutinesApi::class)
-    suspend fun uploadAll(onUploadActivityStarted: ((BaseActivityModel) -> Unit)? = null): Boolean {
-        var isCompleted = true
-        activityLocalStorage.loadAllActivityStorageDataFlow()
-            .onEach { storageData ->
-                val activityModel = fulfillActivityInfo(
-                    storageData.activityModel,
-                    storageData.locationDataPoints.first()
-                )
-                onUploadActivityStarted?.invoke(activityModel)
-                activityRepository.saveActivity(
-                    activityModel,
-                    storageData.routeBitmapFile,
-                    speedDataPoints = emptyList(),
-                    locationDataPoints = storageData.locationDataPoints,
-                    stepCadenceDataPoints = emptyList()
-                )
-                activityLocalStorage.deleteActivityData(activityModel.id)
-            }
+    @OptIn(InternalCoroutinesApi::class, FlowPreview::class)
+    suspend fun uploadAll(): Flow<Resource<BaseActivityModel>> =
+        activityLocalStorage.loadAllActivityStorageDataFlow().flatMapConcat { storageData ->
+            val activityModel = fulfillActivityInfo(
+                storageData.activityModel,
+                storageData.locationDataPoints.first()
+            )
+            activityRepository.saveActivity(
+                activityModel,
+                storageData.routeBitmapFile,
+                speedDataPoints = emptyList(),
+                locationDataPoints = storageData.locationDataPoints,
+                stepCadenceDataPoints = emptyList()
+            )
+            activityLocalStorage.deleteActivityData(activityModel.id)
+            flowOf<Resource<BaseActivityModel>>(Resource.Success(activityModel))
+        }
             .catch { exception ->
-                isCompleted = false
+                emit(Resource.Error(exception))
                 Timber.e(exception)
             }
-            .collect()
-
-        return isCompleted
-    }
 
     /**
      * An activity may miss some data when starting (due to no network). This method

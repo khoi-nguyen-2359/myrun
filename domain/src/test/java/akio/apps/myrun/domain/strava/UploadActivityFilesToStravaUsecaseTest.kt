@@ -12,6 +12,7 @@ import akio.apps.myrun.data.eapps.api.StravaDataRepository
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import akio.apps.myrun.data.eapps.api.model.StravaAthlete
 import akio.apps.myrun.data.eapps.api.model.StravaTokenRefresh
+import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -40,14 +41,31 @@ class UploadActivityFilesToStravaUsecaseTest {
         mockedExternalAppProvidersRepository = mock()
         mockedStravaDataRepository = mock()
         mockedActivityLocalStorage = mock()
-        uploadActivityFilesToStravaUsecase =
-            UploadActivityFilesToStravaUsecase(
-                mockedUserAuthenticateState,
-                mockedExternalAppProvidersRepository,
-                mockedStravaDataRepository,
-                mockedActivityLocalStorage,
-                testDispatcher
-            )
+        uploadActivityFilesToStravaUsecase = UploadActivityFilesToStravaUsecase(
+            mockedUserAuthenticateState,
+            mockedExternalAppProvidersRepository,
+            mockedStravaDataRepository,
+            mockedActivityLocalStorage
+        )
+    }
+
+    @Test
+    fun uploadAll_LoadMultiAsyncItems_ExceptionCase() = testDispatcher.runBlockingTest {
+        whenever(mockedUserAuthenticateState.requireUserAccountId()).thenReturn("userId")
+        val stravaToken = createStravaToken()
+        whenever(mockedExternalAppProvidersRepository.getStravaProviderToken("userId"))
+            .thenReturn(stravaToken)
+        val dataItemFlow = flowOf(
+            *listOf("id1", "id2", "id3", "id4", "id5").map {
+                createActivitySyncData(it)
+            }.toTypedArray()
+        )
+        whenever(mockedActivityLocalStorage.loadAllActivitySyncDataFlow()).thenReturn(dataItemFlow)
+        whenever(mockedActivityLocalStorage.deleteActivitySyncData("id3")).then {
+            throw Exception("Crash at data item id3!")
+        }
+        val result = uploadActivityFilesToStravaUsecase.uploadAll()
+        assertEquals(false, result)
     }
 
     @Test
@@ -78,11 +96,11 @@ class UploadActivityFilesToStravaUsecaseTest {
         assertFalse(result)
     }
 
-    private fun createActivitySyncData(): ActivitySyncData =
+    private fun createActivitySyncData(id: String = "id"): ActivitySyncData =
         ActivitySyncData(
             RunningActivityModel(
                 ActivityDataModel(
-                    "id",
+                    id,
                     ActivityType.Cycling,
                     "name",
                     "routeImage",

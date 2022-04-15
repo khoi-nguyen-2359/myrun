@@ -8,15 +8,17 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.location.api.PlaceDataSource
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.domain.activity.UploadActivitiesUsecase
 import akio.apps.myrun.domain.user.PlaceIdentifierConverter
+import app.cash.turbine.test
+import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.any
@@ -53,16 +55,21 @@ class UploadActivitiesUsecaseImplTest {
     }
 
     @Test
+    @OptIn(ExperimentalTime::class)
     fun testUploadAll_LoadDataExceptionCase() = runBlockingTest {
         val storageDataFlow = flow<ActivityStorageData> { throw Exception("crash!") }
         whenever(mockedActivityLocalStorage.loadAllActivityStorageDataFlow())
             .thenReturn(storageDataFlow)
 
-        val result = uploadActivitiesUsecase.uploadAll()
-        assertFalse(result)
+        uploadActivitiesUsecase.uploadAll().test {
+            val errorResourceItem = awaitItem()
+            assert(errorResourceItem is Resource.Error)
+            awaitComplete()
+        }
     }
 
     @Test
+    @OptIn(ExperimentalTime::class)
     fun testUploadAll_UploadExceptionCase() = runBlockingTest {
         val activityStorageData = createActivityStorageData()
         val storageDataFlow = flowOf(activityStorageData)
@@ -71,8 +78,11 @@ class UploadActivitiesUsecaseImplTest {
         whenever(mockedActivityRepository.saveActivity(any(), any(), any(), any(), any()))
             .then { throw Exception("crash!") }
 
-        val result = uploadActivitiesUsecase.uploadAll()
-        assertFalse(result)
+        uploadActivitiesUsecase.uploadAll().test {
+            val errorResourceItem = awaitItem()
+            assert(errorResourceItem is Resource.Error)
+            awaitComplete()
+        }
     }
 
     private fun createActivityStorageData(): ActivityStorageData =

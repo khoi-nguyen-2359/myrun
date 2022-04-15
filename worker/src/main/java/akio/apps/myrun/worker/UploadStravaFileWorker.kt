@@ -1,6 +1,7 @@
 package akio.apps.myrun.worker
 
 import akio.apps.myrun.domain.strava.UploadActivityFilesToStravaUsecase
+import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import android.app.Application
 import android.content.Context
 import androidx.work.BackoffPolicy
@@ -13,6 +14,8 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class UploadStravaFileWorker(
@@ -23,13 +26,19 @@ class UploadStravaFileWorker(
     @Inject
     lateinit var uploadActivityFilesToStravaUsecase: UploadActivityFilesToStravaUsecase
 
+    @Inject
+    @NamedIoDispatcher
+    lateinit var ioDispatcher: CoroutineDispatcher
+
     init {
         DaggerWorkerFeatureComponent.factory().create(appContext as Application).inject(this)
     }
 
     override suspend fun doWork(): Result {
         Timber.d("worker start")
-        val isComplete = uploadActivityFilesToStravaUsecase.uploadAll()
+        val isComplete = withContext(ioDispatcher) {
+            uploadActivityFilesToStravaUsecase.uploadAll()
+        }
         return if (isComplete) {
             Result.success()
         } else {
