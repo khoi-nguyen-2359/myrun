@@ -28,7 +28,7 @@ class GooglePlaceDataSource @Inject constructor(
      */
     private val placesClientLazy: Lazy<PlacesClient>,
     private val application: Application,
-    @akio.apps.myrun.wiring.common.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : PlaceDataSource {
 
     private val placesClient by lazy { placesClientLazy.get() }

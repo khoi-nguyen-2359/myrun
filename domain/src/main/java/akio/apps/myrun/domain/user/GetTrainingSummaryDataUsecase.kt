@@ -27,7 +27,8 @@ import kotlinx.parcelize.Parcelize
 class GetTrainingSummaryDataUsecase @Inject constructor(
     private val activityRepository: ActivityRepository,
     private val userAuthenticationState: UserAuthenticationState,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
     private val timeProvider: TimeProvider = Now
 ) {
     /**

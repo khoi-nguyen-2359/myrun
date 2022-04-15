@@ -36,7 +36,8 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val objectAutoId: ObjectAutoId,
     private val polyUtil: PolyUtil,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) {
     suspend operator fun invoke(activityName: String, routeImageBitmap: Bitmap) =
         withContext(ioDispatcher) {

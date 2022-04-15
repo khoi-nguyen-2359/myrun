@@ -47,6 +47,7 @@ dependencies {
     kapt(libs.daggerCompiler)
 
     implementation(libs.okHttp)
+    implementation(libs.okHttpLogger)
     implementation(libs.retrofit)
     implementation(libs.retrofitGsonConverter)
 

@@ -18,7 +18,8 @@ class UploadActivityFilesToStravaUsecase @Inject constructor(
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val stravaDataRepository: StravaDataRepository,
     private val activityLocalStorage: ActivityLocalStorage,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) {
     suspend fun uploadAll(): Boolean = withContext(ioDispatcher) {
         val userAccountId = userAuthenticationState.requireUserAccountId()

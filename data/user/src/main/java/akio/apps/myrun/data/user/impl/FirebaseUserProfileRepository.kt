@@ -11,6 +11,7 @@ import akio.apps.myrun.data.user.impl.mapper.FirestoreUserProfileMapper
 import akio.apps.myrun.data.user.impl.model.FirestoreUser
 import akio.apps.myrun.data.user.impl.model.FirestoreUserGender
 import akio.apps.myrun.data.user.impl.model.FirestoreUserProfileUpdateMap
+import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import android.net.Uri
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -33,7 +34,8 @@ class FirebaseUserProfileRepository @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage,
     private val firestoreUserProfileMapper: FirestoreUserProfileMapper,
-    @akio.apps.myrun.wiring.common.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : UserProfileRepository {
 
     private fun getUserDocument(userId: String): DocumentReference {
