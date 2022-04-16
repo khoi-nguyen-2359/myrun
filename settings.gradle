@@ -10,7 +10,6 @@ include(':data:location')
 include ':data:user'
 include ':data:common'
 include ':data:activity'
-include ':data:authentication'
 include ':data:eapps'
 include(":test")
 include ':feature:profile'

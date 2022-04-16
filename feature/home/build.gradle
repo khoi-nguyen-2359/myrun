@@ -47,7 +47,6 @@ dependencies {
 
     implementation(project(':domain'))
 
-    implementation(project(':data:authentication'))
     implementation(project(':data:user'))
     implementation(project(':data:activity'))
 

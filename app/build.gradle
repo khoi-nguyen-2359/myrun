@@ -96,7 +96,7 @@ dependencies {
     implementation(libs.firebasePerfKtx)
     implementation(libs.firebaseAuthKtx)
 
-    implementation(project(':data:authentication'))
+    implementation(project(':data:user'))
     implementation(project(':data:tracking'))
 
     implementation project(':worker')

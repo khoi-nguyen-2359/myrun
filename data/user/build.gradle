@@ -35,8 +35,7 @@ dependencies {
     implementation project(":data:api")
 
     implementation project(":data:common")
-    implementation(libs.firebaseFirestoreKtx)
-    implementation(libs.firebaseStorageKtx)
+    implementation(libs.bundles.firebase.data)
 
     // app migration
     implementation(libs.dataStore)

@@ -39,7 +39,6 @@ dependencies {
     implementation(project(":data:activity"))
     implementation(project(":data:tracking"))
     implementation(project(":data:user"))
-    implementation(project(":data:authentication"))
     implementation(project(":data:eapps"))
 
     implementation(project(":data:common"))

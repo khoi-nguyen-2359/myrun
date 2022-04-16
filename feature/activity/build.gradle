@@ -49,7 +49,6 @@ dependencies {
 
     implementation(project(':data:location'))
     implementation(project(':data:activity'))
-    implementation(project(':data:authentication'))
     implementation(project(':data:user'))
     implementation(project(':data:eapps'))
 

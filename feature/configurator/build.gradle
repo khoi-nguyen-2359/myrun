@@ -46,7 +46,6 @@ dependencies {
     implementation(project(':data:tracking'))
     implementation(project(':data:user'))
     implementation(project(':data:eapps'))
-    implementation(project(':data:authentication'))
 
     implementation(project(":data:common"))
     implementation(libs.bundles.firebase.data)
