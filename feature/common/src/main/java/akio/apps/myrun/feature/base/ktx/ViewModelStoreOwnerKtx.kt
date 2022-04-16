@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.base.viewmodel
+package akio.apps.myrun.feature.base.ktx
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable

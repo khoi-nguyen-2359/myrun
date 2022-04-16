@@ -13,7 +13,7 @@ import akio.apps.myrun.feature.base.ui.CentralLoadingView
 import akio.apps.myrun.feature.base.ui.ColumnSpacer
 import akio.apps.myrun.feature.base.ui.RowSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
-import akio.apps.myrun.feature.base.viewmodel.rememberViewModelProvider
+import akio.apps.myrun.feature.base.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.userstats.UserStatsViewModel
 import akio.apps.myrun.feature.userstats.di.DaggerUserStatsFeatureComponent
 import android.app.Application

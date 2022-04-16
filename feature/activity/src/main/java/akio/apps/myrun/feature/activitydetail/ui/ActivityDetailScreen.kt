@@ -14,7 +14,7 @@ import akio.apps.myrun.feature.base.ui.CentralAnnouncementView
 import akio.apps.myrun.feature.base.ui.CentralLoadingView
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
-import akio.apps.myrun.feature.base.viewmodel.rememberViewModelProvider
+import akio.apps.myrun.feature.base.ktx.rememberViewModelProvider
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
