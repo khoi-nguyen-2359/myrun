@@ -12,10 +12,10 @@ import akio.apps.myrun.feature.base.ktx.getColorCompat
 import akio.apps.myrun.feature.base.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.feature.route.R
 import akio.apps.myrun.feature.route.RoutePlanningViewModel
+import akio.apps.myrun.feature.route.di.DaggerRoutePlanningFeatureComponent
 import akio.apps.myrun.feature.route.model.RoutePlottingState
 import akio.apps.myrun.feature.route.model.toLatLng
 import akio.apps.myrun.feature.route.model.toPoint
-import akio.apps.myrun.feature.route.wiring.DaggerRoutePlanningFeatureComponent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap

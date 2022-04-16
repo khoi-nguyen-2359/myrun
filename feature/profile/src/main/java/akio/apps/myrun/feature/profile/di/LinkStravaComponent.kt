@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.profile.wiring
+package akio.apps.myrun.feature.profile.di
 
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.data.common.di.FeatureScope

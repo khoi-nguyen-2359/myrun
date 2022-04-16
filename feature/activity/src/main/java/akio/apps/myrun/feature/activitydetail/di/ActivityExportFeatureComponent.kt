@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.activitydetail.wiring
+package akio.apps.myrun.feature.activitydetail.di
 
 import akio.apps.myrun.data.activity.ActivityDataModule
 import akio.apps.myrun.data.common.di.DispatchersModule

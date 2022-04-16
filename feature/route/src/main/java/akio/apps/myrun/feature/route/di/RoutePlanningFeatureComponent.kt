@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.route.wiring
+package akio.apps.myrun.feature.route.di
 
 import akio.apps.myrun.data.common.di.DispatchersModule
 import akio.apps.myrun.data.location.LocationDataModule

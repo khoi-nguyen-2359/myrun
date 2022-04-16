@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.tracking.wiring
+package akio.apps.myrun.feature.tracking.di
 
 import akio.apps.myrun.data.activity.ActivityDataModule
 import akio.apps.myrun.data.authentication.AuthenticationDataModule

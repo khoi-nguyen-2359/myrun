@@ -26,7 +26,7 @@ import akio.apps.myrun.feature.profile.LinkStravaDelegate
 import akio.apps.myrun.feature.profile.R
 import akio.apps.myrun.feature.profile.UploadAvatarActivity
 import akio.apps.myrun.feature.profile.UserProfileViewModel
-import akio.apps.myrun.feature.profile.wiring.DaggerUserProfileFeatureComponent
+import akio.apps.myrun.feature.profile.di.DaggerUserProfileFeatureComponent
 import android.annotation.SuppressLint
 import android.app.Application
 import android.app.DatePickerDialog

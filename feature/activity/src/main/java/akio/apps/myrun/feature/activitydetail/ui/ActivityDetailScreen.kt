@@ -4,7 +4,7 @@ import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
-import akio.apps.myrun.feature.activitydetail.wiring.DaggerActivityDetailFeatureComponent
+import akio.apps.myrun.feature.activitydetail.di.DaggerActivityDetailFeatureComponent
 import akio.apps.myrun.feature.base.TrackingValueFormatter
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppColors
