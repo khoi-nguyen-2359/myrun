@@ -8,8 +8,7 @@ include(":app")
 include(':data:tracking')
 include(':data:location')
 include ':data:user'
-include ':data:firebase'
-include ':wiring:common'
+include ':data:common'
 include ':data:activity'
 include ':data:authentication'
 include ':data:eapps'

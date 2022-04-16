@@ -9,6 +9,7 @@ import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.common.di.NamedIoDispatcher
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.api.PolyUtil
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
@@ -16,7 +17,6 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.domain.activity.getLatLng
 import akio.apps.myrun.domain.common.ObjectAutoId
 import akio.apps.myrun.domain.common.TrackingValueConverter
-import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import android.graphics.Bitmap
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher

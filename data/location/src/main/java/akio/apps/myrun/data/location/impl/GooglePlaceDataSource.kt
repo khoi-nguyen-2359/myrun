@@ -1,11 +1,11 @@
 package akio.apps.myrun.data.location.impl
 
+import akio.apps.myrun.data.common.di.NamedIoDispatcher
 import akio.apps.myrun.data.location.api.PlaceDataSource
 import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.location.api.model.PlaceAddressComponent
 import akio.apps.myrun.data.location.api.model.PlaceDetails
 import akio.apps.myrun.data.location.api.model.PlaceSuggestion
-import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import android.annotation.SuppressLint
 import android.app.Application
 import android.location.Address

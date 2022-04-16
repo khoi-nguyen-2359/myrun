@@ -18,9 +18,7 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
 
 class UploadActivitiesUsecase @Inject constructor(

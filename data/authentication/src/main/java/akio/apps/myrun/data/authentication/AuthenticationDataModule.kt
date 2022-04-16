@@ -4,7 +4,7 @@ import akio.apps.myrun.data.authentication.api.SignInManager
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.authentication.impl.FirebaseAuthenticationState
 import akio.apps.myrun.data.authentication.impl.FirebaseSignInManager
-import akio.apps.myrun.data.firebase.FirebaseDataModule
+import akio.apps.myrun.data.common.firebase.FirebaseDataModule
 import dagger.Binds
 import dagger.Module
 

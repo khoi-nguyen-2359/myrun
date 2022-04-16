@@ -1,7 +1,7 @@
 package akio.apps.myrun.worker
 
+import akio.apps.myrun.data.common.di.NamedIoDispatcher
 import akio.apps.myrun.domain.strava.UploadActivityFilesToStravaUsecase
-import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import android.app.Application
 import android.content.Context
 import androidx.work.BackoffPolicy

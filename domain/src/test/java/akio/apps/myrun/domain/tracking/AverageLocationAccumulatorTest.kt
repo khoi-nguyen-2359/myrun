@@ -1,8 +1,8 @@
 package akio.apps.myrun.domain.tracking
 
 import akio.apps.myrun.data.location.api.model.Location
-import akio.apps.myrun.domain.tracking.locationprocessor.AverageLocationAccumulator
 import akio.apps.myrun.domain.time.TimeProvider
+import akio.apps.myrun.domain.tracking.locationprocessor.AverageLocationAccumulator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Before

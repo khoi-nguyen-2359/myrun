@@ -1,4 +1,4 @@
-package akio.apps.myrun.di
+package akio.apps.myrun.data.common.di
 
 import akio.apps.myrun.MyRunApp
 import akio.apps.myrun.data.tracking.TrackingDataModule

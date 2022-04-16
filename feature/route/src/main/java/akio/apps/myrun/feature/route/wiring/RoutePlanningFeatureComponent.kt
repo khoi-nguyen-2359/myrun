@@ -1,10 +1,10 @@
 package akio.apps.myrun.feature.route.wiring
 
+import akio.apps.myrun.data.common.di.DispatchersModule
 import akio.apps.myrun.data.location.LocationDataModule
 import akio.apps.myrun.data.route.RouteDataComponent
 import akio.apps.myrun.domain.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.route.RoutePlanningViewModel
-import akio.apps.myrun.wiring.common.DispatchersModule
 import android.app.Application
 import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance

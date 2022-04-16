@@ -10,7 +10,6 @@ import akio.apps.myrun.data.location.impl.LocationDataSourceImpl
 import akio.apps.myrun.data.location.impl.PolyUtilImpl
 import akio.apps.myrun.data.location.impl.SphericalUtilImpl
 import akio.apps.myrun.data.location.impl.model.GoogleMapDirectionApiKey
-import akio.apps.myrun.wiring.common.BuildConfig
 import android.app.Application
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices

@@ -1,4 +1,4 @@
-package akio.apps.myrun.wiring.common
+package akio.apps.myrun.data.common.di
 
 import dagger.Module
 import dagger.Provides

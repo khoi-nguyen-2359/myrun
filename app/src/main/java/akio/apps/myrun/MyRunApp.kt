@@ -1,9 +1,9 @@
 package akio.apps.myrun
 
+import akio.apps.myrun.data.common.di.AppComponent
+import akio.apps.myrun.data.common.di.DaggerAppComponent
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
-import akio.apps.myrun.di.AppComponent
-import akio.apps.myrun.di.DaggerAppComponent
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import akio.apps.myrun.feature.configurator.ConfiguratorFacade
 import akio.apps.myrun.feature.tracking.RouteTrackingService

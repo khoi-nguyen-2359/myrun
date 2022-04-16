@@ -10,7 +10,6 @@ import akio.apps.myrun.data.eapps.impl.StravaAuthenticator
 import akio.apps.myrun.data.eapps.impl.StravaDataRepositoryImpl
 import akio.apps.myrun.data.eapps.impl.StravaTokenRepositoryImpl
 import akio.apps.myrun.data.eapps.impl.model.StravaTokenRefreshMapper
-import akio.apps.myrun.wiring.common.BuildConfig
 import com.google.gson.Gson
 import dagger.Binds
 import dagger.Module

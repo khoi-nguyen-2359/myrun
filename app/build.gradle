@@ -92,7 +92,7 @@ dependencies {
 
     implementation project(':domain')
 
-    implementation project(':data:firebase')
+    implementation project(':data:common')
     implementation(libs.firebasePerfKtx)
     implementation(libs.firebaseAuthKtx)
 

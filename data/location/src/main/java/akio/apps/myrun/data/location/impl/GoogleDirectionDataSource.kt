@@ -1,11 +1,11 @@
 package akio.apps.myrun.data.location.impl
 
+import akio.apps.myrun.data.common.di.NamedIoDispatcher
 import akio.apps.myrun.data.location.api.DirectionDataSource
 import akio.apps.myrun.data.location.api.PolyUtil
 import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.location.impl.model.GoogleMapDirectionApiKey
 import akio.apps.myrun.data.location.impl.model.MapApiStatus
-import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

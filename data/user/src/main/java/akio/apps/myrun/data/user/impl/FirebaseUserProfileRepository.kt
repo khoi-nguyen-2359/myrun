@@ -1,7 +1,8 @@
 package akio.apps.myrun.data.user.impl
 
 import akio.apps.myrun.data.common.Resource
-import akio.apps.myrun.data.firebase.FirebaseStorageUtils
+import akio.apps.myrun.data.common.di.NamedIoDispatcher
+import akio.apps.myrun.data.common.firebase.FirebaseStorageUtils
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.ProfileEditData
@@ -11,7 +12,6 @@ import akio.apps.myrun.data.user.impl.mapper.FirestoreUserProfileMapper
 import akio.apps.myrun.data.user.impl.model.FirestoreUser
 import akio.apps.myrun.data.user.impl.model.FirestoreUserGender
 import akio.apps.myrun.data.user.impl.model.FirestoreUserProfileUpdateMap
-import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import android.net.Uri
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore

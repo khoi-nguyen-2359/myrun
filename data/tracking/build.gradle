@@ -42,8 +42,7 @@ android {
 
 dependencies {
     implementation(project(":data:api"))
-    implementation(project(":data:firebase"))
-    implementation(project(":wiring:common"))
+    implementation(project(":data:common"))
 
     implementation(libs.kotlinxCoroutinesPlayServices)
 

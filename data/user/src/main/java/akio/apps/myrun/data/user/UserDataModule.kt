@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.user
 
+import akio.apps.myrun.data.common.di.DispatchersModule
 import akio.apps.myrun.data.user.api.AppMigrationState
 import akio.apps.myrun.data.user.api.UserFollowRepository
 import akio.apps.myrun.data.user.api.UserProfileRepository
@@ -8,7 +9,6 @@ import akio.apps.myrun.data.user.impl.FirebaseUserFollowRepository
 import akio.apps.myrun.data.user.impl.FirebaseUserProfileRepository
 import akio.apps.myrun.data.user.impl.FirebaseUserRecentPlaceRepository
 import akio.apps.myrun.data.user.impl.PreferenceAppMigrationState
-import akio.apps.myrun.wiring.common.DispatchersModule
 import dagger.Binds
 import dagger.Module
 

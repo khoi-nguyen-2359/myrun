@@ -1,4 +1,4 @@
-package akio.apps.myrun.wiring.common
+package akio.apps.myrun.data.common.di
 
 import javax.inject.Scope
 
