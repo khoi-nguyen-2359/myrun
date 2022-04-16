@@ -7,10 +7,10 @@ import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.base.TrackingValueFormatter
 import akio.apps.myrun.feature.base.ktx.px2dp
+import akio.apps.myrun.feature.base.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
-import akio.apps.myrun.feature.base.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.feed.ActivityFeedViewModel
 import akio.apps.myrun.feature.feed.di.DaggerActivityFeedFeatureComponent
 import akio.apps.myrun.feature.feed.ui.ActivityFeedColors.listBackground

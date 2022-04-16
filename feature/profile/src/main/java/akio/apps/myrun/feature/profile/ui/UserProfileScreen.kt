@@ -8,6 +8,7 @@ import akio.apps.myrun.data.eapps.api.model.RunningApp
 import akio.apps.myrun.data.eapps.api.model.StravaAthlete
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.UserProfile
+import akio.apps.myrun.feature.base.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppBarIconButton
 import akio.apps.myrun.feature.base.ui.AppBarTextButton
@@ -21,7 +22,6 @@ import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.base.ui.ProgressDialog
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
 import akio.apps.myrun.feature.base.ui.filterFloatTextField
-import akio.apps.myrun.feature.base.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.profile.LinkStravaDelegate
 import akio.apps.myrun.feature.profile.R
 import akio.apps.myrun.feature.profile.UploadAvatarActivity

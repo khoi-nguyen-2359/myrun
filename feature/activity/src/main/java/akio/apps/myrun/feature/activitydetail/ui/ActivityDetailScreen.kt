@@ -6,6 +6,7 @@ import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
 import akio.apps.myrun.feature.activitydetail.di.DaggerActivityDetailFeatureComponent
 import akio.apps.myrun.feature.base.TrackingValueFormatter
+import akio.apps.myrun.feature.base.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
@@ -14,7 +15,6 @@ import akio.apps.myrun.feature.base.ui.CentralAnnouncementView
 import akio.apps.myrun.feature.base.ui.CentralLoadingView
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
-import akio.apps.myrun.feature.base.ktx.rememberViewModelProvider
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

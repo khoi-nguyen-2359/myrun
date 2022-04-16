@@ -3,6 +3,7 @@ package akio.apps.myrun.feature.splash
 import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 import akio.apps.myrun.feature.base.DialogDelegate
 import akio.apps.myrun.feature.base.ktx.collectEventRepeatOnStarted
+import akio.apps.myrun.feature.base.ktx.collectRepeatOnStarted
 import akio.apps.myrun.feature.base.ktx.lazyViewModelProvider
 import akio.apps.myrun.feature.main.MainActivity
 import akio.apps.myrun.feature.registration.SignInActivity
@@ -38,7 +39,7 @@ class SplashActivity : AppCompatActivity() {
             splashViewModel.launchCatchingError,
             dialogDelegate::showExceptionAlert
         )
-        collectEventRepeatOnStarted(splashViewModel.isUserSignedIn, ::onUserSignIn)
+        collectRepeatOnStarted(splashViewModel.isUserSignedIn, ::onUserSignIn)
     }
 
     private fun onUserSignIn(isSignedIn: Boolean) = lifecycleScope.launch {

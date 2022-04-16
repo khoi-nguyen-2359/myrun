@@ -5,6 +5,7 @@ import akio.apps.myrun.domain.common.TrackingValueConverter
 import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.base.BuildConfig
+import akio.apps.myrun.feature.base.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppBarIconButton
 import akio.apps.myrun.feature.base.ui.AppColors
@@ -13,7 +14,6 @@ import akio.apps.myrun.feature.base.ui.CentralLoadingView
 import akio.apps.myrun.feature.base.ui.ColumnSpacer
 import akio.apps.myrun.feature.base.ui.RowSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
-import akio.apps.myrun.feature.base.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.userstats.UserStatsViewModel
 import akio.apps.myrun.feature.userstats.di.DaggerUserStatsFeatureComponent
 import android.app.Application

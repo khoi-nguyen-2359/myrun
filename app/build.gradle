@@ -93,6 +93,7 @@ dependencies {
     implementation project(':domain')
 
     implementation project(':data:common')
+    implementation platform(libs.firebaseBom)
     implementation(libs.firebasePerfKtx)
     implementation(libs.firebaseAuthKtx)
 
@@ -139,8 +140,11 @@ dependencies {
     }
 
     testImplementation(libs.kotlinTest)
+    testImplementation(libs.mockitoKotlin)
     testImplementation(project(":feature:configurator"))
     testImplementation(project(":feature:route"))
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinXCoroutinesTest)
 }
 
 buildtimetracker {
