@@ -1,8 +1,8 @@
 package akio.apps.myrun.data.tracking.impl
 
 import akio.apps.myrun.data.activity.api.model.DataPoint
+import akio.apps.myrun.data.common.di.NamedIoDispatcher
 import akio.apps.myrun.data.tracking.api.FitnessDataRepository
-import akio.apps.myrun.wiring.common.NamedIoDispatcher
 import android.app.Application
 import androidx.annotation.VisibleForTesting
 import com.google.android.gms.auth.api.signin.GoogleSignIn

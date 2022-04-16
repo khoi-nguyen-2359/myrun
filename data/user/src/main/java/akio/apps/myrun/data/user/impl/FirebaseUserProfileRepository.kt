@@ -1,7 +1,8 @@
 package akio.apps.myrun.data.user.impl
 
 import akio.apps.myrun.data.common.Resource
-import akio.apps.myrun.data.firebase.FirebaseStorageUtils
+import akio.apps.myrun.data.common.di.NamedIoDispatcher
+import akio.apps.myrun.data.common.firebase.FirebaseStorageUtils
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.ProfileEditData
@@ -33,7 +34,8 @@ class FirebaseUserProfileRepository @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage,
     private val firestoreUserProfileMapper: FirestoreUserProfileMapper,
-    @akio.apps.myrun.wiring.common.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : UserProfileRepository {
 
     private fun getUserDocument(userId: String): DocumentReference {

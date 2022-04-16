@@ -34,11 +34,8 @@ android {
 dependencies {
     implementation project(":data:api")
 
-    implementation project(":data:firebase")
-    implementation(libs.firebaseFirestoreKtx)
-    implementation(libs.firebaseStorageKtx)
-
-    implementation project(":wiring:common")
+    implementation project(":data:common")
+    implementation(libs.bundles.firebase.data)
 
     // app migration
     implementation(libs.dataStore)

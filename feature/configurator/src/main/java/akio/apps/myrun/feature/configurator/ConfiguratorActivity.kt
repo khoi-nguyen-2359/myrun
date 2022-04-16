@@ -1,9 +1,10 @@
 package akio.apps.myrun.feature.configurator
 
-import akio.apps.myrun.feature.configurator._di.ConfiguratorComponent
-import akio.apps.myrun.feature.configurator._di.DaggerConfiguratorComponent
+import akio.apps.myrun.feature.configurator.di.ConfiguratorComponent
+import akio.apps.myrun.feature.configurator.di.DaggerConfiguratorComponent
 import akio.apps.myrun.feature.configurator.ui.ConfiguratorScreen
-import akio.apps.myrun.feature.configurator.viewmodel.UserAuthenticationViewModel
+import akio.apps.myrun.feature.configurator.viewmodel.RouteTrackingSectionViewModel
+import akio.apps.myrun.feature.configurator.viewmodel.UserAuthenticationSectionViewModel
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -14,11 +15,11 @@ class ConfiguratorActivity : AppCompatActivity() {
         DaggerConfiguratorComponent.factory().create(application)
     }
 
-    private val routeTrackingViewModel: RouteTrackingConfigurationViewModel by lazy {
-        configuratorComponent.routeTrackingConfigurationViewModel()
+    private val routeTrackingViewModel: RouteTrackingSectionViewModel by lazy {
+        configuratorComponent.routeTrackingSectionViewModel()
     }
 
-    private val userAuthViewModel: UserAuthenticationViewModel by lazy {
+    private val userAuthSectionViewModel: UserAuthenticationSectionViewModel by lazy {
         configuratorComponent.userAuthenticationViewModel()
     }
 
@@ -27,7 +28,7 @@ class ConfiguratorActivity : AppCompatActivity() {
         setContent {
             ConfiguratorScreen(
                 routeTrackingViewModel,
-                userAuthViewModel
+                userAuthSectionViewModel
             )
         }
     }

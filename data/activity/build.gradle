@@ -37,11 +37,9 @@ android {
 dependencies {
     implementation(project(':data:api'))
 
-    implementation(project(':data:firebase'))
+    implementation(project(':data:common'))
     implementation(libs.firebaseFirestoreKtx)
     implementation(libs.firebaseStorageKtx)
-
-    implementation(project(':wiring:common'))
 
     implementation(libs.javaXInject)
 

@@ -1,4 +1,4 @@
-package akio.apps.myrun.log
+package akio.apps.myrun.feature.base
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

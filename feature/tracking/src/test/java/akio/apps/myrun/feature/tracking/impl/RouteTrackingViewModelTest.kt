@@ -12,16 +12,17 @@ import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegateImpl
 import akio.apps.myrun.domain.tracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.tracking.StoreTrackingActivityDataUsecase
 import akio.apps.myrun.feature.tracking.RouteTrackingViewModel
-import akio.apps.test.whenBlocking
 import android.app.Application
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
+import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
@@ -50,25 +51,22 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
     }
 
     @Test
-    fun `given tracking is stopped, when request initial data, then got initial location`() {
-        whenBlocking(mockedRouteTrackingState) {
-            getTrackingStatusFlow()
-        }.thenReturn(flowOf(STOPPED))
+    fun `given tracking is stopped, when request initial data, then got initial location`() =
+        runBlockingTest {
+            whenever(mockedRouteTrackingState.getTrackingStatusFlow()).thenReturn(flowOf(STOPPED))
 
-        testee = createViewModel()
+            testee = createViewModel()
 
-        whenBlocking(mockedRouteTrackingState) {
-            getTrackingStatus()
-        }.thenReturn(STOPPED)
+            whenever(mockedRouteTrackingState.getTrackingStatus()).thenReturn(STOPPED)
 
-        testee.requestInitialData()
+            testee.requestInitialData()
 
-        assertNull(testee.trackingStats.value)
-        assertNull(testee.trackingLocationBatch.value)
+            assertNull(testee.trackingStats.value)
+            assertNull(testee.trackingLocationBatch.value)
 
-        verify(mockedRouteTrackingState).getTrackingStatusFlow()
-        verifyBlocking(mockedRouteTrackingState) { getTrackingStatus() }
-    }
+            verify(mockedRouteTrackingState).getTrackingStatusFlow()
+            verifyBlocking(mockedRouteTrackingState) { getTrackingStatus() }
+        }
 
     private fun createViewModel() = RouteTrackingViewModel(
         mockedAppContext,

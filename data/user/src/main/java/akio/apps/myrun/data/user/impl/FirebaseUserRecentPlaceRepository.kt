@@ -1,6 +1,7 @@
 package akio.apps.myrun.data.user.impl
 
 import akio.apps.myrun.data.common.Resource
+import akio.apps.myrun.data.common.di.NamedIoDispatcher
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.data.user.impl.model.FirestorePlaceIdentifier
@@ -21,7 +22,8 @@ import kotlinx.coroutines.withContext
 
 class FirebaseUserRecentPlaceRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
-    @akio.apps.myrun.wiring.common.NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : UserRecentPlaceRepository {
 
     private val recentPlaceCollection: CollectionReference

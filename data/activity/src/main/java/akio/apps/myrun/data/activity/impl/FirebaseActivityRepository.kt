@@ -12,8 +12,8 @@ import akio.apps.myrun.data.activity.impl.model.FirestoreFloatDataPointParser
 import akio.apps.myrun.data.activity.impl.model.FirestoreIntegerDataPointParser
 import akio.apps.myrun.data.activity.impl.model.FirestoreLocationDataPointParser
 import akio.apps.myrun.data.common.Resource
-import akio.apps.myrun.data.firebase.FirebaseStorageUtils
-import akio.apps.myrun.wiring.common.NamedIoDispatcher
+import akio.apps.myrun.data.common.di.NamedIoDispatcher
+import akio.apps.myrun.data.common.firebase.FirebaseStorageUtils
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -33,7 +33,8 @@ class FirebaseActivityRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage,
     private val firestoreActivityMapper: FirestoreActivityMapper,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ActivityRepository {
 
     private val userActivityCollectionGroup: Query

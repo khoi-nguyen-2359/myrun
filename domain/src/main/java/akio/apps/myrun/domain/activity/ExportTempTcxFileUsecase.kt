@@ -4,7 +4,7 @@ import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
-import akio.apps.myrun.wiring.common.NamedIoDispatcher
+import akio.apps.myrun.data.common.di.NamedIoDispatcher
 import android.app.Application
 import java.io.File
 import java.text.SimpleDateFormat
@@ -17,7 +17,8 @@ class ExportTempTcxFileUsecase @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
     private val activityRepository: ActivityRepository,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) {
 
     private val timeFormatter = SimpleDateFormat("ddMMyyyy_HHmm", Locale.US)

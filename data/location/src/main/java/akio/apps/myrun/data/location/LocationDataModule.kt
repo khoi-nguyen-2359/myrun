@@ -10,7 +10,6 @@ import akio.apps.myrun.data.location.impl.LocationDataSourceImpl
 import akio.apps.myrun.data.location.impl.PolyUtilImpl
 import akio.apps.myrun.data.location.impl.SphericalUtilImpl
 import akio.apps.myrun.data.location.impl.model.GoogleMapDirectionApiKey
-import akio.apps.myrun.wiring.common.NetworkModule
 import android.app.Application
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -21,6 +20,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -28,7 +28,6 @@ import retrofit2.converter.gson.GsonConverterFactory
     includes = [
         LocationDataModule.Providers::class,
         DirectionDataModule::class,
-        NetworkModule::class
     ]
 )
 interface LocationDataModule {
@@ -54,7 +53,14 @@ interface LocationDataModule {
             LocationServices.getFusedLocationProviderClient(application)
 
         @Provides
-        fun googleDirectionApi(okHttpClientBuilder: OkHttpClient.Builder): GoogleMapDirectionApi {
+        fun googleDirectionApi(): GoogleMapDirectionApi {
+            val okHttpClientBuilder = OkHttpClient.Builder()
+            if (BuildConfig.DEBUG) {
+                val logger = HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+                okHttpClientBuilder.addInterceptor(logger)
+            }
             val okHttpClient = okHttpClientBuilder.build()
 
             val retrofit = Retrofit.Builder()

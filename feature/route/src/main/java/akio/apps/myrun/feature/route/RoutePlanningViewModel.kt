@@ -2,11 +2,11 @@ package akio.apps.myrun.feature.route
 
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.LatLng
+import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.route.api.RouteRepository
 import akio.apps.myrun.data.route.api.model.RouteModel
 import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.domain.route.RoutePlottingUsecase
-import akio.apps.myrun.feature.base.map.toLatLng
 import akio.apps.myrun.feature.route.model.RoutePlottingState
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
@@ -198,5 +198,7 @@ class RoutePlanningViewModel @Inject constructor(
         ) {
             savedStateHandle[STATE_ROUTE_ID_ARG] = routeId
         }
+
+        fun Location.toLatLng() = LatLng(latitude, longitude)
     }
 }

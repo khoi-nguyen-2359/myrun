@@ -11,4 +11,20 @@
     <string name="activity_export_error_notification_title">Activity export error</string>
     <string name="activity_export_send_tracklog_title">Send tracklog of %1$s</string>
     <string name="activity_export_success_notification_title">Your tracklog was exported. Tap to share it.</string>
+    <string name="home_nav_activity_feed_tab_label">Feed</string>
+    <string name="home_upload_progress">%1$d uploading activity</string>
+    <string name="splash_welcome_text">Let\'s start your\nfirst activity!</string>
+    <string name="activity_feed_loading_item_message">Loading your activities…</string>
+    <string name="home_nav_user_stats_tab_label">Stats</string>
+    <string name="user_home_edit_profile_button">Edit</string>
+    <string name="user_home_training_summary_run_activity_type">Running</string>
+    <string name="user_home_training_summary_ride_activity_type">Cycling</string>
+    <string name="user_home_summary_distance_label">Distance</string>
+    <string name="user_home_summary_pace_label">Pace (min/km)</string>
+    <string name="user_home_summary_activities_label">Activities</string>
+    <string name="user_home_summary_weekly_label">This / last\nweek</string>
+    <string name="user_home_summary_monthly_label">This / last\nmonth</string>
+    <string name="user_home_summary_title">Training summary</string>
+    <string name="user_home_route_section_title">Routes</string>
+    <string name="user_home_summary_total_time_label">Time</string>
 </resources>

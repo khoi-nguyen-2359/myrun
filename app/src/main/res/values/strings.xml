@@ -60,8 +60,6 @@
     <string name="profile_logout_pending_activity_upload_warning">Your uploading activities <b>will be lost.</b></string>
     <string name="content_description_edit_profile_button">Edit Profile button</string>
     <string name="edit_user_profile_title">Edit Profile</string>
-    <string name="home_nav_activity_feed_tab_label">Feed</string>
-    <string name="home_nav_user_home_tab_label">Home</string>
     <string-array name="user_timeline_activity_selection_items">
         <item>Running</item>
         <item>Cycling</item>

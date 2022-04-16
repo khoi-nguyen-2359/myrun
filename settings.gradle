@@ -1,26 +1,35 @@
 enableFeaturePreview("VERSION_CATALOGS")
 rootProject.name = "My Run"
+
+// ===== app module =====
+include(":app")
+
+// ===== feature modules =====
 include(':feature:common')
 include(':feature:registration')
 include(':feature:configurator')
-include(":libs:routeparser")
-include(":app")
+include ':feature:profile'
+include ':feature:activity'
+include ':feature:route'
+include ':feature:tracking'
+
+// ===== domain modules =====
+include ':domain'
+
+// ===== data implementation modules =====
 include(':data:tracking')
 include(':data:location')
 include ':data:user'
-include ':data:firebase'
-include ':wiring:common'
+include ':data:common'
 include ':data:activity'
-include ':data:authentication'
 include ':data:eapps'
-include(":test")
-include ':feature:profile'
-include ':worker'
-include ':feature:activity'
-include ':feature:route'
-include ':feature:home'
-include ':feature:tracking'
 include ':data:route'
-include ':domain'
-include ':data:api'
 include ':data:mapbox-location'
+include ':data:api'
+
+// ===== 3rd library modules =====
+include(":libs:routeparser")
+
+// ===== misc modules =====
+include(":test")
+include ':worker'

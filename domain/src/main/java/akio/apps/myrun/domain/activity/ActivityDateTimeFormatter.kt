@@ -1,6 +1,6 @@
 package akio.apps.myrun.domain.activity
 
-import akio.apps.myrun.wiring.common.TimeProvider
+import akio.apps.myrun.domain.time.TimeProvider
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

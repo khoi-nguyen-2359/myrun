@@ -1,5 +1,7 @@
 package akio.apps.myrun.worker
 
+import akio.apps.myrun.data.common.Resource
+import akio.apps.myrun.data.common.di.NamedIoDispatcher
 import akio.apps.myrun.domain.activity.UploadActivitiesUsecase
 import akio.apps.myrun.feature.base.AppNotificationChannel
 import android.app.Application
@@ -18,12 +20,20 @@ import androidx.work.WorkerParameters
 import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onEach
 
 class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
     CoroutineWorker(appContext, params) {
 
     @Inject
     lateinit var uploadActivitiesUsecase: UploadActivitiesUsecase
+
+    @Inject
+    @NamedIoDispatcher
+    lateinit var ioDispatcher: CoroutineDispatcher
 
     private val activityStartTimeFormatter = SimpleDateFormat("MMM dd, yyyy")
 
@@ -32,9 +42,16 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
     }
 
     override suspend fun doWork(): Result {
-        val isCompleted = uploadActivitiesUsecase.uploadAll { activity ->
-            setForegroundAsync(createForegroundInfo(activity.name, activity.startTime))
-        }
+        val isCompleted = uploadActivitiesUsecase.uploadAll()
+            .flowOn(ioDispatcher)
+            .onEach { resource ->
+                if (resource is Resource.Success) {
+                    setForegroundAsync(
+                        createForegroundInfo(resource.data.name, resource.data.startTime)
+                    )
+                }
+            }
+            .firstOrNull { it is Resource.Error } == null
         return if (isCompleted) {
             Result.success()
         } else {

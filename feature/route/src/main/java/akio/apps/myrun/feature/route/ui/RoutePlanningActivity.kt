@@ -1,20 +1,21 @@
 package akio.apps.myrun.feature.route.ui
 
 import akio.apps.myrun.data.location.api.model.LatLng
+import akio.apps.myrun.data.route.DaggerRouteDataComponent
 import akio.apps.myrun.feature.base.BitmapUtils
 import akio.apps.myrun.feature.base.DialogDelegate
-import akio.apps.myrun.feature.base.ext.dp2px
-import akio.apps.myrun.feature.base.ext.extra
-import akio.apps.myrun.feature.base.ext.getColorCompat
-import akio.apps.myrun.feature.base.lifecycle.collectEventRepeatOnStarted
-import akio.apps.myrun.feature.base.lifecycle.collectRepeatOnStarted
-import akio.apps.myrun.feature.base.viewmodel.lazySavedStateViewModelProvider
+import akio.apps.myrun.feature.base.ktx.collectEventRepeatOnStarted
+import akio.apps.myrun.feature.base.ktx.collectRepeatOnStarted
+import akio.apps.myrun.feature.base.ktx.dp2px
+import akio.apps.myrun.feature.base.ktx.extra
+import akio.apps.myrun.feature.base.ktx.getColorCompat
+import akio.apps.myrun.feature.base.viewmodel.lazyViewModelProvider
 import akio.apps.myrun.feature.route.R
 import akio.apps.myrun.feature.route.RoutePlanningViewModel
+import akio.apps.myrun.feature.route.di.DaggerRoutePlanningFeatureComponent
 import akio.apps.myrun.feature.route.model.RoutePlottingState
 import akio.apps.myrun.feature.route.model.toLatLng
 import akio.apps.myrun.feature.route.model.toPoint
-import akio.apps.myrun.feature.route.wiring.DaggerRoutePlanningFeatureComponent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -62,13 +63,11 @@ class RoutePlanningActivity :
     }
     private val topBar: MaterialToolbar by lazy { findViewById(R.id.topbar) }
 
-    private val viewModel: RoutePlanningViewModel by lazySavedStateViewModelProvider(
-        savedStateOwner = this
-    ) { savedStateHandle ->
+    private val viewModel: RoutePlanningViewModel by lazyViewModelProvider { savedStateHandle ->
         val routeId: String? = extra(EXT_ROUTE_ID, null)
         RoutePlanningViewModel.saveArguments(savedStateHandle, routeId)
         DaggerRoutePlanningFeatureComponent.factory()
-            .create(application, savedStateHandle)
+            .create(application, savedStateHandle, DaggerRouteDataComponent.create())
             .drawRouteViewModel()
     }
 

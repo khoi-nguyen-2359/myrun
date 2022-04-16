@@ -36,8 +36,7 @@ android {
 
 dependencies {
     implementation(project(":data:api"))
-    implementation(project(":data:firebase"))
-    implementation(project(":wiring:common"))
+    implementation(project(":data:common"))
 
     debugApi(project(":data:mapbox-location"))
 
@@ -56,6 +55,7 @@ dependencies {
     implementation(libs.playServicesLocation)
 
     implementation(libs.okHttp)
+    implementation(libs.okHttpLogger)
     implementation(libs.retrofit)
     implementation(libs.retrofitGsonConverter)
 

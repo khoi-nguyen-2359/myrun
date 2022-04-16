@@ -33,7 +33,7 @@ android {
 
 dependencies {
     implementation(project(":data:api"))
-    implementation(project(":wiring:common"))
+    implementation(project(":data:common"))
 
     implementation(libs.mapbox.java.services)
 

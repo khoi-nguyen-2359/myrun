@@ -18,9 +18,8 @@ import akio.apps.myrun.domain.tracking.locationprocessor.AverageLocationAccumula
 import akio.apps.myrun.domain.tracking.locationprocessor.LocationProcessorContainer
 import akio.apps.myrun.domain.tracking.locationprocessor.LocationSpeedFilter
 import akio.apps.myrun.feature.base.AppNotificationChannel
-import akio.apps.myrun.feature.tracking.wiring.DaggerRouteTrackingFeatureComponent
-import akio.apps.myrun.log.flowTimer
-import akio.apps.myrun.wiring.common.Now
+import akio.apps.myrun.feature.base.flowTimer
+import akio.apps.myrun.feature.tracking.di.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.worker.UpdateUserRecentPlaceWorker
 import android.annotation.SuppressLint
 import android.app.ActivityManager
@@ -146,7 +145,7 @@ class RouteTrackingService : Service() {
         if (locationProcessingConfig.isAvgAccumulatorEnabled) {
             Timber.d("avg location accumulator, interval=${locationRequest.updateInterval}")
             locationProcessors.addProcessor(
-                AverageLocationAccumulator(locationRequest.updateInterval, Now)
+                AverageLocationAccumulator(locationRequest.updateInterval)
             )
         }
     }
@@ -168,7 +167,7 @@ class RouteTrackingService : Service() {
         routeTrackingState.setInstantSpeed(processedLocations.last().speed)
 
         cacheStartLocation(processedLocations.first())
-        routeTrackingState.setLastLocationUpdateTime(Now.currentTimeMillis())
+        routeTrackingState.setLastLocationUpdateTime(System.currentTimeMillis())
     }
 
     private suspend fun mapLocationUpdateToActivityLocation(
@@ -189,7 +188,7 @@ class RouteTrackingService : Service() {
     }
 
     private suspend fun getActivityElapsedTime(): Long {
-        val activityElapsedTime = Now.currentTimeMillis() -
+        val activityElapsedTime = System.currentTimeMillis() -
             getTrackingStartTime() -
             routeTrackingState.getPauseDuration()
 
@@ -311,7 +310,7 @@ class RouteTrackingService : Service() {
     private fun onActionStart() {
         Timber.d("onActionStart")
         UpdateUserRecentPlaceWorker.enqueueImmediately(this)
-        setRouteTrackingStartState(Now.currentTimeMillis())
+        setRouteTrackingStartState(System.currentTimeMillis())
         startTrackingTimer()
         notifyTrackingNotification()
         requestLocationUpdates()
@@ -345,7 +344,7 @@ class RouteTrackingService : Service() {
 
     private fun onActionPause() {
         mainScope.launch {
-            routeTrackingState.setLastPauseTime(Now.currentTimeMillis())
+            routeTrackingState.setLastPauseTime(System.currentTimeMillis())
             routeTrackingState.setTrackingStatus(RouteTrackingStatus.PAUSED)
         }
 
@@ -369,7 +368,7 @@ class RouteTrackingService : Service() {
         mainScope.launch {
             routeTrackingState.setTrackingStatus(RouteTrackingStatus.RESUMED)
         }
-        addPauseDuration(Now.currentTimeMillis())
+        addPauseDuration(System.currentTimeMillis())
     }
 
     /**

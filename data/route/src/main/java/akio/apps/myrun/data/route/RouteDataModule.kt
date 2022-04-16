@@ -6,7 +6,7 @@ import dagger.Binds
 import dagger.Module
 
 @Module
-interface RouteDataModule {
+internal interface RouteDataModule {
     @Binds
     fun routeRepository(impl: RouteRepositoryImpl): RouteRepository
 }

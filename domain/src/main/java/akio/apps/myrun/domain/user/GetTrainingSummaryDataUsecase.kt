@@ -4,9 +4,8 @@ import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
-import akio.apps.myrun.wiring.common.NamedIoDispatcher
-import akio.apps.myrun.wiring.common.Now
-import akio.apps.myrun.wiring.common.TimeProvider
+import akio.apps.myrun.data.common.di.NamedIoDispatcher
+import akio.apps.myrun.domain.time.TimeProvider
 import android.os.Parcelable
 import java.util.Calendar
 import java.util.Calendar.DAY_OF_MONTH
@@ -27,8 +26,9 @@ import kotlinx.parcelize.Parcelize
 class GetTrainingSummaryDataUsecase @Inject constructor(
     private val activityRepository: ActivityRepository,
     private val userAuthenticationState: UserAuthenticationState,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val timeProvider: TimeProvider = Now
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
+    private val timeProvider: TimeProvider
 ) {
     /**
      * [weekOffset]: value >= 0, indicates current week, or 1, 2, 3... week in the past.
@@ -123,7 +123,7 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
         abstract fun instantiate(offset: Int, count: Int): TimeRange
     }
 
-    class WeekRange(offset: Int = 0, count: Int = 1, time: Long = Now.currentTimeMillis()) :
+    class WeekRange(offset: Int = 0, count: Int = 1, time: Long = System.currentTimeMillis()) :
         TimeRange(offset, count, time) {
         override val millisTimeRange: LongRange = run {
             val calendar = Calendar.getInstance()
@@ -142,7 +142,7 @@ class GetTrainingSummaryDataUsecase @Inject constructor(
         override fun instantiate(offset: Int, count: Int): WeekRange = WeekRange(offset, count)
     }
 
-    class MonthRange(offset: Int = 0, count: Int = 1, time: Long = Now.currentTimeMillis()) :
+    class MonthRange(offset: Int = 0, count: Int = 1, time: Long = System.currentTimeMillis()) :
         TimeRange(offset, count, time) {
         override val millisTimeRange: LongRange = run {
             val calendar = Calendar.getInstance()

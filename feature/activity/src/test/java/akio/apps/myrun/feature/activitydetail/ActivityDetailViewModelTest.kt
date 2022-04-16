@@ -7,7 +7,6 @@ import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.domain.activity.RunSplitsCalculator
-import akio.apps.test.whenBlocking
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import kotlin.test.assertEquals
@@ -79,8 +78,7 @@ class ActivityDetailViewModelTest {
         }
         val locationDataPoints = mock<List<ActivityLocation>>()
 
-        whenBlocking(mockedActivityRepository) { getActivity(defaultActivityId) }
-            .thenReturn(activityModel)
+        whenever(mockedActivityRepository.getActivity(defaultActivityId)).thenReturn(activityModel)
         whenever(mockedActivityRepository.getActivityLocationDataPoints(defaultActivityId))
             .thenReturn(locationDataPoints)
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
@@ -118,8 +116,7 @@ class ActivityDetailViewModelTest {
             on { startTime }.thenReturn(activityStartTime)
         }
 
-        whenBlocking(mockedActivityRepository) { getActivity(defaultActivityId) }
-            .thenReturn(activityModel)
+        whenever(mockedActivityRepository.getActivity(defaultActivityId)).thenReturn(activityModel)
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
         whenever(mockedActivityDateTimeFormatter.formatActivityDateTime(activityStartTime))
             .thenReturn(mock())
@@ -147,8 +144,7 @@ class ActivityDetailViewModelTest {
     fun testLoadActivityDetails_Failure() = testCoroutineDispatcher.runBlockingTest {
         testViewModelInitialization_Success()
 
-        whenBlocking(mockedActivityRepository) { getActivity(defaultActivityId) }
-            .thenReturn(null)
+        whenever(mockedActivityRepository.getActivity(defaultActivityId)).thenReturn(null)
 
         viewModel.activityDetailScreenStateFlow.test {
             awaitItem() // lastEmittedItem

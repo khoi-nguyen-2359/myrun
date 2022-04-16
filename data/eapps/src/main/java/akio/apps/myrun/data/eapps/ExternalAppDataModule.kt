@@ -10,17 +10,17 @@ import akio.apps.myrun.data.eapps.impl.StravaAuthenticator
 import akio.apps.myrun.data.eapps.impl.StravaDataRepositoryImpl
 import akio.apps.myrun.data.eapps.impl.StravaTokenRepositoryImpl
 import akio.apps.myrun.data.eapps.impl.model.StravaTokenRefreshMapper
-import akio.apps.myrun.wiring.common.NetworkModule
 import com.google.gson.Gson
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-@Module(includes = [ExternalAppDataModule.Providers::class, NetworkModule::class])
+@Module(includes = [ExternalAppDataModule.Providers::class])
 interface ExternalAppDataModule {
     @Binds
     fun externalAppCredentialsRepo(repo: FirebaseExternalAppProvidersRepository):
@@ -34,6 +34,20 @@ interface ExternalAppDataModule {
 
     @Module
     object Providers {
+        @Provides
+        @JvmStatic
+        fun okHttpClient(): OkHttpClient.Builder {
+            val builder = OkHttpClient.Builder()
+            if (BuildConfig.DEBUG) {
+                val logger = HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+                builder.addInterceptor(logger)
+            }
+
+            return builder
+        }
+
         @Provides
         @JvmStatic
         @Named(NAME_STRAVA_GSON)
