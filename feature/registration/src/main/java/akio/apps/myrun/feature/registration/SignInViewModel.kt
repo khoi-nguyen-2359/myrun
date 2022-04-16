@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filterNotNull
 
 class SignInViewModel @Inject constructor(
     private val signInManager: SignInManager,
@@ -18,8 +17,8 @@ class SignInViewModel @Inject constructor(
     private val launchCatching: LaunchCatchingDelegate,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatching {
 
-    private val _signInSuccessResult = MutableStateFlow<Event<SignInSuccessResult>?>(null)
-    val signInSuccessResult: Flow<Event<SignInSuccessResult>> = _signInSuccessResult.filterNotNull()
+    private val _signInSuccessResult = MutableStateFlow<Event<SignInSuccessResult>>(Event())
+    val signInSuccessResult: Flow<Event<SignInSuccessResult>> = _signInSuccessResult
 
     private suspend fun onSignInSuccess(result: SignInSuccessResult) {
         postSignInUsecase.invoke(result)
