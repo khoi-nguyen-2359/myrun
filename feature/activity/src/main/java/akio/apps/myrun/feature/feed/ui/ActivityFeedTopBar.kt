@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.feed.ui
 
+import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.base.ui.AppBarIconButton
 import akio.apps.myrun.feature.base.ui.AppDimensions
-import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.feed.ActivityFeedViewModel
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background

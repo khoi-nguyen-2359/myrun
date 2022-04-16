@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.common.di
+package akio.apps.myrun.di
 
 import akio.apps.myrun.MyRunApp
 import akio.apps.myrun.data.tracking.TrackingDataModule
@@ -11,7 +11,6 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
-        // TrackingDomainModule::class,
         TrackingDataModule::class
     ]
 )
