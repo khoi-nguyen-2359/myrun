@@ -91,10 +91,10 @@ class ActivityDetailViewModelTest {
             initActivityDetailViewModel(
                 SavedStateHandle(mapOf("SAVED_STATE_ACTIVITY_ID" to defaultActivityId))
             )
-        viewModel.activityDetailScreenStateFlow.test {
+        viewModel.screenStateFlow.test {
             val lastEmittedItem = awaitItem()
             assertTrue(
-                lastEmittedItem is ActivityDetailViewModel.ActivityDetailScreenState.DataAvailable
+                lastEmittedItem is ActivityDetailViewModel.ScreenState.DataAvailable
             )
             assertEquals(activityModel, lastEmittedItem.activityData)
             assertNull(lastEmittedItem.activityPlaceName)
@@ -121,16 +121,16 @@ class ActivityDetailViewModelTest {
         whenever(mockedActivityDateTimeFormatter.formatActivityDateTime(activityStartTime))
             .thenReturn(mock())
 
-        viewModel.activityDetailScreenStateFlow.test {
+        viewModel.screenStateFlow.test {
             awaitItem() // skip last emitted Item
             viewModel.loadActivityDetails()
             val loadingItem = awaitItem()
             assertTrue(
-                loadingItem is ActivityDetailViewModel.ActivityDetailScreenState.FullScreenLoading
+                loadingItem is ActivityDetailViewModel.ScreenState.FullScreenLoading
             )
             val resultItem = awaitItem()
             assertTrue(
-                resultItem is ActivityDetailViewModel.ActivityDetailScreenState.DataAvailable
+                resultItem is ActivityDetailViewModel.ScreenState.DataAvailable
             )
             assertEquals(activityModel, resultItem.activityData)
             assertNull(resultItem.activityPlaceName)
@@ -146,15 +146,15 @@ class ActivityDetailViewModelTest {
 
         whenever(mockedActivityRepository.getActivity(defaultActivityId)).thenReturn(null)
 
-        viewModel.activityDetailScreenStateFlow.test {
+        viewModel.screenStateFlow.test {
             awaitItem() // lastEmittedItem
             viewModel.loadActivityDetails()
             assertTrue(
-                awaitItem() is ActivityDetailViewModel.ActivityDetailScreenState.FullScreenLoading
+                awaitItem() is ActivityDetailViewModel.ScreenState.FullScreenLoading
             )
             val failureItem = awaitItem()
             assertTrue(
-                failureItem is ActivityDetailViewModel.ActivityDetailScreenState.ErrorAndRetry
+                failureItem is ActivityDetailViewModel.ScreenState.ErrorAndRetry
             )
         }
 

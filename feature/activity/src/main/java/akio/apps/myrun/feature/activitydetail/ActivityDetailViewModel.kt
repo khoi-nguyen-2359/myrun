@@ -31,30 +31,34 @@ class ActivityDetailViewModel @Inject constructor(
     private val activityDetailsMutableStateFlow: MutableStateFlow<Resource<BaseActivityModel>> =
         MutableStateFlow(Resource.Loading())
 
-    val activityDetailScreenStateFlow: Flow<ActivityDetailScreenState> =
-        activityDetailsMutableStateFlow.map { activityResource ->
-            val userId = userAuthenticationState.requireUserAccountId()
-            val userPlaceIdentifier = userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
-            val placeName = placeNameSelector.select(
-                activityResource.data?.placeIdentifier,
-                userPlaceIdentifier
-            )
-            val runSplits = if (activityResource is Resource.Success &&
-                activityResource.data.activityType == ActivityType.Running
-            ) {
-                val locations =
-                    activityRepository.getActivityLocationDataPoints(activityResource.data.id)
-                runSplitsCalculator.createRunSplits(locations)
-            } else {
-                emptyList()
-            }
-            ActivityDetailScreenState.create(
-                activityResource,
-                activityDateTimeFormatter,
-                placeName,
-                runSplits
-            )
+    val screenStateFlow: Flow<ScreenState> =
+        activityDetailsMutableStateFlow.map(::combineScreenState)
+
+    private suspend fun combineScreenState(
+        activityResource: Resource<BaseActivityModel>
+    ): ScreenState {
+        val userId = userAuthenticationState.requireUserAccountId()
+        val userPlaceIdentifier = userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
+        val placeName = placeNameSelector.select(
+            activityResource.data?.placeIdentifier,
+            userPlaceIdentifier
+        )
+        val runSplits = if (activityResource is Resource.Success &&
+            activityResource.data.activityType == ActivityType.Running
+        ) {
+            val locations =
+                activityRepository.getActivityLocationDataPoints(activityResource.data.id)
+            runSplitsCalculator.createRunSplits(locations)
+        } else {
+            emptyList()
         }
+        return ScreenState.create(
+            activityResource,
+            activityDateTimeFormatter,
+            placeName,
+            runSplits
+        )
+    }
 
     init {
         loadActivityDetails()
@@ -78,10 +82,10 @@ class ActivityDetailViewModel @Inject constructor(
 
     class ActivityNotFoundException : Exception()
 
-    sealed class ActivityDetailScreenState {
-        object FullScreenLoading : ActivityDetailScreenState()
-        object ErrorAndRetry : ActivityDetailScreenState()
-        object UnknownState : ActivityDetailScreenState()
+    sealed class ScreenState {
+        object FullScreenLoading : ScreenState()
+        object ErrorAndRetry : ScreenState()
+        object UnknownState : ScreenState()
 
         class DataAvailable(
             val activityData: BaseActivityModel,
@@ -89,7 +93,7 @@ class ActivityDetailViewModel @Inject constructor(
             val activityFormattedStartTime: ActivityDateTimeFormatter.Result,
             val runSplits: List<Double>,
             val isStillLoading: Boolean,
-        ) : ActivityDetailScreenState()
+        ) : ScreenState()
 
         companion object {
             fun create(
@@ -97,7 +101,7 @@ class ActivityDetailViewModel @Inject constructor(
                 activityDateTimeFormatter: ActivityDateTimeFormatter,
                 activityPlaceName: String?,
                 runSplits: List<Double>,
-            ): ActivityDetailScreenState {
+            ): ScreenState {
                 val activityData = activityDetailResource.data
                 return when {
                     activityData == null &&
