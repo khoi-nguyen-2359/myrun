@@ -14,8 +14,9 @@ interface DirectionDataModule {
     fun directionDataSource(impl: MapBoxDirectionDataSource): DirectionDataSource
 
     @Module
-    class Providers {
+    object Providers {
         @Provides
+        @JvmStatic
         fun mapBoxAccessToken(application: Application): MapBoxAccessToken =
             MapBoxAccessToken(application.getString(R.string.mapbox_access_token))
     }
