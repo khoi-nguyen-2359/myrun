@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.home.userstats.ui
+package akio.apps.myrun.feature.userstats.ui
 
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.domain.common.TrackingValueConverter
@@ -13,9 +13,9 @@ import akio.apps.myrun.feature.base.ui.ColumnSpacer
 import akio.apps.myrun.feature.base.ui.RowSpacer
 import akio.apps.myrun.feature.base.ui.StatusBarSpacer
 import akio.apps.myrun.feature.base.viewmodel.rememberViewModelProvider
-import akio.apps.myrun.feature.home.R
-import akio.apps.myrun.feature.home.userstats.UserStatsViewModel
-import akio.apps.myrun.feature.home.userstats.di.DaggerUserStatsFeatureComponent
+import akio.apps.myrun.feature.activity.R
+import akio.apps.myrun.feature.userstats.UserStatsViewModel
+import akio.apps.myrun.feature.userstats.di.DaggerUserStatsFeatureComponent
 import android.app.Application
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image

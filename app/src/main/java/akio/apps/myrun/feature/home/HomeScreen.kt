@@ -7,8 +7,8 @@ import akio.apps.myrun.feature.base.ui.AppDimensions.AppBarHeight
 import akio.apps.myrun.feature.base.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
-import akio.apps.myrun.feature.home.feed.ui.ActivityFeedScreen
-import akio.apps.myrun.feature.home.userstats.ui.UserStatsScreen
+import akio.apps.myrun.feature.feed.ui.ActivityFeedScreen
+import akio.apps.myrun.feature.userstats.ui.UserStatsScreen
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.Box

@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.home.feed.ui
+package akio.apps.myrun.feature.feed.ui
 
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
 import akio.apps.myrun.data.activity.api.model.ActivityType

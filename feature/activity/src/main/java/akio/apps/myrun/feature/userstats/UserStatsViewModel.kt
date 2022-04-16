@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.home.userstats
+package akio.apps.myrun.feature.userstats
 
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.ActivityType

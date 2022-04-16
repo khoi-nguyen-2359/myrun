@@ -1,11 +1,11 @@
-package akio.apps.myrun.feature.home.feed.di
+package akio.apps.myrun.feature.feed.di
 
 import akio.apps.myrun.data.activity.ActivityDataModule
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.data.common.di.FeatureScope
 import akio.apps.myrun.data.user.UserDataModule
 import akio.apps.myrun.domain.launchcatching.LaunchCatchingModule
-import akio.apps.myrun.feature.home.feed.ActivityFeedViewModel
+import akio.apps.myrun.feature.feed.ActivityFeedViewModel
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component

@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.home.feed.ui
+package akio.apps.myrun.feature.feed.ui
 
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
@@ -10,14 +10,14 @@ import akio.apps.myrun.feature.base.navigation.HomeNavDestination
 import akio.apps.myrun.feature.base.ui.AppColors
 import akio.apps.myrun.feature.base.ui.AppDimensions
 import akio.apps.myrun.feature.base.viewmodel.rememberViewModelProvider
-import akio.apps.myrun.feature.home.R
-import akio.apps.myrun.feature.home.feed.ActivityFeedViewModel
-import akio.apps.myrun.feature.home.feed.di.DaggerActivityFeedFeatureComponent
-import akio.apps.myrun.feature.home.feed.ui.ActivityFeedColors.listBackground
-import akio.apps.myrun.feature.home.feed.ui.ActivityFeedDimensions.activityItemHorizontalMargin
-import akio.apps.myrun.feature.home.feed.ui.ActivityFeedDimensions.activityItemHorizontalPadding
-import akio.apps.myrun.feature.home.feed.ui.ActivityFeedDimensions.activityItemVerticalMargin
-import akio.apps.myrun.feature.home.feed.ui.ActivityFeedDimensions.activityItemVerticalPadding
+import akio.apps.myrun.feature.activity.R
+import akio.apps.myrun.feature.feed.ActivityFeedViewModel
+import akio.apps.myrun.feature.feed.di.DaggerActivityFeedFeatureComponent
+import akio.apps.myrun.feature.feed.ui.ActivityFeedColors.listBackground
+import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemHorizontalMargin
+import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemHorizontalPadding
+import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemVerticalMargin
+import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemVerticalPadding
 import android.app.Application
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
