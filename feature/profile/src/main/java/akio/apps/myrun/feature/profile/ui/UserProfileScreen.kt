@@ -112,8 +112,8 @@ private fun UserProfileScreen(
     navController: NavController,
     userProfileViewModel: UserProfileViewModel,
 ) = AppTheme {
-    val screenState by userProfileViewModel.userProfileScreenStateFlow
-        .collectAsState(initial = UserProfileViewModel.UserProfileScreenState.Loading)
+    val screenState by userProfileViewModel.screenStateFlow
+        .collectAsState(initial = UserProfileViewModel.ScreenState.Loading)
     UserProfileScreen(
         screenState,
         navController,
@@ -141,7 +141,7 @@ private fun UserProfileScreen(
 
 @Composable
 private fun UserProfileScreen(
-    screenState: UserProfileViewModel.UserProfileScreenState,
+    screenState: UserProfileViewModel.ScreenState,
     navController: NavController,
     onConfirmToUnlinkStrava: () -> Unit,
     onClickSaveUserProfile: () -> Unit,
@@ -150,7 +150,7 @@ private fun UserProfileScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         StatusBarSpacer()
         val isSaveButtonVisible =
-            screenState is UserProfileViewModel.UserProfileScreenState.FormState
+            screenState is UserProfileViewModel.ScreenState.FormState
         UserProfileTopBar(
             isSaveButtonVisible,
             navController,
@@ -162,16 +162,16 @@ private fun UserProfileScreen(
                 .background(Color.White)
         ) {
             when (screenState) {
-                UserProfileViewModel.UserProfileScreenState.Loading ->
+                UserProfileViewModel.ScreenState.Loading ->
                     CentralLoadingView(
                         text = stringResource(id = R.string.user_profile_fullscreen_loading_text)
                     )
-                is UserProfileViewModel.UserProfileScreenState.ErrorRetry ->
+                is UserProfileViewModel.ScreenState.ErrorRetry ->
                     CentralAnnouncementView(
                         text = stringResource(id = R.string.dialog_delegate_unknown_error) +
                             "\n${screenState.exception.localizedMessage}"
                     ) { }
-                is UserProfileViewModel.UserProfileScreenState.FormState -> {
+                is UserProfileViewModel.ScreenState.FormState -> {
                     UserProfileForm(
                         screenState.editingFormData,
                         screenState.stravaLinkingState,
@@ -597,7 +597,7 @@ private fun UserProfileImageView(
 @Composable
 private fun PreviewUserProfileScreenSuccessForm() {
     UserProfileScreen(
-        screenState = UserProfileViewModel.UserProfileScreenState.create(
+        screenState = UserProfileViewModel.ScreenState.create(
             Resource.Success(createUserProfile()),
             Resource.Success(createExternalProviders()),
             null
@@ -613,7 +613,7 @@ private fun PreviewUserProfileScreenSuccessForm() {
 @Composable
 private fun PreviewUserProfileScreenErrorForm() {
     UserProfileScreen(
-        screenState = UserProfileViewModel.UserProfileScreenState.create(
+        screenState = UserProfileViewModel.ScreenState.create(
             Resource.Error(Exception()),
             Resource.Success(createExternalProviders()),
             null

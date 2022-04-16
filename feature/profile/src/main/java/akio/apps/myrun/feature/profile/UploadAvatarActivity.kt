@@ -35,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+// TODO: convert to composable UI
 class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) {
 
     private var initialImageRequestDisposable: Disposable? = null
@@ -45,8 +46,6 @@ class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) 
     private val takePictureButton: View by lazy { findViewById(R.id.btCamera) }
     private val pickPictureButton: View by lazy { findViewById(R.id.btGallery) }
     private val rotateButton: View by lazy { findViewById(R.id.rotateButton) }
-
-    // TODO: refactor to composable UI
 
     @Inject
     lateinit var uploadUserAvatarImageUsecase: UploadUserAvatarImageUsecase

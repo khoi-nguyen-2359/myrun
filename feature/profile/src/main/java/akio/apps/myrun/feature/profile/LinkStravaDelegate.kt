@@ -6,7 +6,8 @@ import android.content.Intent
 import android.net.Uri
 import timber.log.Timber
 
-const val STRAVA_APP_ID = "54817"
+// TODO: separate strava dev app for debug/release
+private const val STRAVA_APP_ID = "54817"
 
 class LinkStravaDelegate(
     private val activity: Activity,
