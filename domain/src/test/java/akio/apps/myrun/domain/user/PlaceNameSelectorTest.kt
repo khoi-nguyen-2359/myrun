@@ -5,19 +5,18 @@ import org.junit.Before
 import org.junit.Test
 
 class PlaceNameSelectorTest {
-    private lateinit var usecase: PlaceNameSelector
+    private lateinit var selector: PlaceNameSelector
 
     @Before
     fun setup() {
-        usecase =
-            PlaceNameSelector(PlaceIdentifierConverter())
+        selector = PlaceNameSelector(PlaceIdentifierConverter())
     }
 
     @Test
     fun testGetActivityDisplayPlaceName_DifferentCountry() {
         val activityPlaceIdentifier = "USA-CA-SJ"
         val currentUserPlaceIdentifier = "VN-HCM-D10-W9"
-        val placeName = usecase(activityPlaceIdentifier, currentUserPlaceIdentifier)
+        val placeName = selector.select(activityPlaceIdentifier, currentUserPlaceIdentifier)
         assertEquals("USA, CA", placeName)
     }
 
@@ -25,7 +24,7 @@ class PlaceNameSelectorTest {
     fun testGetActivityDisplayPlaceName_DifferentCity() {
         val activityPlaceIdentifier = "VN-HN-CG"
         val currentUserPlaceIdentifier = "VN-HCM-D10-W9"
-        val placeName = usecase(activityPlaceIdentifier, currentUserPlaceIdentifier)
+        val placeName = selector.select(activityPlaceIdentifier, currentUserPlaceIdentifier)
         assertEquals("HN, CG", placeName)
     }
 
@@ -33,7 +32,7 @@ class PlaceNameSelectorTest {
     fun testGetActivityDisplayPlaceName_DifferentLastAddress() {
         val activityPlaceIdentifier = "VN-HCM-D10-W10"
         val currentUserPlaceIdentifier = "VN-HCM-D10-W9"
-        val placeName = usecase(activityPlaceIdentifier, currentUserPlaceIdentifier)
+        val placeName = selector.select(activityPlaceIdentifier, currentUserPlaceIdentifier)
         assertEquals("D10, W10", placeName)
     }
 
@@ -41,7 +40,7 @@ class PlaceNameSelectorTest {
     fun testGetActivityDisplayPlaceName_NoUserRecentPlace() {
         val activityPlaceIdentifier = "VN-HCM-D10-W10"
         val currentUserPlaceIdentifier = null
-        val placeName = usecase(activityPlaceIdentifier, currentUserPlaceIdentifier)
+        val placeName = selector.select(activityPlaceIdentifier, currentUserPlaceIdentifier)
         assertEquals("VN, HCM", placeName)
     }
 
@@ -49,7 +48,7 @@ class PlaceNameSelectorTest {
     fun testGetActivityDisplayPlaceName_ShortActivityPlaceAddressList() {
         val activityPlaceIdentifier = "HCM-D10"
         val currentUserPlaceIdentifier = "HCM-D10-W15"
-        val placeName = usecase(activityPlaceIdentifier, currentUserPlaceIdentifier)
+        val placeName = selector.select(activityPlaceIdentifier, currentUserPlaceIdentifier)
         assertEquals("HCM, D10", placeName)
     }
 }

@@ -3,7 +3,7 @@ package akio.apps.myrun.domain.user
 import javax.inject.Inject
 
 /**
- * Select elements in addresses of a place and present it as a meaningful place name to user.
+ * Select elements in addresses of a place and present it as a readable place name to user.
  */
 class PlaceNameSelector @Inject constructor(
     private val placeIdentifierConverter: PlaceIdentifierConverter,
@@ -14,10 +14,7 @@ class PlaceNameSelector @Inject constructor(
      * yet.
      * Returns null if target place doesn't have a name.
      */
-    operator fun invoke(
-        targetPlaceIdentifier: String?,
-        userPlaceIdentifier: String?,
-    ): String? {
+    fun select(targetPlaceIdentifier: String?, userPlaceIdentifier: String?): String? {
         val activityAddressList =
             placeIdentifierConverter.toAddressNameList(targetPlaceIdentifier)
         if (activityAddressList.isEmpty()) {

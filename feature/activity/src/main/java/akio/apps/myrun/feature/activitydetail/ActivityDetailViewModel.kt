@@ -35,8 +35,10 @@ class ActivityDetailViewModel @Inject constructor(
         activityDetailsMutableStateFlow.map { activityResource ->
             val userId = userAuthenticationState.requireUserAccountId()
             val userPlaceIdentifier = userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
-            val placeName =
-                placeNameSelector(activityResource.data?.placeIdentifier, userPlaceIdentifier)
+            val placeName = placeNameSelector.select(
+                activityResource.data?.placeIdentifier,
+                userPlaceIdentifier
+            )
             val runSplits = if (activityResource is Resource.Success &&
                 activityResource.data.activityType == ActivityType.Running
             ) {

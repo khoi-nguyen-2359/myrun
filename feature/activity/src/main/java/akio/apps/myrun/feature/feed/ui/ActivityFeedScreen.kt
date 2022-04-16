@@ -212,7 +212,7 @@ fun ActivityFeedScreen(
     navController: NavController,
 ) {
     val lazyPagingItems = activityFeedViewModel.myActivityList.collectAsLazyPagingItems()
-    val isLoadingInitialData by activityFeedViewModel.isLoadingInitialData.collectAsState(
+    val isLoadingInitialData by activityFeedViewModel.isInitialLoading.collectAsState(
         initial = false
     )
     when {
@@ -488,11 +488,16 @@ private fun ActivityInformationView(
     onClickUserAvatar: () -> Unit,
     isShareMenuVisible: Boolean = true,
 ) = Column(modifier = Modifier.padding(start = activityItemHorizontalPadding)) {
+    val (userName, userAvatar) = if (userProfile?.accountId == activity.athleteInfo.userId) {
+        userProfile.name to userProfile.photo
+    } else {
+        activity.athleteInfo.userName to activity.athleteInfo.userAvatar
+    }
     Row(verticalAlignment = Alignment.CenterVertically) {
-        UserAvatarImage(userProfile?.photo, onClickUserAvatar)
+        UserAvatarImage(userAvatar, onClickUserAvatar)
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1.0f)) {
-            AthleteNameText(userProfile?.name.orEmpty())
+            AthleteNameText(userName.orEmpty())
             Spacer(modifier = Modifier.height(2.dp))
             ActivityTimeAndPlaceText(activityFormattedStartTime, activityDisplayPlaceName)
         }
