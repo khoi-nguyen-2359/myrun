@@ -8,7 +8,7 @@ import androidx.paging.PagingState
 import javax.inject.Inject
 import timber.log.Timber
 
-class ActivityPagingSource @Inject constructor(
+internal class ActivityPagingSource @Inject constructor(
     private val getFeedActivitiesUsecase: GetFeedActivitiesUsecase,
 ) : PagingSource<Long, BaseActivityModel>() {
     override suspend fun load(params: LoadParams<Long>): LoadResult<Long, BaseActivityModel> {
@@ -30,7 +30,7 @@ class ActivityPagingSource @Inject constructor(
     override fun getRefreshKey(state: PagingState<Long, BaseActivityModel>): Long? = null
 }
 
-class ActivityPagingSourceFactory @Inject constructor(
+internal class ActivityPagingSourceFactory @Inject constructor(
     private val getFeedActivitiesUsecase: GetFeedActivitiesUsecase,
 ) {
     fun createPagingSource(): ActivityPagingSource =

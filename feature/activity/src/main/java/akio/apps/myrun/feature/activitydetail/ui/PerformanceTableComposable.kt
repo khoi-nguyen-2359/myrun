@@ -28,7 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PerformanceTableComposable(
+internal fun PerformanceTableComposable(
     activity: BaseActivityModel,
     modifier: Modifier = Modifier,
 ) = Column(modifier) {

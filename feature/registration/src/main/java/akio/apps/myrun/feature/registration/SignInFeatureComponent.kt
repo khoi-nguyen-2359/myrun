@@ -18,7 +18,7 @@ import dagger.Component
         UserDataModule::class,
     ],
 )
-interface SignInFeatureComponent {
+internal interface SignInFeatureComponent {
     fun signInViewModel(): SignInViewModel
 
     @Component.Factory

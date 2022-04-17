@@ -17,7 +17,7 @@ import dagger.Component
         ExternalAppDataModule::class
     ]
 )
-interface LinkStravaComponent {
+internal interface LinkStravaComponent {
     fun linkStravaViewModel(): LinkStravaViewModel
 
     @Component.Factory

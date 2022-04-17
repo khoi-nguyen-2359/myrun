@@ -26,7 +26,7 @@ import dagger.Component
         TrackingDataModule::class
     ],
 )
-interface RouteTrackingFeatureComponent {
+internal interface RouteTrackingFeatureComponent {
     fun routeTrackingViewModel(): RouteTrackingViewModel
 
     fun inject(service: RouteTrackingService)

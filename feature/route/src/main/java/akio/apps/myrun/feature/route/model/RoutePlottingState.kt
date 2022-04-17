@@ -6,7 +6,7 @@ import androidx.annotation.IntRange
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class RoutePlottingState(
+internal data class RoutePlottingState(
     val stateData: List<List<LatLng>>,
     @IntRange(from = 0, to = Long.MAX_VALUE)
     val currentIndex: Int,

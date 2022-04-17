@@ -16,7 +16,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class LocationServiceChecker(
+internal class LocationServiceChecker(
     private val activity: Activity,
     private val rcResolution: Int,
 ) {

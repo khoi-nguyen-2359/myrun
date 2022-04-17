@@ -9,7 +9,7 @@ import timber.log.Timber
 // TODO: separate strava dev app for debug/release
 private const val STRAVA_APP_ID = "54817"
 
-class LinkStravaDelegate(
+internal class LinkStravaDelegate(
     private val activity: Activity,
     private val eventListener: EventListener
 ) {

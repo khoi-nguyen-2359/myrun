@@ -29,7 +29,7 @@ import timber.log.Timber
  * The idea is transforming scroll and scale gestures into translate and scale operations on the
  * drawing source rect.
  */
-class CropImageView @JvmOverloads constructor(
+internal class CropImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

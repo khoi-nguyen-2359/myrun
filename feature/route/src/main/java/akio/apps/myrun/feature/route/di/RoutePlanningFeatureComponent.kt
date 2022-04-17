@@ -18,7 +18,7 @@ import dagger.Component
     ],
     dependencies = [RouteDataComponent::class]
 )
-interface RoutePlanningFeatureComponent {
+internal interface RoutePlanningFeatureComponent {
     fun drawRouteViewModel(): RoutePlanningViewModel
 
     @Component.Factory

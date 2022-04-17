@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 // TODO: convert to composable UI
-class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) {
+internal class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) {
 
     private var initialImageRequestDisposable: Disposable? = null
 

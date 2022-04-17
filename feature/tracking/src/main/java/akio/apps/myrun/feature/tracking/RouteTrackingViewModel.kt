@@ -37,7 +37,7 @@ import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class RouteTrackingViewModel @Inject constructor(
+internal class RouteTrackingViewModel @Inject constructor(
     private val application: Application,
     private val routeTrackingState: RouteTrackingState,
     private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase,

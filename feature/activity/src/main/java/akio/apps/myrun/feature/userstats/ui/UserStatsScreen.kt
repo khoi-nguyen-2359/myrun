@@ -125,7 +125,7 @@ private fun UserStatsScreen(
 }
 
 @Composable
-fun UserStatsContent(
+private fun UserStatsContent(
     screenState: UserStatsViewModel.ScreenState.StatsAvailable,
     modifier: Modifier = Modifier,
     appNavController: NavController,
@@ -140,7 +140,7 @@ fun UserStatsContent(
 }
 
 @Composable
-fun TrainingSummaryTable(screenState: UserStatsViewModel.ScreenState.StatsAvailable) {
+private fun TrainingSummaryTable(screenState: UserStatsViewModel.ScreenState.StatsAvailable) {
     var selectedActivityType by rememberSaveable { mutableStateOf(ActivityType.Running) }
     val summaryData = screenState.trainingSummaryTableData[selectedActivityType]
         ?: return

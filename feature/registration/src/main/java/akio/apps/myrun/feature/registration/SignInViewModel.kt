@@ -11,7 +11,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class SignInViewModel @Inject constructor(
+internal class SignInViewModel @Inject constructor(
     private val signInManager: SignInManager,
     private val postSignInUsecase: PostSignInUsecase,
     private val launchCatching: LaunchCatchingDelegate,

@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class ActivityFeedViewModel @Inject constructor(
+internal class ActivityFeedViewModel @Inject constructor(
     private val activityPagingSourceFactory: ActivityPagingSourceFactory,
     private val placeNameSelector: PlaceNameSelector,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,

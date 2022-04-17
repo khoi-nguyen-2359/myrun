@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
-class RoutePlanningViewModel @Inject constructor(
+internal class RoutePlanningViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val plotRouteUsecase: RoutePlottingUsecase,
     private val locationDataSource: LocationDataSource,

@@ -204,7 +204,7 @@ private fun PaddingValues.clone(
 ): PaddingValues = PaddingValues(start, top, end, bottom)
 
 @Composable
-fun ActivityFeedScreen(
+private fun ActivityFeedScreen(
     activityFeedViewModel: ActivityFeedViewModel,
     contentPadding: PaddingValues,
     feedListState: LazyListState,

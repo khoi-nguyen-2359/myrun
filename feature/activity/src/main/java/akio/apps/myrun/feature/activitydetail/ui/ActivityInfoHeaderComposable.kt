@@ -35,7 +35,7 @@ import coil.compose.rememberImagePainter
 import timber.log.Timber
 
 @Composable
-fun ActivityInfoHeaderView(
+internal fun ActivityInfoHeaderView(
     activityDetail: BaseActivityModel,
     activityFormattedStartTime: ActivityDateTimeFormatter.Result,
     activityDisplayPlaceName: String?,

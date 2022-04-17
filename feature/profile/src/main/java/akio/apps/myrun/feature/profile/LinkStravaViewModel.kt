@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 
-class LinkStravaViewModel @Inject constructor(
+internal class LinkStravaViewModel @Inject constructor(
     private val updateStravaTokenUsecase: UpdateStravaTokenUsecase,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
     private val stravaTokenRepository: StravaTokenRepository,

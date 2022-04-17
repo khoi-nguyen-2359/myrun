@@ -24,7 +24,7 @@ import androidx.compose.ui.window.Dialog
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun StopOptionsDialog(
+internal fun StopOptionsDialog(
     routeTrackingViewModel: RouteTrackingViewModel,
     itemSelectAction: (StopDialogOptionId) -> Unit,
 ) = AppTheme {

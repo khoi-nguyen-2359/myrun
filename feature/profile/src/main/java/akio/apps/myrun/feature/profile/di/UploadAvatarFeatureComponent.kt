@@ -15,7 +15,7 @@ import dagger.Component
         UserDataModule::class
     ],
 )
-interface UploadAvatarFeatureComponent {
+internal interface UploadAvatarFeatureComponent {
     fun inject(activity: UploadAvatarActivity)
 
     @Component.Factory

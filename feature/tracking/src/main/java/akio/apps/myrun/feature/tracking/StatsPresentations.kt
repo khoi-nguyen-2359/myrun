@@ -2,7 +2,7 @@ package akio.apps.myrun.feature.tracking
 
 import akio.apps.myrun.domain.common.TrackingValueConverter
 
-object StatsPresentations {
+internal object StatsPresentations {
     fun getDisplayTrackingDistance(distance: Double): String =
         String.format("%.2f", distance / 1000)
 

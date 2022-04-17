@@ -25,7 +25,7 @@ import kotlin.coroutines.resume
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
-class ActivityRouteMapActivity : AppCompatActivity(R.layout.activity_activity_route_map) {
+internal class ActivityRouteMapActivity : AppCompatActivity(R.layout.activity_activity_route_map) {
     private lateinit var map: GoogleMap
 
     private val encodedPolyline: String by lazy {

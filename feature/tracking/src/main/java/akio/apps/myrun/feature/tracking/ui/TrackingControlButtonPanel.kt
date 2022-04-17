@@ -54,7 +54,7 @@ import androidx.compose.ui.unit.sp
 private val CIRCULAR_CONTROL_BUTTON_SIZE = 90.dp
 
 @Composable
-fun TrackingControlButtonPanel(
+internal fun TrackingControlButtonPanel(
     routeTrackingViewModel: RouteTrackingViewModel,
     onClickControlButton: (TrackingControlButtonType) -> Unit,
     onClickCameraMode: (RouteTrackingActivity.CameraMovement) -> Unit,

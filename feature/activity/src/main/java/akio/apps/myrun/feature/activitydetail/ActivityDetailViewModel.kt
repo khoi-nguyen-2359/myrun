@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class ActivityDetailViewModel @Inject constructor(
+internal class ActivityDetailViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val activityRepository: ActivityRepository,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,

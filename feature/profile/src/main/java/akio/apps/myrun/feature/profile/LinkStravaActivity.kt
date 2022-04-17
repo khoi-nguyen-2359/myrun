@@ -17,7 +17,7 @@ import androidx.lifecycle.LiveData
  * No UI activity to receive result from strava login.
  * Follow Strava document https://developers.strava.com/docs/authentication/
  */
-class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.EventListener {
+internal class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.EventListener {
 
     private val dialogDelegate = DialogDelegate(this)
     private val linkStravaDelegate by lazy { LinkStravaDelegate(this, this) }

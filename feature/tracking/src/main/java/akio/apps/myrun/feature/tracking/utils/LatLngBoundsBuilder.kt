@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLngBounds
 
 private typealias GmsLatLng = com.google.android.gms.maps.model.LatLng
 
-class LatLngBoundsBuilder {
+internal class LatLngBoundsBuilder {
     private val internalBuilder: LatLngBounds.Builder = LatLngBounds.builder()
     private var isEmpty: Boolean = true
 

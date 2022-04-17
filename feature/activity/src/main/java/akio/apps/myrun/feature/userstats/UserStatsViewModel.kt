@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.parcelize.Parcelize
 
-class UserStatsViewModel @Inject constructor(
+internal class UserStatsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val getUserRecentPlaceNameUsecase: GetUserRecentPlaceNameUsecase,

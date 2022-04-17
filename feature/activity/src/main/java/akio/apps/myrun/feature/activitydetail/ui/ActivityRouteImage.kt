@@ -25,7 +25,7 @@ private const val ACTIVITY_ROUTE_IMAGE_RATIO = 1.5f
 
 @OptIn(coil.annotation.ExperimentalCoilApi::class)
 @Composable
-fun ActivityRouteImage(
+internal fun ActivityRouteImage(
     activity: BaseActivityModel,
     imageRatio: Float = ACTIVITY_ROUTE_IMAGE_RATIO,
     onClickAction: (() -> Unit)? = null,

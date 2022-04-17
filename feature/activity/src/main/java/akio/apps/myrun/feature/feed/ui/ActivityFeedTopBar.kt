@@ -36,7 +36,7 @@ private object ActivityFeedTopBarColors {
 }
 
 @Composable
-fun ActivityFeedTopBar(
+internal fun ActivityFeedTopBar(
     activityUploadBadge: ActivityFeedViewModel.ActivityUploadBadgeStatus?,
     onClickUploadCompleteBadge: () -> Unit,
     modifier: Modifier = Modifier,
