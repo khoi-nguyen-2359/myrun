@@ -88,30 +88,23 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    implementation project(':domain')
-
-    implementation project(':base:firebase')
-    implementation platform(libs.firebaseBom)
-    implementation(libs.firebasePerfKtx)
-    implementation(libs.firebaseAuthKtx)
-
-    implementation(project(':data:user'))
-    implementation(project(':data:tracking'))
-
-    implementation project(':worker')
-
-    implementation project(':feature:core')
     implementation project(':feature:registration')
     implementation project(":feature:profile")
     implementation project(":feature:activity")
     implementation project(":feature:tracking")
 
-    debugImplementation project(":feature:route")
-    debugImplementation project(":feature:configurator")
-
+    implementation project(':worker')
     implementation(libs.workManager) // to config work manager in application class
+
+    implementation project(':domain')
+
+    implementation(project(':data:user'))
+    implementation(project(':data:tracking'))
+
+    implementation project(':base:firebase')
+    implementation platform(libs.firebaseBom)
+    implementation(libs.firebasePerfKtx)
+    implementation(libs.firebaseAuthKtx)
 
     implementation(libs.googlePlaces)   // to init place sdk in application class
 
@@ -135,6 +128,9 @@ dependencies {
 
     implementation(libs.timber)
 
+    debugImplementation project(":feature:core")
+    debugImplementation project(":feature:route")
+    debugImplementation project(":feature:configurator")
     if (localProps.getProperty("leakcanary.enabled", "1") == "1") {
         debugImplementation(libs.leakCanary)
     }

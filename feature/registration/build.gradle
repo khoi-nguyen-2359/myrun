@@ -35,12 +35,12 @@ android {
 dependencies {
     implementation(project(":feature:core"))
 
-    implementation(project(":base:di"))
     implementation(project(':domain'))
 
-    implementation(project(':data:eapps'))
     implementation(project(':data:user'))
+    implementation(project(':data:eapps'))
 
+    implementation(project(":base:di"))
     implementation(project(":base:firebase"))
     implementation(libs.bundles.firebase.data)
 

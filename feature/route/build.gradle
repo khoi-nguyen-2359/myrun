@@ -35,13 +35,14 @@ android {
 }
 
 dependencies {
-    implementation(project(":base:di"))
     implementation(project(':feature:core'))
 
     implementation(project(':domain'))
 
     implementation(project(':data:location'))
     implementation(project(':data:route'))
+
+    implementation(project(":base:di"))
 
     implementation(libs.androidXAppCompat)
     implementation(libs.activity)

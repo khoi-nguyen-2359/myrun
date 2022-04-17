@@ -44,23 +44,22 @@ android {
 dependencies {
     implementation(project(':feature:core'))
 
-    implementation(project(":base:di"))
-
     implementation(project(':domain'))
 
     implementation(project(':data:user'))
     implementation(project(':data:eapps'))
     implementation(project(':data:activity'))
     implementation(project(':data:tracking'))
+    implementation(project(':data:location'))
 
+    implementation(project(":base:di"))
     implementation(project(':base:firebase'))
     implementation(libs.bundles.firebase.data)
 
-    implementation(project(':data:location'))
+    implementation(project(':worker'))
+
     implementation(libs.playServicesLocation)
     implementation(libs.googlePlaces)
-
-    implementation(project(':worker'))
 
     implementation(libs.kotlinxCoroutinesPlayServices)
 
