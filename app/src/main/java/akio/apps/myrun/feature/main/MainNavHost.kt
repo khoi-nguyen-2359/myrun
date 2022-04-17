@@ -93,7 +93,7 @@ private fun NavGraphBuilder.addHomeDestination(
         popEnterTransition = { _, _ -> AppNavTransitionDefaults.popEnterTransition },
         popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
     ) {
-        HomeScreen(
+        HomeTabScreen(
             navController,
             onClickFloatingActionButton,
             onClickExportActivityFile,

@@ -11,6 +11,7 @@ import akio.apps.myrun.feature.feed.ui.ActivityFeedScreen
 import akio.apps.myrun.feature.userstats.ui.UserStatsScreen
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -55,6 +56,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.LocalWindowInsets
 import kotlin.math.roundToInt
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 private enum class HomeNavItemInfo(
@@ -78,11 +80,11 @@ private enum class HomeNavItemInfo(
 private const val REVEAL_ANIM_THRESHOLD = 10
 
 @Composable
-fun HomeScreen(
+fun HomeTabScreen(
     appNavController: NavController,
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
-    openRoutePlanningAction: () -> Unit
+    openRoutePlanningAction: () -> Unit,
 ) = AppTheme {
     // FAB is inactive when user selects a tab other than Feed
     var isFabActive by remember { mutableStateOf(true) }
@@ -92,25 +94,8 @@ fun HomeScreen(
     val fabOffsetY = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
     // insets may be updated, so remember scroll connection with keys
-    val nestedScrollConnection = remember(fabBoxSizePx) {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val delta = available.y
-                if (!isFabActive) {
-                    return Offset.Zero
-                }
-
-                val targetFabOffsetY = when {
-                    delta >= REVEAL_ANIM_THRESHOLD -> 0f // reveal (move up)
-                    delta <= -REVEAL_ANIM_THRESHOLD -> fabBoxSizePx // go away (move down)
-                    else -> return Offset.Zero
-                }
-                coroutineScope.launch {
-                    fabOffsetY.animateTo(targetFabOffsetY)
-                }
-                return Offset.Zero
-            }
-        }
+    val fabAnimationScrollConnection = remember(fabBoxSizePx) {
+        createScrollConnectionForFabAnimation(isFabActive, fabBoxSizePx, coroutineScope, fabOffsetY)
     }
 
     val homeNavController = rememberNavController()
@@ -118,19 +103,12 @@ fun HomeScreen(
     isFabActive = currentBackStackEntry?.destination?.route == HomeNavItemInfo.ActivityFeed.route
     // toggle FAB when switching between tabs
     LaunchedEffect(isFabActive) {
-        when {
-            isFabActive && fabOffsetY.value != 0f -> {
-                fabOffsetY.animateTo(0f)
-            }
-            !isFabActive && fabOffsetY.value != fabBoxSizePx -> {
-                fabOffsetY.animateTo(fabBoxSizePx)
-            }
-        }
+        animateFabOffsetY(isFabActive, fabOffsetY, fabBoxSizePx)
     }
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .nestedScroll(nestedScrollConnection)
+            .nestedScroll(fabAnimationScrollConnection)
     ) {
         HomeNavHost(
             homeNavController,
@@ -155,13 +133,51 @@ fun HomeScreen(
     }
 }
 
+private fun createScrollConnectionForFabAnimation(
+    isFabActive: Boolean,
+    fabBoxSizePx: Float,
+    coroutineScope: CoroutineScope,
+    fabOffsetY: Animatable<Float, AnimationVector1D>,
+) = object : NestedScrollConnection {
+    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+        if (!isFabActive) {
+            return Offset.Zero
+        }
+        val delta = available.y
+        val targetFabOffsetY = when {
+            delta >= REVEAL_ANIM_THRESHOLD -> 0f // reveal (move up)
+            delta <= -REVEAL_ANIM_THRESHOLD -> fabBoxSizePx // go away (move down)
+            else -> return Offset.Zero
+        }
+        coroutineScope.launch {
+            fabOffsetY.animateTo(targetFabOffsetY)
+        }
+        return Offset.Zero
+    }
+}
+
+private suspend fun animateFabOffsetY(
+    isFabActive: Boolean,
+    fabOffsetY: Animatable<Float, AnimationVector1D>,
+    fabBoxSizePx: Float,
+) {
+    when {
+        isFabActive && fabOffsetY.value != 0f -> {
+            fabOffsetY.animateTo(0f)
+        }
+        !isFabActive && fabOffsetY.value != fabBoxSizePx -> {
+            fabOffsetY.animateTo(fabBoxSizePx)
+        }
+    }
+}
+
 @Composable
 private fun HomeNavHost(
     homeNavController: NavHostController,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     contentPaddings: PaddingValues,
     appNavController: NavController,
-    openRoutePlanningAction: () -> Unit
+    openRoutePlanningAction: () -> Unit,
 ) {
     NavHost(
         modifier = Modifier.fillMaxSize(),
