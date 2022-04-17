@@ -102,7 +102,7 @@ dependencies {
 
     implementation project(':worker')
 
-    implementation project(':feature:common')
+    implementation project(':feature:core')
     implementation project(':feature:registration')
     implementation project(":feature:profile")
     implementation project(":feature:activity")

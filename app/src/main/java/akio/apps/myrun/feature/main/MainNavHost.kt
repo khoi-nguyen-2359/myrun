@@ -2,8 +2,7 @@ package akio.apps.myrun.feature.main
 
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
-import akio.apps.myrun.feature.base.navigation.HomeNavDestination
-import akio.apps.myrun.feature.home.HomeScreen
+import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition

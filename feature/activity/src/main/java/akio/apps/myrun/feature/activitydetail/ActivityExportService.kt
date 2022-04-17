@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.activitydetail
 import akio.apps.myrun.domain.activity.ExportTempTcxFileUsecase
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.activitydetail.di.DaggerActivityExportFeatureComponent
-import akio.apps.myrun.feature.base.AppNotificationChannel
+import akio.apps.myrun.feature.core.AppNotificationChannel
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service

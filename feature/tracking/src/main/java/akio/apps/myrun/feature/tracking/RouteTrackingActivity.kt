@@ -9,12 +9,13 @@ import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus.PAUSED
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus.RESUMED
 import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegateImpl
-import akio.apps.myrun.feature.base.BitmapUtils.createDrawableBitmap
-import akio.apps.myrun.feature.base.ktx.collectEventRepeatOnStarted
-import akio.apps.myrun.feature.base.ktx.collectRepeatOnStarted
-import akio.apps.myrun.feature.base.ktx.dp2px
-import akio.apps.myrun.feature.base.ktx.lazyViewModelProvider
-import akio.apps.myrun.feature.base.ktx.observe
+import akio.apps.myrun.feature.core.BitmapUtils.createDrawableBitmap
+import akio.apps.myrun.feature.core.DialogDelegate
+import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
+import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted
+import akio.apps.myrun.feature.core.ktx.dp2px
+import akio.apps.myrun.feature.core.ktx.lazyViewModelProvider
+import akio.apps.myrun.feature.core.ktx.observe
 import akio.apps.myrun.feature.tracking.di.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.feature.tracking.ui.ActivitySettingsView
 import akio.apps.myrun.feature.tracking.ui.RouteTrackingStatsView
@@ -79,7 +80,7 @@ class RouteTrackingActivity(
     // first camera move will instantly jump to the current location, no animation (map first load)
     private var isFirstCameraMoveFinished: Boolean = false
 
-    private val dialogDelegate by lazy { akio.apps.myrun.feature.base.DialogDelegate(this) }
+    private val dialogDelegate by lazy { DialogDelegate(this) }
 
     private val routeTrackingViewModel: RouteTrackingViewModel by lazyViewModelProvider {
         DaggerRouteTrackingFeatureComponent.factory().create(application).routeTrackingViewModel()

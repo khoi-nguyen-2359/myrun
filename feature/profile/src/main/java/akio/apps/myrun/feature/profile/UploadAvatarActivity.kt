@@ -2,9 +2,9 @@ package akio.apps.myrun.feature.profile
 
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
-import akio.apps.myrun.feature.base.DialogDelegate
-import akio.apps.myrun.feature.base.picker.PickPictureDelegate
-import akio.apps.myrun.feature.base.picker.TakePictureDelegate
+import akio.apps.myrun.feature.core.DialogDelegate
+import akio.apps.myrun.feature.core.picker.PickPictureDelegate
+import akio.apps.myrun.feature.core.picker.TakePictureDelegate
 import akio.apps.myrun.feature.profile.di.DaggerUploadAvatarFeatureComponent
 import akio.apps.myrun.feature.profile.ui.CropImageView
 import android.content.Context

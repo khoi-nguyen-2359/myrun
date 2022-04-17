@@ -6,8 +6,8 @@ import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.feature.activity.R
-import akio.apps.myrun.feature.base.TrackingValueFormatter
-import akio.apps.myrun.feature.base.ui.AppDimensions
+import akio.apps.myrun.feature.core.TrackingValueFormatter
+import akio.apps.myrun.feature.core.ui.AppDimensions
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope

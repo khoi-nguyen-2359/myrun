@@ -15,7 +15,7 @@ import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
 import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.domain.tracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.tracking.StoreTrackingActivityDataUsecase
-import akio.apps.myrun.feature.base.flowTimer
+import akio.apps.myrun.feature.core.flowTimer
 import akio.apps.myrun.feature.tracking.model.RouteTrackingStats
 import akio.apps.myrun.worker.UploadStravaFileWorker
 import android.app.Application

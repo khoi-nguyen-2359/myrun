@@ -1,10 +1,10 @@
 package akio.apps.myrun.feature.registration
 
 import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
-import akio.apps.myrun.feature.base.DialogDelegate
-import akio.apps.myrun.feature.base.ktx.collectEventRepeatOnStarted
-import akio.apps.myrun.feature.base.ktx.collectRepeatOnStarted
-import akio.apps.myrun.feature.base.ktx.lazyViewModelProvider
+import akio.apps.myrun.feature.core.DialogDelegate
+import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
+import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted
+import akio.apps.myrun.feature.core.ktx.lazyViewModelProvider
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
