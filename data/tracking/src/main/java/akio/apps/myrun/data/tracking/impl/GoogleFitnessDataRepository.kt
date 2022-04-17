@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.tracking.impl
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.model.DataPoint
-import akio.apps.myrun.data.common.di.NamedIoDispatcher
 import akio.apps.myrun.data.tracking.api.FitnessDataRepository
 import android.app.Application
 import androidx.annotation.VisibleForTesting

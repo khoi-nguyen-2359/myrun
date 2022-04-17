@@ -42,7 +42,7 @@ android {
 
 dependencies {
     implementation(project(":data:api"))
-    implementation(project(":data:common"))
+    implementation(project(":base:di"))
 
     implementation(libs.kotlinxCoroutinesPlayServices)
 

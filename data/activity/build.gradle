@@ -35,9 +35,10 @@ android {
 }
 
 dependencies {
-    implementation(project(':data:api'))
+    implementation(project(":data:api"))
+    implementation(project(":base:di"))
 
-    implementation(project(':data:common'))
+    implementation(project(":data:common"))
     implementation(libs.firebaseFirestoreKtx)
     implementation(libs.firebaseStorageKtx)
 

@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.route.di
 
-import akio.apps.myrun.data.common.di.DispatchersModule
+import akio.apps.myrun.base.di.DispatchersModule
 import akio.apps.myrun.data.location.LocationDataModule
 import akio.apps.myrun.data.route.RouteDataComponent
 import akio.apps.myrun.domain.launchcatching.LaunchCatchingModule

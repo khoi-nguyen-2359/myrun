@@ -34,6 +34,8 @@ android {
 dependencies {
     implementation(project(":feature:common"))
 
+    implementation(project(":base:di"))
+
     implementation(project(':domain'))
 
     implementation(project(":data:activity"))

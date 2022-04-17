@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.registration
 
+import akio.apps.myrun.base.di.FeatureScope
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
-import akio.apps.myrun.data.common.di.FeatureScope
 import akio.apps.myrun.data.common.firebase.FirebaseDataModule
 import akio.apps.myrun.data.eapps.ExternalAppDataModule
 import akio.apps.myrun.data.user.UserDataModule

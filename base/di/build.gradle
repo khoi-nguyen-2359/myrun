@@ -8,9 +8,6 @@ android {
     compileSdk project.compileSdk
 
     defaultConfig {
-        minSdk project.minSdk
-        targetSdk project.targetSdk
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -35,29 +32,10 @@ android {
 }
 
 dependencies {
-    implementation(project(":data:api"))
-    implementation(project(":base:di"))
-
-    debugApi(project(":data:mapbox-location"))
-
-    implementation(libs.googlePlaces)
-    implementation(libs.androidGoogleMap)
-    implementation(libs.androidMapUtils)
-
-    implementation(libs.timber)
-
-    implementation(libs.kotlinxCoroutinesPlayServices)
     implementation(libs.kotlinxCoroutinesCore)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
 
-    implementation(libs.playServicesLocation)
-
-    implementation(libs.okHttp)
-    implementation(libs.okHttpLogger)
-    implementation(libs.retrofit)
-    implementation(libs.retrofitGsonConverter)
-
-    testImplementation(libs.kotlinTest)
+    implementation(libs.timber)
 }

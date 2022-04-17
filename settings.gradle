@@ -27,6 +27,9 @@ include ':data:route'
 include ':data:mapbox-location'
 include ':data:api'
 
+// ===== base modules =====
+include ':base:di'
+
 // ===== 3rd library modules =====
 include(":libs:routeparser")
 

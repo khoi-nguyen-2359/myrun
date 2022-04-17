@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.feed.di
 
+import akio.apps.myrun.base.di.FeatureScope
 import akio.apps.myrun.data.activity.ActivityDataModule
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
-import akio.apps.myrun.data.common.di.FeatureScope
 import akio.apps.myrun.data.user.UserDataModule
 import akio.apps.myrun.domain.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.feed.ActivityFeedViewModel

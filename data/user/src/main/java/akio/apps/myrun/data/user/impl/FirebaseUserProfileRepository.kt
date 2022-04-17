@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.user.impl
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.common.Resource
-import akio.apps.myrun.data.common.di.NamedIoDispatcher
 import akio.apps.myrun.data.common.firebase.FirebaseStorageUtils
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.model.Gender

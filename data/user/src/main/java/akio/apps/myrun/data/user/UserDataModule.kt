@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.user
 
-import akio.apps.myrun.data.common.di.DispatchersModule
+import akio.apps.myrun.base.di.DispatchersModule
 import akio.apps.myrun.data.user.api.AppMigrationState
 import akio.apps.myrun.data.user.api.UserFollowRepository
 import akio.apps.myrun.data.user.api.UserProfileRepository

@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.location.impl.mapbox
 
-import akio.apps.myrun.data.common.di.NamedIoDispatcher
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.location.api.DirectionDataSource
 import akio.apps.myrun.data.location.api.model.LatLng
 import androidx.annotation.WorkerThread

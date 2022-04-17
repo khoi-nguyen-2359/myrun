@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.activity.impl
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
@@ -16,7 +17,6 @@ import akio.apps.myrun.data.activity.impl.model.LocalAthleteInfo
 import akio.apps.myrun.data.activity.impl.model.LocalBaseActivity
 import akio.apps.myrun.data.activity.impl.model.LocalCyclingActivity
 import akio.apps.myrun.data.activity.impl.model.LocalRunningActivity
-import akio.apps.myrun.data.common.di.NamedIoDispatcher
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap

@@ -1,10 +1,10 @@
 package akio.apps.myrun.domain.user
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
-import akio.apps.myrun.data.common.di.NamedIoDispatcher
 import akio.apps.myrun.domain.time.TimeProvider
 import android.os.Parcelable
 import java.util.Calendar

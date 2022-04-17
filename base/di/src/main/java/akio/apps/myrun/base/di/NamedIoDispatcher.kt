@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.common.di
+package akio.apps.myrun.base.di
 
 import javax.inject.Qualifier
 
