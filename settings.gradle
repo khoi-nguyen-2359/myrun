@@ -24,7 +24,7 @@ include ':data:user'
 include ':data:activity'
 include ':data:eapps'
 include ':data:route'
-include ':data:mapbox-location'
+include ':data:location-mapbox'
 
 // ===== base modules =====
 include ':base:di'

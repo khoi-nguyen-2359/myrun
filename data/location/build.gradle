@@ -38,7 +38,7 @@ dependencies {
     implementation(project(":data:api"))
     implementation(project(":base:di"))
 
-    debugApi(project(":data:mapbox-location"))
+    debugApi(project(":data:location-mapbox"))
 
     implementation(libs.googlePlaces)
     implementation(libs.androidGoogleMap)
