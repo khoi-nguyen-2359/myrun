@@ -8,9 +8,9 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus.STOPPED
-import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegateImpl
 import akio.apps.myrun.domain.tracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.tracking.StoreTrackingActivityDataUsecase
+import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegateImpl
 import akio.apps.myrun.feature.tracking.RouteTrackingViewModel
 import android.app.Application
 import kotlinx.coroutines.ExperimentalCoroutinesApi

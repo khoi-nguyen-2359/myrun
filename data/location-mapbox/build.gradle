@@ -39,8 +39,8 @@ dependencies {
 
     implementation(libs.timber)
 
-    implementation(libs.kotlinxCoroutinesPlayServices)
-    implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)

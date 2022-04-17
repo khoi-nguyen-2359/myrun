@@ -7,10 +7,10 @@ import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
-import akio.apps.myrun.feature.core.Event
-import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.PlaceNameSelector
+import akio.apps.myrun.feature.core.Event
+import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager

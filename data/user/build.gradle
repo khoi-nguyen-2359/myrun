@@ -42,9 +42,8 @@ dependencies {
     // app migration
     implementation(libs.dataStore)
 
-    implementation(libs.kotlinxCoroutinesPlayServices)
-    implementation(libs.kotlinxCoroutinesCore)
-    implementation(libs.javaXInject)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)

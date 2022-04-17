@@ -7,8 +7,6 @@ import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus.PAUSED
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus.RESUMED
-import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
-import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegateImpl
 import akio.apps.myrun.feature.core.BitmapUtils.createDrawableBitmap
 import akio.apps.myrun.feature.core.DialogDelegate
 import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
@@ -16,6 +14,8 @@ import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.dp2px
 import akio.apps.myrun.feature.core.ktx.lazyViewModelProvider
 import akio.apps.myrun.feature.core.ktx.observe
+import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
+import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegateImpl
 import akio.apps.myrun.feature.tracking.di.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.feature.tracking.ui.ActivitySettingsView
 import akio.apps.myrun.feature.tracking.ui.RouteTrackingStatsView

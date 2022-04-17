@@ -47,7 +47,7 @@ dependencies {
     implementation(libs.bundles.firebase.data)
 
     implementation(project(":data:location"))
-    implementation(libs.playServicesLocation)
+    implementation(libs.playservices.location)
     implementation(libs.googlePlaces)
 
     implementation(libs.workManager)

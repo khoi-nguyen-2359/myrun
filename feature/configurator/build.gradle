@@ -51,8 +51,8 @@ dependencies {
     implementation(project(":base:firebase"))
     implementation(libs.bundles.firebase.data)
 
-    implementation(libs.androidXCore)
-    implementation(libs.androidXAppCompat)
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidMaterial)
 
     implementation(libs.bundles.compose)

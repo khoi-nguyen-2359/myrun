@@ -34,7 +34,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.timber)
 
     implementation(libs.androidx.annotation)

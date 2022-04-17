@@ -60,12 +60,12 @@ dependencies {
     implementation(libs.androidMaterial)
     implementation(libs.constraintLayout)
     implementation(libs.bundles.compose)
-    implementation(libs.accompanistInsets)
-    implementation(libs.coilCompose)
+    implementation(libs.accompanist.insets)
+    implementation(libs.coilcompose)
 
-    implementation(libs.androidXAppCompat)
+    implementation(libs.androidx.appcompat)
     implementation(libs.timber)
-    implementation(libs.lifecycleViewModelKtx)
+    implementation(libs.lifecycle.viewmodel.ktx)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)

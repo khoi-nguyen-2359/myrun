@@ -44,11 +44,11 @@ dependencies {
     implementation(project(":base:firebase"))
     implementation(libs.bundles.firebase.data)
 
-    implementation(libs.lifecycleRuntimeKtx)
-    implementation(libs.lifecycleLiveDataKtx)
-    implementation(libs.lifecycleViewModelKtx)
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
 
-    implementation(libs.kotlinxCoroutinesPlayServices)
+    implementation(libs.kotlinx.coroutines.play.services)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
@@ -56,7 +56,7 @@ dependencies {
     implementation(libs.okHttp)
 
     // social sign in
-    implementation(libs.playServicesAuth)
+    implementation(libs.playservices.auth)
     implementation(libs.facebookLogin)
 
     implementation(libs.constraintLayout)

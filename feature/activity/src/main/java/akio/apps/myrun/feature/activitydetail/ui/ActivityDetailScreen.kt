@@ -1,11 +1,11 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
+import akio.apps.myrun.feature.TrackingValueFormatter
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
 import akio.apps.myrun.feature.activitydetail.di.DaggerActivityDetailFeatureComponent
-import akio.apps.myrun.feature.TrackingValueFormatter
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppColors

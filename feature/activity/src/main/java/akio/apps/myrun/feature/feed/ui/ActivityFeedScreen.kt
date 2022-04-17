@@ -4,8 +4,8 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
-import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.TrackingValueFormatter
+import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.ktx.px2dp
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination

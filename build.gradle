@@ -12,12 +12,12 @@ buildscript {
 
     dependencies {
         classpath(libs.agp)
-        classpath(libs.kotlinGradlePlugin)
-        classpath(libs.playServicesGradlePlugin)
-        classpath(libs.firebaseCrashlyticsGradle)
-        classpath(libs.kotlinSerialization)
-        classpath(libs.firebasePerf)
+        classpath(libs.kotlingradle.plugin)
+        classpath(libs.playservices.plugin)
+        classpath(libs.firebase.crashlytics.plugin)
+        classpath(libs.firebase.perf.plugin)
         classpath(libs.build.time.tracker)
+        classpath(libs.kotlinserialization.plugin)
 //        classpath(libs.ksp)
     }
 }

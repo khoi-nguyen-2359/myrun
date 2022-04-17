@@ -43,11 +43,11 @@ android {
 
 dependencies {
     implementation(libs.androidMaterial)
-    implementation(libs.androidXAppCompat)
+    implementation(libs.androidx.appcompat)
     implementation(libs.bundles.compose)
-    implementation(libs.accompanistInsets)
+    implementation(libs.accompanist.insets)
 
-    implementation(libs.lifecycleRuntimeKtx)
+    implementation(libs.lifecycle.runtime.ktx)
 
     implementation(libs.timber)
 
@@ -55,7 +55,7 @@ dependencies {
     kapt(libs.daggerCompiler)
 
     testImplementation(libs.kotlinTest)
-    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockito.inline)
     testImplementation(libs.kotlinReflect)
 }

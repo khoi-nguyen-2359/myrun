@@ -39,15 +39,14 @@ dependencies {
     implementation(project(":base:di"))
 
     implementation(project(":base:firebase"))
-    implementation(libs.firebaseFirestoreKtx)
-    implementation(libs.firebaseStorageKtx)
+    implementation(libs.bundles.firebase.data)
 
     implementation(libs.javaXInject)
 
-    implementation(libs.kotlinxSerializationProtoBuf)
+    implementation(libs.kotlinx.serialization.protobuf)
 
-    implementation(libs.kotlinxCoroutinesCore)
-    implementation(libs.kotlinxCoroutinesPlayServices)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.play.services)
 
     implementation(libs.tcxzPot)
 

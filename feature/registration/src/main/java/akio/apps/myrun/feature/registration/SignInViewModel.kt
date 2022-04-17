@@ -2,9 +2,9 @@ package akio.apps.myrun.feature.registration
 
 import akio.apps.myrun.data.authentication.api.SignInManager
 import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
+import akio.apps.myrun.domain.user.PostSignInUsecase
 import akio.apps.myrun.feature.core.Event
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
-import akio.apps.myrun.domain.user.PostSignInUsecase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject

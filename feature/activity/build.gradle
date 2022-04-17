@@ -59,15 +59,15 @@ dependencies {
     implementation(libs.constraintLayout)
 
     implementation(libs.bundles.compose)
-    implementation(libs.accompanistPlaceholder)
-    implementation(libs.accompanistInsets)
-    implementation(libs.coilCompose)
+    implementation(libs.accompanist.placeholder)
+    implementation(libs.accompanist.insets)
+    implementation(libs.coilcompose)
 
-    implementation(libs.androidXAppCompat)
+    implementation(libs.androidx.appcompat)
 
     implementation(libs.timber)
 
-    implementation(libs.lifecycleViewModelKtx)
+    implementation(libs.lifecycle.viewmodel.ktx)
 
     implementation(libs.androidMapUtils)
     implementation(libs.androidGoogleMap)
@@ -78,6 +78,6 @@ dependencies {
 
     testImplementation(libs.bundles.testCoroutine)
     testImplementation(libs.kotlinTest)
-    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.mockito.kotlin)
     testImplementation(libs.kotlinReflect)
 }

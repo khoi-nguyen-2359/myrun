@@ -5,8 +5,8 @@ import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.route.api.RouteRepository
 import akio.apps.myrun.data.route.api.model.RouteModel
-import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.domain.route.RoutePlottingUsecase
+import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.feature.route.model.RoutePlottingState
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle

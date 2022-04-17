@@ -40,7 +40,7 @@ dependencies {
 
     implementation(libs.androidx.annotation)
 
-    implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.timber)
 
@@ -49,7 +49,7 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinReflect)
-    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockito.inline)
     testImplementation(libs.kotlinTest)
     testImplementation(libs.kotlinXCoroutinesTest)
