@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.profile
 
-import akio.apps.myrun.domain.launchcatching.Event
+import akio.apps.myrun.feature.core.Event
 import akio.apps.myrun.feature.core.DialogDelegate
 import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted

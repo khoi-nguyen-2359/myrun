@@ -88,7 +88,8 @@ android {
 }
 
 dependencies {
-    implementation project(':feature:registration')
+    implementation project(":feature:core")
+    implementation project(":feature:registration")
     implementation project(":feature:profile")
     implementation project(":feature:activity")
     implementation project(":feature:tracking")
@@ -103,8 +104,8 @@ dependencies {
 
     implementation project(':base:firebase')
     implementation platform(libs.firebaseBom)
+    implementation(libs.bundles.firebase.data)
     implementation(libs.firebasePerfKtx)
-    implementation(libs.firebaseAuthKtx)
 
     implementation(libs.googlePlaces)   // to init place sdk in application class
 
@@ -128,7 +129,6 @@ dependencies {
 
     implementation(libs.timber)
 
-    debugImplementation project(":feature:core")
     debugImplementation project(":feature:route")
     debugImplementation project(":feature:configurator")
     if (localProps.getProperty("leakcanary.enabled", "1") == "1") {

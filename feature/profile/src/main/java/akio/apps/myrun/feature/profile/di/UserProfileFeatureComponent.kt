@@ -4,7 +4,7 @@ import akio.apps.myrun.base.di.FeatureScope
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.data.eapps.ExternalAppDataModule
 import akio.apps.myrun.data.user.UserDataModule
-import akio.apps.myrun.domain.launchcatching.LaunchCatchingModule
+import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.profile.UserProfileViewModel
 import android.app.Application
 import androidx.lifecycle.SavedStateHandle

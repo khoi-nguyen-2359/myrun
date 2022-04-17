@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.splash.di
 
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
-import akio.apps.myrun.domain.launchcatching.LaunchCatchingModule
+import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.splash.SplashViewModel
 import dagger.Component
 

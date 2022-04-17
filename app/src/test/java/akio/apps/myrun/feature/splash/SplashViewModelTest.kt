@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.splash
 
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
-import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegate
+import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import app.cash.turbine.test
 import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -1,6 +1,6 @@
-package akio.apps.myrun.domain.launchcatching
+package akio.apps.myrun.feature.core
 
-open class Event<out T>(private val content: T? = null) {
+class Event<out T>(private val content: T? = null) {
 
     var hasBeenHandled = false
         private set // Allow external read but not write

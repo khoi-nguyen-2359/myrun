@@ -1,4 +1,4 @@
-package akio.apps.myrun.domain.launchcatching
+package akio.apps.myrun.feature.core.launchcatching
 
 import dagger.Module
 import dagger.Provides

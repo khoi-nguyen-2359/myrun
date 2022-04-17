@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.profile
 
 import akio.apps.myrun.data.eapps.api.StravaTokenRepository
-import akio.apps.myrun.domain.launchcatching.Event
-import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegate
+import akio.apps.myrun.feature.core.Event
+import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.domain.strava.UpdateStravaTokenUsecase
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

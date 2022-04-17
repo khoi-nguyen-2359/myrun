@@ -1,5 +1,6 @@
-package akio.apps.myrun.domain.launchcatching
+package akio.apps.myrun.feature.core.launchcatching
 
+import akio.apps.myrun.feature.core.Event
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

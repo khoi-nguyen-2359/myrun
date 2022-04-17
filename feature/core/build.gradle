@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -41,8 +42,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":domain"))
-
     implementation(libs.androidMaterial)
     implementation(libs.androidXAppCompat)
     implementation(libs.bundles.compose)
@@ -52,7 +51,8 @@ dependencies {
 
     implementation(libs.timber)
 
-    implementation(libs.javaXInject)
+    implementation(libs.dagger)
+    kapt(libs.daggerCompiler)
 
     testImplementation(libs.kotlinTest)
     testImplementation(libs.mockitoKotlin)

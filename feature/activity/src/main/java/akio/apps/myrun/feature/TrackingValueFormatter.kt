@@ -1,9 +1,10 @@
-package akio.apps.myrun.feature.core
+package akio.apps.myrun.feature
 
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.domain.common.TrackingValueConverter
+import akio.apps.myrun.feature.core.R
 import android.content.Context
 import androidx.annotation.StringRes
 

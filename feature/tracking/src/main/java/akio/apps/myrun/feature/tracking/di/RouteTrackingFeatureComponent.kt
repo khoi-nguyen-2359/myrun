@@ -7,7 +7,7 @@ import akio.apps.myrun.data.eapps.ExternalAppDataModule
 import akio.apps.myrun.data.location.LocationDataModule
 import akio.apps.myrun.data.tracking.TrackingDataModule
 import akio.apps.myrun.data.user.UserDataModule
-import akio.apps.myrun.domain.launchcatching.LaunchCatchingModule
+import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.tracking.RouteTrackingService
 import akio.apps.myrun.feature.tracking.RouteTrackingViewModel
 import android.app.Application

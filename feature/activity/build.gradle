@@ -71,6 +71,7 @@ dependencies {
 
     implementation(libs.androidMapUtils)
     implementation(libs.androidGoogleMap)
+    implementation(libs.googlePlaces)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)

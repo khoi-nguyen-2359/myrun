@@ -82,6 +82,8 @@ dependencies {
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
 
+    implementation(libs.okHttp)
+
     testImplementation(testFixtures(project(':test')))
     testImplementation(libs.bundles.testCoroutine)
     testImplementation(libs.junit)

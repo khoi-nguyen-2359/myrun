@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.core.ktx
 
-import akio.apps.myrun.domain.launchcatching.Event
+import akio.apps.myrun.feature.core.Event
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -27,7 +27,6 @@ fun <T> LifecycleOwner.collectEventRepeatOnStarted(
     action: suspend (T) -> Unit,
 ) = lifecycleScope.launch {
     lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-        flow.mapNotNull { it.getContentIfNotHandled() }
-            .collect(action)
+        flow.mapNotNull { it.getContentIfNotHandled() }.collect(action)
     }
 }

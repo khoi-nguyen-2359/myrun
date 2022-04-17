@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.base
 
-import akio.apps.myrun.feature.core.TrackingValueFormatter
+import akio.apps.myrun.feature.TrackingValueFormatter
 import org.junit.Assert.assertNull
 import org.junit.Test
 
@@ -8,7 +8,7 @@ class TrackingValueFormatterTest {
     @Test
     fun testEnumsHaveUniqueIds() {
         val mapUniqueCheck = mutableMapOf<String, Boolean>()
-        TrackingValueFormatter::class.sealedSubclasses.mapNotNull { it.objectInstance }
+        akio.apps.myrun.feature.TrackingValueFormatter::class.sealedSubclasses.mapNotNull { it.objectInstance }
             .map { it.id }
             .forEach { enumId ->
                 assertNull(mapUniqueCheck[enumId])
