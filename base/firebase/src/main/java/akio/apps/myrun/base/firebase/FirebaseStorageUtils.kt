@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.common.firebase
+package akio.apps.myrun.base.firebase
 
 import android.graphics.Bitmap
 import android.net.Uri

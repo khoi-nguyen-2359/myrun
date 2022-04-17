@@ -52,7 +52,7 @@ dependencies {
     implementation(project(':data:user'))
     implementation(project(':data:eapps'))
 
-    implementation(project(':data:common'))
+    implementation(project(':base:firebase'))
     implementation(libs.bundles.firebase.data)
 
     implementation(project(':worker'))

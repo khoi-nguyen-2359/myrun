@@ -53,7 +53,7 @@ dependencies {
     implementation(project(':data:activity'))
     implementation(project(':data:tracking'))
 
-    implementation(project(':data:common'))
+    implementation(project(':base:firebase'))
     implementation(libs.bundles.firebase.data)
 
     implementation(project(':data:location'))

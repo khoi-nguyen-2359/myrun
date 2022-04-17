@@ -20,7 +20,6 @@ include ':domain'
 include(':data:tracking')
 include(':data:location')
 include ':data:user'
-include ':data:common'
 include ':data:activity'
 include ':data:eapps'
 include ':data:route'
@@ -29,6 +28,7 @@ include ':data:api'
 
 // ===== base modules =====
 include ':base:di'
+include ':base:firebase'
 
 // ===== 3rd library modules =====
 include(":libs:routeparser")

@@ -1,4 +1,4 @@
-package akio.apps.myrun.data.common.firebase
+package akio.apps.myrun.base.firebase
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
