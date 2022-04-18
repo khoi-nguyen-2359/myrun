@@ -1,9 +1,9 @@
 package akio.apps.myrun.worker
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.common.Resource
-import akio.apps.myrun.data.common.di.NamedIoDispatcher
 import akio.apps.myrun.domain.activity.UploadActivitiesUsecase
-import akio.apps.myrun.feature.base.AppNotificationChannel
+import akio.apps.myrun.feature.core.AppNotificationChannel
 import android.app.Application
 import android.app.Notification
 import android.content.Context

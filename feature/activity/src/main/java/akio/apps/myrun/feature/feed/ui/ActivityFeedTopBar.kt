@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.feed.ui
 
 import akio.apps.myrun.feature.activity.R
-import akio.apps.myrun.feature.base.ui.AppBarIconButton
-import akio.apps.myrun.feature.base.ui.AppDimensions
+import akio.apps.myrun.feature.core.ui.AppBarIconButton
+import akio.apps.myrun.feature.core.ui.AppDimensions
 import akio.apps.myrun.feature.feed.ActivityFeedViewModel
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
@@ -36,7 +36,7 @@ private object ActivityFeedTopBarColors {
 }
 
 @Composable
-fun ActivityFeedTopBar(
+internal fun ActivityFeedTopBar(
     activityUploadBadge: ActivityFeedViewModel.ActivityUploadBadgeStatus?,
     onClickUploadCompleteBadge: () -> Unit,
     modifier: Modifier = Modifier,

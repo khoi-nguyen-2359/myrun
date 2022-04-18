@@ -35,15 +35,16 @@ android {
 }
 
 dependencies {
-    implementation(project(':data:common'))
-    implementation(project(':feature:common'))
+    implementation(project(':feature:core'))
 
     implementation(project(':domain'))
 
     implementation(project(':data:location'))
     implementation(project(':data:route'))
 
-    implementation(libs.androidXAppCompat)
+    implementation(project(":base:di"))
+
+    implementation(libs.androidx.appcompat)
     implementation(libs.activity)
     implementation(libs.constraintLayout)
     implementation(libs.androidMaterial)
@@ -51,14 +52,14 @@ dependencies {
     implementation(libs.androidMapUtils)
     implementation(libs.androidGoogleMap)
 
-    implementation(libs.playServicesLocation)
+    implementation(libs.playservices.location)
     implementation(libs.googlePlaces)
 
     implementation(libs.mapbox.maps)
 
     implementation(libs.timber)
 
-    implementation(libs.lifecycleViewModelKtx)
+    implementation(libs.lifecycle.viewmodel.ktx)
 
     implementation(libs.okHttp)
 

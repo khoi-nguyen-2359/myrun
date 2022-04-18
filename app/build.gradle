@@ -88,45 +88,40 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
-    implementation project(':domain')
-
-    implementation project(':data:common')
-    implementation(libs.firebasePerfKtx)
-    implementation(libs.firebaseAuthKtx)
-
-    implementation(project(':data:user'))
-    implementation(project(':data:tracking'))
-
-    implementation project(':worker')
-
-    implementation project(':feature:common')
-    implementation project(':feature:registration')
+    implementation project(":feature:core")
+    implementation project(":feature:registration")
     implementation project(":feature:profile")
     implementation project(":feature:activity")
     implementation project(":feature:tracking")
 
-    debugImplementation project(":feature:route")
-    debugImplementation project(":feature:configurator")
-
+    implementation project(':worker')
     implementation(libs.workManager) // to config work manager in application class
+
+    implementation project(':domain')
+
+    implementation(project(':data:user'))
+    implementation(project(':data:tracking'))
+
+    implementation project(':base:firebase')
+    implementation platform(libs.firebase.bom)
+    implementation(libs.bundles.firebase.data)
+    implementation(libs.firebase.perf.ktx)
 
     implementation(libs.googlePlaces)   // to init place sdk in application class
 
-    implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
 
-    implementation(libs.androidXCore)
-    implementation(libs.androidXAppCompat)
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.appcompat)
     implementation(libs.splashScreen)
 
-    implementation(libs.lifecycleProcess)
+    implementation(libs.lifecycle.process)
 
     implementation(libs.bundles.compose)
-    implementation(libs.accompanistInsets)
+    implementation(libs.accompanist.insets)
 
     implementation(libs.multidex)
 
@@ -134,13 +129,18 @@ dependencies {
 
     implementation(libs.timber)
 
+    debugImplementation project(":feature:route")
+    debugImplementation project(":feature:configurator")
     if (localProps.getProperty("leakcanary.enabled", "1") == "1") {
         debugImplementation(libs.leakCanary)
     }
 
     testImplementation(libs.kotlinTest)
+    testImplementation(libs.mockito.kotlin)
     testImplementation(project(":feature:configurator"))
     testImplementation(project(":feature:route"))
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinXCoroutinesTest)
 }
 
 buildtimetracker {

@@ -19,7 +19,7 @@ class PostSignInUsecase @Inject constructor(
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
 ) {
 
-    suspend operator fun invoke(result: SignInSuccessResult) {
+    suspend fun invoke(result: SignInSuccessResult) {
         val userAccount = userAuthenticationState.getUserAccount()
         if (userAccount != null) {
             if (result.isNewUser) {

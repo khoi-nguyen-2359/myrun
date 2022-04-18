@@ -4,13 +4,13 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
+import akio.apps.myrun.feature.TrackingValueFormatter
 import akio.apps.myrun.feature.activity.R
-import akio.apps.myrun.feature.base.TrackingValueFormatter
-import akio.apps.myrun.feature.base.ktx.px2dp
-import akio.apps.myrun.feature.base.navigation.HomeNavDestination
-import akio.apps.myrun.feature.base.ui.AppColors
-import akio.apps.myrun.feature.base.ui.AppDimensions
-import akio.apps.myrun.feature.base.viewmodel.rememberViewModelProvider
+import akio.apps.myrun.feature.core.ktx.px2dp
+import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
+import akio.apps.myrun.feature.core.navigation.HomeNavDestination
+import akio.apps.myrun.feature.core.ui.AppColors
+import akio.apps.myrun.feature.core.ui.AppDimensions
 import akio.apps.myrun.feature.feed.ActivityFeedViewModel
 import akio.apps.myrun.feature.feed.di.DaggerActivityFeedFeatureComponent
 import akio.apps.myrun.feature.feed.ui.ActivityFeedColors.listBackground
@@ -204,7 +204,7 @@ private fun PaddingValues.clone(
 ): PaddingValues = PaddingValues(start, top, end, bottom)
 
 @Composable
-fun ActivityFeedScreen(
+private fun ActivityFeedScreen(
     activityFeedViewModel: ActivityFeedViewModel,
     contentPadding: PaddingValues,
     feedListState: LazyListState,
@@ -212,7 +212,7 @@ fun ActivityFeedScreen(
     navController: NavController,
 ) {
     val lazyPagingItems = activityFeedViewModel.myActivityList.collectAsLazyPagingItems()
-    val isLoadingInitialData by activityFeedViewModel.isLoadingInitialData.collectAsState(
+    val isLoadingInitialData by activityFeedViewModel.isInitialLoading.collectAsState(
         initial = false
     )
     when {
@@ -488,11 +488,16 @@ private fun ActivityInformationView(
     onClickUserAvatar: () -> Unit,
     isShareMenuVisible: Boolean = true,
 ) = Column(modifier = Modifier.padding(start = activityItemHorizontalPadding)) {
+    val (userName, userAvatar) = if (userProfile?.accountId == activity.athleteInfo.userId) {
+        userProfile.name to userProfile.photo
+    } else {
+        activity.athleteInfo.userName to activity.athleteInfo.userAvatar
+    }
     Row(verticalAlignment = Alignment.CenterVertically) {
-        UserAvatarImage(userProfile?.photo, onClickUserAvatar)
+        UserAvatarImage(userAvatar, onClickUserAvatar)
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1.0f)) {
-            AthleteNameText(userProfile?.name.orEmpty())
+            AthleteNameText(userName.orEmpty())
             Spacer(modifier = Modifier.height(2.dp))
             ActivityTimeAndPlaceText(activityFormattedStartTime, activityDisplayPlaceName)
         }

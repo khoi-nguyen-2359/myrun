@@ -5,11 +5,11 @@ import akio.apps.myrun.data.eapps.api.model.ExternalProviders
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.data.user.api.model.UserProfile
-import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
 import akio.apps.myrun.domain.user.GetProviderTokensUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
+import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.worker.UploadStravaFileWorker
 import android.app.Application
 import androidx.lifecycle.SavedStateHandle
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 
-class UserProfileViewModel @Inject constructor(
+internal class UserProfileViewModel @Inject constructor(
     private val application: Application,
     private val savedStateHandle: SavedStateHandle,
     private val getUserProfileUsecase: GetUserProfileUsecase,
@@ -34,16 +34,15 @@ class UserProfileViewModel @Inject constructor(
      * Presents the data of editing values in input fields. Null means no initial data fetched,
      * screen hasn't ever entered editing state.
      */
-    private val editingUserProfileFormDataMutableStateFlow: MutableStateFlow<UserProfileFormData?> =
+    private val editingFormDataMutableStateFlow: MutableStateFlow<UserProfileFormData?> =
         MutableStateFlow(savedStateHandle.getFormData())
 
-    val userProfileScreenStateFlow: Flow<UserProfileScreenState> =
-        combine(
-            getUserProfileUsecase.getUserProfileFlow(savedStateHandle.getUserId()),
-            getProviderTokensUsecase.getProviderTokensFlow(),
-            editingUserProfileFormDataMutableStateFlow,
-            UserProfileScreenState::create
-        )
+    val screenStateFlow: Flow<ScreenState> = combine(
+        getUserProfileUsecase.getUserProfileFlow(savedStateHandle.getUserId()),
+        getProviderTokensUsecase.getProviderTokensFlow(),
+        editingFormDataMutableStateFlow,
+        ScreenState::create
+    )
 
     fun deauthorizeStrava() {
         viewModelScope.launchCatching {
@@ -54,14 +53,14 @@ class UserProfileViewModel @Inject constructor(
     }
 
     fun updateUserProfile() {
-        val editingFormData = editingUserProfileFormDataMutableStateFlow.value
+        val editingFormData = editingFormDataMutableStateFlow.value
         if (editingFormData?.isValid() != true)
             return
         updateUserProfileUsecase.updateUserProfile(editingFormData.makeProfileEditData())
     }
 
     fun onFormDataChanged(formData: UserProfileFormData) {
-        editingUserProfileFormDataMutableStateFlow.value = formData
+        editingFormDataMutableStateFlow.value = formData
         savedStateHandle.saveFormData(formData)
     }
 
@@ -95,9 +94,9 @@ class UserProfileViewModel @Inject constructor(
 
     enum class StravaLinkingState { Linked, NotLinked, Unknown }
 
-    sealed class UserProfileScreenState {
-        object Loading : UserProfileScreenState()
-        class ErrorRetry(val exception: Throwable) : UserProfileScreenState()
+    sealed class ScreenState {
+        object Loading : ScreenState()
+        class ErrorRetry(val exception: Throwable) : ScreenState()
         class FormState(
             /**
              * Data for values that are editing in input fields.
@@ -108,14 +107,14 @@ class UserProfileViewModel @Inject constructor(
              * Status of Strava account link.
              */
             val stravaLinkingState: StravaLinkingState,
-        ) : UserProfileScreenState()
+        ) : ScreenState()
 
         companion object {
             fun create(
                 userProfileRes: Resource<UserProfile>,
                 eappTokensRes: Resource<out ExternalProviders>,
                 editingFormData: UserProfileFormData?,
-            ): UserProfileScreenState = when (userProfileRes) {
+            ): ScreenState = when (userProfileRes) {
                 is Resource.Loading -> Loading
                 is Resource.Error -> ErrorRetry(userProfileRes.exception)
                 is Resource.Success -> {

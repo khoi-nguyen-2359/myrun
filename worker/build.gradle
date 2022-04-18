@@ -32,7 +32,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":feature:common"))
+    implementation(project(":feature:core"))
+
+    implementation(project(":base:di"))
 
     implementation(project(':domain'))
 
@@ -41,11 +43,11 @@ dependencies {
     implementation(project(":data:user"))
     implementation(project(":data:eapps"))
 
-    implementation(project(":data:common"))
+    implementation(project(":base:firebase"))
     implementation(libs.bundles.firebase.data)
 
     implementation(project(":data:location"))
-    implementation(libs.playServicesLocation)
+    implementation(libs.playservices.location)
     implementation(libs.googlePlaces)
 
     implementation(libs.workManager)

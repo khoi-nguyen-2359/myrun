@@ -38,7 +38,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":feature:common"))
+    implementation(project(":feature:core"))
 
     implementation(project(':domain'))
 
@@ -47,11 +47,12 @@ dependencies {
     implementation(project(':data:user'))
     implementation(project(':data:eapps'))
 
-    implementation(project(":data:common"))
+    implementation(project(":base:di"))
+    implementation(project(":base:firebase"))
     implementation(libs.bundles.firebase.data)
 
-    implementation(libs.androidXCore)
-    implementation(libs.androidXAppCompat)
+    implementation(libs.androidx.core)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidMaterial)
 
     implementation(libs.bundles.compose)

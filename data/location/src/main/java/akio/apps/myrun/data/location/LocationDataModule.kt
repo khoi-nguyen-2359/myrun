@@ -44,15 +44,18 @@ interface LocationDataModule {
     fun polyUtil(polyUtil: PolyUtilImpl): PolyUtil
 
     @Module
-    class Providers {
+    object Providers {
         @Provides
+        @JvmStatic
         fun placesClient(application: Application): PlacesClient = Places.createClient(application)
 
         @Provides
+        @JvmStatic
         fun locationClient(application: Application): FusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(application)
 
         @Provides
+        @JvmStatic
         fun googleDirectionApi(): GoogleMapDirectionApi {
             val okHttpClientBuilder = OkHttpClient.Builder()
             if (BuildConfig.DEBUG) {
@@ -73,6 +76,7 @@ interface LocationDataModule {
         }
 
         @Provides
+        @JvmStatic
         fun googleDirectionApiKey(application: Application): GoogleMapDirectionApiKey =
             GoogleMapDirectionApiKey(application.getString(R.string.google_direction_api_key))
     }

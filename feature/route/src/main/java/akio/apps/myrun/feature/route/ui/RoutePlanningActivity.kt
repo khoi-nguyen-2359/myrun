@@ -2,14 +2,14 @@ package akio.apps.myrun.feature.route.ui
 
 import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.route.DaggerRouteDataComponent
-import akio.apps.myrun.feature.base.BitmapUtils
-import akio.apps.myrun.feature.base.DialogDelegate
-import akio.apps.myrun.feature.base.ktx.collectEventRepeatOnStarted
-import akio.apps.myrun.feature.base.ktx.collectRepeatOnStarted
-import akio.apps.myrun.feature.base.ktx.dp2px
-import akio.apps.myrun.feature.base.ktx.extra
-import akio.apps.myrun.feature.base.ktx.getColorCompat
-import akio.apps.myrun.feature.base.viewmodel.lazyViewModelProvider
+import akio.apps.myrun.feature.core.BitmapUtils
+import akio.apps.myrun.feature.core.DialogDelegate
+import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
+import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted
+import akio.apps.myrun.feature.core.ktx.dp2px
+import akio.apps.myrun.feature.core.ktx.extra
+import akio.apps.myrun.feature.core.ktx.getColorCompat
+import akio.apps.myrun.feature.core.ktx.lazyViewModelProvider
 import akio.apps.myrun.feature.route.R
 import akio.apps.myrun.feature.route.RoutePlanningViewModel
 import akio.apps.myrun.feature.route.di.DaggerRoutePlanningFeatureComponent

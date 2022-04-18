@@ -6,11 +6,10 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk project.compileSdk
 
     defaultConfig {
-        minSdk 21
-        targetSdk 31
+        minSdk project.minSdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -42,16 +41,16 @@ android {
 
 dependencies {
     implementation(project(":data:api"))
-    implementation(project(":data:common"))
+    implementation(project(":base:di"))
 
-    implementation(libs.kotlinxCoroutinesPlayServices)
+    implementation(libs.kotlinx.coroutines.play.services)
 
-    implementation(libs.playServicesAuth)
-    implementation(libs.playServicesFitness)
+    implementation(libs.playservices.auth)
+    implementation(libs.playservices.fitness)
 
-    implementation(libs.roomKtx)
-    implementation(libs.roomRuntime)
-    kapt(libs.roomCompiler)
+    implementation(libs.room.ktx)
+    implementation(libs.room.runtime)
+    kapt(libs.room.compiler)
 
     implementation(libs.timber)
 

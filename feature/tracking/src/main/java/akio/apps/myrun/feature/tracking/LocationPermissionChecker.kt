@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.tracking
 
-import akio.apps.myrun.feature.base.permissions.AppPermissions
+import akio.apps.myrun.feature.core.permissions.AppPermissions
 import android.content.pm.PackageManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog

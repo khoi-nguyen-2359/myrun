@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.profile.ui
 
-import akio.apps.myrun.feature.base.ktx.dp2px
-import akio.apps.myrun.feature.base.ktx.toRect
+import akio.apps.myrun.feature.core.ktx.dp2px
+import akio.apps.myrun.feature.core.ktx.toRect
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
@@ -29,7 +29,7 @@ import timber.log.Timber
  * The idea is transforming scroll and scale gestures into translate and scale operations on the
  * drawing source rect.
  */
-class CropImageView @JvmOverloads constructor(
+internal class CropImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.location.impl
 
-import akio.apps.myrun.data.common.di.NamedIoDispatcher
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.location.api.PlaceDataSource
 import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.location.api.model.PlaceAddressComponent

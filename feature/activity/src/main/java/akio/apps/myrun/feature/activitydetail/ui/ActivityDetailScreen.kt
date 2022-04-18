@@ -1,20 +1,20 @@
 package akio.apps.myrun.feature.activitydetail.ui
 
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
+import akio.apps.myrun.feature.TrackingValueFormatter
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
 import akio.apps.myrun.feature.activitydetail.di.DaggerActivityDetailFeatureComponent
-import akio.apps.myrun.feature.base.TrackingValueFormatter
-import akio.apps.myrun.feature.base.navigation.HomeNavDestination
-import akio.apps.myrun.feature.base.ui.AppColors
-import akio.apps.myrun.feature.base.ui.AppDimensions
-import akio.apps.myrun.feature.base.ui.AppTheme
-import akio.apps.myrun.feature.base.ui.CentralAnnouncementView
-import akio.apps.myrun.feature.base.ui.CentralLoadingView
-import akio.apps.myrun.feature.base.ui.NavigationBarSpacer
-import akio.apps.myrun.feature.base.ui.StatusBarSpacer
-import akio.apps.myrun.feature.base.viewmodel.rememberViewModelProvider
+import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
+import akio.apps.myrun.feature.core.navigation.HomeNavDestination
+import akio.apps.myrun.feature.core.ui.AppColors
+import akio.apps.myrun.feature.core.ui.AppDimensions
+import akio.apps.myrun.feature.core.ui.AppTheme
+import akio.apps.myrun.feature.core.ui.CentralAnnouncementView
+import akio.apps.myrun.feature.core.ui.CentralLoadingView
+import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
+import akio.apps.myrun.feature.core.ui.StatusBarSpacer
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -82,8 +82,8 @@ private fun ActivityDetailScreen(
     onClickExportFile: (BaseActivityModel) -> Unit,
     navController: NavController,
 ) = AppTheme {
-    val screenState by activityDetailViewModel.activityDetailScreenStateFlow.collectAsState(
-        initial = ActivityDetailViewModel.ActivityDetailScreenState.FullScreenLoading
+    val screenState by activityDetailViewModel.screenStateFlow.collectAsState(
+        initial = ActivityDetailViewModel.ScreenState.FullScreenLoading
     )
     ActivityDetailScreen(
         screenState,
@@ -96,7 +96,7 @@ private fun ActivityDetailScreen(
 
 @Composable
 private fun ActivityDetailScreen(
-    screenState: ActivityDetailViewModel.ActivityDetailScreenState,
+    screenState: ActivityDetailViewModel.ScreenState,
     navController: NavController,
     onClickExportFile: (BaseActivityModel) -> Unit,
     onActivityDetailLoadRetry: () -> Unit,
@@ -109,19 +109,19 @@ private fun ActivityDetailScreen(
             onClickExportFile
         )
         when (screenState) {
-            is ActivityDetailViewModel.ActivityDetailScreenState.FullScreenLoading -> {
+            is ActivityDetailViewModel.ScreenState.FullScreenLoading -> {
                 CentralLoadingView(
                     text = stringResource(id = R.string.activity_details_loading_message)
                 )
             }
-            is ActivityDetailViewModel.ActivityDetailScreenState.ErrorAndRetry -> {
+            is ActivityDetailViewModel.ScreenState.ErrorAndRetry -> {
                 CentralAnnouncementView(
                     text = stringResource(id = R.string.activity_details_loading_error)
                 ) {
                     onActivityDetailLoadRetry()
                 }
             }
-            is ActivityDetailViewModel.ActivityDetailScreenState.DataAvailable -> {
+            is ActivityDetailViewModel.ScreenState.DataAvailable -> {
                 ActivityDetailDataContainer(
                     screenState,
                     navController,
@@ -130,7 +130,7 @@ private fun ActivityDetailScreen(
                         .background(Color.White)
                 )
             }
-            ActivityDetailViewModel.ActivityDetailScreenState.UnknownState -> {
+            ActivityDetailViewModel.ScreenState.UnknownState -> {
             }
         }
         NavigationBarSpacer()
@@ -139,7 +139,7 @@ private fun ActivityDetailScreen(
 
 @Composable
 private fun ActivityDetailDataContainer(
-    screenState: ActivityDetailViewModel.ActivityDetailScreenState.DataAvailable,
+    screenState: ActivityDetailViewModel.ScreenState.DataAvailable,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -274,19 +274,19 @@ private fun NavController.navigateToProfile(userId: String) {
 
 @Composable
 private fun ActivityDetailTopBar(
-    screenState: ActivityDetailViewModel.ActivityDetailScreenState,
+    screenState: ActivityDetailViewModel.ScreenState,
     onClickBackButton: () -> Unit,
     onClickExportFile: (BaseActivityModel) -> Unit,
 ) {
     val topBarTitle =
-        (screenState as? ActivityDetailViewModel.ActivityDetailScreenState.DataAvailable)
+        (screenState as? ActivityDetailViewModel.ScreenState.DataAvailable)
             ?.activityData
             ?.name
             ?: ""
     TopAppBar(
         title = { Text(text = topBarTitle) },
         actions = {
-            if (screenState is ActivityDetailViewModel.ActivityDetailScreenState.DataAvailable) {
+            if (screenState is ActivityDetailViewModel.ScreenState.DataAvailable) {
                 ShareActionMenu { onClickExportFile(screenState.activityData) }
             }
         },

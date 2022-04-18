@@ -1,9 +1,9 @@
 package akio.apps.myrun.feature.activitydetail
 
 import akio.apps.myrun.feature.activity.R
-import akio.apps.myrun.feature.base.BitmapUtils.createDrawableBitmap
-import akio.apps.myrun.feature.base.ktx.dp2px
-import akio.apps.myrun.feature.base.ktx.getColorCompat
+import akio.apps.myrun.feature.core.BitmapUtils.createDrawableBitmap
+import akio.apps.myrun.feature.core.ktx.dp2px
+import akio.apps.myrun.feature.core.ktx.getColorCompat
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -25,7 +25,7 @@ import kotlin.coroutines.resume
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
-class ActivityRouteMapActivity : AppCompatActivity(R.layout.activity_activity_route_map) {
+internal class ActivityRouteMapActivity : AppCompatActivity(R.layout.activity_activity_route_map) {
     private lateinit var map: GoogleMap
 
     private val encodedPolyline: String by lazy {

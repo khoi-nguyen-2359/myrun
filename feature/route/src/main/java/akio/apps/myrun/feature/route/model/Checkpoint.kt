@@ -6,7 +6,7 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Checkpoint(
+internal data class Checkpoint(
     val position: LatLng,
     val distance: Double,
     var updatePhotoContentUri: Uri? = null,

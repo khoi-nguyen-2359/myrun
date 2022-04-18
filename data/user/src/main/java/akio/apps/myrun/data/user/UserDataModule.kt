@@ -1,6 +1,7 @@
 package akio.apps.myrun.data.user
 
-import akio.apps.myrun.data.common.di.DispatchersModule
+import akio.apps.myrun.base.di.DispatchersModule
+import akio.apps.myrun.base.firebase.FirebaseDataModule
 import akio.apps.myrun.data.user.api.AppMigrationState
 import akio.apps.myrun.data.user.api.UserFollowRepository
 import akio.apps.myrun.data.user.api.UserProfileRepository
@@ -12,7 +13,7 @@ import akio.apps.myrun.data.user.impl.PreferenceAppMigrationState
 import dagger.Binds
 import dagger.Module
 
-@Module(includes = [DispatchersModule::class])
+@Module(includes = [DispatchersModule::class, FirebaseDataModule::class])
 interface UserDataModule {
     @Binds
     fun userProfileRepo(repo: FirebaseUserProfileRepository): UserProfileRepository

@@ -10,8 +10,8 @@ java {
 }
 
 dependencies {
-    implementation(libs.kotlinxCoroutinesCore)
-    implementation(libs.mockitoCore)
-    testFixturesImplementation(libs.kotlinxCoroutinesCore)
-    testFixturesImplementation(libs.mockitoCore)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.mockito.core)
+    testFixturesImplementation(libs.kotlinx.coroutines.core)
+    testFixturesImplementation(libs.mockito.core)
 }

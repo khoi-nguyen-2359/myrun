@@ -1,13 +1,13 @@
 package akio.apps.myrun.feature.tracking.di
 
+import akio.apps.myrun.base.di.FeatureScope
 import akio.apps.myrun.data.activity.ActivityDataModule
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
-import akio.apps.myrun.data.common.di.FeatureScope
 import akio.apps.myrun.data.eapps.ExternalAppDataModule
 import akio.apps.myrun.data.location.LocationDataModule
 import akio.apps.myrun.data.tracking.TrackingDataModule
 import akio.apps.myrun.data.user.UserDataModule
-import akio.apps.myrun.domain.launchcatching.LaunchCatchingModule
+import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.tracking.RouteTrackingService
 import akio.apps.myrun.feature.tracking.RouteTrackingViewModel
 import android.app.Application
@@ -26,7 +26,7 @@ import dagger.Component
         TrackingDataModule::class
     ],
 )
-interface RouteTrackingFeatureComponent {
+internal interface RouteTrackingFeatureComponent {
     fun routeTrackingViewModel(): RouteTrackingViewModel
 
     fun inject(service: RouteTrackingService)

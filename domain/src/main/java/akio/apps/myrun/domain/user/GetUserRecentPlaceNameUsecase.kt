@@ -15,7 +15,7 @@ class GetUserRecentPlaceNameUsecase @Inject constructor(
     fun getUserRecentPlaceNameFlow(): Flow<PlaceIdentifier?> {
         val userId = userAuthenticationState.requireUserAccountId()
         return userRecentPlaceRepository.getRecentPlaceIdentifierFlow(userId).map {
-            placeNameSelector.invoke(it.data, it.data)
+            placeNameSelector.select(it.data, it.data)
         }
     }
 }

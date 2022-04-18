@@ -7,16 +7,15 @@ import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
-import akio.apps.myrun.domain.launchcatching.Event
-import akio.apps.myrun.domain.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.PlaceNameSelector
+import akio.apps.myrun.feature.core.Event
+import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -29,7 +28,7 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class ActivityFeedViewModel @Inject constructor(
+internal class ActivityFeedViewModel @Inject constructor(
     private val activityPagingSourceFactory: ActivityPagingSourceFactory,
     private val placeNameSelector: PlaceNameSelector,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
@@ -50,23 +49,6 @@ class ActivityFeedViewModel @Inject constructor(
     val userProfile: Flow<UserProfile> =
         getUserProfileUsecase.getUserProfileFlow().mapNotNull { it.data }
 
-    @OptIn(FlowPreview::class)
-    private fun createActivityUploadBadgeStatusFlow(): Flow<ActivityUploadBadgeStatus> =
-        activityLocalStorage.getActivityStorageDataCountFlow()
-            .distinctUntilChanged()
-            .mapNotNull { count ->
-                val status = when {
-                    count > 0 -> ActivityUploadBadgeStatus.InProgress(count)
-                    count == 0 && lastActivityStorageCount > 0 -> ActivityUploadBadgeStatus.Complete
-                    else -> null
-                }
-                lastActivityStorageCount = count
-
-                status
-            }
-            // there are 2 collectors so use shareIn
-            .shareIn(viewModelScope, replay = 1, started = SharingStarted.WhileSubscribed())
-
     val myActivityList: Flow<PagingData<BaseActivityModel>> = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
@@ -74,39 +56,21 @@ class ActivityFeedViewModel @Inject constructor(
             prefetchDistance = PAGE_SIZE
         ),
         // do not pass initial key as timestamp because initialKey is reused in invalidating!
-        // initialKey = Now.currentTimeMillis()
+        // initialKey = System.currentTimeMillis()
     ) { recreateActivityPagingSource() }
         .flow
-        .cachedIn(viewModelScope)
-
-    private fun recreateActivityPagingSource(): ActivityPagingSource =
-        activityPagingSourceFactory.createPagingSource().also {
-            Timber.d("recreateActivityPagingSource")
-            activityPagingSource = it
-        }
 
     private val mapActivityIdToPlaceName: MutableMap<String, String> = mutableMapOf()
 
     // This is optional data, null for not found.
     private var userRecentPlaceIdentifier: PlaceIdentifier? = null
 
-    private val isLoadingInitialDataMutable: MutableStateFlow<Boolean> = MutableStateFlow(true)
-    val isLoadingInitialData: Flow<Boolean> = isLoadingInitialDataMutable
+    private val isInitialLoadingMutable: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val isInitialLoading: Flow<Boolean> = isInitialLoadingMutable
 
     init {
         loadInitialData()
         observeActivityUploadCount()
-    }
-
-    private fun observeActivityUploadCount() = viewModelScope.launch {
-        activityUploadBadge.collect {
-            reloadFeedData()
-        }
-    }
-
-    private fun reloadFeedData() {
-        Timber.d("reloadFeedData")
-        activityPagingSource?.invalidate()
     }
 
     fun getFormattedStartTime(activity: BaseActivityModel): ActivityDateTimeFormatter.Result =
@@ -121,19 +85,50 @@ class ActivityFeedViewModel @Inject constructor(
             return placeName
         }
 
-        placeName = placeNameSelector(
-            activityPlaceIdentifier,
-            userRecentPlaceIdentifier
-        )
+        placeName = placeNameSelector.select(activityPlaceIdentifier, userRecentPlaceIdentifier)
             ?: ""
         mapActivityIdToPlaceName[activityId] = placeName
 
         return placeName
     }
 
+    private fun observeActivityUploadCount() = viewModelScope.launch {
+        activityUploadBadge.collect {
+            reloadFeedData()
+        }
+    }
+
+    private fun reloadFeedData() {
+        Timber.d("reloadFeedData")
+        activityPagingSource?.invalidate()
+    }
+
+    @OptIn(FlowPreview::class)
+    private fun createActivityUploadBadgeStatusFlow(): Flow<ActivityUploadBadgeStatus> =
+        activityLocalStorage.getActivityStorageDataCountFlow()
+            .distinctUntilChanged()
+            .mapNotNull { count ->
+                val status = when {
+                    count > 0 -> ActivityUploadBadgeStatus.InProgress(count)
+                    count == 0 && lastActivityStorageCount > 0 -> ActivityUploadBadgeStatus.Complete
+                    else -> null
+                }
+                lastActivityStorageCount = count
+
+                status
+            }
+            // convert to shared flow for multiple collectors
+            .shareIn(viewModelScope, replay = 1, started = SharingStarted.WhileSubscribed())
+
+    private fun recreateActivityPagingSource(): ActivityPagingSource =
+        activityPagingSourceFactory.createPagingSource().also {
+            Timber.d("recreateActivityPagingSource")
+            activityPagingSource = it
+        }
+
     private fun loadInitialData() =
         viewModelScope.launchCatching(
-            progressStateFlow = isLoadingInitialDataMutable,
+            progressStateFlow = isInitialLoadingMutable,
             errorStateFlow = MutableStateFlow(Event(null))
         ) {
             val userId = userAuthenticationState.getUserAccountId()

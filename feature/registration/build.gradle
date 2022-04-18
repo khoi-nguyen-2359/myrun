@@ -33,27 +33,30 @@ android {
 }
 
 dependencies {
-    implementation(project(":feature:common"))
+    implementation(project(":feature:core"))
 
     implementation(project(':domain'))
 
-    implementation(project(':data:eapps'))
     implementation(project(':data:user'))
+    implementation(project(':data:eapps'))
 
-    implementation(project(":data:common"))
+    implementation(project(":base:di"))
+    implementation(project(":base:firebase"))
     implementation(libs.bundles.firebase.data)
 
-    implementation(libs.lifecycleRuntimeKtx)
-    implementation(libs.lifecycleLiveDataKtx)
-    implementation(libs.lifecycleViewModelKtx)
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
 
-    implementation(libs.kotlinxCoroutinesPlayServices)
+    implementation(libs.kotlinx.coroutines.play.services)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
 
+    implementation(libs.okHttp)
+
     // social sign in
-    implementation(libs.playServicesAuth)
+    implementation(libs.playservices.auth)
     implementation(libs.facebookLogin)
 
     implementation(libs.constraintLayout)

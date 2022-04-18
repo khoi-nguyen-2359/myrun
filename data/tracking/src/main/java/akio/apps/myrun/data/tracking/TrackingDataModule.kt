@@ -32,8 +32,9 @@ interface TrackingDataModule {
     fun fitnessDataRepository(repositoryGoogle: GoogleFitnessDataRepository): FitnessDataRepository
 
     @Module
-    class Providers {
+    object Providers {
         @Provides
+        @JvmStatic
         fun routeTrackingDatabase(application: Application): RouteTrackingDatabase =
             Room.databaseBuilder(
                 application,
@@ -45,6 +46,7 @@ interface TrackingDataModule {
                 .build()
 
         @Provides
+        @JvmStatic
         fun routeTrackingLocationDao(database: RouteTrackingDatabase): RouteTrackingLocationDao =
             database.trackingLocationDao()
     }

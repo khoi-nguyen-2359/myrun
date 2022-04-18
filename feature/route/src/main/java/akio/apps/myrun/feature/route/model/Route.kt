@@ -6,7 +6,7 @@ import com.google.maps.android.SphericalUtil
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class Route(
+internal class Route(
     var id: String = "",
     var routeName: String = "",
     var waypoints: List<LatLng> = listOf(),

@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.tracking.ui
 
-import akio.apps.myrun.feature.base.ui.AppTheme
+import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.tracking.R
 import akio.apps.myrun.feature.tracking.RouteTrackingViewModel
 import androidx.compose.foundation.clickable
@@ -24,7 +24,7 @@ import androidx.compose.ui.window.Dialog
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun StopOptionsDialog(
+internal fun StopOptionsDialog(
     routeTrackingViewModel: RouteTrackingViewModel,
     itemSelectAction: (StopDialogOptionId) -> Unit,
 ) = AppTheme {

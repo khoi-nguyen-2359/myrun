@@ -34,12 +34,11 @@ android {
 dependencies {
     implementation project(':data:api')
 
-    implementation project(':data:common')
-    implementation(libs.firebaseFirestoreKtx)
+    implementation project(':base:firebase')
+    implementation(libs.bundles.firebase.data)
 
-    implementation(libs.kotlinxCoroutinesPlayServices)
-
-    implementation(libs.kotlinxCoroutinesCore)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
@@ -47,7 +46,7 @@ dependencies {
     implementation(libs.okHttp)
     implementation(libs.okHttpLogger)
     implementation(libs.retrofit)
-    implementation(libs.retrofitGsonConverter)
+    implementation(libs.retrofitconverter.gson)
 
     implementation(libs.dataStore)
     implementation(libs.timber)

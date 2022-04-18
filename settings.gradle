@@ -5,7 +5,7 @@ rootProject.name = "My Run"
 include(":app")
 
 // ===== feature modules =====
-include(':feature:common')
+include(':feature:core')
 include(':feature:registration')
 include(':feature:configurator')
 include ':feature:profile'
@@ -15,17 +15,20 @@ include ':feature:tracking'
 
 // ===== domain modules =====
 include ':domain'
+include ':data:api'
 
 // ===== data implementation modules =====
 include(':data:tracking')
 include(':data:location')
 include ':data:user'
-include ':data:common'
 include ':data:activity'
 include ':data:eapps'
 include ':data:route'
-include ':data:mapbox-location'
-include ':data:api'
+include ':data:location-mapbox'
+
+// ===== base modules =====
+include ':base:di'
+include ':base:firebase'
 
 // ===== 3rd library modules =====
 include(":libs:routeparser")

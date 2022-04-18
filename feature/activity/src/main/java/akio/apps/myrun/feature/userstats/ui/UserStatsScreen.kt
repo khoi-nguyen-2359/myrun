@@ -3,17 +3,17 @@ package akio.apps.myrun.feature.userstats.ui
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.domain.common.TrackingValueConverter
 import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
+import akio.apps.myrun.feature.activity.BuildConfig
 import akio.apps.myrun.feature.activity.R
-import akio.apps.myrun.feature.base.BuildConfig
-import akio.apps.myrun.feature.base.navigation.HomeNavDestination
-import akio.apps.myrun.feature.base.ui.AppBarIconButton
-import akio.apps.myrun.feature.base.ui.AppColors
-import akio.apps.myrun.feature.base.ui.AppDimensions
-import akio.apps.myrun.feature.base.ui.CentralLoadingView
-import akio.apps.myrun.feature.base.ui.ColumnSpacer
-import akio.apps.myrun.feature.base.ui.RowSpacer
-import akio.apps.myrun.feature.base.ui.StatusBarSpacer
-import akio.apps.myrun.feature.base.viewmodel.rememberViewModelProvider
+import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
+import akio.apps.myrun.feature.core.navigation.HomeNavDestination
+import akio.apps.myrun.feature.core.ui.AppBarIconButton
+import akio.apps.myrun.feature.core.ui.AppColors
+import akio.apps.myrun.feature.core.ui.AppDimensions
+import akio.apps.myrun.feature.core.ui.CentralLoadingView
+import akio.apps.myrun.feature.core.ui.ColumnSpacer
+import akio.apps.myrun.feature.core.ui.RowSpacer
+import akio.apps.myrun.feature.core.ui.StatusBarSpacer
 import akio.apps.myrun.feature.userstats.UserStatsViewModel
 import akio.apps.myrun.feature.userstats.di.DaggerUserStatsFeatureComponent
 import android.app.Application
@@ -125,7 +125,7 @@ private fun UserStatsScreen(
 }
 
 @Composable
-fun UserStatsContent(
+private fun UserStatsContent(
     screenState: UserStatsViewModel.ScreenState.StatsAvailable,
     modifier: Modifier = Modifier,
     appNavController: NavController,
@@ -140,7 +140,7 @@ fun UserStatsContent(
 }
 
 @Composable
-fun TrainingSummaryTable(screenState: UserStatsViewModel.ScreenState.StatsAvailable) {
+private fun TrainingSummaryTable(screenState: UserStatsViewModel.ScreenState.StatsAvailable) {
     var selectedActivityType by rememberSaveable { mutableStateOf(ActivityType.Running) }
     val summaryData = screenState.trainingSummaryTableData[selectedActivityType]
         ?: return

@@ -43,29 +43,30 @@ android {
 }
 
 dependencies {
-    implementation(project(':feature:common'))
+    implementation(project(':feature:core'))
 
     implementation(project(':domain'))
 
     implementation(project(':data:user'))
     implementation(project(':data:eapps'))
 
-    implementation(project(':data:common'))
+    implementation(project(":base:di"))
+    implementation(project(':base:firebase'))
     implementation(libs.bundles.firebase.data)
 
     implementation(project(':worker'))
-
     implementation(libs.workManager) // still needed when using module 'worker'
 
     implementation(libs.androidMaterial)
     implementation(libs.constraintLayout)
     implementation(libs.bundles.compose)
-    implementation(libs.accompanistInsets)
-    implementation(libs.coilCompose)
+    implementation(libs.accompanist.insets)
+    implementation(libs.coilcompose)
 
-    implementation(libs.androidXAppCompat)
+    implementation(libs.androidx.appcompat)
     implementation(libs.timber)
-    implementation(libs.lifecycleViewModelKtx)
+    implementation(libs.lifecycle.viewmodel.ktx)
+
     implementation(libs.dagger)
     kapt(libs.daggerCompiler)
 }

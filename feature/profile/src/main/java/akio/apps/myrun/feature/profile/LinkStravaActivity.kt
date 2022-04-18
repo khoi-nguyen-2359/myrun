@@ -1,10 +1,10 @@
 package akio.apps.myrun.feature.profile
 
-import akio.apps.myrun.domain.launchcatching.Event
-import akio.apps.myrun.feature.base.DialogDelegate
-import akio.apps.myrun.feature.base.ktx.collectEventRepeatOnStarted
-import akio.apps.myrun.feature.base.ktx.collectRepeatOnStarted
-import akio.apps.myrun.feature.base.viewmodel.lazyViewModelProvider
+import akio.apps.myrun.feature.core.DialogDelegate
+import akio.apps.myrun.feature.core.Event
+import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
+import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted
+import akio.apps.myrun.feature.core.ktx.lazyViewModelProvider
 import akio.apps.myrun.feature.profile.di.DaggerLinkStravaComponent
 import android.content.Intent
 import android.os.Bundle
@@ -17,7 +17,7 @@ import androidx.lifecycle.LiveData
  * No UI activity to receive result from strava login.
  * Follow Strava document https://developers.strava.com/docs/authentication/
  */
-class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.EventListener {
+internal class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.EventListener {
 
     private val dialogDelegate = DialogDelegate(this)
     private val linkStravaDelegate by lazy { LinkStravaDelegate(this, this) }

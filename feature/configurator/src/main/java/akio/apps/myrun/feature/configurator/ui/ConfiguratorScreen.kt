@@ -1,8 +1,8 @@
 package akio.apps.myrun.feature.configurator.ui
 
-import akio.apps.myrun.feature.base.ui.AppTheme
 import akio.apps.myrun.feature.configurator.viewmodel.RouteTrackingSectionViewModel
 import akio.apps.myrun.feature.configurator.viewmodel.UserAuthenticationSectionViewModel
+import akio.apps.myrun.feature.core.ui.AppTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
