@@ -1,18 +1,17 @@
-package akio.apps.myrun.data.activity.model
+package akio.apps.myrun.data.activity.api.locationparser
 
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
-import akio.apps.myrun.data.activity.impl.model.FirestoreLocationDataPointParser
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class FirestoreLocationDataPointParserTest {
+class LocationDataPointParserV1Test {
 
-    private lateinit var firestoreLocationDataPointParser: FirestoreLocationDataPointParser
+    private lateinit var locationDataPointParserV1: LocationDataPointParserV1
 
     @Before
     fun setup() {
-        firestoreLocationDataPointParser = FirestoreLocationDataPointParser()
+        locationDataPointParserV1 = LocationDataPointParserV1()
     }
 
     @Test
@@ -40,14 +39,14 @@ class FirestoreLocationDataPointParserTest {
                 speed = 0.0
             )
         )
-        val result = firestoreLocationDataPointParser.flatten(locations)
+        val result = locationDataPointParserV1.flatten(locations)
         assertEquals(listOf(0.0, 1.0, 2.0, 32.0, 4.0, 5.0, 6.0, 71.0, 8.0, 9.0, 10.0, 13.0), result)
     }
 
     @Test
     fun testBuild() {
         val dataPoints = listOf(0.0, 1.0, 2.0, 32.0, 4.0, 5.0, 6.0, 71.0, 8.0, 9.0, 10.0, 13.0)
-        val locations = firestoreLocationDataPointParser.build(dataPoints)
+        val locations = locationDataPointParserV1.build(dataPoints)
         assertEquals(
             listOf(
                 ActivityLocation(

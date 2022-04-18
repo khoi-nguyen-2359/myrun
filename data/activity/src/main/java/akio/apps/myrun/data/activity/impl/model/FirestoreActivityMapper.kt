@@ -6,7 +6,6 @@ import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
-import akio.apps.myrun.data.activity.impl.FirebaseActivityRepository
 import android.net.Uri
 import javax.inject.Inject
 
@@ -29,25 +28,13 @@ class FirestoreActivityMapper @Inject constructor() {
                 duration,
                 distance,
                 encodedPolyline,
-                AthleteInfo(
-                    athleteInfo.userId,
-                    athleteInfo.userName,
-                    athleteInfo.userAvatar
-                )
+                AthleteInfo(athleteInfo.userId, athleteInfo.userName, athleteInfo.userAvatar)
             )
         }
 
-        return input.run {
-            runningData?.run {
-                // TODO: Replace this with stored pace field when migration are done on firestore.
-                val fixedPace = (duration / 60000.0) / (distance / 1000)
-                RunningActivityModel(activityData, fixedPace, cadence)
-            }
-                ?: cyclingData?.run {
-                    CyclingActivityModel(activityData, speed)
-                }
-        }
-            ?: throw IllegalArgumentException("Got invalid activity type while parsing")
+        return input.runningData?.run { RunningActivityModel(activityData, pace, cadence) }
+            ?: input.cyclingData?.run { CyclingActivityModel(activityData, speed) }
+            ?: throw IllegalArgumentException("Invalid activity type.")
     }
 
     fun mapRev(
@@ -84,7 +71,6 @@ class FirestoreActivityMapper @Inject constructor() {
                     athleteInfo.userName,
                     athleteInfo.userAvatar
                 ),
-                version = FirebaseActivityRepository.ACTIVITY_DATA_VERSION
             )
         }
     }

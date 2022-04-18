@@ -16,6 +16,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -59,13 +60,15 @@ internal class ActivityFeedViewModel @Inject constructor(
         // initialKey = System.currentTimeMillis()
     ) { recreateActivityPagingSource() }
         .flow
+        // cachedIn will help latest data to be emitted right after transition
+        .cachedIn(viewModelScope)
 
     private val mapActivityIdToPlaceName: MutableMap<String, String> = mutableMapOf()
 
     // This is optional data, null for not found.
     private var userRecentPlaceIdentifier: PlaceIdentifier? = null
 
-    private val isInitialLoadingMutable: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    private val isInitialLoadingMutable: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isInitialLoading: Flow<Boolean> = isInitialLoadingMutable
 
     init {

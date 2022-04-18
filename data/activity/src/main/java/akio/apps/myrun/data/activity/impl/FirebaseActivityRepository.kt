@@ -3,6 +3,7 @@ package akio.apps.myrun.data.activity.impl
 import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.base.firebase.FirebaseStorageUtils
 import akio.apps.myrun.data.activity.api.ActivityRepository
+import akio.apps.myrun.data.activity.api.locationparser.LocationDataPointParserFactory
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.DataPoint
@@ -12,7 +13,6 @@ import akio.apps.myrun.data.activity.impl.model.FirestoreDataPointList
 import akio.apps.myrun.data.activity.impl.model.FirestoreDataPointSerializer
 import akio.apps.myrun.data.activity.impl.model.FirestoreFloatDataPointParser
 import akio.apps.myrun.data.activity.impl.model.FirestoreIntegerDataPointParser
-import akio.apps.myrun.data.activity.impl.model.FirestoreLocationDataPointParser
 import akio.apps.myrun.data.common.Resource
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -45,7 +45,7 @@ class FirebaseActivityRepository @Inject constructor(
     }
 
     private fun getActivityImageStorage(userId: String): StorageReference =
-        firebaseStorage.getReference("activity_image/$userId")
+        firebaseStorage.getReference("$PATH_ACTIVITY_IMAGE/$userId")
 
     override suspend fun getActivitiesByStartTime(
         fixUserId: String,
@@ -53,8 +53,8 @@ class FirebaseActivityRepository @Inject constructor(
         startAfterTime: Long,
         limit: Int,
     ): List<BaseActivityModel> = withContext(ioDispatcher) {
-        val query = userActivityCollectionGroup.whereIn("athleteInfo.userId", userIds)
-            .orderBy("startTime", Query.Direction.DESCENDING)
+        val query = userActivityCollectionGroup.whereIn(FIELD_ATHLETE_USERID, userIds)
+            .orderBy(FIELD_ACTIVITY_START_TIME, Query.Direction.DESCENDING)
             .startAfter(startAfterTime)
             .limit(limit.toLong())
 
@@ -70,7 +70,7 @@ class FirebaseActivityRepository @Inject constructor(
         endTime: Long,
     ): List<BaseActivityModel> = withContext(ioDispatcher) {
         val query = getUserActivityCollection(userId)
-            .orderBy("startTime", Query.Direction.DESCENDING)
+            .orderBy(FIELD_ACTIVITY_START_TIME, Query.Direction.DESCENDING)
             .startAt(endTime)
             .endAt(startTime)
 
@@ -136,23 +136,16 @@ class FirebaseActivityRepository @Inject constructor(
         val locationDocRef = dataPointCollections.document(PATH_DATA_POINTS_LOCATIONS)
         batch.set(
             speedDocRef,
-            FirestoreDataPointSerializer(FirestoreFloatDataPointParser()).serialize(
-                speedDataPoints
-            )
+            FirestoreDataPointSerializer(FirestoreFloatDataPointParser()).serialize(speedDataPoints)
         )
-        batch.set(
-            locationDocRef,
-            FirestoreDataPointList(
-                data = FirestoreLocationDataPointParser().flatten(locationDataPoints)
-            )
-        )
+        val parser = LocationDataPointParserFactory.getWriteParser()
+        batch.set(locationDocRef, FirestoreDataPointList(parser.flatten(locationDataPoints)))
 
         if (stepCadenceDataPoints != null) {
             batch.set(
                 stepCadenceDocRef,
-                FirestoreDataPointSerializer(FirestoreIntegerDataPointParser()).serialize(
-                    stepCadenceDataPoints
-                )
+                FirestoreDataPointSerializer(FirestoreIntegerDataPointParser())
+                    .serialize(stepCadenceDataPoints)
             )
         }
     }
@@ -161,7 +154,7 @@ class FirebaseActivityRepository @Inject constructor(
         activityId: String,
     ): List<ActivityLocation> = withContext(ioDispatcher) {
         val firebaseActivity =
-            userActivityCollectionGroup.whereEqualTo(FIELD_ACTIVITY_ID, activityId).get().await()
+            userActivityCollectionGroup.whereEqualTo(FIELD_ID, activityId).get().await()
         val firestoreLocationDataPoints = firebaseActivity.documents.getOrNull(0)
             ?.reference
             ?.collection(PATH_DATA_POINTS)
@@ -171,13 +164,14 @@ class FirebaseActivityRepository @Inject constructor(
             ?.toObject(FirestoreDataPointList::class.java)
             ?: return@withContext emptyList()
 
-        FirestoreLocationDataPointParser().build(firestoreLocationDataPoints.data)
+        LocationDataPointParserFactory.getParser(firestoreLocationDataPoints.version)
+            .build(firestoreLocationDataPoints.data)
     }
 
     override suspend fun getActivity(
         activityId: String,
     ): BaseActivityModel? = withContext(ioDispatcher) {
-        val snapshot = userActivityCollectionGroup.whereEqualTo("id", activityId).get().await()
+        val snapshot = userActivityCollectionGroup.whereEqualTo(FIELD_ID, activityId).get().await()
         snapshot.documents
             .getOrNull(0)
             ?.toObject(FirestoreActivity::class.java)
@@ -185,7 +179,7 @@ class FirebaseActivityRepository @Inject constructor(
     }
 
     override suspend fun getActivityResource(
-        activityId: String
+        activityId: String,
     ): Resource<BaseActivityModel?> = try {
         val activityData = getActivity(activityId)
         Resource.Success(activityData)
@@ -200,15 +194,13 @@ class FirebaseActivityRepository @Inject constructor(
         private const val PATH_DATA_POINTS = "dataPoints"
         private const val PATH_DATA_POINTS_SPEED = "speed"
         private const val PATH_DATA_POINTS_STEP_CADENCE = "stepCadence"
+        private const val PATH_ACTIVITY_IMAGE = "activity_image"
         private const val PATH_DATA_POINTS_LOCATIONS = "location"
 
-        private const val FIELD_ACTIVITY_ID = "id"
+        private const val FIELD_ID = "id"
+        private const val FIELD_ACTIVITY_START_TIME = "startTime"
+        private const val FIELD_ATHLETE_USERID = "athleteInfo.userId"
 
         private const val THUMBNAIL_SCALED_SIZE = 1024 // px
-
-        /**
-         * Data version of activity stored on firestore.
-         */
-        internal const val ACTIVITY_DATA_VERSION = 2
     }
 }

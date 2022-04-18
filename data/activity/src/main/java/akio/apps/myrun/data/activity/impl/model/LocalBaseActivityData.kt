@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.activity.impl.model
 
+import akio.apps.myrun.data.activity.api.model.DataPointVersion
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -61,6 +62,8 @@ sealed class LocalBaseActivity(
     // Set a name for serializer to differentiate with the extended class's field.
     @SerialName("LocalBaseActivity_activityData")
     open val activityData: LocalActivityData,
+    @SerialName("LocalBaseActivity_version")
+    open val version: Int
 ) : LocalBaseActivityData by activityData
 
 @Serializable
@@ -70,7 +73,8 @@ data class LocalRunningActivity(
     // stats
     val pace: Double,
     val cadence: Int,
-) : LocalBaseActivity(activityData)
+    override val version: Int = DataPointVersion.min().value
+) : LocalBaseActivity(activityData, version)
 
 @Serializable
 data class LocalCyclingActivity(
@@ -78,4 +82,5 @@ data class LocalCyclingActivity(
 
     // stats
     val speed: Double,
-) : LocalBaseActivity(activityData)
+    override val version: Int = DataPointVersion.min().value
+) : LocalBaseActivity(activityData, version)
