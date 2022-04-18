@@ -40,11 +40,11 @@ dependencies {
     implementation project(":base:di")
 
     // app migration
-    implementation(libs.dataStore)
+    implementation(libs.datastore)
 
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 }

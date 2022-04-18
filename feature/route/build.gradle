@@ -46,14 +46,14 @@ dependencies {
 
     implementation(libs.androidx.appcompat)
     implementation(libs.activity)
-    implementation(libs.constraintLayout)
-    implementation(libs.androidMaterial)
+    implementation(libs.constraintlayout)
+    implementation(libs.androidmaterial)
 
-    implementation(libs.androidMapUtils)
-    implementation(libs.androidGoogleMap)
+    implementation(libs.googlemaps.androidutils)
+    implementation(libs.playservices.map)
 
     implementation(libs.playservices.location)
-    implementation(libs.googlePlaces)
+    implementation(libs.googleplaces)
 
     implementation(libs.mapbox.maps)
 
@@ -61,10 +61,10 @@ dependencies {
 
     implementation(libs.lifecycle.viewmodel.ktx)
 
-    implementation(libs.okHttp)
+    implementation(libs.okhttp)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 
-    testImplementation(libs.kotlinTest)
+    testImplementation(libs.kotlintest)
 }

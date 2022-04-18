@@ -41,24 +41,22 @@ dependencies {
     implementation(project(":base:firebase"))
     implementation(libs.bundles.firebase.data)
 
-    implementation(libs.javaXInject)
-
     implementation(libs.kotlinx.serialization.protobuf)
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.play.services)
 
-    implementation(libs.tcxzPot)
+    implementation(libs.tcxzpot)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 
-    implementation(libs.androidGoogleMap)
-    implementation(libs.androidMapUtils)
+    implementation(libs.playservices.map)
+    implementation(libs.googlemaps.androidutils)
 
     implementation(libs.timber)
 
-    implementation(libs.dataStore)
+    implementation(libs.datastore)
 
     implementation(libs.junit)
 }

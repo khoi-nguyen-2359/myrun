@@ -48,15 +48,15 @@ dependencies {
 
     implementation(project(":data:location"))
     implementation(libs.playservices.location)
-    implementation(libs.googlePlaces)
+    implementation(libs.googleplaces)
 
-    implementation(libs.workManager)
+    implementation(libs.workmanager)
     implementation(libs.guava) // to resolve error 'cannot access ListenableFuture' in work manager
 
-    implementation(libs.okHttp)
+    implementation(libs.okhttp)
 
     implementation(libs.timber)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 }

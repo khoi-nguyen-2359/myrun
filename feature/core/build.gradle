@@ -42,7 +42,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidMaterial)
+    implementation(libs.androidmaterial)
     implementation(libs.androidx.appcompat)
     implementation(libs.bundles.compose)
     implementation(libs.accompanist.insets)
@@ -52,10 +52,10 @@ dependencies {
     implementation(libs.timber)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 
-    testImplementation(libs.kotlinTest)
+    testImplementation(libs.kotlintest)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockito.inline)
-    testImplementation(libs.kotlinReflect)
+    testImplementation(libs.kotlinreflect)
 }

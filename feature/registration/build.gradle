@@ -51,16 +51,16 @@ dependencies {
     implementation(libs.kotlinx.coroutines.play.services)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 
-    implementation(libs.okHttp)
+    implementation(libs.okhttp)
 
     // social sign in
     implementation(libs.playservices.auth)
-    implementation(libs.facebookLogin)
+    implementation(libs.facebook.login)
 
-    implementation(libs.constraintLayout)
-    implementation(libs.androidMaterial)
+    implementation(libs.constraintlayout)
+    implementation(libs.androidmaterial)
 
     implementation(libs.timber)
 }

@@ -59,12 +59,12 @@ dependencies {
     implementation(project(':worker'))
 
     implementation(libs.playservices.location)
-    implementation(libs.googlePlaces)
+    implementation(libs.googleplaces)
 
     implementation(libs.kotlinx.coroutines.play.services)
 
-    implementation(libs.constraintLayout)
-    implementation(libs.androidMaterial)
+    implementation(libs.constraintlayout)
+    implementation(libs.androidmaterial)
 
     implementation(libs.bundles.compose)
 
@@ -76,20 +76,20 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.lifecycle.livedata.ktx)
 
-    implementation(libs.androidMapUtils)
-    implementation(libs.androidGoogleMap)
+    implementation(libs.googlemaps.androidutils)
+    implementation(libs.playservices.map)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 
-    implementation(libs.okHttp)
+    implementation(libs.okhttp)
 
     testImplementation(testFixtures(project(':test')))
     testImplementation(libs.bundles.testCoroutine)
     testImplementation(libs.junit)
-    testImplementation(libs.kotlinTest)
+    testImplementation(libs.kotlintest)
     testImplementation(libs.androidx.coretesting)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockito.inline)
-    testImplementation(libs.kotlinReflect)
+    testImplementation(libs.kotlinreflect)
 }

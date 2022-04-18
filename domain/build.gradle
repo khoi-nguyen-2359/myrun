@@ -45,13 +45,13 @@ dependencies {
     implementation(libs.timber)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 
     testImplementation(libs.junit)
-    testImplementation(libs.kotlinReflect)
+    testImplementation(libs.kotlinreflect)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockito.inline)
-    testImplementation(libs.kotlinTest)
-    testImplementation(libs.kotlinXCoroutinesTest)
+    testImplementation(libs.kotlintest)
+    testImplementation(libs.kotlinx.coroutinestest)
     testImplementation(libs.turbine)
 }

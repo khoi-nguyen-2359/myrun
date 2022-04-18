@@ -43,7 +43,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 
-    testImplementation(libs.kotlinTest)
+    testImplementation(libs.kotlintest)
 }

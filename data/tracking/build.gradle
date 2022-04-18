@@ -55,9 +55,9 @@ dependencies {
     implementation(libs.timber)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 
-    implementation(libs.dataStore)
+    implementation(libs.datastore)
 
     testImplementation(libs.junit)
 }

@@ -16,7 +16,7 @@ buildscript {
         classpath(libs.playservices.plugin)
         classpath(libs.firebase.crashlytics.plugin)
         classpath(libs.firebase.perf.plugin)
-        classpath(libs.build.time.tracker)
+        classpath(libs.buildtimetracker)
         classpath(libs.kotlinserialization.plugin)
 //        classpath(libs.ksp)
     }

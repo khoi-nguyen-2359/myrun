@@ -55,10 +55,10 @@ dependencies {
     implementation(libs.bundles.firebase.data)
 
     implementation(project(':worker'))
-    implementation(libs.workManager) // still needed when using module 'worker'
+    implementation(libs.workmanager) // still needed when using module 'worker'
 
-    implementation(libs.androidMaterial)
-    implementation(libs.constraintLayout)
+    implementation(libs.androidmaterial)
+    implementation(libs.constraintlayout)
     implementation(libs.bundles.compose)
     implementation(libs.accompanist.insets)
     implementation(libs.coilcompose)
@@ -68,5 +68,5 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 }
