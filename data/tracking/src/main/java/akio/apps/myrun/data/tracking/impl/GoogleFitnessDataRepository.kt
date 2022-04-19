@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.tracking.impl
 
-import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.model.DataPoint
 import akio.apps.myrun.data.tracking.api.FitnessDataRepository
 import android.app.Application
@@ -14,17 +13,13 @@ import com.google.android.gms.fitness.request.DataReadRequest
 import java.util.TreeSet
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 private typealias GmsDataPoint = com.google.android.gms.fitness.data.DataPoint
 
 class GoogleFitnessDataRepository @Inject constructor(
     private val application: Application,
-    @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher,
 ) : FitnessDataRepository {
 
     private val fitnessOptions
@@ -69,7 +64,7 @@ class GoogleFitnessDataRepository @Inject constructor(
         bucketTimeInSec: Long,
         dataType: DataType,
         aggregateType: DataType? = dataType.aggregateType,
-    ): List<GmsDataPoint> = withContext(ioDispatcher) {
+    ): List<GmsDataPoint> {
         try {
             val readRequest = DataReadRequest.Builder()
                 .apply {
@@ -83,7 +78,7 @@ class GoogleFitnessDataRepository @Inject constructor(
                 .setTimeRange(startTimeInSec, endTimeInSec, TimeUnit.SECONDS)
                 .build()
 
-            return@withContext fitnessHistoryClient.readData(readRequest)
+            return fitnessHistoryClient.readData(readRequest)
                 .await()
                 ?.run {
                     val dataPoints = TreeSet<GmsDataPoint> { o1, o2 ->
@@ -113,7 +108,7 @@ class GoogleFitnessDataRepository @Inject constructor(
                 ?: emptyList()
         } catch (throwable: Throwable) {
             throwable.printStackTrace()
-            return@withContext emptyList()
+            return emptyList()
         }
     }
 
@@ -121,7 +116,7 @@ class GoogleFitnessDataRepository @Inject constructor(
         startTime: Long,
         endTime: Long,
         interval: Long,
-    ): List<DataPoint<Float>> = withContext(ioDispatcher) {
+    ): List<DataPoint<Float>> {
         val speedDataPoints = readFitnessData(
             startTime,
             endTime,
@@ -129,7 +124,7 @@ class GoogleFitnessDataRepository @Inject constructor(
             DataType.TYPE_SPEED,
             DataType.AGGREGATE_SPEED_SUMMARY
         )
-        return@withContext speedDataPoints.map {
+        return speedDataPoints.map {
             DataPoint(
                 it.getStartTime(TimeUnit.MILLISECONDS),
                 it.getValue(Field.FIELD_AVERAGE)
@@ -142,7 +137,7 @@ class GoogleFitnessDataRepository @Inject constructor(
         startTime: Long,
         endTime: Long,
         interval: Long,
-    ): List<DataPoint<Int>> = withContext(ioDispatcher) {
+    ): List<DataPoint<Int>> {
         val cadenceDataPoints =
             readFitnessData(startTime, endTime, interval, DataType.TYPE_STEP_COUNT_CADENCE)
                 .map { cadenceDp ->
@@ -173,14 +168,14 @@ class GoogleFitnessDataRepository @Inject constructor(
                 )
             }
 
-        return@withContext mergeDataPoints(cadenceDataPoints, stepDeltaDataPoints)
+        return mergeDataPoints(cadenceDataPoints, stepDeltaDataPoints)
     }
 
     override suspend fun getHeartRateDataPoints(
         startTime: Long,
         endTime: Long,
         interval: Long,
-    ): List<DataPoint<Int>> = withContext(ioDispatcher) {
+    ): List<DataPoint<Int>> {
         val heartRateDataPoints = readFitnessData(
             startTime,
             endTime,
@@ -188,7 +183,7 @@ class GoogleFitnessDataRepository @Inject constructor(
             DataType.TYPE_HEART_RATE_BPM,
             DataType.AGGREGATE_HEART_RATE_SUMMARY
         )
-        return@withContext heartRateDataPoints.map {
+        return heartRateDataPoints.map {
             DataPoint(
                 it.getStartTime(TimeUnit.MILLISECONDS),
                 it.getValue(Field.FIELD_AVERAGE)

@@ -197,7 +197,7 @@ class RouteTrackingActivity(
 
     private fun updateStickyCamera(
         locationUpdate: List<Location>,
-        animate: Boolean = isFirstCameraMoveFinished
+        animate: Boolean = isFirstCameraMoveFinished,
     ) {
         Timber.d("Sticky Camera $cameraMovement")
         if (isMapCameraMoving) {
