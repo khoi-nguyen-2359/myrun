@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.eapps.impl
 
-import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
@@ -22,8 +21,6 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.Source
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -31,12 +28,10 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 private val Context.prefDataStore:
     DataStore<Preferences> by preferencesDataStore("external_app_providers_repository_prefs")
@@ -47,8 +42,6 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firestoreStravaTokenMapper: FirestoreStravaTokenMapper,
     private val firestoreProvidersMapper: FirestoreProvidersMapper,
-    @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher,
 ) : ExternalAppProvidersRepository {
 
     private val prefDataStore: DataStore<Preferences> = application.prefDataStore
@@ -80,7 +73,7 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
                 val providers = snapshot?.toObject(FirestoreProviders::class.java)
                     ?.run(firestoreProvidersMapper::map)
                     ?: ExternalProviders.createEmpty()
-                CoroutineScope(ioDispatcher).launch {
+                launch {
                     setStravaSyncEnabled(providers.strava != null)
                 }
                 trySendBlocking(Resource.Success(providers))
@@ -95,11 +88,10 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
             }
         }
     }
-        .flowOn(ioDispatcher)
 
     override suspend fun getExternalProviders(
         accountId: String,
-    ): ExternalProviders = withContext(ioDispatcher) {
+    ): ExternalProviders {
         val allTokenData = getProviderTokenDocument(accountId)
             .get()
             .await()
@@ -109,13 +101,13 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
 
         setStravaSyncEnabled(allTokenData.strava != null)
 
-        allTokenData
+        return allTokenData
     }
 
     override suspend fun updateStravaProvider(
         accountId: String,
         token: ExternalAppToken.StravaToken,
-    ): Unit = withContext(ioDispatcher) {
+    ) {
         val providerTokenDocument = getProviderTokenDocument(accountId)
         val providerToken = FirestoreProviders.FirestoreProviderToken(
             RunningApp.Strava.appName,
@@ -129,17 +121,13 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
         setStravaSyncEnabled(true)
     }
 
-    override suspend fun removeStravaProvider(
-        accountId: String,
-    ): Unit = withContext(ioDispatcher) {
+    override suspend fun removeStravaProvider(accountId: String) {
         val providerTokenDocument = getProviderTokenDocument(accountId)
         providerTokenDocument.set(mapOf(RunningApp.Strava.id to null), SetOptions.merge()).await()
         setStravaSyncEnabled(false)
     }
 
-    override suspend fun getStravaProviderToken(
-        accountId: String,
-    ): ExternalAppToken.StravaToken? = withContext(ioDispatcher) {
+    override suspend fun getStravaProviderToken(accountId: String): ExternalAppToken.StravaToken? {
         // TODO: add document path to get directly the strava token?
         val tokenData = getProviderTokenDocument(accountId)
             .get()
@@ -151,7 +139,7 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
 
         setStravaSyncEnabled(tokenData != null)
 
-        tokenData
+        return tokenData
     }
 
     private suspend fun setStravaSyncEnabled(isEnabled: Boolean) {

@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.profile
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.eapps.api.model.ExternalProviders
 import akio.apps.myrun.data.user.api.model.Gender
@@ -16,9 +17,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 
 internal class UserProfileViewModel @Inject constructor(
     private val application: Application,
@@ -28,6 +32,9 @@ internal class UserProfileViewModel @Inject constructor(
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
     private val updateUserProfileUsecase: UpdateUserProfileUsecase,
+
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
     /**
@@ -39,14 +46,14 @@ internal class UserProfileViewModel @Inject constructor(
 
     val screenStateFlow: Flow<ScreenState> = combine(
         getUserProfileUsecase.getUserProfileFlow(savedStateHandle.getUserId()),
-        getProviderTokensUsecase.getProviderTokensFlow(),
+        getProviderTokensUsecase.getProviderTokensFlow().flowOn(ioDispatcher),
         editingFormDataMutableStateFlow,
         ScreenState::create
     )
 
     fun deauthorizeStrava() {
         viewModelScope.launchCatching {
-            deauthorizeStravaUsecase.deauthorizeStrava()
+            withContext(ioDispatcher) { deauthorizeStravaUsecase.deauthorizeStrava() }
 
             UploadStravaFileWorker.clear(application)
         }
