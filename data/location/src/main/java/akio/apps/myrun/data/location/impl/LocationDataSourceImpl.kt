@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.location.impl
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
@@ -11,6 +12,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -27,10 +29,12 @@ private typealias AndroidLocation = android.location.Location
 
 class LocationDataSourceImpl @Inject constructor(
     private val locationClient: FusedLocationProviderClient,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : LocationDataSource {
 
     @SuppressLint("MissingPermission")
-    override suspend fun getLastLocation(): Location? = withContext(Dispatchers.IO) {
+    override suspend fun getLastLocation(): Location? = withContext(ioDispatcher) {
         try {
             val androidLocation = locationClient.lastLocation.await()
             androidLocation?.toLocation()
@@ -44,7 +48,7 @@ class LocationDataSourceImpl @Inject constructor(
         if (lastLocation != null) {
             emit(lastLocation)
         } else {
-            val request = LocationRequestConfig(0, 0, 0f)
+            val request = LocationRequestConfig()
             val result = getLocationUpdate(request).first { it.isNotEmpty() }
             emit(result.last())
         }

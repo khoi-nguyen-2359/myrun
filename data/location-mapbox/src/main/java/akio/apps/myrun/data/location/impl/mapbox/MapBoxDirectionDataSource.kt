@@ -2,6 +2,7 @@ package akio.apps.myrun.data.location.impl.mapbox
 
 import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.location.api.DirectionDataSource
+import akio.apps.myrun.data.location.api.WaypointReducer
 import akio.apps.myrun.data.location.api.model.LatLng
 import androidx.annotation.WorkerThread
 import com.mapbox.api.directions.v5.DirectionsCriteria
@@ -14,10 +15,11 @@ import kotlinx.coroutines.withContext
 
 class MapBoxDirectionDataSource @Inject constructor(
     private val mapBoxAccessToken: MapBoxAccessToken,
-    private val waypointQuantityReducer: WaypointQuantityReducer,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
 ) : DirectionDataSource {
+
+    private val waypointReducer: WaypointReducer = WaypointReducer()
 
     @WorkerThread
     override suspend fun getWalkingDirections(
@@ -31,7 +33,7 @@ class MapBoxDirectionDataSource @Inject constructor(
             .overview(DirectionsCriteria.OVERVIEW_SIMPLIFIED)
             .geometries(DirectionsCriteria.GEOMETRY_POLYLINE)
             .coordinates(
-                waypointQuantityReducer.reduce(waypoints, MAX_MAP_MATCHING_API_WAYPOINT)
+                waypointReducer.reduce(waypoints, MAX_MAP_MATCHING_API_WAYPOINT)
                     .map { Point.fromLngLat(it.longitude, it.latitude) }
             )
             .build()

@@ -6,7 +6,6 @@ import akio.apps.myrun.data.location.api.model.PlaceSuggestion
 
 interface PlaceDataSource {
     suspend fun getCurrentPlace(): PlaceDetails?
-    suspend fun getAddressFromLocation(lat: Double, lng: Double): List<PlaceAddressComponent>
     suspend fun getRecentPlaceAddressFromLocation(lat: Double, lng: Double):
         List<PlaceAddressComponent>
     suspend fun getPlaceSuggestions(query: String): List<PlaceSuggestion>
