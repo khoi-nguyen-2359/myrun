@@ -45,7 +45,7 @@ internal class UserProfileViewModel @Inject constructor(
         MutableStateFlow(savedStateHandle.getFormData())
 
     val screenStateFlow: Flow<ScreenState> = combine(
-        getUserProfileUsecase.getUserProfileFlow(savedStateHandle.getUserId()),
+        getUserProfileUsecase.getUserProfileFlow(savedStateHandle.getUserId()).flowOn(ioDispatcher),
         getProviderTokensUsecase.getProviderTokensFlow().flowOn(ioDispatcher),
         editingFormDataMutableStateFlow,
         ScreenState::create

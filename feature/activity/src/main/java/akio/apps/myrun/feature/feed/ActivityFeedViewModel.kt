@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.feed
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
@@ -18,15 +19,18 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 internal class ActivityFeedViewModel @Inject constructor(
@@ -38,6 +42,8 @@ internal class ActivityFeedViewModel @Inject constructor(
     private val launchCatchingViewModel: LaunchCatchingDelegate,
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val activityDateTimeFormatter: ActivityDateTimeFormatter,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingViewModel {
 
     private var activityPagingSource: ActivityPagingSource? = null
@@ -48,7 +54,7 @@ internal class ActivityFeedViewModel @Inject constructor(
         createActivityUploadBadgeStatusFlow()
 
     val userProfile: Flow<UserProfile> =
-        getUserProfileUsecase.getUserProfileFlow().mapNotNull { it.data }
+        getUserProfileUsecase.getUserProfileFlow().mapNotNull { it.data }.flowOn(ioDispatcher)
 
     val myActivityList: Flow<PagingData<BaseActivityModel>> = Pager(
         config = PagingConfig(
@@ -136,8 +142,9 @@ internal class ActivityFeedViewModel @Inject constructor(
         ) {
             val userId = userAuthenticationState.getUserAccountId()
             if (userId != null) {
-                userRecentPlaceIdentifier =
+                userRecentPlaceIdentifier = withContext(ioDispatcher) {
                     userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
+                }
             }
         }
 

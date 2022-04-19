@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.profile
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UploadUserAvatarImageUsecase
 import akio.apps.myrun.feature.core.DialogDelegate
@@ -31,11 +32,12 @@ import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-// TODO: convert to composable UI
+// TODO: convert to composable UI + MVVM
 internal class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload_avatar) {
 
     private var initialImageRequestDisposable: Disposable? = null
@@ -57,6 +59,10 @@ internal class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload
     private val pickPictureDelegate = PickPictureDelegate(this, ::presentPictureContent)
 
     private val imageLoader: ImageLoader by lazy { Coil.imageLoader(this) }
+
+    @Inject
+    @NamedIoDispatcher
+    lateinit var ioDispatcher: CoroutineDispatcher
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,7 +98,9 @@ internal class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload
     }
 
     private fun loadInitialUserProfilePicture() = lifecycleScope.launch {
-        val userProfilePictureUrl = getUserProfileUsecase.getUserProfileResource().data?.photo
+        val userProfilePictureUrl = withContext(ioDispatcher) {
+            getUserProfileUsecase.getUserProfileResource().data?.photo
+        }
             ?: return@launch
 
         val initialImageRequest = ImageRequest.Builder(this@UploadAvatarActivity)
@@ -156,7 +164,7 @@ internal class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload
         }
     }
 
-    private suspend fun uploadUserAvatarFile(bitmapTmpFile: File) {
+    private suspend fun uploadUserAvatarFile(bitmapTmpFile: File) = withContext(ioDispatcher) {
         val fileUri = Uri.fromFile(bitmapTmpFile)
         uploadUserAvatarImageUsecase.uploadUserAvatarImage(fileUri.toString())
     }

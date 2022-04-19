@@ -17,7 +17,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,11 +37,11 @@ internal class ActivityDetailViewModel @Inject constructor(
         MutableStateFlow(Resource.Loading())
 
     val screenStateFlow: Flow<ScreenState> =
-        activityDetailsMutableStateFlow.map(::combineScreenState).flowOn(ioDispatcher)
+        activityDetailsMutableStateFlow.map(::combineScreenState)
 
     private suspend fun combineScreenState(
         activityResource: Resource<BaseActivityModel>,
-    ): ScreenState {
+    ): ScreenState = withContext(ioDispatcher) {
         val userId = userAuthenticationState.requireUserAccountId()
         val userPlaceIdentifier = userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
         val placeName = placeNameSelector.select(
@@ -58,7 +57,7 @@ internal class ActivityDetailViewModel @Inject constructor(
         } else {
             emptyList()
         }
-        return ScreenState.create(
+        ScreenState.create(
             activityResource,
             activityDateTimeFormatter,
             placeName,
