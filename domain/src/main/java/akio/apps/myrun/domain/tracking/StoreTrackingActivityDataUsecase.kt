@@ -77,8 +77,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
             activityName,
             routeImage = "", // local storage does not include
             placeIdentifier,
-            startTime
-                ?: endTime - duration,
+            startTime ?: endTime - duration,
             endTime,
             duration,
             distance,
@@ -87,9 +86,12 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         )
         return when (activityType) {
             ActivityType.Running -> {
-                val pace =
+                val pace = if (distance == 0.0) {
+                    0.0
+                } else {
                     TrackingValueConverter.TimeMinute.fromRawValue(duration) /
                         TrackingValueConverter.DistanceKm.fromRawValue(distance)
+                }
                 RunningActivityModel(activityData, pace, cadence = 0)
             }
             ActivityType.Cycling -> {
