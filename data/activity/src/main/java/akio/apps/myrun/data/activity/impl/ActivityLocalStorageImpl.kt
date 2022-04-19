@@ -30,6 +30,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import java.io.BufferedOutputStream
 import java.io.File
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
@@ -48,6 +49,7 @@ private val Context.prefDataStore:
     DataStore<Preferences> by preferencesDataStore("activity_local_storage_prefs")
 
 @OptIn(ExperimentalSerializationApi::class)
+@Singleton
 class ActivityLocalStorageImpl @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,

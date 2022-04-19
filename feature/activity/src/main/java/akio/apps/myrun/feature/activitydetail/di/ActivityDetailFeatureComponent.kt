@@ -8,7 +8,9 @@ import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Component
+import javax.inject.Singleton
 
+@Singleton
 @Component(
     modules = [
         AuthenticationDataModule::class,

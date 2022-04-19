@@ -15,6 +15,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.map
 private val Context.prefDataStore:
     DataStore<Preferences> by preferencesDataStore("route_tracking_state_prefs")
 
+@Singleton
 class PreferencesRouteTrackingState @Inject constructor(
     application: Application,
 ) : RouteTrackingState {

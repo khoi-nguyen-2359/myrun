@@ -28,7 +28,7 @@ class ActivityTcxFileWriterImpl @Inject constructor() : ActivityTcxFileWriter {
         locations: List<ActivityLocation>,
         cadences: List<Int>,
         outputFile: File,
-        zip: Boolean
+        zip: Boolean,
     ) {
         val serializer = if (zip)
             ZipFileSerializer(outputFile, ".tcx")

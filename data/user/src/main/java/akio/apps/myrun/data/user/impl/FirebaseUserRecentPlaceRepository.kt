@@ -8,6 +8,7 @@ import akio.apps.myrun.data.user.impl.model.FirestorePlaceIdentifier
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,6 +21,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
+@Singleton
 class FirebaseUserRecentPlaceRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     @NamedIoDispatcher

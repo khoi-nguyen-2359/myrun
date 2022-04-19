@@ -6,7 +6,9 @@ import akio.apps.myrun.feature.activitydetail.ActivityExportService
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
+import javax.inject.Singleton
 
+@Singleton
 @Component(
     modules = [
         DispatchersModule::class,

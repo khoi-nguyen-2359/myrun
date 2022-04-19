@@ -1,6 +1,5 @@
 package akio.apps.myrun.feature.profile.di
 
-import akio.apps.myrun.base.di.FeatureScope
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.data.eapps.ExternalAppDataModule
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingModule
@@ -8,8 +7,9 @@ import akio.apps.myrun.feature.profile.LinkStravaViewModel
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
+import javax.inject.Singleton
 
-@FeatureScope
+@Singleton
 @Component(
     modules = [
         LaunchCatchingModule::class,

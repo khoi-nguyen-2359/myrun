@@ -12,6 +12,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,6 +28,7 @@ import timber.log.Timber
 
 private typealias AndroidLocation = android.location.Location
 
+@Singleton
 class LocationDataSourceImpl @Inject constructor(
     private val locationClient: FusedLocationProviderClient,
     @NamedIoDispatcher

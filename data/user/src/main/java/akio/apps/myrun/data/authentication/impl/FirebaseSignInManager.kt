@@ -7,8 +7,10 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.tasks.await
 
+@Singleton
 class FirebaseSignInManager @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) : SignInManager {

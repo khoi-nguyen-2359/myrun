@@ -8,9 +8,11 @@ import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.location.impl.model.GoogleMapDirectionApiKey
 import akio.apps.myrun.data.location.impl.model.MapApiStatus
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
+@Singleton
 class GoogleDirectionDataSource @Inject constructor(
     private val googleMapDirectionApi: GoogleMapDirectionApi,
     private val googleMapDirectionApiKey: GoogleMapDirectionApiKey,

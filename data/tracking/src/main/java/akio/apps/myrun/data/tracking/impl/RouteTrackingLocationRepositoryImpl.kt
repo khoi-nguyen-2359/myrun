@@ -4,9 +4,11 @@ import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
+@Singleton
 class RouteTrackingLocationRepositoryImpl @Inject constructor(
     private val routeTrackingLocationDao: RouteTrackingLocationDao,
     @NamedIoDispatcher

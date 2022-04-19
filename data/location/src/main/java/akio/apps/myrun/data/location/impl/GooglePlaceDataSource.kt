@@ -18,10 +18,12 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.Lazy
 import java.util.Locale
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
+@Singleton
 class GooglePlaceDataSource @Inject constructor(
     /**
      * Use lazy to avoid uninitialized Places when providing PlacesClient

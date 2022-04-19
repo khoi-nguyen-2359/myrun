@@ -10,9 +10,11 @@ import com.mapbox.api.matching.v5.MapboxMapMatching
 import com.mapbox.geojson.Point
 import com.mapbox.geojson.utils.PolylineUtils
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
+@Singleton
 class MapBoxDirectionDataSource @Inject constructor(
     private val mapBoxAccessToken: MapBoxAccessToken,
     @NamedIoDispatcher

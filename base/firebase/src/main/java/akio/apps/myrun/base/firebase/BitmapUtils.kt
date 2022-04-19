@@ -5,7 +5,11 @@ import android.graphics.BitmapFactory
 import kotlin.math.roundToInt
 
 object BitmapUtils {
-    fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+    private fun calculateInSampleSize(
+        options: BitmapFactory.Options,
+        reqWidth: Int,
+        reqHeight: Int,
+    ): Int {
         // Raw height and width of image
         val (height: Int, width: Int) = options.run { outHeight to outWidth }
         var inSampleSize = 1
@@ -26,7 +30,7 @@ object BitmapUtils {
     fun decodeSampledFile(
         filePath: String,
         reqWidth: Int,
-        reqHeight: Int
+        reqHeight: Int,
     ): Bitmap = BitmapFactory.Options()
         .run {
             inJustDecodeBounds = true

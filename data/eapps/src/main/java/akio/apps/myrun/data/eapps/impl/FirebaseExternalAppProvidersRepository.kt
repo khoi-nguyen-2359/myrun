@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.Source
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +41,7 @@ import kotlinx.coroutines.withContext
 private val Context.prefDataStore:
     DataStore<Preferences> by preferencesDataStore("external_app_providers_repository_prefs")
 
+@Singleton
 class FirebaseExternalAppProvidersRepository @Inject constructor(
     private val application: Application,
     private val firestore: FirebaseFirestore,

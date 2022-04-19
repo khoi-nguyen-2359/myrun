@@ -4,7 +4,9 @@ import akio.apps.myrun.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.splash.SplashViewModel
 import dagger.Component
+import javax.inject.Singleton
 
+@Singleton
 @Component(
     modules = [
         LaunchCatchingModule::class,

@@ -102,6 +102,7 @@ dependencies {
     implementation(project(':data:user'))
     implementation(project(':data:tracking'))
 
+    implementation project(':base:di')
     implementation project(':base:firebase')
     implementation platform(libs.firebase.bom)
     implementation(libs.bundles.firebase.data)
