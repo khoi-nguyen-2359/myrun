@@ -37,8 +37,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-private val Context.prefDataStore: DataStore<Preferences> by
-preferencesDataStore("external_app_providers_repository")
+private val Context.prefDataStore:
+    DataStore<Preferences> by preferencesDataStore("external_app_providers_repository_prefs")
 
 class FirebaseExternalAppProvidersRepository @Inject constructor(
     private val application: Application,

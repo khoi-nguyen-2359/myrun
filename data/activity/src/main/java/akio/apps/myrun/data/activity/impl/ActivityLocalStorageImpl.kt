@@ -44,8 +44,8 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.protobuf.ProtoBuf
 import timber.log.Timber
 
-private val Context.prefDataStore: DataStore<Preferences> by
-preferencesDataStore("activity_local_storage")
+private val Context.prefDataStore:
+    DataStore<Preferences> by preferencesDataStore("activity_local_storage_prefs")
 
 @OptIn(ExperimentalSerializationApi::class)
 class ActivityLocalStorageImpl @Inject constructor(

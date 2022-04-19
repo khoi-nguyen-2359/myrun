@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private val Context.prefDataStore:
-    DataStore<Preferences> by preferencesDataStore("route_tracking_state")
+    DataStore<Preferences> by preferencesDataStore("route_tracking_state_prefs")
 
 class PreferencesRouteTrackingState @Inject constructor(
     application: Application,
@@ -33,10 +33,7 @@ class PreferencesRouteTrackingState @Inject constructor(
         .first()
 
     override fun getTrackingStatusFlow(): Flow<@RouteTrackingStatus Int> = prefDataStore.data
-        .map { data ->
-            data[KEY_TRACKING_STATUS]
-                ?: RouteTrackingStatus.STOPPED
-        }
+        .map { data -> data[KEY_TRACKING_STATUS] ?: RouteTrackingStatus.STOPPED }
         .distinctUntilChanged() // or it will fire whenever prefDataStore.data change
 
     override suspend fun setTrackingStatus(@RouteTrackingStatus status: Int) {
@@ -57,22 +54,18 @@ class PreferencesRouteTrackingState @Inject constructor(
 
     override suspend fun getRouteDistance(): Double = prefDataStore.data
         .map { state ->
-            state[KEY_ROUTE_DISTANCE]
-                ?: 0f
+            state[KEY_ROUTE_DISTANCE] ?: 0f
         }
         .first()
         .toDouble()
 
     override suspend fun setTrackingDuration(totalSec: Long) {
-        prefDataStore.edit { data ->
-            data[KEY_TRACKING_DURATION] = totalSec
-        }
+        prefDataStore.edit { data -> data[KEY_TRACKING_DURATION] = totalSec }
     }
 
     override suspend fun getTrackingDuration(): Long = prefDataStore.data
         .map { state ->
-            state[KEY_TRACKING_DURATION]
-                ?: 0L
+            state[KEY_TRACKING_DURATION] ?: 0L
         }
         .first()
 
@@ -92,8 +85,7 @@ class PreferencesRouteTrackingState @Inject constructor(
 
     override suspend fun getPauseDuration(): Long = prefDataStore.data
         .map { state ->
-            state[KEY_PAUSE_DURATION]
-                ?: 0L
+            state[KEY_PAUSE_DURATION] ?: 0L
         }
         .first()
 
@@ -111,16 +103,13 @@ class PreferencesRouteTrackingState @Inject constructor(
 
     override suspend fun getInstantSpeed(): Double = prefDataStore.data
         .map { data ->
-            data[KEY_CURRENT_SPEED]
-                ?: 0f
+            data[KEY_CURRENT_SPEED] ?: 0f
         }
         .first()
         .toDouble()
 
     override suspend fun setInstantSpeed(currentSpeed: Double) {
-        prefDataStore.edit { data ->
-            data[KEY_CURRENT_SPEED] = currentSpeed.toFloat()
-        }
+        prefDataStore.edit { data -> data[KEY_CURRENT_SPEED] = currentSpeed.toFloat() }
     }
 
     override suspend fun clear() {
@@ -181,8 +170,7 @@ class PreferencesRouteTrackingState @Inject constructor(
     override suspend fun getPlaceIdentifier(): String? =
         prefDataStore.data.map { data ->
             data[KEY_PLACE_IDENTIFIER]
-        }
-            .first()
+        }.first()
 
     companion object {
         private val KEY_TRACKING_STATUS = intPreferencesKey("KEY_TRACKING_STATUS")

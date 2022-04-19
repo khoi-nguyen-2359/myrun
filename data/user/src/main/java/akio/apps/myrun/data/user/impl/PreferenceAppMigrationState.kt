@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private val Context.prefDataStore:
-    DataStore<Preferences> by preferencesDataStore("app_version_migration_state")
+    DataStore<Preferences> by preferencesDataStore("app_version_migration_state_prefs")
 
 class PreferenceAppMigrationState @Inject constructor(
     application: Application,
