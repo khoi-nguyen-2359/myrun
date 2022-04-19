@@ -40,7 +40,6 @@ class GetTrainingSummaryDataUsecaseTest {
         usecase = GetTrainingSummaryDataUsecase(
             mockedActivityRepository,
             mockedUserAuthenticationState,
-            testCoroutineDispatcher,
             mockedTimeProvider
         )
     }
