@@ -1,6 +1,5 @@
 package akio.apps.myrun.worker
 
-import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.domain.strava.UploadActivityFilesToStravaUsecase
 import android.app.Application
 import android.content.Context
@@ -15,6 +14,7 @@ import androidx.work.WorkerParameters
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -26,9 +26,7 @@ class UploadStravaFileWorker(
     @Inject
     lateinit var uploadActivityFilesToStravaUsecase: UploadActivityFilesToStravaUsecase
 
-    @Inject
-    @NamedIoDispatcher
-    lateinit var ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     init {
         DaggerWorkerFeatureComponent.factory().create(appContext as Application).inject(this)

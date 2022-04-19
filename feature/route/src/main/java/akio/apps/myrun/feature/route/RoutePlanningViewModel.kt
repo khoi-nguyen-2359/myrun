@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.route
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.location.api.model.Location
@@ -13,12 +14,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 
 internal class RoutePlanningViewModel @Inject constructor(
@@ -27,6 +30,8 @@ internal class RoutePlanningViewModel @Inject constructor(
     private val locationDataSource: LocationDataSource,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
     private val routeRepository: RouteRepository,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
     private val _routeDrawingMode: MutableStateFlow<RouteDrawingMode> =
@@ -86,10 +91,12 @@ internal class RoutePlanningViewModel @Inject constructor(
             (_screenState.value as? ScreenState.RoutePlotting)
                 ?: return
         viewModelScope.launchCatching {
-            val plottingResult = plotRouteUsecase.plotRoute(
-                drawnPath,
-                routePlottingScreenState.plottingState.getCurrentState()
-            )
+            val plottingResult = withContext(ioDispatcher) {
+                plotRouteUsecase.plotRoute(
+                    drawnPath,
+                    routePlottingScreenState.plottingState.getCurrentState()
+                )
+            }
             val screenState = routePlottingScreenState.copy(
                 plottingState = routePlottingScreenState.plottingState.record(plottingResult)
             )

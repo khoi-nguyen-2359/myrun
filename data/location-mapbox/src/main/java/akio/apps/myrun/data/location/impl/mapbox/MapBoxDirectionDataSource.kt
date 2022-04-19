@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.location.impl.mapbox
 
-import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.location.api.DirectionDataSource
 import akio.apps.myrun.data.location.api.WaypointReducer
 import akio.apps.myrun.data.location.api.model.LatLng
@@ -11,14 +10,10 @@ import com.mapbox.geojson.Point
 import com.mapbox.geojson.utils.PolylineUtils
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 
 @Singleton
 class MapBoxDirectionDataSource @Inject constructor(
     private val mapBoxAccessToken: MapBoxAccessToken,
-    @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher,
 ) : DirectionDataSource {
 
     private val waypointReducer: WaypointReducer = WaypointReducer()
@@ -26,7 +21,7 @@ class MapBoxDirectionDataSource @Inject constructor(
     @WorkerThread
     override suspend fun getWalkingDirections(
         waypoints: List<LatLng>,
-    ): List<LatLng> = withContext(ioDispatcher) {
+    ): List<LatLng> {
         val mapMatchingRequest = MapboxMapMatching.builder()
             .accessToken(mapBoxAccessToken.value)
             .profile(DirectionsCriteria.PROFILE_WALKING)
@@ -46,7 +41,8 @@ class MapBoxDirectionDataSource @Inject constructor(
         val gmsWaypoints = geometry?.let {
             PolylineUtils.decode(geometry, GOOGLE_POLYLINE_PRECISION)
         } ?: emptyList()
-        gmsWaypoints.map { LatLng(it.latitude(), it.longitude()) }
+
+        return gmsWaypoints.map { LatLng(it.latitude(), it.longitude()) }
     }
 
     companion object {
