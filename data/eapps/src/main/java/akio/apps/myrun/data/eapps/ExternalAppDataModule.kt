@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.eapps
 
+import akio.apps.myrun.base.di.DispatchersModule
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.eapps.api.StravaDataRepository
@@ -20,7 +21,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-@Module(includes = [ExternalAppDataModule.Providers::class])
+@Module(includes = [ExternalAppDataModule.Providers::class, DispatchersModule::class])
 interface ExternalAppDataModule {
     @Binds
     fun externalAppCredentialsRepo(repo: FirebaseExternalAppProvidersRepository):

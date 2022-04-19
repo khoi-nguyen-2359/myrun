@@ -34,6 +34,7 @@ android {
 dependencies {
     implementation project(':data:api')
 
+    implementation project(':base:di')
     implementation project(':base:firebase')
     implementation(libs.bundles.firebase.data)
 

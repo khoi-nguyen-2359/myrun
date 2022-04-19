@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.eapps.impl
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.Source
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,66 +38,66 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 private val Context.prefDataStore: DataStore<Preferences> by
-preferencesDataStore("FirebaseExternalAppProvidersRepository")
+preferencesDataStore("external_app_providers_repository")
 
 class FirebaseExternalAppProvidersRepository @Inject constructor(
     private val application: Application,
     private val firestore: FirebaseFirestore,
     private val firestoreStravaTokenMapper: FirestoreStravaTokenMapper,
     private val firestoreProvidersMapper: FirestoreProvidersMapper,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ExternalAppProvidersRepository {
 
     private val prefDataStore: DataStore<Preferences> = application.prefDataStore
 
     private fun getProviderTokenDocument(userUid: String): DocumentReference {
-        return firestore.collection(PROVIDERS_COLLECTION_PATH)
-            .document(userUid)
+        return firestore.collection(PROVIDERS_COLLECTION_PATH).document(userUid)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getExternalProvidersFlow(
         accountId: String,
-    ): Flow<Resource<out ExternalProviders>> =
-        callbackFlow {
-            val providerTokenDocument = getProviderTokenDocument(accountId)
-            try {
-                val cached = providerTokenDocument.get(Source.CACHE)
-                    .await()
-                    .toObject(FirestoreProviders::class.java)
+    ): Flow<Resource<out ExternalProviders>> = callbackFlow {
+        val providerTokenDocument = getProviderTokenDocument(accountId)
+        try {
+            val cached = providerTokenDocument.get(Source.CACHE)
+                .await()
+                .toObject(FirestoreProviders::class.java)
+                ?.run(firestoreProvidersMapper::map)
+
+            setStravaSyncEnabled(cached?.strava != null)
+
+            send(Resource.Loading(cached))
+        } catch (ex: Exception) {
+            send(Resource.Loading(null))
+        }
+
+        val listener = providerTokenDocument.addSnapshotListener { snapshot, error ->
+            if (error == null) {
+                val providers = snapshot?.toObject(FirestoreProviders::class.java)
                     ?.run(firestoreProvidersMapper::map)
-
-                setStravaSyncEnabled(cached?.strava != null)
-
-                send(Resource.Loading(cached))
-            } catch (ex: Exception) {
-                send(Resource.Loading(null))
-            }
-
-            val listener = providerTokenDocument.addSnapshotListener { snapshot, error ->
-                if (error == null) {
-                    val providers = snapshot?.toObject(FirestoreProviders::class.java)
-                        ?.run(firestoreProvidersMapper::map)
-                        ?: ExternalProviders.createEmpty()
-                    CoroutineScope(Dispatchers.IO).launch {
-                        setStravaSyncEnabled(providers.strava != null)
-                    }
-                    trySendBlocking(Resource.Success(providers))
-                } else {
-                    trySendBlocking(Resource.Error<ExternalProviders>(error))
+                    ?: ExternalProviders.createEmpty()
+                CoroutineScope(ioDispatcher).launch {
+                    setStravaSyncEnabled(providers.strava != null)
                 }
-            }
-
-            awaitClose {
-                runBlocking(Dispatchers.Main.immediate) {
-                    listener.remove()
-                }
+                trySendBlocking(Resource.Success(providers))
+            } else {
+                trySendBlocking(Resource.Error<ExternalProviders>(error))
             }
         }
-            .flowOn(Dispatchers.IO)
+
+        awaitClose {
+            runBlocking(Dispatchers.Main.immediate) {
+                listener.remove()
+            }
+        }
+    }
+        .flowOn(ioDispatcher)
 
     override suspend fun getExternalProviders(
         accountId: String,
-    ): ExternalProviders = withContext(Dispatchers.IO) {
+    ): ExternalProviders = withContext(ioDispatcher) {
         val allTokenData = getProviderTokenDocument(accountId)
             .get()
             .await()
@@ -111,7 +113,7 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
     override suspend fun updateStravaProvider(
         accountId: String,
         token: ExternalAppToken.StravaToken,
-    ): Unit = withContext(Dispatchers.IO) {
+    ): Unit = withContext(ioDispatcher) {
         val providerTokenDocument = getProviderTokenDocument(accountId)
         val providerToken = FirestoreProviders.FirestoreProviderToken(
             RunningApp.Strava.appName,
@@ -127,7 +129,7 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
 
     override suspend fun removeStravaProvider(
         accountId: String,
-    ): Unit = withContext(Dispatchers.IO) {
+    ): Unit = withContext(ioDispatcher) {
         val providerTokenDocument = getProviderTokenDocument(accountId)
         providerTokenDocument.set(mapOf(RunningApp.Strava.id to null), SetOptions.merge()).await()
         setStravaSyncEnabled(false)
@@ -135,21 +137,20 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
 
     override suspend fun getStravaProviderToken(
         accountId: String,
-    ): ExternalAppToken.StravaToken? =
-        withContext(Dispatchers.IO) {
-            // TODO: add document path to get directly the strava token?
-            val tokenData = getProviderTokenDocument(accountId)
-                .get()
-                .await()
-                .toObject(FirestoreProviders::class.java)
-                ?.run(firestoreProvidersMapper::map)
-                ?.strava
-                ?.token
+    ): ExternalAppToken.StravaToken? = withContext(ioDispatcher) {
+        // TODO: add document path to get directly the strava token?
+        val tokenData = getProviderTokenDocument(accountId)
+            .get()
+            .await()
+            .toObject(FirestoreProviders::class.java)
+            ?.run(firestoreProvidersMapper::map)
+            ?.strava
+            ?.token
 
-            setStravaSyncEnabled(tokenData != null)
+        setStravaSyncEnabled(tokenData != null)
 
-            tokenData
-        }
+        tokenData
+    }
 
     private suspend fun setStravaSyncEnabled(isEnabled: Boolean) {
         prefDataStore.edit { data -> data[KEY_IS_STRAVA_SYNC_ENABLED] = isEnabled }
