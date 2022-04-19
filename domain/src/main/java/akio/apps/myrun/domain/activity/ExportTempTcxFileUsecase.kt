@@ -1,6 +1,5 @@
 package akio.apps.myrun.domain.activity
 
-import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
@@ -10,15 +9,11 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 
 class ExportTempTcxFileUsecase @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
     private val activityRepository: ActivityRepository,
-    @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher,
 ) {
 
     private val timeFormatter = SimpleDateFormat("ddMMyyyy_HHmm", Locale.US)
@@ -27,9 +22,9 @@ class ExportTempTcxFileUsecase @Inject constructor(
      * Exports content the of activity with given [activityId] to a TCX file. Returns null if error
      * happened.
      */
-    suspend operator fun invoke(activityId: String): File? = withContext(ioDispatcher) {
+    suspend fun export(activityId: String): File? {
         val activityModel = activityRepository.getActivity(activityId)
-            ?: return@withContext null
+            ?: return null
         val fileName = makeFileName(activityModel)
         val externalFileDir = application.getExternalFilesDir(null)
         val storeDir = if (externalFileDir != null) {
@@ -40,7 +35,7 @@ class ExportTempTcxFileUsecase @Inject constructor(
         storeDir.mkdirs()
         val storeFile = File("${storeDir.absolutePath}/$fileName")
         if (storeFile.isFile && storeFile.exists()) {
-            return@withContext storeFile
+            return storeFile
         }
 
         storeFile.createNewFile()
@@ -56,7 +51,7 @@ class ExportTempTcxFileUsecase @Inject constructor(
             outputFile = storeFile,
             zip = false
         )
-        storeFile
+        return storeFile
     }
 
     private fun makeFileName(activity: BaseActivityModel): String =

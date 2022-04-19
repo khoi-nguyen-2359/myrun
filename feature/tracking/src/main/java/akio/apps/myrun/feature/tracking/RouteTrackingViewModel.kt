@@ -117,7 +117,7 @@ internal class RouteTrackingViewModel @Inject constructor(
         val activityType = activityType.value
             ?: return@withContext
         val activityName = makeNewActivityName(activityType)
-        storeTrackingActivityDataUsecase(activityName, routeMapImage)
+        storeTrackingActivityDataUsecase.invoke(activityName, routeMapImage)
         scheduleActivitySyncIfAvailable()
         clearRouteTrackingStateUsecase.clear()
     }

@@ -48,6 +48,7 @@ internal class UserStatsViewModel @Inject constructor(
         activityLocalStorage.getActivityStorageDataCountFlow()
             .distinctUntilChanged()
             .map { getTrainingSummaryDataUsecase.getUserTrainingSummaryData() }
+            .flowOn(ioDispatcher)
 
     private fun combineUserProfileAndRecentPlace(
         userProfile: UserProfile,

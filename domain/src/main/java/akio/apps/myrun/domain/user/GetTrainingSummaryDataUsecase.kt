@@ -1,6 +1,5 @@
 package akio.apps.myrun.domain.user
 
-import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
@@ -19,78 +18,73 @@ import java.util.Calendar.SECOND
 import java.util.Calendar.YEAR
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 
 class GetTrainingSummaryDataUsecase @Inject constructor(
     private val activityRepository: ActivityRepository,
     private val userAuthenticationState: UserAuthenticationState,
-    @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher,
-    private val timeProvider: TimeProvider
+    private val timeProvider: TimeProvider,
 ) {
     /**
      * [weekOffset]: value >= 0, indicates current week, or 1, 2, 3... week in the past.
      */
-    suspend fun getUserTrainingSummaryData(): Map<ActivityType, TrainingSummaryTableData> =
-        withContext(ioDispatcher) {
-            val currentTime = timeProvider.currentTimeMillis()
-            val biMonthRange = MonthRange(offset = 1, count = 2, currentTime)
-            val userId = userAuthenticationState.requireUserAccountId()
-            val activitiesInRange = activityRepository.getActivitiesInTimeRange(
-                userId,
-                biMonthRange.millisTimeRange.first,
-                biMonthRange.millisTimeRange.last
-            )
-            listOf(ActivityType.Running, ActivityType.Cycling).map { activityType ->
-                val thisWeekData =
-                    WeekRange(time = currentTime) to mutableListOf<BaseActivityModel>()
-                val lastWeekData =
-                    WeekRange(offset = 1, time = currentTime) to mutableListOf<BaseActivityModel>()
-                val thisMonthData =
-                    MonthRange(time = currentTime) to mutableListOf<BaseActivityModel>()
-                val lastMonthData =
-                    MonthRange(offset = 1, time = currentTime) to mutableListOf<BaseActivityModel>()
-                val timeRangeDataList =
-                    listOf(thisWeekData, lastWeekData, thisMonthData, lastMonthData)
-                activitiesInRange
-                    .filter { it.activityType == activityType }
-                    .forEach { activity ->
-                        timeRangeDataList.forEach { (timeRange, activityList) ->
-                            if (activity.startTime in timeRange.millisTimeRange) {
-                                activityList.add(activity)
-                            }
+    suspend fun getUserTrainingSummaryData(): Map<ActivityType, TrainingSummaryTableData> {
+        val currentTime = timeProvider.currentTimeMillis()
+        val biMonthRange = MonthRange(offset = 1, count = 2, currentTime)
+        val userId = userAuthenticationState.requireUserAccountId()
+        val activitiesInRange = activityRepository.getActivitiesInTimeRange(
+            userId,
+            biMonthRange.millisTimeRange.first,
+            biMonthRange.millisTimeRange.last
+        )
+        return listOf(ActivityType.Running, ActivityType.Cycling).map { activityType ->
+            val thisWeekData =
+                WeekRange(time = currentTime) to mutableListOf<BaseActivityModel>()
+            val lastWeekData =
+                WeekRange(offset = 1, time = currentTime) to mutableListOf<BaseActivityModel>()
+            val thisMonthData =
+                MonthRange(time = currentTime) to mutableListOf<BaseActivityModel>()
+            val lastMonthData =
+                MonthRange(offset = 1, time = currentTime) to mutableListOf<BaseActivityModel>()
+            val timeRangeDataList =
+                listOf(thisWeekData, lastWeekData, thisMonthData, lastMonthData)
+            activitiesInRange
+                .filter { it.activityType == activityType }
+                .forEach { activity ->
+                    timeRangeDataList.forEach { (timeRange, activityList) ->
+                        if (activity.startTime in timeRange.millisTimeRange) {
+                            activityList.add(activity)
                         }
-                    }
-
-                var summaryTable = TrainingSummaryTableData()
-                timeRangeDataList.forEach { (timeRange, activityList) ->
-                    val summaryData = TrainingSummaryData(
-                        distance = activityList.sumOf { it.distance },
-                        time = activityList.sumOf { it.duration },
-                        activityCount = activityList.size
-                    )
-                    summaryTable = when {
-                        timeRange is WeekRange && timeRange.offset == 0 -> summaryTable.copy(
-                            thisWeekSummary = summaryData
-                        )
-                        timeRange is WeekRange && timeRange.offset == 1 -> summaryTable.copy(
-                            lastWeekSummary = summaryData
-                        )
-                        timeRange is MonthRange && timeRange.offset == 0 -> summaryTable.copy(
-                            thisMonthSummary = summaryData
-                        )
-                        timeRange is MonthRange && timeRange.offset == 1 -> summaryTable.copy(
-                            lastMonthSummary = summaryData
-                        )
-                        else -> summaryTable
                     }
                 }
 
-                activityType to summaryTable
-            }.toMap()
-        }
+            var summaryTable = TrainingSummaryTableData()
+            timeRangeDataList.forEach { (timeRange, activityList) ->
+                val summaryData = TrainingSummaryData(
+                    distance = activityList.sumOf { it.distance },
+                    time = activityList.sumOf { it.duration },
+                    activityCount = activityList.size
+                )
+                summaryTable = when {
+                    timeRange is WeekRange && timeRange.offset == 0 -> summaryTable.copy(
+                        thisWeekSummary = summaryData
+                    )
+                    timeRange is WeekRange && timeRange.offset == 1 -> summaryTable.copy(
+                        lastWeekSummary = summaryData
+                    )
+                    timeRange is MonthRange && timeRange.offset == 0 -> summaryTable.copy(
+                        thisMonthSummary = summaryData
+                    )
+                    timeRange is MonthRange && timeRange.offset == 1 -> summaryTable.copy(
+                        lastMonthSummary = summaryData
+                    )
+                    else -> summaryTable
+                }
+            }
+
+            activityType to summaryTable
+        }.toMap()
+    }
 
     @Parcelize
     data class TrainingSummaryTableData(

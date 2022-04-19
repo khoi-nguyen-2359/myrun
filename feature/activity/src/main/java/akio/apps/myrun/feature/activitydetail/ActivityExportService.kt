@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.activitydetail
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.domain.activity.ExportTempTcxFileUsecase
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.activitydetail.di.DaggerActivityExportFeatureComponent
@@ -19,6 +20,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +36,10 @@ class ActivityExportService : Service() {
 
     @Inject
     lateinit var exportTempTcxFileUsecase: ExportTempTcxFileUsecase
+
+    @Inject
+    @NamedIoDispatcher
+    lateinit var ioDispatcher: CoroutineDispatcher
 
     private val activityInfoQueue = ConcurrentLinkedQueue<ActivityInfo>()
     private var processingJob: Job? = null
@@ -103,11 +109,11 @@ class ActivityExportService : Service() {
         startForeground(NOTIFICATION_ID_PROGRESS, notificationBuilder.build())
     }
 
-    private suspend fun exportActivityList() = withContext(Dispatchers.IO) {
+    private suspend fun exportActivityList() = withContext(ioDispatcher) {
         while (true) {
             val activityInfo = activityInfoQueue.peek()
                 ?: break
-            val exportedFile = exportTempTcxFileUsecase(activityInfo.id)
+            val exportedFile = exportTempTcxFileUsecase.export(activityInfo.id)
             // reduce the queue at this place for correct counter on the progress notification
             // message
             activityInfoQueue.poll()
