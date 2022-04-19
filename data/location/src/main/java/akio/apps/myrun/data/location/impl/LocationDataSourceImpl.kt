@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.location.impl
 
-import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
@@ -13,7 +12,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -23,7 +21,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 private typealias AndroidLocation = android.location.Location
@@ -31,18 +28,14 @@ private typealias AndroidLocation = android.location.Location
 @Singleton
 class LocationDataSourceImpl @Inject constructor(
     private val locationClient: FusedLocationProviderClient,
-    @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher,
 ) : LocationDataSource {
 
     @SuppressLint("MissingPermission")
-    override suspend fun getLastLocation(): Location? = withContext(ioDispatcher) {
-        try {
-            val androidLocation = locationClient.lastLocation.await()
-            androidLocation?.toLocation()
-        } catch (ex: SecurityException) {
-            null
-        }
+    override suspend fun getLastLocation(): Location? = try {
+        val androidLocation = locationClient.lastLocation.await()
+        androidLocation?.toLocation()
+    } catch (ex: SecurityException) {
+        null
     }
 
     override fun getLastLocationFlow(): Flow<Location> = flow {

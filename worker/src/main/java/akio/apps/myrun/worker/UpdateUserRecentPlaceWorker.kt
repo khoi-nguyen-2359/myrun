@@ -14,6 +14,9 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class UpdateUserRecentPlaceWorker(
     appContext: Context,
@@ -23,11 +26,13 @@ class UpdateUserRecentPlaceWorker(
     @Inject
     lateinit var updateUserRecentPlaceUsecase: UpdateUserRecentPlaceUsecase
 
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+
     init {
         DaggerWorkerFeatureComponent.factory().create(appContext as Application).inject(this)
     }
 
-    override suspend fun doWork(): Result =
+    override suspend fun doWork(): Result = withContext(ioDispatcher) {
         when (updateUserRecentPlaceUsecase.updateUserRecentPlace()) {
             UpdateUserRecentPlaceUsecase.Result.InvalidUser -> Result.failure()
             UpdateUserRecentPlaceUsecase.Result.LocationUnavailable,
@@ -35,6 +40,7 @@ class UpdateUserRecentPlaceWorker(
             -> Result.retry()
             UpdateUserRecentPlaceUsecase.Result.Success -> Result.success()
         }
+    }
 
     companion object {
         private const val UNIQUE_WORK_NAME = "routetracking.UpdateUserRecentPlaceWorker"
