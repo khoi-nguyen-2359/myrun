@@ -61,7 +61,8 @@ class ActivityDetailViewModelTest {
         mockedUserAuthenticationState,
         mock(),
         mockedRunSplitsCalculator,
-        mockedActivityDateTimeFormatter
+        mockedActivityDateTimeFormatter,
+        testCoroutineDispatcher
     )
 
     @After
