@@ -2,9 +2,11 @@ package akio.apps.myrun.data.authentication.impl
 
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.authentication.api.model.UserAccount
+import android.util.Log
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -14,10 +16,16 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
+@Singleton
 class FirebaseAuthenticationState @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val firebaseUserMapper: FirebaseUserMapper
 ) : UserAuthenticationState {
+
+    private val firebaseUserMapper: FirebaseUserMapper = FirebaseUserMapper()
+
+    init {
+        Log.d("khoi", "create FirebaseAuthenticationState $this")
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getUserAccountFlow(): Flow<UserAccount?> = callbackFlow {

@@ -11,6 +11,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -20,23 +21,21 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 private typealias AndroidLocation = android.location.Location
 
+@Singleton
 class LocationDataSourceImpl @Inject constructor(
     private val locationClient: FusedLocationProviderClient,
 ) : LocationDataSource {
 
     @SuppressLint("MissingPermission")
-    override suspend fun getLastLocation(): Location? = withContext(Dispatchers.IO) {
-        try {
-            val androidLocation = locationClient.lastLocation.await()
-            androidLocation?.toLocation()
-        } catch (ex: SecurityException) {
-            null
-        }
+    override suspend fun getLastLocation(): Location? = try {
+        val androidLocation = locationClient.lastLocation.await()
+        androidLocation?.toLocation()
+    } catch (ex: SecurityException) {
+        null
     }
 
     override fun getLastLocationFlow(): Flow<Location> = flow {
@@ -44,7 +43,7 @@ class LocationDataSourceImpl @Inject constructor(
         if (lastLocation != null) {
             emit(lastLocation)
         } else {
-            val request = LocationRequestConfig(0, 0, 0f)
+            val request = LocationRequestConfig()
             val result = getLocationUpdate(request).first { it.isNotEmpty() }
             emit(result.last())
         }

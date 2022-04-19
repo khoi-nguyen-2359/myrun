@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.eapps.impl
 
+import akio.apps.myrun.data.eapps.api.StravaDataRepository
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import akio.apps.myrun.data.eapps.api.model.StravaRouteModel
 import akio.apps.myrun.data.eapps.impl.mapper.StravaStravaRouteMapper
@@ -13,7 +14,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 class StravaDataRepositoryImpl @Inject constructor(
     private val stravaApi: StravaApi,
     private val stravaRouteMapper: StravaStravaRouteMapper,
-) : akio.apps.myrun.data.eapps.api.StravaDataRepository {
+) : StravaDataRepository {
     override suspend fun saveActivity(
         stravaToken: ExternalAppToken.StravaToken,
         activityTitle: String,
@@ -43,6 +44,6 @@ class StravaDataRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        const val TCX_MIME_TYPE = "application/vnd.garmin.tcx+xml"
+        private const val TCX_MIME_TYPE = "application/vnd.garmin.tcx+xml"
     }
 }

@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.userstats
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.user.api.PlaceIdentifier
@@ -11,9 +12,11 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
@@ -26,6 +29,8 @@ internal class UserStatsViewModel @Inject constructor(
     private val getUserRecentPlaceNameUsecase: GetUserRecentPlaceNameUsecase,
     private val getTrainingSummaryDataUsecase: GetTrainingSummaryDataUsecase,
     private val activityLocalStorage: ActivityLocalStorage,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     val screenState: Flow<ScreenState> = combine(
@@ -36,12 +41,14 @@ internal class UserStatsViewModel @Inject constructor(
     )
         .onStart { emit(savedStateHandle.getScreenState()) }
         .onEach { savedStateHandle.setScreenState(it) }
+        .flowOn(ioDispatcher)
 
     private fun getTrainingSummaryDataFlow():
         Flow<Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>> =
         activityLocalStorage.getActivityStorageDataCountFlow()
             .distinctUntilChanged()
             .map { getTrainingSummaryDataUsecase.getUserTrainingSummaryData() }
+            .flowOn(ioDispatcher)
 
     private fun combineUserProfileAndRecentPlace(
         userProfile: UserProfile,

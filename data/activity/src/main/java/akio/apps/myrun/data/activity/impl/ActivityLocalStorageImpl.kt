@@ -1,8 +1,8 @@
 package akio.apps.myrun.data.activity.impl
 
-import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.ActivityTcxFileWriter
+import akio.apps.myrun.data.activity.api.locationparser.LocationDataPointParserFactory
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityStorageData
@@ -11,6 +11,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
+import akio.apps.myrun.data.activity.api.model.DataPointVersion
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.activity.impl.model.LocalActivityData
 import akio.apps.myrun.data.activity.impl.model.LocalAthleteInfo
@@ -28,13 +29,12 @@ import androidx.datastore.preferences.preferencesDataStore
 import java.io.BufferedOutputStream
 import java.io.File
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Singleton
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
@@ -42,15 +42,14 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.protobuf.ProtoBuf
 import timber.log.Timber
 
-private val Context.prefDataStore: DataStore<Preferences> by
-preferencesDataStore("ActivityLocalStorageImpl")
+private val Context.prefDataStore:
+    DataStore<Preferences> by preferencesDataStore("activity_local_storage_prefs")
 
 @OptIn(ExperimentalSerializationApi::class)
+@Singleton
 class ActivityLocalStorageImpl @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
-    @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher,
 ) : ActivityLocalStorage {
     private val prefDataStore: DataStore<Preferences> = application.prefDataStore
     private val protoBuf = ProtoBuf {
@@ -72,8 +71,8 @@ class ActivityLocalStorageImpl @Inject constructor(
     override suspend fun storeActivityData(
         activity: BaseActivityModel,
         locations: List<ActivityLocation>,
-        routeBitmap: Bitmap
-    ) = withContext(ioDispatcher) {
+        routeBitmap: Bitmap,
+    ) = coroutineScope {
         Timber.d("==== [START] STORE ACTIVITY DATA =====")
         val activityDirectory = createActivityStorageDirectory(activity.id)
         val writeInfoAsync = async {
@@ -83,7 +82,8 @@ class ActivityLocalStorageImpl @Inject constructor(
             Timber.d("Stored info at ${activityDirectory.infoFile}")
         }
         val writeLocationsAsync = async {
-            val serializedLocations = serializeActivityLocations(locations)
+            val parser = LocationDataPointParserFactory.getWriteParser()
+            val serializedLocations = parser.flatten(locations)
             val locationsBytes = protoBuf.encodeToByteArray(serializedLocations)
             activityDirectory.locationsFile.bufferedWriteByteArray(locationsBytes)
             Timber.d("Stored locations at ${activityDirectory.locationsFile}")
@@ -104,7 +104,7 @@ class ActivityLocalStorageImpl @Inject constructor(
     override suspend fun storeActivitySyncData(
         activityModel: BaseActivityModel,
         activityLocations: List<ActivityLocation>,
-    ) = withContext(ioDispatcher) {
+    ) = coroutineScope {
         Timber.d("==== [START] STORE ACTIVITY SYNC DATA =====")
         val activitySyncDirectory = createActivitySyncDirectory(activityModel.id)
         val tcxWriterAsync = async {
@@ -113,7 +113,7 @@ class ActivityLocalStorageImpl @Inject constructor(
                 activityLocations,
                 emptyList(),
                 activitySyncDirectory.tcxFile,
-                false
+                zip = false
             )
             Timber.d("Stored tcx file at ${activitySyncDirectory.tcxFile}")
         }
@@ -135,22 +135,20 @@ class ActivityLocalStorageImpl @Inject constructor(
 
     private suspend fun loadActivityStorageData(
         activityId: String,
-    ): ActivityStorageData = withContext(ioDispatcher) {
+    ): ActivityStorageData {
         val activityDirectory = createActivityStorageDirectory(activityId)
-        val activityModelDeferred = async {
-            val activityInfoBytes = activityDirectory.infoFile.bufferedReadByteArray()
-            val activityInfo = protoBuf.decodeFromByteArray<LocalBaseActivity>(activityInfoBytes)
-            activityInfo.toActivity()
-        }
-        val locationsDeferred = async {
-            val locationsBytes = activityDirectory.locationsFile.bufferedReadByteArray()
-            val flattenLocations = protoBuf.decodeFromByteArray<List<Double>>(locationsBytes)
-            deserializeActivityLocation(flattenLocations)
-        }
+        val activityInfoBytes = activityDirectory.infoFile.bufferedReadByteArray()
+        val localActivityInfo = protoBuf.decodeFromByteArray<LocalBaseActivity>(activityInfoBytes)
+        val activityModel = localActivityInfo.toActivity()
 
-        ActivityStorageData(
-            activityModelDeferred.await(),
-            locationsDeferred.await(),
+        val locationsBytes = activityDirectory.locationsFile.bufferedReadByteArray()
+        val flattenLocations = protoBuf.decodeFromByteArray<List<Double>>(locationsBytes)
+        val parser = LocationDataPointParserFactory.getParser(localActivityInfo.version)
+        val activityLocations = parser.build(flattenLocations)
+
+        return ActivityStorageData(
+            activityModel,
+            activityLocations,
             activityDirectory.routeBitmapFile
         )
     }
@@ -183,26 +181,6 @@ class ActivityLocalStorageImpl @Inject constructor(
         return storageRootDir.list().orEmpty()
             .asFlow()
             .map(::loadActivityStorageData)
-            .flowOn(ioDispatcher)
-    }
-
-    private fun serializeActivityLocations(locations: List<ActivityLocation>): List<Double> =
-        locations.flatMap {
-            listOf(it.elapsedTime.toDouble(), it.latitude, it.longitude, it.latitude)
-        }
-
-    private fun deserializeActivityLocation(
-        flattenList: List<Double>,
-    ): List<ActivityLocation> = flattenList.chunked(4).flatMap {
-        listOf(
-            ActivityLocation(
-                elapsedTime = it[0].toLong(),
-                latitude = it[1],
-                longitude = it[2],
-                altitude = it[3],
-                speed = 0.0
-            )
-        )
     }
 
     private fun File.bufferedWriteByteArray(content: ByteArray) =
@@ -222,7 +200,6 @@ class ActivityLocalStorageImpl @Inject constructor(
         createActivitySyncRootDir().list().orEmpty()
             .asFlow()
             .map(::loadActivitySyncData)
-            .flowOn(ioDispatcher)
 
     override fun deleteActivitySyncData(activityId: String) {
         createActivitySyncDirectory(activityId).syncDir.deleteRecursively()
@@ -276,16 +253,14 @@ class ActivityLocalStorageImpl @Inject constructor(
             duration,
             distance,
             encodedPolyline,
-            LocalAthleteInfo(
-                athleteInfo.userId,
-                athleteInfo.userName,
-                athleteInfo.userAvatar
-            )
+            LocalAthleteInfo(athleteInfo.userId, athleteInfo.userName, athleteInfo.userAvatar)
         )
 
         return when (this) {
-            is RunningActivityModel -> LocalRunningActivity(trackingInfoData, pace, cadence)
-            is CyclingActivityModel -> LocalCyclingActivity(trackingInfoData, speed)
+            is RunningActivityModel ->
+                LocalRunningActivity(trackingInfoData, pace, cadence, DataPointVersion.max().value)
+            is CyclingActivityModel ->
+                LocalCyclingActivity(trackingInfoData, speed, DataPointVersion.max().value)
         }
     }
 

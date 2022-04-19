@@ -2,9 +2,8 @@ package akio.apps.myrun.data.authentication.impl
 
 import akio.apps.myrun.data.authentication.api.model.UserAccount
 import com.google.firebase.auth.FirebaseUser
-import javax.inject.Inject
 
-class FirebaseUserMapper @Inject constructor() {
+class FirebaseUserMapper {
     fun map(input: FirebaseUser): UserAccount {
         return UserAccount(
             input.uid,

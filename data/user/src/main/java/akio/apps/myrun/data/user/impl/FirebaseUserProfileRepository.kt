@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.user.impl
 
-import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.base.firebase.FirebaseStorageUtils
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.user.api.UserProfileRepository
@@ -18,24 +17,22 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
+@Singleton
 class FirebaseUserProfileRepository @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage,
     private val firestoreUserProfileMapper: FirestoreUserProfileMapper,
-    @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher,
 ) : UserProfileRepository {
 
     private fun getUserDocument(userId: String): DocumentReference {
@@ -66,35 +63,36 @@ class FirebaseUserProfileRepository @Inject constructor(
                 }
             }
         }
-            .flowOn(ioDispatcher)
 
-    override suspend fun getUserProfile(userId: String): UserProfile = withContext(ioDispatcher) {
+    override suspend fun getUserProfile(userId: String): UserProfile {
         val fsUserProfile = getUserDocument(userId).get()
             .await()
             .toObject(FirestoreUser::class.java)
             ?.profile
             ?: throw UserProfileNotFoundError("Could not find userId $userId")
 
-        firestoreUserProfileMapper.map(fsUserProfile)
+        return firestoreUserProfileMapper.map(fsUserProfile)
     }
 
-    override suspend fun uploadUserAvatarImage(userId: String, imageFileUri: String): Uri? =
-        withContext(ioDispatcher) {
-            val uploadedUri = if (imageFileUri.startsWith("file://")) {
-                FirebaseStorageUtils.uploadLocalBitmap(
-                    getAvatarStorage(),
-                    userId,
-                    imageFileUri.removePrefix("file://"),
-                    AVATAR_SCALED_SIZE
-                )
-            } else {
-                null
-            }
-
-            updateUserProfile(userId, ProfileEditData(avatarUri = uploadedUri))
-
-            uploadedUri
+    override suspend fun uploadUserAvatarImage(
+        userId: String,
+        imageFileUri: String,
+    ): Uri? {
+        val uploadedUri = if (imageFileUri.startsWith("file://")) {
+            FirebaseStorageUtils.uploadLocalBitmap(
+                getAvatarStorage(),
+                userId,
+                imageFileUri.removePrefix("file://"),
+                AVATAR_SCALED_SIZE
+            )
+        } else {
+            null
         }
+
+        updateUserProfile(userId, ProfileEditData(avatarUri = uploadedUri))
+
+        return uploadedUri
+    }
 
     override fun updateUserProfile(userId: String, profileEditData: ProfileEditData) {
         val firestoreGender = when (profileEditData.gender) {
@@ -115,9 +113,9 @@ class FirebaseUserProfileRepository @Inject constructor(
     }
 
     companion object {
-        const val FIRESTORE_USERS_DOCUMENT = "users"
-        const val FIREBASE_STORAGE_USER_FOLDER = "user_avatar"
+        private const val FIRESTORE_USERS_DOCUMENT = "users"
+        private const val FIREBASE_STORAGE_USER_FOLDER = "user_avatar"
 
-        const val AVATAR_SCALED_SIZE = 512 // px
+        private const val AVATAR_SCALED_SIZE = 512 // px
     }
 }

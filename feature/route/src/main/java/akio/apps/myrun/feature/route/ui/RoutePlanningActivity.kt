@@ -43,7 +43,9 @@ import com.mapbox.maps.extension.style.sources.generated.geoJsonSource
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.scalebar.scalebar
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RoutePlanningActivity :
     AppCompatActivity(R.layout.activity_draw_route),
@@ -211,7 +213,9 @@ class RoutePlanningActivity :
 
     private fun initMapCamera() = lifecycleScope.launch {
         val map = mapView.getMapboxMap()
-        val boundCoordinates = viewModel.getInitialMapViewBoundCoordinates()
+        val boundCoordinates = withContext(Dispatchers.IO) {
+            viewModel.getInitialMapViewBoundCoordinates()
+        }
         val boundPadding = 50.dp2px.toDouble()
         val cameraOptions = map.cameraForCoordinates(
             boundCoordinates.map { it.toPoint() },

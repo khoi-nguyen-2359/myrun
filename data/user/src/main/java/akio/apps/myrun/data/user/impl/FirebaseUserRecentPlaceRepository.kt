@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.user.impl
 
-import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
@@ -8,43 +7,38 @@ import akio.apps.myrun.data.user.impl.model.FirestorePlaceIdentifier
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
+@Singleton
 class FirebaseUserRecentPlaceRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
-    @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher,
 ) : UserRecentPlaceRepository {
 
     private val recentPlaceCollection: CollectionReference
         get() = firestore.collection("recent_place")
 
-    override suspend fun saveRecentPlace(userId: String, areaIdentifier: PlaceIdentifier): Unit =
-        withContext(ioDispatcher) {
-            val firestoreRecentPlace = FirestorePlaceIdentifier(areaIdentifier)
-            recentPlaceCollection.document(userId)
-                .set(firestoreRecentPlace)
-                .await()
-        }
+    override suspend fun saveRecentPlace(userId: String, areaIdentifier: PlaceIdentifier) {
+        val firestoreRecentPlace = FirestorePlaceIdentifier(areaIdentifier)
+        recentPlaceCollection.document(userId)
+            .set(firestoreRecentPlace)
+            .await()
+    }
 
     override suspend fun getRecentPlaceIdentifier(userId: String): PlaceIdentifier? =
-        withContext(ioDispatcher) {
-            recentPlaceCollection.document(userId)
-                .get()
-                .await()
-                .toObject(FirestorePlaceIdentifier::class.java)
-                ?.placeIdentifier
-        }
+        recentPlaceCollection.document(userId)
+            .get()
+            .await()
+            .toObject(FirestorePlaceIdentifier::class.java)
+            ?.placeIdentifier
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getRecentPlaceIdentifierFlow(
@@ -70,5 +64,4 @@ class FirebaseUserRecentPlaceRepository @Inject constructor(
                 }
             }
         }
-            .flowOn(ioDispatcher)
 }

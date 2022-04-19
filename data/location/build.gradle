@@ -40,9 +40,9 @@ dependencies {
 
     debugApi(project(":data:location-mapbox"))
 
-    implementation(libs.googlePlaces)
-    implementation(libs.androidGoogleMap)
-    implementation(libs.androidMapUtils)
+    implementation(libs.googleplaces)
+    implementation(libs.playservices.map)
+    implementation(libs.googlemaps.androidutils)
 
     implementation(libs.timber)
 
@@ -50,14 +50,14 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 
     implementation(libs.playservices.location)
 
-    implementation(libs.okHttp)
-    implementation(libs.okHttpLogger)
+    implementation(libs.okhttp)
+    implementation(libs.okhttplogger)
     implementation(libs.retrofit)
     implementation(libs.retrofitconverter.gson)
 
-    testImplementation(libs.kotlinTest)
+    testImplementation(libs.kotlintest)
 }

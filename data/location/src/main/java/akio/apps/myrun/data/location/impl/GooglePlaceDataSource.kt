@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.location.impl
 
-import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.location.api.PlaceDataSource
 import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.location.api.model.PlaceAddressComponent
@@ -18,23 +17,22 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.Lazy
 import java.util.Locale
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Singleton
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
+@Singleton
 class GooglePlaceDataSource @Inject constructor(
     /**
      * Use lazy to avoid uninitialized Places when providing PlacesClient
      */
     private val placesClientLazy: Lazy<PlacesClient>,
     private val application: Application,
-    @NamedIoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : PlaceDataSource {
 
     private val placesClient by lazy { placesClientLazy.get() }
 
     @SuppressLint("MissingPermission")
-    override suspend fun getCurrentPlace(): PlaceDetails? = withContext(ioDispatcher) {
+    override suspend fun getCurrentPlace(): PlaceDetails? {
         val request: FindCurrentPlaceRequest =
             FindCurrentPlaceRequest.newInstance(listOf(Place.Field.ID, Place.Field.NAME))
 
@@ -43,13 +41,13 @@ class GooglePlaceDataSource @Inject constructor(
             .maxByOrNull { it.likelihood }
             ?.let { placeLikelihood ->
                 val placeId = placeLikelihood.place.id
-                    ?: return@withContext null
+                    ?: return null
 
                 val fetchPlaceRequest =
                     FetchPlaceRequest.newInstance(placeId, listOf(Place.Field.ADDRESS_COMPONENTS))
                 val fetchPlaceResponse = placesClient.fetchPlace(fetchPlaceRequest).await()
                 val latLng = fetchPlaceResponse.place.latLng
-                return@withContext PlaceDetails(
+                return PlaceDetails(
                     placeId,
                     placeLikelihood.place.name ?: "",
                     fetchPlaceResponse.place.addressComponents?.asList()
@@ -58,10 +56,44 @@ class GooglePlaceDataSource @Inject constructor(
                 )
             }
 
-        return@withContext null
+        return null
     }
 
-    override suspend fun getAddressFromLocation(
+    override suspend fun getRecentPlaceAddressFromLocation(
+        lat: Double,
+        lng: Double,
+    ): List<PlaceAddressComponent> {
+        val sortingOrder = mutableMapOf<String, Int>()
+        getRecentPlaceAddressSortingOrder()
+            .forEachIndexed { index, addressType -> sortingOrder[addressType] = index }
+
+        val addressComponents = getAddressFromLocation(lat, lng)
+            .filter { addressComponent ->
+                addressComponent.types.any { addressType -> sortingOrder.containsKey(addressType) }
+            }
+
+        return addressComponents.sortedBy { addressComponent ->
+            addressComponent.types.find { addressType -> sortingOrder[addressType] != null }
+                ?.let { addressType -> sortingOrder[addressType] }
+                ?: Int.MAX_VALUE
+        }
+    }
+
+    override suspend fun getPlaceSuggestions(query: String): List<PlaceSuggestion> {
+        val request = FindAutocompletePredictionsRequest.builder()
+            .setQuery(query)
+            .build()
+        val response = placesClient.findAutocompletePredictions(request).await()
+        return response.autocompletePredictions.map { prediction ->
+            PlaceSuggestion(
+                prediction.placeId,
+                placeName = prediction.getPrimaryText(null).toString(),
+                placeInformation = prediction.getSecondaryText(null).toString()
+            )
+        }
+    }
+
+    private fun getAddressFromLocation(
         lat: Double,
         lng: Double,
     ): List<PlaceAddressComponent> {
@@ -109,40 +141,6 @@ class GooglePlaceDataSource @Inject constructor(
             GEOCODER_ADDRESS_LOCALITY,
             GEOCODER_ADDRESS_SUB_LOCALITY
         )
-    }
-
-    override suspend fun getRecentPlaceAddressFromLocation(
-        lat: Double,
-        lng: Double,
-    ): List<PlaceAddressComponent> {
-        val sortingOrder = mutableMapOf<String, Int>()
-        getRecentPlaceAddressSortingOrder()
-            .forEachIndexed { index, addressType -> sortingOrder[addressType] = index }
-
-        val addressComponents = getAddressFromLocation(lat, lng)
-            .filter { addressComponent ->
-                addressComponent.types.any { addressType -> sortingOrder.containsKey(addressType) }
-            }
-
-        return addressComponents.sortedBy { addressComponent ->
-            addressComponent.types.find { addressType -> sortingOrder[addressType] != null }
-                ?.let { addressType -> sortingOrder[addressType] }
-                ?: Int.MAX_VALUE
-        }
-    }
-
-    override suspend fun getPlaceSuggestions(query: String): List<PlaceSuggestion> {
-        val request = FindAutocompletePredictionsRequest.builder()
-            .setQuery(query)
-            .build()
-        val response = placesClient.findAutocompletePredictions(request).await()
-        return response.autocompletePredictions.map { prediction ->
-            PlaceSuggestion(
-                prediction.placeId,
-                placeName = prediction.getPrimaryText(null).toString(),
-                placeInformation = prediction.getSecondaryText(null).toString()
-            )
-        }
     }
 
     companion object {

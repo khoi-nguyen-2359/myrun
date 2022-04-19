@@ -9,12 +9,14 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private val Context.prefDataStore:
-    DataStore<Preferences> by preferencesDataStore("app_version_migration_state")
+    DataStore<Preferences> by preferencesDataStore("app_version_migration_state_prefs")
 
+@Singleton
 class PreferenceAppMigrationState @Inject constructor(
     application: Application,
 ) : AppMigrationState {

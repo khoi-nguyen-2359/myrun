@@ -8,7 +8,9 @@ import akio.apps.myrun.feature.configurator.viewmodel.UserAuthenticationSectionV
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
+import javax.inject.Singleton
 
+@Singleton
 @Component(
     modules = [
         AuthenticationDataModule::class,

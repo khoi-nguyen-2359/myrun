@@ -35,5 +35,5 @@ dependencies {
     implementation(project(":data:api"))
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 }

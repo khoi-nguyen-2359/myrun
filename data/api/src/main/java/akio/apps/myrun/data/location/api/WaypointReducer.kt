@@ -1,10 +1,9 @@
-package akio.apps.myrun.data.location.impl.mapbox
+package akio.apps.myrun.data.location.api
 
 import akio.apps.myrun.data.location.api.model.LatLng
-import javax.inject.Inject
 import timber.log.Timber
 
-class WaypointQuantityReducer @Inject constructor() {
+class WaypointReducer {
     fun reduce(originalWaypoints: List<LatLng>, max: Int): List<LatLng> {
         Timber.d("original waypoints size = ${originalWaypoints.size}")
         if (originalWaypoints.size <= max) {

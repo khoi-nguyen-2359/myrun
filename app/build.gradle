@@ -95,28 +95,29 @@ dependencies {
     implementation project(":feature:tracking")
 
     implementation project(':worker')
-    implementation(libs.workManager) // to config work manager in application class
+    implementation(libs.workmanager) // to config work manager in application class
 
     implementation project(':domain')
 
     implementation(project(':data:user'))
     implementation(project(':data:tracking'))
 
+    implementation project(':base:di')
     implementation project(':base:firebase')
     implementation platform(libs.firebase.bom)
     implementation(libs.bundles.firebase.data)
     implementation(libs.firebase.perf.ktx)
 
-    implementation(libs.googlePlaces)   // to init place sdk in application class
+    implementation(libs.googleplaces)   // to init place sdk in application class
 
     implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
-    implementation(libs.splashScreen)
+    implementation(libs.splashscreen)
 
     implementation(libs.lifecycle.process)
 
@@ -132,15 +133,15 @@ dependencies {
     debugImplementation project(":feature:route")
     debugImplementation project(":feature:configurator")
     if (localProps.getProperty("leakcanary.enabled", "1") == "1") {
-        debugImplementation(libs.leakCanary)
+        debugImplementation(libs.leakcanary)
     }
 
-    testImplementation(libs.kotlinTest)
+    testImplementation(libs.kotlintest)
     testImplementation(libs.mockito.kotlin)
     testImplementation(project(":feature:configurator"))
     testImplementation(project(":feature:route"))
     testImplementation(libs.turbine)
-    testImplementation(libs.kotlinXCoroutinesTest)
+    testImplementation(libs.kotlinx.coroutinestest)
 }
 
 buildtimetracker {

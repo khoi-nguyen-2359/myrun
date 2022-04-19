@@ -53,12 +53,12 @@ dependencies {
 
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidMaterial)
+    implementation(libs.androidmaterial)
 
     implementation(libs.bundles.compose)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 
     testImplementation(libs.junit)
 }

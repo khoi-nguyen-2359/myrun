@@ -16,7 +16,7 @@ import okhttp3.Response
 import okhttp3.Route
 import timber.log.Timber
 
-class StravaAuthenticator(
+class StravaRefreshTokenAuthenticator(
     private val httpClient: OkHttpClient,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val stravaTokenRefreshMapper: StravaTokenRefreshMapper,
@@ -64,8 +64,7 @@ class StravaAuthenticator(
             )
             .build()
 
-        val refreshResponse = httpClient.newCall(refreshRequest)
-            .execute()
+        val refreshResponse = httpClient.newCall(refreshRequest).execute()
         if (refreshResponse.isSuccessful && refreshResponse.code == 200) {
             val stringResponse = refreshResponse.body?.string()
             val tokenRefreshEntity =

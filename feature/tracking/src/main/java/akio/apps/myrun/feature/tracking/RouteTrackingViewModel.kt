@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.tracking
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
@@ -27,6 +28,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import java.util.Calendar
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -35,6 +37,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 internal class RouteTrackingViewModel @Inject constructor(
@@ -48,6 +51,8 @@ internal class RouteTrackingViewModel @Inject constructor(
     private val locationDataSource: LocationDataSource,
     private val routeTrackingConfiguration: RouteTrackingConfiguration,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
     // TODO: Will refactor this screen to Composable
@@ -108,11 +113,11 @@ internal class RouteTrackingViewModel @Inject constructor(
         }
     }
 
-    suspend fun storeActivityData(routeMapImage: Bitmap) {
+    suspend fun storeActivityData(routeMapImage: Bitmap) = withContext(ioDispatcher) {
         val activityType = activityType.value
-            ?: return
+            ?: return@withContext
         val activityName = makeNewActivityName(activityType)
-        storeTrackingActivityDataUsecase(activityName, routeMapImage)
+        storeTrackingActivityDataUsecase.invoke(activityName, routeMapImage)
         scheduleActivitySyncIfAvailable()
         clearRouteTrackingStateUsecase.clear()
     }
@@ -179,7 +184,7 @@ internal class RouteTrackingViewModel @Inject constructor(
 
     fun discardActivity() {
         viewModelScope.launchCatching {
-            clearRouteTrackingStateUsecase.clear()
+            withContext(ioDispatcher) { clearRouteTrackingStateUsecase.clear() }
         }
     }
 

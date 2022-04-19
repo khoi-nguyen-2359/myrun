@@ -1,7 +1,10 @@
 package akio.apps.myrun.feature.feed.ui
 
+import akio.apps.myrun.data.activity.api.model.ActivityDataModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
+import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.TrackingValueFormatter
@@ -21,6 +24,7 @@ import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemVertic
 import android.app.Application
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -97,6 +101,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.LocalWindowInsets
 import kotlin.math.roundToInt
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 private object ActivityFeedColors {
@@ -146,21 +151,7 @@ private fun ActivityFeedScreen(
 
     // insets may be updated => top bar height changes, so remember scroll connection with keys
     val nestedScrollConnection = remember(topBarHeightPx) {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val delta = available.y
-                val targetOffset = when {
-                    delta >= REVEAL_ANIM_THRESHOLD -> 0f
-                    delta <= -REVEAL_ANIM_THRESHOLD -> -topBarHeightPx
-                    else -> return Offset.Zero
-                }
-                coroutineScope.launch {
-                    topBarOffsetY.animateTo(targetOffset)
-                }
-
-                return Offset.Zero
-            }
-        }
+        createTopBarAnimScrollConnection(topBarHeightPx, coroutineScope, topBarOffsetY)
     }
 
     val activityUploadBadge by activityFeedViewModel.activityUploadBadge.collectAsState(
@@ -196,12 +187,25 @@ private fun ActivityFeedScreen(
     }
 }
 
-private fun PaddingValues.clone(
-    start: Dp = calculateStartPadding(LayoutDirection.Ltr),
-    top: Dp = calculateTopPadding(),
-    end: Dp = calculateEndPadding(LayoutDirection.Ltr),
-    bottom: Dp = calculateBottomPadding(),
-): PaddingValues = PaddingValues(start, top, end, bottom)
+private fun createTopBarAnimScrollConnection(
+    topBarHeightPx: Float,
+    coroutineScope: CoroutineScope,
+    topBarOffsetY: Animatable<Float, AnimationVector1D>,
+) = object : NestedScrollConnection {
+    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+        val delta = available.y
+        val targetOffset = when {
+            delta >= REVEAL_ANIM_THRESHOLD -> 0f
+            delta <= -REVEAL_ANIM_THRESHOLD -> -topBarHeightPx
+            else -> return Offset.Zero
+        }
+        coroutineScope.launch {
+            topBarOffsetY.animateTo(targetOffset)
+        }
+
+        return Offset.Zero
+    }
+}
 
 @Composable
 private fun ActivityFeedScreen(
@@ -340,10 +344,6 @@ private fun LoadingItem() = Column(
     )
 }
 
-@Preview
-@Composable
-private fun LoadingItemPreview() = LoadingItem()
-
 @Composable
 private fun FeedActivityItem(
     activity: BaseActivityModel,
@@ -443,40 +443,12 @@ private fun ActivityPerformanceRow(activity: BaseActivityModel, modifier: Modifi
     }
 }
 
-/**
- * @Preview
-@Composable
-private fun PreviewFeedActivityItem() {
-FeedActivityItem(
-activity = RunningActivityModel(
-activityData = ActivityDataModel(
-id = "id",
-activityType = ActivityType.Running,
-name = "Evening Run",
-routeImage = "http://example.com",
-placeIdentifier = null,
-startTime = System.currentTimeMillis(),
-endTime = 2000L,
-duration = 1000L,
-distance = 1234.0,
-encodedPolyline = "",
-athleteInfo = ActivityModel.AthleteInfo(
-userId = "id",
-userName = "Khoi Nguyen",
-userAvatar = "userAvatar"
-)
-),
-pace = 12.34,
-cadence = 160
-),
-activityDisplayPlaceName = "activityDisplayPlaceName",
-onClickActivityAction = { },
-onClickExportFile = { },
-onClickUserAvatar = { },
-userProfile = UserProfile(accountId = "userId", photo = null),
-)
-}
- */
+private fun PaddingValues.clone(
+    start: Dp = calculateStartPadding(LayoutDirection.Ltr),
+    top: Dp = calculateTopPadding(),
+    end: Dp = calculateEndPadding(LayoutDirection.Ltr),
+    bottom: Dp = calculateBottomPadding(),
+): PaddingValues = PaddingValues(start, top, end, bottom)
 
 @Composable
 private fun ActivityInformationView(
@@ -631,3 +603,41 @@ private fun FeedItem(content: @Composable () -> Unit) = Box(
         content = content
     )
 }
+
+@Preview
+@Composable
+private fun PreviewFeedActivityItem() {
+    FeedActivityItem(
+        activity = RunningActivityModel(
+            activityData = ActivityDataModel(
+                id = "id",
+                activityType = ActivityType.Running,
+                name = "Evening Run",
+                routeImage = "http://example.com",
+                placeIdentifier = null,
+                startTime = System.currentTimeMillis(),
+                endTime = 2000L,
+                duration = 1000L,
+                distance = 1234.0,
+                encodedPolyline = "",
+                athleteInfo = AthleteInfo(
+                    userId = "id",
+                    userName = "Khoi Nguyen",
+                    userAvatar = "userAvatar"
+                )
+            ),
+            pace = 12.34,
+            cadence = 160
+        ),
+        activityDisplayPlaceName = "activityDisplayPlaceName",
+        onClickActivityAction = { },
+        onClickExportFile = { },
+        onClickUserAvatar = { },
+        userProfile = UserProfile(accountId = "userId", photo = null),
+        activityFormattedStartTime = ActivityDateTimeFormatter.Result.FullDateTime("dd/mm/yyyy")
+    )
+}
+
+@Preview
+@Composable
+private fun LoadingItemPreview() = LoadingItem()

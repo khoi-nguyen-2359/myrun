@@ -56,7 +56,7 @@ dependencies {
     implementation(project(':base:firebase'))
     implementation(libs.bundles.firebase.data)
 
-    implementation(libs.constraintLayout)
+    implementation(libs.constraintlayout)
 
     implementation(libs.bundles.compose)
     implementation(libs.accompanist.placeholder)
@@ -69,15 +69,15 @@ dependencies {
 
     implementation(libs.lifecycle.viewmodel.ktx)
 
-    implementation(libs.androidMapUtils)
-    implementation(libs.androidGoogleMap)
-    implementation(libs.googlePlaces)
+    implementation(libs.googlemaps.androidutils)
+    implementation(libs.playservices.map)
+    implementation(libs.googleplaces)
 
     implementation(libs.dagger)
-    kapt(libs.daggerCompiler)
+    kapt(libs.daggercompiler)
 
     testImplementation(libs.bundles.testCoroutine)
-    testImplementation(libs.kotlinTest)
+    testImplementation(libs.kotlintest)
     testImplementation(libs.mockito.kotlin)
-    testImplementation(libs.kotlinReflect)
+    testImplementation(libs.kotlinreflect)
 }

@@ -12,7 +12,7 @@
     <string name="activity_export_send_tracklog_title">Send tracklog of %1$s</string>
     <string name="activity_export_success_notification_title">Your tracklog was exported. Tap to share it.</string>
     <string name="home_nav_activity_feed_tab_label">Feed</string>
-    <string name="home_upload_progress">%1$d uploading activity</string>
+    <string name="home_upload_progress">%1$d uploading</string>
     <string name="splash_welcome_text">Let\'s start your\nfirst activity!</string>
     <string name="activity_feed_loading_item_message">Loading your activities…</string>
     <string name="home_nav_user_stats_tab_label">Stats</string>

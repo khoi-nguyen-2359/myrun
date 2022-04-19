@@ -15,8 +15,7 @@ class StravaTokenRepositoryImpl @Inject constructor(
 ) : StravaTokenRepository {
     override suspend fun exchangeToken(code: String): ExternalAppToken.StravaToken {
         val stravaToken = stravaApi.exchangeToken(STRAVA_APP_ID, STRAVA_APP_SECRET, code)
-        val tokenModel = stravaTokenMapper.map(stravaToken)
-        return tokenModel
+        return stravaTokenMapper.map(stravaToken)
     }
 
     override suspend fun deauthorizeToken(accessToken: String) {

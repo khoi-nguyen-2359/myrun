@@ -35,6 +35,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +45,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class RouteTrackingService : Service() {
@@ -77,6 +79,8 @@ class RouteTrackingService : Service() {
 
     private val mainScope = CoroutineScope(SupervisorJob() + Dispatchers.Main + exceptionHandler)
 
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+
     private var locationUpdateJob: Job? = null
     private var trackingTimerJob: Job? = null
 
@@ -107,7 +111,9 @@ class RouteTrackingService : Service() {
             .onEach {
                 if (it == null) {
                     onActionStop()
-                    clearRouteTrackingStateUsecase.clear()
+                    CoroutineScope(ioDispatcher).launch {
+                        clearRouteTrackingStateUsecase.clear()
+                    }
                 }
             }
             .launchIn(mainScope)
@@ -150,11 +156,11 @@ class RouteTrackingService : Service() {
         }
     }
 
-    private suspend fun onLocationUpdate(locations: List<Location>) {
+    private suspend fun onLocationUpdate(locations: List<Location>) = withContext(ioDispatcher) {
         Timber.tag(LOG_TAG_LOCATION).d("[RouteTrackingService] onLocationUpdate: ${locations.size}")
         val processedLocations: List<Location> = locationProcessors.process(locations)
         if (processedLocations.isEmpty()) {
-            return
+            return@withContext
         }
         Timber.tag(LOG_TAG_LOCATION).d(
             "[RouteTrackingService] Location processed: ${processedLocations.size}"

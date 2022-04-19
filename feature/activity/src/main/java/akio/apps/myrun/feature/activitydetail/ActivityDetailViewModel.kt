@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.activitydetail
 
+import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
@@ -13,10 +14,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class ActivityDetailViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
@@ -26,6 +29,8 @@ internal class ActivityDetailViewModel @Inject constructor(
     private val placeNameSelector: PlaceNameSelector,
     private val runSplitsCalculator: RunSplitsCalculator,
     private val activityDateTimeFormatter: ActivityDateTimeFormatter,
+    @NamedIoDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private val activityDetailsMutableStateFlow: MutableStateFlow<Resource<BaseActivityModel>> =
@@ -35,8 +40,8 @@ internal class ActivityDetailViewModel @Inject constructor(
         activityDetailsMutableStateFlow.map(::combineScreenState)
 
     private suspend fun combineScreenState(
-        activityResource: Resource<BaseActivityModel>
-    ): ScreenState {
+        activityResource: Resource<BaseActivityModel>,
+    ): ScreenState = withContext(ioDispatcher) {
         val userId = userAuthenticationState.requireUserAccountId()
         val userPlaceIdentifier = userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
         val placeName = placeNameSelector.select(
@@ -52,7 +57,7 @@ internal class ActivityDetailViewModel @Inject constructor(
         } else {
             emptyList()
         }
-        return ScreenState.create(
+        ScreenState.create(
             activityResource,
             activityDateTimeFormatter,
             placeName,
@@ -67,7 +72,9 @@ internal class ActivityDetailViewModel @Inject constructor(
     fun loadActivityDetails() {
         viewModelScope.launch {
             activityDetailsMutableStateFlow.value = Resource.Loading()
-            val activity = activityRepository.getActivity(savedStateHandle.getActivityId())
+            val activity = withContext(ioDispatcher) {
+                activityRepository.getActivity(savedStateHandle.getActivityId())
+            }
             if (activity == null) {
                 activityDetailsMutableStateFlow.value = Resource.Error(ActivityNotFoundException())
             } else {

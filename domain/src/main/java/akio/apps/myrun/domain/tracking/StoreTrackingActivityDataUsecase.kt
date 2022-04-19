@@ -1,6 +1,5 @@
 package akio.apps.myrun.domain.tracking
 
-import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
@@ -19,9 +18,8 @@ import akio.apps.myrun.domain.common.ObjectAutoId
 import akio.apps.myrun.domain.common.TrackingValueConverter
 import android.graphics.Bitmap
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.coroutineScope
 
 /**
  * Stores all information of an activity that have been tracked. Must not include any data that get
@@ -35,33 +33,30 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val objectAutoId: ObjectAutoId,
     private val polyUtil: PolyUtil,
-    @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher,
 ) {
-    suspend operator fun invoke(activityName: String, routeImageBitmap: Bitmap) =
-        withContext(ioDispatcher) {
-            val userId = userAuthenticationState.requireUserAccountId()
-            val activityId = objectAutoId.autoId()
-            val activityLocations = routeTrackingLocationRepository.getAllLocations()
-            val activityModel =
-                createActivityInfo(userId, activityId, activityName, activityLocations)
+    suspend fun invoke(activityName: String, routeImageBitmap: Bitmap) = coroutineScope {
+        val userId = userAuthenticationState.requireUserAccountId()
+        val activityId = objectAutoId.autoId()
+        val activityLocations = routeTrackingLocationRepository.getAllLocations()
+        val activityModel =
+            createActivityInfo(userId, activityId, activityName, activityLocations)
 
-            val activityStorageAsync = async {
-                activityLocalStorage.storeActivityData(
-                    activityModel,
-                    activityLocations,
-                    routeImageBitmap
-                )
-            }
-
-            val activitySyncAsync = async {
-                if (externalAppProvidersRepository.isStravaSyncEnabled()) {
-                    activityLocalStorage.storeActivitySyncData(activityModel, activityLocations)
-                }
-            }
-            activityStorageAsync.join()
-            activitySyncAsync.join()
+        val activityStorageAsync = async {
+            activityLocalStorage.storeActivityData(
+                activityModel,
+                activityLocations,
+                routeImageBitmap
+            )
         }
+
+        val activitySyncAsync = async {
+            if (externalAppProvidersRepository.isStravaSyncEnabled()) {
+                activityLocalStorage.storeActivitySyncData(activityModel, activityLocations)
+            }
+        }
+        activityStorageAsync.join()
+        activitySyncAsync.join()
+    }
 
     private suspend fun createActivityInfo(
         userId: String,

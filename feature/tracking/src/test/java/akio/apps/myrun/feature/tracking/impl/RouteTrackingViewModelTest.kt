@@ -15,6 +15,7 @@ import akio.apps.myrun.feature.tracking.RouteTrackingViewModel
 import android.app.Application
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -36,6 +37,7 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
     private lateinit var mockedLocationDataSource: LocationDataSource
     private lateinit var mockedRouteTrackingConfiguration: RouteTrackingConfiguration
     private lateinit var testee: RouteTrackingViewModel
+    private lateinit var testCoroutineDispatcher: TestCoroutineDispatcher
 
     @Before
     fun setup() {
@@ -48,6 +50,7 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
         mockedAppContext = mock()
         mockedLocationDataSource = mock()
         mockedRouteTrackingConfiguration = mock()
+        testCoroutineDispatcher = TestCoroutineDispatcher()
     }
 
     @Test
@@ -78,6 +81,7 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
         mockedAuthenticationState,
         mockedLocationDataSource,
         mockedRouteTrackingConfiguration,
-        LaunchCatchingDelegateImpl()
+        LaunchCatchingDelegateImpl(),
+        testCoroutineDispatcher
     )
 }

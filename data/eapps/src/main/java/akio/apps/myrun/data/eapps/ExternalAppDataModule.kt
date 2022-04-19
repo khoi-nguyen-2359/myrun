@@ -1,13 +1,14 @@
 package akio.apps.myrun.data.eapps
 
+import akio.apps.myrun.base.di.DispatchersModule
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.eapps.api.StravaDataRepository
 import akio.apps.myrun.data.eapps.api.StravaTokenRepository
 import akio.apps.myrun.data.eapps.impl.FirebaseExternalAppProvidersRepository
 import akio.apps.myrun.data.eapps.impl.StravaApi
-import akio.apps.myrun.data.eapps.impl.StravaAuthenticator
 import akio.apps.myrun.data.eapps.impl.StravaDataRepositoryImpl
+import akio.apps.myrun.data.eapps.impl.StravaRefreshTokenAuthenticator
 import akio.apps.myrun.data.eapps.impl.StravaTokenRepositoryImpl
 import akio.apps.myrun.data.eapps.impl.model.StravaTokenRefreshMapper
 import com.google.gson.Gson
@@ -20,7 +21,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-@Module(includes = [ExternalAppDataModule.Providers::class])
+@Module(includes = [ExternalAppDataModule.Providers::class, DispatchersModule::class])
 interface ExternalAppDataModule {
     @Binds
     fun externalAppCredentialsRepo(repo: FirebaseExternalAppProvidersRepository):
@@ -61,9 +62,9 @@ interface ExternalAppDataModule {
             tokenRefreshMapper: StravaTokenRefreshMapper,
             externalAppProvidersRepository: ExternalAppProvidersRepository,
             userAuthenticationState: UserAuthenticationState,
-        ): StravaAuthenticator {
+        ): StravaRefreshTokenAuthenticator {
             val refreshTokenClient = okHttpClientBuilder.build()
-            return StravaAuthenticator(
+            return StravaRefreshTokenAuthenticator(
                 refreshTokenClient,
                 externalAppProvidersRepository,
                 tokenRefreshMapper,
@@ -79,10 +80,10 @@ interface ExternalAppDataModule {
         @JvmStatic
         fun stravaApiService(
             okHttpClientBuilder: OkHttpClient.Builder,
-            stravaAuthenticator: StravaAuthenticator,
+            stravaRefreshTokenAuthenticator: StravaRefreshTokenAuthenticator,
             @Named(NAME_STRAVA_GSON) gson: Gson,
         ): StravaApi {
-            okHttpClientBuilder.authenticator(stravaAuthenticator)
+            okHttpClientBuilder.authenticator(stravaRefreshTokenAuthenticator)
 
             val okHttpClient = okHttpClientBuilder.build()
 

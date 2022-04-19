@@ -13,15 +13,18 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
-private val Context.prefDataStore: DataStore<Preferences> by
-preferencesDataStore("RouteTrackingConfigurationImpl")
+private val Context.prefDataStore:
+    DataStore<Preferences> by preferencesDataStore("route_tracking_configuration_prefs")
 
-class RouteTrackingConfigurationImpl @Inject constructor(application: Application) :
-    RouteTrackingConfiguration {
+@Singleton
+class RouteTrackingConfigurationImpl @Inject constructor(
+    application: Application,
+) : RouteTrackingConfiguration {
 
     private val prefDataStore = application.prefDataStore
     override suspend fun getLocationRequestConfig(): LocationRequestConfig =
