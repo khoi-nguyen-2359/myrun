@@ -78,23 +78,25 @@ class FirebaseUserProfileRepository @Inject constructor(
         firestoreUserProfileMapper.map(fsUserProfile)
     }
 
-    override suspend fun uploadUserAvatarImage(userId: String, imageFileUri: String): Uri? =
-        withContext(ioDispatcher) {
-            val uploadedUri = if (imageFileUri.startsWith("file://")) {
-                FirebaseStorageUtils.uploadLocalBitmap(
-                    getAvatarStorage(),
-                    userId,
-                    imageFileUri.removePrefix("file://"),
-                    AVATAR_SCALED_SIZE
-                )
-            } else {
-                null
-            }
-
-            updateUserProfile(userId, ProfileEditData(avatarUri = uploadedUri))
-
-            uploadedUri
+    override suspend fun uploadUserAvatarImage(
+        userId: String,
+        imageFileUri: String,
+    ): Uri? = withContext(ioDispatcher) {
+        val uploadedUri = if (imageFileUri.startsWith("file://")) {
+            FirebaseStorageUtils.uploadLocalBitmap(
+                getAvatarStorage(),
+                userId,
+                imageFileUri.removePrefix("file://"),
+                AVATAR_SCALED_SIZE
+            )
+        } else {
+            null
         }
+
+        updateUserProfile(userId, ProfileEditData(avatarUri = uploadedUri))
+
+        uploadedUri
+    }
 
     override fun updateUserProfile(userId: String, profileEditData: ProfileEditData) {
         val firestoreGender = when (profileEditData.gender) {
@@ -115,9 +117,9 @@ class FirebaseUserProfileRepository @Inject constructor(
     }
 
     companion object {
-        const val FIRESTORE_USERS_DOCUMENT = "users"
-        const val FIREBASE_STORAGE_USER_FOLDER = "user_avatar"
+        private const val FIRESTORE_USERS_DOCUMENT = "users"
+        private const val FIREBASE_STORAGE_USER_FOLDER = "user_avatar"
 
-        const val AVATAR_SCALED_SIZE = 512 // px
+        private const val AVATAR_SCALED_SIZE = 512 // px
     }
 }
