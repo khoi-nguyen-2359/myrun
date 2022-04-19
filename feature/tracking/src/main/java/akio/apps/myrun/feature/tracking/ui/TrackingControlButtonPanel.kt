@@ -63,7 +63,7 @@ internal fun TrackingControlButtonPanel(
     // when entering the screen, initial location may not be available if location is not ready yet,
     // so use flow to get the location when it is ready.
     val initialLocation by produceState<Location?>(initialValue = null, producer = {
-        value = routeTrackingViewModel.getLatestLocation()
+        value = routeTrackingViewModel.getLastLocation()
     })
     val stickyCameraMode by routeTrackingViewModel.stickyCameraButtonState.collectAsState()
     TrackingControlButtonPanel(

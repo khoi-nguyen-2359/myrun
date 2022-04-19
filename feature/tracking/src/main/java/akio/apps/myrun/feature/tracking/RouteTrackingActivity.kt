@@ -270,7 +270,7 @@ class RouteTrackingActivity(
         this.cameraMovement = expectedMode
         // move right after set mode value
         lifecycleScope.launch {
-            val lastLocation = routeTrackingViewModel.getLatestLocation()
+            val lastLocation = routeTrackingViewModel.getLastLocation()
             updateStickyCamera(listOf(lastLocation), animate)
         }
         val cameraButtonState = when (expectedMode) {
@@ -428,7 +428,7 @@ class RouteTrackingActivity(
 
     private fun startRouteTracking() {
         ContextCompat.startForegroundService(this, RouteTrackingService.startIntent(this))
-        routeTrackingViewModel.requestDataUpdates()
+        routeTrackingViewModel.startDataUpdates()
     }
 
     private fun pauseRouteTracking() {

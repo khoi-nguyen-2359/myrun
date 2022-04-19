@@ -33,9 +33,11 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -60,8 +62,9 @@ internal class RouteTrackingViewModel @Inject constructor(
     val stickyCameraButtonState: MutableStateFlow<RouteTrackingActivity.CameraMovement> =
         MutableStateFlow(RouteTrackingActivity.CameraMovement.StickyBounds)
 
-    suspend fun getLatestLocation(): Location =
-        locationUpdateFlow.takeWhile { it.isNotEmpty() }.first().first()
+    suspend fun getLastLocation(): Location =
+        locationUpdateFlow.replayCache.lastOrNull()?.lastOrNull()
+            ?: locationUpdateFlow.first { it.isNotEmpty() }.first()
 
     private val _trackingLocationBatch = MutableLiveData<List<ActivityLocation>>()
     val trackingLocationBatch: LiveData<List<ActivityLocation>> =
@@ -85,8 +88,9 @@ internal class RouteTrackingViewModel @Inject constructor(
     )
 
     @OptIn(FlowPreview::class)
-    val locationUpdateFlow: Flow<List<Location>> =
+    val locationUpdateFlow: SharedFlow<List<Location>> =
         getLocationRequestConfigFlow().flatMapConcat(locationDataSource::getLocationUpdate)
+            .shareIn(viewModelScope, SharingStarted.WhileSubscribed(), replay = 1)
 
     fun resumeDataUpdates() {
         if (trackingStatus.value == RouteTrackingStatus.RESUMED) {
@@ -164,6 +168,16 @@ internal class RouteTrackingViewModel @Inject constructor(
         }
     }
 
+    fun startDataUpdates() {
+        viewModelScope.launch { insertFirstTrackedLocation() }
+        requestDataUpdates()
+    }
+
+    private suspend fun insertFirstTrackedLocation() = withContext(ioDispatcher) {
+        val lastLocation = getLastLocation().toActivityLocation(activityElapsedTime = 0)
+        routeTrackingLocationRepository.insert(listOf(lastLocation))
+    }
+
     fun requestDataUpdates() {
         trackingTimerJob?.cancel()
         trackingTimerJob = viewModelScope.flowTimer(0, TRACKING_TIMER_PERIOD) {
@@ -187,6 +201,10 @@ internal class RouteTrackingViewModel @Inject constructor(
             withContext(ioDispatcher) { clearRouteTrackingStateUsecase.clear() }
         }
     }
+
+    private fun Location.toActivityLocation(activityElapsedTime: Long) = ActivityLocation(
+        activityElapsedTime, latitude, longitude, altitude, speed
+    )
 
     companion object {
         const val TRACKING_TIMER_PERIOD = 1000L
