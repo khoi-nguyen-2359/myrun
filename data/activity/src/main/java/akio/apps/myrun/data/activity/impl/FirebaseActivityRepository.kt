@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.activity.impl
 
-import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.base.firebase.FirebaseStorageUtils
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.locationparser.LocationDataPointParserFactory
@@ -25,9 +24,7 @@ import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 @Singleton
@@ -35,8 +32,6 @@ class FirebaseActivityRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage,
     private val firestoreActivityMapper: FirestoreActivityMapper,
-    @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher,
 ) : ActivityRepository {
 
     private val userActivityCollectionGroup: Query
@@ -54,7 +49,7 @@ class FirebaseActivityRepository @Inject constructor(
         userIds: List<String>,
         startAfterTime: Long,
         limit: Int,
-    ): List<BaseActivityModel> = withContext(ioDispatcher) {
+    ): List<BaseActivityModel> {
         val query = userActivityCollectionGroup.whereIn(FIELD_ATHLETE_USERID, userIds)
             .orderBy(FIELD_ACTIVITY_START_TIME, Query.Direction.DESCENDING)
             .startAfter(startAfterTime)
@@ -62,7 +57,7 @@ class FirebaseActivityRepository @Inject constructor(
 
         val snapshot = query.get().await()
 
-        snapshot.documents.mapNotNull { it.toObject(FirestoreActivity::class.java) }
+        return snapshot.documents.mapNotNull { it.toObject(FirestoreActivity::class.java) }
             .map(firestoreActivityMapper::map)
     }
 
@@ -70,14 +65,14 @@ class FirebaseActivityRepository @Inject constructor(
         userId: String,
         startTime: Long,
         endTime: Long,
-    ): List<BaseActivityModel> = withContext(ioDispatcher) {
+    ): List<BaseActivityModel> {
         val query = getUserActivityCollection(userId)
             .orderBy(FIELD_ACTIVITY_START_TIME, Query.Direction.DESCENDING)
             .startAt(endTime)
             .endAt(startTime)
 
         val snapshot = query.get().await()
-        snapshot.documents.mapNotNull { it.toObject(FirestoreActivity::class.java) }
+        return snapshot.documents.mapNotNull { it.toObject(FirestoreActivity::class.java) }
             .map(firestoreActivityMapper::map)
     }
 
@@ -87,7 +82,7 @@ class FirebaseActivityRepository @Inject constructor(
         speedDataPoints: List<DataPoint<Float>>,
         locationDataPoints: List<ActivityLocation>,
         stepCadenceDataPoints: List<DataPoint<Int>>?,
-    ): String = withContext(ioDispatcher) {
+    ): String {
         Timber.d("=== SAVING ACTIVITY ===")
         val activityDocRef = if (activity.id.isNotEmpty()) {
             getUserActivityCollection(activity.athleteInfo.userId).document(activity.id)
@@ -122,7 +117,7 @@ class FirebaseActivityRepository @Inject constructor(
         }.await()
         Timber.d("=== [DONE] SAVING ACTIVITY ===")
 
-        activityDocRef.id
+        return activityDocRef.id
     }
 
     private fun batchWriteActivityDataPoints(
@@ -154,7 +149,7 @@ class FirebaseActivityRepository @Inject constructor(
 
     override suspend fun getActivityLocationDataPoints(
         activityId: String,
-    ): List<ActivityLocation> = withContext(ioDispatcher) {
+    ): List<ActivityLocation> {
         val firebaseActivity =
             userActivityCollectionGroup.whereEqualTo(FIELD_ID, activityId).get().await()
         val firestoreLocationDataPoints = firebaseActivity.documents.getOrNull(0)
@@ -164,17 +159,17 @@ class FirebaseActivityRepository @Inject constructor(
             ?.get()
             ?.await()
             ?.toObject(FirestoreDataPointList::class.java)
-            ?: return@withContext emptyList()
+            ?: return emptyList()
 
-        LocationDataPointParserFactory.getParser(firestoreLocationDataPoints.version)
+        return LocationDataPointParserFactory.getParser(firestoreLocationDataPoints.version)
             .build(firestoreLocationDataPoints.data)
     }
 
     override suspend fun getActivity(
         activityId: String,
-    ): BaseActivityModel? = withContext(ioDispatcher) {
+    ): BaseActivityModel? {
         val snapshot = userActivityCollectionGroup.whereEqualTo(FIELD_ID, activityId).get().await()
-        snapshot.documents
+        return snapshot.documents
             .getOrNull(0)
             ?.toObject(FirestoreActivity::class.java)
             ?.let(firestoreActivityMapper::map)

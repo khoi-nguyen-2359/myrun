@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.activity.impl
 
-import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.api.locationparser.LocationDataPointParserFactory
@@ -31,13 +30,11 @@ import java.io.BufferedOutputStream
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
@@ -53,8 +50,6 @@ private val Context.prefDataStore:
 class ActivityLocalStorageImpl @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,
-    @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher,
 ) : ActivityLocalStorage {
     private val prefDataStore: DataStore<Preferences> = application.prefDataStore
     private val protoBuf = ProtoBuf {
@@ -77,7 +72,7 @@ class ActivityLocalStorageImpl @Inject constructor(
         activity: BaseActivityModel,
         locations: List<ActivityLocation>,
         routeBitmap: Bitmap,
-    ) = withContext(ioDispatcher) {
+    ) = coroutineScope {
         Timber.d("==== [START] STORE ACTIVITY DATA =====")
         val activityDirectory = createActivityStorageDirectory(activity.id)
         val writeInfoAsync = async {
@@ -109,7 +104,7 @@ class ActivityLocalStorageImpl @Inject constructor(
     override suspend fun storeActivitySyncData(
         activityModel: BaseActivityModel,
         activityLocations: List<ActivityLocation>,
-    ) = withContext(ioDispatcher) {
+    ) = coroutineScope {
         Timber.d("==== [START] STORE ACTIVITY SYNC DATA =====")
         val activitySyncDirectory = createActivitySyncDirectory(activityModel.id)
         val tcxWriterAsync = async {
@@ -140,7 +135,7 @@ class ActivityLocalStorageImpl @Inject constructor(
 
     private suspend fun loadActivityStorageData(
         activityId: String,
-    ): ActivityStorageData = withContext(ioDispatcher) {
+    ): ActivityStorageData {
         val activityDirectory = createActivityStorageDirectory(activityId)
         val activityInfoBytes = activityDirectory.infoFile.bufferedReadByteArray()
         val localActivityInfo = protoBuf.decodeFromByteArray<LocalBaseActivity>(activityInfoBytes)
@@ -151,7 +146,11 @@ class ActivityLocalStorageImpl @Inject constructor(
         val parser = LocationDataPointParserFactory.getParser(localActivityInfo.version)
         val activityLocations = parser.build(flattenLocations)
 
-        ActivityStorageData(activityModel, activityLocations, activityDirectory.routeBitmapFile)
+        return ActivityStorageData(
+            activityModel,
+            activityLocations,
+            activityDirectory.routeBitmapFile
+        )
     }
 
     override fun getActivityStorageDataCountFlow(): Flow<Int> {
@@ -182,19 +181,6 @@ class ActivityLocalStorageImpl @Inject constructor(
         return storageRootDir.list().orEmpty()
             .asFlow()
             .map(::loadActivityStorageData)
-            .flowOn(ioDispatcher)
-    }
-
-    private fun deserializeActivityLocation(
-        flattenList: List<Double>,
-    ): List<ActivityLocation> = flattenList.chunked(4) {
-        ActivityLocation(
-            elapsedTime = it[0].toLong(),
-            latitude = it[1],
-            longitude = it[2],
-            altitude = it[3],
-            speed = 0.0
-        )
     }
 
     private fun File.bufferedWriteByteArray(content: ByteArray) =
@@ -214,7 +200,6 @@ class ActivityLocalStorageImpl @Inject constructor(
         createActivitySyncRootDir().list().orEmpty()
             .asFlow()
             .map(::loadActivitySyncData)
-            .flowOn(ioDispatcher)
 
     override fun deleteActivitySyncData(activityId: String) {
         createActivitySyncDirectory(activityId).syncDir.deleteRecursively()

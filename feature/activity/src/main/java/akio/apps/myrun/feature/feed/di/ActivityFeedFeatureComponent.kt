@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.feed.di
 
+import akio.apps.myrun.base.di.DispatchersModule
 import akio.apps.myrun.data.activity.ActivityDataModule
 import akio.apps.myrun.data.authentication.AuthenticationDataModule
 import akio.apps.myrun.data.user.UserDataModule
@@ -16,7 +17,8 @@ import javax.inject.Singleton
         LaunchCatchingModule::class,
         AuthenticationDataModule::class,
         UserDataModule::class,
-        ActivityDataModule::class
+        ActivityDataModule::class,
+        DispatchersModule::class
     ]
 )
 internal interface ActivityFeedFeatureComponent {

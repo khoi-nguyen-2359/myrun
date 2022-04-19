@@ -34,12 +34,10 @@ class UploadStravaFileWorker(
         DaggerWorkerFeatureComponent.factory().create(appContext as Application).inject(this)
     }
 
-    override suspend fun doWork(): Result {
+    override suspend fun doWork(): Result = withContext(ioDispatcher) {
         Timber.d("worker start")
-        val isComplete = withContext(ioDispatcher) {
-            uploadActivityFilesToStravaUsecase.uploadAll()
-        }
-        return if (isComplete) {
+        val isComplete = uploadActivityFilesToStravaUsecase.uploadAll()
+        if (isComplete) {
             Result.success()
         } else {
             Result.retry()
