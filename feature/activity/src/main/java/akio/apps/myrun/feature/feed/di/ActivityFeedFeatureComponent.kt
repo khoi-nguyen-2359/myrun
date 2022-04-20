@@ -7,6 +7,7 @@ import akio.apps.myrun.data.user.UserDataModule
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.feed.ActivityFeedViewModel
 import android.app.Application
+import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -28,6 +29,7 @@ internal interface ActivityFeedFeatureComponent {
     interface Factory {
         fun create(
             @BindsInstance application: Application,
+            @BindsInstance savedStateHandle: SavedStateHandle,
         ): ActivityFeedFeatureComponent
     }
 }

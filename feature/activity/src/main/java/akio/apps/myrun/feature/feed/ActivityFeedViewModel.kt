@@ -12,6 +12,7 @@ import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.PlaceNameSelector
 import akio.apps.myrun.feature.core.Event
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -25,15 +26,18 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 internal class ActivityFeedViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val activityPagingSourceFactory: ActivityPagingSourceFactory,
     private val placeNameSelector: PlaceNameSelector,
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
@@ -48,7 +52,8 @@ internal class ActivityFeedViewModel @Inject constructor(
 
     private var activityPagingSource: ActivityPagingSource? = null
 
-    private var lastActivityStorageCount: Int = -1
+    private val isUploadBadgeDismissedFlow: MutableStateFlow<Boolean> =
+        MutableStateFlow(savedStateHandle.isUploadBadgeDismissed())
 
     val activityUploadBadge: Flow<ActivityUploadBadgeStatus> =
         createActivityUploadBadgeStatusFlow()
@@ -80,6 +85,11 @@ internal class ActivityFeedViewModel @Inject constructor(
     init {
         loadInitialData()
         observeActivityUploadCount()
+    }
+
+    fun setUploadBadgeDismissed(isDismissed: Boolean) {
+        isUploadBadgeDismissedFlow.value = isDismissed
+        savedStateHandle.setUploadBadgeDismissed(isDismissed)
     }
 
     fun getFormattedStartTime(activity: BaseActivityModel): ActivityDateTimeFormatter.Result =
@@ -116,15 +126,19 @@ internal class ActivityFeedViewModel @Inject constructor(
     private fun createActivityUploadBadgeStatusFlow(): Flow<ActivityUploadBadgeStatus> =
         activityLocalStorage.getActivityStorageDataCountFlow()
             .distinctUntilChanged()
-            .mapNotNull { count ->
-                val status = when {
-                    count > 0 -> ActivityUploadBadgeStatus.InProgress(count)
-                    count == 0 && lastActivityStorageCount > 0 -> ActivityUploadBadgeStatus.Complete
-                    else -> null
+            .onEach {
+                if (it > 0) {
+                    setUploadBadgeDismissed(false)
                 }
-                lastActivityStorageCount = count
-
-                status
+            }
+            .combine(isUploadBadgeDismissedFlow) { localActivityCount, isUploadBadgeDismissed ->
+                when {
+                    localActivityCount > 0 ->
+                        ActivityUploadBadgeStatus.InProgress(localActivityCount)
+                    localActivityCount == 0 && !isUploadBadgeDismissed ->
+                        ActivityUploadBadgeStatus.Complete
+                    else -> ActivityUploadBadgeStatus.Hidden
+                }
             }
             // convert to shared flow for multiple collectors
             .shareIn(viewModelScope, replay = 1, started = SharingStarted.WhileSubscribed())
@@ -148,6 +162,13 @@ internal class ActivityFeedViewModel @Inject constructor(
             }
         }
 
+    private fun SavedStateHandle.isUploadBadgeDismissed(): Boolean =
+        this[STATE_IS_UPLOAD_BADGE_DISMISSED] ?: true
+
+    private fun SavedStateHandle.setUploadBadgeDismissed(isDismissed: Boolean) {
+        this[STATE_IS_UPLOAD_BADGE_DISMISSED] = isDismissed
+    }
+
     sealed class ActivityUploadBadgeStatus {
         class InProgress(val activityCount: Int) : ActivityUploadBadgeStatus()
         object Complete : ActivityUploadBadgeStatus()
@@ -156,5 +177,7 @@ internal class ActivityFeedViewModel @Inject constructor(
 
     companion object {
         const val PAGE_SIZE = 6
+
+        private const val STATE_IS_UPLOAD_BADGE_DISMISSED = "STATE_IS_UPLOAD_BADGE_DISMISSED"
     }
 }
