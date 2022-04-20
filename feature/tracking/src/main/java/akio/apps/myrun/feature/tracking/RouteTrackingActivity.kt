@@ -189,34 +189,28 @@ class RouteTrackingActivity(
         observe(routeTrackingViewModel.activityType, trackingStatsView::setActivityType)
         collectRepeatOnStarted(isLaunchCatchingInProgress, dialogDelegate::toggleProgressDialog)
         collectEventRepeatOnStarted(launchCatchingError, dialogDelegate::showExceptionAlert)
-        collectRepeatOnStarted(
-            routeTrackingViewModel.locationUpdateFlow,
-            ::updateStickyCamera
-        )
+        collectRepeatOnStarted(routeTrackingViewModel.locationUpdateFlow) {
+            if (!isMapCameraMoving && it.isNotEmpty()) {
+                updateStickyCamera(it.last())
+            }
+        }
     }
 
     private fun updateStickyCamera(
-        locationUpdate: List<Location>,
+        lastLocation: Location,
         animate: Boolean = isFirstCameraMoveFinished,
     ) {
         Timber.d("Sticky Camera $cameraMovement")
-        if (isMapCameraMoving) {
-            return
-        }
         when (cameraMovement) {
             CameraMovement.StickyLocation -> {
-                locationUpdate.lastOrNull()?.let {
-                    recenterMap(it, animate)
-                }
+                recenterMap(lastLocation, animate)
             }
             CameraMovement.StickyBounds -> {
                 val latLngBounds = trackingRouteCameraBounds.build()
                 if (latLngBounds != null) {
                     recenterMap(latLngBounds, getCameraViewPortSize(), animate)
                 } else {
-                    locationUpdate.lastOrNull()?.let { location ->
-                        recenterZoomOutMap(location, animate)
-                    }
+                    recenterZoomOutMap(lastLocation, animate)
                 }
             }
             else -> {
@@ -271,7 +265,7 @@ class RouteTrackingActivity(
         // move right after set mode value
         lifecycleScope.launch {
             val lastLocation = routeTrackingViewModel.getLastLocation()
-            updateStickyCamera(listOf(lastLocation), animate)
+            updateStickyCamera(lastLocation, animate)
         }
         val cameraButtonState = when (expectedMode) {
             CameraMovement.StickyLocation -> CameraMovement.StickyBounds
