@@ -7,7 +7,6 @@ import akio.apps.myrun.feature.profile.ui.UserProfileScreen
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -25,18 +24,23 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 private object AppNavTransitionDefaults {
     val enterTransition: EnterTransition = slideInHorizontally(
         initialOffsetX = { fullWidth -> fullWidth / 2 },
-        animationSpec = tween(200, easing = LinearEasing)
-    ) + fadeIn(initialAlpha = 0f, animationSpec = tween(200, easing = LinearEasing))
+        animationSpec = tween(200)
+    ) + fadeIn(initialAlpha = 0f, animationSpec = tween(200))
 
-    val popEnterTransition: EnterTransition = slideInHorizontally(
-        initialOffsetX = { 0 },
-        animationSpec = tween(200, easing = LinearEasing)
-    ) + fadeIn(initialAlpha = 1f, animationSpec = tween(200, easing = LinearEasing))
+    val exitTransition: ExitTransition = fadeOut(
+        targetAlpha = 1f,
+        animationSpec = tween(0)
+    )
+
+    val popEnterTransition: EnterTransition = fadeIn(
+        initialAlpha = 1f,
+        animationSpec = tween(0)
+    )
 
     val popExitTransition: ExitTransition = slideOutHorizontally(
         targetOffsetX = { fullWidth -> fullWidth },
-        animationSpec = tween(200, easing = LinearEasing)
-    ) + fadeOut(targetAlpha = 0f, animationSpec = tween(200, easing = LinearEasing))
+        animationSpec = tween(200)
+    ) + fadeOut(targetAlpha = 0f, animationSpec = tween(200))
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -73,6 +77,7 @@ private fun NavGraphBuilder.addProfileDestination(navController: NavHostControll
         route = HomeNavDestination.Profile.route,
         arguments = HomeNavDestination.Profile.arguments,
         enterTransition = { _, _ -> AppNavTransitionDefaults.enterTransition },
+        exitTransition = { _, _ -> AppNavTransitionDefaults.exitTransition },
         popEnterTransition = { _, _ -> AppNavTransitionDefaults.popEnterTransition },
         popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
     ) { backStackEntry ->
@@ -90,6 +95,7 @@ private fun NavGraphBuilder.addHomeDestination(
     composable(
         route = HomeNavDestination.Home.route,
         enterTransition = { _, _ -> AppNavTransitionDefaults.enterTransition },
+        exitTransition = { _, _ -> AppNavTransitionDefaults.exitTransition },
         popEnterTransition = { _, _ -> AppNavTransitionDefaults.popEnterTransition },
         popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
     ) {
@@ -111,6 +117,7 @@ private fun NavGraphBuilder.addActivityDetailDestination(
         route = HomeNavDestination.ActivityDetail.route,
         arguments = HomeNavDestination.ActivityDetail.arguments,
         enterTransition = { _, _ -> AppNavTransitionDefaults.enterTransition },
+        exitTransition = { _, _ -> AppNavTransitionDefaults.exitTransition },
         popEnterTransition = { _, _ -> AppNavTransitionDefaults.popEnterTransition },
         popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
     ) { navBackStackEntry ->

@@ -10,8 +10,14 @@ import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.feed.ui.ActivityFeedScreen
 import akio.apps.myrun.feature.userstats.ui.UserStatsScreen
 import androidx.annotation.StringRes
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -50,14 +56,31 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
+@OptIn(ExperimentalAnimationApi::class)
+private object HomeTabNavTransitionDefaults {
+    private val fadeInImmediately = fadeIn(
+        initialAlpha = 1f,
+        animationSpec = tween(durationMillis = 0)
+    )
+    private val fadeOutImmediately = fadeOut(
+        targetAlpha = 0f,
+        animationSpec = tween(durationMillis = 0)
+    )
+
+    val enterTransition: EnterTransition = fadeInImmediately
+    val exitTransition: ExitTransition = fadeOutImmediately
+    val popEnterTransition: EnterTransition = fadeInImmediately
+    val popExitTransition: ExitTransition = fadeOutImmediately
+}
 
 private enum class HomeNavItemInfo(
     @StringRes
@@ -79,6 +102,7 @@ private enum class HomeNavItemInfo(
 
 private const val REVEAL_ANIM_THRESHOLD = 10
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun HomeTabScreen(
     appNavController: NavController,
@@ -98,7 +122,7 @@ fun HomeTabScreen(
         createScrollConnectionForFabAnimation(isFabActive, fabBoxSizePx, coroutineScope, fabOffsetY)
     }
 
-    val homeNavController = rememberNavController()
+    val homeNavController = rememberAnimatedNavController()
     val currentBackStackEntry by homeNavController.currentBackStackEntryAsState()
     isFabActive = currentBackStackEntry?.destination?.route == HomeNavItemInfo.ActivityFeed.route
     // toggle FAB when switching between tabs
@@ -171,6 +195,7 @@ private suspend fun animateFabOffsetY(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun HomeNavHost(
     homeNavController: NavHostController,
@@ -179,7 +204,7 @@ private fun HomeNavHost(
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
 ) {
-    NavHost(
+    AnimatedNavHost(
         modifier = Modifier.fillMaxSize(),
         navController = homeNavController,
         startDestination = HomeNavItemInfo.ActivityFeed.route
@@ -194,12 +219,19 @@ private fun HomeNavHost(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.addUserStatsDestination(
     contentPaddings: PaddingValues,
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
 ) {
-    composable(route = HomeNavItemInfo.UserStats.route) { backstackEntry ->
+    composable(
+        route = HomeNavItemInfo.UserStats.route,
+        enterTransition = { _, _ -> HomeTabNavTransitionDefaults.enterTransition },
+        exitTransition = { _, _ -> HomeTabNavTransitionDefaults.exitTransition },
+        popEnterTransition = { _, _ -> HomeTabNavTransitionDefaults.popEnterTransition },
+        popExitTransition = { _, _ -> HomeTabNavTransitionDefaults.popExitTransition }
+    ) { backstackEntry ->
         UserStatsScreen(appNavController, backstackEntry, contentPaddings, openRoutePlanningAction)
     }
 }
@@ -226,8 +258,11 @@ private fun navigateHomeDestination(
     homeNavController: NavHostController,
     itemInfo: HomeNavItemInfo,
 ) {
+    val currentEntryDesId = homeNavController.currentBackStackEntry?.destination?.id
+        ?: homeNavController.graph.findStartDestination().id
     homeNavController.navigate(itemInfo.route) {
-        popUpTo(homeNavController.graph.findStartDestination().id) {
+        popUpTo(currentEntryDesId) {
+            inclusive = true
             saveState = true
         }
         launchSingleTop = true
@@ -235,12 +270,19 @@ private fun navigateHomeDestination(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.addActivityFeedDestination(
     contentPadding: PaddingValues,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     appNavController: NavController,
 ) {
-    composable(route = HomeNavItemInfo.ActivityFeed.route) { backstackEntry ->
+    composable(
+        route = HomeNavItemInfo.ActivityFeed.route,
+        enterTransition = { _, _ -> HomeTabNavTransitionDefaults.enterTransition },
+        exitTransition = { _, _ -> HomeTabNavTransitionDefaults.exitTransition },
+        popEnterTransition = { _, _ -> HomeTabNavTransitionDefaults.popEnterTransition },
+        popExitTransition = { _, _ -> HomeTabNavTransitionDefaults.popExitTransition }
+    ) { backstackEntry ->
         ActivityFeedScreen(
             appNavController,
             backstackEntry,
