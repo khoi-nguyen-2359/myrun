@@ -3,12 +3,15 @@ package akio.apps.myrun.feature.main
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.core.ktx.px2dp
+import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.core.ui.AppDimensions.AppBarHeight
 import akio.apps.myrun.feature.core.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.feed.ui.ActivityFeedScreen
+import akio.apps.myrun.feature.main.di.DaggerHomeTabFeatureComponent
 import akio.apps.myrun.feature.userstats.ui.UserStatsScreen
+import android.app.Application
 import androidx.annotation.StringRes
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -32,9 +35,11 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.BarChart
+import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,10 +52,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -106,6 +113,7 @@ private const val REVEAL_ANIM_THRESHOLD = 10
 @Composable
 fun HomeTabScreen(
     appNavController: NavController,
+    backStackEntry: NavBackStackEntry,
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     openRoutePlanningAction: () -> Unit,
@@ -123,12 +131,17 @@ fun HomeTabScreen(
     }
 
     val homeNavController = rememberAnimatedNavController()
-    val currentBackStackEntry by homeNavController.currentBackStackEntryAsState()
-    isFabActive = currentBackStackEntry?.destination?.route == HomeNavItemInfo.ActivityFeed.route
+    val homeBackStackEntry by homeNavController.currentBackStackEntryAsState()
+    isFabActive = homeBackStackEntry?.destination?.route == HomeNavItemInfo.ActivityFeed.route
     // toggle FAB when switching between tabs
     LaunchedEffect(isFabActive) {
         animateFabOffsetY(isFabActive, fabOffsetY, fabBoxSizePx)
     }
+    val application = LocalContext.current.applicationContext as Application
+    val homeTabViewModel = backStackEntry.rememberViewModelProvider {
+        DaggerHomeTabFeatureComponent.factory().create(application).homeTabViewModel()
+    }
+    val isTrackingStarted by homeTabViewModel.isTrackingStarted.collectAsState(false)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -147,7 +160,7 @@ fun HomeTabScreen(
                 .align(Alignment.BottomCenter)
                 .offset { IntOffset(x = 0, y = fabOffsetY.value.roundToInt()) }
         ) {
-            HomeFloatingActionButton(onClickFloatingActionButton)
+            HomeFloatingActionButton(onClickFloatingActionButton, isTrackingStarted)
         }
 
         Column(modifier = Modifier.align(Alignment.BottomCenter)) {
@@ -293,10 +306,20 @@ private fun NavGraphBuilder.addActivityFeedDestination(
 }
 
 @Composable
-private fun HomeFloatingActionButton(onClick: () -> Unit, modifier: Modifier = Modifier) =
+private fun HomeFloatingActionButton(
+    onClick: () -> Unit,
+    isTrackingStarted: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val fabIcon = if (isTrackingStarted) {
+        Icons.Rounded.DirectionsRun
+    } else {
+        Icons.Rounded.Add
+    }
     FloatingActionButton(onClick = onClick, modifier = modifier) {
         Icon(
-            imageVector = Icons.Rounded.Add,
+            imageVector = fabIcon,
             contentDescription = "Floating action button on bottom bar"
         )
     }
+}

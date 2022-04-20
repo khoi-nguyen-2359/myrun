@@ -1,8 +1,9 @@
-package akio.apps.myrun.feature.main
+package akio.apps.myrun.feature.main.ui
 
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
+import akio.apps.myrun.feature.main.HomeTabScreen
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -98,9 +99,10 @@ private fun NavGraphBuilder.addHomeDestination(
         exitTransition = { _, _ -> AppNavTransitionDefaults.exitTransition },
         popEnterTransition = { _, _ -> AppNavTransitionDefaults.popEnterTransition },
         popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
-    ) {
+    ) { backStackEntry ->
         HomeTabScreen(
             navController,
+            backStackEntry,
             onClickFloatingActionButton,
             onClickExportActivityFile,
             openRoutePlanningAction
