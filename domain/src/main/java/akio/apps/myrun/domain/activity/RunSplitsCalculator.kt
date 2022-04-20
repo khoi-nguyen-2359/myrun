@@ -7,9 +7,7 @@ import javax.inject.Inject
 import timber.log.Timber
 
 class RunSplitsCalculator @Inject constructor(private val sphericalUtil: SphericalUtil) {
-    fun createRunSplits(
-        locationDataPoints: List<ActivityLocation>,
-    ): List<Double> {
+    fun createRunSplits(locationDataPoints: List<ActivityLocation>): List<Double> {
         var splitDistance = 0.0
         var prevLocation = locationDataPoints.firstOrNull()
             ?: return emptyList()

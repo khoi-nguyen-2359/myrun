@@ -157,7 +157,7 @@ private fun ActivityDetailDataContainer(
                 navigateToActivityMap(context, screenState.activityData.encodedPolyline)
             }
             PerformanceTableComposable(screenState.activityData)
-            if (screenState.runSplits.isNotEmpty()) {
+            if (screenState.runSplits.size > 1) {
                 RunSplitsTable(
                     screenState.runSplits,
                     screenState.activityData.distance,
@@ -222,16 +222,7 @@ fun RunSplitsTable(
             Row(
                 modifier = Modifier.padding(vertical = 1.dp)
             ) {
-                val kmLabel = if (index == runSplits.size - 1) {
-                    val rounded = String.format("%.1f", (totalDistance % 1000) / 1000)
-                    if (rounded == "1.0") {
-                        "${index + 1}"
-                    } else {
-                        rounded
-                    }
-                } else {
-                    (index + 1).toString()
-                }
+                val kmLabel = formatKmLabel(index, runSplits, totalDistance)
                 Text(
                     text = kmLabel, modifier = Modifier.weight(kmColumnWeight),
                     style = MaterialTheme.typography.caption
@@ -254,6 +245,20 @@ fun RunSplitsTable(
         }
         Spacer(modifier = Modifier.height(AppDimensions.screenVerticalSpacing))
     }
+}
+
+private fun formatKmLabel(
+    index: Int,
+    runSplits: List<Double>,
+    totalDistance: Double,
+): String {
+    if (index == runSplits.size - 1) {
+        val rounded = String.format("%.1f", (totalDistance % 1000) / 1000)
+        if (rounded != "1.0") {
+            return rounded
+        }
+    }
+    return "${index + 1}"
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffff)
