@@ -37,7 +37,6 @@ import androidx.compose.material.icons.rounded.GpsOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,7 +58,8 @@ internal fun TrackingControlButtonPanel(
     onClickControlButton: (TrackingControlButtonType) -> Unit,
     onClickCameraMode: (RouteTrackingActivity.CameraMovement) -> Unit,
 ) {
-    val trackingStatus by routeTrackingViewModel.trackingStatus.observeAsState()
+    val trackingStatus by routeTrackingViewModel.trackingStatus
+        .collectAsState(initial = RouteTrackingStatus.STOPPED)
     // when entering the screen, initial location may not be available if location is not ready yet,
     // so use flow to get the location when it is ready.
     val initialLocation by produceState<Location?>(initialValue = null, producer = {

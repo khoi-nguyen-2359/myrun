@@ -13,7 +13,6 @@ import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.dp2px
 import akio.apps.myrun.feature.core.ktx.lazyViewModelProvider
-import akio.apps.myrun.feature.core.ktx.observe
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegateImpl
 import akio.apps.myrun.feature.tracking.di.DaggerRouteTrackingFeatureComponent
@@ -175,18 +174,20 @@ class RouteTrackingActivity(
             routeTrackingViewModel.isLaunchCatchingInProgress,
             dialogDelegate::toggleProgressDialog
         )
-        observe(routeTrackingViewModel.trackingLocationBatch, ::onTrackingLocationUpdate)
-        observe(routeTrackingViewModel.trackingStats, trackingStatsView::update)
-        observe(routeTrackingViewModel.trackingStatus, ::onTrackingStatusChanged)
+        collectRepeatOnStarted(
+            routeTrackingViewModel.trackingLocationBatch,
+            ::onTrackingLocationUpdate
+        )
+        collectRepeatOnStarted(routeTrackingViewModel.trackingStats, trackingStatsView::update)
+        collectRepeatOnStarted(routeTrackingViewModel.trackingStatus, ::onTrackingStatusChanged)
         collectEventRepeatOnStarted(
             routeTrackingViewModel.launchCatchingError,
             dialogDelegate::showExceptionAlert
         )
-        observe(
+        collectRepeatOnStarted(
             routeTrackingViewModel.activityType,
             activitySettingsView::setActivityType
         )
-        observe(routeTrackingViewModel.activityType, trackingStatsView::setActivityType)
         collectRepeatOnStarted(isLaunchCatchingInProgress, dialogDelegate::toggleProgressDialog)
         collectEventRepeatOnStarted(launchCatchingError, dialogDelegate::showExceptionAlert)
         collectRepeatOnStarted(routeTrackingViewModel.locationUpdateFlow) {
@@ -286,8 +287,7 @@ class RouteTrackingActivity(
 
     private var startPointMarker: Marker? = null
     private fun onTrackingLocationUpdate(batch: List<ActivityLocation>) {
-        Timber.tag(LOG_TAG_LOCATION)
-            .d("onTrackingLocationUpdate: ${batch.size}")
+        Timber.tag(LOG_TAG_LOCATION).d("onTrackingLocationUpdate: ${batch.size}")
         addStartPointMarkerIfNotAdded(batch)
         drawTrackingLocationUpdate(batch)
         moveMapCameraOnTrackingLocationUpdate(batch)

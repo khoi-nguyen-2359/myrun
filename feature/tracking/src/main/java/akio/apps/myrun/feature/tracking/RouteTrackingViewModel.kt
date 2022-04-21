@@ -21,10 +21,7 @@ import akio.apps.myrun.feature.tracking.model.RouteTrackingStats
 import akio.apps.myrun.worker.UploadStravaFileWorker
 import android.app.Application
 import android.graphics.Bitmap
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import java.util.Calendar
 import javax.inject.Inject
@@ -66,18 +63,19 @@ internal class RouteTrackingViewModel @Inject constructor(
         locationUpdateFlow.replayCache.lastOrNull()?.lastOrNull()
             ?: locationUpdateFlow.first { it.isNotEmpty() }.first()
 
-    private val _trackingLocationBatch = MutableLiveData<List<ActivityLocation>>()
-    val trackingLocationBatch: LiveData<List<ActivityLocation>> =
+    private val _trackingLocationBatch = MutableStateFlow<List<ActivityLocation>>(emptyList())
+    val trackingLocationBatch: Flow<List<ActivityLocation>> =
         _trackingLocationBatch
 
-    private val _trackingStats = MutableLiveData<RouteTrackingStats>()
-    val trackingStats: LiveData<RouteTrackingStats> = _trackingStats
+    private val _trackingStats = MutableStateFlow(RouteTrackingStats())
+    val trackingStats: Flow<RouteTrackingStats> = _trackingStats
 
-    val trackingStatus: LiveData<@RouteTrackingStatus Int> =
-        routeTrackingState.getTrackingStatusFlow().asLiveData()
+    val trackingStatus: SharedFlow<@RouteTrackingStatus Int> =
+        routeTrackingState.getTrackingStatusFlow()
+            .shareIn(viewModelScope, SharingStarted.WhileSubscribed(), replay = 1)
 
-    private val _activityType = MutableLiveData<ActivityType>()
-    val activityType: LiveData<ActivityType> = _activityType
+    private val _activityType = MutableStateFlow(ActivityType.Running)
+    val activityType: Flow<ActivityType> = _activityType
 
     private var trackingTimerJob: Job? = null
     private var processedLocationCount = 0
@@ -93,7 +91,7 @@ internal class RouteTrackingViewModel @Inject constructor(
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed(), replay = 1)
 
     fun resumeDataUpdates() {
-        if (trackingStatus.value == RouteTrackingStatus.RESUMED) {
+        if (trackingStatus.replayCache.lastOrNull() == RouteTrackingStatus.RESUMED) {
             requestDataUpdates()
         }
     }
@@ -118,8 +116,7 @@ internal class RouteTrackingViewModel @Inject constructor(
     }
 
     suspend fun storeActivityData(routeMapImage: Bitmap) = withContext(ioDispatcher) {
-        val activityType = activityType.value
-            ?: return@withContext
+        val activityType = _activityType.value
         val activityName = makeNewActivityName(activityType)
         storeTrackingActivityDataUsecase.invoke(activityName, routeMapImage)
         scheduleActivitySyncIfAvailable()
