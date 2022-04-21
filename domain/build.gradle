@@ -36,7 +36,6 @@ android {
 
 dependencies {
     api(project(":data:api"))
-    implementation(project(":base:di"))
 
     implementation(libs.androidx.annotation)
 
