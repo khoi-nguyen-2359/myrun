@@ -1,4 +1,4 @@
-package akio.apps.myrun.feature.main
+package akio.apps.myrun.feature.main.ui
 
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel

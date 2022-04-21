@@ -3,7 +3,6 @@ package akio.apps.myrun.feature.main.ui
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
-import akio.apps.myrun.feature.main.HomeTabScreen
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -30,7 +29,7 @@ private object AppNavTransitionDefaults {
 
     val exitTransition: ExitTransition = fadeOut(
         targetAlpha = 1f,
-        animationSpec = tween(0)
+        animationSpec = tween(200)
     )
 
     val popEnterTransition: EnterTransition = fadeIn(
