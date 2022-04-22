@@ -12,12 +12,14 @@ import akio.apps.myrun.domain.tracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.tracking.StoreTrackingActivityDataUsecase
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegateImpl
 import akio.apps.myrun.feature.tracking.RouteTrackingViewModel
+import akio.apps.myrun.feature.tracking.model.RouteTrackingStats
 import android.app.Application
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.mock
@@ -64,8 +66,8 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
 
             testee.requestInitialData()
 
-            assertNull(testee.trackingStats.value)
-            assertNull(testee.trackingLocationBatch.value)
+            assertEquals(RouteTrackingStats(), testee.trackingStats.value)
+            assertTrue(testee.trackingLocationBatch.value.isEmpty())
 
             verify(mockedRouteTrackingState).getTrackingStatusFlow()
             verifyBlocking(mockedRouteTrackingState) { getTrackingStatus() }

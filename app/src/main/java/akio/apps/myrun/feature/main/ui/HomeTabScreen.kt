@@ -1,17 +1,26 @@
-package akio.apps.myrun.feature.main
+package akio.apps.myrun.feature.main.ui
 
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.core.ktx.px2dp
+import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.core.ui.AppDimensions.AppBarHeight
 import akio.apps.myrun.feature.core.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.feed.ui.ActivityFeedScreen
+import akio.apps.myrun.feature.main.di.DaggerHomeTabFeatureComponent
 import akio.apps.myrun.feature.userstats.ui.UserStatsScreen
+import android.app.Application
 import androidx.annotation.StringRes
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,9 +35,11 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.BarChart
+import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,23 +52,42 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
+@OptIn(ExperimentalAnimationApi::class)
+private object HomeTabNavTransitionDefaults {
+    private val fadeInImmediately = fadeIn(
+        initialAlpha = 1f,
+        animationSpec = tween(durationMillis = 0)
+    )
+    private val fadeOutImmediately = fadeOut(
+        targetAlpha = 0f,
+        animationSpec = tween(durationMillis = 0)
+    )
+
+    val enterTransition: EnterTransition = fadeInImmediately
+    val exitTransition: ExitTransition = fadeOutImmediately
+    val popEnterTransition: EnterTransition = fadeInImmediately
+    val popExitTransition: ExitTransition = fadeOutImmediately
+}
 
 private enum class HomeNavItemInfo(
     @StringRes
@@ -79,9 +109,11 @@ private enum class HomeNavItemInfo(
 
 private const val REVEAL_ANIM_THRESHOLD = 10
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun HomeTabScreen(
     appNavController: NavController,
+    backStackEntry: NavBackStackEntry,
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     openRoutePlanningAction: () -> Unit,
@@ -98,13 +130,18 @@ fun HomeTabScreen(
         createScrollConnectionForFabAnimation(isFabActive, fabBoxSizePx, coroutineScope, fabOffsetY)
     }
 
-    val homeNavController = rememberNavController()
-    val currentBackStackEntry by homeNavController.currentBackStackEntryAsState()
-    isFabActive = currentBackStackEntry?.destination?.route == HomeNavItemInfo.ActivityFeed.route
+    val homeNavController = rememberAnimatedNavController()
+    val homeBackStackEntry by homeNavController.currentBackStackEntryAsState()
+    isFabActive = homeBackStackEntry?.destination?.route == HomeNavItemInfo.ActivityFeed.route
     // toggle FAB when switching between tabs
     LaunchedEffect(isFabActive) {
         animateFabOffsetY(isFabActive, fabOffsetY, fabBoxSizePx)
     }
+    val application = LocalContext.current.applicationContext as Application
+    val homeTabViewModel = backStackEntry.rememberViewModelProvider {
+        DaggerHomeTabFeatureComponent.factory().create(application).homeTabViewModel()
+    }
+    val isTrackingStarted by homeTabViewModel.isTrackingStarted.collectAsState(false)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -123,7 +160,7 @@ fun HomeTabScreen(
                 .align(Alignment.BottomCenter)
                 .offset { IntOffset(x = 0, y = fabOffsetY.value.roundToInt()) }
         ) {
-            HomeFloatingActionButton(onClickFloatingActionButton)
+            HomeFloatingActionButton(onClickFloatingActionButton, isTrackingStarted)
         }
 
         Column(modifier = Modifier.align(Alignment.BottomCenter)) {
@@ -171,6 +208,7 @@ private suspend fun animateFabOffsetY(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun HomeNavHost(
     homeNavController: NavHostController,
@@ -179,7 +217,7 @@ private fun HomeNavHost(
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
 ) {
-    NavHost(
+    AnimatedNavHost(
         modifier = Modifier.fillMaxSize(),
         navController = homeNavController,
         startDestination = HomeNavItemInfo.ActivityFeed.route
@@ -194,12 +232,19 @@ private fun HomeNavHost(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.addUserStatsDestination(
     contentPaddings: PaddingValues,
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
 ) {
-    composable(route = HomeNavItemInfo.UserStats.route) { backstackEntry ->
+    composable(
+        route = HomeNavItemInfo.UserStats.route,
+        enterTransition = { _, _ -> HomeTabNavTransitionDefaults.enterTransition },
+        exitTransition = { _, _ -> HomeTabNavTransitionDefaults.exitTransition },
+        popEnterTransition = { _, _ -> HomeTabNavTransitionDefaults.popEnterTransition },
+        popExitTransition = { _, _ -> HomeTabNavTransitionDefaults.popExitTransition }
+    ) { backstackEntry ->
         UserStatsScreen(appNavController, backstackEntry, contentPaddings, openRoutePlanningAction)
     }
 }
@@ -226,8 +271,11 @@ private fun navigateHomeDestination(
     homeNavController: NavHostController,
     itemInfo: HomeNavItemInfo,
 ) {
+    val currentEntryDesId = homeNavController.currentBackStackEntry?.destination?.id
+        ?: homeNavController.graph.findStartDestination().id
     homeNavController.navigate(itemInfo.route) {
-        popUpTo(homeNavController.graph.findStartDestination().id) {
+        popUpTo(currentEntryDesId) {
+            inclusive = true
             saveState = true
         }
         launchSingleTop = true
@@ -235,12 +283,19 @@ private fun navigateHomeDestination(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 private fun NavGraphBuilder.addActivityFeedDestination(
     contentPadding: PaddingValues,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     appNavController: NavController,
 ) {
-    composable(route = HomeNavItemInfo.ActivityFeed.route) { backstackEntry ->
+    composable(
+        route = HomeNavItemInfo.ActivityFeed.route,
+        enterTransition = { _, _ -> HomeTabNavTransitionDefaults.enterTransition },
+        exitTransition = { _, _ -> HomeTabNavTransitionDefaults.exitTransition },
+        popEnterTransition = { _, _ -> HomeTabNavTransitionDefaults.popEnterTransition },
+        popExitTransition = { _, _ -> HomeTabNavTransitionDefaults.popExitTransition }
+    ) { backstackEntry ->
         ActivityFeedScreen(
             appNavController,
             backstackEntry,
@@ -251,10 +306,20 @@ private fun NavGraphBuilder.addActivityFeedDestination(
 }
 
 @Composable
-private fun HomeFloatingActionButton(onClick: () -> Unit, modifier: Modifier = Modifier) =
+private fun HomeFloatingActionButton(
+    onClick: () -> Unit,
+    isTrackingStarted: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val fabIcon = if (isTrackingStarted) {
+        Icons.Rounded.DirectionsRun
+    } else {
+        Icons.Rounded.Add
+    }
     FloatingActionButton(onClick = onClick, modifier = modifier) {
         Icon(
-            imageVector = Icons.Rounded.Add,
+            imageVector = fabIcon,
             contentDescription = "Floating action button on bottom bar"
         )
     }
+}

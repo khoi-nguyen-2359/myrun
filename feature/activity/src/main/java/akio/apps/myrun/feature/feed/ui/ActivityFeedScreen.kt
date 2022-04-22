@@ -125,8 +125,8 @@ fun ActivityFeedScreen(
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
     val application = LocalContext.current.applicationContext as Application
-    val activityFeedViewModel = backStackEntry.rememberViewModelProvider {
-        DaggerActivityFeedFeatureComponent.factory().create(application).feedViewModel()
+    val activityFeedViewModel = backStackEntry.rememberViewModelProvider { savedState ->
+        DaggerActivityFeedFeatureComponent.factory().create(application, savedState).feedViewModel()
     }
     ActivityFeedScreen(
         activityFeedViewModel,
@@ -155,7 +155,7 @@ private fun ActivityFeedScreen(
     }
 
     val activityUploadBadge by activityFeedViewModel.activityUploadBadge.collectAsState(
-        initial = null
+        initial = ActivityFeedViewModel.ActivityUploadBadgeStatus.Hidden
     )
 
     val feedListState = rememberLazyListState()
@@ -177,7 +177,7 @@ private fun ActivityFeedScreen(
 
         ActivityFeedTopBar(
             activityUploadBadge,
-            { coroutineScope.launch { feedListState.animateScrollToItem(0) } },
+            onClickUploadCompleteBadge(coroutineScope, feedListState, activityFeedViewModel),
             Modifier
                 .height(topBarHeightDp)
                 .align(Alignment.TopCenter)
@@ -185,6 +185,16 @@ private fun ActivityFeedScreen(
                 .background(AppColors.primary)
         )
     }
+}
+
+@Composable
+private fun onClickUploadCompleteBadge(
+    coroutineScope: CoroutineScope,
+    feedListState: LazyListState,
+    activityFeedViewModel: ActivityFeedViewModel,
+): () -> Unit = {
+    coroutineScope.launch { feedListState.animateScrollToItem(0) }
+    activityFeedViewModel.setUploadBadgeDismissed(true)
 }
 
 private fun createTopBarAnimScrollConnection(

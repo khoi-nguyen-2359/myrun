@@ -21,10 +21,7 @@ import akio.apps.myrun.feature.tracking.model.RouteTrackingStats
 import akio.apps.myrun.worker.UploadStravaFileWorker
 import android.app.Application
 import android.graphics.Bitmap
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import java.util.Calendar
 import javax.inject.Inject
@@ -33,9 +30,12 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -60,21 +60,23 @@ internal class RouteTrackingViewModel @Inject constructor(
     val stickyCameraButtonState: MutableStateFlow<RouteTrackingActivity.CameraMovement> =
         MutableStateFlow(RouteTrackingActivity.CameraMovement.StickyBounds)
 
-    suspend fun getLatestLocation(): Location =
-        locationUpdateFlow.takeWhile { it.isNotEmpty() }.first().first()
+    suspend fun getLastLocation(): Location =
+        locationUpdateFlow.replayCache.lastOrNull()?.lastOrNull()
+            ?: locationUpdateFlow.first { it.isNotEmpty() }.first()
 
-    private val _trackingLocationBatch = MutableLiveData<List<ActivityLocation>>()
-    val trackingLocationBatch: LiveData<List<ActivityLocation>> =
+    private val _trackingLocationBatch = MutableStateFlow<List<ActivityLocation>>(emptyList())
+    val trackingLocationBatch: StateFlow<List<ActivityLocation>> =
         _trackingLocationBatch
 
-    private val _trackingStats = MutableLiveData<RouteTrackingStats>()
-    val trackingStats: LiveData<RouteTrackingStats> = _trackingStats
+    private val _trackingStats = MutableStateFlow(RouteTrackingStats())
+    val trackingStats: StateFlow<RouteTrackingStats> = _trackingStats
 
-    val trackingStatus: LiveData<@RouteTrackingStatus Int> =
-        routeTrackingState.getTrackingStatusFlow().asLiveData()
+    val trackingStatus: SharedFlow<@RouteTrackingStatus Int> =
+        routeTrackingState.getTrackingStatusFlow()
+            .shareIn(viewModelScope, SharingStarted.WhileSubscribed(), replay = 1)
 
-    private val _activityType = MutableLiveData<ActivityType>()
-    val activityType: LiveData<ActivityType> = _activityType
+    private val _activityType = MutableStateFlow(ActivityType.Running)
+    val activityType: Flow<ActivityType> = _activityType
 
     private var trackingTimerJob: Job? = null
     private var processedLocationCount = 0
@@ -85,11 +87,12 @@ internal class RouteTrackingViewModel @Inject constructor(
     )
 
     @OptIn(FlowPreview::class)
-    val locationUpdateFlow: Flow<List<Location>> =
+    val locationUpdateFlow: SharedFlow<List<Location>> =
         getLocationRequestConfigFlow().flatMapConcat(locationDataSource::getLocationUpdate)
+            .shareIn(viewModelScope, SharingStarted.WhileSubscribed(), replay = 1)
 
     fun resumeDataUpdates() {
-        if (trackingStatus.value == RouteTrackingStatus.RESUMED) {
+        if (trackingStatus.replayCache.lastOrNull() == RouteTrackingStatus.RESUMED) {
             requestDataUpdates()
         }
     }
@@ -114,8 +117,7 @@ internal class RouteTrackingViewModel @Inject constructor(
     }
 
     suspend fun storeActivityData(routeMapImage: Bitmap) = withContext(ioDispatcher) {
-        val activityType = activityType.value
-            ?: return@withContext
+        val activityType = _activityType.value
         val activityName = makeNewActivityName(activityType)
         storeTrackingActivityDataUsecase.invoke(activityName, routeMapImage)
         scheduleActivitySyncIfAvailable()
@@ -164,6 +166,16 @@ internal class RouteTrackingViewModel @Inject constructor(
         }
     }
 
+    fun startDataUpdates() {
+        viewModelScope.launch { insertFirstTrackedLocation() }
+        requestDataUpdates()
+    }
+
+    private suspend fun insertFirstTrackedLocation() = withContext(ioDispatcher) {
+        val lastLocation = getLastLocation().toActivityLocation(activityElapsedTime = 0)
+        routeTrackingLocationRepository.insert(listOf(lastLocation))
+    }
+
     fun requestDataUpdates() {
         trackingTimerJob?.cancel()
         trackingTimerJob = viewModelScope.flowTimer(0, TRACKING_TIMER_PERIOD) {
@@ -187,6 +199,10 @@ internal class RouteTrackingViewModel @Inject constructor(
             withContext(ioDispatcher) { clearRouteTrackingStateUsecase.clear() }
         }
     }
+
+    private fun Location.toActivityLocation(activityElapsedTime: Long) = ActivityLocation(
+        activityElapsedTime, latitude, longitude, altitude, speed
+    )
 
     companion object {
         const val TRACKING_TIMER_PERIOD = 1000L
