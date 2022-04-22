@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.shareIn
@@ -64,11 +65,11 @@ internal class RouteTrackingViewModel @Inject constructor(
             ?: locationUpdateFlow.first { it.isNotEmpty() }.first()
 
     private val _trackingLocationBatch = MutableStateFlow<List<ActivityLocation>>(emptyList())
-    val trackingLocationBatch: Flow<List<ActivityLocation>> =
+    val trackingLocationBatch: StateFlow<List<ActivityLocation>> =
         _trackingLocationBatch
 
     private val _trackingStats = MutableStateFlow(RouteTrackingStats())
-    val trackingStats: Flow<RouteTrackingStats> = _trackingStats
+    val trackingStats: StateFlow<RouteTrackingStats> = _trackingStats
 
     val trackingStatus: SharedFlow<@RouteTrackingStatus Int> =
         routeTrackingState.getTrackingStatusFlow()
