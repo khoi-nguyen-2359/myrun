@@ -34,8 +34,8 @@ Tech stack
 
 Why I'm making this
 ---
-- Learning purpose: I can not change my company project's architecture back and forth like a boss at here 😎
-- Sample of my daily work and my interests (beside my [resume 🧾](https://docs.google.com/file/d/1lotPrWfKcnAawO8ZYg5Hpb0bhW8YjO7x/edit))
+- Learning purpose: where I can change the project's architecture back and forth 😎
+- Sample of my work and my interests (beside my [resume 🧾](https://docs.google.com/document/d/1Qs8YTNrCz8lqp6FTVQ3VL7DRZCcARBSn/edit))
 
 Wiki
 ---
