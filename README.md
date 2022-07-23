@@ -13,14 +13,14 @@ Status
 ---
 [![Develop](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/develop_pr_checks.yml/badge.svg)](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/develop_pr_checks.yml)
 [![Release](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/release_pr_checks.yml/badge.svg)](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/release_pr_checks.yml)
-[![Deploy](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/deploy.yml/badge.svg)](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/deploy.yml)
+[![Publish](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/publish.yml/badge.svg)](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/publish.yml)
 
 Highlights
 ---
 - Use Jetpack Compose and MVVM to build a unidirectional data flow UI.
 - Make use of persistent storage and WorkManager to create a better offline user experience.
 - Use Android foreground service for run tracking operations.
-- Apply CI/CD using Github Action to automate code quality checks and deploy process.
+- Apply CI/CD using Github Action to automate code quality checks and publish process.
 
 Tech stack
 ---
