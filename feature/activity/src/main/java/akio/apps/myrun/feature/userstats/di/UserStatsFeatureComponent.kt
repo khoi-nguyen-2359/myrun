@@ -15,7 +15,7 @@ import dagger.Component
 @FeatureScope
 @Component(
     modules = [
-        DispatchersModule::class,
+        DispatchersModule::class
     ],
     dependencies = [
         AuthenticationDataComponent::class,

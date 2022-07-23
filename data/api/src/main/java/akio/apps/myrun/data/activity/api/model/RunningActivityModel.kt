@@ -5,5 +5,5 @@ data class RunningActivityModel(
 
     // stats
     val pace: Double,
-    val cadence: Int
+    val cadence: Int,
 ) : BaseActivityModel(activityData)

@@ -33,7 +33,7 @@ class AverageLocationAccumulatorTest {
         val batch1 = listOf(
             Location(0, 0, 1.0, 2.0, 3.0, 0.0),
             Location(4, 4, 5.0, 6.0, 7.0, 0.0),
-            Location(8, 8, 9.0, 10.0, 11.0, 0.0),
+            Location(8, 8, 9.0, 10.0, 11.0, 0.0)
         )
         whenever(mockedTimeProvider.currentTimeMillis()).thenReturn(500L)
         val firstDelivery = locationProcessorContainer.process(batch1)
@@ -42,7 +42,7 @@ class AverageLocationAccumulatorTest {
         val batch2 = listOf(
             Location(12, 12, 13.0, 14.0, 15.0, 0.0),
             Location(16, 16, 17.0, 18.0, 19.0, 0.0),
-            Location(20, 20, 21.0, 22.0, 23.0, 0.0),
+            Location(20, 20, 21.0, 22.0, 23.0, 0.0)
         )
         val avgLocationEntity2 = listOf(Location(20, 20, 11.0, 12.0, 13.0, 0.0))
         whenever(mockedTimeProvider.currentTimeMillis()).thenReturn(2000)
@@ -52,7 +52,7 @@ class AverageLocationAccumulatorTest {
         val batch3 = listOf(
             Location(0, 0, 2.0, 4.0, 3.0, 0.0),
             Location(4, 4, 4.0, 6.0, 7.0, 0.0),
-            Location(8, 8, 6.0, 11.0, 11.0, 0.0),
+            Location(8, 8, 6.0, 11.0, 11.0, 0.0)
         )
         whenever(mockedTimeProvider.currentTimeMillis()).thenReturn(2100)
         val thirdDelivery = locationProcessorContainer.process(batch3)

@@ -46,7 +46,7 @@ interface WorkerFeatureComponent {
             trackingDataComponent: TrackingDataComponent =
                 DaggerTrackingDataComponent.factory().create(application),
             activityDataComponent: ActivityDataComponent =
-                DaggerActivityDataComponent.factory().create(application)
+                DaggerActivityDataComponent.factory().create(application),
         ): WorkerFeatureComponent
     }
 }

@@ -2,11 +2,12 @@ package akio.apps.myrun.data.eapps
 
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.eapps.api.StravaSyncState
-import akio.apps.myrun.data.eapps.api.StravaTokenRepository
+import akio.apps.myrun.data.eapps.di.ExternalAppDataScope
 import akio.apps.myrun.data.eapps.impl.StravaApi
 import akio.apps.myrun.data.eapps.impl.StravaRefreshTokenAuthenticator
 import akio.apps.myrun.data.eapps.impl.model.StravaTokenRefreshMapper
 import com.google.gson.Gson
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -16,6 +17,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Module(includes = [ExternalAppDataModule.Providers::class])
+@ContributesTo(ExternalAppDataScope::class)
 interface ExternalAppDataModule {
     @Module
     object Providers {
@@ -45,7 +47,7 @@ interface ExternalAppDataModule {
             @Named(NAME_STRAVA_GSON) gson: Gson,
             tokenRefreshMapper: StravaTokenRefreshMapper,
             externalAppProvidersRepository: ExternalAppProvidersRepository,
-            stravaSyncState: StravaSyncState
+            stravaSyncState: StravaSyncState,
         ): StravaRefreshTokenAuthenticator {
             val refreshTokenClient = okHttpClientBuilder.build()
             return StravaRefreshTokenAuthenticator(

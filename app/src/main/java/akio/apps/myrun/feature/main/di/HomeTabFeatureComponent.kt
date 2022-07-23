@@ -18,7 +18,7 @@ interface HomeTabFeatureComponent {
         fun create(
             @BindsInstance application: Application,
             trackingDataComponent: TrackingDataComponent =
-                DaggerTrackingDataComponent.factory().create(application)
+                DaggerTrackingDataComponent.factory().create(application),
         ): HomeTabFeatureComponent
     }
 }

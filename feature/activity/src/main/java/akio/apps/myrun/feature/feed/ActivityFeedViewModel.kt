@@ -66,7 +66,7 @@ internal class ActivityFeedViewModel @Inject constructor(
             pageSize = PAGE_SIZE,
             enablePlaceholders = false,
             prefetchDistance = PAGE_SIZE
-        ),
+        )
         // do not pass initial key as timestamp because initialKey is reused in invalidating!
         // initialKey = System.currentTimeMillis()
     ) { recreateActivityPagingSource() }

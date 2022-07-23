@@ -37,7 +37,7 @@ class AverageLocationAccumulator(
             accumulatedLocation.latitude / batchSize,
             accumulatedLocation.longitude / batchSize,
             accumulatedLocation.altitude / batchSize,
-            accumulatedLocation.speed / batchSize,
+            accumulatedLocation.speed / batchSize
         )
     }
 

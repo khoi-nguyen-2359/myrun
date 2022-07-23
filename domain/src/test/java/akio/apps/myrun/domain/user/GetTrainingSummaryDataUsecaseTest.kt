@@ -49,7 +49,7 @@ class GetTrainingSummaryDataUsecaseTest {
         val timeZoneRawOffset = TimeZone.getDefault().rawOffset
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
         whenever(mockedTimeProvider.currentTimeMillis()).thenReturn(
-            1639353600000L + timeZoneRawOffset, // 00:00:00 Dec 13 2021 (GMT)
+            1639353600000L + timeZoneRawOffset // 00:00:00 Dec 13 2021 (GMT)
         )
 
         val timeRangeStart = 1635724800000 - timeZoneRawOffset // 00:00:00 1 Nov 2021 (local)
@@ -58,7 +58,7 @@ class GetTrainingSummaryDataUsecaseTest {
             mockedActivityRepository.getActivitiesInTimeRange(
                 defaultUserId,
                 timeRangeStart,
-                timeRangeEnd,
+                timeRangeEnd
             )
         ).thenReturn(
             listOf(
@@ -165,7 +165,7 @@ class GetTrainingSummaryDataUsecaseTest {
         verify(mockedActivityRepository).getActivitiesInTimeRange(
             defaultUserId,
             timeRangeStart,
-            timeRangeEnd,
+            timeRangeEnd
         )
 
         val runSummary = summaryTableMap[ActivityType.Running]

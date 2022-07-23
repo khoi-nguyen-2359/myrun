@@ -22,11 +22,11 @@ ij_kotlin_keep_blank_lines_in_declarations = 1
 ij_kotlin_keep_blank_lines_in_code = 1
 ij_kotlin_keep_blank_lines_before_right_brace = 0
 ij_kotlin_align_multiline_parameters = false
-continuation_indent_size = 4
 ij_continuation_indent_size = 4
 ij_kotlin_import_nested_classes = false
 ij_kotlin_imports_layout = *,^
 ij_kotlin_allow_trailing_comma = true
+disabled_rules = filename
 
 [*.java]
 ij_java_class_count_to_use_import_on_demand = 99

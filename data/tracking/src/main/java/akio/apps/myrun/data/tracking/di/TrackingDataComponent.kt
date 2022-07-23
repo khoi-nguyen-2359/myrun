@@ -1,6 +1,5 @@
 package akio.apps.myrun.data.tracking.di
 
-import akio.apps.myrun.data.tracking.TrackingDataModule
 import akio.apps.myrun.data.tracking.api.FitnessDataRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
@@ -14,10 +13,7 @@ import javax.inject.Singleton
 abstract class TrackingDataScope private constructor()
 
 @Singleton
-@MergeComponent(
-    scope = TrackingDataScope::class,
-    modules = [TrackingDataModule::class]
-)
+@MergeComponent(TrackingDataScope::class)
 interface TrackingDataComponent {
     fun routeTrackingConfig(): RouteTrackingConfiguration
     fun routeTrackingLocationRepo(): RouteTrackingLocationRepository

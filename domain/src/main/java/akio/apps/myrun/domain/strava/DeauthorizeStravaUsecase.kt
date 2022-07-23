@@ -10,7 +10,7 @@ class DeauthorizeStravaUsecase @Inject constructor(
     private val stravaTokenRepository: StravaTokenRepository,
     private val stravaSyncState: StravaSyncState,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
-    private val userAuthenticationState: UserAuthenticationState
+    private val userAuthenticationState: UserAuthenticationState,
 ) {
     suspend fun deauthorizeStrava() {
         val userAccountId = userAuthenticationState.getUserAccountId()

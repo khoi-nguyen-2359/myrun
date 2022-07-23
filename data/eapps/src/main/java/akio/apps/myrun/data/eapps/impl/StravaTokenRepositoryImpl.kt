@@ -4,18 +4,9 @@ import akio.apps.myrun.data.eapps.api.StravaTokenRepository
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import akio.apps.myrun.data.eapps.di.ExternalAppDataScope
 import akio.apps.myrun.data.eapps.impl.mapper.StravaStravaTokenMapper
-import android.app.Application
-import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 
 // TODO: Config debug/release strava app
 private const val STRAVA_APP_ID = "54817"

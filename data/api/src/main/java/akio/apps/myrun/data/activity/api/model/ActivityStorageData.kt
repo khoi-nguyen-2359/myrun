@@ -5,5 +5,5 @@ import java.io.File
 data class ActivityStorageData(
     val activityModel: BaseActivityModel,
     val locationDataPoints: List<ActivityLocation>,
-    val routeBitmapFile: File
+    val routeBitmapFile: File,
 )

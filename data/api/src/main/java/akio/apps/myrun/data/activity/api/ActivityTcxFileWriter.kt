@@ -10,6 +10,6 @@ interface ActivityTcxFileWriter {
         locations: List<ActivityLocation>,
         cadences: List<Int>,
         outputFile: File,
-        zip: Boolean
+        zip: Boolean,
     )
 }

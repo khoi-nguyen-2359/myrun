@@ -33,15 +33,17 @@ class ActivityTcxFileWriterImpl @Inject constructor() : ActivityTcxFileWriter {
         outputFile: File,
         zip: Boolean,
     ) {
-        val serializer = if (zip)
+        val serializer = if (zip) {
             ZipFileSerializer(outputFile, ".tcx")
-        else
+        } else {
             ClosableFileSerializer(outputFile)
+        }
 
-        val avgCadence: Int? = if (cadences.isEmpty())
+        val avgCadence: Int? = if (cadences.isEmpty()) {
             null
-        else
+        } else {
             cadences.average().toInt()
+        }
 
         val startDate = Date(activity.startTime)
         val sportType = when (activity.activityType) {

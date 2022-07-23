@@ -1,13 +1,16 @@
 package akio.apps.myrun.data.tracking
 
+import akio.apps.myrun.data.tracking.di.TrackingDataScope
 import akio.apps.myrun.data.tracking.impl.RouteTrackingDatabase
 import akio.apps.myrun.data.tracking.impl.RouteTrackingLocationDao
 import android.app.Application
 import androidx.room.Room
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
 
 @Module(includes = [TrackingDataModule.Providers::class])
+@ContributesTo(TrackingDataScope::class)
 interface TrackingDataModule {
     @Module
     object Providers {

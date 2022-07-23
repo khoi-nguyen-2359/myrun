@@ -15,7 +15,6 @@ object BitmapUtils {
         var inSampleSize = 1
 
         if (height > reqHeight || width > reqWidth) {
-
             val halfHeight: Int = height / 2
             val halfWidth: Int = width / 2
 

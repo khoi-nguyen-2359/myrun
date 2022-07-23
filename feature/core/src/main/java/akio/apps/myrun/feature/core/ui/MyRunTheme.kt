@@ -18,6 +18,7 @@ object AppColors {
 
     @Composable
     fun error() = MaterialTheme.colors.error
+
     @Composable
     fun primarySurface() = MaterialTheme.colors.primarySurface
 }

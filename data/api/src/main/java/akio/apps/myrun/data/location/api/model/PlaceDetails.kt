@@ -4,5 +4,5 @@ data class PlaceDetails(
     val id: String,
     val name: String,
     val addressComponents: List<PlaceAddressComponent>,
-    val latLng: LatLng
+    val latLng: LatLng,
 )

@@ -10,7 +10,7 @@ sealed interface LocationDataPointParser {
 
 object LocationDataPointParserFactory {
     private val parserRegistry: Map<DataPointVersion, LocationDataPointParser> = mapOf(
-        DataPointVersion.V1 to LocationDataPointParserV1(),
+        DataPointVersion.V1 to LocationDataPointParserV1()
     )
 
     fun getParser(version: Int): LocationDataPointParser {

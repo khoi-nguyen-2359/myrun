@@ -1,4 +1,4 @@
-package akio.apps._base
+package akio.apps.base
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import kotlinx.coroutines.Dispatchers

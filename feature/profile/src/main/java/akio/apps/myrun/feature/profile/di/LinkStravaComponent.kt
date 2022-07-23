@@ -16,7 +16,7 @@ import dagger.Component
 @Component(
     modules = [
         DispatchersModule::class,
-        LaunchCatchingModule::class,
+        LaunchCatchingModule::class
     ],
     dependencies = [
         AuthenticationDataComponent::class,

@@ -54,7 +54,7 @@ internal fun ActivityInfoHeaderView(
             AthleteNameText(activityDetail)
             ActivityTimeAndPlaceText(
                 activityFormattedStartTime,
-                activityDisplayPlaceName,
+                activityDisplayPlaceName
             )
         }
     }

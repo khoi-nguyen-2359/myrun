@@ -70,7 +70,7 @@ class FirestoreActivityMapper @Inject constructor() {
                     athleteInfo.userId,
                     athleteInfo.userName,
                     athleteInfo.userAvatar
-                ),
+                )
             )
         }
     }

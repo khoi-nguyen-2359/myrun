@@ -23,5 +23,5 @@ data class RoomTrackingLocation(
     val altitude: Double,
 
     @ColumnInfo(name = "speed")
-    val speed: Double
+    val speed: Double,
 )

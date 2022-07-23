@@ -12,7 +12,7 @@ import dagger.Component
 @FeatureScope
 @Component(
     modules = [
-        LaunchCatchingModule::class,
+        LaunchCatchingModule::class
     ],
     dependencies = [AuthenticationDataComponent::class]
 )
@@ -24,7 +24,7 @@ interface SplashFeatureComponent {
         fun create(
             @BindsInstance application: Application,
             authenticationDataComponent: AuthenticationDataComponent =
-                DaggerAuthenticationDataComponent.factory().create(application)
+                DaggerAuthenticationDataComponent.factory().create(application),
         ): SplashFeatureComponent
     }
 }

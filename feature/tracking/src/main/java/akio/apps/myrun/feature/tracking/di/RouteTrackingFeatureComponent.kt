@@ -8,7 +8,6 @@ import akio.apps.myrun.data.authentication.di.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.di.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.eapps.di.DaggerExternalAppDataComponent
 import akio.apps.myrun.data.eapps.di.ExternalAppDataComponent
-import akio.apps.myrun.data.location.LocationDataModule
 import akio.apps.myrun.data.location.di.DaggerLocationDataComponent
 import akio.apps.myrun.data.location.di.LocationDataComponent
 import akio.apps.myrun.data.tracking.di.DaggerTrackingDataComponent

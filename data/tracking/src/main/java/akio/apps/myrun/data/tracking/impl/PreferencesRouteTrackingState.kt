@@ -152,9 +152,9 @@ class PreferencesRouteTrackingState @Inject constructor(
         val alt = data[KEY_START_LOCATION_ALT]
         val speed = data[KEY_START_LOCATION_SPEED]
             ?: 0
-        if (elapsedTime == null || time == null || lat == null || lng == null || alt == null)
+        if (elapsedTime == null || time == null || lat == null || lng == null || alt == null) {
             null
-        else
+        } else {
             Location(
                 elapsedTime,
                 time,
@@ -163,6 +163,7 @@ class PreferencesRouteTrackingState @Inject constructor(
                 alt.toDouble(),
                 speed.toDouble()
             )
+        }
     }
         .first()
 

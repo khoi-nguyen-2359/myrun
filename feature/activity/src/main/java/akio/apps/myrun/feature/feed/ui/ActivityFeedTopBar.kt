@@ -104,7 +104,7 @@ private fun UploadInProgressBadge(count: Int) {
                 .background(Color.Black)
                 .padding(horizontal = 8.dp),
             expanded = isUploadInfoPopupShowing,
-            onDismissRequest = { isUploadInfoPopupShowing = false },
+            onDismissRequest = { isUploadInfoPopupShowing = false }
         ) {
             val popupMessage = stringResource(R.string.home_upload_progress, count)
             Text(

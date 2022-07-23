@@ -7,5 +7,5 @@ data class FirestoreRunningData(
     @PropertyName("pace")
     val pace: Double = 0.0,
     @PropertyName("cadence")
-    val cadence: Int = 0
+    val cadence: Int = 0,
 )

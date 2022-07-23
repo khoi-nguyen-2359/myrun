@@ -226,7 +226,8 @@ fun RunSplitsTable(
             ) {
                 val kmLabel = formatKmLabel(index, runSplits, totalDistance)
                 Text(
-                    text = kmLabel, modifier = Modifier.weight(kmColumnWeight),
+                    text = kmLabel,
+                    modifier = Modifier.weight(kmColumnWeight),
                     style = MaterialTheme.typography.caption
                 )
                 Text(
@@ -267,7 +268,7 @@ private fun formatKmLabel(
 @Composable
 fun PreviewRunSplitsTable() = RunSplitsTable(
     runSplits = listOf(6.4, 6.15, 6.0, 5.8, 5.6, 5.5, 7.0),
-    6700.0,
+    6700.0
 )
 
 fun navigateToActivityMap(context: Context, encodedPolyline: String) {

@@ -4,5 +4,5 @@ import akio.apps.myrun.data.location.api.model.LatLng
 
 data class RouteDetailModel(
     val routeModel: RouteModel,
-    val waypoints: List<LatLng>
+    val waypoints: List<LatLng>,
 )

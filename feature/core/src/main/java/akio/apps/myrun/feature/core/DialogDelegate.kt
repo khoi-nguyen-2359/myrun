@@ -24,8 +24,9 @@ class DialogDelegate(private val context: Context) {
     }
 
     fun dismissProgressDialog() {
-        if (progressDialog?.isShowing != true)
+        if (progressDialog?.isShowing != true) {
             return
+        }
 
         progressDialog?.dismiss()
     }
@@ -43,7 +44,7 @@ class DialogDelegate(private val context: Context) {
     private fun showErrorAlert(
         context: Context,
         message: String?,
-        onClose: DialogInterface.OnClickListener? = null
+        onClose: DialogInterface.OnClickListener? = null,
     ): Dialog {
         val noneNullMessage = message ?: context.getString(R.string.dialog_delegate_unknown_error)
         val dialog = AlertDialog.Builder(context)

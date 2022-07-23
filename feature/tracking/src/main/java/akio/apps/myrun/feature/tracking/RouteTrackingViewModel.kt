@@ -194,7 +194,11 @@ internal class RouteTrackingViewModel @Inject constructor(
     }
 
     private fun Location.toActivityLocation(activityElapsedTime: Long) = ActivityLocation(
-        activityElapsedTime, latitude, longitude, altitude, speed
+        activityElapsedTime,
+        latitude,
+        longitude,
+        altitude,
+        speed
     )
 
     companion object {

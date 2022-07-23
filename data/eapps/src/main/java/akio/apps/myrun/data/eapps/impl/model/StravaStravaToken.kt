@@ -10,10 +10,10 @@ data class StravaStravaToken(
     val refreshToken: String,
 
     @SerializedName("athlete")
-    val athlete: StravaAthlete
+    val athlete: StravaAthlete,
 ) {
     data class StravaAthlete(
         @SerializedName("id")
-        val id: Long
+        val id: Long,
     )
 }

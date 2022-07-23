@@ -36,5 +36,5 @@ data class FirestoreActivity(
 
     // user info
     @PropertyName("athleteInfo")
-    val athleteInfo: FirestoreActivityAthleteInfo = FirestoreActivityAthleteInfo()
+    val athleteInfo: FirestoreActivityAthleteInfo = FirestoreActivityAthleteInfo(),
 )

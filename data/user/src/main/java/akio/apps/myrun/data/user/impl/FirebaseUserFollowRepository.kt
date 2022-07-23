@@ -10,7 +10,7 @@ import javax.inject.Singleton
 @Singleton
 @ContributesBinding(AuthenticationDataScope::class)
 class FirebaseUserFollowRepository @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
 ) : UserFollowRepository {
     private val userFollowCollection
         get() = firestore.collection("userfollow")

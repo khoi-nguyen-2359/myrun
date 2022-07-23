@@ -326,7 +326,7 @@ private fun ActivityFeedEmptyMessage(modifier: Modifier = Modifier) = Box(
         fontSize = 30.sp,
         fontStyle = FontStyle.Italic,
         fontWeight = FontWeight.Bold,
-        textAlign = TextAlign.Center,
+        textAlign = TextAlign.Center
     )
 }
 

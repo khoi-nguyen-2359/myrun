@@ -115,7 +115,7 @@ class FirebaseActivityRepository @Inject constructor(
                 activityDocRef,
                 speedDataPoints,
                 locationDataPoints,
-                stepCadenceDataPoints,
+                stepCadenceDataPoints
             )
         }.await()
         Timber.d("=== [DONE] SAVING ACTIVITY ===")

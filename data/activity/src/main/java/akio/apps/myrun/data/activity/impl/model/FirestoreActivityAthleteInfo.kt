@@ -8,5 +8,5 @@ data class FirestoreActivityAthleteInfo(
     @PropertyName("userName")
     val userName: String? = null,
     @PropertyName("userAvatar")
-    val userAvatar: String? = null
+    val userAvatar: String? = null,
 )

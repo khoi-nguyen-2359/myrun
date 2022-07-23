@@ -18,7 +18,8 @@ class TimeRangeTest {
         calendar[Calendar.DAY_OF_WEEK] = MONDAY
         assertEquals(calendar.timeInMillis, weekRange.millisTimeRange.first)
         assertEquals(
-            calendar.timeInMillis + TimeUnit.DAYS.toMillis(7), weekRange.millisTimeRange.last
+            calendar.timeInMillis + TimeUnit.DAYS.toMillis(7),
+            weekRange.millisTimeRange.last
         )
     }
 

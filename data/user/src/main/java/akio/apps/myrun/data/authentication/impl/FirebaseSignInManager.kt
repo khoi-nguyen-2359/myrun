@@ -15,7 +15,7 @@ import kotlinx.coroutines.tasks.await
 @Singleton
 @ContributesBinding(AuthenticationDataScope::class)
 class FirebaseSignInManager @Inject constructor(
-    private val firebaseAuth: FirebaseAuth
+    private val firebaseAuth: FirebaseAuth,
 ) : SignInManager {
     override suspend fun linkFacebook(facebookAccessToken: String) {
         val credential = FacebookAuthProvider.getCredential(facebookAccessToken)

@@ -2,7 +2,6 @@ package akio.apps.myrun.data.eapps.impl
 
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.eapps.api.StravaSyncState
-import akio.apps.myrun.data.eapps.api.StravaTokenRepository
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import akio.apps.myrun.data.eapps.impl.model.StravaStravaTokenRefresh
 import akio.apps.myrun.data.eapps.impl.model.StravaTokenRefreshMapper

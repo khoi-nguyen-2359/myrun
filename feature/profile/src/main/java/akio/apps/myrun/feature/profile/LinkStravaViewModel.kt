@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.profile
 
 import akio.apps.myrun.base.di.NamedIoDispatcher
-import akio.apps.myrun.data.eapps.api.StravaTokenRepository
 import akio.apps.myrun.domain.strava.UpdateStravaTokenUsecase
 import akio.apps.myrun.feature.core.Event
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
@@ -17,7 +16,7 @@ internal class LinkStravaViewModel @Inject constructor(
     private val updateStravaTokenUsecase: UpdateStravaTokenUsecase,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
     @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
     private val _stravaTokenExchangedSuccess = MutableLiveData<Event<Unit>>()

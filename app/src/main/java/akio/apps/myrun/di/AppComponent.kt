@@ -1,16 +1,14 @@
 package akio.apps.myrun.di
 
 import akio.apps.myrun.MyRunApp
-import akio.apps.myrun.base.di.FeatureScope
-import akio.apps.myrun.data.tracking.TrackingDataModule
+import akio.apps.myrun.base.di.AppScope
 import akio.apps.myrun.data.tracking.di.DaggerTrackingDataComponent
 import akio.apps.myrun.data.tracking.di.TrackingDataComponent
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
-import javax.inject.Singleton
 
-@FeatureScope
+@AppScope
 @Component(
     dependencies = [TrackingDataComponent::class]
 )
@@ -23,7 +21,7 @@ interface AppComponent {
         fun create(
             @BindsInstance application: Application,
             trackingDataComponent: TrackingDataComponent =
-                DaggerTrackingDataComponent.factory().create(application)
+                DaggerTrackingDataComponent.factory().create(application),
         ): AppComponent
     }
 

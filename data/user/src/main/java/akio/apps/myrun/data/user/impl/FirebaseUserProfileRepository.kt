@@ -18,7 +18,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.anvil.annotations.ContributesBinding
-import com.squareup.anvil.annotations.ContributesTo
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers

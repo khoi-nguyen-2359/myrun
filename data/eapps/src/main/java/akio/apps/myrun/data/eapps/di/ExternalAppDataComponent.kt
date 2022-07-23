@@ -1,7 +1,6 @@
 package akio.apps.myrun.data.eapps.di
 
 import akio.apps.myrun.base.firebase.FirebaseDataModule
-import akio.apps.myrun.data.eapps.ExternalAppDataModule
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.eapps.api.StravaDataRepository
 import akio.apps.myrun.data.eapps.api.StravaSyncState
@@ -17,10 +16,7 @@ abstract class ExternalAppDataScope private constructor()
 @Singleton
 @MergeComponent(
     scope = ExternalAppDataScope::class,
-    modules = [
-        ExternalAppDataModule::class,
-        FirebaseDataModule::class,
-    ]
+    modules = [FirebaseDataModule::class]
 )
 interface ExternalAppDataComponent {
     fun externalAppRepository(): ExternalAppProvidersRepository

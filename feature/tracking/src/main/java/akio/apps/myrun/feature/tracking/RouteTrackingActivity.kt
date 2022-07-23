@@ -465,8 +465,9 @@ class RouteTrackingActivity(
      * (no internet, no drawing happens)
      */
     private suspend fun captureGoogleMapViewSnapshot(cameraViewPortSize: Size): Bitmap? {
-        if (!hasMapCameraBeenIdled)
+        if (!hasMapCameraBeenIdled) {
             return null
+        }
         val snapshot = suspendCancellableCoroutine<Bitmap?> { continuation ->
             mapView.snapshot { mapSnapshot ->
                 continuation.resume(mapSnapshot)

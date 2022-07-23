@@ -7,7 +7,6 @@ plugins {
     id 'com.google.firebase.crashlytics'
     id 'com.google.firebase.firebase-perf'
     id "build-time-tracker"
-    id 'com.squareup.anvil'
 }
 
 android {
@@ -114,6 +113,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.dagger)
+    implementation(libs.anvil.annotations)
     kapt(libs.daggercompiler)
 
     implementation(libs.androidx.core)

@@ -4,5 +4,5 @@ import com.google.firebase.firestore.PropertyName
 
 data class FirestorePlaceIdentifier(
     @PropertyName("placeIdentifier")
-    val placeIdentifier: String? = null
+    val placeIdentifier: String? = null,
 )

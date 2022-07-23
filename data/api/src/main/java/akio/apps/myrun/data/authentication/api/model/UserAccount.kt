@@ -5,5 +5,5 @@ data class UserAccount(
     val email: String?,
     val displayName: String?,
     val photoUrl: String?,
-    val phoneNumber: String?
+    val phoneNumber: String?,
 )

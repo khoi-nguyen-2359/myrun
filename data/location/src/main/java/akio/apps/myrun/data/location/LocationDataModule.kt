@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.location
 
+import akio.apps.myrun.data.location.di.LocationDataScope
 import akio.apps.myrun.data.location.impl.GoogleMapDirectionApi
 import akio.apps.myrun.data.location.impl.model.GoogleMapDirectionApiKey
 import android.app.Application
@@ -8,6 +9,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.gson.Gson
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -18,9 +20,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Module(
     includes = [
         LocationDataModule.Providers::class,
-        DirectionDataModule::class,
+        DirectionDataModule::class
     ]
 )
+@ContributesTo(LocationDataScope::class)
 interface LocationDataModule {
     @Module
     object Providers {

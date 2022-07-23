@@ -11,15 +11,16 @@ private const val STRAVA_APP_ID = "54817"
 
 internal class LinkStravaDelegate(
     private val activity: Activity,
-    private val eventListener: EventListener
+    private val eventListener: EventListener,
 ) {
 
     val stravaRedirectUri = createRedirectUri(activity)
 
     fun checkStravaLoginResult(intent: Intent?) {
         val data = intent?.data ?: return
-        if (!data.toString().startsWith(stravaRedirectUri))
+        if (!data.toString().startsWith(stravaRedirectUri)) {
             return
+        }
 
         data.getQueryParameter("error")
             ?.let { errorMessage ->

@@ -1,6 +1,6 @@
 package akio.apps.myrun.feature.tracking.impl
 
-import akio.apps._base.InstantTaskExecutorTest
+import akio.apps.base.InstantTaskExecutorTest
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.api.LocationDataSource

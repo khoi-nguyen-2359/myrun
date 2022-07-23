@@ -2,7 +2,6 @@ package akio.apps.myrun.feature.route.di
 
 import akio.apps.myrun.base.di.DispatchersModule
 import akio.apps.myrun.base.di.FeatureScope
-import akio.apps.myrun.data.location.LocationDataModule
 import akio.apps.myrun.data.location.di.DaggerLocationDataComponent
 import akio.apps.myrun.data.location.di.LocationDataComponent
 import akio.apps.myrun.data.route.DaggerRouteDataComponent
@@ -13,7 +12,6 @@ import android.app.Application
 import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Component
-import javax.inject.Singleton
 
 @FeatureScope
 @Component(
@@ -36,7 +34,7 @@ internal interface RoutePlanningFeatureComponent {
             @BindsInstance savedStateHandle: SavedStateHandle,
             routeDataComponent: RouteDataComponent = DaggerRouteDataComponent.create(),
             locationDataComponent: LocationDataComponent =
-                DaggerLocationDataComponent.factory().create(application)
+                DaggerLocationDataComponent.factory().create(application),
         ): RoutePlanningFeatureComponent
     }
 }
