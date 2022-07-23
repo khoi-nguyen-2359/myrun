@@ -18,7 +18,6 @@ class UploadActivityFilesToStravaUsecase @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val stravaDataRepository: StravaDataRepository,
-    private val stravaTokenRepository: StravaTokenRepository,
     private val stravaSyncState: StravaSyncState,
     private val activityLocalStorage: ActivityLocalStorage,
 ) {

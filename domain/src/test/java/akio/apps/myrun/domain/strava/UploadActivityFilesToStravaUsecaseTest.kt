@@ -9,6 +9,7 @@ import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.eapps.api.StravaDataRepository
+import akio.apps.myrun.data.eapps.api.StravaSyncState
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import akio.apps.myrun.data.eapps.api.model.StravaAthlete
 import akio.apps.myrun.data.eapps.api.model.StravaTokenRefresh
@@ -34,6 +35,7 @@ class UploadActivityFilesToStravaUsecaseTest {
     private lateinit var mockedExternalAppProvidersRepository: ExternalAppProvidersRepository
     private lateinit var mockedUserAuthenticateState: UserAuthenticationState
     private lateinit var uploadActivityFilesToStravaUsecase: UploadActivityFilesToStravaUsecase
+    private lateinit var mockedstravaSyncState: StravaSyncState
 
     @Before
     fun setup() {
@@ -41,10 +43,12 @@ class UploadActivityFilesToStravaUsecaseTest {
         mockedExternalAppProvidersRepository = mock()
         mockedStravaDataRepository = mock()
         mockedActivityLocalStorage = mock()
+        mockedstravaSyncState = mock()
         uploadActivityFilesToStravaUsecase = UploadActivityFilesToStravaUsecase(
             mockedUserAuthenticateState,
             mockedExternalAppProvidersRepository,
             mockedStravaDataRepository,
+            mockedstravaSyncState,
             mockedActivityLocalStorage
         )
     }
