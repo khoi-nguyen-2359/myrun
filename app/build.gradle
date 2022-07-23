@@ -22,6 +22,12 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    sourceSets {
+        rc {
+            setRoot 'src/release'
+        }
+    }
+
     signingConfigs {
         debug {
             storeFile file('./keystores/myrun_debug_key_v2.jks')
