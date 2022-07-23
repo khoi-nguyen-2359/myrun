@@ -87,8 +87,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import coil.size.Scale
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -549,7 +549,6 @@ private fun UserProfileTopBar(
     )
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun UserProfileImageView(
     photoUrl: String?,
@@ -560,14 +559,16 @@ private fun UserProfileImageView(
     Surface(shape = CircleShape, modifier = Modifier.size(imageLoadSizeDp)) {
         Box {
             Image(
-                painter = rememberImagePainter(
-                    data = photoUrl,
-                    builder = {
-                        size(imageLoadSizePx)
-                        placeholder(R.drawable.common_avatar_placeholder_image)
-                        error(R.drawable.common_avatar_placeholder_image)
-                        scale(Scale.FILL)
-                    }
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = photoUrl)
+                        .apply {
+                            size(imageLoadSizePx)
+                            placeholder(R.drawable.common_avatar_placeholder_image)
+                            error(R.drawable.common_avatar_placeholder_image)
+                            scale(Scale.FILL)
+                        }
+                        .build()
                 ),
                 contentDescription = "Athlete avatar",
                 modifier = Modifier

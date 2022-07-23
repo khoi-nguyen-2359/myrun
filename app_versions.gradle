@@ -4,5 +4,5 @@ project.ext {
     appId = "akio.apps.myrun"
     minSdk = 21
     targetSdk = 30
-    compileSdk = 31
+    compileSdk = 32
 }

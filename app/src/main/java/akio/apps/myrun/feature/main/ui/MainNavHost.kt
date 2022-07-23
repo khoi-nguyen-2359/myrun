@@ -15,12 +15,10 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
-@OptIn(ExperimentalAnimationApi::class)
 private object AppNavTransitionDefaults {
     val enterTransition: EnterTransition = slideInHorizontally(
         initialOffsetX = { fullWidth -> fullWidth / 2 },
@@ -49,7 +47,7 @@ fun MainNavHost(
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     openRoutePlanningAction: () -> Unit,
-) = ProvideWindowInsets {
+) {
     val navController = rememberAnimatedNavController()
     AnimatedNavHost(
         navController = navController,
@@ -76,10 +74,10 @@ private fun NavGraphBuilder.addProfileDestination(navController: NavHostControll
     composable(
         route = HomeNavDestination.Profile.route,
         arguments = HomeNavDestination.Profile.arguments,
-        enterTransition = { _, _ -> AppNavTransitionDefaults.enterTransition },
-        exitTransition = { _, _ -> AppNavTransitionDefaults.exitTransition },
-        popEnterTransition = { _, _ -> AppNavTransitionDefaults.popEnterTransition },
-        popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
+        enterTransition = { AppNavTransitionDefaults.enterTransition },
+        exitTransition = { AppNavTransitionDefaults.exitTransition },
+        popEnterTransition = { AppNavTransitionDefaults.popEnterTransition },
+        popExitTransition = { AppNavTransitionDefaults.popExitTransition }
     ) { backStackEntry ->
         UserProfileScreen(navController, backStackEntry)
     }
@@ -94,10 +92,10 @@ private fun NavGraphBuilder.addHomeDestination(
 ) {
     composable(
         route = HomeNavDestination.Home.route,
-        enterTransition = { _, _ -> AppNavTransitionDefaults.enterTransition },
-        exitTransition = { _, _ -> AppNavTransitionDefaults.exitTransition },
-        popEnterTransition = { _, _ -> AppNavTransitionDefaults.popEnterTransition },
-        popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
+        enterTransition = { AppNavTransitionDefaults.enterTransition },
+        exitTransition = { AppNavTransitionDefaults.exitTransition },
+        popEnterTransition = { AppNavTransitionDefaults.popEnterTransition },
+        popExitTransition = { AppNavTransitionDefaults.popExitTransition }
     ) { backStackEntry ->
         HomeTabScreen(
             navController,
@@ -117,10 +115,10 @@ private fun NavGraphBuilder.addActivityDetailDestination(
     composable(
         route = HomeNavDestination.ActivityDetail.route,
         arguments = HomeNavDestination.ActivityDetail.arguments,
-        enterTransition = { _, _ -> AppNavTransitionDefaults.enterTransition },
-        exitTransition = { _, _ -> AppNavTransitionDefaults.exitTransition },
-        popEnterTransition = { _, _ -> AppNavTransitionDefaults.popEnterTransition },
-        popExitTransition = { _, _ -> AppNavTransitionDefaults.popExitTransition }
+        enterTransition = { AppNavTransitionDefaults.enterTransition },
+        exitTransition = { AppNavTransitionDefaults.exitTransition },
+        popEnterTransition = { AppNavTransitionDefaults.popEnterTransition },
+        popExitTransition = { AppNavTransitionDefaults.popExitTransition }
     ) { navBackStackEntry ->
         ActivityDetailScreen(
             navController,

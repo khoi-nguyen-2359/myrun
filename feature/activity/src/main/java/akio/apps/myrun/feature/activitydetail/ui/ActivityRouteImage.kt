@@ -15,8 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
@@ -33,12 +34,14 @@ internal fun ActivityRouteImage(
     val context = LocalContext.current
     val imageWidth = remember { (context.resources.displayMetrics.widthPixels * 0.8).toInt() }
     val imageHeight = remember { (imageWidth / imageRatio).toInt() }
-    val imagePainter = rememberImagePainter(
-        data = activity.routeImage,
-        builder = {
-            size(imageWidth, imageHeight)
-                .crossfade(200)
-        }
+    val imagePainter = rememberAsyncImagePainter(
+        ImageRequest.Builder(LocalContext.current)
+            .data(data = activity.routeImage)
+            .apply {
+                size(imageWidth, imageHeight)
+                    .crossfade(200)
+            }
+            .build()
     )
     Image(
         painter = imagePainter,
@@ -47,7 +50,7 @@ internal fun ActivityRouteImage(
             .fillMaxWidth()
             .aspectRatio(imageRatio)
             .placeholder(
-                visible = imagePainter.state !is ImagePainter.State.Success,
+                visible = imagePainter.state !is AsyncImagePainter.State.Success,
                 highlight = PlaceholderHighlight.shimmer()
             )
             .run {

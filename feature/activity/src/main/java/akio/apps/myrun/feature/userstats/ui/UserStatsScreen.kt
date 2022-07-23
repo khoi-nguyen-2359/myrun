@@ -67,7 +67,8 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import coil.size.Scale
 
 @Composable
@@ -455,14 +456,16 @@ private fun UserProfileImage(
     val imageLoadSizePx = with(LocalDensity.current) { imageLoadSizeDp.roundToPx() }
     Surface(shape = CircleShape, modifier = Modifier.size(imageLoadSizeDp)) {
         Image(
-            painter = rememberImagePainter(
-                data = photoUrl,
-                builder = {
-                    size(imageLoadSizePx)
-                    placeholder(R.drawable.common_avatar_placeholder_image)
-                    error(R.drawable.common_avatar_placeholder_image)
-                    scale(Scale.FILL)
-                }
+            painter = rememberAsyncImagePainter(
+                ImageRequest.Builder(LocalContext.current)
+                    .data(data = photoUrl)
+                    .apply {
+                        size(imageLoadSizePx)
+                        placeholder(R.drawable.common_avatar_placeholder_image)
+                        error(R.drawable.common_avatar_placeholder_image)
+                        scale(Scale.FILL)
+                    }
+                    .build()
             ),
             contentDescription = "Athlete avatar",
             modifier = Modifier

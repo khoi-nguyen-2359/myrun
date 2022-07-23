@@ -24,9 +24,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
@@ -64,7 +66,6 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -120,8 +121,8 @@ fun HomeTabScreen(
 ) = AppTheme {
     // FAB is inactive when user selects a tab other than Feed
     var isFabActive by remember { mutableStateOf(true) }
-    val insets = LocalWindowInsets.current
-    val fabBoxHeightDp = FabSize * 4 / 3 + AppBarHeight + insets.systemBars.bottom.px2dp.dp
+    val systemBarTopDp = WindowInsets.systemBars.getBottom(LocalDensity.current).px2dp.dp
+    val fabBoxHeightDp = FabSize * 4 / 3 + AppBarHeight + systemBarTopDp
     val fabBoxSizePx = with(LocalDensity.current) { fabBoxHeightDp.roundToPx().toFloat() }
     val fabOffsetY = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
@@ -240,10 +241,10 @@ private fun NavGraphBuilder.addUserStatsDestination(
 ) {
     composable(
         route = HomeNavItemInfo.UserStats.route,
-        enterTransition = { _, _ -> HomeTabNavTransitionDefaults.enterTransition },
-        exitTransition = { _, _ -> HomeTabNavTransitionDefaults.exitTransition },
-        popEnterTransition = { _, _ -> HomeTabNavTransitionDefaults.popEnterTransition },
-        popExitTransition = { _, _ -> HomeTabNavTransitionDefaults.popExitTransition }
+        enterTransition = { HomeTabNavTransitionDefaults.enterTransition },
+        exitTransition = { HomeTabNavTransitionDefaults.exitTransition },
+        popEnterTransition = { HomeTabNavTransitionDefaults.popEnterTransition },
+        popExitTransition = { HomeTabNavTransitionDefaults.popExitTransition }
     ) { backstackEntry ->
         UserStatsScreen(appNavController, backstackEntry, contentPaddings, openRoutePlanningAction)
     }
@@ -291,10 +292,10 @@ private fun NavGraphBuilder.addActivityFeedDestination(
 ) {
     composable(
         route = HomeNavItemInfo.ActivityFeed.route,
-        enterTransition = { _, _ -> HomeTabNavTransitionDefaults.enterTransition },
-        exitTransition = { _, _ -> HomeTabNavTransitionDefaults.exitTransition },
-        popEnterTransition = { _, _ -> HomeTabNavTransitionDefaults.popEnterTransition },
-        popExitTransition = { _, _ -> HomeTabNavTransitionDefaults.popExitTransition }
+        enterTransition = { HomeTabNavTransitionDefaults.enterTransition },
+        exitTransition = { HomeTabNavTransitionDefaults.exitTransition },
+        popEnterTransition = { HomeTabNavTransitionDefaults.popEnterTransition },
+        popExitTransition = { HomeTabNavTransitionDefaults.popExitTransition }
     ) { backstackEntry ->
         ActivityFeedScreen(
             appNavController,

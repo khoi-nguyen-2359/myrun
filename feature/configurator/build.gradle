@@ -23,7 +23,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion libs.versions.compose.get()
+        kotlinCompilerExtensionVersion libs.versions.composecompiler.get()
     }
 
     compileOptions {
@@ -33,7 +33,6 @@ android {
 
     kotlinOptions {
         jvmTarget = "11"
-        useIR = true
     }
 }
 

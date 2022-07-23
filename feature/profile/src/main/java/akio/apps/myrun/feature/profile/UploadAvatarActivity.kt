@@ -27,7 +27,7 @@ import coil.Coil
 import coil.ImageLoader
 import coil.request.Disposable
 import coil.request.ImageRequest
-import coil.size.OriginalSize
+import coil.size.Size
 import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 import java.io.FileOutputStream
@@ -106,7 +106,7 @@ internal class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload
         val initialImageRequest = ImageRequest.Builder(this@UploadAvatarActivity)
             .data(userProfilePictureUrl)
             .lifecycle(lifecycle)
-            .size(OriginalSize)
+            .size(Size.ORIGINAL)
             .allowConversionToBitmap(true)
             .allowHardware(false) // don't use hardware bitmap because we need to edit it later.
             .target { result ->

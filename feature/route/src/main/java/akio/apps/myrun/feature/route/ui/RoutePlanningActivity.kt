@@ -135,6 +135,7 @@ class RoutePlanningActivity :
                     drawDirectionResult(screenState.plottingState.getCurrentState())
                     updateStateControlButtons(screenState.plottingState)
                 }
+                is RoutePlanningViewModel.ScreenState.LoadingRoute -> {}
             }
         }
 

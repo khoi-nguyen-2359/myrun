@@ -20,7 +20,7 @@ inline fun <reified T : ViewModel> ViewModelStoreOwner.viewModelProvider(
     val viewModelProvider = ViewModelProvider(
         this,
         object : AbstractSavedStateViewModelFactory(savedStateOwner, null) {
-            override fun <T : ViewModel?> create(
+            override fun <T : ViewModel> create(
                 key: String,
                 modelClass: Class<T>,
                 handle: SavedStateHandle,

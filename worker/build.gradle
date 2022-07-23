@@ -26,7 +26,6 @@ android {
 
     kotlinOptions {
         jvmTarget = "11"
-        useIR = true
         allWarningsAsErrors = true
     }
 }

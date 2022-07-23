@@ -11,6 +11,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.Priority
 import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -83,7 +84,7 @@ class LocationDataSourceImpl @Inject constructor(
         val locationRequest = LocationRequest.create()
         locationRequest.fastestInterval = fastestUpdateInterval
         locationRequest.interval = updateInterval
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.priority = Priority.PRIORITY_HIGH_ACCURACY
         locationRequest.smallestDisplacement = smallestDisplacement
         return locationRequest
     }

@@ -8,6 +8,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsStatusCodes
+import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
 import kotlin.coroutines.resume
 import kotlinx.coroutines.CancellableContinuation
@@ -30,7 +31,7 @@ internal class LocationServiceChecker(
         val sampleRequest = LocationRequest.create().apply {
             interval = requestEntity.updateInterval
             fastestInterval = requestEntity.fastestUpdateInterval
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            priority = Priority.PRIORITY_HIGH_ACCURACY
             smallestDisplacement = requestEntity.smallestDisplacement
         }
         val settingsReq = LocationSettingsRequest.Builder()

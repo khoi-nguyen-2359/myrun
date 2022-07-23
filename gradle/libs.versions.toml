@@ -1,65 +1,70 @@
 [versions]
-agp = "7.0.3"
+agp = "7.2.1"
 ksp = "1.5.30-1.0.0"
 buildtimetracker = "0.11.1"
 
 multidex = "1.0.3"
 
-kotlin = "1.5.31"
-coroutines = "1.5.2"
-kotlinserialization = "1.2.1"
+kotlin = "1.7.0"
+coroutines = "1.6.4"
+kotlinserialization = "1.3.3"
 
 # jetpack: https://developer.android.com/jetpack/androidx/versions/all-channel
-androidx-core = "1.6.0"
-appcompat = "1.3.1"
-activity = "1.3.0"
-fragment = "1.3.6"
-constraintlayout = "2.1.0"
-androidmaterial = "1.4.0"
+androidx-core = "1.8.0"
+appcompat = "1.4.2"
+activity = "1.5.0"
+fragment = "1.5.0"
+constraintlayout = "2.1.4"
+androidmaterial = "1.6.1"
 datastore = "1.0.0"
 workmanager = "2.7.1"
-paging = "3.0.1"
-room = "2.3.0"
-lifecycle = "2.4.0"
-splashscreen = "1.0.0-alpha02"
-androidx-annotation = "1.2.0"
+paging = "3.1.1"
+room = "2.4.2"
+lifecycle = "2.5.0"
+splashscreen = "1.0.0-rc01"
+androidx-annotation = "1.4.0"
 
 # compose
-compose = "1.0.5"
-pagingcompose = "1.0.0-alpha14"
-accompanist = "0.20.2"
-navigationcompose = "2.4.0-beta02"
+composecompiler = "1.2.0"
+compose = "1.2.0-rc03"
+pagingcompose = "1.0.0-alpha15"
+accompanist = "0.24.13-rc"
+navigationcompose = "1.1.0-alpha10"
 
 # google play services: https://developers.google.com/android/guides/releases
-playservices-plugin = "4.3.10"  # https://developers.google.com/android/guides/google-services-plugin
+playservices-plugin = "4.3.13"  # https://developers.google.com/android/guides/google-services-plugin
 playservices-gcm = "17.0.0"
-playservices-location = "18.0.0"
-playservices-auth = "19.2.0"
-playservices-fitness = "20.0.0"
-playservices-map = "17.0.1"
+playservices-location = "20.0.0"
+playservices-auth = "20.2.0"
+playservices-fitness = "21.1.0"
+playservices-map = "18.0.2"
 
 # google map
-googleplaces = "2.4.0"
+googleplaces = "2.6.0"
 googlemaps-androidutils = "2.2.5"
 
-# firebase
-firebase-bom = "28.4.0"
-firebase-crashlytics-version = "2.7.1"
-firebase-perf = "1.4.0"
+# mapbox
+mapbox-java = "5.8.0"
+mapbox-maps = "10.0.0"
+
+# firebase: https://firebase.google.com/support/release-notes/android#latest_sdk_versions
+firebase-bom = "30.3.0"
+firebase-crashlytics-plugin = "2.9.1"
+firebase-perf-plugin = "1.4.1"
 
 # others
 guava = "30.1.1-android"
-okhttp = "4.9.1"
-gson = "2.8.6"
+okhttp = "4.10.0"
+gson = "2.9.0"
 retrofit = "2.9.0"
-dagger = "2.41"
-anvil = "2.3.11"
-timber = "4.7.1"
-glide = "4.12.0"
-coil = "1.3.0"
+dagger = "2.43"
+anvil = "2.4.1"
+timber = "5.0.1"
+glide = "4.13.2"
+coil = "2.1.0"
 facebook = "9.1.1"
 tcxzpot = "0.2.0"
-leakcanary = "2.7"
+leakcanary = "2.9.1"
 javax-inject = "1"
 
 # testing
@@ -75,11 +80,7 @@ androidx-junit = "1.1.3"
 
 uiautomator = "2.2.0"
 espresso = "3.4.0"
-turbine = "0.6.0"
-
-# mapbox
-mapbox-java = "5.8.0"
-mapbox-maps = "10.0.0"
+turbine = "0.8.0"
 
 [libraries]
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -143,8 +144,8 @@ firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-storage-ktx = { module = "com.google.firebase:firebase-storage-ktx" }
 firebase-perf-ktx = { module = "com.google.firebase:firebase-perf-ktx" }
-firebase-crashlytics-plugin = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebase-crashlytics-version" }
-firebase-perf-plugin = { module = "com.google.firebase:perf-plugin", version.ref = "firebase-perf" }
+firebase-crashlytics-plugin = { module = "com.google.firebase:firebase-crashlytics-gradle", version.ref = "firebase-crashlytics-plugin" }
+firebase-perf-plugin = { module = "com.google.firebase:perf-plugin", version.ref = "firebase-perf-plugin" }
 
 # playservices
 playservices-plugin = { module = "com.google.gms:google-services", version.ref = "playservices-plugin" }

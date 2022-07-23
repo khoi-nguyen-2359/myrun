@@ -30,7 +30,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        installSplashScreen().setKeepVisibleCondition { true }
+        installSplashScreen().setKeepOnScreenCondition { true }
         initObservers()
     }
 

@@ -31,7 +31,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import timber.log.Timber
 
 @Composable
@@ -127,13 +128,15 @@ private fun UserAvatarImage(
     val avatarDimension = 46.dp
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
     Image(
-        painter = rememberImagePainter(
-            data = activityDetail.athleteInfo.userAvatar.orEmpty(),
-            builder = {
-                size(avatarSize.toInt())
-                    .placeholder(R.drawable.common_avatar_placeholder_image)
-                    .error(R.drawable.common_avatar_placeholder_image)
-            }
+        painter = rememberAsyncImagePainter(
+            ImageRequest.Builder(LocalContext.current)
+                .data(data = activityDetail.athleteInfo.userAvatar.orEmpty())
+                .apply {
+                    size(avatarSize.toInt())
+                        .placeholder(R.drawable.common_avatar_placeholder_image)
+                        .error(R.drawable.common_avatar_placeholder_image)
+                }
+                .build()
         ),
         contentDescription = "Athlete avatar",
         modifier = Modifier

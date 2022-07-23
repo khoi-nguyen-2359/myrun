@@ -36,6 +36,7 @@ class GoogleFitnessDataRepository @Inject constructor(
         get() = GoogleSignIn.getAccountForExtension(application, fitnessOptions)
             .let { Fitness.getRecordingClient(application, it) }
 
+    @Suppress("DEPRECATION")
     private val fitnessHistoryClient
         get() = GoogleSignIn.getAccountForExtension(application, fitnessOptions)
             .let { Fitness.getHistoryClient(application, it) }

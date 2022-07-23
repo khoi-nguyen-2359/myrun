@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -42,6 +43,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -97,9 +99,8 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
-import com.google.accompanist.insets.LocalWindowInsets
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -144,8 +145,8 @@ private fun ActivityFeedScreen(
     navController: NavController,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val insets = LocalWindowInsets.current
-    val topBarHeightDp = AppDimensions.AppBarHeight + insets.systemBars.top.px2dp.dp
+    val systemBarsTopDp = WindowInsets.systemBars.getTop(LocalDensity.current).px2dp.dp
+    val topBarHeightDp = AppDimensions.AppBarHeight + systemBarsTopDp
     val topBarOffsetY = remember { Animatable(0f) }
     val topBarHeightPx = with(LocalDensity.current) { topBarHeightDp.roundToPx().toFloat() }
 
@@ -576,7 +577,6 @@ private fun ActivityTimeAndPlaceText(
     )
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun UserAvatarImage(
     userProfilePicture: String?,
@@ -585,13 +585,15 @@ private fun UserAvatarImage(
     val avatarDimension = 46.dp
     val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
     Image(
-        painter = rememberImagePainter(
-            data = userProfilePicture.orEmpty(),
-            builder = {
-                size(avatarSize.toInt())
-                    .placeholder(R.drawable.common_avatar_placeholder_image)
-                    .error(R.drawable.common_avatar_placeholder_image)
-            }
+        painter = rememberAsyncImagePainter(
+            ImageRequest.Builder(LocalContext.current)
+                .data(data = userProfilePicture.orEmpty())
+                .apply {
+                    size(avatarSize.toInt())
+                        .placeholder(R.drawable.common_avatar_placeholder_image)
+                        .error(R.drawable.common_avatar_placeholder_image)
+                }
+                .build()
         ),
         contentDescription = "Athlete avatar",
         modifier = Modifier
