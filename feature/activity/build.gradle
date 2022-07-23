@@ -78,6 +78,7 @@ dependencies {
 
     testImplementation(libs.bundles.testCoroutine)
     testImplementation(libs.kotlintest)
+    testImplementation(libs.junit)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.kotlinreflect)
 }

@@ -13,11 +13,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.ExperimentalTime
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
@@ -37,14 +38,14 @@ class ActivityDetailViewModelTest {
     private lateinit var mockedRunSplitsCalculator: RunSplitsCalculator
     private lateinit var mockedActivityDateTimeFormatter: ActivityDateTimeFormatter
 
-    private val testCoroutineDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
+    private val testDispatcher: CoroutineDispatcher = UnconfinedTestDispatcher()
 
     private val defaultActivityId = "defaultActivityId"
     private val defaultUserId = "defaultUserId"
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testCoroutineDispatcher)
+        Dispatchers.setMain(testDispatcher)
         mockedActivityRepository = mock()
         mockedUserAuthenticationState = mock()
         mockedUserRecentPlaceRepository = mock()
@@ -62,17 +63,16 @@ class ActivityDetailViewModelTest {
         mock(),
         mockedRunSplitsCalculator,
         mockedActivityDateTimeFormatter,
-        testCoroutineDispatcher
+        testDispatcher
     )
 
     @After
     fun tearDown() {
         Dispatchers.resetMain()
-        testCoroutineDispatcher.cleanupTestCoroutines()
     }
 
     @Test
-    fun testViewModelInitialization_Success() = testCoroutineDispatcher.runBlockingTest {
+    fun testViewModelInitialization_Success() = runTest(testDispatcher) {
         val activityStartTime = 1234L
         val activityModel = mock<BaseActivityModel> {
             on { startTime }.thenReturn(activityStartTime)
@@ -109,7 +109,7 @@ class ActivityDetailViewModelTest {
     }
 
     @Test
-    fun testLoadActivityDetails_Success() = testCoroutineDispatcher.runBlockingTest {
+    fun testLoadActivityDetails_Success() = runTest(testDispatcher) {
         testViewModelInitialization_Success()
 
         val activityStartTime = 1234L
@@ -142,7 +142,7 @@ class ActivityDetailViewModelTest {
     }
 
     @Test
-    fun testLoadActivityDetails_Failure() = testCoroutineDispatcher.runBlockingTest {
+    fun testLoadActivityDetails_Failure() = runTest(testDispatcher) {
         testViewModelInitialization_Success()
 
         whenever(mockedActivityRepository.getActivity(defaultActivityId)).thenReturn(null)
