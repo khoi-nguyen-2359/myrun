@@ -5,7 +5,6 @@ import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import app.cash.turbine.test
 import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.mock
@@ -26,7 +25,7 @@ class SplashViewModelTest {
     }
 
     @Test
-    fun testIsUserSignedIn_ErrorCase() = runBlockingTest {
+    fun testIsUserSignedIn_ErrorCase() = runTest {
         val userAuthStateError = Exception("User auth state error!")
         whenever(mockedUserAuthState.isSignedIn())
             .then { throw userAuthStateError }

@@ -10,10 +10,8 @@ import app.cash.turbine.test
 import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -42,8 +40,6 @@ class GetUserProfileUsecaseTest {
 
     lateinit var testee: GetUserProfileUsecase
 
-    private val testCoroutineDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
-
     @Before
     fun setup() {
         mockedUserProfileRepository = mock()
@@ -65,7 +61,7 @@ class GetUserProfileUsecaseTest {
         )
 
         // when
-        runBlockingTest {
+        runTest {
             val userProfileFlow = testee.getUserProfileFlow(null)
             userProfileFlow.collect { userProfileResource ->
                 assertEquals(userProfile, userProfileResource.data)
@@ -88,7 +84,7 @@ class GetUserProfileUsecaseTest {
 
     @Test
     fun `given user not logged in, when get user profile, then exception thrown`() =
-        testCoroutineDispatcher.runBlockingTest {
+        runTest {
             // given
             val thrownException = IllegalStateException()
             whenever(mockedUserAuthenticationState.requireUserAccountId())

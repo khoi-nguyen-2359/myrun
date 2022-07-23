@@ -17,7 +17,6 @@ import kotlin.test.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.mock
@@ -51,7 +50,7 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
 
     @Test
     fun `given tracking is stopped, when request initial data, then got initial location`() =
-        runBlockingTest {
+        runTest {
             whenever(mockedRouteTrackingState.getTrackingStatusFlow()).thenReturn(flowOf(STOPPED))
 
             testee = createViewModel()

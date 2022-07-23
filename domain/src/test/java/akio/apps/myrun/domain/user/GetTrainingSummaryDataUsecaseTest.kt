@@ -13,8 +13,7 @@ import java.util.TimeZone
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.mock
@@ -28,7 +27,6 @@ class GetTrainingSummaryDataUsecaseTest {
     private lateinit var mockedActivityRepository: ActivityRepository
     private lateinit var mockedUserAuthenticationState: UserAuthenticationState
     private lateinit var mockedTimeProvider: TimeProvider
-    private val testCoroutineDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
 
     private val defaultUserId: String = "defaultUserId"
 
@@ -45,7 +43,7 @@ class GetTrainingSummaryDataUsecaseTest {
     }
 
     @Test
-    fun test() = testCoroutineDispatcher.runBlockingTest {
+    fun test() = runTest {
         val timeZoneRawOffset = TimeZone.getDefault().rawOffset
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
         whenever(mockedTimeProvider.currentTimeMillis()).thenReturn(

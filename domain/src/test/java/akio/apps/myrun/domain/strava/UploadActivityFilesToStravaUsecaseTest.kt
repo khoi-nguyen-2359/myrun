@@ -17,8 +17,7 @@ import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
@@ -29,7 +28,6 @@ import org.mockito.kotlin.whenever
 @ExperimentalCoroutinesApi
 class UploadActivityFilesToStravaUsecaseTest {
 
-    private val testDispatcher: TestCoroutineDispatcher = TestCoroutineDispatcher()
     private lateinit var mockedActivityLocalStorage: ActivityLocalStorage
     private lateinit var mockedStravaDataRepository: StravaDataRepository
     private lateinit var mockedExternalAppProvidersRepository: ExternalAppProvidersRepository
@@ -54,7 +52,7 @@ class UploadActivityFilesToStravaUsecaseTest {
     }
 
     @Test
-    fun uploadAll_LoadMultiAsyncItems_ExceptionCase() = testDispatcher.runBlockingTest {
+    fun uploadAll_LoadMultiAsyncItems_ExceptionCase() = runTest {
         whenever(mockedUserAuthenticateState.requireUserAccountId()).thenReturn("userId")
         val stravaToken = createStravaToken()
         whenever(mockedExternalAppProvidersRepository.getStravaProviderToken("userId"))
@@ -73,7 +71,7 @@ class UploadActivityFilesToStravaUsecaseTest {
     }
 
     @Test
-    fun uploadAll_LoadDataExceptionCase() = testDispatcher.runBlockingTest {
+    fun uploadAll_LoadDataExceptionCase() = runTest {
         whenever(mockedUserAuthenticateState.requireUserAccountId()).thenReturn("userId")
         val stravaToken = createStravaToken()
         whenever(mockedExternalAppProvidersRepository.getStravaProviderToken("userId"))
@@ -86,7 +84,7 @@ class UploadActivityFilesToStravaUsecaseTest {
     }
 
     @Test
-    fun uploadAll_UploadDataExceptionCase() = testDispatcher.runBlockingTest {
+    fun uploadAll_UploadDataExceptionCase() = runTest {
         whenever(mockedUserAuthenticateState.requireUserAccountId()).thenReturn("userId")
         val stravaToken = createStravaToken()
         whenever(mockedExternalAppProvidersRepository.getStravaProviderToken("userId"))
