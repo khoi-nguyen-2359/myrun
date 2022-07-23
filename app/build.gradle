@@ -142,6 +142,7 @@ dependencies {
         debugImplementation(libs.leakcanary)
     }
 
+    testImplementation(libs.junit)
     testImplementation(libs.kotlintest)
     testImplementation(libs.mockito.kotlin)
     testImplementation(project(":feature:configurator"))
