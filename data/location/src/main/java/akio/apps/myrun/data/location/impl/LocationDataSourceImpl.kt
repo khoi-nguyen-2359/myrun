@@ -4,12 +4,14 @@ import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.location.api.model.LocationRequestConfig
+import akio.apps.myrun.data.location.di.LocationDataScope
 import android.annotation.SuppressLint
 import android.os.Looper
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +28,7 @@ import timber.log.Timber
 private typealias AndroidLocation = android.location.Location
 
 @Singleton
+@ContributesBinding(LocationDataScope::class)
 class LocationDataSourceImpl @Inject constructor(
     private val locationClient: FusedLocationProviderClient,
 ) : LocationDataSource {

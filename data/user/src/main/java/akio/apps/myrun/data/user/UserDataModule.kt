@@ -13,19 +13,19 @@ import akio.apps.myrun.data.user.impl.PreferenceAppMigrationState
 import dagger.Binds
 import dagger.Module
 
-@Module(includes = [DispatchersModule::class, FirebaseDataModule::class])
-interface UserDataModule {
-    @Binds
-    fun userProfileRepo(repo: FirebaseUserProfileRepository): UserProfileRepository
-
-    @Binds
-    fun userFollowRepository(firebaseUserFollowRepository: FirebaseUserFollowRepository):
-        UserFollowRepository
-
-    @Binds
-    fun recentPlaceRepo(firebaseRecentPlaceRepository: FirebaseUserRecentPlaceRepository):
-        UserRecentPlaceRepository
-
-    @Binds
-    fun appVersionMigrationState(impl: PreferenceAppMigrationState): AppMigrationState
-}
+// @Module(includes = [DispatchersModule::class, FirebaseDataModule::class])
+// interface UserDataModule {
+//     @Binds
+//     fun userProfileRepo(repo: FirebaseUserProfileRepository): UserProfileRepository
+//
+//     @Binds
+//     fun userFollowRepository(firebaseUserFollowRepository: FirebaseUserFollowRepository):
+//         UserFollowRepository
+//
+//     @Binds
+//     fun recentPlaceRepo(firebaseRecentPlaceRepository: FirebaseUserRecentPlaceRepository):
+//         UserRecentPlaceRepository
+//
+//     @Binds
+//     fun appVersionMigrationState(impl: PreferenceAppMigrationState): AppMigrationState
+// }

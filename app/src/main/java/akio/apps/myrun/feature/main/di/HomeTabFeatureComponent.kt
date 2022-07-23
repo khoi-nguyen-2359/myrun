@@ -1,19 +1,24 @@
 package akio.apps.myrun.feature.main.di
 
-import akio.apps.myrun.data.tracking.TrackingDataModule
+import akio.apps.myrun.base.di.FeatureScope
+import akio.apps.myrun.data.tracking.di.DaggerTrackingDataComponent
+import akio.apps.myrun.data.tracking.di.TrackingDataComponent
 import akio.apps.myrun.feature.main.HomeTabViewModel
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
-import javax.inject.Singleton
 
-@Singleton
-@Component(modules = [TrackingDataModule::class])
+@FeatureScope
+@Component(dependencies = [TrackingDataComponent::class])
 interface HomeTabFeatureComponent {
     fun homeTabViewModel(): HomeTabViewModel
 
     @Component.Factory
     interface Factory {
-        fun create(@BindsInstance application: Application): HomeTabFeatureComponent
+        fun create(
+            @BindsInstance application: Application,
+            trackingDataComponent: TrackingDataComponent =
+                DaggerTrackingDataComponent.factory().create(application)
+        ): HomeTabFeatureComponent
     }
 }

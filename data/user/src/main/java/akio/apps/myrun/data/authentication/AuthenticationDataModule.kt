@@ -8,11 +8,11 @@ import akio.apps.myrun.data.authentication.impl.FirebaseSignInManager
 import dagger.Binds
 import dagger.Module
 
-@Module(includes = [FirebaseDataModule::class])
-interface AuthenticationDataModule {
-    @Binds
-    fun userAuthStorage(state: FirebaseAuthenticationState): UserAuthenticationState
-
-    @Binds
-    fun signInManager(manager: FirebaseSignInManager): SignInManager
-}
+// @Module(includes = [FirebaseDataModule::class])
+// interface AuthenticationDataModule {
+//     @Binds
+//     fun userAuthStorage(state: FirebaseAuthenticationState): UserAuthenticationState
+//
+//     @Binds
+//     fun signInManager(manager: FirebaseSignInManager): SignInManager
+// }

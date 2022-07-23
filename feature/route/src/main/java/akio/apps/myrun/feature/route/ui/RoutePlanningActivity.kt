@@ -69,7 +69,7 @@ class RoutePlanningActivity :
         val routeId: String? = extra(EXT_ROUTE_ID, null)
         RoutePlanningViewModel.saveArguments(savedStateHandle, routeId)
         DaggerRoutePlanningFeatureComponent.factory()
-            .create(application, savedStateHandle, DaggerRouteDataComponent.create())
+            .create(application, savedStateHandle)
             .drawRouteViewModel()
     }
 

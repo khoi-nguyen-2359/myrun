@@ -3,14 +3,17 @@ package akio.apps.myrun.data.authentication.impl
 import akio.apps.myrun.data.authentication.api.SignInManager
 import akio.apps.myrun.data.authentication.api.model.SignInMethod
 import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
+import akio.apps.myrun.data.authentication.di.AuthenticationDataScope
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.tasks.await
 
 @Singleton
+@ContributesBinding(AuthenticationDataScope::class)
 class FirebaseSignInManager @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) : SignInManager {

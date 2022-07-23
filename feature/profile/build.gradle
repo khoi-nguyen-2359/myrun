@@ -68,5 +68,6 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
 
     implementation(libs.dagger)
+    implementation(libs.anvil.annotations)
     kapt(libs.daggercompiler)
 }

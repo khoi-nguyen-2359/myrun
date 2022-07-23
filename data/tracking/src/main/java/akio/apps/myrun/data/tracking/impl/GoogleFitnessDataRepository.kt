@@ -2,6 +2,7 @@ package akio.apps.myrun.data.tracking.impl
 
 import akio.apps.myrun.data.activity.api.model.DataPoint
 import akio.apps.myrun.data.tracking.api.FitnessDataRepository
+import akio.apps.myrun.data.tracking.di.TrackingDataScope
 import android.app.Application
 import androidx.annotation.VisibleForTesting
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -10,14 +11,18 @@ import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.DataType
 import com.google.android.gms.fitness.data.Field
 import com.google.android.gms.fitness.request.DataReadRequest
+import com.squareup.anvil.annotations.ContributesBinding
 import java.util.TreeSet
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 private typealias GmsDataPoint = com.google.android.gms.fitness.data.DataPoint
 
+@Singleton
+@ContributesBinding(TrackingDataScope::class)
 class GoogleFitnessDataRepository @Inject constructor(
     private val application: Application,
 ) : FitnessDataRepository {

@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.playservices.map)
 
     implementation(libs.dagger)
+    implementation(libs.anvil.annotations)
     kapt(libs.daggercompiler)
 
     implementation(libs.okhttp)

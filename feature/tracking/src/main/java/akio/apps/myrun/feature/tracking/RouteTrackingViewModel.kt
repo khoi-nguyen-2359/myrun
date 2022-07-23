@@ -3,8 +3,6 @@ package akio.apps.myrun.feature.tracking
 import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityType
-import akio.apps.myrun.data.authentication.api.UserAuthenticationState
-import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
@@ -45,9 +43,7 @@ internal class RouteTrackingViewModel @Inject constructor(
     private val routeTrackingState: RouteTrackingState,
     private val clearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase,
     private val storeTrackingActivityDataUsecase: StoreTrackingActivityDataUsecase,
-    private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val routeTrackingLocationRepository: RouteTrackingLocationRepository,
-    private val authenticationState: UserAuthenticationState,
     private val locationDataSource: LocationDataSource,
     private val routeTrackingConfiguration: RouteTrackingConfiguration,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
@@ -145,11 +141,8 @@ internal class RouteTrackingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun scheduleActivitySyncIfAvailable() {
-        val userAccountId = authenticationState.getUserAccountId()
-        if (userAccountId != null && externalAppProvidersRepository.isStravaSyncEnabled()) {
-            UploadStravaFileWorker.enqueue(application)
-        }
+    private fun scheduleActivitySyncIfAvailable() {
+        UploadStravaFileWorker.enqueue(application)
     }
 
     private suspend fun notifyLatestDataUpdate() {

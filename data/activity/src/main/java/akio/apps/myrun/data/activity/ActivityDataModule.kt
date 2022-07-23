@@ -10,14 +10,14 @@ import akio.apps.myrun.data.activity.impl.FirebaseActivityRepository
 import dagger.Binds
 import dagger.Module
 
-@Module(includes = [FirebaseDataModule::class])
-interface ActivityDataModule {
-    @Binds
-    fun activityRepository(repositoryFirebase: FirebaseActivityRepository): ActivityRepository
-
-    @Binds
-    fun tcxWriter(writerImpl: ActivityTcxFileWriterImpl): ActivityTcxFileWriter
-
-    @Binds
-    fun activityLocalStorage(storageImpl: ActivityLocalStorageImpl): ActivityLocalStorage
-}
+// @Module(includes = [FirebaseDataModule::class])
+// interface ActivityDataModule {
+//     @Binds
+//     fun activityRepository(repositoryFirebase: FirebaseActivityRepository): ActivityRepository
+//
+//     @Binds
+//     fun tcxWriter(writerImpl: ActivityTcxFileWriterImpl): ActivityTcxFileWriter
+//
+//     @Binds
+//     fun activityLocalStorage(storageImpl: ActivityLocalStorageImpl): ActivityLocalStorage
+// }

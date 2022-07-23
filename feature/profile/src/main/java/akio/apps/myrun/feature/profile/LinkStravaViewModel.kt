@@ -16,8 +16,6 @@ import kotlinx.coroutines.withContext
 internal class LinkStravaViewModel @Inject constructor(
     private val updateStravaTokenUsecase: UpdateStravaTokenUsecase,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
-    private val stravaTokenRepository: StravaTokenRepository,
-
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
@@ -27,9 +25,8 @@ internal class LinkStravaViewModel @Inject constructor(
 
     fun exchangeStravaToken(stravaLoginCode: String) {
         viewModelScope.launchCatching {
-            val stravaToken = stravaTokenRepository.exchangeToken(stravaLoginCode)
             withContext(ioDispatcher) {
-                updateStravaTokenUsecase.updateStravaToken(stravaToken)
+                updateStravaTokenUsecase.updateStravaToken(stravaLoginCode)
             }
             _stravaTokenExchangedSuccess.value = Event(Unit)
         }

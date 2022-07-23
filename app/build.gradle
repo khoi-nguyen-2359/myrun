@@ -7,6 +7,7 @@ plugins {
     id 'com.google.firebase.crashlytics'
     id 'com.google.firebase.firebase-perf'
     id "build-time-tracker"
+    id 'com.squareup.anvil'
 }
 
 android {

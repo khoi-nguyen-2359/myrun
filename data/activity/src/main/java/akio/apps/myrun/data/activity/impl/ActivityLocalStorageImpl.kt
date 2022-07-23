@@ -13,6 +13,7 @@ import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.DataPointVersion
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
+import akio.apps.myrun.data.activity.di.ActivityDataScope
 import akio.apps.myrun.data.activity.impl.model.LocalActivityData
 import akio.apps.myrun.data.activity.impl.model.LocalAthleteInfo
 import akio.apps.myrun.data.activity.impl.model.LocalBaseActivity
@@ -26,6 +27,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.squareup.anvil.annotations.ContributesBinding
 import java.io.BufferedOutputStream
 import java.io.File
 import javax.inject.Inject
@@ -47,6 +49,7 @@ private val Context.prefDataStore:
 
 @OptIn(ExperimentalSerializationApi::class)
 @Singleton
+@ContributesBinding(ActivityDataScope::class)
 class ActivityLocalStorageImpl @Inject constructor(
     private val application: Application,
     private val activityTcxFileWriter: ActivityTcxFileWriter,

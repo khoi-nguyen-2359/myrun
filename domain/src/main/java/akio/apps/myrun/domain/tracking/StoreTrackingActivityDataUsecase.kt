@@ -10,6 +10,8 @@ import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
+import akio.apps.myrun.data.eapps.api.StravaSyncState
+import akio.apps.myrun.data.eapps.api.StravaTokenRepository
 import akio.apps.myrun.data.location.api.PolyUtil
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
@@ -30,7 +32,8 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
     private val routeTrackingState: RouteTrackingState,
     private val routeTrackingLocationRepository: RouteTrackingLocationRepository,
     private val activityLocalStorage: ActivityLocalStorage,
-    private val externalAppProvidersRepository: ExternalAppProvidersRepository,
+    private val stravaTokenRepository: StravaTokenRepository,
+    private val stravaSyncState: StravaSyncState,
     private val objectAutoId: ObjectAutoId,
     private val polyUtil: PolyUtil,
 ) {
@@ -50,7 +53,7 @@ class StoreTrackingActivityDataUsecase @Inject constructor(
         }
 
         val activitySyncAsync = async {
-            if (externalAppProvidersRepository.isStravaSyncEnabled()) {
+            if (stravaSyncState.getStravaSyncAccountId() != null) {
                 activityLocalStorage.storeActivitySyncData(activityModel, activityLocations)
             }
         }

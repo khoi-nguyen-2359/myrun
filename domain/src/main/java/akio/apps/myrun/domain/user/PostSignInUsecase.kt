@@ -4,6 +4,8 @@ import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 import akio.apps.myrun.data.authentication.api.model.UserAccount
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
+import akio.apps.myrun.data.eapps.api.StravaSyncState
+import akio.apps.myrun.data.eapps.api.StravaTokenRepository
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.model.ProfileEditData
 import java.io.IOException
@@ -17,6 +19,8 @@ class PostSignInUsecase @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
     private val userProfileRepository: UserProfileRepository,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
+    private val stravaTokenRepository: StravaTokenRepository,
+    private val stravaSyncState: StravaSyncState,
 ) {
 
     suspend fun invoke(result: SignInSuccessResult) {
@@ -36,7 +40,12 @@ class PostSignInUsecase @Inject constructor(
      */
     private suspend fun syncStravaToken(userAccount: UserAccount) = try {
         // need try catch in case logging in without internet (google sign in with cached session)
-        externalAppProvidersRepository.getStravaProviderToken(userAccount.uid)
+        val stravaToken = externalAppProvidersRepository.getStravaProviderToken(userAccount.uid)
+        if (stravaToken != null) {
+            stravaSyncState.setStravaSyncAccountId(userAccount.uid)
+        } else {
+            stravaSyncState.setStravaSyncAccountId(null)
+        }
     } catch (ioEx: IOException) {
         // let the strava sync flag untouched.
         Timber.e(ioEx)
