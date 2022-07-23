@@ -5,6 +5,7 @@ import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.data.location.api.model.PlaceAddressComponent
 import akio.apps.myrun.data.location.api.model.PlaceDetails
 import akio.apps.myrun.data.location.api.model.PlaceSuggestion
+import akio.apps.myrun.data.location.di.LocationDataScope
 import android.annotation.SuppressLint
 import android.app.Application
 import android.location.Address
@@ -14,6 +15,7 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.squareup.anvil.annotations.ContributesBinding
 import dagger.Lazy
 import java.util.Locale
 import javax.inject.Inject
@@ -21,6 +23,7 @@ import javax.inject.Singleton
 import kotlinx.coroutines.tasks.await
 
 @Singleton
+@ContributesBinding(LocationDataScope::class)
 class GooglePlaceDataSource @Inject constructor(
     /**
      * Use lazy to avoid uninitialized Places when providing PlacesClient

@@ -2,10 +2,13 @@ package akio.apps.myrun.data.tracking.impl
 
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
+import akio.apps.myrun.data.tracking.di.TrackingDataScope
+import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
+@ContributesBinding(TrackingDataScope::class)
 class RouteTrackingLocationRepositoryImpl @Inject constructor(
     private val routeTrackingLocationDao: RouteTrackingLocationDao,
 ) : RouteTrackingLocationRepository {

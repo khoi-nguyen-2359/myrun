@@ -4,5 +4,5 @@ import java.io.File
 
 data class ActivitySyncData(
     val activityModel: BaseActivityModel,
-    val tcxFile: File
+    val tcxFile: File,
 )

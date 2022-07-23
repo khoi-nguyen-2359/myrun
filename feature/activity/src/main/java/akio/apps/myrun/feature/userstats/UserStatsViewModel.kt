@@ -30,7 +30,7 @@ internal class UserStatsViewModel @Inject constructor(
     private val getTrainingSummaryDataUsecase: GetTrainingSummaryDataUsecase,
     private val activityLocalStorage: ActivityLocalStorage,
     @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     val screenState: Flow<ScreenState> = combine(

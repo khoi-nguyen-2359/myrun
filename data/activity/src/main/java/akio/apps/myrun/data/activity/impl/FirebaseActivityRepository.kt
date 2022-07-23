@@ -6,6 +6,7 @@ import akio.apps.myrun.data.activity.api.locationparser.LocationDataPointParserF
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.DataPoint
+import akio.apps.myrun.data.activity.di.ActivityDataScope
 import akio.apps.myrun.data.activity.impl.model.FirestoreActivity
 import akio.apps.myrun.data.activity.impl.model.FirestoreActivityMapper
 import akio.apps.myrun.data.activity.impl.model.FirestoreDataPointList
@@ -20,6 +21,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.squareup.anvil.annotations.ContributesBinding
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
@@ -28,6 +30,7 @@ import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 @Singleton
+@ContributesBinding(ActivityDataScope::class)
 class FirebaseActivityRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage,
@@ -112,7 +115,7 @@ class FirebaseActivityRepository @Inject constructor(
                 activityDocRef,
                 speedDataPoints,
                 locationDataPoints,
-                stepCadenceDataPoints,
+                stepCadenceDataPoints
             )
         }.await()
         Timber.d("=== [DONE] SAVING ACTIVITY ===")

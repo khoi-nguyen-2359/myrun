@@ -1,22 +1,26 @@
 package akio.apps.myrun.feature.activitydetail.di
 
-import akio.apps.myrun.data.activity.ActivityDataModule
-import akio.apps.myrun.data.authentication.AuthenticationDataModule
-import akio.apps.myrun.data.location.LocationDataModule
-import akio.apps.myrun.data.user.UserDataModule
+import akio.apps.myrun.base.di.DispatchersModule
+import akio.apps.myrun.base.di.FeatureScope
+import akio.apps.myrun.data.activity.di.ActivityDataComponent
+import akio.apps.myrun.data.activity.di.DaggerActivityDataComponent
+import akio.apps.myrun.data.authentication.di.AuthenticationDataComponent
+import akio.apps.myrun.data.authentication.di.DaggerAuthenticationDataComponent
+import akio.apps.myrun.data.location.di.DaggerLocationDataComponent
+import akio.apps.myrun.data.location.di.LocationDataComponent
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
+import android.app.Application
 import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Component
-import javax.inject.Singleton
 
-@Singleton
+@FeatureScope
 @Component(
-    modules = [
-        AuthenticationDataModule::class,
-        LocationDataModule::class,
-        UserDataModule::class,
-        ActivityDataModule::class
+    modules = [DispatchersModule::class],
+    dependencies = [
+        LocationDataComponent::class,
+        AuthenticationDataComponent::class,
+        ActivityDataComponent::class
     ]
 )
 internal interface ActivityDetailFeatureComponent {
@@ -25,7 +29,14 @@ internal interface ActivityDetailFeatureComponent {
     @Component.Factory
     interface Factory {
         fun create(
+            @BindsInstance application: Application,
             @BindsInstance savedStateHandle: SavedStateHandle,
+            locationDataComponent: LocationDataComponent =
+                DaggerLocationDataComponent.factory().create(application),
+            authenticationDataComponent: AuthenticationDataComponent =
+                DaggerAuthenticationDataComponent.factory().create(application),
+            activityDataComponent: ActivityDataComponent =
+                DaggerActivityDataComponent.factory().create(application),
         ): ActivityDetailFeatureComponent
     }
 }

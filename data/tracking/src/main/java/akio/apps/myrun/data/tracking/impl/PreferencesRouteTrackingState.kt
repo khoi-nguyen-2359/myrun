@@ -4,6 +4,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
+import akio.apps.myrun.data.tracking.di.TrackingDataScope
 import android.app.Application
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -14,6 +15,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
@@ -25,6 +27,7 @@ private val Context.prefDataStore:
     DataStore<Preferences> by preferencesDataStore("route_tracking_state_prefs")
 
 @Singleton
+@ContributesBinding(TrackingDataScope::class)
 class PreferencesRouteTrackingState @Inject constructor(
     application: Application,
 ) : RouteTrackingState {
@@ -149,9 +152,9 @@ class PreferencesRouteTrackingState @Inject constructor(
         val alt = data[KEY_START_LOCATION_ALT]
         val speed = data[KEY_START_LOCATION_SPEED]
             ?: 0
-        if (elapsedTime == null || time == null || lat == null || lng == null || alt == null)
+        if (elapsedTime == null || time == null || lat == null || lng == null || alt == null) {
             null
-        else
+        } else {
             Location(
                 elapsedTime,
                 time,
@@ -160,6 +163,7 @@ class PreferencesRouteTrackingState @Inject constructor(
                 alt.toDouble(),
                 speed.toDouble()
             )
+        }
     }
         .first()
 

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 class StravaStravaRoute(
     val map: StravaStravaRouteMap?,
     val name: String,
-    val segments: List<StravaStravaSegment>?
+    val segments: List<StravaStravaSegment>?,
 ) {
     fun getEncodedPolyline() = map?.polyline ?: map?.summaryPolyline
     fun getCountry() = segments?.firstOrNull()?.country
@@ -16,10 +16,10 @@ class StravaStravaRouteMap(
     val polyline: String?,
 
     @SerializedName("summary_polyline")
-    val summaryPolyline: String?
+    val summaryPolyline: String?,
 )
 
 class StravaStravaSegment(
     val country: String?,
-    val city: String?
+    val city: String?,
 )

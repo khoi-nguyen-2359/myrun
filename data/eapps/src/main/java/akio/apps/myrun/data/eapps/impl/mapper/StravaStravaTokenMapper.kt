@@ -8,7 +8,9 @@ import javax.inject.Inject
 class StravaStravaTokenMapper @Inject constructor() {
     fun map(input: StravaStravaToken): ExternalAppToken.StravaToken {
         return ExternalAppToken.StravaToken(
-            input.accessToken, input.refreshToken, StravaAthlete(input.athlete.id)
+            input.accessToken,
+            input.refreshToken,
+            StravaAthlete(input.athlete.id)
         )
     }
 }

@@ -12,7 +12,7 @@ enum class AppNotificationChannel(
     val baseNotificationId: Int,
     val importance: Int,
     @StringRes val nameRes: Int,
-    @StringRes val descriptionRes: Int
+    @StringRes val descriptionRes: Int,
 ) {
     TrackingService(
         "TrackingService",

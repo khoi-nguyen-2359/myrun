@@ -113,6 +113,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     implementation(libs.dagger)
+    implementation(libs.anvil.annotations)
     kapt(libs.daggercompiler)
 
     implementation(libs.androidx.core)

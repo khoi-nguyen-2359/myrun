@@ -1,17 +1,16 @@
 package akio.apps.myrun.di
 
 import akio.apps.myrun.MyRunApp
-import akio.apps.myrun.data.tracking.TrackingDataModule
+import akio.apps.myrun.base.di.AppScope
+import akio.apps.myrun.data.tracking.di.DaggerTrackingDataComponent
+import akio.apps.myrun.data.tracking.di.TrackingDataComponent
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
-import javax.inject.Singleton
 
-@Singleton
+@AppScope
 @Component(
-    modules = [
-        TrackingDataModule::class
-    ]
+    dependencies = [TrackingDataComponent::class]
 )
 interface AppComponent {
     // Application injection method
@@ -20,7 +19,9 @@ interface AppComponent {
     @Component.Factory
     interface Factory {
         fun create(
-            @BindsInstance application: Application
+            @BindsInstance application: Application,
+            trackingDataComponent: TrackingDataComponent =
+                DaggerTrackingDataComponent.factory().create(application),
         ): AppComponent
     }
 

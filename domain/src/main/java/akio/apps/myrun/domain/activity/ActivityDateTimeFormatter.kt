@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ActivityDateTimeFormatter @Inject constructor(
-    private val timeProvider: TimeProvider
+    private val timeProvider: TimeProvider,
 ) {
     private val timeFormatter: SimpleDateFormat = SimpleDateFormat("h:mm a")
     private val dateFormatter: SimpleDateFormat = SimpleDateFormat("dd/MM/yyyy")

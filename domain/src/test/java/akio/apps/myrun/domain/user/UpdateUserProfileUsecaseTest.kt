@@ -86,7 +86,7 @@ class UpdateUserProfileUsecaseTest {
             birthdate,
             Gender.Male,
             65f,
-            avatarUri,
+            avatarUri
         )
     }
 }

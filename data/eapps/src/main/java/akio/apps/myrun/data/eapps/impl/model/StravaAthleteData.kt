@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 class StravaAthleteData(
     @SerializedName("id")
-    val id: Long
+    val id: Long,
 )

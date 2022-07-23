@@ -300,7 +300,7 @@ private fun RowScope.TableCell(
         .weight(1f)
         .padding(vertical = 12.dp)
         .alignByBaseline(),
-    content = content,
+    content = content
 //    verticalAlignment = Alignment.Bottom,
 )
 
@@ -348,7 +348,7 @@ private fun RowScope.TrainingSummaryProgress(
             .weight(1f)
             .alignByBaseline(),
         textAlign = TextAlign.End,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Bold
 //        color = AppColors.primary
     )
     Text(
@@ -363,7 +363,7 @@ private fun RowScope.TrainingSummaryProgress(
         modifier = Modifier
             .weight(1f)
             .alignByBaseline(),
-        textAlign = TextAlign.Start,
+        textAlign = TextAlign.Start
 //        fontWeight = FontWeight.Bold,
 //        color = AppColors.secondary
     )

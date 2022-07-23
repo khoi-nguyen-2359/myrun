@@ -4,8 +4,10 @@ import akio.apps.myrun.data.activity.api.ActivityTcxFileWriter
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
+import akio.apps.myrun.data.activity.di.ActivityDataScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
+import com.squareup.anvil.annotations.ContributesBinding
 import com.sweetzpot.tcxzpot.Activities
 import com.sweetzpot.tcxzpot.Cadence
 import com.sweetzpot.tcxzpot.Intensity
@@ -22,6 +24,7 @@ import java.io.File
 import java.util.Date
 import javax.inject.Inject
 
+@ContributesBinding(ActivityDataScope::class)
 class ActivityTcxFileWriterImpl @Inject constructor() : ActivityTcxFileWriter {
     override suspend fun writeTcxFile(
         activity: BaseActivityModel,
@@ -30,15 +33,17 @@ class ActivityTcxFileWriterImpl @Inject constructor() : ActivityTcxFileWriter {
         outputFile: File,
         zip: Boolean,
     ) {
-        val serializer = if (zip)
+        val serializer = if (zip) {
             ZipFileSerializer(outputFile, ".tcx")
-        else
+        } else {
             ClosableFileSerializer(outputFile)
+        }
 
-        val avgCadence: Int? = if (cadences.isEmpty())
+        val avgCadence: Int? = if (cadences.isEmpty()) {
             null
-        else
+        } else {
             cadences.average().toInt()
+        }
 
         val startDate = Date(activity.startTime)
         val sportType = when (activity.activityType) {

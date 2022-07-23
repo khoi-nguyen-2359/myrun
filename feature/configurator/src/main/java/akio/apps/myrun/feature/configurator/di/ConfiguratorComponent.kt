@@ -1,21 +1,23 @@
 package akio.apps.myrun.feature.configurator.di
 
-import akio.apps.myrun.data.authentication.AuthenticationDataModule
-import akio.apps.myrun.data.tracking.TrackingDataModule
-import akio.apps.myrun.data.user.UserDataModule
+import akio.apps.myrun.base.di.DispatchersModule
+import akio.apps.myrun.base.di.FeatureScope
+import akio.apps.myrun.data.authentication.di.AuthenticationDataComponent
+import akio.apps.myrun.data.authentication.di.DaggerAuthenticationDataComponent
+import akio.apps.myrun.data.tracking.di.DaggerTrackingDataComponent
+import akio.apps.myrun.data.tracking.di.TrackingDataComponent
 import akio.apps.myrun.feature.configurator.viewmodel.RouteTrackingSectionViewModel
 import akio.apps.myrun.feature.configurator.viewmodel.UserAuthenticationSectionViewModel
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
-import javax.inject.Singleton
 
-@Singleton
+@FeatureScope
 @Component(
-    modules = [
-        AuthenticationDataModule::class,
-        UserDataModule::class,
-        TrackingDataModule::class
+    modules = [DispatchersModule::class],
+    dependencies = [
+        AuthenticationDataComponent::class,
+        TrackingDataComponent::class
     ]
 )
 interface ConfiguratorComponent {
@@ -26,6 +28,10 @@ interface ConfiguratorComponent {
     interface Factory {
         fun create(
             @BindsInstance application: Application,
+            authenticationDataComponent: AuthenticationDataComponent =
+                DaggerAuthenticationDataComponent.factory().create(application),
+            trackingDataComponent: TrackingDataComponent =
+                DaggerTrackingDataComponent.factory().create(application),
         ): ConfiguratorComponent
     }
 }

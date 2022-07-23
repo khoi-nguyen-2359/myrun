@@ -8,5 +8,5 @@ data class ActivityLocation(
     val latitude: Double,
     val longitude: Double,
     val altitude: Double,
-    val speed: Double
+    val speed: Double,
 )

@@ -4,7 +4,7 @@ import com.google.firebase.firestore.PropertyName
 
 data class FirestoreProviders(
     @PropertyName("strava")
-    val strava: FirestoreProviderToken<FirestoreStravaToken>? = null
+    val strava: FirestoreProviderToken<FirestoreStravaToken>? = null,
 ) {
 
     data class FirestoreProviderToken<T>(
@@ -12,7 +12,7 @@ data class FirestoreProviders(
         val name: String = "",
 
         @PropertyName("token")
-        val token: T? = null
+        val token: T? = null,
     )
 
     data class FirestoreStravaToken(
@@ -25,11 +25,11 @@ data class FirestoreProviders(
         @PropertyName("athlete")
         val athlete: FirestoreStravaAthlete = FirestoreStravaAthlete(
             0
-        )
+        ),
     )
 
     data class FirestoreStravaAthlete(
         @PropertyName("id")
-        val id: Long = 0
+        val id: Long = 0,
     )
 }

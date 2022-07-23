@@ -11,12 +11,12 @@ interface ActivityLocalStorage {
     suspend fun storeActivityData(
         activity: BaseActivityModel,
         locations: List<ActivityLocation>,
-        routeBitmap: Bitmap
+        routeBitmap: Bitmap,
     )
 
     suspend fun storeActivitySyncData(
         activityModel: BaseActivityModel,
-        activityLocations: List<ActivityLocation>
+        activityLocations: List<ActivityLocation>,
     )
 
     suspend fun loadAllActivityStorageDataFlow(): Flow<ActivityStorageData>

@@ -7,5 +7,5 @@ class StravaStravaTokenRefresh(
     val accessToken: String,
 
     @SerializedName("refresh_token")
-    val refreshToken: String
+    val refreshToken: String,
 )

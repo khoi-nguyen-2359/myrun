@@ -6,7 +6,7 @@ import akio.apps.myrun.data.eapps.api.model.RunningApp
 import javax.inject.Inject
 
 class FirestoreProvidersMapper @Inject constructor(
-    private val stravaTokenMapper: FirestoreStravaTokenMapper
+    private val stravaTokenMapper: FirestoreStravaTokenMapper,
 ) {
     fun map(input: akio.apps.myrun.data.eapps.impl.model.FirestoreProviders): ExternalProviders {
         return ExternalProviders(

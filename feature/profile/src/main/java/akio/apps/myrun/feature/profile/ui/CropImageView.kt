@@ -32,7 +32,7 @@ import timber.log.Timber
 internal class CropImageView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
+    defStyleAttr: Int = 0,
 ) : View(context, attrs, defStyleAttr) {
 
     private var centerCropScale = 1f
@@ -148,8 +148,9 @@ internal class CropImageView @JvmOverloads constructor(
     }
 
     private fun scaleCenterCrop() {
-        if (imageBitmap == null)
+        if (imageBitmap == null) {
             return
+        }
 
         centerCropScale = max(
             drawDestRect.width() / imageBounds.width(),
@@ -169,7 +170,7 @@ internal class CropImageView @JvmOverloads constructor(
                     e1: MotionEvent,
                     e2: MotionEvent,
                     distanceX: Float,
-                    distanceY: Float
+                    distanceY: Float,
                 ): Boolean {
                     offsetSrcRect(distanceX / accumulateScale, distanceY / accumulateScale)
                     ViewCompat.postInvalidateOnAnimation(this@CropImageView)
@@ -190,7 +191,8 @@ internal class CropImageView @JvmOverloads constructor(
                 drawSourceRect.top + (drawSourceRect.height() - newHeight) * pivotPercentY,
                 newHeight
             ),
-            0f, 0f
+            0f,
+            0f
         )
         drawSourceRect.right = drawSourceRect.left + newWidth
         drawSourceRect.bottom = drawSourceRect.top + newHeight

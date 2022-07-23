@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class ReverseGeocodingResult(
     @SerializedName("address_components")
-    val addressComponents: List<GoogleMapAddressComponent>
+    val addressComponents: List<GoogleMapAddressComponent>,
 )

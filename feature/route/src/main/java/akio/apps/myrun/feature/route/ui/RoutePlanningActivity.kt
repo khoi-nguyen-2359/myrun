@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.route.ui
 
 import akio.apps.myrun.data.location.api.model.LatLng
-import akio.apps.myrun.data.route.DaggerRouteDataComponent
 import akio.apps.myrun.feature.core.BitmapUtils
 import akio.apps.myrun.feature.core.DialogDelegate
 import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
@@ -69,7 +68,7 @@ class RoutePlanningActivity :
         val routeId: String? = extra(EXT_ROUTE_ID, null)
         RoutePlanningViewModel.saveArguments(savedStateHandle, routeId)
         DaggerRoutePlanningFeatureComponent.factory()
-            .create(application, savedStateHandle, DaggerRouteDataComponent.create())
+            .create(application, savedStateHandle)
             .drawRouteViewModel()
     }
 

@@ -11,14 +11,15 @@ object FirebaseStorageUtils {
         storageRef: StorageReference,
         storeName: String,
         bitmap: Bitmap,
-        scaledSize: Int
+        scaledSize: Int,
     ): Uri {
         val photoRef = storageRef.child(storeName)
 
-        val uploadBitmap = if (scaledSize != 1)
+        val uploadBitmap = if (scaledSize != 1) {
             BitmapUtils.scale(bitmap, scaledSize)
-        else
+        } else {
             bitmap
+        }
 
         val uploadBaos = ByteArrayOutputStream()
         uploadBitmap.compress(Bitmap.CompressFormat.JPEG, 100, uploadBaos)
@@ -33,7 +34,7 @@ object FirebaseStorageUtils {
         storage: StorageReference,
         storeName: String,
         filePath: String,
-        scaledSize: Int
+        scaledSize: Int,
     ): Uri {
         val imageBitmap = BitmapUtils.decodeSampledFile(filePath, scaledSize, scaledSize)
         val downloadUrl = uploadBitmap(storage, storeName, imageBitmap, 1)

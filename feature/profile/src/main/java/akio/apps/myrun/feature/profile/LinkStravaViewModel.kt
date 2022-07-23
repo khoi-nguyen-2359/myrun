@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.profile
 
 import akio.apps.myrun.base.di.NamedIoDispatcher
-import akio.apps.myrun.data.eapps.api.StravaTokenRepository
 import akio.apps.myrun.domain.strava.UpdateStravaTokenUsecase
 import akio.apps.myrun.feature.core.Event
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
@@ -16,10 +15,8 @@ import kotlinx.coroutines.withContext
 internal class LinkStravaViewModel @Inject constructor(
     private val updateStravaTokenUsecase: UpdateStravaTokenUsecase,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
-    private val stravaTokenRepository: StravaTokenRepository,
-
     @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
     private val _stravaTokenExchangedSuccess = MutableLiveData<Event<Unit>>()
@@ -27,9 +24,8 @@ internal class LinkStravaViewModel @Inject constructor(
 
     fun exchangeStravaToken(stravaLoginCode: String) {
         viewModelScope.launchCatching {
-            val stravaToken = stravaTokenRepository.exchangeToken(stravaLoginCode)
             withContext(ioDispatcher) {
-                updateStravaTokenUsecase.updateStravaToken(stravaToken)
+                updateStravaTokenUsecase.updateStravaToken(stravaLoginCode)
             }
             _stravaTokenExchangedSuccess.value = Event(Unit)
         }

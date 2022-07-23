@@ -1,6 +1,7 @@
 package akio.apps.myrun.data.user.impl
 
 import akio.apps.myrun.base.firebase.FirebaseStorageUtils
+import akio.apps.myrun.data.authentication.di.AuthenticationDataScope
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.model.Gender
@@ -16,6 +17,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
+import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +31,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 @Singleton
+@ContributesBinding(AuthenticationDataScope::class)
 class FirebaseUserProfileRepository @Inject constructor(
     private val firebaseFirestore: FirebaseFirestore,
     private val firebaseStorage: FirebaseStorage,

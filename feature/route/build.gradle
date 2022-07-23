@@ -65,6 +65,7 @@ dependencies {
 
     implementation(libs.dagger)
     kapt(libs.daggercompiler)
+    implementation(libs.anvil.annotations)
 
     testImplementation(libs.kotlintest)
 }

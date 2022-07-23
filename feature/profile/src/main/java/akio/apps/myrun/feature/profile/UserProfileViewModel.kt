@@ -34,7 +34,7 @@ internal class UserProfileViewModel @Inject constructor(
     private val updateUserProfileUsecase: UpdateUserProfileUsecase,
 
     @NamedIoDispatcher
-    private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
 
     /**
@@ -61,8 +61,9 @@ internal class UserProfileViewModel @Inject constructor(
 
     fun updateUserProfile() {
         val editingFormData = editingFormDataMutableStateFlow.value
-        if (editingFormData?.isValid() != true)
+        if (editingFormData?.isValid() != true) {
             return
+        }
         updateUserProfileUsecase.updateUserProfile(editingFormData.makeProfileEditData())
     }
 

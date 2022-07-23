@@ -2,9 +2,11 @@ package akio.apps.myrun.data.authentication.impl
 
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.authentication.api.model.UserAccount
+import akio.apps.myrun.data.authentication.di.AuthenticationDataScope
 import android.util.Log
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +19,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 @Singleton
+@ContributesBinding(AuthenticationDataScope::class)
 class FirebaseAuthenticationState @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
 ) : UserAuthenticationState {

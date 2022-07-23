@@ -63,7 +63,7 @@ sealed class LocalBaseActivity(
     @SerialName("LocalBaseActivity_activityData")
     open val activityData: LocalActivityData,
     @SerialName("LocalBaseActivity_version")
-    open val version: Int
+    open val version: Int,
 ) : LocalBaseActivityData by activityData
 
 @Serializable
@@ -73,7 +73,7 @@ data class LocalRunningActivity(
     // stats
     val pace: Double,
     val cadence: Int,
-    override val version: Int = DataPointVersion.min().value
+    override val version: Int = DataPointVersion.min().value,
 ) : LocalBaseActivity(activityData, version)
 
 @Serializable
@@ -82,5 +82,5 @@ data class LocalCyclingActivity(
 
     // stats
     val speed: Double,
-    override val version: Int = DataPointVersion.min().value
+    override val version: Int = DataPointVersion.min().value,
 ) : LocalBaseActivity(activityData, version)

@@ -1,8 +1,6 @@
 package akio.apps.myrun.feature.tracking.impl
 
-import akio.apps._base.InstantTaskExecutorTest
-import akio.apps.myrun.data.authentication.api.UserAuthenticationState
-import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
+import akio.apps.base.InstantTaskExecutorTest
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
@@ -29,8 +27,6 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
-    private lateinit var mockedAuthenticationState: UserAuthenticationState
-    private lateinit var mockedExternalAppProvidersRepository: ExternalAppProvidersRepository
     private lateinit var mockedClearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
     private lateinit var mockedRouteTrackingLocationRepository: RouteTrackingLocationRepository
     private lateinit var mockedRouteTrackingState: RouteTrackingState
@@ -43,8 +39,6 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
 
     @Before
     fun setup() {
-        mockedAuthenticationState = mock()
-        mockedExternalAppProvidersRepository = mock()
         mockedClearRouteTrackingStateUsecase = mock()
         mockedRouteTrackingLocationRepository = mock()
         mockedRouteTrackingState = mock()
@@ -78,9 +72,7 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
         mockedRouteTrackingState,
         mockedClearRouteTrackingStateUsecase,
         mockedStoreTrackingActivityDataUsecase,
-        mockedExternalAppProvidersRepository,
         mockedRouteTrackingLocationRepository,
-        mockedAuthenticationState,
         mockedLocationDataSource,
         mockedRouteTrackingConfiguration,
         LaunchCatchingDelegateImpl(),

@@ -5,7 +5,7 @@ import akio.apps.myrun.data.location.api.model.Location
 import timber.log.Timber
 
 class LocationSpeedFilter(
-    private val maxValidSpeed: Double
+    private val maxValidSpeed: Double,
 ) : LocationProcessor {
     override fun process(locations: List<Location>): List<Location> =
         locations.filter {

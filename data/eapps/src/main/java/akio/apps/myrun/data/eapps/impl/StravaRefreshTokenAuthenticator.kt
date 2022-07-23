@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.eapps.impl
 
-import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
+import akio.apps.myrun.data.eapps.api.StravaSyncState
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import akio.apps.myrun.data.eapps.impl.model.StravaStravaTokenRefresh
 import akio.apps.myrun.data.eapps.impl.model.StravaTokenRefreshMapper
@@ -20,31 +20,32 @@ class StravaRefreshTokenAuthenticator(
     private val httpClient: OkHttpClient,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val stravaTokenRefreshMapper: StravaTokenRefreshMapper,
-    private val userAuthenticationState: UserAuthenticationState,
+    private val stravaSyncState: StravaSyncState,
     private val baseStravaUrl: String,
     private val gson: Gson,
     private val clientId: String,
     private val clientSecret: String,
 ) : Authenticator {
 
-    override fun authenticate(route: Route?, response: Response): Request? {
-        val userAccountId = userAuthenticationState.getUserAccountId()
+    override fun authenticate(route: Route?, response: Response): Request? = runBlocking {
+        val userAccountId = stravaSyncState.getStravaSyncAccountId()
         if (response.code != 401 || userAccountId == null) {
-            return null
+            return@runBlocking null
         }
 
-        val originalToken = runBlocking {
-            externalAppProvidersRepository.getStravaProviderToken(userAccountId)
+        val originalToken = externalAppProvidersRepository.getStravaProviderToken(userAccountId)
+        if (originalToken == null) {
+            stravaSyncState.setStravaSyncAccountId(null)
         }
         val originalRequest = response.request
         val originalAccessToken = originalRequest.header("Authorization")
             ?.removePrefix("Bearer ")
         if (originalToken == null || originalAccessToken == null) {
-            return null
+            return@runBlocking null
         }
 
         if (originalAccessToken != originalToken.accessToken) {
-            return originalRequest.newBuilder()
+            return@runBlocking originalRequest.newBuilder()
                 .addHeader("Authorization", "Bearer ${originalToken.accessToken}")
                 .build()
         }
@@ -73,12 +74,10 @@ class StravaRefreshTokenAuthenticator(
             val refreshToken = stravaTokenRefreshMapper.map(tokenRefreshEntity)
             val newToken = ExternalAppToken.StravaToken(refreshToken, originalToken.athlete)
 
-            runBlocking {
-                externalAppProvidersRepository.updateStravaProvider(userAccountId, newToken)
-            }
+            externalAppProvidersRepository.updateStravaProvider(userAccountId, newToken)
 
             Timber.d("refresh Strava token request succeed")
-            return response.request
+            return@runBlocking response.request
                 .newBuilder()
                 .header("Authorization", "Bearer $newAccessToken")
                 .build()
@@ -91,8 +90,9 @@ class StravaRefreshTokenAuthenticator(
                     "refresh_token=$originalRefreshToken"
             )
         )
-        runBlocking { externalAppProvidersRepository.removeStravaProvider(userAccountId) }
+        externalAppProvidersRepository.removeStravaProvider(userAccountId)
+        stravaSyncState.setStravaSyncAccountId(null)
 
-        return null
+        return@runBlocking null
     }
 }

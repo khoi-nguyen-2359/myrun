@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.googleplaces)
 
     implementation(libs.dagger)
+    implementation(libs.anvil.annotations)
     kapt(libs.daggercompiler)
 
     testImplementation(libs.bundles.testCoroutine)

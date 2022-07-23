@@ -6,5 +6,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class RouteModel(
     val routeId: String,
-    val routeName: String
+    val routeName: String,
 ) : Parcelable

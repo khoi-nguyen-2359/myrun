@@ -15,6 +15,7 @@ import akio.apps.myrun.feature.core.ui.CentralAnnouncementView
 import akio.apps.myrun.feature.core.ui.CentralLoadingView
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.core.ui.StatusBarSpacer
+import android.app.Application
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -68,9 +69,10 @@ fun ActivityDetailScreen(
         HomeNavDestination.ActivityDetail.activityIdRequiredArg.parseValueInBackStackEntry(
             navBackStackEntry
         )
+    val application = LocalContext.current.applicationContext as Application
     val activityDetailViewModel = navBackStackEntry.rememberViewModelProvider { handle ->
         DaggerActivityDetailFeatureComponent.factory()
-            .create(ActivityDetailViewModel.setInitialSavedState(handle, activityId))
+            .create(application, ActivityDetailViewModel.setInitialSavedState(handle, activityId))
             .activityDetailsViewModel()
     }
     ActivityDetailScreen(activityDetailViewModel, onClickExportFile, navController)
@@ -224,7 +226,8 @@ fun RunSplitsTable(
             ) {
                 val kmLabel = formatKmLabel(index, runSplits, totalDistance)
                 Text(
-                    text = kmLabel, modifier = Modifier.weight(kmColumnWeight),
+                    text = kmLabel,
+                    modifier = Modifier.weight(kmColumnWeight),
                     style = MaterialTheme.typography.caption
                 )
                 Text(
@@ -265,7 +268,7 @@ private fun formatKmLabel(
 @Composable
 fun PreviewRunSplitsTable() = RunSplitsTable(
     runSplits = listOf(6.4, 6.15, 6.0, 5.8, 5.6, 5.5, 7.0),
-    6700.0,
+    6700.0
 )
 
 fun navigateToActivityMap(context: Context, encodedPolyline: String) {

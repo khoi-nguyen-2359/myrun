@@ -1,24 +1,26 @@
 package akio.apps.myrun.feature.userstats.di
 
 import akio.apps.myrun.base.di.DispatchersModule
-import akio.apps.myrun.data.activity.ActivityDataModule
-import akio.apps.myrun.data.authentication.AuthenticationDataModule
-import akio.apps.myrun.data.user.UserDataModule
+import akio.apps.myrun.base.di.FeatureScope
+import akio.apps.myrun.data.activity.di.ActivityDataComponent
+import akio.apps.myrun.data.activity.di.DaggerActivityDataComponent
+import akio.apps.myrun.data.authentication.di.AuthenticationDataComponent
+import akio.apps.myrun.data.authentication.di.DaggerAuthenticationDataComponent
 import akio.apps.myrun.feature.userstats.UserStatsViewModel
 import android.app.Application
 import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Component
-import javax.inject.Singleton
 
-@Singleton
+@FeatureScope
 @Component(
     modules = [
-        DispatchersModule::class,
-        AuthenticationDataModule::class,
-        UserDataModule::class,
-        ActivityDataModule::class
+        DispatchersModule::class
     ],
+    dependencies = [
+        AuthenticationDataComponent::class,
+        ActivityDataComponent::class
+    ]
 )
 internal interface UserStatsFeatureComponent {
     fun userStatsViewModel(): UserStatsViewModel
@@ -28,6 +30,10 @@ internal interface UserStatsFeatureComponent {
         fun create(
             @BindsInstance application: Application,
             @BindsInstance savedStateHandle: SavedStateHandle,
+            authenticationDataComponent: AuthenticationDataComponent =
+                DaggerAuthenticationDataComponent.factory().create(application),
+            activityDataComponent: ActivityDataComponent =
+                DaggerActivityDataComponent.factory().create(application),
         ): UserStatsFeatureComponent
     }
 }

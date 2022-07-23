@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.user.impl
 
+import akio.apps.myrun.data.authentication.di.AuthenticationDataScope
 import akio.apps.myrun.data.user.api.AppMigrationState
 import android.app.Application
 import android.content.Context
@@ -8,6 +9,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
+import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.first
@@ -17,6 +19,7 @@ private val Context.prefDataStore:
     DataStore<Preferences> by preferencesDataStore("app_version_migration_state_prefs")
 
 @Singleton
+@ContributesBinding(AuthenticationDataScope::class)
 class PreferenceAppMigrationState @Inject constructor(
     application: Application,
 ) : AppMigrationState {

@@ -28,10 +28,11 @@ internal object StatsPresentations {
      * @param speed of unit meter/sec
      */
     fun getDisplayPace(speed: Double): String {
-        val pace = if (speed == 0.0)
+        val pace = if (speed == 0.0) {
             0.0
-        else
+        } else {
             1 / TrackingValueConverter.SpeedKmPerMinute.fromRawValue(speed)
+        }
 
         return String.format("%d:%02d", pace.toInt(), ((pace % 1) * 60).toInt())
     }

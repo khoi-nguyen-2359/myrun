@@ -7,7 +7,7 @@ import androidx.compose.runtime.collectAsState
 
 @Composable
 fun UserAuthenticationSection(
-    userAuthenticationSectionSectionViewModel: UserAuthenticationSectionViewModel
+    userAuthenticationSectionSectionViewModel: UserAuthenticationSectionViewModel,
 ) {
     ExpandableSection(label = "User") {
         val userProfileState =

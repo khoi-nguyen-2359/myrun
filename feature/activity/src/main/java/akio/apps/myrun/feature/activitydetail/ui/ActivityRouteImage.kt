@@ -57,7 +57,7 @@ internal fun ActivityRouteImage(
                     this
                 }
             },
-        contentScale = ContentScale.Crop,
+        contentScale = ContentScale.Crop
     )
 }
 

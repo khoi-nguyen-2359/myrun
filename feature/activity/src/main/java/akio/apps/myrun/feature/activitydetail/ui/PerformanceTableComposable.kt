@@ -56,7 +56,7 @@ internal fun PerformanceTableComposable(
 }
 
 private fun createActivityFormatterList(
-    activity: BaseActivityModel
+    activity: BaseActivityModel,
 ): List<TrackingValueFormatter<*>> =
     when (activity.activityType) {
         ActivityType.Running -> listOf(

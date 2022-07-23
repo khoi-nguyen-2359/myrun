@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.onEach
 fun CoroutineScope.flowTimer(
     initialDelay: Long,
     period: Long,
-    action: suspend CoroutineScope.() -> Unit
+    action: suspend CoroutineScope.() -> Unit,
 ): Job = flow {
     if (initialDelay > 0) {
         delay(initialDelay)

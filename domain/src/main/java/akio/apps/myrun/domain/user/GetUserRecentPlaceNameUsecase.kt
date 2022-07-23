@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 class GetUserRecentPlaceNameUsecase @Inject constructor(
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
     private val userAuthenticationState: UserAuthenticationState,
-    private val placeNameSelector: PlaceNameSelector
+    private val placeNameSelector: PlaceNameSelector,
 ) {
     fun getUserRecentPlaceNameFlow(): Flow<PlaceIdentifier?> {
         val userId = userAuthenticationState.requireUserAccountId()

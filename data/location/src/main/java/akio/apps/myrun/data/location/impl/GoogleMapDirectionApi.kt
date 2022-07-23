@@ -10,6 +10,6 @@ interface GoogleMapDirectionApi {
         @Query("origin") origin: String,
         @Query("destination") destination: String,
         @Query("waypoints") waypoints: String,
-        @Query("key") apiKey: String
+        @Query("key") apiKey: String,
     ): GoogleDirectionResponse
 }

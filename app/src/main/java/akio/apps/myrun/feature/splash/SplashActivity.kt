@@ -20,7 +20,7 @@ import timber.log.Timber
 class SplashActivity : AppCompatActivity() {
 
     private val splashViewModel: SplashViewModel by lazyViewModelProvider {
-        DaggerSplashFeatureComponent.factory().create().splashViewModel()
+        DaggerSplashFeatureComponent.factory().create(application).splashViewModel()
     }
 
     private val dialogDelegate by lazy { DialogDelegate(this) }

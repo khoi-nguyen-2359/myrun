@@ -630,7 +630,9 @@ private fun createExternalProviders() =
         ProviderToken(
             RunningApp.Strava,
             ExternalAppToken.StravaToken(
-                "accessToken", "refreshToken", StravaAthlete(0L)
+                "accessToken",
+                "refreshToken",
+                StravaAthlete(0L)
             )
         )
     )

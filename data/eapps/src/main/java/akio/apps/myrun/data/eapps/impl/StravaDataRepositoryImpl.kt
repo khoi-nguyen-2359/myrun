@@ -3,14 +3,19 @@ package akio.apps.myrun.data.eapps.impl
 import akio.apps.myrun.data.eapps.api.StravaDataRepository
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import akio.apps.myrun.data.eapps.api.model.StravaRouteModel
+import akio.apps.myrun.data.eapps.di.ExternalAppDataScope
 import akio.apps.myrun.data.eapps.impl.mapper.StravaStravaRouteMapper
+import com.squareup.anvil.annotations.ContributesBinding
 import java.io.File
 import javax.inject.Inject
+import javax.inject.Singleton
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
+@Singleton
+@ContributesBinding(ExternalAppDataScope::class)
 class StravaDataRepositoryImpl @Inject constructor(
     private val stravaApi: StravaApi,
     private val stravaRouteMapper: StravaStravaRouteMapper,

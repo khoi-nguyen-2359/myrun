@@ -8,5 +8,5 @@ data class GoogleMapAddressComponent(
     @SerializedName("short_name")
     val shortName: String,
     @SerializedName("types")
-    val types: List<String>
+    val types: List<String>,
 )

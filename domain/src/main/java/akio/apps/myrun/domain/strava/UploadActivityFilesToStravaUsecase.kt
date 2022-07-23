@@ -4,6 +4,7 @@ import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.eapps.api.ExternalAppProvidersRepository
 import akio.apps.myrun.data.eapps.api.StravaDataRepository
+import akio.apps.myrun.data.eapps.api.StravaSyncState
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.catch
@@ -16,20 +17,24 @@ class UploadActivityFilesToStravaUsecase @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
     private val externalAppProvidersRepository: ExternalAppProvidersRepository,
     private val stravaDataRepository: StravaDataRepository,
+    private val stravaSyncState: StravaSyncState,
     private val activityLocalStorage: ActivityLocalStorage,
 ) {
     @OptIn(FlowPreview::class)
     suspend fun uploadAll(): Boolean {
         val userAccountId = userAuthenticationState.requireUserAccountId()
         val stravaToken = externalAppProvidersRepository.getStravaProviderToken(userAccountId)
-            ?: return true
-
+        if (stravaToken == null) {
+            stravaSyncState.setStravaSyncAccountId(null)
+        }
         return activityLocalStorage.loadAllActivitySyncDataFlow().flatMapConcat { syncData ->
-            stravaDataRepository.saveActivity(
-                stravaToken,
-                syncData.activityModel.name,
-                syncData.tcxFile
-            )
+            if (stravaToken != null) {
+                stravaDataRepository.saveActivity(
+                    stravaToken,
+                    syncData.activityModel.name,
+                    syncData.tcxFile
+                )
+            }
             activityLocalStorage.deleteActivitySyncData(syncData.activityModel.id)
             flowOf(true)
         }
