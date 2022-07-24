@@ -4,6 +4,12 @@ plugins {
     id 'kotlin-kapt'
 }
 
+def loadProperty = { propertyName, defaultValue ->
+    getRootProject().hasProperty(propertyName)        \
+                   ? getRootProject().property(propertyName)
+            : defaultValue
+}
+
 android {
     compileSdk project.compileSdk
 
@@ -35,7 +41,7 @@ android {
 
     kotlinOptions {
         jvmTarget = "11"
-        allWarningsAsErrors = true
+        allWarningsAsErrors = localProps["werror"]
         freeCompilerArgs += ["-opt-in=kotlin.RequiresOptIn"]
     }
 }

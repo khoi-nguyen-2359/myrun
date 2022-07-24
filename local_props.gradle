@@ -2,7 +2,9 @@ project.ext {
     localProps = new Properties()
 }
 
-File localPropsFile = project.rootProject.file('local.properties')
+File localPropsFile = rootProject.file('local.properties')
 if (localPropsFile.exists()) {
-    project.localProps.load(localPropsFile.newDataInputStream())
+    localProps.load(localPropsFile.newDataInputStream())
+    // map boolean properties
+    localProps["werror"] = (localProps["werror"] ?: "true").toBoolean()
 }

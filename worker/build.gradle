@@ -26,7 +26,7 @@ android {
 
     kotlinOptions {
         jvmTarget = "11"
-        allWarningsAsErrors = true
+        allWarningsAsErrors = localProps["werror"]
     }
 }
 
