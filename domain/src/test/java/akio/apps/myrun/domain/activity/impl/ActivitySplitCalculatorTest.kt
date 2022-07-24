@@ -2,6 +2,7 @@ package akio.apps.myrun.domain.activity.impl
 
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.location.api.SphericalUtil
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.domain.activity.ActivitySplitCalculator
 import kotlin.test.assertEquals
 import org.junit.Before
@@ -29,7 +30,8 @@ class ActivitySplitCalculatorTest {
             .thenReturn(0.0, 300.0, 300.0, 300.0, 300.0)
         val runSplits = activitySplitCalculator.createRunSplits(
             locationDataPoints = listOf(0L, 2L, 3L, 300000L, 360000L)
-                .map(::createActivityLocationWithElapsedTime)
+                .map(::createActivityLocationWithElapsedTime),
+            MeasureSystem.Metric
         )
         verify(mockedSphericalUtil, times(5)).computeDistanceBetween(any(), any())
         assertEquals(2, runSplits.size)
@@ -43,7 +45,8 @@ class ActivitySplitCalculatorTest {
             .thenReturn(0.0, 300.0, 300.0, 300.0)
         val runSplits = activitySplitCalculator.createRunSplits(
             locationDataPoints = listOf(0L, 2, 3, 300000)
-                .map(::createActivityLocationWithElapsedTime)
+                .map(::createActivityLocationWithElapsedTime),
+            MeasureSystem.Metric
         )
         assertEquals(1, runSplits.size)
         assertEquals("5.55555", String.format("%.5f", runSplits[0]))
@@ -55,7 +58,8 @@ class ActivitySplitCalculatorTest {
             .thenReturn(0.0, 2200.0, 500.0)
         val runSplits = activitySplitCalculator.createRunSplits(
             locationDataPoints = listOf(0L, 620000, 770000)
-                .map(::createActivityLocationWithElapsedTime)
+                .map(::createActivityLocationWithElapsedTime),
+            MeasureSystem.Metric
         )
         verify(mockedSphericalUtil, times(3)).computeDistanceBetween(any(), any())
         assertEquals(3, runSplits.size)
@@ -70,7 +74,8 @@ class ActivitySplitCalculatorTest {
             .thenReturn(0.0, 1000.0, 2800.0)
         val runSplits = activitySplitCalculator.createRunSplits(
             locationDataPoints = listOf(0L, 300000, 1110000)
-                .map(::createActivityLocationWithElapsedTime)
+                .map(::createActivityLocationWithElapsedTime),
+            MeasureSystem.Metric
         )
         verify(mockedSphericalUtil, times(3)).computeDistanceBetween(any(), any())
         assertEquals(4, runSplits.size)
@@ -86,7 +91,8 @@ class ActivitySplitCalculatorTest {
             .thenReturn(0.0, 1000.0, 2700.0)
         val runSplits = activitySplitCalculator.createRunSplits(
             locationDataPoints = listOf(1001L, 301001, 1111001)
-                .map(::createActivityLocationWithElapsedTime)
+                .map(::createActivityLocationWithElapsedTime),
+            MeasureSystem.Metric
         )
         verify(mockedSphericalUtil, times(3)).computeDistanceBetween(any(), any())
         assertEquals(4, runSplits.size)
