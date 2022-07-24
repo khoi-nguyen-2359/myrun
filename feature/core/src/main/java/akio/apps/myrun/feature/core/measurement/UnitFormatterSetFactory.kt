@@ -20,7 +20,7 @@ object UnitFormatterSetFactory {
         }
 
     fun createBodyWeightUnitFormatter(
-        measureSystem: MeasureSystem
+        measureSystem: MeasureSystem,
     ): UserProfileUnitFormatter.BodyWeightUnitFormatter =
         when (measureSystem) {
             MeasureSystem.Metric -> UserProfileUnitFormatter.WeightKg

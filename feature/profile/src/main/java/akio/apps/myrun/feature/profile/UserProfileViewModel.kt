@@ -90,7 +90,7 @@ internal class UserProfileViewModel @Inject constructor(
             photoUrl,
             birthdate,
             Gender.create(genderIdentity),
-            weight,
+            weight
         )
     }
 
@@ -138,7 +138,7 @@ internal class UserProfileViewModel @Inject constructor(
                     }
                     FormState(
                         editingFormData ?: UserProfileFormData.create(
-                            userProfileRes.data,
+                            userProfileRes.data
                         ),
                         stravaLinkingState
                     )
@@ -173,7 +173,7 @@ internal class UserProfileViewModel @Inject constructor(
                 photoUrl = userProfile.photo,
                 birthdate = userProfile.birthdate,
                 gender = userProfile.gender,
-                weight = userProfile.weight,
+                weight = userProfile.weight
             )
         }
     }

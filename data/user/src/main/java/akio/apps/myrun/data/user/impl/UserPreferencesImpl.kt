@@ -17,7 +17,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 private val Context.prefDataStore:
-    DataStore<Preferences> by preferencesDataStore("akio.apps.myrun.data.user.impl.user_preferences_impl")
+    DataStore<Preferences> by preferencesDataStore(
+        "akio.apps.myrun.data.user.impl.user_preferences_impl"
+    )
 
 @Singleton
 @ContributesBinding(AuthenticationDataScope::class)

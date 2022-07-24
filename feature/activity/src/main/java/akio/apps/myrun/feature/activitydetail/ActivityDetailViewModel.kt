@@ -54,7 +54,7 @@ internal class ActivityDetailViewModel @Inject constructor(
             preferredSystem,
             activityDateTimeFormatter,
             placeName,
-            activitySplitCalculator.createRunSplits(locations, preferredSystem),
+            activitySplitCalculator.createRunSplits(locations, preferredSystem)
         )
     }
 
