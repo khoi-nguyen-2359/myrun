@@ -103,7 +103,6 @@ internal class RouteTrackingViewModel @Inject constructor(
     fun requestInitialData() {
         viewModelScope.launchCatching {
             _activityType.value = routeTrackingState.getActivityType()
-            _activityType.value?.name
 
             processedLocationCount = 0
             val latestStatus = routeTrackingState.getTrackingStatus()
