@@ -14,6 +14,12 @@ android {
         consumerProguardFiles "consumer-rules.pro"
     }
 
+    sourceSets {
+        rc {
+            setRoot 'src/release'
+        }
+    }
+
     buildTypes {
         rc {
             debuggable true

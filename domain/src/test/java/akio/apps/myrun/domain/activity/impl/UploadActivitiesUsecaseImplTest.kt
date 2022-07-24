@@ -14,11 +14,10 @@ import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.domain.activity.UploadActivitiesUsecase
 import akio.apps.myrun.domain.user.PlaceIdentifierConverter
 import app.cash.turbine.test
-import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.any
@@ -55,8 +54,7 @@ class UploadActivitiesUsecaseImplTest {
     }
 
     @Test
-    @OptIn(ExperimentalTime::class)
-    fun testUploadAll_LoadDataExceptionCase() = runBlockingTest {
+    fun testUploadAll_LoadDataExceptionCase() = runTest {
         val storageDataFlow = flow<ActivityStorageData> { throw Exception("crash!") }
         whenever(mockedActivityLocalStorage.loadAllActivityStorageDataFlow())
             .thenReturn(storageDataFlow)
@@ -69,8 +67,7 @@ class UploadActivitiesUsecaseImplTest {
     }
 
     @Test
-    @OptIn(ExperimentalTime::class)
-    fun testUploadAll_UploadExceptionCase() = runBlockingTest {
+    fun testUploadAll_UploadExceptionCase() = runTest {
         val activityStorageData = createActivityStorageData()
         val storageDataFlow = flowOf(activityStorageData)
         whenever(mockedActivityLocalStorage.loadAllActivityStorageDataFlow())

@@ -1,6 +1,5 @@
 package akio.apps.myrun.feature.tracking.impl
 
-import akio.apps.base.InstantTaskExecutorTest
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
@@ -14,10 +13,15 @@ import akio.apps.myrun.feature.tracking.model.RouteTrackingStats
 import android.app.Application
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.mock
@@ -26,7 +30,7 @@ import org.mockito.kotlin.verifyBlocking
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
-class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
+class RouteTrackingViewModelTest {
     private lateinit var mockedClearRouteTrackingStateUsecase: ClearRouteTrackingStateUsecase
     private lateinit var mockedRouteTrackingLocationRepository: RouteTrackingLocationRepository
     private lateinit var mockedRouteTrackingState: RouteTrackingState
@@ -35,10 +39,10 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
     private lateinit var mockedLocationDataSource: LocationDataSource
     private lateinit var mockedRouteTrackingConfiguration: RouteTrackingConfiguration
     private lateinit var testee: RouteTrackingViewModel
-    private lateinit var testCoroutineDispatcher: TestCoroutineDispatcher
+    private lateinit var testCoroutineDispatcher: TestDispatcher
 
     @Before
-    fun setup() {
+    fun before() {
         mockedClearRouteTrackingStateUsecase = mock()
         mockedRouteTrackingLocationRepository = mock()
         mockedRouteTrackingState = mock()
@@ -46,12 +50,18 @@ class RouteTrackingViewModelTest : InstantTaskExecutorTest() {
         mockedAppContext = mock()
         mockedLocationDataSource = mock()
         mockedRouteTrackingConfiguration = mock()
-        testCoroutineDispatcher = TestCoroutineDispatcher()
+        testCoroutineDispatcher = UnconfinedTestDispatcher()
+        Dispatchers.setMain(testCoroutineDispatcher)
+    }
+
+    @After
+    fun after() {
+        Dispatchers.resetMain()
     }
 
     @Test
     fun `given tracking is stopped, when request initial data, then got initial location`() =
-        runBlockingTest {
+        runTest {
             whenever(mockedRouteTrackingState.getTrackingStatusFlow()).thenReturn(flowOf(STOPPED))
 
             testee = createViewModel()

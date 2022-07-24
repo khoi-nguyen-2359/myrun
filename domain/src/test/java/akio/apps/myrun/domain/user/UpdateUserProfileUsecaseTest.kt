@@ -7,7 +7,7 @@ import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.domain.common.error.UnauthorizedUserError
 import android.net.Uri
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -41,7 +41,7 @@ class UpdateUserProfileUsecaseTest {
 
     @Test
     fun testUpdateProfileSuccess() {
-        runBlockingTest {
+        runTest {
             // given
             val userId = "userId"
             whenever(userAuthenticationState.requireUserAccountId()).thenReturn(userId)
@@ -58,7 +58,7 @@ class UpdateUserProfileUsecaseTest {
 
     @Test
     fun testUpdateProfileWhenUserIsNotLoggedIn() {
-        runBlockingTest {
+        runTest {
             // given
             whenever(userAuthenticationState.requireUserAccountId()).thenReturn(null)
 

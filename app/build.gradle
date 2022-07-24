@@ -22,6 +22,12 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    sourceSets {
+        rc {
+            setRoot 'src/release'
+        }
+    }
+
     signingConfigs {
         debug {
             storeFile file('./keystores/myrun_debug_key_v2.jks')
@@ -136,6 +142,7 @@ dependencies {
         debugImplementation(libs.leakcanary)
     }
 
+    testImplementation(libs.junit)
     testImplementation(libs.kotlintest)
     testImplementation(libs.mockito.kotlin)
     testImplementation(project(":feature:configurator"))
