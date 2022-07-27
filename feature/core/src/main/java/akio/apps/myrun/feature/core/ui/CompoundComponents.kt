@@ -60,11 +60,13 @@ private fun PreviewUserProfileSwitch() {
 fun CompoundText(
     label: String,
     value: String,
+    onClick: () -> Unit,
 ) = Column(
     modifier = Modifier.padding(
         vertical = AppDimensions.rowVerticalPadding,
         horizontal = AppDimensions.screenHorizontalPadding
     )
+        .clickable { onClick() }
 ) {
     Text(
         text = label,
@@ -75,4 +77,4 @@ fun CompoundText(
 
 @Preview
 @Composable
-private fun PreviewCompoundText() = CompoundText(label = "label", value = "value")
+private fun PreviewCompoundText() = CompoundText(label = "label", value = "value") {}

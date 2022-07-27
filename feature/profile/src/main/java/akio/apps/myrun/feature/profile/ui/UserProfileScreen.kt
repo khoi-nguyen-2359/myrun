@@ -1,11 +1,6 @@
 package akio.apps.myrun.feature.profile.ui
 
 import akio.apps.myrun.data.common.Resource
-import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
-import akio.apps.myrun.data.eapps.api.model.ExternalProviders
-import akio.apps.myrun.data.eapps.api.model.ProviderToken
-import akio.apps.myrun.data.eapps.api.model.RunningApp
-import akio.apps.myrun.data.eapps.api.model.StravaAthlete
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserProfile
@@ -19,14 +14,12 @@ import akio.apps.myrun.feature.core.ui.AppDimensions
 import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.CentralAnnouncementView
 import akio.apps.myrun.feature.core.ui.CentralLoadingView
-import akio.apps.myrun.feature.core.ui.CompoundSwitch
 import akio.apps.myrun.feature.core.ui.ErrorDialog
 import akio.apps.myrun.feature.core.ui.FormSectionSpace
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.core.ui.ProgressDialog
 import akio.apps.myrun.feature.core.ui.StatusBarSpacer
 import akio.apps.myrun.feature.core.ui.filterFloatTextField
-import akio.apps.myrun.feature.profile.LinkStravaDelegate
 import akio.apps.myrun.feature.profile.R
 import akio.apps.myrun.feature.profile.UploadAvatarActivity
 import akio.apps.myrun.feature.profile.UserProfileViewModel
@@ -38,11 +31,9 @@ import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -53,7 +44,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
@@ -62,7 +52,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.ArrowBack
@@ -123,7 +112,6 @@ private fun UserProfileScreen(
         screenState,
         navController,
         preferredSystem,
-        onConfirmToUnlinkStrava = { userProfileViewModel.deauthorizeStrava() },
         onClickSaveUserProfile = {
             userProfileViewModel.updateUserProfile()
             navController.popBackStack()
@@ -149,7 +137,6 @@ private fun UserProfileScreen(
     screenState: UserProfileViewModel.ScreenState,
     navController: NavController,
     preferredSystem: MeasureSystem,
-    onConfirmToUnlinkStrava: () -> Unit,
     onClickSaveUserProfile: () -> Unit,
     onFormDataChanged: (UserProfileViewModel.UserProfileFormData) -> Unit,
 ) {
@@ -180,9 +167,7 @@ private fun UserProfileScreen(
                 is UserProfileViewModel.ScreenState.FormState -> {
                     UserProfileForm(
                         screenState.editingFormData,
-                        screenState.stravaLinkingState,
                         preferredSystem,
-                        onConfirmToUnlinkStrava,
                         onFormDataChanged
                     )
                 }
@@ -204,9 +189,7 @@ private fun BoxScope.UserProfileLoadingIndicator() {
 @Composable
 private fun UserProfileForm(
     formData: UserProfileViewModel.UserProfileFormData,
-    stravaLinkingState: UserProfileViewModel.StravaLinkingState,
     preferredSystem: MeasureSystem,
-    onConfirmToUnlinkStrava: () -> Unit,
     onUserProfileFormDataChanged: (UserProfileViewModel.UserProfileFormData) -> Unit,
 ) {
     val context = LocalContext.current
@@ -271,10 +254,6 @@ private fun UserProfileForm(
         )
 
         FormSectionSpace()
-        SectionTitle(stringResource(id = R.string.profile_other_apps_section_title))
-
-        // strava
-        UserProfileStravaLinkingSwitch(stravaLinkingState, onConfirmToUnlinkStrava)
     }
 }
 
@@ -298,80 +277,8 @@ private fun UserProfileGenderTextField(
     }
 }
 
-@Composable
-private fun UserProfileStravaLinkingSwitch(
-    stravaLinkingState: UserProfileViewModel.StravaLinkingState,
-    onConfirmToUnlinkStrava: () -> Unit,
-) {
-    var isStravaUnlinkAlertShowing by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    CompoundSwitch(
-        label = stringResource(id = R.string.user_profile_strava_description),
-        enabled = stravaLinkingState != UserProfileViewModel.StravaLinkingState.Unknown,
-        checked = stravaLinkingState == UserProfileViewModel.StravaLinkingState.Linked,
-        onClick = {
-            when (stravaLinkingState) {
-                UserProfileViewModel.StravaLinkingState.NotLinked ->
-                    openStravaLinkActivity(context)
-                UserProfileViewModel.StravaLinkingState.Linked ->
-                    isStravaUnlinkAlertShowing = true
-                else -> { /* do nothing */
-                }
-            }
-        }
-    )
-
-    if (isStravaUnlinkAlertShowing) {
-        StravaUnlinkAlert(
-            onDismissRequest = { isStravaUnlinkAlertShowing = false },
-            onConfirmed = { onConfirmToUnlinkStrava() }
-        )
-    }
-}
-
 fun openUploadAvatarActivity(context: Context) {
     val intent = UploadAvatarActivity.launchIntent(context)
-    context.startActivity(intent)
-}
-
-@Composable
-private fun StravaUnlinkAlert(onDismissRequest: () -> Unit, onConfirmed: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        buttons = {
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = AppDimensions.rowVerticalPadding)
-                    .padding(horizontal = AppDimensions.screenHorizontalPadding)
-            ) {
-                TextButton(
-                    onClick = {
-                        onConfirmed()
-                        onDismissRequest()
-                    }
-                ) {
-                    Text(text = stringResource(id = R.string.action_yes), fontSize = 18.sp)
-                }
-                TextButton(
-                    onClick = { onDismissRequest() }
-                ) {
-                    Text(text = stringResource(id = R.string.action_no), fontSize = 18.sp)
-                }
-            }
-        },
-        text = {
-            Text(
-                text = stringResource(id = R.string.user_profile_app_strava_unlink_dialog_message),
-                fontSize = 16.sp
-            )
-        }
-    )
-}
-
-fun openStravaLinkActivity(context: Context) {
-    val intent = LinkStravaDelegate.buildStravaLoginIntent(context)
     context.startActivity(intent)
 }
 
@@ -572,12 +479,10 @@ private fun PreviewUserProfileScreenSuccessForm() {
     UserProfileScreen(
         screenState = UserProfileViewModel.ScreenState.create(
             Resource.Success(createUserProfile()),
-            Resource.Success(createExternalProviders()),
             null
         ),
         navController = rememberNavController(),
         MeasureSystem.Metric,
-        {},
         {}
     ) {}
 }
@@ -588,27 +493,13 @@ private fun PreviewUserProfileScreenErrorForm() {
     UserProfileScreen(
         screenState = UserProfileViewModel.ScreenState.create(
             Resource.Error(Exception()),
-            Resource.Success(createExternalProviders()),
             null
         ),
         navController = rememberNavController(),
         MeasureSystem.Metric,
-        {},
         {}
     ) {}
 }
-
-private fun createExternalProviders() =
-    ExternalProviders(
-        ProviderToken(
-            RunningApp.Strava,
-            ExternalAppToken.StravaToken(
-                "accessToken",
-                "refreshToken",
-                StravaAthlete(0L)
-            )
-        )
-    )
 
 private fun createUserProfile(): UserProfile {
     return UserProfile(
