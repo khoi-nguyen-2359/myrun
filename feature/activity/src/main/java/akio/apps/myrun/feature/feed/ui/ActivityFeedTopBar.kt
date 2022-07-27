@@ -17,6 +17,7 @@ import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.sharp.CheckCircleOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,8 +39,9 @@ private object ActivityFeedTopBarColors {
 @Composable
 internal fun ActivityFeedTopBar(
     activityUploadBadge: ActivityFeedViewModel.ActivityUploadBadgeStatus?,
-    onClickUploadCompleteBadge: () -> Unit,
     modifier: Modifier = Modifier,
+    onClickUploadCompleteBadge: () -> Unit,
+    onClickUserPreferencesButton: () -> Unit,
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
         TopAppBar(
@@ -51,6 +53,9 @@ internal fun ActivityFeedTopBar(
             },
             actions = {
                 ActivityUploadNotifierBadge(activityUploadBadge, onClickUploadCompleteBadge)
+                AppBarIconButton(iconImageVector = Icons.Rounded.Settings) {
+                    onClickUserPreferencesButton()
+                }
             }
         )
     }

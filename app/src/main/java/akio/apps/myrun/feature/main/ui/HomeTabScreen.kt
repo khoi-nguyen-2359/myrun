@@ -73,7 +73,6 @@ import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalAnimationApi::class)
 private object HomeTabNavTransitionDefaults {
     private val fadeInImmediately = fadeIn(
         initialAlpha = 1f,

@@ -4,6 +4,7 @@ import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
+import akio.apps.myrun.feature.userprefs.ui.UserPreferencesScreen
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -66,6 +67,21 @@ fun MainNavHost(
             onClickExportActivityFile,
             navController
         )
+
+        addUserPreferencesDestination(navController)
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+fun NavGraphBuilder.addUserPreferencesDestination(navController: NavHostController) {
+    composable(
+        route = HomeNavDestination.UserPreferences.route,
+        enterTransition = { AppNavTransitionDefaults.enterTransition },
+        exitTransition = { AppNavTransitionDefaults.exitTransition },
+        popEnterTransition = { AppNavTransitionDefaults.popEnterTransition },
+        popExitTransition = { AppNavTransitionDefaults.popExitTransition }
+    ) { backStackEntry ->
+        UserPreferencesScreen(navController, backStackEntry)
     }
 }
 

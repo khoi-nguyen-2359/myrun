@@ -19,7 +19,9 @@ import akio.apps.myrun.feature.core.ui.AppDimensions
 import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.CentralAnnouncementView
 import akio.apps.myrun.feature.core.ui.CentralLoadingView
+import akio.apps.myrun.feature.core.ui.CompoundSwitch
 import akio.apps.myrun.feature.core.ui.ErrorDialog
+import akio.apps.myrun.feature.core.ui.FormSectionSpace
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.core.ui.ProgressDialog
 import akio.apps.myrun.feature.core.ui.StatusBarSpacer
@@ -59,7 +61,6 @@ import androidx.compose.material.ListItem
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
-import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
@@ -219,8 +220,8 @@ private fun UserProfileForm(
         UserProfileImageView(formData.photoUrl) {
             openUploadAvatarActivity(context)
         }
-        UserProfileSectionSpacer()
-        UserProfileSectionSpacer()
+        FormSectionSpace()
+        FormSectionSpace()
         SectionTitle(stringResource(id = R.string.profile_basic_label))
 
         // name
@@ -236,7 +237,7 @@ private fun UserProfileForm(
             errorMessage = userNameErrorMessage
         )
 
-        UserProfileSectionSpacer()
+        FormSectionSpace()
         SectionTitle(stringResource(id = R.string.profile_physical_label))
 
         // birthdate
@@ -269,7 +270,7 @@ private fun UserProfileForm(
             }
         )
 
-        UserProfileSectionSpacer()
+        FormSectionSpace()
         SectionTitle(stringResource(id = R.string.profile_other_apps_section_title))
 
         // strava
@@ -304,7 +305,7 @@ private fun UserProfileStravaLinkingSwitch(
 ) {
     var isStravaUnlinkAlertShowing by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    UserProfileSwitch(
+    CompoundSwitch(
         label = stringResource(id = R.string.user_profile_strava_description),
         enabled = stravaLinkingState != UserProfileViewModel.StravaLinkingState.Unknown,
         checked = stravaLinkingState == UserProfileViewModel.StravaLinkingState.Linked,
@@ -433,42 +434,6 @@ fun showDatePicker(context: Context, userBirthdateInMillis: Long, onDateSelect: 
         .show()
 }
 
-private fun Modifier.modifyIf(enabled: Boolean, application: Modifier.() -> Modifier): Modifier =
-    this.run {
-        if (enabled) {
-            this.application()
-        } else {
-            this
-        }
-    }
-
-@Composable
-private fun UserProfileSwitch(
-    label: String,
-    checked: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-) = Row(
-    verticalAlignment = Alignment.CenterVertically,
-    modifier = Modifier
-        .modifyIf(enabled) {
-            clickable { onClick() }
-        }
-        .padding(
-            vertical = AppDimensions.rowVerticalPadding,
-            horizontal = AppDimensions.screenHorizontalPadding
-        )
-) {
-    Text(text = label, modifier = Modifier.weight(1f))
-    Switch(enabled = enabled, checked = checked, onCheckedChange = null)
-}
-
-@Preview
-@Composable
-private fun PreviewUserProfileSwitch() {
-    UserProfileSwitch("label", checked = true, enabled = true) {}
-}
-
 @Composable
 private fun UserProfileTextField(
     label: String,
@@ -531,11 +496,6 @@ private fun SectionTitle(titleText: String) =
             fontSize = 15.sp
         )
     }
-
-@Composable
-private fun UserProfileSectionSpacer() {
-    Spacer(modifier = Modifier.height(16.dp))
-}
 
 @Composable
 private fun UserProfileTopBar(

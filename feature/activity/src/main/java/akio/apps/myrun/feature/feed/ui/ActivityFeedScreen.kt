@@ -181,13 +181,15 @@ private fun ActivityFeedScreen(
 
         ActivityFeedTopBar(
             activityUploadBadge,
-            onClickUploadCompleteBadge(coroutineScope, feedListState, activityFeedViewModel),
             Modifier
                 .height(topBarHeightDp)
                 .align(Alignment.TopCenter)
                 .offset { IntOffset(x = 0, y = topBarOffsetY.value.roundToInt()) }
-                .background(AppColors.primary)
-        )
+                .background(AppColors.primary),
+            onClickUploadCompleteBadge(coroutineScope, feedListState, activityFeedViewModel)
+        ) {
+            navController.navigate(HomeNavDestination.UserPreferences.route)
+        }
     }
 }
 
