@@ -44,6 +44,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -112,7 +113,7 @@ private fun UserStatsScreen(
 ) {
     Column {
         StatusBarSpacer()
-        UserStatsTopBar(openRoutePlanningAction)
+        UserStatsTopBar(appNavController, openRoutePlanningAction)
         when (screenState) {
             UserStatsViewModel.ScreenState.StatsLoading -> {
                 CentralLoadingView(text = stringResource(id = R.string.message_loading))
@@ -430,9 +431,11 @@ private fun UserStatsOutlinedButton(
     }
 }
 
-@Suppress("UNUSED_PARAMETER")
 @Composable
-private fun UserStatsTopBar(openRoutePlanningAction: () -> Unit) {
+private fun UserStatsTopBar(
+    navController: NavController,
+    openRoutePlanningAction: () -> Unit
+) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.home_nav_user_stats_tab_label)) },
         actions = {
@@ -441,6 +444,9 @@ private fun UserStatsTopBar(openRoutePlanningAction: () -> Unit) {
                     iconImageVector = Icons.Rounded.Add,
                     onClick = openRoutePlanningAction
                 )
+            }
+            AppBarIconButton(iconImageVector = Icons.Rounded.Settings) {
+                navController.navigate(HomeNavDestination.UserPreferences.route)
             }
         }
     )
