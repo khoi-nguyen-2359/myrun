@@ -14,8 +14,8 @@ import akio.apps.myrun.feature.core.ui.CompoundText
 import akio.apps.myrun.feature.core.ui.ConfirmationDialog
 import akio.apps.myrun.feature.core.ui.ErrorDialog
 import akio.apps.myrun.feature.core.ui.FormSectionSpace
-import akio.apps.myrun.feature.core.ui.ListDialog
 import akio.apps.myrun.feature.core.ui.ProgressDialog
+import akio.apps.myrun.feature.core.ui.SingleChoiceListDialog
 import akio.apps.myrun.feature.core.ui.StatusBarSpacer
 import akio.apps.myrun.feature.profile.LinkStravaDelegate
 import akio.apps.myrun.feature.profile.R
@@ -105,16 +105,19 @@ private fun MeasureSystemSection(
 ) {
     var isShowingListDialog by remember { mutableStateOf(false) }
     val allItems = MeasureSystem.values()
+    val sectionLabel = stringResource(id = R.string.user_prefs_unit_of_measure_label)
     CompoundText(
-        label = stringResource(id = R.string.user_prefs_unit_of_measure_label),
+        label = sectionLabel,
         value = preferredSystem.name
     ) {
         isShowingListDialog = true
     }
 
     if (isShowingListDialog) {
-        ListDialog(
+        SingleChoiceListDialog(
+            sectionLabel,
             items = allItems.map { it.name },
+            preferredSystem.name,
             onClickAtIndex = { index -> onSelectMeasureSystem(allItems[index]) },
             onDismiss = { isShowingListDialog = false }
         )
@@ -145,6 +148,7 @@ private fun StravaLinkSwitch(
 
     if (isUnlinkAlertShowing) {
         ConfirmationDialog(
+            title = stringResource(id = R.string.user_prefs_app_strava_unlink_confirm_title),
             onDismiss = { isUnlinkAlertShowing = false },
             confirmLabel = stringResource(id = R.string.action_yes),
             onConfirmed = { onConfirmToUnlinkStrava() },
