@@ -14,10 +14,8 @@ import akio.apps.myrun.feature.core.ui.AppDimensions
 import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.CentralAnnouncementView
 import akio.apps.myrun.feature.core.ui.CentralLoadingView
-import akio.apps.myrun.feature.core.ui.ErrorDialog
 import akio.apps.myrun.feature.core.ui.FormSectionSpace
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
-import akio.apps.myrun.feature.core.ui.ProgressDialog
 import akio.apps.myrun.feature.core.ui.StatusBarSpacer
 import akio.apps.myrun.feature.core.ui.filterFloatTextField
 import akio.apps.myrun.feature.profile.R
@@ -118,17 +116,6 @@ private fun UserProfileScreen(
         }
     ) { editedFormData ->
         userProfileViewModel.onFormDataChanged(editedFormData)
-    }
-
-    // overlay things
-    val isInProgress by userProfileViewModel.isLaunchCatchingInProgress.collectAsState()
-    val error by userProfileViewModel.launchCatchingError.collectAsState()
-    if (isInProgress) {
-        ProgressDialog(stringResource(id = R.string.message_loading))
-    }
-
-    error.getContentIfNotHandled()?.let { ex ->
-        ErrorDialog(ex.message ?: stringResource(id = R.string.dialog_delegate_unknown_error))
     }
 }
 

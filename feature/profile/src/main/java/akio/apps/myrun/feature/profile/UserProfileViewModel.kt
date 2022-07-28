@@ -9,7 +9,6 @@ import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
-import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import javax.inject.Inject
@@ -22,12 +21,11 @@ import kotlinx.coroutines.flow.flowOn
 internal class UserProfileViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getUserProfileUsecase: GetUserProfileUsecase,
-    private val launchCatchingDelegate: LaunchCatchingDelegate,
     private val updateUserProfileUsecase: UpdateUserProfileUsecase,
     private val userPreferences: UserPreferences,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
-) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
+) : ViewModel() {
 
     val preferredSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystem()
 

@@ -12,8 +12,10 @@ import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.CompoundSwitch
 import akio.apps.myrun.feature.core.ui.CompoundText
 import akio.apps.myrun.feature.core.ui.ConfirmationDialog
+import akio.apps.myrun.feature.core.ui.ErrorDialog
 import akio.apps.myrun.feature.core.ui.FormSectionSpace
 import akio.apps.myrun.feature.core.ui.ListDialog
+import akio.apps.myrun.feature.core.ui.ProgressDialog
 import akio.apps.myrun.feature.core.ui.StatusBarSpacer
 import akio.apps.myrun.feature.profile.LinkStravaDelegate
 import akio.apps.myrun.feature.profile.R
@@ -82,6 +84,17 @@ private fun UserPreferencesScreen(
         StravaLinkSwitch(stravaLinkState) {
             userPrefsViewModel.deauthorizeStrava()
         }
+    }
+
+    // overlay things
+    val isInProgress by userPrefsViewModel.isLaunchCatchingInProgress.collectAsState()
+    val error by userPrefsViewModel.launchCatchingError.collectAsState()
+    if (isInProgress) {
+        ProgressDialog(stringResource(id = R.string.message_loading))
+    }
+
+    error.getContentIfNotHandled()?.let { ex ->
+        ErrorDialog(ex.message ?: stringResource(id = R.string.dialog_delegate_unknown_error))
     }
 }
 

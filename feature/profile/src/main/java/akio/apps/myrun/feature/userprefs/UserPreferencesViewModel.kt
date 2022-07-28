@@ -39,12 +39,10 @@ class UserPreferencesViewModel @Inject constructor(
         userPreferences.setMeasureSystem(measureSystem)
     }
 
-    fun deauthorizeStrava() {
-        viewModelScope.launchCatching {
-            withContext(ioDispatcher) { deauthorizeStravaUsecase.deauthorizeStrava() }
+    fun deauthorizeStrava() = viewModelScope.launchCatching {
+        withContext(ioDispatcher) { deauthorizeStravaUsecase.deauthorizeStrava() }
 
-            UploadStravaFileWorker.clear(application)
-        }
+        UploadStravaFileWorker.clear(application)
     }
 
     private fun mapAppTokensToStravaLinkState(
