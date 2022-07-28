@@ -25,6 +25,7 @@ import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemHorizo
 import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemVerticalMargin
 import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemVerticalPadding
 import android.app.Application
+import android.content.Context
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -437,22 +438,8 @@ private fun ActivityPerformanceRow(
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
-    val valueFormatterList = remember(measureSystem) {
-        val trackValueFormatterPreference =
-            UnitFormatterSetFactory.createUnitFormatterSet(measureSystem)
-        createActivityFormatterList(activity.activityType, trackValueFormatterPreference)
-    }
-    val performanceValue = remember(isExpanded) {
-        valueFormatterList.foldIndexed("") { index, acc, performedResultFormatter ->
-            val formattedValue = performedResultFormatter.getFormattedValue(activity)
-            val unit = performedResultFormatter.getUnit(context)
-            val presentedText = "$formattedValue $unit"
-            if (!isExpanded && index == 0) {
-                return@remember presentedText
-            }
-            "$acc$presentedText$PERFORMANCE_VALUE_DELIM"
-        }
-            .removeSuffix(PERFORMANCE_VALUE_DELIM)
+    val performanceValue = remember(isExpanded, measureSystem) {
+        makePerformanceDisplayText(measureSystem, activity, context, isExpanded)
     }
 
     OutlinedButton(
@@ -474,6 +461,34 @@ private fun ActivityPerformanceRow(
             modifier = Modifier.animateContentSize()
         )
     }
+}
+
+private fun makePerformanceDisplayText(
+    measureSystem: MeasureSystem,
+    activity: BaseActivityModel,
+    context: Context,
+    isExpanded: Boolean,
+): String {
+    val trackValueFormatterPreference =
+        UnitFormatterSetFactory.createUnitFormatterSet(measureSystem)
+    val selectedFormatterList = createActivityFormatterList(
+        activity.activityType,
+        trackValueFormatterPreference
+    ).let { formatterList ->
+        if (!isExpanded) {
+            // show only one stats number when the box is collapsed
+            listOfNotNull(formatterList.firstOrNull())
+        } else {
+            formatterList
+        }
+    }
+    return selectedFormatterList.fold("") { acc, performedResultFormatter ->
+        val formattedValue = performedResultFormatter.getFormattedValue(activity)
+        val unit = performedResultFormatter.getUnit(context)
+        val presentedText = "$formattedValue $unit"
+        "$acc$presentedText$PERFORMANCE_VALUE_DELIM"
+    }
+        .removeSuffix(PERFORMANCE_VALUE_DELIM)
 }
 
 private fun PaddingValues.clone(
