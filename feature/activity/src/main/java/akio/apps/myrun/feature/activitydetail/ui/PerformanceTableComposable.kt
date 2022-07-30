@@ -5,8 +5,11 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
-import akio.apps.myrun.feature.TrackingValueFormatter
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.feature.activity.R
+import akio.apps.myrun.feature.core.measurement.TrackUnitFormatter
+import akio.apps.myrun.feature.core.measurement.TrackUnitFormatterSet
+import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.core.ui.AppDimensions
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +21,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,9 +34,12 @@ import androidx.compose.ui.unit.dp
 @Composable
 internal fun PerformanceTableComposable(
     activity: BaseActivityModel,
+    trackUnitFormatterSet: TrackUnitFormatterSet,
     modifier: Modifier = Modifier,
 ) = Column(modifier) {
-    val trackingValueFormatterList = createActivityFormatterList(activity)
+    val trackingValueFormatterList = remember(trackUnitFormatterSet) {
+        createActivityFormatterList(activity, trackUnitFormatterSet)
+    }
 
     val iterator = trackingValueFormatterList.iterator()
     while (iterator.hasNext()) {
@@ -57,17 +64,18 @@ internal fun PerformanceTableComposable(
 
 private fun createActivityFormatterList(
     activity: BaseActivityModel,
-): List<TrackingValueFormatter<*>> =
+    trackUnitFormatterSet: TrackUnitFormatterSet,
+): List<TrackUnitFormatter<*>> =
     when (activity.activityType) {
         ActivityType.Running -> listOf(
-            TrackingValueFormatter.DistanceKm,
-            TrackingValueFormatter.PaceMinutePerKm,
-            TrackingValueFormatter.DurationHourMinuteSecond
+            trackUnitFormatterSet.distanceFormatter,
+            trackUnitFormatterSet.paceFormatter,
+            trackUnitFormatterSet.durationFormatter
         )
         ActivityType.Cycling -> listOf(
-            TrackingValueFormatter.DistanceKm,
-            TrackingValueFormatter.SpeedKmPerHour,
-            TrackingValueFormatter.DurationHourMinuteSecond
+            trackUnitFormatterSet.distanceFormatter,
+            trackUnitFormatterSet.speedFormatter,
+            trackUnitFormatterSet.durationFormatter
         )
         else -> emptyList()
     }
@@ -75,19 +83,19 @@ private fun createActivityFormatterList(
 @Composable
 private fun RowScope.PerformedResultCellComposable(
     activity: BaseActivityModel,
-    valueFormatter: TrackingValueFormatter<*>,
+    trackUnitFormatter: TrackUnitFormatter<*>,
 ) = Column(
     horizontalAlignment = Alignment.CenterHorizontally,
     modifier = Modifier.weight(weight = 1f)
 ) {
     Text(
-        text = valueFormatter.getLabel(LocalContext.current),
+        text = trackUnitFormatter.getLabel(LocalContext.current),
         style = MaterialTheme.typography.caption,
         textAlign = TextAlign.Center,
         fontWeight = FontWeight.Bold
     )
-    val formattedValue = valueFormatter.getFormattedValue(activity)
-    val unit = valueFormatter.getUnit(LocalContext.current)
+    val formattedValue = trackUnitFormatter.getFormattedValue(activity)
+    val unit = trackUnitFormatter.getUnit(LocalContext.current)
     Text(
         text = "$formattedValue $unit",
         style = MaterialTheme.typography.h6,
@@ -120,6 +128,7 @@ private fun PreviewTable() {
             ),
             pace = 1.0,
             cadence = 160
-        )
+        ),
+        UnitFormatterSetFactory.createUnitFormatterSet(MeasureSystem.Default)
     )
 }

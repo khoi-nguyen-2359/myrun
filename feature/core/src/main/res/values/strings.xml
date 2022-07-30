@@ -18,10 +18,16 @@
     <string name="route_tracking_pace_label">Pace</string>
     <string name="route_tracking_distance_label">Distance</string>
     <string name="performance_duration_label">Time</string>
-    <string name="performance_unit_speed">km/h</string>
+    <string name="performance_unit_speed_km_per_hour">km/h</string>
+    <string name="performance_unit_speed_mi_per_hour">mi/h</string>
     <string name="performance_unit_pace_min_per_km">/km</string>
+    <string name="performance_unit_pace_min_per_mile">/mi</string>
     <string name="performance_unit_distance_km">km</string>
+    <string name="performance_unit_distance_mi">mi</string>
     <string name="common_speed_unit">km/h</string>
+    <string name="user_profile_unit_weight_kg">kg</string>
+    <string name="user_profile_unit_weight_label">Weight</string>
+    <string name="user_profile_unit_weight_lbs">lbs</string>
 
     <string name="activity_name_running">Run</string>
     <string name="activity_name_cycling">Ride</string>
@@ -51,6 +57,7 @@
 
     <string name="alert_permissions_rationale_message">You should give application enough permissions to select a picture.</string>
     <string name="alert_permissions_missing_message">Application doesn\'t have enough permissions to select a picture.</string>
+    <string name="performance_unit_time_hour">hour</string>
     <string-array name="photo_selection_options">
         <item>Camera</item>
         <item>Photo Gallery</item>

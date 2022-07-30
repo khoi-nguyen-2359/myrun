@@ -2,13 +2,14 @@ package akio.apps.myrun.feature.activitydetail
 
 import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityRepository
-import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.common.Resource
+import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
-import akio.apps.myrun.domain.activity.RunSplitsCalculator
+import akio.apps.myrun.domain.activity.ActivitySplitCalculator
 import akio.apps.myrun.domain.user.PlaceNameSelector
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -17,7 +18,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -27,8 +28,9 @@ internal class ActivityDetailViewModel @Inject constructor(
     private val userRecentPlaceRepository: UserRecentPlaceRepository,
     private val userAuthenticationState: UserAuthenticationState,
     private val placeNameSelector: PlaceNameSelector,
-    private val runSplitsCalculator: RunSplitsCalculator,
+    private val activitySplitCalculator: ActivitySplitCalculator,
     private val activityDateTimeFormatter: ActivityDateTimeFormatter,
+    userPreferences: UserPreferences,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
@@ -36,32 +38,23 @@ internal class ActivityDetailViewModel @Inject constructor(
     private val activityDetailsMutableStateFlow: MutableStateFlow<Resource<BaseActivityModel>> =
         MutableStateFlow(Resource.Loading())
 
-    val screenStateFlow: Flow<ScreenState> =
-        activityDetailsMutableStateFlow.map(::combineScreenState)
-
-    private suspend fun combineScreenState(
-        activityResource: Resource<BaseActivityModel>,
-    ): ScreenState = withContext(ioDispatcher) {
+    val screenStateFlow: Flow<ScreenState> = combine(
+        activityDetailsMutableStateFlow,
+        userPreferences.getMeasureSystem()
+    ) { activityResource, preferredSystem ->
         val userId = userAuthenticationState.requireUserAccountId()
         val userPlaceIdentifier = userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
-        val placeName = placeNameSelector.select(
-            activityResource.data?.placeIdentifier,
-            userPlaceIdentifier
-        )
-        val runSplits = if (activityResource is Resource.Success &&
-            activityResource.data.activityType == ActivityType.Running
-        ) {
-            val locations =
-                activityRepository.getActivityLocationDataPoints(activityResource.data.id)
-            runSplitsCalculator.createRunSplits(locations)
-        } else {
-            emptyList()
-        }
+        val placeName =
+            placeNameSelector.select(activityResource.data?.placeIdentifier, userPlaceIdentifier)
+        val locations = activityResource.data?.id?.let { activityId ->
+            activityRepository.getActivityLocationDataPoints(activityId)
+        } ?: emptyList()
         ScreenState.create(
             activityResource,
+            preferredSystem,
             activityDateTimeFormatter,
             placeName,
-            runSplits
+            activitySplitCalculator.createRunSplits(locations, preferredSystem)
         )
     }
 
@@ -96,6 +89,7 @@ internal class ActivityDetailViewModel @Inject constructor(
 
         class DataAvailable(
             val activityData: BaseActivityModel,
+            val preferredSystem: MeasureSystem,
             val activityPlaceName: String?,
             val activityFormattedStartTime: ActivityDateTimeFormatter.Result,
             val runSplits: List<Double>,
@@ -105,6 +99,7 @@ internal class ActivityDetailViewModel @Inject constructor(
         companion object {
             fun create(
                 activityDetailResource: Resource<BaseActivityModel>,
+                preferredSystem: MeasureSystem,
                 activityDateTimeFormatter: ActivityDateTimeFormatter,
                 activityPlaceName: String?,
                 runSplits: List<Double>,
@@ -118,6 +113,7 @@ internal class ActivityDetailViewModel @Inject constructor(
                     activityData != null -> {
                         DataAvailable(
                             activityData,
+                            preferredSystem,
                             activityPlaceName,
                             activityDateTimeFormatter.formatActivityDateTime(
                                 activityData.startTime

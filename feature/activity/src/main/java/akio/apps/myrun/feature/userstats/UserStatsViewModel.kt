@@ -4,6 +4,8 @@ import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.user.api.PlaceIdentifier
+import akio.apps.myrun.data.user.api.UserPreferences
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
@@ -29,6 +31,7 @@ internal class UserStatsViewModel @Inject constructor(
     private val getUserRecentPlaceNameUsecase: GetUserRecentPlaceNameUsecase,
     private val getTrainingSummaryDataUsecase: GetTrainingSummaryDataUsecase,
     private val activityLocalStorage: ActivityLocalStorage,
+    private val userPreferences: UserPreferences,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
@@ -37,6 +40,7 @@ internal class UserStatsViewModel @Inject constructor(
         getUserProfileUsecase.getUserProfileFlow().mapNotNull { it.data },
         getUserRecentPlaceNameUsecase.getUserRecentPlaceNameFlow(),
         getTrainingSummaryDataFlow(),
+        userPreferences.getMeasureSystem(),
         ::combineUserProfileAndRecentPlace
     )
         .onStart { emit(savedStateHandle.getScreenState()) }
@@ -55,9 +59,13 @@ internal class UserStatsViewModel @Inject constructor(
         userRecentPlace: PlaceIdentifier?,
         trainingSummaryTableData:
             Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
-    ): ScreenState {
-        return ScreenState.createScreenState(userRecentPlace, userProfile, trainingSummaryTableData)
-    }
+        measureSystem: MeasureSystem,
+    ): ScreenState = ScreenState.createScreenState(
+        userRecentPlace,
+        userProfile,
+        trainingSummaryTableData,
+        measureSystem
+    )
 
     private fun SavedStateHandle.getScreenState(): ScreenState =
         this[STATE_SCREEN_STATE] ?: ScreenState.StatsLoading
@@ -79,6 +87,7 @@ internal class UserStatsViewModel @Inject constructor(
             val userRecentPlace: PlaceIdentifier?,
             val trainingSummaryTableData:
                 Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
+            val measureSystem: MeasureSystem,
         ) : ScreenState(), Parcelable
 
         companion object {
@@ -87,12 +96,14 @@ internal class UserStatsViewModel @Inject constructor(
                 userProfile: UserProfile,
                 trainingSummaryTableData:
                     Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
+                measureSystem: MeasureSystem,
             ): StatsAvailable {
                 return StatsAvailable(
                     userProfile.name,
                     userProfile.photo,
                     userRecentPlace,
-                    trainingSummaryTableData
+                    trainingSummaryTableData,
+                    measureSystem
                 )
             }
         }

@@ -11,6 +11,7 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
+import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.domain.tracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.tracking.StoreTrackingActivityDataUsecase
 import akio.apps.myrun.feature.core.flowTimer
@@ -47,6 +48,7 @@ internal class RouteTrackingViewModel @Inject constructor(
     private val locationDataSource: LocationDataSource,
     private val routeTrackingConfiguration: RouteTrackingConfiguration,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
+    val userPreferences: UserPreferences,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {

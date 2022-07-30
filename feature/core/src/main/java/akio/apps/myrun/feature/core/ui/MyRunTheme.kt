@@ -34,6 +34,11 @@ object AppDimensions {
     val rowVerticalPadding: Dp = 12.dp
 }
 
+object AppTextStyle {
+    @Composable
+    fun dialogTitle() = MaterialTheme.typography.h6
+}
+
 @Composable
 fun AppTheme(content: @Composable () -> Unit) = MaterialTheme(
     colors = lightColors(

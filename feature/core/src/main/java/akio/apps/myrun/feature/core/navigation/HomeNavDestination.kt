@@ -33,4 +33,6 @@ object HomeNavDestination {
             listOf(activityIdRequiredArg.toNavArgumentValuePair(activityId))
         )
     }
+
+    object UserPreferences : NavDestinationInfo(routeName = "userPreferences")
 }

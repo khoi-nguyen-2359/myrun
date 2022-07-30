@@ -4,9 +4,11 @@ import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
-import akio.apps.myrun.domain.activity.RunSplitsCalculator
+import akio.apps.myrun.domain.activity.ActivitySplitCalculator
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import kotlin.test.assertEquals
@@ -16,6 +18,7 @@ import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -35,8 +38,9 @@ class ActivityDetailViewModelTest {
     private lateinit var mockedActivityRepository: ActivityRepository
     private lateinit var mockedUserAuthenticationState: UserAuthenticationState
     private lateinit var mockedUserRecentPlaceRepository: UserRecentPlaceRepository
-    private lateinit var mockedRunSplitsCalculator: RunSplitsCalculator
+    private lateinit var mockedActivitySplitCalculator: ActivitySplitCalculator
     private lateinit var mockedActivityDateTimeFormatter: ActivityDateTimeFormatter
+    private lateinit var mockedUserPreferences: UserPreferences
 
     private val testDispatcher: CoroutineDispatcher = UnconfinedTestDispatcher()
 
@@ -49,8 +53,9 @@ class ActivityDetailViewModelTest {
         mockedActivityRepository = mock()
         mockedUserAuthenticationState = mock()
         mockedUserRecentPlaceRepository = mock()
-        mockedRunSplitsCalculator = mock()
+        mockedActivitySplitCalculator = mock()
         mockedActivityDateTimeFormatter = mock()
+        mockedUserPreferences = mock()
     }
 
     private fun initActivityDetailViewModel(
@@ -61,8 +66,9 @@ class ActivityDetailViewModelTest {
         mockedUserRecentPlaceRepository,
         mockedUserAuthenticationState,
         mock(),
-        mockedRunSplitsCalculator,
+        mockedActivitySplitCalculator,
         mockedActivityDateTimeFormatter,
+        mockedUserPreferences,
         testDispatcher
     )
 
@@ -83,8 +89,10 @@ class ActivityDetailViewModelTest {
         whenever(mockedActivityRepository.getActivityLocationDataPoints(defaultActivityId))
             .thenReturn(locationDataPoints)
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
-        whenever(mockedRunSplitsCalculator.createRunSplits(locationDataPoints))
-            .thenReturn(emptyList())
+        whenever(mockedUserPreferences.getMeasureSystem()).thenReturn(flowOf(MeasureSystem.Metric))
+        whenever(
+            mockedActivitySplitCalculator.createRunSplits(locationDataPoints, MeasureSystem.Metric)
+        ).thenReturn(emptyList())
         whenever(mockedActivityDateTimeFormatter.formatActivityDateTime(activityStartTime))
             .thenReturn(mock())
 

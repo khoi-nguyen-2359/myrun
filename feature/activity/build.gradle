@@ -50,6 +50,7 @@ dependencies {
     implementation(project(':data:activity'))
     implementation(project(':data:user'))
     implementation(project(':data:eapps'))
+    implementation(project(':data:api'))
 
     implementation(project(":base:di"))
     implementation(project(':base:firebase'))

@@ -8,7 +8,6 @@
     <string name="user_profile_hint_birthdate">Birthdate</string>
     <string name="user_profile_hint_gender">Gender</string>
     <string name="user_profile_hint_weight">Weight</string>
-    <string name="profile_other_apps_section_title">Other apps</string>
     <string name="user_profile_strava_description">Sync your new activity to Strava automatically.</string>
     <string name="user_profile_fullscreen_loading_text">Getting your profile …</string>
     <string name="user_profile_select_birthdate_instruction">Select your birthdate</string>
@@ -22,9 +21,12 @@
     <string name="upload_avatar_title">Change avatar</string>
     <string name="user_profile_error_empty_user_name">User display name can not be blank.</string>
     <string name="upload_avatar_connection_unavailable_error">You need internet connection to update your profile image.</string>
-    <string name="user_profile_app_strava_unlink_dialog_message">Do you want to unlink from Strava? Your future activities won\'t be synced up.</string>
+    <string name="user_prefs_app_strava_unlink_confirm_message">Do you want to unlink from Strava? Your future activities won\'t be synced up.</string>
     <string name="user_profile_error_getting_profile">Error happened when getting profile.</string>
     <string name="upload_avatar_capture_camera">Open camera</string>
     <string name="upload_avatar_browse_gallery">Pick from gallery</string>
     <string name="action_upload">Upload</string>
+    <string name="user_prefs_title">User Preferences</string>
+    <string name="user_prefs_unit_of_measure_label">Unit of Measure</string>
+    <string name="user_prefs_app_strava_unlink_confirm_title">Unlink Confirmation</string>
 </resources>

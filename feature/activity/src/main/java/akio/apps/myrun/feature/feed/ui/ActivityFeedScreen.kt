@@ -5,12 +5,15 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
-import akio.apps.myrun.feature.TrackingValueFormatter
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.ktx.px2dp
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
+import akio.apps.myrun.feature.core.measurement.TrackUnitFormatter
+import akio.apps.myrun.feature.core.measurement.TrackUnitFormatterSet
+import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
@@ -22,6 +25,7 @@ import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemHorizo
 import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemVerticalMargin
 import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemVerticalPadding
 import android.app.Application
+import android.content.Context
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -178,13 +182,15 @@ private fun ActivityFeedScreen(
 
         ActivityFeedTopBar(
             activityUploadBadge,
-            onClickUploadCompleteBadge(coroutineScope, feedListState, activityFeedViewModel),
             Modifier
                 .height(topBarHeightDp)
                 .align(Alignment.TopCenter)
                 .offset { IntOffset(x = 0, y = topBarOffsetY.value.roundToInt()) }
-                .background(AppColors.primary)
-        )
+                .background(AppColors.primary),
+            onClickUploadCompleteBadge(coroutineScope, feedListState, activityFeedViewModel)
+        ) {
+            navController.navigate(HomeNavDestination.UserPreferences.route)
+        }
     }
 }
 
@@ -265,6 +271,9 @@ private fun ActivityFeedItemList(
     navController: NavController,
 ) {
     val userProfile by activityFeedViewModel.userProfile.collectAsState(initial = null)
+    val preferredUnitSystem by activityFeedViewModel.preferredSystem.collectAsState(
+        initial = MeasureSystem.Default
+    )
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -289,6 +298,7 @@ private fun ActivityFeedItemList(
                     activityFormattedStartTime,
                     activityDisplayPlaceName,
                     userProfile,
+                    preferredUnitSystem,
                     { activityModel ->
                         val route = HomeNavDestination.ActivityDetail.routeWithActivityId(
                             activityModel.id
@@ -361,6 +371,7 @@ private fun FeedActivityItem(
     activityFormattedStartTime: ActivityDateTimeFormatter.Result,
     activityDisplayPlaceName: String,
     userProfile: UserProfile?,
+    preferredSystem: MeasureSystem,
     onClickActivityAction: (BaseActivityModel) -> Unit,
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
@@ -381,34 +392,38 @@ private fun FeedActivityItem(
             isShareMenuVisible = true
         )
         Spacer(modifier = Modifier.height(8.dp))
-        ActivityRouteImageBox(activity)
+        ActivityRouteImageBox(activity, preferredSystem)
     }
 }
 
 @Composable
-private fun ActivityRouteImageBox(activity: BaseActivityModel) =
-    Box(contentAlignment = Alignment.TopStart) {
-        ActivityRouteImage(activity)
-        ActivityPerformanceRow(
-            activity,
-            modifier = Modifier.padding(
-                horizontal = activityItemHorizontalPadding,
-                vertical = activityItemVerticalPadding
-            )
+private fun ActivityRouteImageBox(
+    activity: BaseActivityModel,
+    preferredSystem: MeasureSystem,
+) = Box(contentAlignment = Alignment.TopStart) {
+    ActivityRouteImage(activity)
+    ActivityPerformanceRow(
+        activity,
+        preferredSystem,
+        modifier = Modifier.padding(
+            horizontal = activityItemHorizontalPadding,
+            vertical = activityItemVerticalPadding
         )
-    }
+    )
+}
 
 private fun createActivityFormatterList(
     activityType: ActivityType,
-): List<TrackingValueFormatter<*>> =
+    trackUnitFormatterSet: TrackUnitFormatterSet,
+): List<TrackUnitFormatter<*>> =
     when (activityType) {
         ActivityType.Running -> listOf(
-            TrackingValueFormatter.DistanceKm,
-            TrackingValueFormatter.PaceMinutePerKm
+            trackUnitFormatterSet.distanceFormatter,
+            trackUnitFormatterSet.paceFormatter
         )
         ActivityType.Cycling -> listOf(
-            TrackingValueFormatter.DistanceKm,
-            TrackingValueFormatter.SpeedKmPerHour
+            trackUnitFormatterSet.distanceFormatter,
+            trackUnitFormatterSet.speedFormatter
         )
         else -> emptyList()
     }
@@ -416,21 +431,15 @@ private fun createActivityFormatterList(
 private const val PERFORMANCE_VALUE_DELIM = " - "
 
 @Composable
-private fun ActivityPerformanceRow(activity: BaseActivityModel, modifier: Modifier = Modifier) {
+private fun ActivityPerformanceRow(
+    activity: BaseActivityModel,
+    measureSystem: MeasureSystem,
+    modifier: Modifier = Modifier,
+) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
-    val valueFormatterList = remember { createActivityFormatterList(activity.activityType) }
-    val performanceValue = remember(isExpanded) {
-        valueFormatterList.foldIndexed("") { index, acc, performedResultFormatter ->
-            val formattedValue = performedResultFormatter.getFormattedValue(activity)
-            val unit = performedResultFormatter.getUnit(context)
-            val presentedText = "$formattedValue $unit"
-            if (!isExpanded && index == 0) {
-                return@remember presentedText
-            }
-            "$acc$presentedText$PERFORMANCE_VALUE_DELIM"
-        }
-            .removeSuffix(PERFORMANCE_VALUE_DELIM)
+    val performanceValue = remember(isExpanded, measureSystem) {
+        makePerformanceDisplayText(measureSystem, activity, context, isExpanded)
     }
 
     OutlinedButton(
@@ -452,6 +461,34 @@ private fun ActivityPerformanceRow(activity: BaseActivityModel, modifier: Modifi
             modifier = Modifier.animateContentSize()
         )
     }
+}
+
+private fun makePerformanceDisplayText(
+    measureSystem: MeasureSystem,
+    activity: BaseActivityModel,
+    context: Context,
+    isExpanded: Boolean,
+): String {
+    val trackValueFormatterPreference =
+        UnitFormatterSetFactory.createUnitFormatterSet(measureSystem)
+    val selectedFormatterList = createActivityFormatterList(
+        activity.activityType,
+        trackValueFormatterPreference
+    ).let { formatterList ->
+        if (!isExpanded) {
+            // show only one stats number when the box is collapsed
+            listOfNotNull(formatterList.firstOrNull())
+        } else {
+            formatterList
+        }
+    }
+    return selectedFormatterList.fold("") { acc, performedResultFormatter ->
+        val formattedValue = performedResultFormatter.getFormattedValue(activity)
+        val unit = performedResultFormatter.getUnit(context)
+        val presentedText = "$formattedValue $unit"
+        "$acc$presentedText$PERFORMANCE_VALUE_DELIM"
+    }
+        .removeSuffix(PERFORMANCE_VALUE_DELIM)
 }
 
 private fun PaddingValues.clone(
@@ -646,7 +683,8 @@ private fun PreviewFeedActivityItem() {
         onClickExportFile = { },
         onClickUserAvatar = { },
         userProfile = UserProfile(accountId = "userId", photo = null),
-        activityFormattedStartTime = ActivityDateTimeFormatter.Result.FullDateTime("dd/mm/yyyy")
+        activityFormattedStartTime = ActivityDateTimeFormatter.Result.FullDateTime("dd/mm/yyyy"),
+        preferredSystem = MeasureSystem.Default
     )
 }
 

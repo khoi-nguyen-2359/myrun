@@ -1,14 +1,11 @@
 package akio.apps.myrun.feature.profile.ui
 
 import akio.apps.myrun.data.common.Resource
-import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
-import akio.apps.myrun.data.eapps.api.model.ExternalProviders
-import akio.apps.myrun.data.eapps.api.model.ProviderToken
-import akio.apps.myrun.data.eapps.api.model.RunningApp
-import akio.apps.myrun.data.eapps.api.model.StravaAthlete
 import akio.apps.myrun.data.user.api.model.Gender
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
+import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppBarIconButton
 import akio.apps.myrun.feature.core.ui.AppBarTextButton
@@ -17,12 +14,10 @@ import akio.apps.myrun.feature.core.ui.AppDimensions
 import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.CentralAnnouncementView
 import akio.apps.myrun.feature.core.ui.CentralLoadingView
-import akio.apps.myrun.feature.core.ui.ErrorDialog
+import akio.apps.myrun.feature.core.ui.FormSectionSpace
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
-import akio.apps.myrun.feature.core.ui.ProgressDialog
 import akio.apps.myrun.feature.core.ui.StatusBarSpacer
 import akio.apps.myrun.feature.core.ui.filterFloatTextField
-import akio.apps.myrun.feature.profile.LinkStravaDelegate
 import akio.apps.myrun.feature.profile.R
 import akio.apps.myrun.feature.profile.UploadAvatarActivity
 import akio.apps.myrun.feature.profile.UserProfileViewModel
@@ -34,11 +29,9 @@ import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,7 +42,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
@@ -57,9 +49,7 @@ import androidx.compose.material.ListItem
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Surface
-import androidx.compose.material.Switch
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.sharp.ArrowBack
@@ -114,28 +104,18 @@ private fun UserProfileScreen(
 ) = AppTheme {
     val screenState by userProfileViewModel.screenStateFlow
         .collectAsState(initial = UserProfileViewModel.ScreenState.Loading)
+    val preferredSystem by userProfileViewModel.preferredSystem
+        .collectAsState(initial = MeasureSystem.Metric)
     UserProfileScreen(
         screenState,
         navController,
-        onConfirmToUnlinkStrava = { userProfileViewModel.deauthorizeStrava() },
+        preferredSystem,
         onClickSaveUserProfile = {
             userProfileViewModel.updateUserProfile()
             navController.popBackStack()
-        },
-        onFormDataChanged = { editedFormData ->
-            userProfileViewModel.onFormDataChanged(editedFormData)
         }
-    )
-
-    // overlay things
-    val isInProgress by userProfileViewModel.isLaunchCatchingInProgress.collectAsState()
-    val error by userProfileViewModel.launchCatchingError.collectAsState()
-    if (isInProgress) {
-        ProgressDialog(stringResource(id = R.string.message_loading))
-    }
-
-    error.getContentIfNotHandled()?.let { ex ->
-        ErrorDialog(ex.message ?: stringResource(id = R.string.dialog_delegate_unknown_error))
+    ) { editedFormData ->
+        userProfileViewModel.onFormDataChanged(editedFormData)
     }
 }
 
@@ -143,7 +123,7 @@ private fun UserProfileScreen(
 private fun UserProfileScreen(
     screenState: UserProfileViewModel.ScreenState,
     navController: NavController,
-    onConfirmToUnlinkStrava: () -> Unit,
+    preferredSystem: MeasureSystem,
     onClickSaveUserProfile: () -> Unit,
     onFormDataChanged: (UserProfileViewModel.UserProfileFormData) -> Unit,
 ) {
@@ -174,8 +154,7 @@ private fun UserProfileScreen(
                 is UserProfileViewModel.ScreenState.FormState -> {
                     UserProfileForm(
                         screenState.editingFormData,
-                        screenState.stravaLinkingState,
-                        onConfirmToUnlinkStrava,
+                        preferredSystem,
                         onFormDataChanged
                     )
                 }
@@ -197,11 +176,12 @@ private fun BoxScope.UserProfileLoadingIndicator() {
 @Composable
 private fun UserProfileForm(
     formData: UserProfileViewModel.UserProfileFormData,
-    stravaLinkingState: UserProfileViewModel.StravaLinkingState,
-    onConfirmToUnlinkStrava: () -> Unit,
+    preferredSystem: MeasureSystem,
     onUserProfileFormDataChanged: (UserProfileViewModel.UserProfileFormData) -> Unit,
 ) {
     val context = LocalContext.current
+    val bodyWeightUnitFormatter =
+        UnitFormatterSetFactory.createBodyWeightUnitFormatter(preferredSystem)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.verticalScroll(rememberScrollState())
@@ -210,8 +190,8 @@ private fun UserProfileForm(
         UserProfileImageView(formData.photoUrl) {
             openUploadAvatarActivity(context)
         }
-        UserProfileSectionSpacer()
-        UserProfileSectionSpacer()
+        FormSectionSpace()
+        FormSectionSpace()
         SectionTitle(stringResource(id = R.string.profile_basic_label))
 
         // name
@@ -227,7 +207,7 @@ private fun UserProfileForm(
             errorMessage = userNameErrorMessage
         )
 
-        UserProfileSectionSpacer()
+        FormSectionSpace()
         SectionTitle(stringResource(id = R.string.profile_physical_label))
 
         // birthdate
@@ -247,21 +227,20 @@ private fun UserProfileForm(
         // gender
         UserProfileGenderTextField(formData, onUserProfileFormDataChanged)
 
+        val formattedWeight = bodyWeightUnitFormatter.getFormattedValue(formData.weight)
+        val label = bodyWeightUnitFormatter.getLabel(context)
+        val unit = bodyWeightUnitFormatter.getUnit(context)
         UserProfileTextField(
-            label = stringResource(id = R.string.user_profile_hint_weight),
-            value = formData.weight,
+            label = "$label ($unit)",
+            value = formattedWeight,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             onValueChange = { editWeight ->
-                val selectedWeight = filterFloatTextField(formData.weight, editWeight)
-                onUserProfileFormDataChanged(formData.copy(weight = selectedWeight))
+                val selectedWeight = filterFloatTextField(formattedWeight, editWeight)
+                onUserProfileFormDataChanged(formData.copy(weight = selectedWeight.toFloat()))
             }
         )
 
-        UserProfileSectionSpacer()
-        SectionTitle(stringResource(id = R.string.profile_other_apps_section_title))
-
-        // strava
-        UserProfileStravaLinkingSwitch(stravaLinkingState, onConfirmToUnlinkStrava)
+        FormSectionSpace()
     }
 }
 
@@ -285,80 +264,8 @@ private fun UserProfileGenderTextField(
     }
 }
 
-@Composable
-private fun UserProfileStravaLinkingSwitch(
-    stravaLinkingState: UserProfileViewModel.StravaLinkingState,
-    onConfirmToUnlinkStrava: () -> Unit,
-) {
-    var isStravaUnlinkAlertShowing by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    UserProfileSwitch(
-        label = stringResource(id = R.string.user_profile_strava_description),
-        enabled = stravaLinkingState != UserProfileViewModel.StravaLinkingState.Unknown,
-        checked = stravaLinkingState == UserProfileViewModel.StravaLinkingState.Linked,
-        onClick = {
-            when (stravaLinkingState) {
-                UserProfileViewModel.StravaLinkingState.NotLinked ->
-                    openStravaLinkActivity(context)
-                UserProfileViewModel.StravaLinkingState.Linked ->
-                    isStravaUnlinkAlertShowing = true
-                else -> { /* do nothing */
-                }
-            }
-        }
-    )
-
-    if (isStravaUnlinkAlertShowing) {
-        StravaUnlinkAlert(
-            onDismissRequest = { isStravaUnlinkAlertShowing = false },
-            onConfirmed = { onConfirmToUnlinkStrava() }
-        )
-    }
-}
-
 fun openUploadAvatarActivity(context: Context) {
     val intent = UploadAvatarActivity.launchIntent(context)
-    context.startActivity(intent)
-}
-
-@Composable
-private fun StravaUnlinkAlert(onDismissRequest: () -> Unit, onConfirmed: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        buttons = {
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = AppDimensions.rowVerticalPadding)
-                    .padding(horizontal = AppDimensions.screenHorizontalPadding)
-            ) {
-                TextButton(
-                    onClick = {
-                        onConfirmed()
-                        onDismissRequest()
-                    }
-                ) {
-                    Text(text = stringResource(id = R.string.action_yes), fontSize = 18.sp)
-                }
-                TextButton(
-                    onClick = { onDismissRequest() }
-                ) {
-                    Text(text = stringResource(id = R.string.action_no), fontSize = 18.sp)
-                }
-            }
-        },
-        text = {
-            Text(
-                text = stringResource(id = R.string.user_profile_app_strava_unlink_dialog_message),
-                fontSize = 16.sp
-            )
-        }
-    )
-}
-
-fun openStravaLinkActivity(context: Context) {
-    val intent = LinkStravaDelegate.buildStravaLoginIntent(context)
     context.startActivity(intent)
 }
 
@@ -419,42 +326,6 @@ fun showDatePicker(context: Context, userBirthdateInMillis: Long, onDateSelect: 
         birthDayOfMonth
     )
         .show()
-}
-
-private fun Modifier.modifyIf(enabled: Boolean, application: Modifier.() -> Modifier): Modifier =
-    this.run {
-        if (enabled) {
-            this.application()
-        } else {
-            this
-        }
-    }
-
-@Composable
-private fun UserProfileSwitch(
-    label: String,
-    checked: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-) = Row(
-    verticalAlignment = Alignment.CenterVertically,
-    modifier = Modifier
-        .modifyIf(enabled) {
-            clickable { onClick() }
-        }
-        .padding(
-            vertical = AppDimensions.rowVerticalPadding,
-            horizontal = AppDimensions.screenHorizontalPadding
-        )
-) {
-    Text(text = label, modifier = Modifier.weight(1f))
-    Switch(enabled = enabled, checked = checked, onCheckedChange = null)
-}
-
-@Preview
-@Composable
-private fun PreviewUserProfileSwitch() {
-    UserProfileSwitch("label", checked = true, enabled = true) {}
 }
 
 @Composable
@@ -519,11 +390,6 @@ private fun SectionTitle(titleText: String) =
             fontSize = 15.sp
         )
     }
-
-@Composable
-private fun UserProfileSectionSpacer() {
-    Spacer(modifier = Modifier.height(16.dp))
-}
 
 @Composable
 private fun UserProfileTopBar(
@@ -600,14 +466,12 @@ private fun PreviewUserProfileScreenSuccessForm() {
     UserProfileScreen(
         screenState = UserProfileViewModel.ScreenState.create(
             Resource.Success(createUserProfile()),
-            Resource.Success(createExternalProviders()),
             null
         ),
         navController = rememberNavController(),
-        {},
-        {},
+        MeasureSystem.Metric,
         {}
-    )
+    ) {}
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffffff)
@@ -616,27 +480,13 @@ private fun PreviewUserProfileScreenErrorForm() {
     UserProfileScreen(
         screenState = UserProfileViewModel.ScreenState.create(
             Resource.Error(Exception()),
-            Resource.Success(createExternalProviders()),
             null
         ),
         navController = rememberNavController(),
-        {},
-        {},
+        MeasureSystem.Metric,
         {}
-    )
+    ) {}
 }
-
-private fun createExternalProviders() =
-    ExternalProviders(
-        ProviderToken(
-            RunningApp.Strava,
-            ExternalAppToken.StravaToken(
-                "accessToken",
-                "refreshToken",
-                StravaAthlete(0L)
-            )
-        )
-    )
 
 private fun createUserProfile(): UserProfile {
     return UserProfile(

@@ -13,12 +13,14 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.model.LocationProcessingConfig
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
+import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.domain.tracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.tracking.locationprocessor.AverageLocationAccumulator
 import akio.apps.myrun.domain.tracking.locationprocessor.LocationProcessorContainer
 import akio.apps.myrun.domain.tracking.locationprocessor.LocationSpeedFilter
 import akio.apps.myrun.feature.core.AppNotificationChannel
 import akio.apps.myrun.feature.core.flowTimer
+import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.tracking.di.DaggerRouteTrackingFeatureComponent
 import akio.apps.myrun.worker.UpdateUserRecentPlaceWorker
 import android.annotation.SuppressLint
@@ -70,6 +72,9 @@ class RouteTrackingService : Service() {
 
     @Inject
     lateinit var routeTrackingConfiguration: RouteTrackingConfiguration
+
+    @Inject
+    lateinit var userPreferences: UserPreferences
 
     private var locationProcessors: LocationProcessorContainer = LocationProcessorContainer()
 
@@ -250,6 +255,9 @@ class RouteTrackingService : Service() {
     }
 
     private fun notifyTrackingNotification() = mainScope.launch {
+        val preferredSystem = userPreferences.getMeasureSystem().first()
+        val (distanceFormatter, _, _, durationFormatter) =
+            UnitFormatterSetFactory.createUnitFormatterSet(preferredSystem)
         val notificationIntent = RouteTrackingActivity.launchIntent(this@RouteTrackingService)
         val intentFlag = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             PendingIntent.FLAG_UPDATE_CURRENT
@@ -264,9 +272,9 @@ class RouteTrackingService : Service() {
         )
 
         val durationDisplay =
-            StatsPresentations.getDisplayDuration(routeTrackingState.getTrackingDuration())
+            durationFormatter.getFormattedValue(routeTrackingState.getTrackingDuration())
         val distanceDisplay =
-            StatsPresentations.getDisplayTrackingDistance(routeTrackingState.getRouteDistance())
+            distanceFormatter.getFormattedValue(routeTrackingState.getRouteDistance())
         val notificationBuilder: Notification.Builder =
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 @Suppress("DEPRECATION")

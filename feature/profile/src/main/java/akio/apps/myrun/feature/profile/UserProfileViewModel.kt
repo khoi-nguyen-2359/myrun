@@ -2,40 +2,32 @@ package akio.apps.myrun.feature.profile
 
 import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.common.Resource
-import akio.apps.myrun.data.eapps.api.model.ExternalProviders
+import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.model.Gender
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.ProfileEditData
 import akio.apps.myrun.data.user.api.model.UserProfile
-import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
-import akio.apps.myrun.domain.user.GetProviderTokensUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
-import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
-import akio.apps.myrun.worker.UploadStravaFileWorker
-import android.app.Application
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withContext
 
 internal class UserProfileViewModel @Inject constructor(
-    private val application: Application,
     private val savedStateHandle: SavedStateHandle,
     private val getUserProfileUsecase: GetUserProfileUsecase,
-    private val getProviderTokensUsecase: GetProviderTokensUsecase,
-    private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
-    private val launchCatchingDelegate: LaunchCatchingDelegate,
     private val updateUserProfileUsecase: UpdateUserProfileUsecase,
-
+    private val userPreferences: UserPreferences,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
-) : ViewModel(), LaunchCatchingDelegate by launchCatchingDelegate {
+) : ViewModel() {
+
+    val preferredSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystem()
 
     /**
      * Presents the data of editing values in input fields. Null means no initial data fetched,
@@ -46,18 +38,9 @@ internal class UserProfileViewModel @Inject constructor(
 
     val screenStateFlow: Flow<ScreenState> = combine(
         getUserProfileUsecase.getUserProfileFlow(savedStateHandle.getUserId()).flowOn(ioDispatcher),
-        getProviderTokensUsecase.getProviderTokensFlow().flowOn(ioDispatcher),
         editingFormDataMutableStateFlow,
         ScreenState::create
     )
-
-    fun deauthorizeStrava() {
-        viewModelScope.launchCatching {
-            withContext(ioDispatcher) { deauthorizeStravaUsecase.deauthorizeStrava() }
-
-            UploadStravaFileWorker.clear(application)
-        }
-    }
 
     fun updateUserProfile() {
         val editingFormData = editingFormDataMutableStateFlow.value
@@ -79,7 +62,7 @@ internal class UserProfileViewModel @Inject constructor(
         val name = get<String>(SAVED_STATE_USER_NAME) ?: return null
         val birthdate = get<Long>(SAVED_STATE_USER_BIRTHDATE) ?: return null
         val genderIdentity = get<Int>(SAVED_STATE_USER_GENDER) ?: return null
-        val weight = get<String>(SAVED_STATE_USER_WEIGHT) ?: return null
+        val weight = get<Float>(SAVED_STATE_USER_WEIGHT) ?: return null
         val photoUrl = get<String>(SAVED_STATE_USER_PHOTO_URL) ?: return null
         return UserProfileFormData(
             name,
@@ -100,8 +83,6 @@ internal class UserProfileViewModel @Inject constructor(
 
     private fun SavedStateHandle.getUserId(): String? = this.get<String>(SAVED_STATE_USER_ID)
 
-    enum class StravaLinkingState { Linked, NotLinked, Unknown }
-
     sealed class ScreenState {
         object Loading : ScreenState()
         class ErrorRetry(val exception: Throwable) : ScreenState()
@@ -110,50 +91,37 @@ internal class UserProfileViewModel @Inject constructor(
              * Data for values that are editing in input fields.
              */
             val editingFormData: UserProfileFormData,
-
-            /**
-             * Status of Strava account link.
-             */
-            val stravaLinkingState: StravaLinkingState,
         ) : ScreenState()
 
         companion object {
             fun create(
                 userProfileRes: Resource<UserProfile>,
-                eappTokensRes: Resource<out ExternalProviders>,
                 editingFormData: UserProfileFormData?,
             ): ScreenState = when (userProfileRes) {
                 is Resource.Loading -> Loading
                 is Resource.Error -> ErrorRetry(userProfileRes.exception)
                 is Resource.Success -> {
-                    val stravaLinkingState = when {
-                        eappTokensRes is Resource.Error -> StravaLinkingState.Unknown
-                        eappTokensRes.data?.strava != null -> StravaLinkingState.Linked
-                        eappTokensRes.data?.strava == null -> StravaLinkingState.NotLinked
-                        else -> StravaLinkingState.Unknown
-                    }
                     FormState(
-                        editingFormData ?: UserProfileFormData.create(userProfileRes.data),
-                        stravaLinkingState
+                        editingFormData ?: UserProfileFormData.create(userProfileRes.data)
                     )
                 }
             }
         }
     }
 
-    data class UserProfileFormData constructor(
+    data class UserProfileFormData(
         val name: String,
         val photoUrl: String?,
         val birthdate: Long,
         val gender: Gender,
-        val weight: String,
+        val weight: Float,
     ) {
         fun makeProfileEditData(): ProfileEditData {
             return ProfileEditData(
                 displayName = name,
                 birthdate = birthdate,
                 gender = gender,
-                weight = weight.toFloatOrNull()
+                weight = weight
             )
         }
 
@@ -167,7 +135,7 @@ internal class UserProfileViewModel @Inject constructor(
                 photoUrl = userProfile.photo,
                 birthdate = userProfile.birthdate,
                 gender = userProfile.gender,
-                weight = userProfile.weight.toString()
+                weight = userProfile.weight
             )
         }
     }

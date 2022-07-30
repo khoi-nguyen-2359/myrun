@@ -5,6 +5,7 @@ import akio.apps.myrun.data.authentication.api.SignInManager
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.AppMigrationState
 import akio.apps.myrun.data.user.api.UserFollowRepository
+import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
 import android.app.Application
@@ -27,6 +28,7 @@ interface AuthenticationDataComponent {
     fun userProfileRepository(): UserProfileRepository
     fun appMigrationState(): AppMigrationState
     fun userFollowRepository(): UserFollowRepository
+    fun userPreferences(): UserPreferences
 
     @Component.Factory
     interface Factory {

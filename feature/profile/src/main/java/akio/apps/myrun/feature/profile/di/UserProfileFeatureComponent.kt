@@ -8,6 +8,7 @@ import akio.apps.myrun.data.eapps.di.DaggerExternalAppDataComponent
 import akio.apps.myrun.data.eapps.di.ExternalAppDataComponent
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.profile.UserProfileViewModel
+import akio.apps.myrun.feature.userprefs.UserPreferencesViewModel
 import android.app.Application
 import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
@@ -26,6 +27,7 @@ import dagger.Component
 )
 internal interface UserProfileFeatureComponent {
     fun userProfileViewModel(): UserProfileViewModel
+    fun userPrefsViewModel(): UserPreferencesViewModel
 
     @Component.Factory
     interface Factory {

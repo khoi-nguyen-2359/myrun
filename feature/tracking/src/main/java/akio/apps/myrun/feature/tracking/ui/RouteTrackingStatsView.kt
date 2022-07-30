@@ -1,8 +1,10 @@
 package akio.apps.myrun.feature.tracking.ui
 
 import akio.apps.myrun.data.activity.api.model.ActivityType
+import akio.apps.myrun.data.user.api.model.MeasureSystem
+import akio.apps.myrun.feature.core.measurement.TrackUnitFormatterSet
+import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.tracking.R
-import akio.apps.myrun.feature.tracking.StatsPresentations
 import akio.apps.myrun.feature.tracking.model.RouteTrackingStats
 import android.content.Context
 import android.util.AttributeSet
@@ -17,6 +19,9 @@ internal class RouteTrackingStatsView @JvmOverloads constructor(
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     private val distanceTextView: TextView by lazy { findViewById(R.id.distance_text_view) }
+    private val distanceUnitTextView: TextView by lazy {
+        findViewById(R.id.distance_unit_text_view)
+    }
     private val timeTextView: TextView by lazy { findViewById(R.id.time_text_view) }
     private val speedTextView: TextView by lazy { findViewById(R.id.speed_text_view) }
     private val speedLabelTextView: TextView by lazy { findViewById(R.id.speed_label_text_view) }
@@ -24,6 +29,10 @@ internal class RouteTrackingStatsView @JvmOverloads constructor(
     private var speedPresenter: ((Double) -> String)? = null
 
     private val activityTypes = listOf(ActivityType.Running, ActivityType.Cycling)
+
+    // TODO: Clean this up when moving this view to compose
+    var trackUnitFormatterSet: TrackUnitFormatterSet =
+        UnitFormatterSetFactory.createUnitFormatterSet(MeasureSystem.Metric)
 
     init {
         LayoutInflater.from(context).inflate(R.layout.merge_route_tracking_stats_view, this, true)
@@ -42,25 +51,28 @@ internal class RouteTrackingStatsView @JvmOverloads constructor(
         setActivityType(activityTypes[activityTypeIndex])
     }
 
-    fun setActivityType(activityType: ActivityType) {
-        when (activityType) {
+    private fun setActivityType(activityType: ActivityType) {
+        val (_, paceFormatter, speedFormatter, _) = trackUnitFormatterSet
+        speedPresenter = when (activityType) {
             ActivityType.Running -> {
-                speedLabelTextView.setText(R.string.route_tracking_pace_label)
-                speedUnitTextView.setText(R.string.performance_unit_pace_min_per_km)
-                speedPresenter = { speed -> StatsPresentations.getDisplayPace(speed) }
+                speedLabelTextView.setText(paceFormatter.labelResId)
+                speedUnitTextView.setText(paceFormatter.unitResId ?: 0)
+                paceFormatter::getFormattedValue
             }
             ActivityType.Cycling -> {
-                speedLabelTextView.setText(R.string.route_tracking_speed_label)
-                speedUnitTextView.setText(R.string.common_speed_unit)
-                speedPresenter = { speed -> StatsPresentations.getDisplaySpeed(speed) }
+                speedLabelTextView.setText(speedFormatter.labelResId)
+                speedUnitTextView.setText(speedFormatter.unitResId ?: 0)
+                speedFormatter::getFormattedValue
             }
-            else -> throw Exception("INvalid activity type")
+            else -> throw Exception("Invalid activity type")
         }
     }
 
     fun update(stats: RouteTrackingStats) {
-        distanceTextView.text = StatsPresentations.getDisplayTrackingDistance(stats.distance)
-        timeTextView.text = StatsPresentations.getDisplayDuration(stats.duration)
+        val (distanceFormatter, _, _, durationFormatter) = trackUnitFormatterSet
+        distanceUnitTextView.text = distanceFormatter.getUnit(context)
+        distanceTextView.text = distanceFormatter.getFormattedValue(stats.distance)
+        timeTextView.text = durationFormatter.getFormattedValue(stats.duration)
         speedTextView.text = speedPresenter?.invoke(stats.speed)
     }
 }
