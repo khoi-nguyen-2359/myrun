@@ -5,6 +5,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
+import akio.apps.myrun.feature.core.ui.modifyIf
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.aspectRatio
@@ -32,15 +33,13 @@ internal fun ActivityRouteImage(
     onClickAction: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
-    val imageWidth = remember { (context.resources.displayMetrics.widthPixels * 0.8).toInt() }
+    val imageWidth = remember { (context.resources.displayMetrics.widthPixels * 0.7).toInt() }
     val imageHeight = remember { (imageWidth / imageRatio).toInt() }
     val imagePainter = rememberAsyncImagePainter(
         ImageRequest.Builder(LocalContext.current)
             .data(data = activity.routeImage)
-            .apply {
-                size(imageWidth, imageHeight)
-                    .crossfade(200)
-            }
+            .size(imageWidth, imageHeight)
+            .crossfade(200)
             .build()
     )
     Image(
@@ -53,12 +52,8 @@ internal fun ActivityRouteImage(
                 visible = imagePainter.state !is AsyncImagePainter.State.Success,
                 highlight = PlaceholderHighlight.shimmer()
             )
-            .run {
-                if (onClickAction != null) {
-                    clickable { onClickAction() }
-                } else {
-                    this
-                }
+            .modifyIf(onClickAction != null) {
+                clickable { onClickAction?.invoke() }
             },
         contentScale = ContentScale.Crop
     )
