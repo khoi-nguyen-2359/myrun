@@ -1,6 +1,6 @@
 project.ext {
-    versionName = "1.8.8"
-    versionCode = 1_08_08
+    versionName = "1.9.0"
+    versionCode = 1_09_00
     appId = "akio.apps.myrun"
     minSdk = 21
     targetSdk = 30
