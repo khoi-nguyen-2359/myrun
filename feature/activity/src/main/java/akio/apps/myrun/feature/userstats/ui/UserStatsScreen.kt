@@ -1,11 +1,12 @@
 package akio.apps.myrun.feature.userstats.ui
 
 import akio.apps.myrun.data.activity.api.model.ActivityType
-import akio.apps.myrun.data.user.api.UnitConverter
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.feature.activity.BuildConfig
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
+import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppBarIconButton
 import akio.apps.myrun.feature.core.ui.AppColors
@@ -146,31 +147,18 @@ private fun TrainingSummaryTable(screenState: UserStatsViewModel.ScreenState.Sta
     var selectedActivityType by rememberSaveable { mutableStateOf(ActivityType.Running) }
     val summaryData = screenState.trainingSummaryTableData[selectedActivityType]
         ?: return
-    val thisWeekDistance = UnitConverter.DistanceKm.fromRawValue(
-        summaryData.thisWeekSummary.distance
-    )
-    val lastWeekDistance = UnitConverter.DistanceKm.fromRawValue(
-        summaryData.lastWeekSummary.distance
-    )
-    val thisWeekTime = UnitConverter.TimeHour.fromRawValue(
-        summaryData.thisWeekSummary.time
-    )
-    val lastWeekTime = UnitConverter.TimeHour.fromRawValue(
-        summaryData.lastWeekSummary.time
-    )
-    val thisMonthDistance = UnitConverter.DistanceKm.fromRawValue(
-        summaryData.thisMonthSummary.distance
-    )
-    val lastMonthDistance = UnitConverter.DistanceKm.fromRawValue(
-        summaryData.lastMonthSummary.distance
-    )
-    val thisMonthTime = UnitConverter.TimeHour.fromRawValue(
-        summaryData.thisMonthSummary.time
-    )
-    val lastMonthTime = UnitConverter.TimeHour.fromRawValue(
-        summaryData.lastMonthSummary.time
-    )
+    val (distanceFormatter, durationFormatter) =
+        UnitFormatterSetFactory.createStatsUnitFormatterSet(screenState.measureSystem)
+    val thisWeekDistance = distanceFormatter.getFormattedValue(summaryData.thisWeekSummary.distance)
+    val lastWeekDistance = distanceFormatter.getFormattedValue(summaryData.lastWeekSummary.distance)
+    val thisWeekTime = durationFormatter.getFormattedValue(summaryData.thisWeekSummary.time)
+    val lastWeekTime = durationFormatter.getFormattedValue(summaryData.lastWeekSummary.time)
+    val thisMonthDist = distanceFormatter.getFormattedValue(summaryData.thisMonthSummary.distance)
+    val lastMonthDist = distanceFormatter.getFormattedValue(summaryData.lastMonthSummary.distance)
+    val thisMonthTime = durationFormatter.getFormattedValue(summaryData.thisMonthSummary.time)
+    val lastMonthTime = durationFormatter.getFormattedValue(summaryData.lastMonthSummary.time)
 
+    val context = LocalContext.current
     Column {
         ActivityTypePane(selectedActivityType) { selectedActivityType = it }
         ColumnSpacer(height = AppDimensions.rowVerticalPadding)
@@ -188,19 +176,13 @@ private fun TrainingSummaryTable(screenState: UserStatsViewModel.ScreenState.Sta
                         textAlign = TextAlign.Start
                     )
                     Text(
-                        text = " (km)",
+                        text = " (${distanceFormatter.getUnit(context)})",
                         style = MaterialTheme.typography.caption,
                         modifier = Modifier.alignByBaseline()
                     )
                 }
-                TrainingSummaryProgress(
-                    current = String.format("%.1f", thisWeekDistance),
-                    previous = String.format("%.1f", lastWeekDistance)
-                )
-                TrainingSummaryProgress(
-                    current = String.format("%.1f", thisMonthDistance),
-                    previous = String.format("%.1f", lastMonthDistance)
-                )
+                TrainingSummaryProgress(current = thisWeekDistance, previous = lastWeekDistance)
+                TrainingSummaryProgress(current = thisMonthDist, previous = lastMonthDist)
             }
             TableDivider()
             TableRow {
@@ -210,19 +192,13 @@ private fun TrainingSummaryTable(screenState: UserStatsViewModel.ScreenState.Sta
                         textAlign = TextAlign.Start
                     )
                     Text(
-                        text = " (hour)",
+                        text = " (${durationFormatter.getUnit(context)})",
                         style = MaterialTheme.typography.caption,
                         modifier = Modifier.alignByBaseline()
                     )
                 }
-                TrainingSummaryProgress(
-                    current = String.format("%.1f", thisWeekTime),
-                    previous = String.format("%.1f", lastWeekTime)
-                )
-                TrainingSummaryProgress(
-                    current = String.format("%.1f", thisMonthTime),
-                    previous = String.format("%.1f", lastMonthTime)
-                )
+                TrainingSummaryProgress(current = thisWeekTime, previous = lastWeekTime)
+                TrainingSummaryProgress(current = thisMonthTime, previous = lastMonthTime)
             }
             TableDivider()
             TableRow {
@@ -434,7 +410,7 @@ private fun UserStatsOutlinedButton(
 @Composable
 private fun UserStatsTopBar(
     navController: NavController,
-    openRoutePlanningAction: () -> Unit
+    openRoutePlanningAction: () -> Unit,
 ) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.home_nav_user_stats_tab_label)) },
@@ -513,7 +489,8 @@ private fun PreviewUserStats() {
                     )
                 ),
                 ActivityType.Cycling to GetTrainingSummaryDataUsecase.TrainingSummaryTableData()
-            )
+            ),
+            measureSystem = MeasureSystem.Default
         ),
         contentPadding = PaddingValues(),
         rememberNavController()

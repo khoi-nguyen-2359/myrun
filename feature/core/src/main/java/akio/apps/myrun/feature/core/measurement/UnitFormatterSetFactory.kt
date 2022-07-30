@@ -26,4 +26,16 @@ object UnitFormatterSetFactory {
             MeasureSystem.Metric -> UserProfileUnitFormatter.WeightKg
             MeasureSystem.Imperial -> UserProfileUnitFormatter.WeightPound
         }
+
+    fun createStatsUnitFormatterSet(measureSystem: MeasureSystem): StatsUnitFormatterSet =
+        when (measureSystem) {
+            MeasureSystem.Imperial -> StatsUnitFormatterSet(
+                StatsUnitFormatter.DurationMile,
+                StatsUnitFormatter.TimeHour
+            )
+            MeasureSystem.Metric -> StatsUnitFormatterSet(
+                StatsUnitFormatter.DurationKm,
+                StatsUnitFormatter.TimeHour
+            )
+        }
 }

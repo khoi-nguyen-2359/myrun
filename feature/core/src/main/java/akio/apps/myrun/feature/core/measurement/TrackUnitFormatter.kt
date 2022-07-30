@@ -118,4 +118,9 @@ abstract class TrackUnitFormatter<RAW : Number>(
         unitResId = null,
         UnitConverter.TimeHour
     )
+
+    internal object DurationHour : DurationUnitFormatter(
+        unitResId = R.string.performance_unit_time_hour,
+        UnitConverter.TimeHour
+    )
 }
