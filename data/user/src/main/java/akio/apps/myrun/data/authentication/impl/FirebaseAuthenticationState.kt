@@ -10,7 +10,6 @@ import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +29,6 @@ class FirebaseAuthenticationState @Inject constructor(
         Log.d("khoi", "create FirebaseAuthenticationState $this")
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getUserAccountFlow(): Flow<UserAccount?> = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener {
             it.currentUser?.let { firebaseUser ->
