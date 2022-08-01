@@ -96,7 +96,7 @@ fun CompoundText(
         .padding(
             vertical = AppDimensions.rowVerticalPadding,
             horizontal = AppDimensions.screenHorizontalPadding
-        ),
+        )
 ) {
     if (icon != null) {
         StartIcon(icon, tint)

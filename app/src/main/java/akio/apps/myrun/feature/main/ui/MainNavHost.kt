@@ -4,6 +4,7 @@ import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
+import akio.apps.myrun.feature.userprefs.ui.DeleteAccountScreen
 import akio.apps.myrun.feature.userprefs.ui.UserPreferencesScreen
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -14,32 +15,29 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 private object AppNavTransitionDefaults {
+    private const val duration = 200
     val enterTransition: EnterTransition = slideInHorizontally(
         initialOffsetX = { fullWidth -> fullWidth / 2 },
-        animationSpec = tween(200)
-    ) + fadeIn(initialAlpha = 0f, animationSpec = tween(200))
+        animationSpec = tween(duration)
+    ) + fadeIn(animationSpec = tween(duration))
 
     val exitTransition: ExitTransition = fadeOut(
-        targetAlpha = 1f,
-        animationSpec = tween(200)
+        animationSpec = tween(duration)
     )
 
     val popEnterTransition: EnterTransition = fadeIn(
-        initialAlpha = 1f,
-        animationSpec = tween(0)
+        animationSpec = tween(duration)
     )
 
     val popExitTransition: ExitTransition = slideOutHorizontally(
-        targetOffsetX = { fullWidth -> fullWidth },
-        animationSpec = tween(200)
-    ) + fadeOut(targetAlpha = 0f, animationSpec = tween(200))
+        targetOffsetX = { fullWidth -> fullWidth / 2 },
+        animationSpec = tween(duration)
+    ) + fadeOut(animationSpec = tween(duration))
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -52,94 +50,41 @@ fun MainNavHost(
     val navController = rememberAnimatedNavController()
     AnimatedNavHost(
         navController = navController,
-        startDestination = HomeNavDestination.Home.route
+        startDestination = HomeNavDestination.Home.route,
+        enterTransition = { AppNavTransitionDefaults.enterTransition },
+        exitTransition = { AppNavTransitionDefaults.exitTransition },
+        popEnterTransition = { AppNavTransitionDefaults.popEnterTransition },
+        popExitTransition = { AppNavTransitionDefaults.popExitTransition }
     ) {
-        addHomeDestination(
-            navController,
-            onClickFloatingActionButton,
-            onClickExportActivityFile,
-            openRoutePlanningAction
-        )
+        composable(route = HomeNavDestination.Home.route) { navEntry ->
+            HomeTabScreen(
+                navController,
+                navEntry,
+                onClickFloatingActionButton,
+                onClickExportActivityFile,
+                openRoutePlanningAction
+            )
+        }
 
-        addProfileDestination(navController)
+        composable(
+            route = HomeNavDestination.Profile.route,
+            arguments = HomeNavDestination.Profile.arguments
+        ) { navEntry ->
+            UserProfileScreen(navController = navController, backStackEntry = navEntry)
+        }
 
-        addActivityDetailDestination(
-            onClickExportActivityFile,
-            navController
-        )
+        composable(
+            route = HomeNavDestination.ActivityDetail.route,
+            arguments = HomeNavDestination.ActivityDetail.arguments
+        ) { navEntry ->
+            ActivityDetailScreen(navController, navEntry, onClickExportActivityFile)
+        }
 
-        addUserPreferencesDestination(navController)
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.addUserPreferencesDestination(navController: NavHostController) {
-    composable(
-        route = HomeNavDestination.UserPreferences.route,
-        enterTransition = { AppNavTransitionDefaults.enterTransition },
-        exitTransition = { AppNavTransitionDefaults.exitTransition },
-        popEnterTransition = { AppNavTransitionDefaults.popEnterTransition },
-        popExitTransition = { AppNavTransitionDefaults.popExitTransition }
-    ) { backStackEntry ->
-        UserPreferencesScreen(navController, backStackEntry)
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-private fun NavGraphBuilder.addProfileDestination(navController: NavHostController) {
-    composable(
-        route = HomeNavDestination.Profile.route,
-        arguments = HomeNavDestination.Profile.arguments,
-        enterTransition = { AppNavTransitionDefaults.enterTransition },
-        exitTransition = { AppNavTransitionDefaults.exitTransition },
-        popEnterTransition = { AppNavTransitionDefaults.popEnterTransition },
-        popExitTransition = { AppNavTransitionDefaults.popExitTransition }
-    ) { backStackEntry ->
-        UserProfileScreen(navController, backStackEntry)
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-private fun NavGraphBuilder.addHomeDestination(
-    navController: NavHostController,
-    onClickFloatingActionButton: () -> Unit,
-    onClickExportActivityFile: (BaseActivityModel) -> Unit,
-    openRoutePlanningAction: () -> Unit,
-) {
-    composable(
-        route = HomeNavDestination.Home.route,
-        enterTransition = { AppNavTransitionDefaults.enterTransition },
-        exitTransition = { AppNavTransitionDefaults.exitTransition },
-        popEnterTransition = { AppNavTransitionDefaults.popEnterTransition },
-        popExitTransition = { AppNavTransitionDefaults.popExitTransition }
-    ) { backStackEntry ->
-        HomeTabScreen(
-            navController,
-            backStackEntry,
-            onClickFloatingActionButton,
-            onClickExportActivityFile,
-            openRoutePlanningAction
-        )
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-private fun NavGraphBuilder.addActivityDetailDestination(
-    onClickExportFile: (BaseActivityModel) -> Unit,
-    navController: NavHostController,
-) {
-    composable(
-        route = HomeNavDestination.ActivityDetail.route,
-        arguments = HomeNavDestination.ActivityDetail.arguments,
-        enterTransition = { AppNavTransitionDefaults.enterTransition },
-        exitTransition = { AppNavTransitionDefaults.exitTransition },
-        popEnterTransition = { AppNavTransitionDefaults.popEnterTransition },
-        popExitTransition = { AppNavTransitionDefaults.popExitTransition }
-    ) { navBackStackEntry ->
-        ActivityDetailScreen(
-            navController,
-            navBackStackEntry,
-            onClickExportFile = onClickExportFile
-        )
+        composable(HomeNavDestination.UserPreferences.route) { navEntry ->
+            UserPreferencesScreen(navController = navController, backStackEntry = navEntry)
+        }
+        composable(HomeNavDestination.DeleteAccount.route) { navEntry ->
+            DeleteAccountScreen(navController = navController, navEntry = navEntry)
+        }
     }
 }

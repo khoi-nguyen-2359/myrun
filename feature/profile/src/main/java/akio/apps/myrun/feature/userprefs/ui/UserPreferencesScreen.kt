@@ -7,6 +7,7 @@ import akio.apps.myrun.data.eapps.api.model.RunningApp
 import akio.apps.myrun.data.eapps.api.model.StravaAthlete
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
+import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppBarIconButton
 import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.CompoundSwitch
@@ -25,8 +26,6 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Icon
-import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -34,7 +33,6 @@ import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.CloudSync
 import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.SquareFoot
-import androidx.compose.material.icons.rounded.Straighten
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -68,7 +66,7 @@ private fun UserPreferencesScreen(
     val preferredSystem by userPrefsViewModel.preferredSystem
         .collectAsState(initial = MeasureSystem.Default)
     val stravaLinkState by userPrefsViewModel.stravaLinkState
-        .collectAsState(initial = UserPreferencesViewModel.StravaLinkState.Unknown)
+            .collectAsState(initial = UserPreferencesViewModel.StravaLinkState.Unknown)
     Column(modifier = Modifier.fillMaxSize()) {
         StatusBarSpacer()
         TopAppBar(
@@ -99,6 +97,7 @@ private fun UserPreferencesScreen(
             icon = Icons.Rounded.DeleteForever,
             tint = Color.Red
         ) {
+            navController.navigate(HomeNavDestination.DeleteAccount.route)
         }
     }
 
