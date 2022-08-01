@@ -62,11 +62,11 @@ fun CompoundText(
     value: String,
     onClick: () -> Unit,
 ) = Column(
-    modifier = Modifier.padding(
-        vertical = AppDimensions.rowVerticalPadding,
-        horizontal = AppDimensions.screenHorizontalPadding
-    )
-        .clickable { onClick() }
+    modifier = Modifier.clickable { onClick() }
+        .padding(
+            vertical = AppDimensions.rowVerticalPadding,
+            horizontal = AppDimensions.screenHorizontalPadding
+        )
 ) {
     Text(
         text = label,
