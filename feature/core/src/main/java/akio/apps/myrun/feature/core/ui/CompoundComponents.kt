@@ -1,17 +1,21 @@
 package akio.apps.myrun.feature.core.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 
@@ -46,7 +50,12 @@ fun CompoundSwitch(
             horizontal = AppDimensions.screenHorizontalPadding
         )
 ) {
-    Text(text = label, modifier = Modifier.weight(1f))
+    Text(
+        text = label,
+        modifier = Modifier.weight(1f),
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis
+    )
     Switch(enabled = enabled, checked = checked, onCheckedChange = null)
 }
 
@@ -59,20 +68,39 @@ private fun PreviewUserProfileSwitch() {
 @Composable
 fun CompoundText(
     label: String,
-    value: String,
+    labelStyle: TextStyle = LocalTextStyle.current,
+    value: String? = null,
     onClick: () -> Unit,
 ) = Column(
-    modifier = Modifier.clickable { onClick() }
+    modifier = Modifier
+        .clickable { onClick() }
         .padding(
             vertical = AppDimensions.rowVerticalPadding,
             horizontal = AppDimensions.screenHorizontalPadding
-        )
+        ),
+    verticalArrangement = Arrangement.Center
 ) {
+    val labelMaxLines = if (value == null) {
+        2
+    } else {
+        1
+    }
     Text(
         text = label,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        maxLines = labelMaxLines,
+        overflow = TextOverflow.Ellipsis,
+        style = labelStyle
     )
-    Text(text = value, modifier = Modifier.fillMaxWidth(), fontSize = 13.sp)
+    if (value != null) {
+        Text(
+            text = value,
+            modifier = Modifier.fillMaxWidth(),
+            fontSize = 13.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
 }
 
 @Preview

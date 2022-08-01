@@ -25,6 +25,7 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -36,6 +37,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavBackStackEntry
@@ -83,6 +85,14 @@ private fun UserPreferencesScreen(
 
         StravaLinkSwitch(stravaLinkState) {
             userPrefsViewModel.deauthorizeStrava()
+        }
+
+        FormSectionSpace()
+
+        CompoundText(
+            label = stringResource(id = R.string.user_prefs_delete_account_label),
+            labelStyle = LocalTextStyle.current.copy(color = Color.Red)
+        ) {
         }
     }
 

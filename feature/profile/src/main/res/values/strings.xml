@@ -29,4 +29,5 @@
     <string name="user_prefs_title">Preferences</string>
     <string name="user_prefs_unit_of_measure_label">Unit of Measure</string>
     <string name="user_prefs_app_strava_unlink_confirm_title">Unlink Confirmation</string>
+    <string name="user_prefs_delete_account_label">Delete Account</string>
 </resources>
