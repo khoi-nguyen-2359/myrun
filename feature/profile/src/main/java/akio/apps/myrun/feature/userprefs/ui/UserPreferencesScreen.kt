@@ -25,11 +25,16 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Icon
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.CloudSync
+import androidx.compose.material.icons.rounded.DeleteForever
+import androidx.compose.material.icons.rounded.SquareFoot
+import androidx.compose.material.icons.rounded.Straighten
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -91,7 +96,8 @@ private fun UserPreferencesScreen(
 
         CompoundText(
             label = stringResource(id = R.string.user_prefs_delete_account_label),
-            labelStyle = LocalTextStyle.current.copy(color = Color.Red)
+            icon = Icons.Rounded.DeleteForever,
+            tint = Color.Red
         ) {
         }
     }
@@ -118,7 +124,8 @@ private fun MeasureSystemSection(
     val sectionLabel = stringResource(id = R.string.user_prefs_unit_of_measure_label)
     CompoundText(
         label = sectionLabel,
-        value = preferredSystem.name
+        value = preferredSystem.name,
+        icon = Icons.Rounded.SquareFoot
     ) {
         isShowingListDialog = true
     }
@@ -144,7 +151,8 @@ private fun StravaLinkSwitch(
     CompoundSwitch(
         label = stringResource(id = R.string.user_profile_strava_description),
         enabled = linkState != UserPreferencesViewModel.StravaLinkState.Unknown,
-        checked = linkState == UserPreferencesViewModel.StravaLinkState.Linked
+        checked = linkState == UserPreferencesViewModel.StravaLinkState.Linked,
+        startIcon = Icons.Rounded.CloudSync
     ) {
         when (linkState) {
             UserPreferencesViewModel.StravaLinkState.NotLinked ->
