@@ -35,5 +35,5 @@ object HomeNavDestination {
     }
 
     object UserPreferences : NavDestinationInfo(routeName = "userPreferences")
-    object DeleteAccount : NavDestinationInfo(routeName = "deleteAccount")
+    object DeleteAccount : NavDestinationInfo(routeName = "deleteAccount2")
 }

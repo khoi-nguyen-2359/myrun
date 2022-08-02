@@ -5,6 +5,7 @@ import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.StatusBarSpacer
 import akio.apps.myrun.feature.profile.R
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -24,8 +25,13 @@ import androidx.navigation.NavController
 fun DeleteAccountScreen(
     navController: NavController,
     navEntry: NavBackStackEntry,
-) = AppTheme {
-    Column {
+) {
+    DeleteAccountScreen(navController)
+}
+
+@Composable
+private fun DeleteAccountScreen(navController: NavController) = AppTheme {
+    Column(modifier = Modifier.fillMaxSize()) {
         StatusBarSpacer()
         TopAppBar(
             navigationIcon = { AppBarArrowBackButton(navController) },

@@ -44,11 +44,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 
 @Composable
 fun UserPreferencesScreen(
-    navController: NavHostController,
+    navController: NavController,
     backStackEntry: NavBackStackEntry,
 ) {
     val application = LocalContext.current.applicationContext as Application
@@ -60,13 +60,13 @@ fun UserPreferencesScreen(
 
 @Composable
 private fun UserPreferencesScreen(
-    navController: NavHostController,
+    navController: NavController,
     userPrefsViewModel: UserPreferencesViewModel,
 ) = AppTheme {
     val preferredSystem by userPrefsViewModel.preferredSystem
         .collectAsState(initial = MeasureSystem.Default)
     val stravaLinkState by userPrefsViewModel.stravaLinkState
-            .collectAsState(initial = UserPreferencesViewModel.StravaLinkState.Unknown)
+        .collectAsState(initial = UserPreferencesViewModel.StravaLinkState.Unknown)
     Column(modifier = Modifier.fillMaxSize()) {
         StatusBarSpacer()
         TopAppBar(
@@ -98,6 +98,7 @@ private fun UserPreferencesScreen(
             tint = Color.Red
         ) {
             navController.navigate(HomeNavDestination.DeleteAccount.route)
+            // navController.navigate(HomeNavDestination.Home.route)
         }
     }
 

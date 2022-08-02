@@ -56,7 +56,7 @@ fun MainNavHost(
         popEnterTransition = { AppNavTransitionDefaults.popEnterTransition },
         popExitTransition = { AppNavTransitionDefaults.popExitTransition }
     ) {
-        composable(route = HomeNavDestination.Home.route) { navEntry ->
+        composable(HomeNavDestination.Home.route) { navEntry ->
             HomeTabScreen(
                 navController,
                 navEntry,
@@ -70,7 +70,7 @@ fun MainNavHost(
             route = HomeNavDestination.Profile.route,
             arguments = HomeNavDestination.Profile.arguments
         ) { navEntry ->
-            UserProfileScreen(navController = navController, backStackEntry = navEntry)
+            UserProfileScreen(navController, navEntry)
         }
 
         composable(
@@ -81,10 +81,11 @@ fun MainNavHost(
         }
 
         composable(HomeNavDestination.UserPreferences.route) { navEntry ->
-            UserPreferencesScreen(navController = navController, backStackEntry = navEntry)
+            UserPreferencesScreen(navController, navEntry)
         }
+
         composable(HomeNavDestination.DeleteAccount.route) { navEntry ->
-            DeleteAccountScreen(navController = navController, navEntry = navEntry)
+            DeleteAccountScreen(navController, navEntry)
         }
     }
 }
