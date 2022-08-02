@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
@@ -47,6 +48,22 @@ inline fun Modifier.modifyIf(enabled: Boolean, application: Modifier.() -> Modif
     }
 
 @Composable
+fun CompoundCheckBox(
+    label: String,
+    checked: Boolean,
+    onClick: () -> Unit
+) = Row(
+    verticalAlignment = CenterVertically,
+    modifier = Modifier
+        .clickable { onClick() }
+        .addCompoundComponentPaddings()
+) {
+    Checkbox(checked = checked, onCheckedChange = null)
+    Spacer(modifier = Modifier.width(contentSpacer))
+    Text(text = label, maxLines = 2, overflow = TextOverflow.Ellipsis)
+}
+
+@Composable
 fun CompoundSwitch(
     label: String,
     checked: Boolean,
@@ -59,10 +76,7 @@ fun CompoundSwitch(
         .modifyIf(enabled) {
             clickable { onClick() }
         }
-        .padding(
-            vertical = AppDimensions.rowVerticalPadding,
-            horizontal = AppDimensions.screenHorizontalPadding
-        )
+        .addCompoundComponentPaddings()
 ) {
     if (startIcon != null) {
         StartIcon(startIcon)
@@ -93,10 +107,7 @@ fun CompoundText(
 ) = Row(
     modifier = Modifier
         .clickable { onClick() }
-        .padding(
-            vertical = AppDimensions.rowVerticalPadding,
-            horizontal = AppDimensions.screenHorizontalPadding
-        )
+        .addCompoundComponentPaddings()
 ) {
     if (icon != null) {
         StartIcon(icon, tint)
@@ -127,6 +138,12 @@ fun CompoundText(
         }
     }
 }
+
+@Composable
+fun Modifier.addCompoundComponentPaddings() = this.padding(
+    vertical = AppDimensions.rowVerticalPadding,
+    horizontal = AppDimensions.screenHorizontalPadding
+)
 
 @Composable
 private fun RowScope.StartIcon(icon: ImageVector, tint: Color? = null) {

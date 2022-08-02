@@ -2,10 +2,14 @@ package akio.apps.myrun.feature.userprefs.ui
 
 import akio.apps.myrun.feature.core.ui.AppBarArrowBackButton
 import akio.apps.myrun.feature.core.ui.AppTheme
+import akio.apps.myrun.feature.core.ui.CompoundCheckBox
+import akio.apps.myrun.feature.core.ui.FormSectionSpace
 import akio.apps.myrun.feature.core.ui.StatusBarSpacer
 import akio.apps.myrun.feature.profile.R
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -37,6 +41,8 @@ private fun DeleteAccountScreen(navController: NavController) = AppTheme {
             navigationIcon = { AppBarArrowBackButton(navController) },
             title = { Text(stringResource(id = R.string.user_prefs_delete_account_label)) }
         )
+
+        Spacer(modifier = Modifier.height(32.dp))
 
         Icon(
             Icons.Rounded.DeleteForever,
