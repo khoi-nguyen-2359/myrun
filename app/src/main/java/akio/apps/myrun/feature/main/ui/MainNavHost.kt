@@ -4,7 +4,6 @@ import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
-import akio.apps.myrun.feature.userprefs.ui.DeleteAccountScreen
 import akio.apps.myrun.feature.userprefs.ui.UserPreferencesScreen
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -82,10 +81,6 @@ fun MainNavHost(
 
         composable(HomeNavDestination.UserPreferences.route) { navEntry ->
             UserPreferencesScreen(navController, navEntry)
-        }
-
-        composable(HomeNavDestination.DeleteAccount.route) { navEntry ->
-            DeleteAccountScreen(navController, navEntry)
         }
     }
 }

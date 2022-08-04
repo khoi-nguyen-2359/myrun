@@ -112,7 +112,7 @@ private fun UserPreferencesScreen(
 
         FormSectionSpace()
 
-        DeleteAccountSection(userPrefsViewModel, navController)
+        DeleteAccountSection(userPrefsViewModel)
     }
 
     // overlay things
@@ -128,10 +128,7 @@ private fun UserPreferencesScreen(
 }
 
 @Composable
-private fun DeleteAccountSection(
-    viewModel: UserPreferencesViewModel,
-    navController: NavController,
-) {
+private fun DeleteAccountSection(viewModel: UserPreferencesViewModel) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var isShowingConfirmDialog by remember { mutableStateOf(false) }
