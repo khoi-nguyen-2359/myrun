@@ -25,6 +25,9 @@ internal class SignInViewModel @Inject constructor(
     private val _signInSuccessResult = MutableStateFlow<Event<SignInSuccessResult>>(Event())
     val signInSuccessResult: Flow<Event<SignInSuccessResult>> = _signInSuccessResult
 
+    private val _reAuthSuccessResult = MutableStateFlow(Event<Unit>())
+    val reAuthSuccessResult: Flow<Event<Unit>> = _reAuthSuccessResult
+
     private suspend fun onSignInSuccess(result: SignInSuccessResult) = withContext(ioDispatcher) {
         postSignInUsecase.invoke(result)
         _signInSuccessResult.value = Event(result)
@@ -41,6 +44,13 @@ internal class SignInViewModel @Inject constructor(
         viewModelScope.launchCatching {
             val result = signInManager.signInGoogle(googleIdToken)
             onSignInSuccess(result)
+        }
+    }
+
+    fun reAuthWithGoogleToken(googleIdToken: String) {
+        viewModelScope.launchCatching {
+            signInManager.reAuthGoogle(googleIdToken)
+            _reAuthSuccessResult.value = Event(Unit)
         }
     }
 }

@@ -2,8 +2,6 @@ package akio.apps.myrun.feature.userprefs.ui
 
 import akio.apps.myrun.feature.core.ui.AppBarArrowBackButton
 import akio.apps.myrun.feature.core.ui.AppTheme
-import akio.apps.myrun.feature.core.ui.CompoundCheckBox
-import akio.apps.myrun.feature.core.ui.FormSectionSpace
 import akio.apps.myrun.feature.core.ui.StatusBarSpacer
 import akio.apps.myrun.feature.profile.R
 import androidx.compose.foundation.layout.Column

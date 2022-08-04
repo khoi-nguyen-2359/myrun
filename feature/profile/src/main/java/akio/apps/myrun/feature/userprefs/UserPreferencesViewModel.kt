@@ -1,6 +1,8 @@
 package akio.apps.myrun.feature.userprefs
 
 import akio.apps.myrun.base.di.NamedIoDispatcher
+import akio.apps.myrun.data.authentication.api.SignInManager
+import akio.apps.myrun.data.authentication.api.error.UnauthorizedUserError
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.eapps.api.model.ExternalProviders
 import akio.apps.myrun.data.user.api.UserPreferences
@@ -13,6 +15,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
+import kotlin.jvm.Throws
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -26,6 +29,7 @@ class UserPreferencesViewModel @Inject constructor(
     private val getProviderTokensUsecase: GetProviderTokensUsecase,
     private val deauthorizeStravaUsecase: DeauthorizeStravaUsecase,
     private val userPreferences: UserPreferences,
+    private val signInManager: SignInManager,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatching {
@@ -43,6 +47,11 @@ class UserPreferencesViewModel @Inject constructor(
         withContext(ioDispatcher) { deauthorizeStravaUsecase.deauthorizeStrava() }
 
         UploadStravaFileWorker.clear(application)
+    }
+
+    @Throws(UnauthorizedUserError::class)
+    suspend fun deleteUser() = withContext(ioDispatcher) {
+        signInManager.deleteUserAccount()
     }
 
     private fun mapAppTokensToStravaLinkState(

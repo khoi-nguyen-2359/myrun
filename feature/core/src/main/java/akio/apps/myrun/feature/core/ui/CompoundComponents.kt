@@ -51,7 +51,7 @@ inline fun Modifier.modifyIf(enabled: Boolean, application: Modifier.() -> Modif
 fun CompoundCheckBox(
     label: String,
     checked: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) = Row(
     verticalAlignment = CenterVertically,
     modifier = Modifier

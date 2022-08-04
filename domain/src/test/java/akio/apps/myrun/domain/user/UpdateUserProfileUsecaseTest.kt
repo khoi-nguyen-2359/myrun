@@ -1,10 +1,10 @@
 package akio.apps.myrun.domain.user
 
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.authentication.api.error.UnauthorizedUserError
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.ProfileEditData
-import akio.apps.myrun.domain.common.error.UnauthorizedUserError
 import android.net.Uri
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

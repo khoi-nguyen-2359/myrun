@@ -13,6 +13,7 @@ interface LaunchCatchingDelegate {
     val launchCatchingError: StateFlow<Event<Throwable>>
     val isLaunchCatchingInProgress: StateFlow<Boolean>
     fun setLaunchCatchingError(error: Throwable)
+    fun setLaunchCatchingInProgress(value: Boolean)
     fun CoroutineScope.launchCatching(
         progressStateFlow: MutableStateFlow<Boolean>? = null,
         errorStateFlow: MutableStateFlow<Event<Throwable>>? = null,
@@ -30,6 +31,10 @@ class LaunchCatchingDelegateImpl @Inject constructor() : LaunchCatchingDelegate 
 
     override fun setLaunchCatchingError(error: Throwable) {
         _launchCatchingError.value = Event(error)
+    }
+
+    override fun setLaunchCatchingInProgress(value: Boolean) {
+        _isLaunchCatchingInProgress.value = value
     }
 
     override fun CoroutineScope.launchCatching(
