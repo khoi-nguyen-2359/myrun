@@ -26,7 +26,11 @@
     <string name="upload_avatar_capture_camera">Open camera</string>
     <string name="upload_avatar_browse_gallery">Pick from gallery</string>
     <string name="action_upload">Upload</string>
-    <string name="user_prefs_title">User Preferences</string>
+    <string name="user_prefs_title">Preferences</string>
     <string name="user_prefs_unit_of_measure_label">Unit of Measure</string>
     <string name="user_prefs_app_strava_unlink_confirm_title">Unlink Confirmation</string>
+    <string name="user_prefs_delete_account_label">Delete Account</string>
+    <string name="user_prefs_delete_account_confirm_message">Please check this box to confirm deleting your account and all of your activities.</string>
+    <string name="action_ok">OK</string>
+    <string name="reauthentication_required_alert_message">You are required to re-authenticate first.</string>
 </resources>

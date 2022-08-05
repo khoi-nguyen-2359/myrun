@@ -63,7 +63,6 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -214,38 +213,30 @@ private fun HomeNavHost(
     homeNavController: NavHostController,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     contentPaddings: PaddingValues,
-    appNavController: NavController,
+    navController: NavController,
     openRoutePlanningAction: () -> Unit,
 ) {
     AnimatedNavHost(
         modifier = Modifier.fillMaxSize(),
         navController = homeNavController,
-        startDestination = HomeNavItemInfo.ActivityFeed.route
-    ) {
-        addActivityFeedDestination(
-            contentPadding = contentPaddings,
-            onClickExportActivityFile = onClickExportActivityFile,
-            appNavController = appNavController
-        )
-
-        addUserStatsDestination(contentPaddings, appNavController, openRoutePlanningAction)
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-private fun NavGraphBuilder.addUserStatsDestination(
-    contentPaddings: PaddingValues,
-    appNavController: NavController,
-    openRoutePlanningAction: () -> Unit,
-) {
-    composable(
-        route = HomeNavItemInfo.UserStats.route,
+        startDestination = HomeNavItemInfo.ActivityFeed.route,
         enterTransition = { HomeTabNavTransitionDefaults.enterTransition },
         exitTransition = { HomeTabNavTransitionDefaults.exitTransition },
         popEnterTransition = { HomeTabNavTransitionDefaults.popEnterTransition },
         popExitTransition = { HomeTabNavTransitionDefaults.popExitTransition }
-    ) { backstackEntry ->
-        UserStatsScreen(appNavController, backstackEntry, contentPaddings, openRoutePlanningAction)
+    ) {
+        composable(HomeNavItemInfo.ActivityFeed.route) { navEntry ->
+            ActivityFeedScreen(
+                navController,
+                navEntry,
+                contentPaddings,
+                onClickExportActivityFile
+            )
+        }
+
+        composable(HomeNavItemInfo.UserStats.route) { navEntry ->
+            UserStatsScreen(navController, navEntry, contentPaddings, openRoutePlanningAction)
+        }
     }
 }
 
@@ -280,28 +271,6 @@ private fun navigateHomeDestination(
         }
         launchSingleTop = true
         restoreState = true
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-private fun NavGraphBuilder.addActivityFeedDestination(
-    contentPadding: PaddingValues,
-    onClickExportActivityFile: (BaseActivityModel) -> Unit,
-    appNavController: NavController,
-) {
-    composable(
-        route = HomeNavItemInfo.ActivityFeed.route,
-        enterTransition = { HomeTabNavTransitionDefaults.enterTransition },
-        exitTransition = { HomeTabNavTransitionDefaults.exitTransition },
-        popEnterTransition = { HomeTabNavTransitionDefaults.popEnterTransition },
-        popExitTransition = { HomeTabNavTransitionDefaults.popExitTransition }
-    ) { backstackEntry ->
-        ActivityFeedScreen(
-            appNavController,
-            backstackEntry,
-            contentPadding = contentPadding,
-            onClickExportActivityFile = onClickExportActivityFile
-        )
     }
 }
 

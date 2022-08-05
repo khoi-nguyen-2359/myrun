@@ -26,9 +26,9 @@ androidx-annotation = "1.4.0"
 
 # compose
 composecompiler = "1.2.0"
-compose = "1.2.0-rc03"
+compose = "1.2.0"
 pagingcompose = "1.0.0-alpha15"
-accompanist = "0.24.13-rc"
+accompanist = "0.25.0"
 navigationcompose = "1.1.0-alpha10"
 
 # google play services: https://developers.google.com/android/guides/releases

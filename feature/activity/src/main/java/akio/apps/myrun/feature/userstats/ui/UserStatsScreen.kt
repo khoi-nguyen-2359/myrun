@@ -366,13 +366,14 @@ private fun UserProfileHeader(
                 fontWeight = FontWeight.Bold,
                 overflow = TextOverflow.Ellipsis
             )
-            ColumnSpacer(height = 4.dp)
-            Text(
-                text = screenState.userRecentPlace
-                    ?: "",
-                style = MaterialTheme.typography.subtitle2,
-                fontWeight = FontWeight.Normal
-            )
+            if (!screenState.userRecentPlace.isNullOrBlank()) {
+                ColumnSpacer(height = 4.dp)
+                Text(
+                    text = screenState.userRecentPlace,
+                    style = MaterialTheme.typography.subtitle2,
+                    fontWeight = FontWeight.Normal
+                )
+            }
         }
         RowSpacer(width = 10.dp)
         UserStatsOutlinedButton(

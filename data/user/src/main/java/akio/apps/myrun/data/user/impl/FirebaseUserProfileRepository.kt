@@ -21,7 +21,6 @@ import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
@@ -44,7 +43,6 @@ class FirebaseUserProfileRepository @Inject constructor(
 
     private fun getAvatarStorage() = firebaseStorage.getReference(FIREBASE_STORAGE_USER_FOLDER)
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getUserProfileFlow(userId: String): Flow<Resource<UserProfile>> =
         callbackFlow {
             val listener = withContext(Dispatchers.Main.immediate) {

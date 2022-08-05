@@ -4,7 +4,9 @@ import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 import akio.apps.myrun.feature.core.DialogDelegate
 import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted
+import akio.apps.myrun.feature.core.ktx.extra
 import akio.apps.myrun.feature.core.ktx.lazyViewModelProvider
+import akio.apps.myrun.feature.core.navigation.OnBoardingNavigation
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -29,6 +31,8 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class SignInActivity : AppCompatActivity(R.layout.activity_sign_in) {
+
+    private val extSignInOrReAuth by lazy { extra(OnBoardingNavigation.EXT_SIGNIN_OR_REAUTH, true) }
 
     private val googleButton: View by lazy { findViewById(R.id.google_button) }
     private val facebookButton: View by lazy { findViewById(R.id.facebook_button) }
@@ -63,6 +67,7 @@ class SignInActivity : AppCompatActivity(R.layout.activity_sign_in) {
 
     private fun initObservers() {
         collectEventRepeatOnStarted(signInVM.signInSuccessResult, ::onSignInSuccess)
+        collectEventRepeatOnStarted(signInVM.reAuthSuccessResult) { finishWithResultOk() }
         collectRepeatOnStarted(
             signInVM.isLaunchCatchingInProgress,
             dialogDelegate::toggleProgressDialog
@@ -104,6 +109,11 @@ class SignInActivity : AppCompatActivity(R.layout.activity_sign_in) {
         finish()
     }
 
+    private fun finishWithResultOk() {
+        setResult(Activity.RESULT_OK)
+        finish()
+    }
+
     @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         facebookCallbackManager.onActivityResult(requestCode, resultCode, data)
@@ -118,7 +128,12 @@ class SignInActivity : AppCompatActivity(R.layout.activity_sign_in) {
                     val account = withContext(Dispatchers.IO) {
                         GoogleSignIn.getSignedInAccountFromIntent(data).await()
                     }
-                    signInVM.signInWithGoogleToken(account.idToken!!)
+                    val token = account.idToken ?: return@launch
+                    if (extSignInOrReAuth) {
+                        signInVM.signInWithGoogleToken(token)
+                    } else {
+                        signInVM.reAuthWithGoogleToken(token)
+                    }
                 } catch (e: ApiException) {
                     Timber.d(e)
                     Toast.makeText(

@@ -11,7 +11,6 @@ import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
@@ -43,7 +42,6 @@ class FirebaseUserRecentPlaceRepository @Inject constructor(
             .toObject(FirestorePlaceIdentifier::class.java)
             ?.placeIdentifier
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getRecentPlaceIdentifierFlow(
         userId: String,
     ): Flow<Resource<out PlaceIdentifier?>> =

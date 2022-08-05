@@ -17,7 +17,6 @@ import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +36,6 @@ class FirebaseExternalAppProvidersRepository @Inject constructor(
         return firestore.collection(PROVIDERS_COLLECTION_PATH).document(userUid)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getExternalProvidersFlow(
         accountId: String,
     ): Flow<Resource<out ExternalProviders>> = callbackFlow {
