@@ -112,12 +112,16 @@ private fun ProgressDialogContent(text: String) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ErrorDialog(text: String) {
+fun ErrorDialog(text: String, onDismiss: () -> Unit) {
     var isShowing by remember { mutableStateOf(true) }
     if (!isShowing) {
         return
     }
-    Dialog(onDismissRequest = { isShowing = false }) {
+    Dialog(
+        onDismissRequest = {
+            isShowing = false
+            onDismiss()
+        }) {
         DialogContentContainer {
             ListItem(
                 icon = {

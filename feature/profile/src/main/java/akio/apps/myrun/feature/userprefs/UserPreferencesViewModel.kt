@@ -9,15 +9,17 @@ import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
 import akio.apps.myrun.domain.user.GetProviderTokensUsecase
+import akio.apps.myrun.feature.core.Event
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.worker.UploadStravaFileWorker
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
-import kotlin.jvm.Throws
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -34,10 +36,31 @@ class UserPreferencesViewModel @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatching {
 
-    val preferredSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystem()
-    val stravaLinkState: Flow<StravaLinkState> = getProviderTokensUsecase.getProviderTokensFlow()
-        .map(::mapAppTokensToStravaLinkState)
-        .flowOn(ioDispatcher)
+    private val isAccountDeletedFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
+    val screenState: Flow<ScreenState> = combine(
+        userPreferences.getMeasureSystem(),
+        getProviderTokensUsecase.getProviderTokensFlow()
+            .map(::mapAppTokensToStravaLinkState)
+            .flowOn(ioDispatcher),
+        isLaunchCatchingInProgress,
+        launchCatchingError,
+        isAccountDeletedFlow
+    ) {
+            measureSystem: MeasureSystem,
+            stravaLinkState: StravaLinkState,
+            isLoading: Boolean,
+            error: Event<Throwable>,
+            isAccountDeleted: Boolean,
+        ->
+        ScreenState(
+            measureSystem,
+            stravaLinkState,
+            isLoading,
+            error.peekContent(),
+            isAccountDeleted
+        )
+    }
 
     fun selectMeasureSystem(measureSystem: MeasureSystem) = viewModelScope.launch {
         userPreferences.setMeasureSystem(measureSystem)
@@ -50,8 +73,15 @@ class UserPreferencesViewModel @Inject constructor(
     }
 
     @Throws(UnauthorizedUserError::class)
-    suspend fun deleteUser() = withContext(ioDispatcher) {
-        signInManager.deleteUserAccount()
+    fun deleteUser() = viewModelScope.launchCatching {
+        withContext(ioDispatcher) {
+            signInManager.deleteUserAccount()
+        }
+        isAccountDeletedFlow.value = true
+    }
+
+    fun clearScreenError() {
+        setLaunchCatchingError(null)
     }
 
     private fun mapAppTokensToStravaLinkState(
@@ -64,4 +94,12 @@ class UserPreferencesViewModel @Inject constructor(
     }
 
     enum class StravaLinkState { Linked, NotLinked, Unknown }
+
+    data class ScreenState(
+        val measureSystem: MeasureSystem = MeasureSystem.Default,
+        val stravaLinkState: StravaLinkState = StravaLinkState.Unknown,
+        val isLoading: Boolean = false,
+        val error: Throwable? = null,
+        val isAccountDeleted: Boolean = false,
+    )
 }
