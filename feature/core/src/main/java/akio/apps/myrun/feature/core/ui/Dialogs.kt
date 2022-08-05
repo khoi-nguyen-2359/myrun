@@ -121,7 +121,8 @@ fun ErrorDialog(text: String, onDismiss: () -> Unit) {
         onDismissRequest = {
             isShowing = false
             onDismiss()
-        }) {
+        }
+    ) {
         DialogContentContainer {
             ListItem(
                 icon = {

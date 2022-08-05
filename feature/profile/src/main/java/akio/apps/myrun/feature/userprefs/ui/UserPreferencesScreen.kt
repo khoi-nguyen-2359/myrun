@@ -85,7 +85,9 @@ private fun UserPreferencesScreen(
     userPrefsViewModel: UserPreferencesViewModel,
 ) = AppTheme {
     val context = LocalContext.current
-    val screenState by userPrefsViewModel.screenState.collectAsState(initial = UserPreferencesViewModel.ScreenState())
+    val screenState by userPrefsViewModel.screenState.collectAsState(
+        initial = UserPreferencesViewModel.ScreenState()
+    )
     Column(modifier = Modifier.fillMaxSize()) {
         StatusBarSpacer()
         TopAppBar(
@@ -124,7 +126,8 @@ private fun UserPreferencesScreen(
                 userPrefsViewModel.clearScreenError()
             }
             else -> ErrorDialog(
-                error.message ?: stringResource(id = R.string.dialog_delegate_unknown_error)) {
+                error.message ?: stringResource(id = R.string.dialog_delegate_unknown_error)
+            ) {
                 userPrefsViewModel.clearScreenError()
             }
         }
