@@ -56,7 +56,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,8 +66,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun UserPreferencesScreen(
@@ -87,10 +84,10 @@ private fun UserPreferencesScreen(
     navController: NavController,
     userPrefsViewModel: UserPreferencesViewModel,
 ) = AppTheme {
-    val preferredSystem by userPrefsViewModel.preferredSystem
-        .collectAsState(initial = MeasureSystem.Default)
-    val stravaLinkState by userPrefsViewModel.stravaLinkState
-        .collectAsState(initial = UserPreferencesViewModel.StravaLinkState.Unknown)
+    val context = LocalContext.current
+    val screenState by userPrefsViewModel.screenState.collectAsState(
+        initial = UserPreferencesViewModel.ScreenState()
+    )
     Column(modifier = Modifier.fillMaxSize()) {
         StatusBarSpacer()
         TopAppBar(
@@ -100,37 +97,50 @@ private fun UserPreferencesScreen(
 
         FormSectionSpace()
 
-        MeasureSystemSection(preferredSystem) { measureSystem ->
+        MeasureSystemSection(screenState.measureSystem) { measureSystem ->
             userPrefsViewModel.selectMeasureSystem(measureSystem)
         }
 
         FormSectionSpace()
 
-        StravaLinkSwitch(stravaLinkState) {
+        StravaLinkSwitch(screenState.stravaLinkState) {
             userPrefsViewModel.deauthorizeStrava()
         }
 
         FormSectionSpace()
 
-        DeleteAccountSection(userPrefsViewModel)
+        DeleteAccountSection {
+            userPrefsViewModel.deleteUser()
+        }
     }
 
     // overlay things
-    val isInProgress by userPrefsViewModel.isLaunchCatchingInProgress.collectAsState()
-    val error by userPrefsViewModel.launchCatchingError.collectAsState()
-    if (isInProgress) {
+    if (screenState.isLoading) {
         ProgressDialog(stringResource(id = R.string.message_loading))
     }
 
-    error.getContentIfNotHandled()?.let { ex ->
-        ErrorDialog(ex.message ?: stringResource(id = R.string.dialog_delegate_unknown_error))
+    screenState.error?.let { error ->
+        when (error) {
+            is UnauthorizedUserError -> {
+                showErrorToastAndNavigateToReAuth(context)
+                userPrefsViewModel.clearScreenError()
+            }
+            else -> ErrorDialog(
+                error.message ?: stringResource(id = R.string.dialog_delegate_unknown_error)
+            ) {
+                userPrefsViewModel.clearScreenError()
+            }
+        }
+    }
+
+    if (screenState.isAccountDeleted) {
+        // reset to splash screen
+        OnBoardingNavigation.createSplashIntent(context)?.let(context::startActivity)
     }
 }
 
 @Composable
-private fun DeleteAccountSection(viewModel: UserPreferencesViewModel) {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+private fun DeleteAccountSection(onDeleteAccount: () -> Unit) {
     var isShowingConfirmDialog by remember { mutableStateOf(false) }
     CompoundText(
         label = stringResource(id = R.string.user_prefs_delete_account_label),
@@ -173,7 +183,7 @@ private fun DeleteAccountSection(viewModel: UserPreferencesViewModel) {
                             Text(text = stringResource(id = R.string.action_cancel))
                         }
                         TextButton(
-                            onClick = { deleteUser(coroutineScope, context, viewModel) },
+                            onClick = { onDeleteAccount() },
                             enabled = isConfirmChecked
                         ) {
                             Text(
@@ -188,28 +198,13 @@ private fun DeleteAccountSection(viewModel: UserPreferencesViewModel) {
     }
 }
 
-private fun deleteUser(
-    coroutineScope: CoroutineScope,
-    context: Context,
-    viewModel: UserPreferencesViewModel,
-) = coroutineScope.launch {
-    try {
-        viewModel.setLaunchCatchingInProgress(true)
-        viewModel.deleteUser()
-        val splashIntent = OnBoardingNavigation.createSplashIntent(context) ?: return@launch
-        context.startActivity(splashIntent)
-    } catch (ex: UnauthorizedUserError) {
-        Toast.makeText(
-            context,
-            R.string.reauthentication_required_alert_message,
-            Toast.LENGTH_SHORT
-        ).show()
-        val reAuthIntent = OnBoardingNavigation.createReAuthenticationIntent(context)
-            ?: return@launch
-        context.startActivity(reAuthIntent)
-    } finally {
-        viewModel.setLaunchCatchingInProgress(false)
-    }
+private fun showErrorToastAndNavigateToReAuth(context: Context) {
+    Toast.makeText(
+        context,
+        R.string.reauthentication_required_alert_message,
+        Toast.LENGTH_SHORT
+    ).show()
+    OnBoardingNavigation.createReAuthenticationIntent(context)?.let(context::startActivity)
 }
 
 @Composable

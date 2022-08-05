@@ -12,7 +12,7 @@ import timber.log.Timber
 interface LaunchCatchingDelegate {
     val launchCatchingError: StateFlow<Event<Throwable>>
     val isLaunchCatchingInProgress: StateFlow<Boolean>
-    fun setLaunchCatchingError(error: Throwable)
+    fun setLaunchCatchingError(error: Throwable?)
     fun setLaunchCatchingInProgress(value: Boolean)
     fun CoroutineScope.launchCatching(
         progressStateFlow: MutableStateFlow<Boolean>? = null,
@@ -29,7 +29,7 @@ class LaunchCatchingDelegateImpl @Inject constructor() : LaunchCatchingDelegate 
     private val _isLaunchCatchingInProgress: MutableStateFlow<Boolean> = MutableStateFlow(false)
     override val isLaunchCatchingInProgress: StateFlow<Boolean> = _isLaunchCatchingInProgress
 
-    override fun setLaunchCatchingError(error: Throwable) {
+    override fun setLaunchCatchingError(error: Throwable?) {
         _launchCatchingError.value = Event(error)
     }
 
