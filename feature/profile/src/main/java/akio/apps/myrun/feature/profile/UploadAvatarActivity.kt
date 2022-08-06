@@ -158,7 +158,7 @@ internal class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload
                     finish()
                 }
             } catch (ex: Exception) {
-                dialogDelegate.showAlertIfErrorExists(ex)
+                dialogDelegate.showErrorDialog(ex)
             }
             dialogDelegate.dismissProgressDialog()
         }

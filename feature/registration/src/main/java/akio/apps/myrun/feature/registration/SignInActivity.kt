@@ -2,7 +2,6 @@ package akio.apps.myrun.feature.registration
 
 import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 import akio.apps.myrun.feature.core.DialogDelegate
-import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.extra
 import akio.apps.myrun.feature.core.ktx.lazyViewModelProvider
@@ -64,15 +63,9 @@ class SignInActivity : AppCompatActivity(R.layout.activity_sign_in) {
         initObservers()
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        // dialogDelegate.showProgressDialog()
-    }
-
     private fun initObservers() {
-        collectEventRepeatOnStarted(signInVM.signInSuccessResult, ::onSignInSuccess)
-        collectEventRepeatOnStarted(signInVM.reAuthSuccessResult) { finishWithResultOk() }
+        collectRepeatOnStarted(signInVM.signInSuccessResult, ::finishWithSignInSuccessData)
+        collectRepeatOnStarted(signInVM.reAuthSuccessResult) { finishWithResultOk() }
         collectRepeatOnStarted(
             signInVM.launchCatchingLoading,
             dialogDelegate::toggleProgressDialog
@@ -104,7 +97,7 @@ class SignInActivity : AppCompatActivity(R.layout.activity_sign_in) {
         startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN)
     }
 
-    private fun onSignInSuccess(signInSuccessResult: SignInSuccessResult) {
+    private fun finishWithSignInSuccessData(signInSuccessResult: SignInSuccessResult) {
         val resultIntent = Intent()
         resultIntent.putExtra(RESULT_SIGN_RESULT_DATA, signInSuccessResult)
         setResult(Activity.RESULT_OK, resultIntent)

@@ -34,11 +34,8 @@ class DialogDelegate(private val context: Context) {
         progressDialog = null
     }
 
-    /**
-     * Show error message if the input error is not null.
-     */
-    fun showAlertIfErrorExists(throwable: Throwable?) {
-        throwable?.message?.let(::showErrorDialog)
+    fun showErrorDialog(throwable: Throwable) {
+        throwable.message?.let(this::showErrorDialog)
     }
 
     fun collectLaunchCatchingError(
