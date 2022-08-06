@@ -2,14 +2,12 @@ package akio.apps.myrun.feature.userprefs
 
 import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.authentication.api.SignInManager
-import akio.apps.myrun.data.authentication.api.error.UnauthorizedUserError
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.eapps.api.model.ExternalProviders
 import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.domain.strava.DeauthorizeStravaUsecase
 import akio.apps.myrun.domain.user.GetProviderTokensUsecase
-import akio.apps.myrun.feature.core.Event
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.worker.UploadStravaFileWorker
 import android.app.Application
@@ -43,21 +41,21 @@ class UserPreferencesViewModel @Inject constructor(
         getProviderTokensUsecase.getProviderTokensFlow()
             .map(::mapAppTokensToStravaLinkState)
             .flowOn(ioDispatcher),
-        isLaunchCatchingInProgress,
+        launchCatchingLoading,
         launchCatchingError,
         isAccountDeletedFlow
     ) {
             measureSystem: MeasureSystem,
             stravaLinkState: StravaLinkState,
             isLoading: Boolean,
-            error: Event<Throwable>,
+            error: Throwable?,
             isAccountDeleted: Boolean,
         ->
         ScreenState(
             measureSystem,
             stravaLinkState,
             isLoading,
-            error.peekContent(),
+            error,
             isAccountDeleted
         )
     }
@@ -72,7 +70,6 @@ class UserPreferencesViewModel @Inject constructor(
         UploadStravaFileWorker.clear(application)
     }
 
-    @Throws(UnauthorizedUserError::class)
     fun deleteUser() = viewModelScope.launchCatching {
         withContext(ioDispatcher) {
             signInManager.deleteUserAccount()
@@ -80,8 +77,8 @@ class UserPreferencesViewModel @Inject constructor(
         isAccountDeletedFlow.value = true
     }
 
-    fun clearScreenError() {
-        setLaunchCatchingError(null)
+    fun acknowledgeError() {
+        setLaunchCatchingError(null) // this makes screen state re-combine with null error
     }
 
     private fun mapAppTokensToStravaLinkState(

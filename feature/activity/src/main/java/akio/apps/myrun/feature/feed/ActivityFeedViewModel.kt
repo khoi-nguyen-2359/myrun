@@ -12,7 +12,6 @@ import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.PlaceNameSelector
-import akio.apps.myrun.feature.core.Event
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -153,8 +152,8 @@ internal class ActivityFeedViewModel @Inject constructor(
 
     private fun loadInitialData() =
         viewModelScope.launchCatching(
-            progressStateFlow = isInitialLoadingMutable,
-            errorStateFlow = MutableStateFlow(Event(null))
+            loadingStateFlow = isInitialLoadingMutable,
+            errorStateFlow = MutableStateFlow(null)
         ) {
             val userId = userAuthenticationState.getUserAccountId()
             if (userId != null) {

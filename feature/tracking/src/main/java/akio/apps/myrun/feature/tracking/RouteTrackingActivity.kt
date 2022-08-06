@@ -9,7 +9,6 @@ import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus.PAUSED
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus.RESUMED
 import akio.apps.myrun.feature.core.BitmapUtils.createDrawableBitmap
 import akio.apps.myrun.feature.core.DialogDelegate
-import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.dp2px
 import akio.apps.myrun.feature.core.ktx.lazyViewModelProvider
@@ -179,7 +178,7 @@ class RouteTrackingActivity(
 
     private fun initObservers() {
         collectRepeatOnStarted(
-            routeTrackingViewModel.isLaunchCatchingInProgress,
+            routeTrackingViewModel.launchCatchingLoading,
             dialogDelegate::toggleProgressDialog
         )
         collectRepeatOnStarted(
@@ -188,16 +187,13 @@ class RouteTrackingActivity(
         )
         collectRepeatOnStarted(routeTrackingViewModel.trackingStats, trackingStatsView::update)
         collectRepeatOnStarted(routeTrackingViewModel.trackingStatus, ::onTrackingStatusChanged)
-        collectEventRepeatOnStarted(
-            routeTrackingViewModel.launchCatchingError,
-            dialogDelegate::showExceptionAlert
-        )
+        dialogDelegate.collectLaunchCatchingError(this, routeTrackingViewModel)
         collectRepeatOnStarted(
             routeTrackingViewModel.activityType,
             activitySettingsView::setActivityType
         )
-        collectRepeatOnStarted(isLaunchCatchingInProgress, dialogDelegate::toggleProgressDialog)
-        collectEventRepeatOnStarted(launchCatchingError, dialogDelegate::showExceptionAlert)
+        collectRepeatOnStarted(launchCatchingLoading, dialogDelegate::toggleProgressDialog)
+        dialogDelegate.collectLaunchCatchingError(this, this)
         collectRepeatOnStarted(routeTrackingViewModel.locationUpdateFlow) {
             if (!isMapCameraMoving && it.isNotEmpty()) {
                 updateStickyCamera(it.last())

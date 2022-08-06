@@ -136,7 +136,7 @@ internal class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload
     private fun cropAndUploadAvatar() {
         val connMan = getSystemService<ConnectivityManager>()
         if (connMan?.activeNetworkInfo?.isConnectedOrConnecting != true) {
-            dialogDelegate.showErrorAlert(
+            dialogDelegate.showErrorDialog(
                 getString(R.string.upload_avatar_connection_unavailable_error)
             )
             return
@@ -158,7 +158,7 @@ internal class UploadAvatarActivity : AppCompatActivity(R.layout.activity_upload
                     finish()
                 }
             } catch (ex: Exception) {
-                dialogDelegate.showExceptionAlert(ex)
+                dialogDelegate.showAlertIfErrorExists(ex)
             }
             dialogDelegate.dismissProgressDialog()
         }

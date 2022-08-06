@@ -3,7 +3,6 @@ package akio.apps.myrun.feature.route.ui
 import akio.apps.myrun.data.location.api.model.LatLng
 import akio.apps.myrun.feature.core.BitmapUtils
 import akio.apps.myrun.feature.core.DialogDelegate
-import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.dp2px
 import akio.apps.myrun.feature.core.ktx.extra
@@ -139,13 +138,10 @@ class RoutePlanningActivity :
             }
         }
 
-        collectEventRepeatOnStarted(
-            viewModel.launchCatchingError,
-            dialogDelegate::showExceptionAlert
-        )
+        dialogDelegate.collectLaunchCatchingError(this, viewModel)
 
         collectRepeatOnStarted(
-            viewModel.isLaunchCatchingInProgress,
+            viewModel.launchCatchingLoading,
             dialogDelegate::toggleProgressDialog
         )
 

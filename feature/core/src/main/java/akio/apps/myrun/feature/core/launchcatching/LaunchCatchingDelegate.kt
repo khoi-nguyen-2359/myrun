@@ -1,49 +1,43 @@
 package akio.apps.myrun.feature.core.launchcatching
 
-import akio.apps.myrun.feature.core.Event
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 interface LaunchCatchingDelegate {
-    val launchCatchingError: StateFlow<Event<Throwable>>
-    val isLaunchCatchingInProgress: StateFlow<Boolean>
+    val launchCatchingError: Flow<Throwable?>
+    val launchCatchingLoading: Flow<Boolean>
     fun setLaunchCatchingError(error: Throwable?)
-    fun setLaunchCatchingInProgress(value: Boolean)
     fun CoroutineScope.launchCatching(
-        progressStateFlow: MutableStateFlow<Boolean>? = null,
-        errorStateFlow: MutableStateFlow<Event<Throwable>>? = null,
+        loadingStateFlow: MutableStateFlow<Boolean>? = null,
+        errorStateFlow: MutableStateFlow<Throwable?>? = null,
         task: suspend CoroutineScope.() -> Unit,
     ): Job
 }
 
 class LaunchCatchingDelegateImpl @Inject constructor() : LaunchCatchingDelegate {
-    private val _launchCatchingError: MutableStateFlow<Event<Throwable>> =
-        MutableStateFlow(Event(null))
-    override val launchCatchingError: StateFlow<Event<Throwable>> = _launchCatchingError
+    private val _launchCatchingError: MutableStateFlow<Throwable?> =
+        MutableStateFlow(null)
+    override val launchCatchingError: Flow<Throwable?> = _launchCatchingError
 
-    private val _isLaunchCatchingInProgress: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    override val isLaunchCatchingInProgress: StateFlow<Boolean> = _isLaunchCatchingInProgress
+    private val _launchCatchingLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    override val launchCatchingLoading: Flow<Boolean> = _launchCatchingLoading
 
     override fun setLaunchCatchingError(error: Throwable?) {
-        _launchCatchingError.value = Event(error)
-    }
-
-    override fun setLaunchCatchingInProgress(value: Boolean) {
-        _isLaunchCatchingInProgress.value = value
+        _launchCatchingError.value = error
     }
 
     override fun CoroutineScope.launchCatching(
-        progressStateFlow: MutableStateFlow<Boolean>?,
-        errorStateFlow: MutableStateFlow<Event<Throwable>>?,
+        loadingStateFlow: MutableStateFlow<Boolean>?,
+        errorStateFlow: MutableStateFlow<Throwable?>?,
         task: suspend CoroutineScope.() -> Unit,
     ) = launch {
-        val selectedProgressStateFlow = progressStateFlow
-            ?: _isLaunchCatchingInProgress
+        val selectedProgressStateFlow = loadingStateFlow
+            ?: _launchCatchingLoading
         val selectedErrorStateFlow = errorStateFlow
             ?: _launchCatchingError
         try {
@@ -51,7 +45,7 @@ class LaunchCatchingDelegateImpl @Inject constructor() : LaunchCatchingDelegate 
             task()
         } catch (ex: Throwable) {
             Timber.e(ex)
-            selectedErrorStateFlow.value = Event(ex)
+            selectedErrorStateFlow.value = ex
         } finally {
             selectedProgressStateFlow.value = false
         }

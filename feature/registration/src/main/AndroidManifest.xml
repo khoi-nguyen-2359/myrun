@@ -8,7 +8,6 @@
         <activity
             android:windowSoftInputMode="adjustPan"
             android:name=".SignInActivity"
-            android:screenOrientation="portrait"
             android:exported="false" />
 
         <!--        Facebook Login -->

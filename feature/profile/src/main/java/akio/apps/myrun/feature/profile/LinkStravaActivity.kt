@@ -2,7 +2,6 @@ package akio.apps.myrun.feature.profile
 
 import akio.apps.myrun.feature.core.DialogDelegate
 import akio.apps.myrun.feature.core.Event
-import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.lazyViewModelProvider
 import akio.apps.myrun.feature.profile.di.DaggerLinkStravaComponent
@@ -31,13 +30,15 @@ internal class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.Even
 
         linkStravaDelegate.checkStravaLoginResult(intent)
         collectRepeatOnStarted(
-            linkStravaViewModel.isLaunchCatchingInProgress,
+            linkStravaViewModel.launchCatchingLoading,
             dialogDelegate::toggleProgressDialog
         )
-        collectEventRepeatOnStarted(linkStravaViewModel.launchCatchingError) {
-            Toast.makeText(this, it.message, Toast.LENGTH_LONG)
-                .show()
-            finish()
+        collectRepeatOnStarted(linkStravaViewModel.launchCatchingError) {
+            if (it != null) {
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG)
+                    .show()
+                finish()
+            }
         }
         observeEvent(linkStravaViewModel.stravaTokenExchangedSuccess) {
             Toast.makeText(
@@ -57,7 +58,7 @@ internal class LinkStravaActivity : AppCompatActivity(), LinkStravaDelegate.Even
     }
 
     override fun onGetStravaLoginError(errorMessage: String) {
-        dialogDelegate.showErrorAlert(errorMessage)
+        dialogDelegate.showErrorDialog(errorMessage)
     }
 
     override fun onGetStravaLoginCode(loginCode: String) {
