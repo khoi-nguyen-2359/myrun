@@ -41,6 +41,7 @@ dependencies {
 
     // app migration
     implementation(libs.datastore)
+    implementation(libs.timber)
 
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.kotlinx.coroutines.core)
