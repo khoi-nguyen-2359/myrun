@@ -3,6 +3,7 @@ package akio.apps.myrun.data.tracking.api
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
+import akio.apps.myrun.data.user.api.model.PlaceIdentifier
 import kotlinx.coroutines.flow.Flow
 
 interface RouteTrackingState {
@@ -36,8 +37,8 @@ interface RouteTrackingState {
     suspend fun setLastLocationUpdateTime(time: Long)
     suspend fun getLastLocationUpdateTime(): Long?
 
-    suspend fun setPlaceIdentifier(placeIdentifier: String)
-    suspend fun getPlaceIdentifier(): String?
+    suspend fun setPlaceIdentifier(placeIdentifier: PlaceIdentifier)
+    suspend fun getPlaceIdentifier(): PlaceIdentifier?
 
     suspend fun clear()
 }

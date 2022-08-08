@@ -3,7 +3,8 @@ package akio.apps.myrun.domain.user
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.PlaceDataSource
-import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
+import akio.apps.myrun.data.user.api.UserRecentActivityRepository
+import akio.apps.myrun.data.user.api.model.PlaceIdentifier
 import java.io.IOException
 import javax.inject.Inject
 
@@ -11,8 +12,7 @@ class UpdateUserRecentPlaceUsecase @Inject constructor(
     private val locationDataSource: LocationDataSource,
     private val placeDataSource: PlaceDataSource,
     private val userAuthenticationState: UserAuthenticationState,
-    private val userRecentPlaceRepository: UserRecentPlaceRepository,
-    private val placeIdentifierConverter: PlaceIdentifierConverter,
+    private val userRecentActivityRepository: UserRecentActivityRepository,
 ) {
     suspend fun updateUserRecentPlace(): Result {
         val userId = userAuthenticationState.getUserAccountId()
@@ -27,8 +27,10 @@ class UpdateUserRecentPlaceUsecase @Inject constructor(
             )
 
             val placeIdentifier =
-                placeIdentifierConverter.fromAddressNameList(sortedAddressTexts.map { it.name })
-            userRecentPlaceRepository.saveRecentPlace(userId, placeIdentifier)
+                PlaceIdentifier.fromAddressComponents(sortedAddressTexts.map { it.name })
+            if (placeIdentifier != null) {
+                userRecentActivityRepository.saveRecentPlace(userId, placeIdentifier)
+            }
         } catch (ex: IOException) {
             return Result.IOFailure
         }

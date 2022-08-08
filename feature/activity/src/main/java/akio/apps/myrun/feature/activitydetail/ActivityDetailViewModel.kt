@@ -6,7 +6,7 @@ import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.user.api.UserPreferences
-import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
+import akio.apps.myrun.data.user.api.UserRecentActivityRepository
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.domain.activity.ActivitySplitCalculator
@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 internal class ActivityDetailViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val activityRepository: ActivityRepository,
-    private val userRecentPlaceRepository: UserRecentPlaceRepository,
+    private val userRecentActivityRepository: UserRecentActivityRepository,
     private val userAuthenticationState: UserAuthenticationState,
     private val placeNameSelector: PlaceNameSelector,
     private val activitySplitCalculator: ActivitySplitCalculator,
@@ -43,7 +43,7 @@ internal class ActivityDetailViewModel @Inject constructor(
         userPreferences.getMeasureSystem()
     ) { activityResource, preferredSystem ->
         val userId = userAuthenticationState.requireUserAccountId()
-        val userPlaceIdentifier = userRecentPlaceRepository.getRecentPlaceIdentifier(userId)
+        val userPlaceIdentifier = userRecentActivityRepository.getRecentPlaceIdentifier(userId)
         val placeName =
             placeNameSelector.select(activityResource.data?.placeIdentifier, userPlaceIdentifier)
         val locations = activityResource.data?.id?.let { activityId ->

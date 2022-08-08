@@ -6,7 +6,7 @@ data class FirestoreUserRecentActivityUpdateMap(
     @PropertyName("recentActivity")
     val recentActivity: MutableMap<String, Any> = mutableMapOf(),
 ) {
-    fun place(value: String) {
+    fun place(value: List<String>) {
         recentActivity[FirestoreUserRecentActivityFields.FIELD_PLACE] = value
     }
 

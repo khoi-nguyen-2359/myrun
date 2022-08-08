@@ -1,5 +1,7 @@
 package akio.apps.myrun.data.activity.api.model
 
+import akio.apps.myrun.data.user.api.model.PlaceIdentifier
+
 /**
  * This interface is for common data fields of an activity.
  * Declare it as internal because it is only used as property delegation for concrete activity
@@ -15,7 +17,7 @@ internal interface BaseActivityDataModel {
     val activityType: ActivityType
     val name: String
     val routeImage: String
-    val placeIdentifier: String?
+    val placeIdentifier: PlaceIdentifier?
 
     // stats
     val startTime: Long

@@ -5,6 +5,7 @@ import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
 import akio.apps.myrun.data.tracking.di.TrackingDataScope
+import akio.apps.myrun.data.user.api.model.PlaceIdentifier
 import android.app.Application
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -167,15 +168,15 @@ class PreferencesRouteTrackingState @Inject constructor(
     }
         .first()
 
-    override suspend fun setPlaceIdentifier(placeIdentifier: String) {
+    override suspend fun setPlaceIdentifier(placeIdentifier: PlaceIdentifier) {
         prefDataStore.edit { data ->
-            data[KEY_PLACE_IDENTIFIER] = placeIdentifier
+            data[KEY_PLACE_IDENTIFIER] = placeIdentifier.toPlaceIdentifierString()
         }
     }
 
-    override suspend fun getPlaceIdentifier(): String? =
+    override suspend fun getPlaceIdentifier(): PlaceIdentifier? =
         prefDataStore.data.map { data ->
-            data[KEY_PLACE_IDENTIFIER]
+            PlaceIdentifier.fromPlaceIdentifierString(data[KEY_PLACE_IDENTIFIER])
         }.first()
 
     companion object {

@@ -2,12 +2,14 @@ package akio.apps.myrun.data.user.impl
 
 import akio.apps.myrun.data.authentication.di.AuthenticationDataScope
 import akio.apps.myrun.data.common.Resource
-import akio.apps.myrun.data.user.api.PlaceIdentifier
-import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
+import akio.apps.myrun.data.user.api.UserRecentActivityRepository
+import akio.apps.myrun.data.user.api.model.PlaceIdentifier
+import akio.apps.myrun.data.user.api.model.UserFollow
 import akio.apps.myrun.data.user.impl.model.FirestoreUser
 import akio.apps.myrun.data.user.impl.model.FirestoreUserRecentActivityUpdateMap
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
@@ -23,16 +25,16 @@ import kotlinx.coroutines.withContext
 
 @Singleton
 @ContributesBinding(AuthenticationDataScope::class)
-class FirebaseUserRecentPlaceRepository @Inject constructor(
+class FirebaseUserRecentActivityRepository @Inject constructor(
     private val firestore: FirebaseFirestore,
-) : UserRecentPlaceRepository {
+) : UserRecentActivityRepository {
 
     private val usersCollection: CollectionReference
         get() = firestore.collection(USERS_COLLECTION)
 
     override suspend fun saveRecentPlace(userId: String, areaIdentifier: PlaceIdentifier) {
         val updateEntry = FirestoreUserRecentActivityUpdateMap().apply {
-            place(areaIdentifier)
+            place(areaIdentifier.addressComponents)
             activeTime(System.currentTimeMillis())
         }
         usersCollection.document(userId)
@@ -46,7 +48,7 @@ class FirebaseUserRecentPlaceRepository @Inject constructor(
             .await()
             .toObject(FirestoreUser::class.java)
             ?.recentActivity
-            ?.place
+            ?.placeComponents?.let(PlaceIdentifier::fromAddressComponents)
 
     override fun getRecentPlaceIdentifierFlow(
         userId: String,
@@ -54,7 +56,10 @@ class FirebaseUserRecentPlaceRepository @Inject constructor(
         val listener = withContext(Dispatchers.Main.immediate) {
             usersCollection.document(userId).addSnapshotListener { snapshot, error ->
                 val placeIdentifier =
-                    snapshot?.toObject(FirestoreUser::class.java)?.recentActivity?.place
+                    snapshot?.toObject(FirestoreUser::class.java)
+                        ?.recentActivity?.placeComponents?.let(
+                            PlaceIdentifier::fromAddressComponents
+                        )
                         ?: return@addSnapshotListener
                 trySendBlocking(Resource.Success(placeIdentifier))
                 error?.let {
@@ -71,7 +76,27 @@ class FirebaseUserRecentPlaceRepository @Inject constructor(
         }
     }
 
+    override suspend fun getUserFollowByRecentActivity(
+        userId: String,
+        placeComponent: String,
+        limit: Long,
+    ): List<UserFollow> =
+        usersCollection.whereArrayContains(USER_RECENT_PLACE_FIELD, placeComponent)
+            .orderBy(USER_RECENT_ACTIVE_TIME_FIELD, Query.Direction.DESCENDING)
+            .limit(limit)
+            .get().await()
+            .documents.mapNotNull { doc ->
+                if (doc.id == userId) {
+                    return@mapNotNull null
+                }
+                val userProfile = doc.toObject(FirestoreUser::class.java)?.profile
+                    ?: return@mapNotNull null
+                UserFollow(userProfile.uid, userProfile.displayName, userProfile.photoUrl)
+            }
+
     companion object {
         private const val USERS_COLLECTION = "users"
+        private const val USER_RECENT_PLACE_FIELD = "recentActivity.placeComponents"
+        private const val USER_RECENT_ACTIVE_TIME_FIELD = "recentActivity.activeTime"
     }
 }

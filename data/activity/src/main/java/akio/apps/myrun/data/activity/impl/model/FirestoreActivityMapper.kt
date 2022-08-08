@@ -6,6 +6,7 @@ import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
+import akio.apps.myrun.data.user.api.model.PlaceIdentifier
 import android.net.Uri
 import javax.inject.Inject
 
@@ -22,7 +23,8 @@ class FirestoreActivityMapper @Inject constructor() {
                 activityType,
                 name,
                 routeImage,
-                placeIdentifier,
+                placeIdentifier?.let(PlaceIdentifier::fromPlaceIdentifierString)
+                    ?: placeComponents?.let(PlaceIdentifier::fromAddressComponents),
                 startTime,
                 endTime,
                 duration,
@@ -58,7 +60,7 @@ class FirestoreActivityMapper @Inject constructor() {
                 activityType = activityType.id,
                 name = name,
                 routeImage = uploadedImageUri.toString(),
-                placeIdentifier = input.placeIdentifier,
+                placeComponents = input.placeIdentifier?.addressComponents,
                 startTime = startTime,
                 endTime = endTime,
                 duration = duration,

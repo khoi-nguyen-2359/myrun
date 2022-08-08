@@ -3,7 +3,6 @@ package akio.apps.myrun.feature.userstats
 import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.ActivityType
-import akio.apps.myrun.data.user.api.PlaceIdentifier
 import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserProfile
@@ -56,7 +55,7 @@ internal class UserStatsViewModel @Inject constructor(
 
     private fun combineUserProfileAndRecentPlace(
         userProfile: UserProfile,
-        userRecentPlace: PlaceIdentifier?,
+        userRecentPlace: String?,
         trainingSummaryTableData:
             Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
         measureSystem: MeasureSystem,
@@ -84,7 +83,7 @@ internal class UserStatsViewModel @Inject constructor(
         data class StatsAvailable(
             val userName: String,
             val userPhotoUrl: String?,
-            val userRecentPlace: PlaceIdentifier?,
+            val userRecentPlace: String?,
             val trainingSummaryTableData:
                 Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
             val measureSystem: MeasureSystem,
@@ -92,7 +91,7 @@ internal class UserStatsViewModel @Inject constructor(
 
         companion object {
             fun createScreenState(
-                userRecentPlace: PlaceIdentifier?,
+                userRecentPlace: String?,
                 userProfile: UserProfile,
                 trainingSummaryTableData:
                     Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,

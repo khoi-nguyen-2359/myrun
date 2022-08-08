@@ -7,7 +7,7 @@ import akio.apps.myrun.data.user.api.AppMigrationState
 import akio.apps.myrun.data.user.api.UserFollowRepository
 import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.UserProfileRepository
-import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
+import akio.apps.myrun.data.user.api.UserRecentActivityRepository
 import android.app.Application
 import com.squareup.anvil.annotations.MergeComponent
 import dagger.BindsInstance
@@ -24,7 +24,7 @@ abstract class AuthenticationDataScope private constructor()
 interface AuthenticationDataComponent {
     fun signInManager(): SignInManager
     fun userAuthState(): UserAuthenticationState
-    fun userRecentPlace(): UserRecentPlaceRepository
+    fun userRecentPlace(): UserRecentActivityRepository
     fun userProfileRepository(): UserProfileRepository
     fun appMigrationState(): AppMigrationState
     fun userFollowRepository(): UserFollowRepository
