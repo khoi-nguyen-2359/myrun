@@ -1,7 +1,7 @@
 package akio.apps.myrun.feature.feed.model
 
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
-import akio.apps.myrun.data.user.api.model.UserFollow
+import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import java.util.concurrent.atomic.AtomicLong
 
 sealed class FeedUiModel(val id: String = "feed-auto-id-${ItemAutoId.incrementAndGet()}") {
@@ -12,4 +12,4 @@ sealed class FeedUiModel(val id: String = "feed-auto-id-${ItemAutoId.incrementAn
 
 data class FeedActivity(val activityData: BaseActivityModel) : FeedUiModel(activityData.id)
 
-data class FeedUserFollowSuggestion(val userList: List<UserFollow>) : FeedUiModel()
+data class FeedUserFollowSuggestion(val userList: List<UserFollowSuggestion>) : FeedUiModel()

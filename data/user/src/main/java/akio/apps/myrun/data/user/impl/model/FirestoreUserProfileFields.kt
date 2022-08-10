@@ -7,4 +7,5 @@ object FirestoreUserProfileFields {
     const val FIELD_WEIGHT = "weight"
     const val FIELD_PHOTO_URL = "photoUrl"
     const val FIELD_BIRTHDATE = "birthdate"
+    const val FIELD_FOLLOW_STATUS = "status"
 }

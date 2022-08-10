@@ -264,7 +264,7 @@ private fun ActivityFeedItemList(
                     )
                 }
                 is FeedUserFollowSuggestion -> {
-                    // FeedUserFollowSuggestionItem(feedItem)
+                    FeedUserFollowSuggestionItem(feedItem)
                 }
                 null -> {
                     // do nothing

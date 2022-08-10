@@ -1,12 +1,8 @@
 package akio.apps.myrun.data.user.api.model
 
-data class UserFollow(
+data class UserFollowSuggestion(
     val uid: String,
     val displayName: String,
     val photoUrl: String?,
-    val status: FollowStatus,
+    val lastActiveTime: Long,
 )
-
-enum class FollowStatus {
-    Requested, Followed
-}

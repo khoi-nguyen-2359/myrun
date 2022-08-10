@@ -8,7 +8,7 @@ import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.UserRecentActivityRepository
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.PlaceIdentifier
-import akio.apps.myrun.data.user.api.model.UserFollow
+import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.domain.user.GetUserFollowSuggestionUsecase
@@ -91,7 +91,7 @@ internal class ActivityFeedViewModel @Inject constructor(
             // convert to shared flow for multiple collectors
             .shareIn(viewModelScope, replay = 1, started = SharingStarted.WhileSubscribed())
 
-    private val userFollowSuggestionFlow: Flow<List<UserFollow>> = flow {
+    private val userFollowSuggestionFlow: Flow<List<UserFollowSuggestion>> = flow {
         emit(emptyList())
         val userFollows = withContext(ioDispatcher) {
             getUserFollowUsecase.getFollowSuggestion()

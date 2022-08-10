@@ -4,12 +4,10 @@ import akio.apps.myrun.data.authentication.di.AuthenticationDataScope
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.user.api.UserRecentActivityRepository
 import akio.apps.myrun.data.user.api.model.PlaceIdentifier
-import akio.apps.myrun.data.user.api.model.UserFollow
 import akio.apps.myrun.data.user.impl.model.FirestoreUser
 import akio.apps.myrun.data.user.impl.model.FirestoreUserRecentActivityUpdateMap
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
@@ -75,24 +73,6 @@ class FirebaseUserRecentActivityRepository @Inject constructor(
             }
         }
     }
-
-    override suspend fun getUserFollowByRecentActivity(
-        userId: String,
-        placeComponent: String,
-        limit: Long,
-    ): List<UserFollow> =
-        usersCollection.whereArrayContains(USER_RECENT_PLACE_FIELD, placeComponent)
-            .orderBy(USER_RECENT_ACTIVE_TIME_FIELD, Query.Direction.DESCENDING)
-            .limit(limit)
-            .get().await()
-            .documents.mapNotNull { doc ->
-                if (doc.id == userId) {
-                    return@mapNotNull null
-                }
-                val userProfile = doc.toObject(FirestoreUser::class.java)?.profile
-                    ?: return@mapNotNull null
-                UserFollow(userProfile.uid, userProfile.displayName, userProfile.photoUrl)
-            }
 
     companion object {
         private const val USERS_COLLECTION = "users"
