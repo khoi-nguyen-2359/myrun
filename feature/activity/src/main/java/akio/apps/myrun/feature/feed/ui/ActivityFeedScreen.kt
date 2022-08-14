@@ -14,7 +14,6 @@ import akio.apps.myrun.feature.feed.model.FeedActivity
 import akio.apps.myrun.feature.feed.model.FeedUiModel
 import akio.apps.myrun.feature.feed.model.FeedUserFollowSuggestion
 import akio.apps.myrun.feature.feed.ui.ActivityFeedColors.listBackground
-import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemHorizontalMargin
 import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemVerticalMargin
 import android.app.Application
 import androidx.compose.animation.core.Animatable
@@ -79,10 +78,10 @@ private object ActivityFeedColors {
 }
 
 internal object ActivityFeedDimensions {
-    val activityItemHorizontalMargin: Dp = 0.dp
     val activityItemVerticalMargin: Dp = 12.dp
     val activityItemHorizontalPadding: Dp = 16.dp
-    val activityItemVerticalPadding: Dp = 12.dp
+    val feedItemVerticalPadding: Dp = 12.dp
+    val feedItemHorizontalPadding: Dp = 12.dp
 }
 
 private const val REVEAL_ANIM_THRESHOLD = 10
@@ -323,10 +322,7 @@ private fun LoadingItem() = Column(
 
 @Composable
 internal fun FeedItem(content: @Composable () -> Unit) = Box(
-    modifier = Modifier.padding(
-        horizontal = activityItemHorizontalMargin,
-        vertical = activityItemVerticalMargin
-    )
+    modifier = Modifier.padding(vertical = activityItemVerticalMargin)
 ) {
     Surface(
         elevation = 2.dp,

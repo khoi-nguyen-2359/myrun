@@ -114,7 +114,8 @@ internal class ActivityFeedViewModel @Inject constructor(
         .combine(userFollowSuggestionFlow) { pagingData, userFollows ->
             var index = 0
             pagingData.flatMap {
-                if (index++ % (PAGE_SIZE / 2) == PAGE_SIZE / 2 - 1 && userFollows.isNotEmpty()) {
+                if (index++ == PAGE_SIZE - 1 && userFollows.isNotEmpty()) {
+                    // insert follow suggestion in the end of the first page
                     listOf(FeedActivity(it), FeedUserFollowSuggestion(userFollows))
                 } else {
                     listOf(FeedActivity(it))

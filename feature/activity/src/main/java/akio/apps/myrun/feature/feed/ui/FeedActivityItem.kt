@@ -16,7 +16,6 @@ import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.feed.ActivityFeedViewModel
 import android.content.Context
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +28,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.DropdownMenu
@@ -49,10 +47,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -61,8 +57,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 
 @Composable
 internal fun FeedActivityItem(
@@ -112,12 +106,8 @@ private fun FeedActivityItem(
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
 ) = FeedItem {
-    Column(
-        modifier = Modifier.clickable {
-            onClickActivityAction(activity)
-        }
-    ) {
-        Spacer(modifier = Modifier.height(ActivityFeedDimensions.activityItemVerticalPadding))
+    Column(modifier = Modifier.clickable { onClickActivityAction(activity) }) {
+        Spacer(modifier = Modifier.height(ActivityFeedDimensions.feedItemVerticalPadding))
         ActivityInformationView(
             activity,
             activityFormattedStartTime,
@@ -143,7 +133,7 @@ private fun ActivityRouteImageBox(
         preferredSystem,
         modifier = Modifier.padding(
             horizontal = ActivityFeedDimensions.activityItemHorizontalPadding,
-            vertical = ActivityFeedDimensions.activityItemVerticalPadding
+            vertical = ActivityFeedDimensions.feedItemVerticalPadding
         )
     )
 }
@@ -253,7 +243,7 @@ private fun ActivityInformationView(
             activity.athleteInfo.userName to activity.athleteInfo.userAvatar
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            UserAvatarImage(userAvatar, onClickUserAvatar)
+            UserAvatarImage(userAvatar, onClickUserAvatar = onClickUserAvatar)
             Spacer(modifier = Modifier.size(12.dp))
             Column(modifier = Modifier.weight(1.0f)) {
                 AthleteNameText(userName.orEmpty())
@@ -350,32 +340,6 @@ private fun ActivityTimeAndPlaceText(
         overflow = TextOverflow.Ellipsis,
         maxLines = 2,
         style = MaterialTheme.typography.caption
-    )
-}
-
-@Composable
-private fun UserAvatarImage(
-    userProfilePicture: String?,
-    onClickUserAvatar: () -> Unit,
-) {
-    val avatarDimension = 46.dp
-    val avatarSize = with(LocalDensity.current) { avatarDimension.toPx() }
-    Image(
-        painter = rememberAsyncImagePainter(
-            ImageRequest.Builder(LocalContext.current)
-                .data(data = userProfilePicture.orEmpty())
-                .apply {
-                    size(avatarSize.toInt())
-                        .placeholder(R.drawable.common_avatar_placeholder_image)
-                        .error(R.drawable.common_avatar_placeholder_image)
-                }
-                .build()
-        ),
-        contentDescription = "Athlete avatar",
-        modifier = Modifier
-            .size(avatarDimension)
-            .clip(CircleShape)
-            .clickable { onClickUserAvatar() }
     )
 }
 

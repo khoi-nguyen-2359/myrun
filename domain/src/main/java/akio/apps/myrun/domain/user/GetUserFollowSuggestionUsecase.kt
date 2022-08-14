@@ -40,6 +40,9 @@ class GetUserFollowSuggestionUsecase @Inject constructor(
             followSuggestions = followSuggestions.filterNot { it.uid in userFollowingIds }
         } while (followSuggestions.isEmpty())
         return followSuggestions
+            .flatMap { listOf(it.copy(uid = it.uid + "1"), it.copy(uid = it.uid + "2")) }
+            .flatMap { listOf(it.copy(uid = it.uid + "3"), it.copy(uid = it.uid + "4")) }
+            .flatMap { listOf(it.copy(uid = it.uid + "5"), it.copy(uid = it.uid + "6")) }
     }
 
     companion object {

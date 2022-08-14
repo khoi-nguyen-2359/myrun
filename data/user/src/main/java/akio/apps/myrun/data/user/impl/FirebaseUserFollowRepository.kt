@@ -46,6 +46,7 @@ class FirebaseUserFollowRepository @Inject constructor(
                 }
         } catch (ex: Exception) {
             // handle cache not found
+            send(emptyList())
             Timber.d("getUserFollowings cache not found.")
         }
 
@@ -74,8 +75,8 @@ class FirebaseUserFollowRepository @Inject constructor(
     ): List<UserFollowSuggestion> = firestore.collection(USERS_COLLECTION)
         .whereArrayContains(USER_RECENT_PLACE_FIELD, placeComponent)
         .orderBy(USER_RECENT_ACTIVE_TIME_FIELD, Query.Direction.DESCENDING)
-        .limit(limit)
         .startAfter(startAfterActiveTime)
+        .limit(limit)
         .get().await()
         .documents.mapNotNull { doc ->
             if (doc.id == userId) {

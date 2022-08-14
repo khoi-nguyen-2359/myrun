@@ -27,4 +27,6 @@
     <string name="user_home_summary_title">Training summary</string>
     <string name="user_home_route_section_title">Routes</string>
     <string name="user_home_summary_total_time_label">Time</string>
+    <string name="activity_feed_follow_suggestion_item_title">Suggested Users</string>
+    <string name="action_follow">Follow</string>
 </resources>
