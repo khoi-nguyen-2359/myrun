@@ -11,6 +11,7 @@ import akio.apps.myrun.data.user.api.model.PlaceIdentifier
 import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
+import akio.apps.myrun.domain.user.FollowUserUsecase
 import akio.apps.myrun.domain.user.GetUserFollowSuggestionUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.PlaceNameSelector
@@ -29,11 +30,11 @@ import androidx.paging.flatMap
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
@@ -54,6 +55,7 @@ internal class ActivityFeedViewModel @Inject constructor(
     private val activityDateTimeFormatter: ActivityDateTimeFormatter,
     private val userPreferences: UserPreferences,
     private val getUserFollowUsecase: GetUserFollowSuggestionUsecase,
+    private val followUserUsecase: FollowUserUsecase,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingViewModel {
@@ -91,13 +93,8 @@ internal class ActivityFeedViewModel @Inject constructor(
             // convert to shared flow for multiple collectors
             .shareIn(viewModelScope, replay = 1, started = SharingStarted.WhileSubscribed())
 
-    private val userFollowSuggestionFlow: Flow<List<UserFollowSuggestion>> = flow {
-        emit(emptyList())
-        val userFollows = withContext(ioDispatcher) {
-            getUserFollowUsecase.getFollowSuggestion()
-        }
-        emit(userFollows)
-    }
+    private val userFollowSuggestionMutableFlow: MutableSharedFlow<List<UserFollowSuggestion>> =
+        MutableStateFlow(emptyList())
 
     val myActivityList: Flow<PagingData<FeedUiModel>> = Pager(
         config = PagingConfig(
@@ -111,7 +108,7 @@ internal class ActivityFeedViewModel @Inject constructor(
         .flow
         // cachedIn will help latest data to be emitted right after transition
         .cachedIn(viewModelScope)
-        .combine(userFollowSuggestionFlow) { pagingData, userFollows ->
+        .combine(userFollowSuggestionMutableFlow) { pagingData, userFollows ->
             var index = 0
             pagingData.flatMap {
                 if (index++ == PAGE_SIZE - 1 && userFollows.isNotEmpty()) {
@@ -134,6 +131,7 @@ internal class ActivityFeedViewModel @Inject constructor(
     init {
         loadInitialData()
         observeActivityUploadCount()
+        emitUserFollowSuggestions()
     }
 
     fun setUploadBadgeDismissed(isDismissed: Boolean) {
@@ -158,6 +156,22 @@ internal class ActivityFeedViewModel @Inject constructor(
         mapActivityIdToPlaceName[activityId] = placeName
 
         return placeName
+    }
+
+    fun followUser(userFollowSuggestion: UserFollowSuggestion) = viewModelScope.launchCatching(
+        loadingStateFlow = MutableStateFlow(false)
+    ) {
+        withContext(ioDispatcher) {
+            followUserUsecase.followUser(userFollowSuggestion)
+        }
+        emitUserFollowSuggestions()
+    }
+
+    private fun emitUserFollowSuggestions() = viewModelScope.launch {
+        val userFollows = withContext(ioDispatcher) {
+            getUserFollowUsecase.getFollowSuggestion()
+        }
+        userFollowSuggestionMutableFlow.emit(userFollows)
     }
 
     private fun observeActivityUploadCount() = viewModelScope.launch {

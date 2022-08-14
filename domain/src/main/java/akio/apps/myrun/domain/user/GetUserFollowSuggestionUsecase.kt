@@ -3,10 +3,11 @@ package akio.apps.myrun.domain.user
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserFollowRepository
 import akio.apps.myrun.data.user.api.UserRecentActivityRepository
+import akio.apps.myrun.data.user.api.model.FollowStatus
+import akio.apps.myrun.data.user.api.model.UserFollow
 import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import akio.apps.myrun.domain.time.TimeProvider
 import javax.inject.Inject
-import kotlinx.coroutines.flow.first
 
 class GetUserFollowSuggestionUsecase @Inject constructor(
     private val userRecentActivityRepository: UserRecentActivityRepository,
@@ -20,9 +21,8 @@ class GetUserFollowSuggestionUsecase @Inject constructor(
             ?: return emptyList()
         val placeComponent = recentPlace.addressComponents.firstOrNull()
             ?: return emptyList()
-        val userFollowingIds = userFollowRepository.getUserFollowingsFlow(userId).first()
-            .map { it.uid }
-            .toSet()
+        val followingUsers = userFollowRepository.getUserFollowings(userId)
+        val (requestedList, acceptedList) = categorizeUserIdByFollowStatus(followingUsers)
         var followSuggestions: List<UserFollowSuggestion>
         var startAfterActiveTime = timeProvider.currentTimeMillis()
         do {
@@ -37,12 +37,29 @@ class GetUserFollowSuggestionUsecase @Inject constructor(
             }
 
             startAfterActiveTime = followSuggestions.last().lastActiveTime
-            followSuggestions = followSuggestions.filterNot { it.uid in userFollowingIds }
+            followSuggestions = followSuggestions.mapNotNull { suggestion ->
+                if (suggestion.uid in acceptedList) {
+                    null
+                } else {
+                    suggestion.copy(isRequested = suggestion.uid in requestedList)
+                }
+            }
         } while (followSuggestions.isEmpty())
         return followSuggestions
-            .flatMap { listOf(it.copy(uid = it.uid + "1"), it.copy(uid = it.uid + "2")) }
-            .flatMap { listOf(it.copy(uid = it.uid + "3"), it.copy(uid = it.uid + "4")) }
-            .flatMap { listOf(it.copy(uid = it.uid + "5"), it.copy(uid = it.uid + "6")) }
+    }
+
+    private fun categorizeUserIdByFollowStatus(
+        userFollows: List<UserFollow>,
+    ): Pair<Set<String>, Set<String>> {
+        val requestedList = mutableSetOf<String>()
+        val acceptedList = mutableSetOf<String>()
+        userFollows.forEach {
+            when (it.status) {
+                FollowStatus.Requested -> requestedList.add(it.uid)
+                FollowStatus.Accepted -> acceptedList.add(it.uid)
+            }
+        }
+        return requestedList to acceptedList
     }
 
     companion object {

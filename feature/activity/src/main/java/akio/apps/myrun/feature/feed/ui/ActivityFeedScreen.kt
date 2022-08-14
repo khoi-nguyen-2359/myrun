@@ -8,6 +8,7 @@ import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
+import akio.apps.myrun.feature.core.ui.ErrorDialog
 import akio.apps.myrun.feature.feed.ActivityFeedViewModel
 import akio.apps.myrun.feature.feed.di.DaggerActivityFeedFeatureComponent
 import akio.apps.myrun.feature.feed.model.FeedActivity
@@ -157,6 +158,13 @@ private fun ActivityFeedScreen(
             navController.navigate(HomeNavDestination.UserPreferences.route)
         }
     }
+
+    val screenError by activityFeedViewModel.launchCatchingError.collectAsState(initial = null)
+    if (screenError != null) {
+        ErrorDialog(text = screenError?.message ?: "") {
+            activityFeedViewModel.setLaunchCatchingError(null)
+        }
+    }
 }
 
 private fun onClickUploadCompleteBadge(
@@ -263,7 +271,7 @@ private fun ActivityFeedItemList(
                     )
                 }
                 is FeedUserFollowSuggestion -> {
-                    FeedUserFollowSuggestionItem(feedItem)
+                    FeedUserFollowSuggestionItem(feedItem, activityFeedViewModel::followUser)
                 }
                 null -> {
                     // do nothing

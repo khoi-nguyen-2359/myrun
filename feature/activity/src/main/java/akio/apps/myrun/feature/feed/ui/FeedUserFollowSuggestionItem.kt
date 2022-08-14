@@ -1,9 +1,11 @@
 package akio.apps.myrun.feature.feed.ui
 
+import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
 import akio.apps.myrun.feature.feed.model.FeedUserFollowSuggestion
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,6 +32,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun FeedUserFollowSuggestionItem(
     followSuggestion: FeedUserFollowSuggestion,
+    onClickFollowUserId: (UserFollowSuggestion) -> Unit,
 ) = Column(
     modifier = Modifier.padding(vertical = ActivityFeedDimensions.feedItemVerticalPadding)
 ) {
@@ -40,48 +43,80 @@ fun FeedUserFollowSuggestionItem(
         fontWeight = FontWeight.Bold
     )
     LazyRow(
-        modifier = Modifier.padding(vertical = AppDimensions.rowVerticalPadding).fillMaxWidth(),
+        modifier = Modifier
+            .padding(vertical = AppDimensions.rowVerticalPadding)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
         items(
             followSuggestion.userList,
             key = { userFollow -> userFollow.uid }
         ) {
-            Card(
-                modifier = Modifier
-                    .width(140.dp)
-                    .padding(horizontal = 6.dp),
-                elevation = 2.dp
+            SuggestedUserCardItem(it, onClickFollowUserId)
+        }
+    }
+}
+
+@Composable
+private fun SuggestedUserCardItem(
+    followSuggestion: UserFollowSuggestion,
+    onClickFollowUser: (UserFollowSuggestion) -> Unit,
+) {
+    val followButtonColors = if (followSuggestion.isRequested) {
+        ButtonDefaults.outlinedButtonColors(
+            Color.White,
+            AppColors.primary
+        )
+    } else {
+        ButtonDefaults.outlinedButtonColors(
+            AppColors.primary,
+            AppColors.onPrimary
+        )
+    }
+
+    val followClickAction = if (followSuggestion.isRequested) {
+        null
+    } else {
+        onClickFollowUser
+    }
+
+    @StringRes
+    val buttonTextResId = if (followSuggestion.isRequested) {
+        R.string.status_requested
+    } else {
+        R.string.action_follow
+    }
+
+    Card(
+        modifier = Modifier
+            .width(160.dp)
+            .padding(6.dp),
+        elevation = 2.dp
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
+        ) {
+            UserAvatarImage(followSuggestion.photoUrl, avatarDimension = 80.dp)
+            Text(
+                text = followSuggestion.displayName,
+                modifier = Modifier.padding(10.dp),
+                maxLines = 2,
+                fontWeight = FontWeight.Bold
+            )
+            OutlinedButton(
+                shape = RoundedCornerShape(3.dp),
+                colors = followButtonColors,
+                contentPadding = PaddingValues(0.dp),
+                enabled = followClickAction != null,
+                onClick = { followClickAction?.invoke(followSuggestion) },
+                modifier = Modifier.heightIn(min = 30.dp).width(100.dp)
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(4.dp)
-                ) {
-                    UserAvatarImage(it.photoUrl, avatarDimension = 80.dp)
-                    Text(
-                        text = it.displayName,
-                        modifier = Modifier.padding(10.dp),
-                        maxLines = 2,
-                        fontWeight = FontWeight.Bold
-                    )
-                    OutlinedButton(
-                        shape = RoundedCornerShape(3.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            AppColors.primary,
-                            Color.White
-                        ),
-                        contentPadding = PaddingValues(0.dp),
-                        onClick = {
-                        },
-                        modifier = Modifier.heightIn(min = 30.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.action_follow),
-                            style = MaterialTheme.typography.caption,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
+                Text(
+                    text = stringResource(buttonTextResId),
+                    style = MaterialTheme.typography.caption,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

@@ -8,5 +8,5 @@ data class UserFollow(
 )
 
 enum class FollowStatus {
-    Requested, Followed
+    Requested, Accepted
 }

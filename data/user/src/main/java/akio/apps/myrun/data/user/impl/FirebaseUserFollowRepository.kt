@@ -11,18 +11,10 @@ import akio.apps.myrun.data.user.impl.model.FirestoreUserFollow
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.Source
 import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
-import timber.log.Timber
 
 @Singleton
 @ContributesBinding(AuthenticationDataScope::class)
@@ -34,38 +26,11 @@ class FirebaseUserFollowRepository @Inject constructor(
         return firestore.collection("$USERS_COLLECTION/$userAccountId/$USER_FOLLOWINGS_COLLECTION")
     }
 
-    override fun getUserFollowingsFlow(userId: String): Flow<List<UserFollow>> = callbackFlow {
-        val userFollowingsCollection = getUserFollowingsCollection(userId)
-        try {
-            userFollowingsCollection.get(Source.CACHE).await().documents
-                .mapNotNull {
-                    it.toObject(FirestoreUserFollow::class.java)?.toUserFollow(it.id)
-                }.let { cachedFollowings ->
-                    send(cachedFollowings)
-                    Timber.d("getUserFollowings from cache. size = ${cachedFollowings.size}")
-                }
-        } catch (ex: Exception) {
-            // handle cache not found
-            send(emptyList())
-            Timber.d("getUserFollowings cache not found.")
-        }
-
-        val listener = userFollowingsCollection.addSnapshotListener { snapshot, error ->
-            if (error == null) {
-                snapshot?.documents
-                    ?.mapNotNull {
-                        it.toObject(FirestoreUserFollow::class.java)?.toUserFollow(it.id)
-                    }
-                    ?.let(::trySendBlocking)
+    override suspend fun getUserFollowings(userId: String): List<UserFollow> =
+        getUserFollowingsCollection(userId).get().await().documents
+            .mapNotNull {
+                it.toObject(FirestoreUserFollow::class.java)?.toUserFollow(it.id)
             }
-        }
-
-        awaitClose {
-            runBlocking(Dispatchers.Main.immediate) {
-                listener.remove()
-            }
-        }
-    }
 
     override suspend fun getUserFollowByRecentActivity(
         userId: String,
@@ -96,8 +61,14 @@ class FirebaseUserFollowRepository @Inject constructor(
         return emptyList()
     }
 
-    override fun followUser(userId: String, followUserId: String) {
-        TODO("Not yet implemented")
+    override suspend fun followUser(userId: String, followSuggestion: UserFollowSuggestion) {
+        val followUserDoc = getUserFollowingsCollection(userId).document(followSuggestion.uid)
+        val entry = FirestoreUserFollow(
+            displayName = followSuggestion.displayName,
+            photoUrl = followSuggestion.photoUrl,
+            status = FirestoreFollowStatus.Requested.value
+        )
+        followUserDoc.set(entry).await()
     }
 
     override fun unfollowUser(userId: String, unfollowUserId: String) {
@@ -110,7 +81,7 @@ class FirebaseUserFollowRepository @Inject constructor(
     private fun toUserFollowStatus(status: Int): FollowStatus =
         when (FirestoreFollowStatus.from(status)) {
             FirestoreFollowStatus.Requested -> FollowStatus.Requested
-            FirestoreFollowStatus.Followed -> FollowStatus.Followed
+            FirestoreFollowStatus.Accepted -> FollowStatus.Accepted
         }
 
     companion object {
