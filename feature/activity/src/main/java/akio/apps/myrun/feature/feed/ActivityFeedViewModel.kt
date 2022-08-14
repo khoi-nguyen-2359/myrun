@@ -17,8 +17,9 @@ import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.PlaceNameSelector
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.feature.feed.model.FeedActivity
+import akio.apps.myrun.feature.feed.model.FeedSuggestedUserFollow
 import akio.apps.myrun.feature.feed.model.FeedUiModel
-import akio.apps.myrun.feature.feed.model.FeedUserFollowSuggestion
+import akio.apps.myrun.feature.feed.model.FeedUserFollowSuggestionList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -73,6 +74,8 @@ internal class ActivityFeedViewModel @Inject constructor(
 
     val preferredSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystem()
 
+    private var cachedUserFollowSuggestions: List<UserFollowSuggestion>? = null
+
     private fun createActivityUploadBadgeStatusFlow(): Flow<ActivityUploadBadgeStatus> =
         activityLocalStorage.getActivityStorageDataCountFlow()
             .distinctUntilChanged()
@@ -94,7 +97,8 @@ internal class ActivityFeedViewModel @Inject constructor(
             .shareIn(viewModelScope, replay = 1, started = SharingStarted.WhileSubscribed())
 
     private val userFollowSuggestionMutableFlow: MutableSharedFlow<List<UserFollowSuggestion>> =
-        MutableStateFlow(emptyList())
+        MutableSharedFlow()
+    private val userFollowActionStateMap: MutableMap<String, Boolean> = mutableMapOf()
 
     val myActivityList: Flow<PagingData<FeedUiModel>> = Pager(
         config = PagingConfig(
@@ -109,16 +113,29 @@ internal class ActivityFeedViewModel @Inject constructor(
         // cachedIn will help latest data to be emitted right after transition
         .cachedIn(viewModelScope)
         .combine(userFollowSuggestionMutableFlow) { pagingData, userFollows ->
-            var index = 0
-            pagingData.flatMap {
-                if (index++ == PAGE_SIZE - 1 && userFollows.isNotEmpty()) {
-                    // insert follow suggestion in the end of the first page
-                    listOf(FeedActivity(it), FeedUserFollowSuggestion(userFollows))
-                } else {
-                    listOf(FeedActivity(it))
+            combinePagingDataSources(pagingData, userFollows)
+        }
+
+    private fun combinePagingDataSources(
+        pagingData: PagingData<BaseActivityModel>,
+        userFollows: List<UserFollowSuggestion>,
+    ): PagingData<FeedUiModel> {
+        var index = 0
+        return pagingData.flatMap {
+            if (index++ == PAGE_SIZE - 1 && userFollows.isNotEmpty()) {
+                // insert follow suggestion in the end of the first page
+                val feedModels = userFollows.map { dataModel ->
+                    FeedSuggestedUserFollow(
+                        dataModel,
+                        userFollowActionStateMap[dataModel.uid] ?: false
+                    )
                 }
+                listOf(FeedActivity(it), FeedUserFollowSuggestionList(feedModels))
+            } else {
+                listOf(FeedActivity(it))
             }
         }
+    }
 
     private val mapActivityIdToPlaceName: MutableMap<String, String> = mutableMapOf()
 
@@ -131,7 +148,7 @@ internal class ActivityFeedViewModel @Inject constructor(
     init {
         loadInitialData()
         observeActivityUploadCount()
-        emitUserFollowSuggestions()
+        loadUserFollowSuggestions()
     }
 
     fun setUploadBadgeDismissed(isDismissed: Boolean) {
@@ -158,20 +175,32 @@ internal class ActivityFeedViewModel @Inject constructor(
         return placeName
     }
 
-    fun followUser(userFollowSuggestion: UserFollowSuggestion) = viewModelScope.launchCatching(
-        loadingStateFlow = MutableStateFlow(false)
-    ) {
-        withContext(ioDispatcher) {
-            followUserUsecase.followUser(userFollowSuggestion)
+    fun followUser(userFollowSuggestion: UserFollowSuggestion) = viewModelScope.launch {
+        try {
+            userFollowActionStateMap[userFollowSuggestion.uid] = true
+            emitCachedUserFollowSuggestions()
+            withContext(ioDispatcher) {
+                followUserUsecase.followUser(userFollowSuggestion)
+            }
+        } catch (ex: Exception) {
+            setLaunchCatchingError(ex)
+            userFollowActionStateMap[userFollowSuggestion.uid] = false
         }
-        emitUserFollowSuggestions()
+        emitCachedUserFollowSuggestions()
     }
 
-    private fun emitUserFollowSuggestions() = viewModelScope.launch {
-        val userFollows = withContext(ioDispatcher) {
+    private fun loadUserFollowSuggestions() = viewModelScope.launch {
+        cachedUserFollowSuggestions = withContext(ioDispatcher) {
             getUserFollowUsecase.getFollowSuggestion()
         }
-        userFollowSuggestionMutableFlow.emit(userFollows)
+
+        emitCachedUserFollowSuggestions()
+    }
+
+    private suspend fun emitCachedUserFollowSuggestions() {
+        cachedUserFollowSuggestions?.let { suggestions ->
+            userFollowSuggestionMutableFlow.emit(suggestions)
+        }
     }
 
     private fun observeActivityUploadCount() = viewModelScope.launch {

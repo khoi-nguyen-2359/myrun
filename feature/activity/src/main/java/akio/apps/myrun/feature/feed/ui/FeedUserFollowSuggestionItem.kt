@@ -4,7 +4,8 @@ import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
-import akio.apps.myrun.feature.feed.model.FeedUserFollowSuggestion
+import akio.apps.myrun.feature.feed.model.FeedSuggestedUserFollow
+import akio.apps.myrun.feature.feed.model.FeedUserFollowSuggestionList
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,7 +32,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun FeedUserFollowSuggestionItem(
-    followSuggestion: FeedUserFollowSuggestion,
+    suggestionList: FeedUserFollowSuggestionList,
     onClickFollowUserId: (UserFollowSuggestion) -> Unit,
 ) = Column(
     modifier = Modifier.padding(vertical = ActivityFeedDimensions.feedItemVerticalPadding)
@@ -49,17 +50,17 @@ fun FeedUserFollowSuggestionItem(
         horizontalArrangement = Arrangement.Center
     ) {
         items(
-            followSuggestion.userList,
-            key = { userFollow -> userFollow.uid }
+            suggestionList.userList,
+            key = { suggestion -> suggestion.userFollow.uid }
         ) {
-            SuggestedUserCardItem(it, onClickFollowUserId)
+            SuggestedUserCard(it, onClickFollowUserId)
         }
     }
 }
 
 @Composable
-private fun SuggestedUserCardItem(
-    followSuggestion: UserFollowSuggestion,
+private fun SuggestedUserCard(
+    followSuggestion: FeedSuggestedUserFollow,
     onClickFollowUser: (UserFollowSuggestion) -> Unit,
 ) {
     val followButtonColors = if (followSuggestion.isRequested) {
@@ -97,9 +98,9 @@ private fun SuggestedUserCardItem(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
         ) {
-            UserAvatarImage(followSuggestion.photoUrl, avatarDimension = 80.dp)
+            UserAvatarImage(followSuggestion.userFollow.photoUrl, avatarDimension = 80.dp)
             Text(
-                text = followSuggestion.displayName,
+                text = followSuggestion.userFollow.displayName,
                 modifier = Modifier.padding(10.dp),
                 maxLines = 2,
                 fontWeight = FontWeight.Bold
@@ -109,8 +110,10 @@ private fun SuggestedUserCardItem(
                 colors = followButtonColors,
                 contentPadding = PaddingValues(0.dp),
                 enabled = followClickAction != null,
-                onClick = { followClickAction?.invoke(followSuggestion) },
-                modifier = Modifier.heightIn(min = 30.dp).width(100.dp)
+                onClick = { followClickAction?.invoke(followSuggestion.userFollow) },
+                modifier = Modifier
+                    .heightIn(min = 30.dp)
+                    .width(100.dp)
             ) {
                 Text(
                     text = stringResource(buttonTextResId),

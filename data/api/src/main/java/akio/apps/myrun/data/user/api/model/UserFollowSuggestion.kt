@@ -5,5 +5,4 @@ data class UserFollowSuggestion(
     val displayName: String,
     val photoUrl: String?,
     val lastActiveTime: Long,
-    val isRequested: Boolean = false,
 )

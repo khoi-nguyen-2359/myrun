@@ -21,8 +21,7 @@ class GetUserFollowSuggestionUsecase @Inject constructor(
             ?: return emptyList()
         val placeComponent = recentPlace.addressComponents.firstOrNull()
             ?: return emptyList()
-        val followingUsers = userFollowRepository.getUserFollowings(userId)
-        val (requestedList, acceptedList) = categorizeUserIdByFollowStatus(followingUsers)
+        val followingUserIds = userFollowRepository.getUserFollowings(userId).map { it.uid }.toSet()
         var followSuggestions: List<UserFollowSuggestion>
         var startAfterActiveTime = timeProvider.currentTimeMillis()
         do {
@@ -37,13 +36,7 @@ class GetUserFollowSuggestionUsecase @Inject constructor(
             }
 
             startAfterActiveTime = followSuggestions.last().lastActiveTime
-            followSuggestions = followSuggestions.mapNotNull { suggestion ->
-                if (suggestion.uid in acceptedList) {
-                    null
-                } else {
-                    suggestion.copy(isRequested = suggestion.uid in requestedList)
-                }
-            }
+            followSuggestions = followSuggestions.filterNot { it.uid in followingUserIds }
         } while (followSuggestions.isEmpty())
         return followSuggestions
     }

@@ -12,4 +12,9 @@ sealed class FeedUiModel(val id: String = "feed-auto-id-${ItemAutoId.incrementAn
 
 data class FeedActivity(val activityData: BaseActivityModel) : FeedUiModel(activityData.id)
 
-data class FeedUserFollowSuggestion(val userList: List<UserFollowSuggestion>) : FeedUiModel()
+data class FeedSuggestedUserFollow(
+    val userFollow: UserFollowSuggestion,
+    val isRequested: Boolean,
+)
+
+data class FeedUserFollowSuggestionList(val userList: List<FeedSuggestedUserFollow>) : FeedUiModel()

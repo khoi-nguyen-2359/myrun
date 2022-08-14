@@ -13,7 +13,7 @@ import akio.apps.myrun.feature.feed.ActivityFeedViewModel
 import akio.apps.myrun.feature.feed.di.DaggerActivityFeedFeatureComponent
 import akio.apps.myrun.feature.feed.model.FeedActivity
 import akio.apps.myrun.feature.feed.model.FeedUiModel
-import akio.apps.myrun.feature.feed.model.FeedUserFollowSuggestion
+import akio.apps.myrun.feature.feed.model.FeedUserFollowSuggestionList
 import akio.apps.myrun.feature.feed.ui.ActivityFeedColors.listBackground
 import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemVerticalMargin
 import android.app.Application
@@ -270,7 +270,7 @@ private fun ActivityFeedItemList(
                         onClickExportActivityFile
                     )
                 }
-                is FeedUserFollowSuggestion -> {
+                is FeedUserFollowSuggestionList -> {
                     FeedUserFollowSuggestionItem(feedItem, activityFeedViewModel::followUser)
                 }
                 null -> {
