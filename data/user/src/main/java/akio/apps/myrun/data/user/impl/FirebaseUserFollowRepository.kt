@@ -6,6 +6,7 @@ import akio.apps.myrun.data.user.api.model.FollowStatus
 import akio.apps.myrun.data.user.api.model.UserFollow
 import akio.apps.myrun.data.user.api.model.UserFollowCounter
 import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
+import akio.apps.myrun.data.user.impl.model.FirestoreCounter
 import akio.apps.myrun.data.user.impl.model.FirestoreFollowStatus
 import akio.apps.myrun.data.user.impl.model.FirestoreUser
 import akio.apps.myrun.data.user.impl.model.FirestoreUserFollow
@@ -71,7 +72,17 @@ class FirebaseUserFollowRepository @Inject constructor(
             }
 
     override suspend fun getUserFollowCounter(userId: String): UserFollowCounter {
-        return UserFollowCounter(0,0)
+        val followerCounterDoc =
+            firestore.document("$USERS_COLLECTION/$userId/$COUNTERS_COLLECTION/$FOLLOWER_COUNTER_DOC")
+        val followerCount =
+            followerCounterDoc.get().await().toObject(FirestoreCounter::class.java)?.count ?: 0
+
+        val followingCounterDoc =
+            firestore.document("$USERS_COLLECTION/$userId/$COUNTERS_COLLECTION/$FOLLOWING_COUNTER_DOC")
+        val followingCount =
+            followingCounterDoc.get().await().toObject(FirestoreCounter::class.java)?.count ?: 0
+
+        return UserFollowCounter(followerCount, followingCount)
     }
 
     override suspend fun followUser(userId: String, followSuggestion: UserFollowSuggestion) {
@@ -111,6 +122,7 @@ class FirebaseUserFollowRepository @Inject constructor(
         private const val USER_RECENT_ACTIVE_TIME_FIELD = "recentActivity.activeTime"
 
         private const val FOLLOWING_COUNTER_DOC = "followingCounter"
+        private const val FOLLOWER_COUNTER_DOC = "followerCounter"
         private const val COUNTERS_COLLECTION = "counters"
         private const val COUNTERS_COUNT_FIELD = "count"
     }

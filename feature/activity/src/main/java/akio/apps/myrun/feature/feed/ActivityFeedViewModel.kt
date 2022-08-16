@@ -110,11 +110,12 @@ internal class ActivityFeedViewModel @Inject constructor(
         // initialKey = System.currentTimeMillis()
     ) { recreateActivityPagingSource() }
         .flow
-        // cachedIn will help latest data to be emitted right after transition
         .cachedIn(viewModelScope)
         .combine(userFollowSuggestionMutableFlow) { pagingData, userFollows ->
             combinePagingDataSources(pagingData, userFollows)
         }
+        // cachedIn will help latest data to be emitted right after transition
+        .cachedIn(viewModelScope)
 
     private fun combinePagingDataSources(
         pagingData: PagingData<BaseActivityModel>,

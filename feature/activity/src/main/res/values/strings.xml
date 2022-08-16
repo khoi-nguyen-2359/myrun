@@ -30,4 +30,6 @@
     <string name="activity_feed_follow_suggestion_item_title">Suggested Users</string>
     <string name="action_follow">Follow</string>
     <string name="status_requested">Requested</string>
+    <string name="user_stats_following_label">Following</string>
+    <string name="user_stats_follower_label">Followers</string>
 </resources>

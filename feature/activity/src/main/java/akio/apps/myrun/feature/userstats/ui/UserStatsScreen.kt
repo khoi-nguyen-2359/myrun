@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.userstats.ui
 
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.user.api.model.MeasureSystem
+import akio.apps.myrun.data.user.api.model.UserFollowCounter
 import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.feature.activity.BuildConfig
 import akio.apps.myrun.feature.activity.R
@@ -18,6 +19,7 @@ import akio.apps.myrun.feature.core.ui.StatusBarSpacer
 import akio.apps.myrun.feature.userstats.UserStatsViewModel
 import akio.apps.myrun.feature.userstats.di.DaggerUserStatsFeatureComponent
 import android.app.Application
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -68,7 +70,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
@@ -81,8 +82,11 @@ fun UserStatsScreen(
     openRoutePlanningAction: () -> Unit,
 ) {
     val application = LocalContext.current.applicationContext as Application
-    val userStatsViewModel = backStackEntry.rememberViewModelProvider {
-        DaggerUserStatsFeatureComponent.factory().create(application, it).userStatsViewModel()
+    val userStatsViewModel = backStackEntry.rememberViewModelProvider { savedStateHandle ->
+        DaggerUserStatsFeatureComponent.factory().create(
+            application,
+            savedStateHandle
+        ).userStatsViewModel()
     }
     UserStatsScreen(userStatsViewModel, contentPadding, appNavController, openRoutePlanningAction)
 }
@@ -137,8 +141,35 @@ private fun UserStatsContent(
         ColumnSpacer(height = AppDimensions.screenVerticalSpacing)
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing)
         UserProfileHeader(screenState, appNavController)
+        ProfileStats(screenState.userFollowCounter)
+        Divider(thickness = 4.dp)
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing * 2)
         TrainingSummaryTable(screenState)
+    }
+}
+
+@Composable
+private fun ProfileStats(userFollowCounter: UserFollowCounter) = Row(
+    modifier = Modifier.padding(
+        start = AppDimensions.screenHorizontalPadding,
+        end = AppDimensions.screenHorizontalPadding,
+        top = AppDimensions.sectionVerticalSpacing,
+        bottom = AppDimensions.sectionVerticalSpacing
+    )
+) {
+    arrayOf(
+        R.string.user_stats_following_label to userFollowCounter.followingCount,
+        R.string.user_stats_follower_label to userFollowCounter.followerCount,
+    ).forEach { (@StringRes labelResId, counterValue) ->
+        Column {
+            Text(
+                text = stringResource(labelResId),
+                style = MaterialTheme.typography.caption,
+                fontWeight = FontWeight.Bold
+            )
+            Text(text = counterValue.toString(), fontSize = 20.sp)
+        }
+        RowSpacer(24.dp)
     }
 }
 
@@ -429,7 +460,6 @@ private fun UserStatsTopBar(
     )
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun UserProfileImage(
     photoUrl: String?,
@@ -491,7 +521,8 @@ private fun PreviewUserStats() {
                 ),
                 ActivityType.Cycling to GetTrainingSummaryDataUsecase.TrainingSummaryTableData()
             ),
-            measureSystem = MeasureSystem.Default
+            measureSystem = MeasureSystem.Default,
+            UserFollowCounter(12, 34)
         ),
         contentPadding = PaddingValues(),
         rememberNavController()
