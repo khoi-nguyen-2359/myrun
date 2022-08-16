@@ -40,7 +40,7 @@ internal class UserStatsViewModel @Inject constructor(
         getUserRecentPlaceNameUsecase.getUserRecentPlaceNameFlow(),
         getTrainingSummaryDataFlow(),
         userPreferences.getMeasureSystem(),
-        ::combineUserProfileAndRecentPlace
+        ::combineScreenStateData
     )
         .onStart { emit(savedStateHandle.getScreenState()) }
         .onEach { savedStateHandle.setScreenState(it) }
@@ -53,7 +53,7 @@ internal class UserStatsViewModel @Inject constructor(
             .map { getTrainingSummaryDataUsecase.getUserTrainingSummaryData() }
             .flowOn(ioDispatcher)
 
-    private fun combineUserProfileAndRecentPlace(
+    private fun combineScreenStateData(
         userProfile: UserProfile,
         userRecentPlace: String?,
         trainingSummaryTableData:

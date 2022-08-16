@@ -41,20 +41,6 @@ class GetUserFollowSuggestionUsecase @Inject constructor(
         return followSuggestions
     }
 
-    private fun categorizeUserIdByFollowStatus(
-        userFollows: List<UserFollow>,
-    ): Pair<Set<String>, Set<String>> {
-        val requestedList = mutableSetOf<String>()
-        val acceptedList = mutableSetOf<String>()
-        userFollows.forEach {
-            when (it.status) {
-                FollowStatus.Requested -> requestedList.add(it.uid)
-                FollowStatus.Accepted -> acceptedList.add(it.uid)
-            }
-        }
-        return requestedList to acceptedList
-    }
-
     companion object {
         private const val MAX_NUM = 10L
     }
