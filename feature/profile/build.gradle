@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.bundles.compose)
     implementation(libs.accompanist.insets)
+    implementation(libs.accompanist.pager)
     implementation(libs.coilcompose)
 
     implementation(libs.androidx.appcompat)

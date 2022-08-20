@@ -3,6 +3,7 @@ package akio.apps.myrun.feature.userstats.ui
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserFollowCounter
+import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.feature.activity.BuildConfig
 import akio.apps.myrun.feature.activity.R
@@ -135,27 +136,39 @@ private fun UserStatsScreen(
 private fun UserStatsContent(
     screenState: UserStatsViewModel.ScreenState.StatsAvailable,
     modifier: Modifier = Modifier,
-    appNavController: NavController,
+    navController: NavController,
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
         ColumnSpacer(height = AppDimensions.screenVerticalSpacing)
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing)
-        UserProfileHeader(screenState, appNavController)
-        ProfileStats(screenState.userFollowCounter)
+        UserProfileHeader(screenState, navController)
+        ProfileStats(screenState.userFollowCounter) {
+            navigateUserFollowScreen(screenState, navController)
+        }
         Divider(thickness = 4.dp)
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing * 2)
         TrainingSummaryTable(screenState)
     }
 }
 
+private fun navigateUserFollowScreen(
+    screenState: UserStatsViewModel.ScreenState.StatsAvailable,
+    navController: NavController,
+) {
+    val userId = HomeNavDestination.UserFollow.routeWithUserId(screenState.userProfile.accountId)
+    navController.navigate(userId)
+}
+
 @Composable
-private fun ProfileStats(userFollowCounter: UserFollowCounter) = Row(
-    modifier = Modifier.padding(
-        start = AppDimensions.screenHorizontalPadding,
-        end = AppDimensions.screenHorizontalPadding,
-        top = AppDimensions.sectionVerticalSpacing,
-        bottom = AppDimensions.sectionVerticalSpacing
-    )
+private fun ProfileStats(userFollowCounter: UserFollowCounter, onClick: () -> Unit) = Row(
+    modifier = Modifier
+        .padding(
+            start = AppDimensions.screenHorizontalPadding,
+            end = AppDimensions.screenHorizontalPadding,
+            top = 20.dp,
+            bottom = 14.dp
+        )
+        .clickable(onClick = onClick)
 ) {
     arrayOf(
         R.string.user_stats_following_label to userFollowCounter.followingCount,
@@ -387,11 +400,11 @@ private fun UserProfileHeader(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)
     ) {
-        UserProfileImage(photoUrl = screenState.userPhotoUrl)
+        UserProfileImage(photoUrl = screenState.userProfile.photo)
         RowSpacer(width = 10.dp)
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = screenState.userName,
+                text = screenState.userProfile.name,
                 style = MaterialTheme.typography.h6,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
@@ -493,8 +506,7 @@ private fun UserProfileImage(
 private fun PreviewUserStats() {
     UserStatsScreen(
         screenState = UserStatsViewModel.ScreenState.StatsAvailable(
-            "My Name",
-            "photoUrl",
+            UserProfile(name = "Super man", photo = "photo Url", accountId = "accountId"),
             "Saigon, Vietnam",
             mapOf(
                 ActivityType.Running to GetTrainingSummaryDataUsecase.TrainingSummaryTableData(

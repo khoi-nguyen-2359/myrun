@@ -124,6 +124,7 @@ coilcompose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanist" }
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
 accompanist-navigation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
+accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 
 # dagger
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }

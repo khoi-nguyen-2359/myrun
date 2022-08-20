@@ -1,7 +1,6 @@
-package akio.apps.myrun.feature.feed.ui
+package akio.apps.myrun.feature.core.ui
 
-import akio.apps.myrun.feature.activity.R
-import akio.apps.myrun.feature.core.ui.modifyIf
+import akio.apps.myrun.feature.core.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
@@ -17,8 +16,8 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 
 @Composable
-internal fun UserAvatarImage(
-    userProfilePicture: String?,
+fun UserAvatarImage(
+    imageUrl: String?,
     avatarDimension: Dp = 46.dp,
     onClickUserAvatar: (() -> Unit)? = null,
 ) {
@@ -26,7 +25,7 @@ internal fun UserAvatarImage(
     Image(
         painter = rememberAsyncImagePainter(
             ImageRequest.Builder(LocalContext.current)
-                .data(data = userProfilePicture.orEmpty())
+                .data(data = imageUrl.orEmpty())
                 .apply {
                     size(avatarSize.toInt())
                         .placeholder(R.drawable.common_avatar_placeholder_image)

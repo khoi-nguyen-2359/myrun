@@ -13,6 +13,7 @@ import akio.apps.myrun.feature.core.measurement.TrackUnitFormatter
 import akio.apps.myrun.feature.core.measurement.TrackUnitFormatterSet
 import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
+import akio.apps.myrun.feature.core.ui.UserAvatarImage
 import akio.apps.myrun.feature.feed.ActivityFeedViewModel
 import android.content.Context
 import androidx.compose.animation.animateContentSize

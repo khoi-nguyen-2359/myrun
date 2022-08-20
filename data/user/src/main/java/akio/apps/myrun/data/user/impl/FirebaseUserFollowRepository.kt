@@ -6,6 +6,7 @@ import akio.apps.myrun.data.user.api.model.FollowStatus
 import akio.apps.myrun.data.user.api.model.UserFollow
 import akio.apps.myrun.data.user.api.model.UserFollowCounter
 import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
+import akio.apps.myrun.data.user.api.model.UserFollowType
 import akio.apps.myrun.data.user.impl.model.FirestoreCounter
 import akio.apps.myrun.data.user.impl.model.FirestoreFollowStatus
 import akio.apps.myrun.data.user.impl.model.FirestoreUser
@@ -34,10 +35,30 @@ class FirebaseUserFollowRepository @Inject constructor(
         return firestore.collection("$USERS_COLLECTION/$userAccountId/$USER_FOLLOWERS_COLLECTION")
     }
 
+    override suspend fun getUserFollows(
+        userId: String,
+        followType: UserFollowType,
+        startAfterUserId: String?,
+        limit: Int,
+    ): List<UserFollow> {
+        val collectionRef = when (followType) {
+            UserFollowType.Following -> getUserFollowingsCollection(userId)
+            UserFollowType.Follower -> getUserFollowersCollection(userId)
+        }
+        return collectionRef
+            .orderBy(USER_FOLLOW_STATUS_FIELD)
+            .orderBy(USER_FOLLOW_NAME_FIELD)
+            .orderBy(USER_FOLLOW_UID_FIELD)
+            .startAfter(null, null, startAfterUserId)
+            .limit(limit.toLong())
+            .get().await()
+            .documents.mapNotNull { it.toObject(FirestoreUserFollow::class.java)?.toUserFollow() }
+    }
+
     override suspend fun getUserFollowings(userId: String): List<UserFollow> =
         getUserFollowingsCollection(userId).get().await().documents
             .mapNotNull {
-                it.toObject(FirestoreUserFollow::class.java)?.toUserFollow(it.id)
+                it.toObject(FirestoreUserFollow::class.java)?.toUserFollow()
             }
 
     override suspend fun getUserFollowByRecentActivity(
@@ -68,7 +89,7 @@ class FirebaseUserFollowRepository @Inject constructor(
     override suspend fun getUserFollowers(userId: String): List<UserFollow> =
         getUserFollowersCollection(userId).get().await().documents
             .mapNotNull {
-                it.toObject(FirestoreUserFollow::class.java)?.toUserFollow(it.id)
+                it.toObject(FirestoreUserFollow::class.java)?.toUserFollow()
             }
 
     override suspend fun getUserFollowCounter(userId: String): UserFollowCounter {
@@ -88,6 +109,7 @@ class FirebaseUserFollowRepository @Inject constructor(
     override suspend fun followUser(userId: String, followSuggestion: UserFollowSuggestion) {
         val followUserDoc = getUserFollowingsCollection(userId).document(followSuggestion.uid)
         val entry = FirestoreUserFollow(
+            followSuggestion.uid,
             followSuggestion.displayName,
             followSuggestion.photoUrl,
             FirestoreFollowStatus.Requested.value
@@ -105,7 +127,7 @@ class FirebaseUserFollowRepository @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    private fun FirestoreUserFollow.toUserFollow(uid: String) =
+    private fun FirestoreUserFollow.toUserFollow() =
         UserFollow(uid, displayName, photoUrl, toUserFollowStatus(status))
 
     private fun toUserFollowStatus(status: Int): FollowStatus =
@@ -125,5 +147,9 @@ class FirebaseUserFollowRepository @Inject constructor(
         private const val FOLLOWER_COUNTER_DOC = "followerCounter"
         private const val COUNTERS_COLLECTION = "counters"
         private const val COUNTERS_COUNT_FIELD = "count"
+
+        private const val USER_FOLLOW_UID_FIELD = "uid"
+        private const val USER_FOLLOW_NAME_FIELD = "displayName"
+        private const val USER_FOLLOW_STATUS_FIELD = "status"
     }
 }

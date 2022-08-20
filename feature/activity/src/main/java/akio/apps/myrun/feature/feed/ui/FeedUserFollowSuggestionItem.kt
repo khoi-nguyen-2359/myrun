@@ -4,6 +4,7 @@ import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
+import akio.apps.myrun.feature.core.ui.UserAvatarImage
 import akio.apps.myrun.feature.feed.model.FeedSuggestedUserFollow
 import akio.apps.myrun.feature.feed.model.FeedUserFollowSuggestionList
 import androidx.annotation.StringRes

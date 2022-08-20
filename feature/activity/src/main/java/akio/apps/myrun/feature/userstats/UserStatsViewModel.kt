@@ -108,8 +108,7 @@ internal class UserStatsViewModel @Inject constructor(
 
         @Parcelize
         data class StatsAvailable(
-            val userName: String,
-            val userPhotoUrl: String?,
+            val userProfile: UserProfile,
             val userRecentPlace: String?,
             val trainingSummaryTableData:
                 Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
@@ -127,8 +126,7 @@ internal class UserStatsViewModel @Inject constructor(
                 userFollowCounter: UserFollowCounter
             ): StatsAvailable {
                 return StatsAvailable(
-                    userProfile.name,
-                    userProfile.photo,
+                    userProfile,
                     userRecentPlace,
                     trainingSummaryTableData,
                     measureSystem,
