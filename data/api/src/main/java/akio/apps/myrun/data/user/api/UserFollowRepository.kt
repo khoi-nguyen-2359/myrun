@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.user.api
 
+import akio.apps.myrun.data.user.api.model.UserFollowPagingToken
 import akio.apps.myrun.data.user.api.model.UserFollow
 import akio.apps.myrun.data.user.api.model.UserFollowCounter
 import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
@@ -20,7 +21,7 @@ interface UserFollowRepository {
     suspend fun getUserFollows(
         userId: String,
         followType: UserFollowType,
-        startAfterUserId: String?,
-        limit: Int
+        limit: Int,
+        pagingToken: UserFollowPagingToken?
     ): List<UserFollow>
 }

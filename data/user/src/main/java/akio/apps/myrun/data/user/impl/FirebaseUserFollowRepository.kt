@@ -5,6 +5,7 @@ import akio.apps.myrun.data.user.api.UserFollowRepository
 import akio.apps.myrun.data.user.api.model.FollowStatus
 import akio.apps.myrun.data.user.api.model.UserFollow
 import akio.apps.myrun.data.user.api.model.UserFollowCounter
+import akio.apps.myrun.data.user.api.model.UserFollowPagingToken
 import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import akio.apps.myrun.data.user.api.model.UserFollowType
 import akio.apps.myrun.data.user.impl.model.FirestoreCounter
@@ -38,8 +39,8 @@ class FirebaseUserFollowRepository @Inject constructor(
     override suspend fun getUserFollows(
         userId: String,
         followType: UserFollowType,
-        startAfterUserId: String?,
         limit: Int,
+        pagingToken: UserFollowPagingToken?,
     ): List<UserFollow> {
         val collectionRef = when (followType) {
             UserFollowType.Following -> getUserFollowingsCollection(userId)
@@ -49,7 +50,17 @@ class FirebaseUserFollowRepository @Inject constructor(
             .orderBy(USER_FOLLOW_STATUS_FIELD)
             .orderBy(USER_FOLLOW_NAME_FIELD)
             .orderBy(USER_FOLLOW_UID_FIELD)
-            .startAfter(null, null, startAfterUserId)
+            .run {
+                if (pagingToken != null) {
+                    startAfter(
+                        pagingToken.status.toFirestoreFollowStatus().rawValue,
+                        pagingToken.userName,
+                        pagingToken.userId
+                    )
+                } else {
+                    this
+                }
+            }
             .limit(limit.toLong())
             .get().await()
             .documents.mapNotNull { it.toObject(FirestoreUserFollow::class.java)?.toUserFollow() }
@@ -112,7 +123,7 @@ class FirebaseUserFollowRepository @Inject constructor(
             followSuggestion.uid,
             followSuggestion.displayName,
             followSuggestion.photoUrl,
-            FirestoreFollowStatus.Requested.value
+            FirestoreFollowStatus.Requested.rawValue
         )
         val followingCounterDoc =
             firestore.document("$USERS_COLLECTION/$userId/$COUNTERS_COLLECTION/$FOLLOWING_COUNTER_DOC")
@@ -129,6 +140,11 @@ class FirebaseUserFollowRepository @Inject constructor(
 
     private fun FirestoreUserFollow.toUserFollow() =
         UserFollow(uid, displayName, photoUrl, toUserFollowStatus(status))
+
+    private fun FollowStatus.toFirestoreFollowStatus() = when (this) {
+        FollowStatus.Accepted -> FirestoreFollowStatus.Accepted
+        FollowStatus.Requested -> FirestoreFollowStatus.Requested
+    }
 
     private fun toUserFollowStatus(status: Int): FollowStatus =
         when (FirestoreFollowStatus.from(status)) {

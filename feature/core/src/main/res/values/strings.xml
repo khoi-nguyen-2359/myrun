@@ -62,4 +62,7 @@
         <item>Camera</item>
         <item>Photo Gallery</item>
     </string-array>
+
+    <string name="action_follow">Follow</string>
+    <string name="status_requested">Requested</string>
 </resources>

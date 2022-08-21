@@ -13,5 +13,5 @@ data class FirestoreUserFollow(
     val photoUrl: String? = null,
 
     @PropertyName(FirestoreUserProfileFields.FIELD_FOLLOW_STATUS)
-    val status: Int = FirestoreFollowStatus.Requested.value,
+    val status: Int = FirestoreFollowStatus.Requested.rawValue,
 )

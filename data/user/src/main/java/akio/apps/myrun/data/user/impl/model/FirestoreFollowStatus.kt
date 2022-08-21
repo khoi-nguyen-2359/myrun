@@ -1,6 +1,6 @@
 package akio.apps.myrun.data.user.impl.model
 
-enum class FirestoreFollowStatus(val value: Int) {
+enum class FirestoreFollowStatus(val rawValue: Int) {
     Requested(1), Accepted(2);
 
     companion object {
