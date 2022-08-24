@@ -123,7 +123,7 @@ internal class ActivityFeedViewModel @Inject constructor(
     ): PagingData<FeedUiModel> {
         var index = 0
         return pagingData.flatMap {
-            if (index++ == PAGE_SIZE - 1 && userFollows.isNotEmpty()) {
+            if (index++ == PAGE_SIZE / 2 && userFollows.isNotEmpty()) {
                 // insert follow suggestion in the end of the first page
                 val feedModels = userFollows.map { dataModel ->
                     FeedSuggestedUserFollow(
