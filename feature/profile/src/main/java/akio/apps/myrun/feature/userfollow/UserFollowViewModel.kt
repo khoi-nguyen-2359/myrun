@@ -3,6 +3,7 @@ package akio.apps.myrun.feature.userfollow
 import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserFollowRepository
+import akio.apps.myrun.data.user.api.model.UserFollow
 import akio.apps.myrun.data.user.api.model.UserFollowType
 import akio.apps.myrun.feature.userfollow.model.FollowStatusDivider
 import akio.apps.myrun.feature.userfollow.model.UserFollowListUiModel
@@ -20,6 +21,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class UserFollowViewModel @Inject constructor(
     private val userFollowRepository: UserFollowRepository,
@@ -28,34 +32,79 @@ class UserFollowViewModel @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
+    private val mapFollowTypeToPagingSource: MutableMap<UserFollowType, UserFollowPagingSource> =
+        mutableMapOf()
+    private val currentUserId: String by lazy { authenticationState.requireUserAccountId() }
+    private val setLoadingRequestIds: Map<UserFollowType, MutableSet<String>> = mapOf(
+        UserFollowType.Follower to mutableSetOf(),
+        UserFollowType.Following to mutableSetOf()
+    )
     private val mutableScreenState: MutableStateFlow<ScreenState> = MutableStateFlow(
         ScreenState(
             tabStates = listOf(
                 TabState(
-                    pagingDataFlow = createPagerFlow(UserFollowType.Following),
+                    UserFollowType.Following,
+                    pagingDataFlow = createPagerFlow(UserFollowType.Following)
                 ),
                 TabState(
-                    pagingDataFlow = createPagerFlow(UserFollowType.Follower),
-                ),
+                    UserFollowType.Follower,
+                    pagingDataFlow = createPagerFlow(UserFollowType.Follower)
+                )
             )
         )
     )
     val screenState: Flow<ScreenState> = mutableScreenState
 
-    private fun createPagerFlow(followType: UserFollowType) = Pager(
-        config = PagingConfig(
-            pageSize = 100,
-            enablePlaceholders = false,
-            prefetchDistance = 100
-        )
-    ) { createPagingSource(followType) }
-        .flow
-        .map { pagingData ->
-            pagingData.map { UserFollowUiModel(it) }.insertDividers()
+    fun deleteFollowingRequest(uid: String) = viewModelScope.launch {
+        modifyUserFollow(uid, UserFollowType.Following) {
+            userFollowRepository.unfollowUser(currentUserId, uid)
         }
+    }
+
+    fun acceptFollowerRequest(uid: String) = viewModelScope.launch {
+        modifyUserFollow(uid, UserFollowType.Follower) {
+            userFollowRepository.acceptFollower(currentUserId, uid)
+        }
+    }
+
+    fun deleteFollowerRequest(uid: String) = viewModelScope.launch {
+        modifyUserFollow(uid, UserFollowType.Follower) {
+            userFollowRepository.deleteFollower(currentUserId, uid)
+        }
+    }
+
+    private suspend fun modifyUserFollow(
+        uid: String,
+        followType: UserFollowType,
+        action: suspend () -> Unit,
+    ) {
+        try {
+            setLoadingRequestIds[followType]?.add(uid)
+            mapFollowTypeToPagingSource[followType]?.invalidate()
+            withContext(ioDispatcher) { action() }
+        } catch (ex: Exception) {
+            Timber.e(ex)
+        } finally {
+            setLoadingRequestIds[followType]?.remove(uid)
+            mapFollowTypeToPagingSource[followType]?.invalidate()
+        }
+    }
+
+    private fun createPagerFlow(followType: UserFollowType) = Pager(
+        config = PagingConfig(pageSize = 100, enablePlaceholders = false, prefetchDistance = 100)
+    ) { createAndStorePagingSource(followType) }
+        .flow
+        .map { pagingData -> pagingData.mapToUiModel(followType).insertDividers() }
         .cachedIn(viewModelScope)
 
-    private fun PagingData<out UserFollowListUiModel>.insertDividers(): PagingData<UserFollowListUiModel> =
+    private fun PagingData<UserFollow>.mapToUiModel(
+        followType: UserFollowType,
+    ): PagingData<UserFollowListUiModel> = map {
+        UserFollowUiModel(it, setLoadingRequestIds[followType]?.contains(it.uid) == true)
+    }
+
+    private fun PagingData<UserFollowListUiModel>.insertDividers():
+        PagingData<UserFollowListUiModel> =
         insertSeparators { i1: UserFollowListUiModel?, i2: UserFollowListUiModel? ->
             if (i1 is UserFollowUiModel && i2 is UserFollowUiModel &&
                 i1.userFollow.status != i2.userFollow.status
@@ -66,17 +115,20 @@ class UserFollowViewModel @Inject constructor(
             }
         }
 
-    private fun createPagingSource(userFollowType: UserFollowType): UserFollowPagingSource =
+    private fun createAndStorePagingSource(userFollowType: UserFollowType): UserFollowPagingSource =
         UserFollowPagingSource(
             userFollowRepository,
             authenticationState,
             userFollowType,
             ioDispatcher
-        )
+        ).also {
+            mapFollowTypeToPagingSource[userFollowType] = it
+        }
 
     class ScreenState(val tabStates: List<TabState>)
 
     class TabState(
+        val type: UserFollowType,
         val pagingDataFlow: Flow<PagingData<UserFollowListUiModel>>,
     )
 

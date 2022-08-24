@@ -172,7 +172,7 @@ private fun ProfileStats(userFollowCounter: UserFollowCounter, onClick: () -> Un
 ) {
     arrayOf(
         R.string.user_stats_following_label to userFollowCounter.followingCount,
-        R.string.user_stats_follower_label to userFollowCounter.followerCount,
+        R.string.user_stats_follower_label to userFollowCounter.followerCount
     ).forEach { (@StringRes labelResId, counterValue) ->
         Column {
             Text(

@@ -4,5 +4,5 @@ import com.google.firebase.firestore.PropertyName
 
 data class FirestoreCounter(
     @PropertyName("count")
-    val count: Int = 0
+    val count: Int = 0,
 )

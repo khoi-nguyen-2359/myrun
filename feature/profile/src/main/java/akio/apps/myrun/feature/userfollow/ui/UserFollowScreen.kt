@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.userfollow.ui
 
 import akio.apps.myrun.data.user.api.model.FollowStatus
 import akio.apps.myrun.data.user.api.model.UserFollow
+import akio.apps.myrun.data.user.api.model.UserFollowType
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.core.ui.AppBarArrowBackButton
 import akio.apps.myrun.feature.core.ui.AppDimensions
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -81,16 +83,26 @@ private fun UserFollowScreenContent(
         StatusBarSpacer()
         TopAppBar(
             navigationIcon = { AppBarArrowBackButton(navController) },
-            title = { Text(text = stringResource(id = R.string.userfollow_title)) },
+            title = { Text(text = stringResource(id = R.string.userfollow_title)) }
         )
 
-        UserFollowTabs(screenState)
+        UserFollowTabs(
+            screenState,
+            userFollowViewModel::deleteFollowingRequest,
+            userFollowViewModel::acceptFollowerRequest,
+            userFollowViewModel::deleteFollowerRequest
+        )
     }
 }
 
 @ExperimentalPagerApi
 @Composable
-private fun ColumnScope.UserFollowTabs(screenState: UserFollowViewModel.ScreenState) {
+private fun ColumnScope.UserFollowTabs(
+    screenState: UserFollowViewModel.ScreenState,
+    deleteFollowingRequestAction: (String) -> Unit,
+    acceptFollowerRequestAction: (String) -> Unit,
+    deleteFollowerAction: (String) -> Unit,
+) {
     val tabLabelResIds =
         listOf(R.string.userfollow_tab_following, R.string.userfollow_tab_followers)
     val pagerState = rememberPagerState()
@@ -108,26 +120,42 @@ private fun ColumnScope.UserFollowTabs(screenState: UserFollowViewModel.ScreenSt
             state = pagerState,
             modifier = Modifier.weight(1f)
         ) { pageIndex ->
-            UserFollowList(screenState.tabStates[pageIndex])
+            UserFollowList(
+                screenState.tabStates[pageIndex],
+                deleteFollowingRequestAction,
+                acceptFollowerRequestAction,
+                deleteFollowerAction
+            )
         }
     }
 }
 
 @Composable
-private fun UserFollowList(tabState: UserFollowViewModel.TabState) {
+private fun UserFollowList(
+    tabState: UserFollowViewModel.TabState,
+    unfollowAction: (String) -> Unit,
+    acceptFollowerAction: (String) -> Unit,
+    deleteFollowerAction: (String) -> Unit,
+) {
     val lazyPagingItems = tabState.pagingDataFlow.collectAsLazyPagingItems()
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        state = rememberLazyListState(),
+        state = rememberLazyListState()
     ) {
         items(
             lazyPagingItems,
             key = { uiModel -> uiModel.id }
         ) { uiModel ->
             when (uiModel) {
-                is UserFollowUiModel -> UserFollowItem(uiModel.userFollow)
+                is UserFollowUiModel -> UserFollowItem(
+                    tabState.type,
+                    uiModel,
+                    unfollowAction,
+                    acceptFollowerAction,
+                    deleteFollowerAction
+                )
                 is FollowStatusDivider -> Divider(thickness = 2.dp)
-                else -> {}
+                null -> {}
             }
         }
 
@@ -142,7 +170,31 @@ private fun UserFollowList(tabState: UserFollowViewModel.TabState) {
 }
 
 @Composable
-private fun UserFollowItem(userFollow: UserFollow) {
+private fun UserFollowItem(
+    followType: UserFollowType,
+    userFollowUiModel: UserFollowUiModel,
+    unfollowAction: (String) -> Unit,
+    acceptFollowerAction: (String) -> Unit,
+    deleteFollowerAction: (String) -> Unit,
+) {
+    @StringRes
+    val confirmButtonLabelRes = when (followType) {
+        UserFollowType.Following -> when (userFollowUiModel.userFollow.status) {
+            FollowStatus.Requested -> R.string.action_delete
+            FollowStatus.Accepted -> R.string.action_unfollow
+        }
+        UserFollowType.Follower -> when (userFollowUiModel.userFollow.status) {
+            FollowStatus.Requested -> R.string.action_accept
+            FollowStatus.Accepted -> R.string.action_delete
+        }
+    }
+    val confirmButtonAction = when (followType) {
+        UserFollowType.Following -> unfollowAction
+        UserFollowType.Follower -> when (userFollowUiModel.userFollow.status) {
+            FollowStatus.Requested -> acceptFollowerAction
+            FollowStatus.Accepted -> deleteFollowerAction
+        }
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -152,27 +204,28 @@ private fun UserFollowItem(userFollow: UserFollow) {
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        UserAvatarImage(imageUrl = userFollow.photoUrl)
+        UserAvatarImage(imageUrl = userFollowUiModel.userFollow.photoUrl)
         Text(
-            text = userFollow.displayName,
+            text = userFollowUiModel.userFollow.displayName,
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 8.dp),
             maxLines = 2
         )
 
-        if (userFollow.status == FollowStatus.Requested) {
-            OutlinedButton(
-                shape = RoundedCornerShape(3.dp),
-                contentPadding = PaddingValues(0.dp),
-                enabled = false,
-                modifier = Modifier
-                    .heightIn(min = 30.dp)
-                    .width(100.dp),
-                onClick = { }
-            ) {
+        OutlinedButton(
+            shape = RoundedCornerShape(3.dp),
+            contentPadding = PaddingValues(0.dp),
+            modifier = Modifier
+                .heightIn(min = 30.dp)
+                .width(80.dp),
+            onClick = { confirmButtonAction(userFollowUiModel.userFollow.uid) }
+        ) {
+            if (userFollowUiModel.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.size(12.dp), strokeWidth = 2.dp)
+            } else {
                 Text(
-                    text = stringResource(R.string.status_requested),
+                    text = stringResource(confirmButtonLabelRes),
                     style = MaterialTheme.typography.caption,
                     fontWeight = FontWeight.Bold
                 )
@@ -185,7 +238,14 @@ private fun UserFollowItem(userFollow: UserFollow) {
 @Composable
 private fun PreviewUserFollowItem() =
     UserFollowItem(
-        UserFollow("uid", "Name", "photo", FollowStatus.Requested)
+        UserFollowType.Follower,
+        UserFollowUiModel(
+            UserFollow("uid", "Name", "photo", FollowStatus.Requested),
+            true
+        ),
+        { },
+        { },
+        { }
     )
 
 @ExperimentalPagerApi
@@ -211,12 +271,17 @@ private fun PreviewUserFollowTabs() =
             UserFollowViewModel.ScreenState(
                 tabStates = listOf(
                     UserFollowViewModel.TabState(
-                        pagingDataFlow = flowOf(PagingData.empty()),
+                        type = UserFollowType.Following,
+                        pagingDataFlow = flowOf(PagingData.empty())
                     ),
                     UserFollowViewModel.TabState(
-                        pagingDataFlow = flowOf(PagingData.empty()),
-                    ),
+                        type = UserFollowType.Follower,
+                        pagingDataFlow = flowOf(PagingData.empty())
+                    )
                 )
-            )
+            ),
+            {},
+            {},
+            {}
         )
     }

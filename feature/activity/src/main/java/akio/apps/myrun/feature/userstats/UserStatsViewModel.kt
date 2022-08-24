@@ -22,8 +22,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -82,7 +80,7 @@ internal class UserStatsViewModel @Inject constructor(
         trainingSummaryTableData:
             Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
         measureSystem: MeasureSystem,
-        userFollowCounter: UserFollowCounter
+        userFollowCounter: UserFollowCounter,
     ): ScreenState = ScreenState.createScreenState(
         userRecentPlace,
         userProfile,
@@ -113,7 +111,7 @@ internal class UserStatsViewModel @Inject constructor(
             val trainingSummaryTableData:
                 Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
             val measureSystem: MeasureSystem,
-            val userFollowCounter: UserFollowCounter
+            val userFollowCounter: UserFollowCounter,
         ) : ScreenState(), Parcelable
 
         companion object {
@@ -123,7 +121,7 @@ internal class UserStatsViewModel @Inject constructor(
                 trainingSummaryTableData:
                     Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
                 measureSystem: MeasureSystem,
-                userFollowCounter: UserFollowCounter
+                userFollowCounter: UserFollowCounter,
             ): StatsAvailable {
                 return StatsAvailable(
                     userProfile,

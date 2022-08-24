@@ -18,19 +18,24 @@ internal class UserFollowPagingSource(
     private val ioDispatcher: CoroutineDispatcher,
 ) : PagingSource<UserFollowPagingToken, UserFollow>() {
     private val userId: String = authenticationState.requireUserAccountId()
-    override suspend fun load(params: LoadParams<UserFollowPagingToken>): LoadResult<UserFollowPagingToken, UserFollow> {
+    override suspend fun load(
+        params: LoadParams<UserFollowPagingToken>,
+    ): LoadResult<UserFollowPagingToken, UserFollow> {
         return try {
             val pageData = withContext(ioDispatcher) {
                 userFollowRepository.getUserFollows(
                     userId,
                     userFollowType,
                     params.loadSize,
-                    params.key,
+                    params.key
                 )
             }
             val nextKey = pageData.lastOrNull()
                 ?.let { UserFollowPagingToken(it.uid, it.status, it.displayName) }
-            Timber.d("$userFollowType loaded, startAfter=${params.key}, size=${pageData.size} nextKey=$nextKey")
+            Timber.d(
+                "$userFollowType loaded, startAfter=${params.key} " +
+                    "size=${pageData.size} nextKey=$nextKey"
+            )
             LoadResult.Page(pageData, prevKey = null, nextKey)
         } catch (ex: Exception) {
             Timber.e(ex)
@@ -38,6 +43,7 @@ internal class UserFollowPagingSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<UserFollowPagingToken, UserFollow>): UserFollowPagingToken? =
-        null
+    override fun getRefreshKey(
+        state: PagingState<UserFollowPagingToken, UserFollow>,
+    ): UserFollowPagingToken? = null
 }

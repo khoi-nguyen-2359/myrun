@@ -36,4 +36,6 @@
     <string name="userfollow_title">User Follow</string>
     <string name="userfollow_tab_following">Following</string>
     <string name="userfollow_tab_followers">Followers</string>
+    <string name="action_accept">Accept</string>
+    <string name="action_unfollow">Unfollow</string>
 </resources>

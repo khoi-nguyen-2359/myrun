@@ -5,6 +5,7 @@ import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
 import akio.apps.myrun.feature.core.ui.UserAvatarImage
+import akio.apps.myrun.feature.core.ui.addEmptyLines
 import akio.apps.myrun.feature.feed.model.FeedSuggestedUserFollow
 import akio.apps.myrun.feature.feed.model.FeedUserFollowSuggestionList
 import androidx.annotation.StringRes
@@ -29,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -101,10 +104,11 @@ private fun SuggestedUserCard(
         ) {
             UserAvatarImage(followSuggestion.userFollow.photoUrl, avatarDimension = 80.dp)
             Text(
-                text = followSuggestion.userFollow.displayName,
+                text = followSuggestion.userFollow.displayName.addEmptyLines(1),
                 modifier = Modifier.padding(10.dp),
                 maxLines = 2,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
             )
             OutlinedButton(
                 shape = RoundedCornerShape(3.dp),
@@ -124,4 +128,35 @@ private fun SuggestedUserCard(
             }
         }
     }
+}
+
+@Composable
+@Preview(backgroundColor = 0xffffff, showBackground = true)
+private fun PreviewSuggestedUserList() {
+    FeedUserFollowSuggestionItem(
+        FeedUserFollowSuggestionList(
+            listOf(
+                FeedSuggestedUserFollow(
+                    UserFollowSuggestion("uid1", "User 1\nline 2", "", 0),
+                    false
+                ),
+                FeedSuggestedUserFollow(
+                    UserFollowSuggestion("uid2", "User 2", "", 1),
+                    false
+                ),
+                FeedSuggestedUserFollow(
+                    UserFollowSuggestion("uid3", "User 3", "", 2),
+                    false
+                ),
+                FeedSuggestedUserFollow(
+                    UserFollowSuggestion("uid4", "User 4", "", 3),
+                    false
+                ),
+                FeedSuggestedUserFollow(
+                    UserFollowSuggestion("uid5", "User 5", "", 4),
+                    false
+                )
+            )
+        )
+    ) { }
 }

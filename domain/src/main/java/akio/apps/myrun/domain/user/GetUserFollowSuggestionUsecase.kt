@@ -3,8 +3,6 @@ package akio.apps.myrun.domain.user
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserFollowRepository
 import akio.apps.myrun.data.user.api.UserRecentActivityRepository
-import akio.apps.myrun.data.user.api.model.FollowStatus
-import akio.apps.myrun.data.user.api.model.UserFollow
 import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import akio.apps.myrun.domain.time.TimeProvider
 import javax.inject.Inject

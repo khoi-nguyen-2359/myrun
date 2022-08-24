@@ -36,6 +36,9 @@ class FirebaseUserFollowRepository @Inject constructor(
         return firestore.collection("$USERS_COLLECTION/$userAccountId/$USER_FOLLOWERS_COLLECTION")
     }
 
+    private fun getCounterDoc(userId: String, counterName: String) =
+        firestore.document("$USERS_COLLECTION/$userId/$COUNTERS_COLLECTION/$counterName")
+
     override suspend fun getUserFollows(
         userId: String,
         followType: UserFollowType,
@@ -104,13 +107,11 @@ class FirebaseUserFollowRepository @Inject constructor(
             }
 
     override suspend fun getUserFollowCounter(userId: String): UserFollowCounter {
-        val followerCounterDoc =
-            firestore.document("$USERS_COLLECTION/$userId/$COUNTERS_COLLECTION/$FOLLOWER_COUNTER_DOC")
+        val followerCounterDoc = getCounterDoc(userId, FOLLOWER_COUNTER_DOC)
         val followerCount =
             followerCounterDoc.get().await().toObject(FirestoreCounter::class.java)?.count ?: 0
 
-        val followingCounterDoc =
-            firestore.document("$USERS_COLLECTION/$userId/$COUNTERS_COLLECTION/$FOLLOWING_COUNTER_DOC")
+        val followingCounterDoc = getCounterDoc(userId, FOLLOWING_COUNTER_DOC)
         val followingCount =
             followingCounterDoc.get().await().toObject(FirestoreCounter::class.java)?.count ?: 0
 
@@ -125,17 +126,49 @@ class FirebaseUserFollowRepository @Inject constructor(
             followSuggestion.photoUrl,
             FirestoreFollowStatus.Requested.rawValue
         )
-        val followingCounterDoc =
-            firestore.document("$USERS_COLLECTION/$userId/$COUNTERS_COLLECTION/$FOLLOWING_COUNTER_DOC")
+        val followingCounterDoc = getCounterDoc(userId, FOLLOWING_COUNTER_DOC)
         val counterUpdateMap = mapOf(COUNTERS_COUNT_FIELD to FieldValue.increment(1))
-        firestore.runTransaction { transaction ->
-            transaction.set(followUserDoc, entry)
-            transaction.set(followingCounterDoc, counterUpdateMap, SetOptions.merge())
-        }.await()
+        firestore.batch()
+            .set(followUserDoc, entry)
+            .set(followingCounterDoc, counterUpdateMap, SetOptions.merge())
+            .commit()
+            .await()
     }
 
-    override fun unfollowUser(userId: String, unfollowUserId: String) {
-        TODO("Not yet implemented")
+    override suspend fun acceptFollower(userId: String, followerId: String) {
+        getUserFollowersCollection(userId)
+            .document(followerId)
+            .set(
+                mapOf(USER_FOLLOW_STATUS_FIELD to FirestoreFollowStatus.Accepted.rawValue),
+                SetOptions.merge()
+            )
+            .await()
+    }
+
+    override suspend fun deleteFollower(userId: String, followerId: String) {
+        val followerDoc = getUserFollowersCollection(userId).document(followerId)
+        val counterUpdateMap = mapOf(COUNTERS_COUNT_FIELD to FieldValue.increment(-1))
+        val counterDoc = getCounterDoc(userId, FOLLOWER_COUNTER_DOC)
+        firestore.batch()
+            .delete(followerDoc)
+            .set(counterDoc, counterUpdateMap, SetOptions.merge())
+            .commit()
+            .await()
+    }
+
+    override suspend fun unfollowUser(userId: String, unfollowUserId: String) {
+        val followingsCollection = getUserFollowingsCollection(userId)
+        val unfollowDoc = followingsCollection.document(unfollowUserId)
+        val followingCounterDoc =
+            firestore.document(
+                "$USERS_COLLECTION/$userId/$COUNTERS_COLLECTION/$FOLLOWING_COUNTER_DOC"
+            )
+        val counterUpdateMap = mapOf(COUNTERS_COUNT_FIELD to FieldValue.increment(-1))
+        firestore.batch()
+            .delete(unfollowDoc)
+            .set(followingCounterDoc, counterUpdateMap, SetOptions.merge())
+            .commit()
+            .await()
     }
 
     private fun FirestoreUserFollow.toUserFollow() =
