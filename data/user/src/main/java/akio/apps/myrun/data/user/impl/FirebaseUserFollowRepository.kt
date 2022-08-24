@@ -115,7 +115,7 @@ class FirebaseUserFollowRepository @Inject constructor(
         val followingCount =
             followingCounterDoc.get().await().toObject(FirestoreCounter::class.java)?.count ?: 0
 
-        return UserFollowCounter(followerCount, followingCount)
+        return UserFollowCounter(followingCount, followerCount)
     }
 
     override suspend fun followUser(userId: String, followSuggestion: UserFollowSuggestion) {

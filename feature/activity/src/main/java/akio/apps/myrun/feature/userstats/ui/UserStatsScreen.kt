@@ -304,16 +304,6 @@ private fun ActivityTypePane(
 private fun TableDivider() = Divider(thickness = 0.5.dp)
 
 @Composable
-private fun SectionTitle(text: String) {
-    Text(
-        modifier = Modifier.padding(start = AppDimensions.screenHorizontalPadding),
-        text = text,
-        style = MaterialTheme.typography.h6,
-        fontWeight = FontWeight.Bold
-    )
-}
-
-@Composable
 private fun RowScope.TableCell(
     modifier: Modifier = Modifier,
     content: @Composable (RowScope.() -> Unit),
