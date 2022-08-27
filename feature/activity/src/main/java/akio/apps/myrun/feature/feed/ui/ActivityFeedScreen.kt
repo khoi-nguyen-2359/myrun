@@ -89,7 +89,8 @@ private const val REVEAL_ANIM_THRESHOLD = 10
 
 @Composable
 fun ActivityFeedScreen(
-    navController: NavController,
+    appNavController: NavController,
+    homeTabNavController: NavController,
     backStackEntry: NavBackStackEntry,
     contentPadding: PaddingValues,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
@@ -102,7 +103,8 @@ fun ActivityFeedScreen(
         activityFeedViewModel,
         contentPadding,
         onClickExportActivityFile,
-        navController
+        appNavController,
+        homeTabNavController
     )
 }
 
@@ -111,7 +113,8 @@ private fun ActivityFeedScreen(
     activityFeedViewModel: ActivityFeedViewModel,
     contentPadding: PaddingValues,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
-    navController: NavController,
+    appNavController: NavController,
+    homeTabNavController: NavController,
 ) {
     Timber.d("Compose ActivityFeedScreen")
     val coroutineScope = rememberCoroutineScope()
@@ -143,7 +146,8 @@ private fun ActivityFeedScreen(
             ),
             feedListState = feedListState,
             onClickExportActivityFile = onClickExportActivityFile,
-            navController = navController
+            appNavController,
+            homeTabNavController
         )
 
         ActivityFeedTopBar(
@@ -155,7 +159,7 @@ private fun ActivityFeedScreen(
                 .background(AppColors.primary),
             { onClickUploadCompleteBadge(coroutineScope, feedListState, activityFeedViewModel) }
         ) {
-            navController.navigate(HomeNavDestination.UserPreferences.route)
+            appNavController.navigate(HomeNavDestination.UserPreferences.route)
         }
     }
 
@@ -202,13 +206,12 @@ private fun ActivityFeedContainer(
     contentPadding: PaddingValues,
     feedListState: LazyListState,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
-    navController: NavController,
+    appNavController: NavController,
+    homeTabNavController: NavController,
 ) {
     Timber.d("Compose ActivityFeedContainer")
     val lazyPagingItems = activityFeedViewModel.myActivityList.collectAsLazyPagingItems()
-    val isLoadingInitialData by activityFeedViewModel.isInitialLoading.collectAsState(
-        initial = false
-    )
+    val isLoadingInitialData by activityFeedViewModel.isInitialLoading.collectAsState(false)
     when {
         isLoadingInitialData ||
             (
@@ -229,7 +232,8 @@ private fun ActivityFeedContainer(
             feedListState,
             lazyPagingItems,
             onClickExportActivityFile,
-            navController
+            appNavController,
+            homeTabNavController
         )
     }
 }
@@ -242,6 +246,7 @@ private fun ActivityFeedItemList(
     lazyPagingItems: LazyPagingItems<FeedUiModel>,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     navController: NavController,
+    homeTabNavController: NavController,
 ) {
     val userProfile by activityFeedViewModel.userProfile.collectAsState(initial = null)
     val preferredUnitSystem by activityFeedViewModel.preferredSystem.collectAsState(
@@ -267,6 +272,7 @@ private fun ActivityFeedItemList(
                         userProfile,
                         preferredUnitSystem,
                         navController,
+                        homeTabNavController,
                         onClickExportActivityFile
                     )
                 }

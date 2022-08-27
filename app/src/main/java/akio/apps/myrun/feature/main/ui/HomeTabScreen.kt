@@ -4,6 +4,7 @@ import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.core.ktx.px2dp
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
+import akio.apps.myrun.feature.core.navigation.HomeTabNavDestination
 import akio.apps.myrun.feature.core.ui.AppDimensions.AppBarHeight
 import akio.apps.myrun.feature.core.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.core.ui.AppTheme
@@ -97,12 +98,12 @@ private enum class HomeNavItemInfo(
     ActivityFeed(
         label = R.string.home_nav_activity_feed_tab_label,
         icon = Icons.Rounded.Timeline,
-        route = "activityFeed"
+        route = HomeTabNavDestination.Feed.route
     ),
     UserStats(
         label = R.string.home_nav_user_stats_tab_label,
         icon = Icons.Rounded.BarChart,
-        route = "userStats"
+        route = HomeTabNavDestination.Stats.route
     )
 }
 
@@ -213,7 +214,7 @@ private fun HomeNavHost(
     homeNavController: NavHostController,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     contentPaddings: PaddingValues,
-    navController: NavController,
+    appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
 ) {
     AnimatedNavHost(
@@ -227,7 +228,8 @@ private fun HomeNavHost(
     ) {
         composable(HomeNavItemInfo.ActivityFeed.route) { navEntry ->
             ActivityFeedScreen(
-                navController,
+                appNavController,
+                homeNavController,
                 navEntry,
                 contentPaddings,
                 onClickExportActivityFile
@@ -235,7 +237,13 @@ private fun HomeNavHost(
         }
 
         composable(HomeNavItemInfo.UserStats.route) { navEntry ->
-            UserStatsScreen(navController, navEntry, contentPaddings, openRoutePlanningAction)
+            UserStatsScreen(
+                userId = null,
+                appNavController,
+                navEntry,
+                contentPaddings,
+                openRoutePlanningAction
+            )
         }
     }
 }

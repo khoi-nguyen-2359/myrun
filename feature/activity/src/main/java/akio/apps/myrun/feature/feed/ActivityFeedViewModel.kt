@@ -61,6 +61,8 @@ internal class ActivityFeedViewModel @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingViewModel {
 
+    private val userId: String = userAuthenticationState.requireUserAccountId()
+
     private var activityPagingSource: ActivityPagingSource? = null
 
     private val isUploadBadgeDismissedFlow: MutableStateFlow<Boolean> =
@@ -70,7 +72,7 @@ internal class ActivityFeedViewModel @Inject constructor(
         createActivityUploadBadgeStatusFlow()
 
     val userProfile: Flow<UserProfile> =
-        getUserProfileUsecase.getUserProfileFlow().mapNotNull { it.data }.flowOn(ioDispatcher)
+        getUserProfileUsecase.getUserProfileFlow(userId).mapNotNull { it.data }.flowOn(ioDispatcher)
 
     val preferredSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystem()
 
@@ -189,6 +191,9 @@ internal class ActivityFeedViewModel @Inject constructor(
         }
         emitCachedUserFollowSuggestions()
     }
+
+    fun isCurrentUser(userId: String): Boolean =
+        userAuthenticationState.requireUserAccountId() == userId
 
     private fun loadUserFollowSuggestions() = viewModelScope.launch {
         cachedUserFollowSuggestions = withContext(ioDispatcher) {

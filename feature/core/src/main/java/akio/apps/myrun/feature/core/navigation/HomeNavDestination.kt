@@ -37,10 +37,21 @@ object HomeNavDestination {
     object UserPreferences : NavDestinationInfo(routeName = "userPreferences")
 
     object UserFollow : NavDestinationInfo(routeName = "userFollow") {
+        private val userIdRequiredArg: RequiredNamedNavArgument =
+            RequiredNamedNavArgument("userId") { type = NavType.StringType }
+
+        override val argumentAdapters: List<NamedNavArgumentAdapter> = listOf(userIdRequiredArg)
+
+        fun routeWithUserId(userId: String): String = createRouteFromArguments(
+            shouldIncludeValue = true,
+            listOf(userIdRequiredArg.toNavArgumentValuePair(userId))
+        )
+    }
+
+    object UserStats : NavDestinationInfo(routeName = "userStats") {
         val userIdRequiredArg: RequiredNamedNavArgument = RequiredNamedNavArgument("userId") {
             type = NavType.StringType
         }
-
         override val argumentAdapters: List<NamedNavArgumentAdapter> = listOf(userIdRequiredArg)
 
         fun routeWithUserId(userId: String): String = createRouteFromArguments(

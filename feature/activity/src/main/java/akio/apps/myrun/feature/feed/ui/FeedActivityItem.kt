@@ -13,6 +13,7 @@ import akio.apps.myrun.feature.core.measurement.TrackUnitFormatter
 import akio.apps.myrun.feature.core.measurement.TrackUnitFormatterSet
 import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
+import akio.apps.myrun.feature.core.navigation.HomeTabNavDestination
 import akio.apps.myrun.feature.core.ui.UserAvatarImage
 import akio.apps.myrun.feature.feed.ActivityFeedViewModel
 import android.content.Context
@@ -61,18 +62,27 @@ import androidx.navigation.NavController
 
 @Composable
 internal fun FeedActivityItem(
-    activityFeedViewModel: ActivityFeedViewModel,
+    feedViewModel: ActivityFeedViewModel,
     activity: BaseActivityModel,
     userProfile: UserProfile?,
     preferredUnitSystem: MeasureSystem,
-    navController: NavController,
+    appNavController: NavController,
+    homeTabNavController: NavController,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
     val activityDisplayPlaceName = remember {
-        activityFeedViewModel.getActivityDisplayPlaceName(activity)
+        feedViewModel.getActivityDisplayPlaceName(activity)
     }
     val activityFormattedStartTime = remember {
-        activityFeedViewModel.getFormattedStartTime(activity)
+        feedViewModel.getFormattedStartTime(activity)
+    }
+    val navigateUserStatsScreenAction = remember {
+        createNavigateUserStatsScreenAction(
+            feedViewModel,
+            activity,
+            appNavController,
+            homeTabNavController
+        )
     }
     FeedActivityItem(
         activity,
@@ -81,19 +91,33 @@ internal fun FeedActivityItem(
         userProfile,
         preferredUnitSystem,
         { activityModel ->
-            val route = HomeNavDestination.ActivityDetail.routeWithActivityId(
-                activityModel.id
-            )
-            navController.navigate(route)
+            val route = HomeNavDestination.ActivityDetail.routeWithActivityId(activityModel.id)
+            appNavController.navigate(route)
         },
         { onClickExportActivityFile(activity) },
-        {
-            val route = HomeNavDestination.Profile.routeWithUserId(
-                activity.athleteInfo.userId
-            )
-            navController.navigate(route)
-        }
+        navigateUserStatsScreenAction
     )
+}
+
+private fun createNavigateUserStatsScreenAction(
+    activityFeedViewModel: ActivityFeedViewModel,
+    activity: BaseActivityModel,
+    appNavController: NavController,
+    homeTabNavController: NavController,
+): () -> Unit {
+    val isCurrentUser = activityFeedViewModel.isCurrentUser(activity.athleteInfo.userId)
+    val navController: NavController
+    val route: String
+    if (isCurrentUser) {
+        navController = homeTabNavController
+        route = HomeTabNavDestination.Stats.route
+    } else {
+        navController = appNavController
+        route = HomeNavDestination.UserStats.routeWithUserId(
+            activity.athleteInfo.userId
+        )
+    }
+    return { navController.navigate(route) }
 }
 
 @Composable

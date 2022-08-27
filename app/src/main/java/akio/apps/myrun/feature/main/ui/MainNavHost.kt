@@ -6,6 +6,7 @@ import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
 import akio.apps.myrun.feature.userfollow.ui.UserFollowScreen
 import akio.apps.myrun.feature.userprefs.ui.UserPreferencesScreen
+import akio.apps.myrun.feature.userstats.ui.UserStatsScreen
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -89,6 +90,15 @@ fun MainNavHost(
             arguments = HomeNavDestination.UserFollow.arguments
         ) { navEntry ->
             UserFollowScreen(navEntry, navController)
+        }
+
+        composable(
+            route = HomeNavDestination.UserStats.route,
+            arguments = HomeNavDestination.UserStats.arguments
+        ) { navEntry ->
+            val userId =
+                HomeNavDestination.UserStats.userIdRequiredArg.parseValueInBackStackEntry(navEntry)
+            UserStatsScreen(userId, navController, navEntry) { }
         }
     }
 }

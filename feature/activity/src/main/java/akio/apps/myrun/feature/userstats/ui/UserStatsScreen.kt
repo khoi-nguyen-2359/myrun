@@ -13,6 +13,7 @@ import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppBarIconButton
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
+import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.CentralLoadingView
 import akio.apps.myrun.feature.core.ui.ColumnSpacer
 import akio.apps.myrun.feature.core.ui.RowSpacer
@@ -77,16 +78,17 @@ import coil.size.Scale
 
 @Composable
 fun UserStatsScreen(
+    userId: String? = null,
     appNavController: NavController,
     backStackEntry: NavBackStackEntry,
-    contentPadding: PaddingValues,
+    contentPadding: PaddingValues = PaddingValues(),
     openRoutePlanningAction: () -> Unit,
-) {
+) = AppTheme {
     val application = LocalContext.current.applicationContext as Application
     val userStatsViewModel = backStackEntry.rememberViewModelProvider { savedStateHandle ->
         DaggerUserStatsFeatureComponent.factory().create(
             application,
-            savedStateHandle
+            UserStatsViewModel.initSavedState(savedStateHandle, userId)
         ).userStatsViewModel()
     }
     UserStatsScreen(userStatsViewModel, contentPadding, appNavController, openRoutePlanningAction)
@@ -410,10 +412,11 @@ private fun UserProfileHeader(
             }
         }
         RowSpacer(width = 10.dp)
-        UserStatsOutlinedButton(
-            text = stringResource(id = R.string.user_home_edit_profile_button)
-        ) {
-            appNavController.navigate(HomeNavDestination.Profile.routeWithUserId())
+
+        if (screenState.isCurrentUser) {
+            UserStatsOutlinedButton(stringResource(id = R.string.user_home_edit_profile_button)) {
+                appNavController.navigate(HomeNavDestination.Profile.routeWithUserId())
+            }
         }
     }
 }
@@ -497,6 +500,7 @@ private fun PreviewUserStats() {
     UserStatsScreen(
         screenState = UserStatsViewModel.ScreenState.StatsAvailable(
             UserProfile(name = "Super man", photo = "photo Url", accountId = "accountId"),
+            isCurrentUser = true,
             "Saigon, Vietnam",
             mapOf(
                 ActivityType.Running to GetTrainingSummaryDataUsecase.TrainingSummaryTableData(

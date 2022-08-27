@@ -20,6 +20,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -28,23 +29,26 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.parcelize.Parcelize
 
 internal class UserStatsViewModel @Inject constructor(
+    getUserProfileUsecase: GetUserProfileUsecase,
+    getUserRecentPlaceNameUsecase: GetUserRecentPlaceNameUsecase,
+    userPreferences: UserPreferences,
+    authenticationState: UserAuthenticationState,
+    userFollowRepository: UserFollowRepository,
     private val savedStateHandle: SavedStateHandle,
-    private val getUserProfileUsecase: GetUserProfileUsecase,
-    private val getUserRecentPlaceNameUsecase: GetUserRecentPlaceNameUsecase,
     private val getTrainingSummaryDataUsecase: GetTrainingSummaryDataUsecase,
     private val activityLocalStorage: ActivityLocalStorage,
-    private val userPreferences: UserPreferences,
-    private val authenticationState: UserAuthenticationState,
-    private val userFollowRepository: UserFollowRepository,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
-    private val userId = authenticationState.requireUserAccountId()
+    private val userId: String =
+        savedStateHandle.getUserId() ?: authenticationState.requireUserAccountId()
+
+    private val isCurrentUser: Boolean = userId == authenticationState.requireUserAccountId()
 
     val screenState: Flow<ScreenState> = combine(
-        getUserProfileUsecase.getUserProfileFlow().mapNotNull { it.data },
-        getUserRecentPlaceNameUsecase.getUserRecentPlaceNameFlow(),
+        getUserProfileUsecase.getUserProfileFlow(userId).mapNotNull { it.data },
+        getUserRecentPlaceNameUsecase.getUserRecentPlaceNameFlow(userId),
         getTrainingSummaryDataFlow(),
         userPreferences.getMeasureSystem(),
         userFollowRepository.getUserFollowCounterFlow(userId),
@@ -56,21 +60,28 @@ internal class UserStatsViewModel @Inject constructor(
 
     private fun getTrainingSummaryDataFlow():
         Flow<Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>> =
-        activityLocalStorage.getActivityStorageDataCountFlow()
-            .distinctUntilChanged()
-            .map { getTrainingSummaryDataUsecase.getUserTrainingSummaryData() }
+        if (isCurrentUser) {
+            activityLocalStorage.getActivityStorageDataCountFlow()
+                .distinctUntilChanged()
+                .map { getTrainingSummaryDataUsecase.getUserTrainingSummaryData(userId) }
+        } else {
+            flow {
+                emit(getTrainingSummaryDataUsecase.getUserTrainingSummaryData(userId))
+            }
+        }
             .flowOn(ioDispatcher)
 
     private suspend fun combineScreenStateData(
         userProfile: UserProfile,
         userRecentPlace: String?,
         trainingSummaryTableData:
-        Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
+            Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
         measureSystem: MeasureSystem,
         userFollowCounter: UserFollowCounter,
     ): ScreenState = ScreenState.createScreenState(
         userRecentPlace,
         userProfile,
+        isCurrentUser,
         trainingSummaryTableData,
         measureSystem,
         userFollowCounter
@@ -82,8 +93,6 @@ internal class UserStatsViewModel @Inject constructor(
     private fun SavedStateHandle.setScreenState(screenState: ScreenState) =
         set(STATE_SCREEN_STATE, screenState)
 
-    private fun SavedStateHandle.getUserId(): String = this[STATE_USER_ID] ?: ""
-
     sealed class ScreenState {
         /**
          * State when user's profile and stats are loading and there's nothing to show.
@@ -94,9 +103,10 @@ internal class UserStatsViewModel @Inject constructor(
         @Parcelize
         data class StatsAvailable(
             val userProfile: UserProfile,
+            val isCurrentUser: Boolean,
             val userRecentPlace: String?,
             val trainingSummaryTableData:
-            Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
+                Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
             val measureSystem: MeasureSystem,
             val userFollowCounter: UserFollowCounter,
         ) : ScreenState(), Parcelable
@@ -105,13 +115,15 @@ internal class UserStatsViewModel @Inject constructor(
             fun createScreenState(
                 userRecentPlace: String?,
                 userProfile: UserProfile,
+                isCurrentUser: Boolean,
                 trainingSummaryTableData:
-                Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
+                    Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
                 measureSystem: MeasureSystem,
                 userFollowCounter: UserFollowCounter,
             ): StatsAvailable {
                 return StatsAvailable(
                     userProfile,
+                    isCurrentUser,
                     userRecentPlace,
                     trainingSummaryTableData,
                     measureSystem,
@@ -125,8 +137,14 @@ internal class UserStatsViewModel @Inject constructor(
         private const val STATE_SCREEN_STATE = "STATE_SCREEN_STATE"
         private const val STATE_USER_ID = "STATE_USER_ID"
 
-        fun initSavedState(savedStateHandle: SavedStateHandle, userId: String): SavedStateHandle {
-            savedStateHandle[STATE_USER_ID] = userId
+        private fun SavedStateHandle.setUserId(userId: String?) {
+            this[STATE_USER_ID] = userId
+        }
+
+        private fun SavedStateHandle.getUserId(): String? = this[STATE_USER_ID]
+
+        fun initSavedState(savedStateHandle: SavedStateHandle, userId: String?): SavedStateHandle {
+            savedStateHandle.setUserId(userId)
             return savedStateHandle
         }
     }

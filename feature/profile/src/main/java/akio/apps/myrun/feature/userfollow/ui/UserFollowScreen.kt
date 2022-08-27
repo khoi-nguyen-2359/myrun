@@ -62,7 +62,7 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
-@ExperimentalPagerApi
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun UserFollowScreen(navEntry: NavBackStackEntry, navController: NavController) = AppTheme {
     val application = LocalContext.current.applicationContext as Application

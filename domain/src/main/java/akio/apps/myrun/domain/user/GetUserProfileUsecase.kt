@@ -16,9 +16,8 @@ class GetUserProfileUsecase @Inject constructor(
     /**
      * [userId] is id of user to fetch data, null will load current user.
      */
-    fun getUserProfileFlow(userId: String? = null): Flow<Resource<UserProfile>> = try {
-        val finalUserId = userId ?: userAuthenticationState.requireUserAccountId()
-        userProfileRepository.getUserProfileFlow(finalUserId)
+    fun getUserProfileFlow(userId: String): Flow<Resource<UserProfile>> = try {
+        userProfileRepository.getUserProfileFlow(userId)
     } catch (ex: Exception) {
         flowOf(Resource.Error(ex))
     }

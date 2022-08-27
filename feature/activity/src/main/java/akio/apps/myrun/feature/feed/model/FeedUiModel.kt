@@ -2,8 +2,6 @@ package akio.apps.myrun.feature.feed.model
 
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
-import android.util.Log
-import timber.log.Timber
 
 sealed class FeedUiModel(val id: String)
 
