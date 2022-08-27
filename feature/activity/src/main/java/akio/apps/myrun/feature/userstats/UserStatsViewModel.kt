@@ -15,11 +15,9 @@ import akio.apps.myrun.domain.user.GetUserRecentPlaceNameUsecase
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
@@ -27,7 +25,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 internal class UserStatsViewModel @Inject constructor(
@@ -43,29 +40,19 @@ internal class UserStatsViewModel @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
-    private val userFollowCounterFlow = MutableStateFlow(UserFollowCounter(0, 0))
+    private val userId = authenticationState.requireUserAccountId()
 
     val screenState: Flow<ScreenState> = combine(
         getUserProfileUsecase.getUserProfileFlow().mapNotNull { it.data },
         getUserRecentPlaceNameUsecase.getUserRecentPlaceNameFlow(),
         getTrainingSummaryDataFlow(),
         userPreferences.getMeasureSystem(),
-        userFollowCounterFlow,
+        userFollowRepository.getUserFollowCounterFlow(userId),
         ::combineScreenStateData
     )
         .onStart { emit(savedStateHandle.getScreenState()) }
         .onEach { savedStateHandle.setScreenState(it) }
         .flowOn(ioDispatcher)
-
-    init {
-        getUserFollowCounters()
-    }
-
-    private fun getUserFollowCounters() = viewModelScope.launch {
-        userFollowCounterFlow.value = userFollowRepository.getUserFollowCounter(
-            authenticationState.requireUserAccountId()
-        )
-    }
 
     private fun getTrainingSummaryDataFlow():
         Flow<Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>> =
@@ -78,7 +65,7 @@ internal class UserStatsViewModel @Inject constructor(
         userProfile: UserProfile,
         userRecentPlace: String?,
         trainingSummaryTableData:
-            Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
+        Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
         measureSystem: MeasureSystem,
         userFollowCounter: UserFollowCounter,
     ): ScreenState = ScreenState.createScreenState(
@@ -109,7 +96,7 @@ internal class UserStatsViewModel @Inject constructor(
             val userProfile: UserProfile,
             val userRecentPlace: String?,
             val trainingSummaryTableData:
-                Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
+            Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
             val measureSystem: MeasureSystem,
             val userFollowCounter: UserFollowCounter,
         ) : ScreenState(), Parcelable
@@ -119,7 +106,7 @@ internal class UserStatsViewModel @Inject constructor(
                 userRecentPlace: String?,
                 userProfile: UserProfile,
                 trainingSummaryTableData:
-                    Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
+                Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
                 measureSystem: MeasureSystem,
                 userFollowCounter: UserFollowCounter,
             ): StatsAvailable {

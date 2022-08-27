@@ -162,13 +162,13 @@ private fun navigateUserFollowScreen(
 @Composable
 private fun ProfileStats(userFollowCounter: UserFollowCounter, onClick: () -> Unit) = Row(
     modifier = Modifier
+        .clickable(onClick = onClick)
         .padding(
             start = AppDimensions.screenHorizontalPadding,
             end = AppDimensions.screenHorizontalPadding,
             top = 20.dp,
             bottom = 14.dp
         )
-        .clickable(onClick = onClick)
 ) {
     arrayOf(
         R.string.user_stats_following_label to userFollowCounter.followingCount,

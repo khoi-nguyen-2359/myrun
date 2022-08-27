@@ -20,6 +20,11 @@ import com.google.firebase.firestore.SetOptions
 import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 
 @Singleton
@@ -106,16 +111,28 @@ class FirebaseUserFollowRepository @Inject constructor(
                 it.toObject(FirestoreUserFollow::class.java)?.toUserFollow()
             }
 
-    override suspend fun getUserFollowCounter(userId: String): UserFollowCounter {
-        val followerCounterDoc = getCounterDoc(userId, FOLLOWER_COUNTER_DOC)
-        val followerCount =
-            followerCounterDoc.get().await().toObject(FirestoreCounter::class.java)?.count ?: 0
+    override fun getUserFollowCounterFlow(userId: String): Flow<UserFollowCounter> = callbackFlow {
+        val followerCounterDoc = getCounterDoc(userId, USER_FOLLOWERS_COLLECTION)
+        var followerCounter = 0
+        var followingCounter = 0
+        val followerListener = followerCounterDoc.addSnapshotListener { snapshot, _ ->
+            followerCounter =
+                snapshot?.toObject(FirestoreCounter::class.java)?.count ?: followerCounter
+            trySend(UserFollowCounter(followingCounter, followerCounter))
+        }
+        val followingCounterDoc = getCounterDoc(userId, USER_FOLLOWINGS_COLLECTION)
+        val followingListener = followingCounterDoc.addSnapshotListener { snapshot, _ ->
+            followingCounter =
+                snapshot?.toObject(FirestoreCounter::class.java)?.count ?: followingCounter
+            trySend(UserFollowCounter(followingCounter, followerCounter))
+        }
 
-        val followingCounterDoc = getCounterDoc(userId, FOLLOWING_COUNTER_DOC)
-        val followingCount =
-            followingCounterDoc.get().await().toObject(FirestoreCounter::class.java)?.count ?: 0
-
-        return UserFollowCounter(followingCount, followerCount)
+        awaitClose {
+            runBlocking(Dispatchers.Main.immediate) {
+                followerListener.remove()
+                followingListener.remove()
+            }
+        }
     }
 
     override suspend fun followUser(userId: String, followSuggestion: UserFollowSuggestion) {
@@ -126,7 +143,7 @@ class FirebaseUserFollowRepository @Inject constructor(
             followSuggestion.photoUrl,
             FirestoreFollowStatus.Requested.rawValue
         )
-        val followingCounterDoc = getCounterDoc(userId, FOLLOWING_COUNTER_DOC)
+        val followingCounterDoc = getCounterDoc(userId, USER_FOLLOWINGS_COLLECTION)
         val counterUpdateMap = mapOf(COUNTERS_COUNT_FIELD to FieldValue.increment(1))
         firestore.batch()
             .set(followUserDoc, entry)
@@ -148,7 +165,7 @@ class FirebaseUserFollowRepository @Inject constructor(
     override suspend fun deleteFollower(userId: String, followerId: String) {
         val followerDoc = getUserFollowersCollection(userId).document(followerId)
         val counterUpdateMap = mapOf(COUNTERS_COUNT_FIELD to FieldValue.increment(-1))
-        val counterDoc = getCounterDoc(userId, FOLLOWER_COUNTER_DOC)
+        val counterDoc = getCounterDoc(userId, USER_FOLLOWERS_COLLECTION)
         firestore.batch()
             .delete(followerDoc)
             .set(counterDoc, counterUpdateMap, SetOptions.merge())
@@ -161,7 +178,7 @@ class FirebaseUserFollowRepository @Inject constructor(
         val unfollowDoc = followingsCollection.document(unfollowUserId)
         val followingCounterDoc =
             firestore.document(
-                "$USERS_COLLECTION/$userId/$COUNTERS_COLLECTION/$FOLLOWING_COUNTER_DOC"
+                "$USERS_COLLECTION/$userId/$COUNTERS_COLLECTION/$USER_FOLLOWINGS_COLLECTION"
             )
         val counterUpdateMap = mapOf(COUNTERS_COUNT_FIELD to FieldValue.increment(-1))
         firestore.batch()
@@ -192,8 +209,6 @@ class FirebaseUserFollowRepository @Inject constructor(
         private const val USER_RECENT_PLACE_FIELD = "recentActivity.placeComponents"
         private const val USER_RECENT_ACTIVE_TIME_FIELD = "recentActivity.activeTime"
 
-        private const val FOLLOWING_COUNTER_DOC = "followingCounter"
-        private const val FOLLOWER_COUNTER_DOC = "followerCounter"
         private const val COUNTERS_COLLECTION = "counters"
         private const val COUNTERS_COUNT_FIELD = "count"
 

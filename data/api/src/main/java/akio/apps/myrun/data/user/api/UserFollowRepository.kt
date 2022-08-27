@@ -5,11 +5,13 @@ import akio.apps.myrun.data.user.api.model.UserFollowCounter
 import akio.apps.myrun.data.user.api.model.UserFollowPagingToken
 import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import akio.apps.myrun.data.user.api.model.UserFollowType
+import kotlinx.coroutines.flow.Flow
 
 interface UserFollowRepository {
     suspend fun getUserFollowings(userId: String): List<UserFollow>
     suspend fun getUserFollowers(userId: String): List<UserFollow>
-    suspend fun getUserFollowCounter(userId: String): UserFollowCounter
+
+    fun getUserFollowCounterFlow(userId: String): Flow<UserFollowCounter>
 
     suspend fun followUser(userId: String, followSuggestion: UserFollowSuggestion)
     suspend fun unfollowUser(userId: String, unfollowUserId: String)
