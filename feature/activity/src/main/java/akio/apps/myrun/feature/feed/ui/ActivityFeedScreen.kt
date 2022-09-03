@@ -277,7 +277,11 @@ private fun ActivityFeedItemList(
                     )
                 }
                 is FeedUserFollowSuggestionList -> {
-                    FeedUserFollowSuggestionItem(feedItem, activityFeedViewModel::followUser)
+                    FeedUserFollowSuggestionItem(
+                        feedItem,
+                        activityFeedViewModel::followUser,
+                        navController::navigateSuggestedUserStats
+                    )
                 }
                 null -> {
                     // do nothing
@@ -289,6 +293,11 @@ private fun ActivityFeedItemList(
             item { LoadingItem() }
         }
     }
+}
+
+private fun NavController.navigateSuggestedUserStats(userId: String) {
+    val route = HomeNavDestination.NormalUserStats.routeWithUserId(userId)
+    this.navigate(route)
 }
 
 @Composable

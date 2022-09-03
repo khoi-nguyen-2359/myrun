@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.feed.ui
 
 import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import akio.apps.myrun.feature.activity.R
+import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
 import akio.apps.myrun.feature.core.ui.UserAvatarImage
@@ -25,6 +26,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,11 +35,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
 @Composable
 fun FeedUserFollowSuggestionItem(
     suggestionList: FeedUserFollowSuggestionList,
     onClickFollowUserId: (UserFollowSuggestion) -> Unit,
+    onClickUserFollowAvatar: (String) -> Unit,
 ) = Column(
     modifier = Modifier.padding(vertical = ActivityFeedDimensions.feedItemVerticalPadding)
 ) {
@@ -57,7 +61,7 @@ fun FeedUserFollowSuggestionItem(
             suggestionList.userList,
             key = { suggestion -> suggestion.userFollow.uid }
         ) {
-            SuggestedUserCard(it, onClickFollowUserId)
+            SuggestedUserCard(it, onClickFollowUserId, onClickUserFollowAvatar)
         }
     }
 }
@@ -66,6 +70,7 @@ fun FeedUserFollowSuggestionItem(
 private fun SuggestedUserCard(
     followSuggestion: FeedSuggestedUserFollow,
     onClickFollowUser: (UserFollowSuggestion) -> Unit,
+    onClickUserFollowAvatar: (String) -> Unit,
 ) {
     val followButtonColors = if (followSuggestion.isRequested) {
         ButtonDefaults.outlinedButtonColors(
@@ -92,6 +97,10 @@ private fun SuggestedUserCard(
         R.string.action_follow
     }
 
+    val onClickAvatarAction = remember {
+        { onClickUserFollowAvatar(followSuggestion.userFollow.uid) }
+    }
+
     Card(
         modifier = Modifier
             .width(160.dp)
@@ -102,7 +111,11 @@ private fun SuggestedUserCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
         ) {
-            UserAvatarImage(followSuggestion.userFollow.photoUrl, avatarDimension = 80.dp)
+            UserAvatarImage(
+                followSuggestion.userFollow.photoUrl,
+                avatarDimension = 80.dp,
+                onClickAvatarAction
+            )
             Text(
                 text = followSuggestion.userFollow.displayName.addEmptyLines(1),
                 modifier = Modifier.padding(10.dp),
@@ -128,6 +141,11 @@ private fun SuggestedUserCard(
             }
         }
     }
+}
+
+private fun NavController.navigateNormalUserStatsScreen(userId: String) {
+    val route = HomeNavDestination.NormalUserStats.routeWithUserId(userId)
+    this.navigate(route)
 }
 
 @Composable
@@ -157,6 +175,7 @@ private fun PreviewSuggestedUserList() {
                     false
                 )
             )
-        )
+        ),
+        { }
     ) { }
 }
