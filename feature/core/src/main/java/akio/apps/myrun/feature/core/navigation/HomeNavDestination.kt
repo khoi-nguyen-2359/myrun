@@ -48,7 +48,7 @@ object HomeNavDestination {
         )
     }
 
-    object UserStats : NavDestinationInfo(routeName = "userStats") {
+    object NormalUserStats : NavDestinationInfo(routeName = "normalUserStats") {
         val userIdRequiredArg: RequiredNamedNavArgument = RequiredNamedNavArgument("userId") {
             type = NavType.StringType
         }

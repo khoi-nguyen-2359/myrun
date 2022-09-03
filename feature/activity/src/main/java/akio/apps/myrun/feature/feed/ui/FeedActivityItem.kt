@@ -113,7 +113,7 @@ private fun createNavigateUserStatsScreenAction(
         route = HomeTabNavDestination.Stats.route
     } else {
         navController = appNavController
-        route = HomeNavDestination.UserStats.routeWithUserId(
+        route = HomeNavDestination.NormalUserStats.routeWithUserId(
             activity.athleteInfo.userId
         )
     }

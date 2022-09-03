@@ -7,20 +7,16 @@ import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.feature.activity.BuildConfig
 import akio.apps.myrun.feature.activity.R
-import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppBarIconButton
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
-import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.CentralLoadingView
 import akio.apps.myrun.feature.core.ui.ColumnSpacer
 import akio.apps.myrun.feature.core.ui.RowSpacer
 import akio.apps.myrun.feature.core.ui.StatusBarSpacer
 import akio.apps.myrun.feature.userstats.UserStatsViewModel
-import akio.apps.myrun.feature.userstats.di.DaggerUserStatsFeatureComponent
-import android.app.Application
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -70,7 +66,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
@@ -78,25 +73,7 @@ import coil.request.ImageRequest
 import coil.size.Scale
 
 @Composable
-fun UserStatsScreen(
-    userId: String? = null,
-    appNavController: NavController,
-    backStackEntry: NavBackStackEntry,
-    contentPadding: PaddingValues = PaddingValues(),
-    openRoutePlanningAction: () -> Unit,
-) = AppTheme {
-    val application = LocalContext.current.applicationContext as Application
-    val userStatsViewModel = backStackEntry.rememberViewModelProvider { savedStateHandle ->
-        DaggerUserStatsFeatureComponent.factory().create(
-            application,
-            UserStatsViewModel.initSavedState(savedStateHandle, userId)
-        ).userStatsViewModel()
-    }
-    UserStatsScreen(userStatsViewModel, contentPadding, appNavController, openRoutePlanningAction)
-}
-
-@Composable
-private fun UserStatsScreen(
+internal fun UserStatsScreen(
     userStatsViewModel: UserStatsViewModel,
     contentPadding: PaddingValues,
     appNavController: NavController,

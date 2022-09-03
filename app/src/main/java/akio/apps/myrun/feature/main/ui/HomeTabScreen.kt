@@ -11,7 +11,7 @@ import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.feed.ui.ActivityFeedScreen
 import akio.apps.myrun.feature.main.di.DaggerHomeTabFeatureComponent
-import akio.apps.myrun.feature.userstats.ui.UserStatsScreen
+import akio.apps.myrun.feature.userstats.ui.CurrentUserStatsScreen
 import android.app.Application
 import androidx.annotation.StringRes
 import androidx.compose.animation.EnterTransition
@@ -237,8 +237,7 @@ private fun HomeNavHost(
         }
 
         composable(HomeNavItemInfo.UserStats.route) { navEntry ->
-            UserStatsScreen(
-                userId = null,
+            CurrentUserStatsScreen(
                 appNavController,
                 navEntry,
                 contentPaddings,
