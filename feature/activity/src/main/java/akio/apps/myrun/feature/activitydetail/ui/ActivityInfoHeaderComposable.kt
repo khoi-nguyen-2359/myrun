@@ -33,7 +33,6 @@ internal fun ActivityInfoHeaderView(
     activityDetail: BaseActivityModel,
     activityFormattedStartTime: ActivityDateTimeFormatter.Result,
     activityDisplayPlaceName: String?,
-    onClickUserAvatar: () -> Unit,
 ) = Column(
     modifier = Modifier
         .padding(
@@ -42,10 +41,7 @@ internal fun ActivityInfoHeaderView(
         )
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        UserAvatarImage(
-            activityDetail.athleteInfo.userAvatar,
-            onClickUserAvatar = onClickUserAvatar
-        )
+        UserAvatarImage(activityDetail.athleteInfo.userAvatar)
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = Modifier.weight(1.0f)) {
             AthleteNameText(activityDetail)
@@ -141,4 +137,4 @@ private fun PreviewActivityInfoHeader() = ActivityInfoHeaderView(
     ),
     activityDisplayPlaceName = "California, Santa Clara County, San Jose",
     activityFormattedStartTime = ActivityDateTimeFormatter.Result.WithinToday("today-string")
-) {}
+)

@@ -37,8 +37,6 @@ fun UserAvatarImage(
         modifier = Modifier
             .size(avatarDimension)
             .clip(CircleShape)
-            .modifyIf(onClickUserAvatar != null) {
-                clickable { onClickUserAvatar?.invoke() }
-            }
+            .clickable(enabled = onClickUserAvatar != null) { onClickUserAvatar?.invoke() }
     )
 }
