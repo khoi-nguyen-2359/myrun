@@ -99,7 +99,7 @@ private fun UserStatsScreen(
 ) {
     Column {
         StatusBarSpacer()
-        UserStatsTopBar(appNavController, openRoutePlanningAction)
+        UserStatsTopBar(screenState, appNavController, openRoutePlanningAction)
         when (screenState) {
             UserStatsViewModel.ScreenState.StatsLoading -> {
                 CentralLoadingView(text = stringResource(id = R.string.message_loading))
@@ -434,23 +434,41 @@ private fun UserStatsOutlinedButton(
 
 @Composable
 private fun UserStatsTopBar(
+    screenState: UserStatsViewModel.ScreenState,
     navController: NavController,
     openRoutePlanningAction: () -> Unit,
 ) {
+    val isCurrentUser = screenState is UserStatsViewModel.ScreenState.StatsAvailable &&
+        screenState.isCurrentUser
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.home_nav_user_stats_tab_label)) },
         actions = {
-            if (BuildConfig.DEBUG) {
-                AppBarIconButton(
-                    iconImageVector = Icons.Rounded.Add,
-                    onClick = openRoutePlanningAction
-                )
-            }
-            AppBarIconButton(iconImageVector = Icons.Rounded.Settings) {
-                navController.navigate(HomeNavDestination.UserPreferences.route)
+            if (isCurrentUser) {
+                TopBarActionButtons(openRoutePlanningAction, navController)
             }
         }
     )
+}
+
+@Composable
+fun TopBarActionButtons(
+    openRoutePlanningAction: () -> Unit,
+    navController: NavController,
+) {
+    if (BuildConfig.DEBUG) {
+        AppBarIconButton(
+            iconImageVector = Icons.Rounded.Add,
+            onClick = openRoutePlanningAction
+        )
+    }
+    AppBarIconButton(
+        iconImageVector = Icons.Rounded.Settings,
+        onClick = navController::navigateUserPreferencesScreen
+    )
+}
+
+private fun NavController.navigateUserPreferencesScreen() {
+    navigate(HomeNavDestination.UserPreferences.route)
 }
 
 @Composable
