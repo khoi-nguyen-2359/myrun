@@ -54,6 +54,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -140,31 +141,40 @@ private fun UserStatsContent(
     modifier: Modifier = Modifier,
     navController: NavController,
 ) {
+    val onClickUserFollowStats = remember {
+        createUserFollowClickAction(screenState, navController)
+    }
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
         ColumnSpacer(height = AppDimensions.screenVerticalSpacing)
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing)
         UserProfileHeader(screenState, navController)
-        ProfileStats(screenState.userFollowCounter) {
-            navigateUserFollowScreen(screenState, navController)
-        }
+        FollowCounterStats(screenState.userFollowCounter, onClickUserFollowStats)
         Divider(thickness = 4.dp)
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing * 2)
         TrainingSummaryTable(screenState)
     }
 }
 
-private fun navigateUserFollowScreen(
+private fun createUserFollowClickAction(
     screenState: UserStatsViewModel.ScreenState.StatsAvailable,
     navController: NavController,
-) {
-    val userId = HomeNavDestination.UserFollow.routeWithUserId(screenState.userProfile.accountId)
-    navController.navigate(userId)
+): (() -> Unit)? = if (screenState.isCurrentUser) {
+    {
+        val userId =
+            HomeNavDestination.UserFollow.routeWithUserId(screenState.userProfile.accountId)
+        navController.navigate(userId)
+    }
+} else {
+    null
 }
 
 @Composable
-private fun ProfileStats(userFollowCounter: UserFollowCounter, onClick: () -> Unit) = Row(
+private fun FollowCounterStats(
+    userFollowCounter: UserFollowCounter,
+    onClick: (() -> Unit)? = null,
+) = Row(
     modifier = Modifier
-        .clickable(onClick = onClick)
+        .clickable(enabled = onClick != null) { onClick?.invoke() }
         .padding(
             start = AppDimensions.screenHorizontalPadding,
             end = AppDimensions.screenHorizontalPadding,
