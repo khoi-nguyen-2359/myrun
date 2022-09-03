@@ -480,7 +480,6 @@ private fun UserStatsTopBar(
 private fun UserProfileImage(
     photoUrl: String?,
     imageLoadSizeDp: Dp = 60.dp,
-    onClick: (() -> Unit)? = null,
 ) {
     val imageLoadSizePx = with(LocalDensity.current) { imageLoadSizeDp.roundToPx() }
     Surface(shape = CircleShape, modifier = Modifier.size(imageLoadSizeDp)) {
@@ -499,7 +498,6 @@ private fun UserProfileImage(
             contentDescription = "Athlete avatar",
             modifier = Modifier
                 .fillMaxSize()
-                .clickable { onClick?.invoke() }
         )
     }
 }
