@@ -91,7 +91,11 @@ class UserFollowViewModel @Inject constructor(
     }
 
     private fun createPagerFlow(followType: UserFollowType) = Pager(
-        config = PagingConfig(pageSize = 100, enablePlaceholders = false, prefetchDistance = 100)
+        config = PagingConfig(
+            pageSize = PAGE_SIZE,
+            enablePlaceholders = false,
+            prefetchDistance = PAGE_SIZE
+        )
     ) { createAndStorePagingSource(followType) }
         .flow
         .map { pagingData -> pagingData.mapToUiModel(followType).insertDividers() }
@@ -133,6 +137,7 @@ class UserFollowViewModel @Inject constructor(
     )
 
     companion object {
+        private const val PAGE_SIZE = 50
         val INIT_SCREEN_STATE = ScreenState(tabStates = listOf())
     }
 }

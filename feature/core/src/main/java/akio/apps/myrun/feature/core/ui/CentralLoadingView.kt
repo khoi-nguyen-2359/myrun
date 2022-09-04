@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -37,11 +38,12 @@ fun CentralLoadingView(
 @Composable
 fun CentralAnnouncementView(
     text: String,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
 ) = Box(
     modifier = Modifier
         .fillMaxSize()
-        .clickable { onClick() },
+        .padding(AppDimensions.screenHorizontalPadding)
+        .clickable(enabled = onClick != null) { onClick?.invoke() },
     contentAlignment = Alignment.Center
 ) {
     Text(

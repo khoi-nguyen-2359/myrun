@@ -7,6 +7,7 @@ import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.core.ui.AppBarArrowBackButton
 import akio.apps.myrun.feature.core.ui.AppDimensions
 import akio.apps.myrun.feature.core.ui.AppTheme
+import akio.apps.myrun.feature.core.ui.CentralAnnouncementView
 import akio.apps.myrun.feature.core.ui.StatusBarSpacer
 import akio.apps.myrun.feature.core.ui.UserAvatarImage
 import akio.apps.myrun.feature.profile.R
@@ -14,6 +15,7 @@ import akio.apps.myrun.feature.userfollow.UserFollowViewModel
 import akio.apps.myrun.feature.userfollow.UserFollowViewModel.Companion.INIT_SCREEN_STATE
 import akio.apps.myrun.feature.userfollow.di.DaggerUserFollowFeatureComponent
 import akio.apps.myrun.feature.userfollow.model.FollowStatusDivider
+import akio.apps.myrun.feature.userfollow.model.UserFollowListUiModel
 import akio.apps.myrun.feature.userfollow.model.UserFollowUiModel
 import android.app.Application
 import androidx.annotation.StringRes
@@ -54,6 +56,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -61,6 +64,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -120,7 +124,7 @@ private fun ColumnScope.UserFollowTabs(
             state = pagerState,
             modifier = Modifier.weight(1f)
         ) { pageIndex ->
-            UserFollowList(
+            UserFollowListContainer(
                 screenState.tabStates[pageIndex],
                 deleteFollowingRequestAction,
                 acceptFollowerRequestAction,
@@ -131,13 +135,39 @@ private fun ColumnScope.UserFollowTabs(
 }
 
 @Composable
-private fun UserFollowList(
+private fun UserFollowListContainer(
     tabState: UserFollowViewModel.TabState,
     unfollowAction: (String) -> Unit,
     acceptFollowerAction: (String) -> Unit,
     deleteFollowerAction: (String) -> Unit,
 ) {
     val lazyPagingItems = tabState.pagingDataFlow.collectAsLazyPagingItems()
+    Timber.d("user follow load state = ${lazyPagingItems.loadState}")
+    when {
+        lazyPagingItems.loadState.refresh == LoadState.Loading &&
+            lazyPagingItems.itemCount == 0 -> FullscreenLoadingItem()
+        lazyPagingItems.loadState.append.endOfPaginationReached &&
+            lazyPagingItems.itemCount == 0 -> {
+            CentralAnnouncementView(stringResource(id = R.string.userfollow_tab_empty_message))
+        }
+        else -> UserFollowList(
+            lazyPagingItems,
+            tabState,
+            unfollowAction,
+            acceptFollowerAction,
+            deleteFollowerAction
+        )
+    }
+}
+
+@Composable
+private fun UserFollowList(
+    lazyPagingItems: LazyPagingItems<UserFollowListUiModel>,
+    tabState: UserFollowViewModel.TabState,
+    unfollowAction: (String) -> Unit,
+    acceptFollowerAction: (String) -> Unit,
+    deleteFollowerAction: (String) -> Unit,
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = rememberLazyListState()
@@ -160,12 +190,22 @@ private fun UserFollowList(
         }
 
         if (lazyPagingItems.loadState.append == LoadState.Loading) {
-            item {
-                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(modifier = Modifier.padding(8.dp))
-                }
-            }
+            item { LoadingItem() }
         }
+    }
+}
+
+@Composable
+private fun LoadingItem() {
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(modifier = Modifier.padding(8.dp))
+    }
+}
+
+@Composable
+private fun FullscreenLoadingItem() {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
     }
 }
 
