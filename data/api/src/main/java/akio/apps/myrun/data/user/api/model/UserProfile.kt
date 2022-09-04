@@ -9,6 +9,7 @@ data class UserProfile(
     val name: String = "",
     val gender: Gender = Gender.Others,
     val weight: Float = 0f,
-    val photo: String?,
+    val photo: String? = null,
     val birthdate: Long = 0,
+    val lastActiveTime: Long = 0
 ) : Parcelable

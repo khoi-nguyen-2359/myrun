@@ -18,8 +18,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.anvil.annotations.ContributesBinding
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -28,6 +26,8 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 @ContributesBinding(AuthenticationDataScope::class)
@@ -47,9 +47,9 @@ class FirebaseUserProfileRepository @Inject constructor(
         callbackFlow {
             val listener = withContext(Dispatchers.Main.immediate) {
                 getUserDocument(userId).addSnapshotListener { snapshot, error ->
-                    val fsUserProfile = snapshot?.toObject(FirestoreUser::class.java)?.profile
+                    val fsUser = snapshot?.toObject(FirestoreUser::class.java)
                         ?: return@addSnapshotListener
-                    val userProfile = firestoreUserProfileMapper.map(fsUserProfile)
+                    val userProfile = firestoreUserProfileMapper.map(fsUser)
                     trySendBlocking(Resource.Success(userProfile))
                     error?.let {
                         trySendBlocking(Resource.Error<UserProfile>(it))
@@ -69,7 +69,6 @@ class FirebaseUserProfileRepository @Inject constructor(
         val fsUserProfile = getUserDocument(userId).get()
             .await()
             .toObject(FirestoreUser::class.java)
-            ?.profile
             ?: throw UserProfileNotFoundError("Could not find userId $userId")
 
         return firestoreUserProfileMapper.map(fsUserProfile)

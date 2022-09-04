@@ -5,6 +5,7 @@ import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserFollowCounter
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
+import akio.apps.myrun.domain.user.GetUserStatsTypeUsecase
 import akio.apps.myrun.feature.activity.BuildConfig
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
@@ -86,8 +87,15 @@ internal fun UserStatsScreen(
         screenState,
         contentPadding,
         appNavController,
-        openRoutePlanningAction
+        openRoutePlanningAction,
+        appNavController::navigateProfileScreen,
+        userStatsViewModel::followUser,
+        userStatsViewModel::unfollowUser,
     )
+}
+
+private fun NavController.navigateProfileScreen(userId: String) {
+    navigate(HomeNavDestination.Profile.routeWithUserId(userId))
 }
 
 @Composable
@@ -96,6 +104,9 @@ private fun UserStatsScreen(
     contentPadding: PaddingValues,
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
+    onClickEdit: (String) -> Unit,
+    onClickFollow: () -> Unit,
+    onClickUnfollow: () -> Unit,
 ) {
     Column {
         StatusBarSpacer()
@@ -105,7 +116,14 @@ private fun UserStatsScreen(
                 CentralLoadingView(text = stringResource(id = R.string.message_loading))
             }
             is UserStatsViewModel.ScreenState.StatsAvailable -> {
-                UserStatsContent(screenState, modifier = Modifier.weight(1f), appNavController)
+                UserStatsContent(
+                    screenState,
+                    modifier = Modifier.weight(1f),
+                    appNavController,
+                    onClickEdit,
+                    onClickFollow,
+                    onClickUnfollow
+                )
             }
         }
         Spacer(modifier = Modifier.height(contentPadding.calculateBottomPadding()))
@@ -117,6 +135,9 @@ private fun UserStatsContent(
     screenState: UserStatsViewModel.ScreenState.StatsAvailable,
     modifier: Modifier = Modifier,
     navController: NavController,
+    onClickEdit: (String) -> Unit,
+    onClickFollow: () -> Unit,
+    onClickUnfollow: () -> Unit,
 ) {
     val onClickUserFollowStats = remember {
         createUserFollowClickAction(screenState, navController)
@@ -124,7 +145,7 @@ private fun UserStatsContent(
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
         ColumnSpacer(height = AppDimensions.screenVerticalSpacing)
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing)
-        UserProfileHeader(screenState, navController)
+        UserProfileHeader(screenState, onClickEdit, onClickFollow, onClickUnfollow)
         FollowCounterStats(screenState.userFollowCounter, onClickUserFollowStats)
         Divider(thickness = 4.dp)
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing * 2)
@@ -135,7 +156,7 @@ private fun UserStatsContent(
 private fun createUserFollowClickAction(
     screenState: UserStatsViewModel.ScreenState.StatsAvailable,
     navController: NavController,
-): (() -> Unit)? = if (screenState.isCurrentUser) {
+): (() -> Unit)? = if (screenState.userType == GetUserStatsTypeUsecase.UserStatsType.CurrentUser) {
     {
         val userId =
             HomeNavDestination.UserFollow.routeWithUserId(screenState.userProfile.accountId)
@@ -278,9 +299,7 @@ private fun ActivityTypePane(
             }
             UserStatsOutlinedButton(
                 text = stringResource(id = activityTypeLabel),
-                onClick = {
-                    selectActivityTypeAction(type)
-                },
+                onClick = { selectActivityTypeAction(type) },
                 modifier = Modifier.padding(end = 12.dp),
                 colors = ButtonDefaults.outlinedButtonColors(backgroundColor, contentColor),
                 width = 65.dp
@@ -373,7 +392,9 @@ private fun RowScope.TrainingSummaryProgress(
 @Composable
 private fun UserProfileHeader(
     screenState: UserStatsViewModel.ScreenState.StatsAvailable,
-    appNavController: NavController,
+    onClickEdit: (String) -> Unit,
+    onClickFollow: () -> Unit,
+    onClickUnfollow: () -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -400,11 +421,41 @@ private fun UserProfileHeader(
         }
         RowSpacer(width = 10.dp)
 
-        if (screenState.isCurrentUser) {
-            UserStatsOutlinedButton(stringResource(id = R.string.user_home_edit_profile_button)) {
-                appNavController.navigate(HomeNavDestination.Profile.routeWithUserId())
-            }
-        }
+        UserStatsActionButton(
+            screenState,
+            onClickEdit,
+            onClickFollow,
+            onClickUnfollow
+        )
+    }
+}
+
+@Composable
+private fun UserStatsActionButton(
+    screenState: UserStatsViewModel.ScreenState.StatsAvailable,
+    onClickEdit: (String) -> Unit,
+    onClickFollow: () -> Unit,
+    onClickUnfollow: () -> Unit,
+) {
+    val (buttonTextRes, onClickAction) = when (screenState.userType) {
+        GetUserStatsTypeUsecase.UserStatsType.CurrentUser ->
+            R.string.user_home_edit_profile_button to
+                { onClickEdit(screenState.userProfile.accountId) }
+        GetUserStatsTypeUsecase.UserStatsType.FollowedUser ->
+            R.string.action_unfollow to onClickUnfollow
+        GetUserStatsTypeUsecase.UserStatsType.NotFollowedUser ->
+            R.string.action_follow to onClickFollow
+        GetUserStatsTypeUsecase.UserStatsType.Invalid -> null to null // "-"
+    }
+
+    val buttonText = if (buttonTextRes != null) {
+        stringResource(buttonTextRes)
+    } else {
+        "-"
+    }
+
+    UserStatsOutlinedButton(buttonText, width = 65.dp) {
+        onClickAction?.invoke()
     }
 }
 
@@ -439,7 +490,7 @@ private fun UserStatsTopBar(
     openRoutePlanningAction: () -> Unit,
 ) {
     val isCurrentUser = screenState is UserStatsViewModel.ScreenState.StatsAvailable &&
-        screenState.isCurrentUser
+        screenState.userType == GetUserStatsTypeUsecase.UserStatsType.CurrentUser
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.home_nav_user_stats_tab_label)) },
         actions = {
@@ -503,7 +554,7 @@ private fun PreviewUserStats() {
     UserStatsScreen(
         screenState = UserStatsViewModel.ScreenState.StatsAvailable(
             UserProfile(name = "Super man", photo = "photo Url", accountId = "accountId"),
-            isCurrentUser = true,
+            GetUserStatsTypeUsecase.UserStatsType.FollowedUser,
             "Saigon, Vietnam",
             mapOf(
                 ActivityType.Running to GetTrainingSummaryDataUsecase.TrainingSummaryTableData(
@@ -534,6 +585,10 @@ private fun PreviewUserStats() {
             UserFollowCounter(12, 34)
         ),
         contentPadding = PaddingValues(),
-        rememberNavController()
-    ) { }
+        rememberNavController(),
+        { },
+        { },
+        { },
+        { },
+    )
 }

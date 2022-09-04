@@ -17,6 +17,11 @@ interface UserFollowRepository {
     suspend fun unfollowUser(userId: String, unfollowUserId: String)
 
     /**
+     * Checks whether [userId] is following [targetId] or not. Emits null for error cases.
+     */
+    fun getIsFollowingFlow(userId: String, targetId: String): Flow<Boolean?>
+
+    /**
      * Accept a user at [followerId] to follow user at [userId]. If the follow request is not
      * existing (was deleted by follower), this action fails and returns false.
      */
