@@ -4,10 +4,12 @@ import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.user.api.UserFollowRepository
 import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.UserRecentActivityRepository
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.PlaceIdentifier
+import akio.apps.myrun.data.user.api.model.UserFollow
 import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
@@ -57,6 +59,7 @@ internal class ActivityFeedViewModel @Inject constructor(
     private val userPreferences: UserPreferences,
     private val getUserFollowUsecase: GetUserFollowSuggestionUsecase,
     private val followUserUsecase: FollowUserUsecase,
+    private val userFollowRepository: UserFollowRepository,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatchingViewModel {
@@ -148,10 +151,24 @@ internal class ActivityFeedViewModel @Inject constructor(
     private val isInitialLoadingMutable: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isInitialLoading: Flow<Boolean> = isInitialLoadingMutable
 
+    private val userFollowingsFlow: Flow<List<UserFollow>> =
+        userFollowRepository.getUserFollowingsFlow(userId)
+
     init {
         loadInitialData()
         observeActivityUploadCount()
         loadUserFollowSuggestions()
+        observeUserFollowings()
+    }
+
+    private fun observeUserFollowings() = viewModelScope.launch {
+        userFollowingsFlow.collect { userFollowings ->
+            userFollowActionStateMap.clear()
+            userFollowings.forEach { userFollow ->
+                userFollowActionStateMap[userFollow.uid] = true
+            }
+            emitCachedUserFollowSuggestions()
+        }
     }
 
     fun setUploadBadgeDismissed(isDismissed: Boolean) {

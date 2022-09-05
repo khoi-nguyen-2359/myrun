@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserFollowRepository {
     suspend fun getUserFollowings(userId: String): List<UserFollow>
+    fun getUserFollowingsFlow(userId: String): Flow<List<UserFollow>>
     suspend fun getUserFollowers(userId: String): List<UserFollow>
 
     fun getUserFollowCounterFlow(userId: String): Flow<UserFollowCounter>
