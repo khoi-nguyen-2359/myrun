@@ -67,4 +67,5 @@
     </string-array>
 
     <string name="status_requested">Requested</string>
+    <string name="status_accepted">Accepted</string>
 </resources>

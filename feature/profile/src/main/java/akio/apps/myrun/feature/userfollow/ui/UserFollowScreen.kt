@@ -14,11 +14,12 @@ import akio.apps.myrun.feature.profile.R
 import akio.apps.myrun.feature.userfollow.UserFollowViewModel
 import akio.apps.myrun.feature.userfollow.UserFollowViewModel.Companion.INIT_SCREEN_STATE
 import akio.apps.myrun.feature.userfollow.di.DaggerUserFollowFeatureComponent
-import akio.apps.myrun.feature.userfollow.model.FollowStatusDivider
+import akio.apps.myrun.feature.userfollow.model.FollowStatusTitle
 import akio.apps.myrun.feature.userfollow.model.UserFollowListUiModel
 import akio.apps.myrun.feature.userfollow.model.UserFollowUiModel
 import android.app.Application
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -34,7 +35,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Tab
@@ -47,6 +47,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -184,7 +185,7 @@ private fun UserFollowList(
                     acceptFollowerAction,
                     deleteFollowerAction
                 )
-                is FollowStatusDivider -> Divider(thickness = 2.dp)
+                is FollowStatusTitle -> UserFollowSectionTitle(uiModel)
                 null -> {}
             }
         }
@@ -193,6 +194,23 @@ private fun UserFollowList(
             item { LoadingItem() }
         }
     }
+}
+
+@Composable
+fun UserFollowSectionTitle(titleUiModel: FollowStatusTitle) {
+    val titleRes = when (titleUiModel.status) {
+        FollowStatus.Requested -> R.string.status_requested
+        FollowStatus.Accepted -> R.string.status_accepted
+    }
+    Text(
+        text = stringResource(titleRes),
+        style = MaterialTheme.typography.caption,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier
+            .background(Color(0x20000000))
+            .padding(horizontal = AppDimensions.screenHorizontalPadding, vertical = 2.dp)
+            .fillMaxWidth(),
+    )
 }
 
 @Composable

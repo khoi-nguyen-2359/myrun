@@ -172,13 +172,13 @@ private fun FollowCounterStats(
     onClick: (() -> Unit)? = null,
 ) = Row(
     modifier = Modifier
-        .clickable(enabled = onClick != null) { onClick?.invoke() }
         .padding(
             start = AppDimensions.screenHorizontalPadding,
             end = AppDimensions.screenHorizontalPadding,
             top = 20.dp,
             bottom = 14.dp
         )
+        .clickable(enabled = onClick != null) { onClick?.invoke() }
 ) {
     arrayOf(
         R.string.user_stats_following_label to userFollowCounter.followingCount,

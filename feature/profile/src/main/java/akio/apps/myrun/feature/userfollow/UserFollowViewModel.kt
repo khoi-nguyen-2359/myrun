@@ -5,7 +5,7 @@ import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserFollowRepository
 import akio.apps.myrun.data.user.api.model.UserFollow
 import akio.apps.myrun.data.user.api.model.UserFollowType
-import akio.apps.myrun.feature.userfollow.model.FollowStatusDivider
+import akio.apps.myrun.feature.userfollow.model.FollowStatusTitle
 import akio.apps.myrun.feature.userfollow.model.UserFollowListUiModel
 import akio.apps.myrun.feature.userfollow.model.UserFollowUiModel
 import androidx.lifecycle.ViewModel
@@ -109,13 +109,16 @@ class UserFollowViewModel @Inject constructor(
 
     private fun PagingData<UserFollowListUiModel>.insertDividers():
         PagingData<UserFollowListUiModel> =
-        insertSeparators { i1: UserFollowListUiModel?, i2: UserFollowListUiModel? ->
-            if (i1 is UserFollowUiModel && i2 is UserFollowUiModel &&
-                i1.userFollow.status != i2.userFollow.status
-            ) {
-                FollowStatusDivider
-            } else {
-                null
+        insertSeparators { above: UserFollowListUiModel?, below: UserFollowListUiModel? ->
+            when {
+                // Add the section title item
+                (above == null && below is UserFollowUiModel) ||
+                    (above is UserFollowUiModel &&
+                        below is UserFollowUiModel &&
+                        above.userFollow.status != below.userFollow.status) -> {
+                    FollowStatusTitle(below.userFollow.status)
+                }
+                else -> null
             }
         }
 
