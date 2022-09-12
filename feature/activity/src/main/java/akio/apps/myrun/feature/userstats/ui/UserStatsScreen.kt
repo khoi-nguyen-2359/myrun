@@ -90,7 +90,7 @@ internal fun UserStatsScreen(
         openRoutePlanningAction,
         appNavController::navigateProfileScreen,
         userStatsViewModel::followUser,
-        userStatsViewModel::unfollowUser,
+        userStatsViewModel::unfollowUser
     )
 }
 
@@ -589,6 +589,6 @@ private fun PreviewUserStats() {
         { },
         { },
         { },
-        { },
+        { }
     )
 }

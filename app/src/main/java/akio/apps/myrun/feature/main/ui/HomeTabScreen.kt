@@ -104,7 +104,7 @@ private enum class HomeNavItemInfo(
         label = R.string.home_nav_user_stats_tab_label,
         icon = Icons.Rounded.BarChart,
         route = HomeTabNavDestination.Stats.route
-    )
+    ),
 }
 
 private const val REVEAL_ANIM_THRESHOLD = 10

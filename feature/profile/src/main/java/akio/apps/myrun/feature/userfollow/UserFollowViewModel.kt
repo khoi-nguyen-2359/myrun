@@ -113,9 +113,11 @@ class UserFollowViewModel @Inject constructor(
             when {
                 // Add the section title item
                 (above == null && below is UserFollowUiModel) ||
-                    (above is UserFollowUiModel &&
-                        below is UserFollowUiModel &&
-                        above.userFollow.status != below.userFollow.status) -> {
+                    (
+                        above is UserFollowUiModel &&
+                            below is UserFollowUiModel &&
+                            above.userFollow.status != below.userFollow.status
+                        ) -> {
                     FollowStatusTitle(below.userFollow.status)
                 }
                 else -> null

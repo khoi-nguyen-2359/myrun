@@ -209,7 +209,7 @@ fun UserFollowSectionTitle(titleUiModel: FollowStatusTitle) {
         modifier = Modifier
             .background(Color(0x20000000))
             .padding(horizontal = AppDimensions.screenHorizontalPadding, vertical = 2.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
     )
 }
 

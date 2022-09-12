@@ -99,7 +99,7 @@ internal class UserStatsViewModel @Inject constructor(
         userProfile: UserProfile,
         userRecentPlace: String?,
         trainingSummaryTableData:
-        Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
+            Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
         measureSystem: MeasureSystem,
         userFollowCounter: UserFollowCounter,
         userType: GetUserStatsTypeUsecase.UserStatsType,
@@ -133,7 +133,7 @@ internal class UserStatsViewModel @Inject constructor(
             val userType: GetUserStatsTypeUsecase.UserStatsType,
             val userRecentPlace: String?,
             val trainingSummaryTableData:
-            Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
+                Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
             val measureSystem: MeasureSystem,
             val userFollowCounter: UserFollowCounter,
         ) : ScreenState(), Parcelable
@@ -144,7 +144,7 @@ internal class UserStatsViewModel @Inject constructor(
                 userProfile: UserProfile,
                 userType: GetUserStatsTypeUsecase.UserStatsType,
                 trainingSummaryTableData:
-                Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
+                    Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
                 measureSystem: MeasureSystem,
                 userFollowCounter: UserFollowCounter,
             ): StatsAvailable {
@@ -191,7 +191,8 @@ internal class UserStatsViewModel @Inject constructor(
         private fun SavedStateHandle.getUserId(): String? = this[STATE_USER_ID]
 
         private fun makeDummyUserProfile(): UserProfile = UserProfile(
-            accountId = "", photo = null
+            accountId = "",
+            photo = null
         )
 
         fun initSavedState(savedStateHandle: SavedStateHandle, userId: String?): SavedStateHandle {

@@ -41,6 +41,6 @@ class UpdateUserRecentPlaceUsecase @Inject constructor(
         LocationUnavailable,
         Success,
         IOFailure,
-        InvalidUser
+        InvalidUser,
     }
 }

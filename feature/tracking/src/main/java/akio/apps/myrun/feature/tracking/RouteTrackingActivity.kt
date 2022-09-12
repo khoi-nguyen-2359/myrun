@@ -621,7 +621,7 @@ class RouteTrackingActivity(
         /**
          * Camera is auto sticky to the current route lat-lng bounds.
          */
-        StickyBounds
+        StickyBounds,
     }
 
     companion object {

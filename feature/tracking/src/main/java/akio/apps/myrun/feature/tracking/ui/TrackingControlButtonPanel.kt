@@ -172,7 +172,7 @@ enum class TrackingControlButtonType(
     Stop(
         label = R.string.action_stop,
         color = Pause.color
-    )
+    ),
 }
 
 @OptIn(ExperimentalMaterialApi::class)

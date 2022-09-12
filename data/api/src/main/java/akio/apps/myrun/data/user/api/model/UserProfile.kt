@@ -11,5 +11,5 @@ data class UserProfile(
     val weight: Float = 0f,
     val photo: String? = null,
     val birthdate: Long = 0,
-    val lastActiveTime: Long = 0
+    val lastActiveTime: Long = 0,
 ) : Parcelable

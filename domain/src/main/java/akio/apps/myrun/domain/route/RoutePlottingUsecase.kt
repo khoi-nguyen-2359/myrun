@@ -113,6 +113,6 @@ class RoutePlottingUsecase @Inject constructor(
         Append, // adding new waypoints at the end of current route
         ReversedPrepend, // reverse new waypoints against the plotting direction, then prepend
         ReversedAppend, // reverse new waypoints against the plotting direction, then append
-        Replace // use the adding waypoints entirely over the current route, for the first plotting
+        Replace, // use the adding waypoints entirely over the current route, for the first plotting
     }
 }

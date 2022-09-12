@@ -4,5 +4,6 @@ enum class RunningApp(
     val id: String,
     val appName: String,
 ) {
-    Strava("strava", "Strava");
+    Strava("strava", "Strava"),
+    ;
 }

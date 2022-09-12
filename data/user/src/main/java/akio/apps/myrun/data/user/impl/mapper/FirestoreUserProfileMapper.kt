@@ -4,7 +4,6 @@ import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.data.user.impl.model.FirestoreUser
 import akio.apps.myrun.data.user.impl.model.FirestoreUserGender
-import akio.apps.myrun.data.user.impl.model.FirestoreUserProfile
 import javax.inject.Inject
 
 class FirestoreUserProfileMapper @Inject constructor() {

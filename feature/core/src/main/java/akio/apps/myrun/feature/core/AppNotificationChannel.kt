@@ -36,7 +36,8 @@ enum class AppNotificationChannel(
         NotificationManagerCompat.IMPORTANCE_MIN,
         R.string.notification_channel_name_debug,
         R.string.notification_channel_description_debug
-    );
+    ),
+    ;
 
     private var currentStaticId = 0
 
