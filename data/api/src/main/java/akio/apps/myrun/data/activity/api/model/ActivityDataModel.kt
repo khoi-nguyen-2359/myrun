@@ -1,5 +1,7 @@
 package akio.apps.myrun.data.activity.api.model
 
+import akio.apps.myrun.data.user.api.model.PlaceIdentifier
+
 data class ActivityDataModel(
     override val id: String,
 
@@ -7,7 +9,7 @@ data class ActivityDataModel(
     override val activityType: ActivityType,
     override val name: String,
     override val routeImage: String,
-    override val placeIdentifier: String?,
+    override val placeIdentifier: PlaceIdentifier?,
 
     // stats
     /**

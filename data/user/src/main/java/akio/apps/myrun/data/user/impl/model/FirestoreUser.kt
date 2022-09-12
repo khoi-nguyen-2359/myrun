@@ -5,4 +5,7 @@ import com.google.firebase.firestore.PropertyName
 data class FirestoreUser(
     @PropertyName("profile")
     val profile: FirestoreUserProfile = FirestoreUserProfile(),
+
+    @PropertyName("recentActivity")
+    val recentActivity: FirestoreUserRecentActivity = FirestoreUserRecentActivity(),
 )

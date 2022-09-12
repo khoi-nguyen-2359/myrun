@@ -3,7 +3,6 @@ package akio.apps.myrun.domain.user
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
-import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.domain.time.TimeProvider
 import android.os.Parcelable
 import java.util.Calendar
@@ -22,16 +21,16 @@ import kotlinx.parcelize.Parcelize
 
 class GetTrainingSummaryDataUsecase @Inject constructor(
     private val activityRepository: ActivityRepository,
-    private val userAuthenticationState: UserAuthenticationState,
     private val timeProvider: TimeProvider,
 ) {
     /**
      * [weekOffset]: value >= 0, indicates current week, or 1, 2, 3... week in the past.
      */
-    suspend fun getUserTrainingSummaryData(): Map<ActivityType, TrainingSummaryTableData> {
+    suspend fun getUserTrainingSummaryData(
+        userId: String,
+    ): Map<ActivityType, TrainingSummaryTableData> {
         val currentTime = timeProvider.currentTimeMillis()
         val biMonthRange = MonthRange(offset = 1, count = 2, currentTime)
-        val userId = userAuthenticationState.requireUserAccountId()
         val activitiesInRange = activityRepository.getActivitiesInTimeRange(
             userId,
             biMonthRange.millisTimeRange.first,

@@ -2,13 +2,11 @@ package akio.apps.myrun.feature.registration
 
 import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 import akio.apps.myrun.feature.core.DialogDelegate
-import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.extra
 import akio.apps.myrun.feature.core.ktx.lazyViewModelProvider
 import akio.apps.myrun.feature.core.navigation.OnBoardingNavigation
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -53,8 +51,8 @@ class SignInActivity : AppCompatActivity(R.layout.activity_sign_in) {
         override fun onCancel() {
         }
 
-        override fun onError(error: FacebookException?) {
-            dialogDelegate.showErrorAlert(error?.message)
+        override fun onError(error: FacebookException) {
+            dialogDelegate.showErrorDialog(error.message)
         }
     }
 
@@ -66,16 +64,13 @@ class SignInActivity : AppCompatActivity(R.layout.activity_sign_in) {
     }
 
     private fun initObservers() {
-        collectEventRepeatOnStarted(signInVM.signInSuccessResult, ::onSignInSuccess)
-        collectEventRepeatOnStarted(signInVM.reAuthSuccessResult) { finishWithResultOk() }
+        collectRepeatOnStarted(signInVM.signInSuccessResult, ::finishWithSignInSuccessData)
+        collectRepeatOnStarted(signInVM.reAuthSuccessResult) { finishWithResultOk() }
         collectRepeatOnStarted(
-            signInVM.isLaunchCatchingInProgress,
+            signInVM.launchCatchingLoading,
             dialogDelegate::toggleProgressDialog
         )
-        collectEventRepeatOnStarted(
-            signInVM.launchCatchingError,
-            dialogDelegate::showExceptionAlert
-        )
+        dialogDelegate.collectLaunchCatchingError(this, signInVM)
     }
 
     private fun initViews() {
@@ -102,7 +97,7 @@ class SignInActivity : AppCompatActivity(R.layout.activity_sign_in) {
         startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN)
     }
 
-    private fun onSignInSuccess(signInSuccessResult: SignInSuccessResult) {
+    private fun finishWithSignInSuccessData(signInSuccessResult: SignInSuccessResult) {
         val resultIntent = Intent()
         resultIntent.putExtra(RESULT_SIGN_RESULT_DATA, signInSuccessResult)
         setResult(Activity.RESULT_OK, resultIntent)
@@ -159,9 +154,5 @@ class SignInActivity : AppCompatActivity(R.layout.activity_sign_in) {
         const val RESULT_SIGN_RESULT_DATA = "RESULT_SIGN_RESULT_DATA"
 
         private const val RC_GOOGLE_SIGN_IN = 1
-
-        fun launchIntent(context: Context): Intent {
-            return Intent(context, SignInActivity::class.java)
-        }
     }
 }

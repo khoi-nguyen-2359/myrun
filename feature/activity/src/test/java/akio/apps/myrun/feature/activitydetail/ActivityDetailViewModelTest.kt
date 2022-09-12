@@ -5,7 +5,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserPreferences
-import akio.apps.myrun.data.user.api.UserRecentPlaceRepository
+import akio.apps.myrun.data.user.api.UserRecentActivityRepository
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.domain.activity.ActivitySplitCalculator
@@ -37,7 +37,7 @@ class ActivityDetailViewModelTest {
     private lateinit var viewModel: ActivityDetailViewModel
     private lateinit var mockedActivityRepository: ActivityRepository
     private lateinit var mockedUserAuthenticationState: UserAuthenticationState
-    private lateinit var mockedUserRecentPlaceRepository: UserRecentPlaceRepository
+    private lateinit var mockedUserRecentActivityRepository: UserRecentActivityRepository
     private lateinit var mockedActivitySplitCalculator: ActivitySplitCalculator
     private lateinit var mockedActivityDateTimeFormatter: ActivityDateTimeFormatter
     private lateinit var mockedUserPreferences: UserPreferences
@@ -52,7 +52,7 @@ class ActivityDetailViewModelTest {
         Dispatchers.setMain(testDispatcher)
         mockedActivityRepository = mock()
         mockedUserAuthenticationState = mock()
-        mockedUserRecentPlaceRepository = mock()
+        mockedUserRecentActivityRepository = mock()
         mockedActivitySplitCalculator = mock()
         mockedActivityDateTimeFormatter = mock()
         mockedUserPreferences = mock()
@@ -63,7 +63,7 @@ class ActivityDetailViewModelTest {
     ) = ActivityDetailViewModel(
         viewModelParams,
         mockedActivityRepository,
-        mockedUserRecentPlaceRepository,
+        mockedUserRecentActivityRepository,
         mockedUserAuthenticationState,
         mock(),
         mockedActivitySplitCalculator,

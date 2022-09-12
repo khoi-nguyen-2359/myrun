@@ -2,9 +2,9 @@ package akio.apps.myrun.feature.splash
 
 import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 import akio.apps.myrun.feature.core.DialogDelegate
-import akio.apps.myrun.feature.core.ktx.collectEventRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted
 import akio.apps.myrun.feature.core.ktx.lazyViewModelProvider
+import akio.apps.myrun.feature.core.navigation.OnBoardingNavigation
 import akio.apps.myrun.feature.main.MainActivity
 import akio.apps.myrun.feature.registration.SignInActivity
 import akio.apps.myrun.feature.splash.di.DaggerSplashFeatureComponent
@@ -35,10 +35,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun initObservers() {
-        collectEventRepeatOnStarted(
-            splashViewModel.launchCatchingError,
-            dialogDelegate::showExceptionAlert
-        )
+        dialogDelegate.collectLaunchCatchingError(this, splashViewModel)
         collectRepeatOnStarted(splashViewModel.isUserSignedIn, ::onUserSignIn)
     }
 
@@ -51,7 +48,7 @@ class SplashActivity : AppCompatActivity() {
         if (isSignedIn) {
             goHome()
         } else {
-            val intent = SignInActivity.launchIntent(this@SplashActivity)
+            val intent = OnBoardingNavigation.createSignInIntent(this@SplashActivity)
             @Suppress("DEPRECATION")
             startActivityForResult(intent, RC_SIGN_IN)
         }

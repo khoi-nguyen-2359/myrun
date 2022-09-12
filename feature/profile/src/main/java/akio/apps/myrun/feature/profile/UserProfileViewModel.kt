@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.profile
 
 import akio.apps.myrun.base.di.NamedIoDispatcher
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.model.Gender
@@ -19,13 +20,16 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 
 internal class UserProfileViewModel @Inject constructor(
+    getUserProfileUsecase: GetUserProfileUsecase,
+    userPreferences: UserPreferences,
+    userAuthState: UserAuthenticationState,
     private val savedStateHandle: SavedStateHandle,
-    private val getUserProfileUsecase: GetUserProfileUsecase,
     private val updateUserProfileUsecase: UpdateUserProfileUsecase,
-    private val userPreferences: UserPreferences,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
+
+    private val userId: String = userAuthState.requireUserAccountId()
 
     val preferredSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystem()
 
@@ -37,7 +41,7 @@ internal class UserProfileViewModel @Inject constructor(
         MutableStateFlow(savedStateHandle.getFormData())
 
     val screenStateFlow: Flow<ScreenState> = combine(
-        getUserProfileUsecase.getUserProfileFlow(savedStateHandle.getUserId()).flowOn(ioDispatcher),
+        getUserProfileUsecase.getUserProfileFlow(userId).flowOn(ioDispatcher),
         editingFormDataMutableStateFlow,
         ScreenState::create
     )

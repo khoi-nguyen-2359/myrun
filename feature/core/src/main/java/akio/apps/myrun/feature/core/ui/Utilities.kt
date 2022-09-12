@@ -12,3 +12,5 @@ fun ColumnSpacer(height: Dp) = Spacer(modifier = Modifier.height(height))
 
 @Composable
 fun RowSpacer(width: Dp) = Spacer(modifier = Modifier.width(width))
+
+fun String.addEmptyLines(n: Int) = this + "\n".repeat(n)

@@ -15,6 +15,8 @@ data class FirestoreActivity(
     val routeImage: String = "",
     @PropertyName("placeIdentifier")
     val placeIdentifier: String? = null,
+    @PropertyName("placeComponents")
+    val placeComponents: List<String>? = null,
 
     // stats
     @PropertyName("startTime")

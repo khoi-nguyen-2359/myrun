@@ -31,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import timber.log.Timber
 
 private object ActivityFeedTopBarColors {
     val uploadingBadgeContentColor = Color(0xffffffff)
@@ -43,6 +44,7 @@ internal fun ActivityFeedTopBar(
     onClickUploadCompleteBadge: () -> Unit,
     onClickUserPreferencesButton: () -> Unit,
 ) {
+    Timber.d("Compose ActivityFeedTopBar")
     Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
         TopAppBar(
             title = {

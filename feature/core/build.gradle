@@ -45,7 +45,10 @@ dependencies {
 
     implementation(libs.androidmaterial)
     implementation(libs.androidx.appcompat)
+
     implementation(libs.bundles.compose)
+    debugApi(libs.bundles.compose.preview)
+    implementation(libs.coilcompose)
     implementation(libs.accompanist.insets)
 
     implementation(libs.lifecycle.runtime.ktx)

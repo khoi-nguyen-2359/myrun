@@ -5,9 +5,7 @@ import androidx.navigation.NavArgumentBuilder
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.navArgument
 
-abstract class NamedNavArgumentAdapter(
-    open val namedArgument: NamedNavArgument,
-) {
+abstract class NamedNavArgumentAdapter(open val namedArgument: NamedNavArgument) {
     open fun parseValueInBackStackEntry(entry: NavBackStackEntry): String? =
         entry.arguments?.getString(namedArgument.name)
 

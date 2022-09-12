@@ -15,6 +15,11 @@ object OnBoardingNavigation {
         }
     }
 
+    fun createSignInIntent(context: Context): Intent? {
+        val activityClass = getActivityClass(SIGNIN_ACTIVITY_CLASS_NAME) ?: return null
+        return Intent(context, activityClass)
+    }
+
     fun createSplashIntent(context: Context): Intent? {
         val activityClass = getActivityClass(SPLASH_ACTIVITY_CLASS_NAME) ?: return null
         return Intent(context, activityClass).apply {

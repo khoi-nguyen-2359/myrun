@@ -13,6 +13,7 @@ import akio.apps.myrun.data.eapps.api.StravaSyncState
 import akio.apps.myrun.data.eapps.api.model.ExternalAppToken
 import akio.apps.myrun.data.eapps.api.model.StravaAthlete
 import akio.apps.myrun.data.eapps.api.model.StravaTokenRefresh
+import akio.apps.myrun.data.user.api.model.PlaceIdentifier
 import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
@@ -106,7 +107,7 @@ class UploadActivityFilesToStravaUsecaseTest {
                     ActivityType.Cycling,
                     "name",
                     "routeImage",
-                    "placeIdentifier",
+                    PlaceIdentifier.fromPlaceIdentifierString("placeIdentifier"),
                     startTime = 1000L,
                     endTime = 1000L,
                     duration = 1000L,

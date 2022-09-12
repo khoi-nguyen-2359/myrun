@@ -2,10 +2,12 @@ package akio.apps.myrun.feature.userstats.ui
 
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.user.api.model.MeasureSystem
+import akio.apps.myrun.data.user.api.model.UserFollowCounter
+import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
+import akio.apps.myrun.domain.user.GetUserStatsTypeUsecase
 import akio.apps.myrun.feature.activity.BuildConfig
 import akio.apps.myrun.feature.activity.R
-import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppBarIconButton
@@ -16,8 +18,7 @@ import akio.apps.myrun.feature.core.ui.ColumnSpacer
 import akio.apps.myrun.feature.core.ui.RowSpacer
 import akio.apps.myrun.feature.core.ui.StatusBarSpacer
 import akio.apps.myrun.feature.userstats.UserStatsViewModel
-import akio.apps.myrun.feature.userstats.di.DaggerUserStatsFeatureComponent
-import android.app.Application
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -50,6 +51,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -65,30 +67,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 
 @Composable
-fun UserStatsScreen(
-    appNavController: NavController,
-    backStackEntry: NavBackStackEntry,
-    contentPadding: PaddingValues,
-    openRoutePlanningAction: () -> Unit,
-) {
-    val application = LocalContext.current.applicationContext as Application
-    val userStatsViewModel = backStackEntry.rememberViewModelProvider {
-        DaggerUserStatsFeatureComponent.factory().create(application, it).userStatsViewModel()
-    }
-    UserStatsScreen(userStatsViewModel, contentPadding, appNavController, openRoutePlanningAction)
-}
-
-@Composable
-private fun UserStatsScreen(
+internal fun UserStatsScreen(
     userStatsViewModel: UserStatsViewModel,
     contentPadding: PaddingValues,
     appNavController: NavController,
@@ -101,8 +87,15 @@ private fun UserStatsScreen(
         screenState,
         contentPadding,
         appNavController,
-        openRoutePlanningAction
+        openRoutePlanningAction,
+        appNavController::navigateProfileScreen,
+        userStatsViewModel::followUser,
+        userStatsViewModel::unfollowUser
     )
+}
+
+private fun NavController.navigateProfileScreen(userId: String) {
+    navigate(HomeNavDestination.Profile.routeWithUserId(userId))
 }
 
 @Composable
@@ -111,16 +104,26 @@ private fun UserStatsScreen(
     contentPadding: PaddingValues,
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
+    onClickEdit: (String) -> Unit,
+    onClickFollow: () -> Unit,
+    onClickUnfollow: () -> Unit,
 ) {
     Column {
         StatusBarSpacer()
-        UserStatsTopBar(appNavController, openRoutePlanningAction)
+        UserStatsTopBar(screenState, appNavController, openRoutePlanningAction)
         when (screenState) {
             UserStatsViewModel.ScreenState.StatsLoading -> {
                 CentralLoadingView(text = stringResource(id = R.string.message_loading))
             }
             is UserStatsViewModel.ScreenState.StatsAvailable -> {
-                UserStatsContent(screenState, modifier = Modifier.weight(1f), appNavController)
+                UserStatsContent(
+                    screenState,
+                    modifier = Modifier.weight(1f),
+                    appNavController,
+                    onClickEdit,
+                    onClickFollow,
+                    onClickUnfollow
+                )
             }
         }
         Spacer(modifier = Modifier.height(contentPadding.calculateBottomPadding()))
@@ -131,14 +134,65 @@ private fun UserStatsScreen(
 private fun UserStatsContent(
     screenState: UserStatsViewModel.ScreenState.StatsAvailable,
     modifier: Modifier = Modifier,
-    appNavController: NavController,
+    navController: NavController,
+    onClickEdit: (String) -> Unit,
+    onClickFollow: () -> Unit,
+    onClickUnfollow: () -> Unit,
 ) {
+    val onClickUserFollowStats = remember {
+        createUserFollowClickAction(screenState, navController)
+    }
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
         ColumnSpacer(height = AppDimensions.screenVerticalSpacing)
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing)
-        UserProfileHeader(screenState, appNavController)
+        UserProfileHeader(screenState, onClickEdit, onClickFollow, onClickUnfollow)
+        FollowCounterStats(screenState.userFollowCounter, onClickUserFollowStats)
+        Divider(thickness = 4.dp)
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing * 2)
         TrainingSummaryTable(screenState)
+    }
+}
+
+private fun createUserFollowClickAction(
+    screenState: UserStatsViewModel.ScreenState.StatsAvailable,
+    navController: NavController,
+): (() -> Unit)? = if (screenState.userType == GetUserStatsTypeUsecase.UserStatsType.CurrentUser) {
+    {
+        val userId =
+            HomeNavDestination.UserFollow.routeWithUserId(screenState.userProfile.accountId)
+        navController.navigate(userId)
+    }
+} else {
+    null
+}
+
+@Composable
+private fun FollowCounterStats(
+    userFollowCounter: UserFollowCounter,
+    onClick: (() -> Unit)? = null,
+) = Row(
+    modifier = Modifier
+        .padding(
+            start = AppDimensions.screenHorizontalPadding,
+            end = AppDimensions.screenHorizontalPadding,
+            top = 20.dp,
+            bottom = 14.dp
+        )
+        .clickable(enabled = onClick != null) { onClick?.invoke() }
+) {
+    arrayOf(
+        R.string.user_stats_following_label to userFollowCounter.followingCount,
+        R.string.user_stats_follower_label to userFollowCounter.followerCount
+    ).forEach { (@StringRes labelResId, counterValue) ->
+        Column {
+            Text(
+                text = stringResource(labelResId),
+                style = MaterialTheme.typography.caption,
+                fontWeight = FontWeight.Bold
+            )
+            Text(text = counterValue.toString(), fontSize = 20.sp)
+        }
+        RowSpacer(24.dp)
     }
 }
 
@@ -245,9 +299,7 @@ private fun ActivityTypePane(
             }
             UserStatsOutlinedButton(
                 text = stringResource(id = activityTypeLabel),
-                onClick = {
-                    selectActivityTypeAction(type)
-                },
+                onClick = { selectActivityTypeAction(type) },
                 modifier = Modifier.padding(end = 12.dp),
                 colors = ButtonDefaults.outlinedButtonColors(backgroundColor, contentColor),
                 width = 65.dp
@@ -258,16 +310,6 @@ private fun ActivityTypePane(
 
 @Composable
 private fun TableDivider() = Divider(thickness = 0.5.dp)
-
-@Composable
-private fun SectionTitle(text: String) {
-    Text(
-        modifier = Modifier.padding(start = AppDimensions.screenHorizontalPadding),
-        text = text,
-        style = MaterialTheme.typography.h6,
-        fontWeight = FontWeight.Bold
-    )
-}
 
 @Composable
 private fun RowScope.TableCell(
@@ -350,17 +392,19 @@ private fun RowScope.TrainingSummaryProgress(
 @Composable
 private fun UserProfileHeader(
     screenState: UserStatsViewModel.ScreenState.StatsAvailable,
-    appNavController: NavController,
+    onClickEdit: (String) -> Unit,
+    onClickFollow: () -> Unit,
+    onClickUnfollow: () -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)
     ) {
-        UserProfileImage(photoUrl = screenState.userPhotoUrl)
+        UserProfileImage(photoUrl = screenState.userProfile.photo)
         RowSpacer(width = 10.dp)
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = screenState.userName,
+                text = screenState.userProfile.name,
                 style = MaterialTheme.typography.h6,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
@@ -376,11 +420,42 @@ private fun UserProfileHeader(
             }
         }
         RowSpacer(width = 10.dp)
-        UserStatsOutlinedButton(
-            text = stringResource(id = R.string.user_home_edit_profile_button)
-        ) {
-            appNavController.navigate(HomeNavDestination.Profile.routeWithUserId())
-        }
+
+        UserStatsActionButton(
+            screenState,
+            onClickEdit,
+            onClickFollow,
+            onClickUnfollow
+        )
+    }
+}
+
+@Composable
+private fun UserStatsActionButton(
+    screenState: UserStatsViewModel.ScreenState.StatsAvailable,
+    onClickEdit: (String) -> Unit,
+    onClickFollow: () -> Unit,
+    onClickUnfollow: () -> Unit,
+) {
+    val (buttonTextRes, onClickAction) = when (screenState.userType) {
+        GetUserStatsTypeUsecase.UserStatsType.CurrentUser ->
+            R.string.user_home_edit_profile_button to
+                { onClickEdit(screenState.userProfile.accountId) }
+        GetUserStatsTypeUsecase.UserStatsType.FollowedUser ->
+            R.string.action_unfollow to onClickUnfollow
+        GetUserStatsTypeUsecase.UserStatsType.NotFollowedUser ->
+            R.string.action_follow to onClickFollow
+        GetUserStatsTypeUsecase.UserStatsType.Invalid -> null to null // "-"
+    }
+
+    val buttonText = if (buttonTextRes != null) {
+        stringResource(buttonTextRes)
+    } else {
+        "-"
+    }
+
+    UserStatsOutlinedButton(buttonText, width = 65.dp) {
+        onClickAction?.invoke()
     }
 }
 
@@ -410,31 +485,47 @@ private fun UserStatsOutlinedButton(
 
 @Composable
 private fun UserStatsTopBar(
+    screenState: UserStatsViewModel.ScreenState,
     navController: NavController,
     openRoutePlanningAction: () -> Unit,
 ) {
+    val isCurrentUser = screenState is UserStatsViewModel.ScreenState.StatsAvailable &&
+        screenState.userType == GetUserStatsTypeUsecase.UserStatsType.CurrentUser
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.home_nav_user_stats_tab_label)) },
         actions = {
-            if (BuildConfig.DEBUG) {
-                AppBarIconButton(
-                    iconImageVector = Icons.Rounded.Add,
-                    onClick = openRoutePlanningAction
-                )
-            }
-            AppBarIconButton(iconImageVector = Icons.Rounded.Settings) {
-                navController.navigate(HomeNavDestination.UserPreferences.route)
+            if (isCurrentUser) {
+                TopBarActionButtons(openRoutePlanningAction, navController)
             }
         }
     )
 }
 
-@OptIn(ExperimentalCoilApi::class)
+@Composable
+fun TopBarActionButtons(
+    openRoutePlanningAction: () -> Unit,
+    navController: NavController,
+) {
+    if (BuildConfig.DEBUG) {
+        AppBarIconButton(
+            iconImageVector = Icons.Rounded.Add,
+            onClick = openRoutePlanningAction
+        )
+    }
+    AppBarIconButton(
+        iconImageVector = Icons.Rounded.Settings,
+        onClick = navController::navigateUserPreferencesScreen
+    )
+}
+
+private fun NavController.navigateUserPreferencesScreen() {
+    navigate(HomeNavDestination.UserPreferences.route)
+}
+
 @Composable
 private fun UserProfileImage(
     photoUrl: String?,
     imageLoadSizeDp: Dp = 60.dp,
-    onClick: (() -> Unit)? = null,
 ) {
     val imageLoadSizePx = with(LocalDensity.current) { imageLoadSizeDp.roundToPx() }
     Surface(shape = CircleShape, modifier = Modifier.size(imageLoadSizeDp)) {
@@ -453,7 +544,6 @@ private fun UserProfileImage(
             contentDescription = "Athlete avatar",
             modifier = Modifier
                 .fillMaxSize()
-                .clickable { onClick?.invoke() }
         )
     }
 }
@@ -463,8 +553,8 @@ private fun UserProfileImage(
 private fun PreviewUserStats() {
     UserStatsScreen(
         screenState = UserStatsViewModel.ScreenState.StatsAvailable(
-            "My Name",
-            "photoUrl",
+            UserProfile(name = "Super man", photo = "photo Url", accountId = "accountId"),
+            GetUserStatsTypeUsecase.UserStatsType.FollowedUser,
             "Saigon, Vietnam",
             mapOf(
                 ActivityType.Running to GetTrainingSummaryDataUsecase.TrainingSummaryTableData(
@@ -491,9 +581,14 @@ private fun PreviewUserStats() {
                 ),
                 ActivityType.Cycling to GetTrainingSummaryDataUsecase.TrainingSummaryTableData()
             ),
-            measureSystem = MeasureSystem.Default
+            measureSystem = MeasureSystem.Default,
+            UserFollowCounter(12, 34)
         ),
         contentPadding = PaddingValues(),
-        rememberNavController()
-    ) { }
+        rememberNavController(),
+        { },
+        { },
+        { },
+        { }
+    )
 }

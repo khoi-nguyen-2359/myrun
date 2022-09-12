@@ -19,6 +19,7 @@ import akio.apps.myrun.data.activity.impl.model.LocalAthleteInfo
 import akio.apps.myrun.data.activity.impl.model.LocalBaseActivity
 import akio.apps.myrun.data.activity.impl.model.LocalCyclingActivity
 import akio.apps.myrun.data.activity.impl.model.LocalRunningActivity
+import akio.apps.myrun.data.user.api.model.PlaceIdentifier
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
@@ -250,7 +251,7 @@ class ActivityLocalStorageImpl @Inject constructor(
             activityType.identity,
             name,
             routeImage,
-            placeIdentifier,
+            placeIdentifier?.toPlaceIdentifierString(),
             startTime,
             endTime,
             duration,
@@ -273,7 +274,7 @@ class ActivityLocalStorageImpl @Inject constructor(
             ActivityType.from(activityType),
             name,
             routeImage,
-            placeIdentifier,
+            PlaceIdentifier.fromPlaceIdentifierString(placeIdentifier),
             startTime,
             endTime,
             duration,

@@ -35,5 +35,28 @@ object HomeNavDestination {
     }
 
     object UserPreferences : NavDestinationInfo(routeName = "userPreferences")
-    object DeleteAccount : NavDestinationInfo(routeName = "deleteAccount2")
+
+    object UserFollow : NavDestinationInfo(routeName = "userFollow") {
+        private val userIdRequiredArg: RequiredNamedNavArgument =
+            RequiredNamedNavArgument("userId") { type = NavType.StringType }
+
+        override val argumentAdapters: List<NamedNavArgumentAdapter> = listOf(userIdRequiredArg)
+
+        fun routeWithUserId(userId: String): String = createRouteFromArguments(
+            shouldIncludeValue = true,
+            listOf(userIdRequiredArg.toNavArgumentValuePair(userId))
+        )
+    }
+
+    object NormalUserStats : NavDestinationInfo(routeName = "normalUserStats") {
+        val userIdRequiredArg: RequiredNamedNavArgument = RequiredNamedNavArgument("userId") {
+            type = NavType.StringType
+        }
+        override val argumentAdapters: List<NamedNavArgumentAdapter> = listOf(userIdRequiredArg)
+
+        fun routeWithUserId(userId: String): String = createRouteFromArguments(
+            shouldIncludeValue = true,
+            listOf(userIdRequiredArg.toNavArgumentValuePair(userId))
+        )
+    }
 }

@@ -129,7 +129,6 @@ private fun ActivityDetailScreen(
             is ActivityDetailViewModel.ScreenState.DataAvailable -> {
                 ActivityDetailDataContainer(
                     screenState,
-                    navController,
                     modifier = Modifier
                         .weight(1f)
                         .background(Color.White)
@@ -145,7 +144,6 @@ private fun ActivityDetailScreen(
 @Composable
 private fun ActivityDetailDataContainer(
     screenState: ActivityDetailViewModel.ScreenState.DataAvailable,
-    navController: NavController,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -158,9 +156,7 @@ private fun ActivityDetailDataContainer(
                 screenState.activityData,
                 screenState.activityFormattedStartTime,
                 screenState.activityPlaceName
-            ) {
-                navController.navigateToProfile(screenState.activityData.athleteInfo.userId)
-            }
+            )
             ActivityRouteImage(screenState.activityData) {
                 navigateToActivityMap(context, screenState.activityData.encodedPolyline)
             }
@@ -287,10 +283,6 @@ fun PreviewRunSplitsTable() = RunSplitsTable(
 fun navigateToActivityMap(context: Context, encodedPolyline: String) {
     val intent = ActivityRouteMapActivity.createLaunchIntent(context, encodedPolyline)
     context.startActivity(intent)
-}
-
-private fun NavController.navigateToProfile(userId: String) {
-    navigate(HomeNavDestination.Profile.routeWithUserId(userId))
 }
 
 @Composable

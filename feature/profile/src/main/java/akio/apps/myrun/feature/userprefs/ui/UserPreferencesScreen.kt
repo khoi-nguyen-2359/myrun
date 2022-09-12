@@ -123,13 +123,12 @@ private fun UserPreferencesScreen(
         when (error) {
             is UnauthorizedUserError -> {
                 showErrorToastAndNavigateToReAuth(context)
-                userPrefsViewModel.clearScreenError()
+                userPrefsViewModel.acknowledgeError()
             }
             else -> ErrorDialog(
-                error.message ?: stringResource(id = R.string.dialog_delegate_unknown_error)
-            ) {
-                userPrefsViewModel.clearScreenError()
-            }
+                error.message ?: stringResource(id = R.string.dialog_delegate_unknown_error),
+                userPrefsViewModel::acknowledgeError
+            )
         }
     }
 

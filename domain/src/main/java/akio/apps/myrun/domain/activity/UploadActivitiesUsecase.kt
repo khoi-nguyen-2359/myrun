@@ -11,10 +11,9 @@ import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.location.api.PlaceDataSource
 import akio.apps.myrun.data.user.api.UserProfileRepository
-import akio.apps.myrun.domain.user.PlaceIdentifierConverter
+import akio.apps.myrun.data.user.api.model.PlaceIdentifier
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapConcat
@@ -27,9 +26,8 @@ class UploadActivitiesUsecase @Inject constructor(
     private val activityLocalStorage: ActivityLocalStorage,
     private val userProfileRepository: UserProfileRepository,
     private val placeDataSource: PlaceDataSource,
-    private val placeIdentifierConverter: PlaceIdentifierConverter,
 ) {
-    @OptIn(InternalCoroutinesApi::class, FlowPreview::class)
+    @OptIn(FlowPreview::class)
     suspend fun uploadAll(): Flow<Resource<BaseActivityModel>> =
         activityLocalStorage.loadAllActivityStorageDataFlow().flatMapConcat { storageData ->
             val activityModel = fulfillActivityInfo(
@@ -67,8 +65,10 @@ class UploadActivitiesUsecase @Inject constructor(
         )
         val activityData = activityModel.activityData.copy(
             athleteInfo = AthleteInfo(userId, userProfile.name, userProfile.photo),
-            placeIdentifier =
-            placeIdentifierConverter.fromAddressNameList(sortedAddressTexts.map { it.name })
+            placeIdentifier = PlaceIdentifier.fromAddressComponents(
+                sortedAddressTexts.map { it.name }
+            )
+            // placeIdentifierConverter.fromAddressNameList()
         )
         return when (activityModel) {
             is RunningActivityModel -> activityModel.copy(activityData)

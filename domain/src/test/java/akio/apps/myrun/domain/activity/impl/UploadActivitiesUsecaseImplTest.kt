@@ -12,7 +12,6 @@ import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.location.api.PlaceDataSource
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.domain.activity.UploadActivitiesUsecase
-import akio.apps.myrun.domain.user.PlaceIdentifierConverter
 import app.cash.turbine.test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
@@ -33,7 +32,6 @@ class UploadActivitiesUsecaseImplTest {
     private lateinit var mockedActivityRepository: ActivityRepository
     private lateinit var uploadActivitiesUsecase: UploadActivitiesUsecase
     private lateinit var mockedPlaceDataSource: PlaceDataSource
-    private lateinit var mockedPlaceIdentifierConverter: PlaceIdentifierConverter
 
     @Before
     fun setup() {
@@ -42,14 +40,12 @@ class UploadActivitiesUsecaseImplTest {
         mockedAuthenticationState = mock()
         mockedUserProfileRepository = mock()
         mockedPlaceDataSource = mock()
-        mockedPlaceIdentifierConverter = mock()
         uploadActivitiesUsecase = UploadActivitiesUsecase(
             mockedAuthenticationState,
             mockedActivityRepository,
             mockedActivityLocalStorage,
             mockedUserProfileRepository,
-            mockedPlaceDataSource,
-            mockedPlaceIdentifierConverter
+            mockedPlaceDataSource
         )
     }
 
@@ -90,7 +86,7 @@ class UploadActivitiesUsecaseImplTest {
                     ActivityType.Cycling,
                     "name",
                     "routeImage",
-                    "placeIdentifier",
+                    null,
                     startTime = 1000L,
                     endTime = 1000L,
                     duration = 1000L,

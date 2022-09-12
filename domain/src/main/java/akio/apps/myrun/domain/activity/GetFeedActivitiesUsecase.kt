@@ -5,6 +5,7 @@ import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.user.api.UserFollowRepository
+import akio.apps.myrun.data.user.api.model.FollowStatus
 import javax.inject.Inject
 
 class GetFeedActivitiesUsecase @Inject constructor(
@@ -18,8 +19,15 @@ class GetFeedActivitiesUsecase @Inject constructor(
     ): Resource<List<BaseActivityModel>> = try {
         val userAccountId = userAuthenticationState.requireUserAccountId()
 
-        val userIds = userFollowRepository.getUserFollowings(userAccountId).toMutableList()
-        userIds.add(userAccountId)
+        // get first() may return cached data
+        val userIds = userFollowRepository.getUserFollowings(userAccountId)
+            .mapNotNull { userFollow ->
+                if (userFollow.status == FollowStatus.Accepted) {
+                    userFollow.uid
+                } else {
+                    null
+                }
+            } + listOf(userAccountId)
 
         val activities =
             activityRepository.getActivitiesByStartTime(userAccountId, userIds, startAfter, count)

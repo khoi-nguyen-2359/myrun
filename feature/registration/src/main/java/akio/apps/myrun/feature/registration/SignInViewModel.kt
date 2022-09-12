@@ -4,14 +4,13 @@ import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.authentication.api.SignInManager
 import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 import akio.apps.myrun.domain.user.PostSignInUsecase
-import akio.apps.myrun.feature.core.Event
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.withContext
 
 internal class SignInViewModel @Inject constructor(
@@ -22,15 +21,15 @@ internal class SignInViewModel @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel(), LaunchCatchingDelegate by launchCatching {
 
-    private val _signInSuccessResult = MutableStateFlow<Event<SignInSuccessResult>>(Event())
-    val signInSuccessResult: Flow<Event<SignInSuccessResult>> = _signInSuccessResult
+    private val _signInSuccessResult = MutableSharedFlow<SignInSuccessResult>()
+    val signInSuccessResult: Flow<SignInSuccessResult> = _signInSuccessResult
 
-    private val _reAuthSuccessResult = MutableStateFlow(Event<Unit>())
-    val reAuthSuccessResult: Flow<Event<Unit>> = _reAuthSuccessResult
+    private val _reAuthSuccessResult = MutableSharedFlow<Unit>()
+    val reAuthSuccessResult: Flow<Unit> = _reAuthSuccessResult
 
     private suspend fun onSignInSuccess(result: SignInSuccessResult) = withContext(ioDispatcher) {
         postSignInUsecase.invoke(result)
-        _signInSuccessResult.value = Event(result)
+        _signInSuccessResult.emit(result)
     }
 
     fun signInWithFacebookToken(tokenValue: String) {
@@ -50,7 +49,7 @@ internal class SignInViewModel @Inject constructor(
     fun reAuthWithGoogleToken(googleIdToken: String) {
         viewModelScope.launchCatching {
             signInManager.reAuthGoogle(googleIdToken)
-            _reAuthSuccessResult.value = Event(Unit)
+            _reAuthSuccessResult.emit(Unit)
         }
     }
 }
