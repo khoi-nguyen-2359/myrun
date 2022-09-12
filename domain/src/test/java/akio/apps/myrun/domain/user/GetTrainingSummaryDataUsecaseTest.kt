@@ -7,7 +7,7 @@ import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
-import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.user.api.model.PlaceIdentifier
 import akio.apps.myrun.domain.time.TimeProvider
 import java.util.TimeZone
 import kotlin.test.assertEquals
@@ -25,7 +25,6 @@ class GetTrainingSummaryDataUsecaseTest {
 
     private lateinit var usecase: GetTrainingSummaryDataUsecase
     private lateinit var mockedActivityRepository: ActivityRepository
-    private lateinit var mockedUserAuthenticationState: UserAuthenticationState
     private lateinit var mockedTimeProvider: TimeProvider
 
     private val defaultUserId: String = "defaultUserId"
@@ -33,11 +32,9 @@ class GetTrainingSummaryDataUsecaseTest {
     @Before
     fun setup() {
         mockedActivityRepository = mock()
-        mockedUserAuthenticationState = mock()
         mockedTimeProvider = mock()
         usecase = GetTrainingSummaryDataUsecase(
             mockedActivityRepository,
-            mockedUserAuthenticationState,
             mockedTimeProvider
         )
     }
@@ -45,7 +42,6 @@ class GetTrainingSummaryDataUsecaseTest {
     @Test
     fun test() = runTest {
         val timeZoneRawOffset = TimeZone.getDefault().rawOffset
-        whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
         whenever(mockedTimeProvider.currentTimeMillis()).thenReturn(
             1639353600000L + timeZoneRawOffset // 00:00:00 Dec 13 2021 (GMT)
         )
@@ -159,7 +155,7 @@ class GetTrainingSummaryDataUsecaseTest {
             )
         )
 
-        val summaryTableMap = usecase.getUserTrainingSummaryData()
+        val summaryTableMap = usecase.getUserTrainingSummaryData(defaultUserId)
         verify(mockedActivityRepository).getActivitiesInTimeRange(
             defaultUserId,
             timeRangeStart,
@@ -248,7 +244,7 @@ class GetTrainingSummaryDataUsecaseTest {
                 ActivityType.Running,
                 "name",
                 "routeImage",
-                "placeIdentifier",
+                PlaceIdentifier.fromPlaceIdentifierString("placeIdentifier"),
                 startTime = startTime,
                 endTime = 1000L,
                 duration = duration,
@@ -265,7 +261,7 @@ class GetTrainingSummaryDataUsecaseTest {
                 ActivityType.Cycling,
                 "name",
                 "routeImage",
-                "placeIdentifier",
+                PlaceIdentifier.fromPlaceIdentifierString("placeIdentifier"),
                 startTime = startTime,
                 endTime = 1000L,
                 duration = duration,

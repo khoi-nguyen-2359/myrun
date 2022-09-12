@@ -129,7 +129,6 @@ private fun ActivityDetailScreen(
             is ActivityDetailViewModel.ScreenState.DataAvailable -> {
                 ActivityDetailDataContainer(
                     screenState,
-                    navController,
                     modifier = Modifier
                         .weight(1f)
                         .background(Color.White)
@@ -145,7 +144,6 @@ private fun ActivityDetailScreen(
 @Composable
 private fun ActivityDetailDataContainer(
     screenState: ActivityDetailViewModel.ScreenState.DataAvailable,
-    navController: NavController,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
