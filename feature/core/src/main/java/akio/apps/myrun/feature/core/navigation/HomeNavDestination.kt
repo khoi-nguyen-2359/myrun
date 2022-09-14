@@ -36,6 +36,25 @@ object HomeNavDestination {
 
     object UserPreferences : NavDestinationInfo(routeName = "userPreferences")
 
+    object WebViewContainer : NavDestinationInfo(routeName = "webViewContainer") {
+        val titleOptionalArg: OptionalNamedNavArgument =
+            OptionalNamedNavArgument("title") { type = NavType.StringType }
+
+        val urlRequiredArg: OptionalNamedNavArgument =
+            OptionalNamedNavArgument("url") { type = NavType.StringType }
+
+        override val argumentAdapters: List<NamedNavArgumentAdapter> =
+            listOf(titleOptionalArg, urlRequiredArg)
+
+        fun routeWithArgs(url: String, title: String? = null) = createRouteFromArguments(
+            shouldIncludeValue = true,
+            listOf(
+                titleOptionalArg.toNavArgumentValuePair(title),
+                urlRequiredArg.toNavArgumentValuePair(url)
+            )
+        )
+    }
+
     object UserFollow : NavDestinationInfo(routeName = "userFollow") {
         private val userIdRequiredArg: RequiredNamedNavArgument =
             RequiredNamedNavArgument("userId") { type = NavType.StringType }
