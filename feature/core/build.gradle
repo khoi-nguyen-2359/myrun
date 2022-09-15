@@ -50,6 +50,7 @@ dependencies {
     debugApi(libs.bundles.compose.preview)
     implementation(libs.coilcompose)
     implementation(libs.accompanist.insets)
+    implementation(libs.accompanist.webview)
 
     implementation(libs.lifecycle.runtime.ktx)
 

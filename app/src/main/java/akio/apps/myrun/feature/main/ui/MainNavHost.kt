@@ -3,6 +3,7 @@ package akio.apps.myrun.feature.main.ui
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
+import akio.apps.myrun.feature.core.screen.WebViewContainer
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
 import akio.apps.myrun.feature.userfollow.ui.UserFollowScreen
 import akio.apps.myrun.feature.userprefs.ui.UserPreferencesScreen
@@ -86,8 +87,15 @@ fun MainNavHost(
         }
 
         composable(
-            route = HomeNavDestination.UserFollow.route,
-            arguments = HomeNavDestination.UserFollow.arguments
+            HomeNavDestination.WebViewContainer.route,
+            HomeNavDestination.WebViewContainer.arguments
+        ) { navEntry ->
+            WebViewContainer(navController, navEntry)
+        }
+
+        composable(
+            HomeNavDestination.UserFollow.route,
+            HomeNavDestination.UserFollow.arguments
         ) { navEntry ->
             UserFollowScreen(navEntry, navController)
         }

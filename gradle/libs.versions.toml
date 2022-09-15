@@ -28,7 +28,7 @@ androidx-annotation = "1.4.0"
 composecompiler = "1.2.0"
 compose = "1.2.0"
 pagingcompose = "1.0.0-alpha15"
-accompanist = "0.25.0"
+accompanist = "0.25.1"
 navigationcompose = "1.1.0-alpha10"
 
 # google play services: https://developers.google.com/android/guides/releases
@@ -125,6 +125,7 @@ accompanist-placeholder = { module = "com.google.accompanist:accompanist-placeho
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
 accompanist-navigation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
+accompanist-webview = { module = "com.google.accompanist:accompanist-webview", version.ref = "accompanist" }
 
 # dagger
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }

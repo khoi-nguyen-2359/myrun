@@ -8,6 +8,7 @@ import akio.apps.myrun.data.eapps.api.model.RunningApp
 import akio.apps.myrun.data.eapps.api.model.StravaAthlete
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
+import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.navigation.OnBoardingNavigation
 import akio.apps.myrun.feature.core.ui.AppBarArrowBackButton
 import akio.apps.myrun.feature.core.ui.AppDimensions
@@ -47,6 +48,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AdminPanelSettings
 import androidx.compose.material.icons.rounded.CloudSync
 import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.ErrorOutline
@@ -101,13 +103,25 @@ private fun UserPreferencesScreen(
             userPrefsViewModel.selectMeasureSystem(measureSystem)
         }
 
-        FormSectionSpace()
+        // FormSectionSpace()
 
         StravaLinkSwitch(screenState.stravaLinkState) {
             userPrefsViewModel.deauthorizeStrava()
         }
 
-        FormSectionSpace()
+        // FormSectionSpace()
+
+        val privacyPolicyLabel = stringResource(id = R.string.user_prefs_privacy_policy)
+        CompoundText(
+            icon = Icons.Rounded.AdminPanelSettings,
+            label = privacyPolicyLabel
+        ) {
+            val route = HomeNavDestination.WebViewContainer.routeWithArgs(
+                url = "https://khoi-nguyen-2359.github.io/myrun/",
+                title = privacyPolicyLabel
+            )
+            navController.navigate(route)
+        }
 
         DeleteAccountSection {
             userPrefsViewModel.deleteUser()
