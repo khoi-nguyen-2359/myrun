@@ -6,4 +6,5 @@
     <color name="central_loading_text">#66000000</color>
     <color name="route_tracking_polyline">#25a9e2</color>
     <color name="darkText">#e6222222</color>
+    <color name="placeholder">#d2d5da</color>
 </resources>

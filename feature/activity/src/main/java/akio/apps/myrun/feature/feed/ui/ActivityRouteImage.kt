@@ -5,7 +5,7 @@ import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
-import akio.apps.myrun.feature.core.ui.modifyIf
+import akio.apps.myrun.feature.activity.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.aspectRatio
@@ -16,16 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.placeholder
-import com.google.accompanist.placeholder.material.shimmer
 
 private const val ACTIVITY_ROUTE_IMAGE_RATIO = 1.5f
 
-@OptIn(coil.annotation.ExperimentalCoilApi::class)
 @Composable
 internal fun ActivityRouteImage(
     activity: BaseActivityModel,
@@ -36,10 +31,11 @@ internal fun ActivityRouteImage(
     val imageWidth = remember { (context.resources.displayMetrics.widthPixels * 0.7).toInt() }
     val imageHeight = remember { (imageWidth / imageRatio).toInt() }
     val imagePainter = rememberAsyncImagePainter(
-        ImageRequest.Builder(LocalContext.current)
+        ImageRequest.Builder(context)
             .data(data = activity.routeImage)
             .size(imageWidth, imageHeight)
             .crossfade(200)
+            .placeholder(R.color.placeholder)
             .build()
     )
     Image(
@@ -48,13 +44,7 @@ internal fun ActivityRouteImage(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(imageRatio)
-            .placeholder(
-                visible = imagePainter.state !is AsyncImagePainter.State.Success,
-                highlight = PlaceholderHighlight.shimmer()
-            )
-            .modifyIf(onClickAction != null) {
-                clickable { onClickAction?.invoke() }
-            },
+            .clickable(onClickAction != null, onClick = { onClickAction?.invoke() }),
         contentScale = ContentScale.Crop
     )
 }
