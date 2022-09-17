@@ -170,7 +170,7 @@ fun HomeTabScreen(
         )
 
         Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-            HomeBottomNavBar(homeNavController)
+            HomeBottomNavBar(homeNavController, currentTabEntry)
             NavigationBarSpacer()
         }
     }
@@ -271,16 +271,18 @@ private fun HomeNavHost(
 }
 
 @Composable
-private fun HomeBottomNavBar(homeNavController: NavHostController) {
-    val currentBackstackEntry by homeNavController.currentBackStackEntryAsState()
+private fun HomeBottomNavBar(
+    homeNavController: NavHostController,
+    currentTabEntry: NavBackStackEntry?,
+) {
     BottomNavigation {
         HomeNavItemInfo.values().forEach { itemInfo ->
-            val isSelected = currentBackstackEntry?.destination
+            val isSelected = currentTabEntry?.destination
                 ?.hierarchy
                 ?.any { it.route == itemInfo.route } == true
             BottomNavigationItem(
                 selected = isSelected,
-                onClick = { navigateHomeDestination(homeNavController, itemInfo) },
+                onClick = { navigateHomeDestination(homeNavController, itemInfo, currentTabEntry) },
                 icon = { Icon(itemInfo.icon, "Home tab icon") },
                 label = { Text(text = stringResource(id = itemInfo.label)) }
             )
@@ -291,8 +293,9 @@ private fun HomeBottomNavBar(homeNavController: NavHostController) {
 private fun navigateHomeDestination(
     homeNavController: NavHostController,
     itemInfo: HomeNavItemInfo,
+    currentTabEntry: NavBackStackEntry?,
 ) {
-    val currentEntryDesId = homeNavController.currentBackStackEntry?.destination?.id
+    val currentEntryDesId = currentTabEntry?.destination?.id
         ?: homeNavController.graph.findStartDestination().id
     homeNavController.navigate(itemInfo.route) {
         popUpTo(currentEntryDesId) {
