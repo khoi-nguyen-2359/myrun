@@ -23,6 +23,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -43,11 +44,10 @@ import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -58,6 +58,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
@@ -118,30 +119,35 @@ fun HomeTabScreen(
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     openRoutePlanningAction: () -> Unit,
 ) = AppTheme {
+    val application = LocalContext.current.applicationContext as Application
+    val homeNavController = rememberAnimatedNavController()
+    val currentTabEntry by homeNavController.currentBackStackEntryAsState()
     // FAB is inactive when user selects a tab other than Feed
-    var isFabActive by remember { mutableStateOf(true) }
-    val systemBarTopDp = WindowInsets.systemBars.getBottom(LocalDensity.current).px2dp.dp
-    val fabBoxHeightDp = FabSize * 4 / 3 + AppBarHeight + systemBarTopDp
+    val isFabActive by derivedStateOf {
+        currentTabEntry?.destination?.route == HomeNavItemInfo.ActivityFeed.route
+    }
+    val systemBarBottomDp = WindowInsets.systemBars.getBottom(LocalDensity.current).px2dp.dp
+    val fabBoxHeightDp = FabSize * 4f / 3 + AppBarHeight + systemBarBottomDp
     val fabBoxSizePx = with(LocalDensity.current) { fabBoxHeightDp.roundToPx().toFloat() }
-    val fabOffsetY = remember { Animatable(0f) }
+    val fabOffsetYAnimatable = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
     // insets may be updated, so remember scroll connection with keys
     val fabAnimationScrollConnection = remember(fabBoxSizePx) {
-        createScrollConnectionForFabAnimation(isFabActive, fabBoxSizePx, coroutineScope, fabOffsetY)
+        createScrollConnectionForFabAnimation(
+            isFabActive,
+            fabBoxSizePx,
+            coroutineScope,
+            fabOffsetYAnimatable
+        )
     }
 
-    val homeNavController = rememberAnimatedNavController()
-    val homeBackStackEntry by homeNavController.currentBackStackEntryAsState()
-    isFabActive = homeBackStackEntry?.destination?.route == HomeNavItemInfo.ActivityFeed.route
     // toggle FAB when switching between tabs
     LaunchedEffect(isFabActive) {
-        animateFabOffsetY(isFabActive, fabOffsetY, fabBoxSizePx)
+        animateFabOffsetY(isFabActive, fabOffsetYAnimatable, fabBoxSizePx)
     }
-    val application = LocalContext.current.applicationContext as Application
     val homeTabViewModel = backStackEntry.rememberViewModelProvider {
         DaggerHomeTabFeatureComponent.factory().create(application).homeTabViewModel()
     }
-    val isTrackingStarted by homeTabViewModel.isTrackingStarted.collectAsState(false)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -154,19 +160,36 @@ fun HomeTabScreen(
             appNavController,
             openRoutePlanningAction
         )
-        Box(
-            modifier = Modifier
-                .height(fabBoxHeightDp)
-                .align(Alignment.BottomCenter)
-                .offset { IntOffset(x = 0, y = fabOffsetY.value.roundToInt()) }
-        ) {
-            HomeFloatingActionButton(onClickFloatingActionButton, isTrackingStarted)
-        }
+
+        val isTrackingStarted by homeTabViewModel.isTrackingStarted.collectAsState(false)
+        HomeFabBox(
+            fabBoxHeightDp,
+            fabOffsetYAnimatable,
+            onClickFloatingActionButton,
+            isTrackingStarted
+        )
 
         Column(modifier = Modifier.align(Alignment.BottomCenter)) {
             HomeBottomNavBar(homeNavController)
             NavigationBarSpacer()
         }
+    }
+}
+
+@Composable
+private fun BoxScope.HomeFabBox(
+    fabBoxHeightDp: Dp,
+    fabOffsetY: Animatable<Float, AnimationVector1D>,
+    onClickFloatingActionButton: () -> Unit,
+    isTrackingStarted: Boolean,
+) {
+    Box(
+        modifier = Modifier
+            .height(fabBoxHeightDp)
+            .align(Alignment.BottomCenter)
+            .offset { IntOffset(x = 0, y = fabOffsetY.value.roundToInt()) }
+    ) {
+        HomeFloatingActionButton(onClickFloatingActionButton, isTrackingStarted)
     }
 }
 
