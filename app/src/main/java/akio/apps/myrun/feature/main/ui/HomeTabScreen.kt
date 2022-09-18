@@ -132,7 +132,7 @@ fun HomeTabScreen(
     val fabOffsetYAnimatable = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
     // insets may be updated, so remember scroll connection with keys
-    val fabAnimationScrollConnection = remember(fabBoxSizePx) {
+    val fabAnimationScrollConnection = remember(fabBoxSizePx, isFabActive) {
         createScrollConnectionForFabAnimation(
             isFabActive,
             fabBoxSizePx,
