@@ -4,11 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisallowComposableCalls
 import androidx.compose.runtime.remember
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.compose.ui.platform.LocalSavedStateRegistryOwner
+import androidx.lifecycle.*
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavBackStackEntry
 import androidx.savedstate.SavedStateRegistryOwner
 
@@ -39,10 +37,21 @@ inline fun <reified T : ViewModel> AppCompatActivity.lazyViewModelProvider(
  * Use [remember] to avoid re-creating view model provider during recomposition, even though the
  * provided view model is always a same instance.
  */
-@Suppress("UNCHECKED_CAST")
 @Composable
 inline fun <reified T : ViewModel> NavBackStackEntry.rememberViewModelProvider(
     crossinline viewModelFactory: @DisallowComposableCalls (SavedStateHandle) -> T,
 ): T = remember(this) {
     this.viewModelProvider(this, viewModelFactory)
+}
+
+@Composable
+inline fun <reified T : ViewModel> rememberLocalViewModel(
+    crossinline viewModelFactory: @DisallowComposableCalls (SavedStateHandle) -> T,
+): T {
+    val viewModelStoreOwner = LocalViewModelStoreOwner.current
+        ?: error("Could not find a local view model store owner.")
+    val savedStateRegistryOwner = LocalSavedStateRegistryOwner.current
+    return remember(viewModelStoreOwner) {
+        viewModelStoreOwner.viewModelProvider(savedStateRegistryOwner, viewModelFactory)
+    }
 }

@@ -58,10 +58,9 @@ fun MainNavHost(
         popEnterTransition = { AppNavTransitionDefaults.popEnterTransition },
         popExitTransition = { AppNavTransitionDefaults.popExitTransition }
     ) {
-        composable(HomeNavDestination.Home.route) { navEntry ->
+        composable(HomeNavDestination.Home.route) {
             HomeTabScreen(
                 navController,
-                navEntry,
                 onClickFloatingActionButton,
                 onClickExportActivityFile,
                 openRoutePlanningAction

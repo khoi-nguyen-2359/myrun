@@ -6,8 +6,10 @@ import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
 import akio.apps.myrun.feature.activity.R
+import akio.apps.myrun.feature.core.ui.modifyIf
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -44,7 +46,9 @@ internal fun ActivityRouteImage(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(imageRatio)
-            .clickable(onClickAction != null, onClick = { onClickAction?.invoke() }),
+            .modifyIf(onClickAction != null) {
+                clickable { onClickAction?.invoke() }
+            },
         contentScale = ContentScale.Crop
     )
 }
