@@ -1,8 +1,10 @@
 package akio.apps.myrun.domain.user
 
+import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.domain.time.TimeProvider
 import android.os.Parcelable
 import java.util.Calendar
@@ -17,12 +19,31 @@ import java.util.Calendar.SECOND
 import java.util.Calendar.YEAR
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.parcelize.Parcelize
 
 class GetTrainingSummaryDataUsecase @Inject constructor(
     private val activityRepository: ActivityRepository,
     private val timeProvider: TimeProvider,
+    private val userAuthState: UserAuthenticationState,
+    private val activityLocalStorage: ActivityLocalStorage,
 ) {
+    fun getUserTrainingSummaryDataFlow(
+        userId: String,
+    ): Flow<Map<ActivityType, TrainingSummaryTableData>> {
+        val isCurrentUser = userAuthState.isCurrentUser(userId)
+        return if (isCurrentUser) {
+            activityLocalStorage.getActivityStorageDataCountFlow()
+                .distinctUntilChanged()
+                .map { getUserTrainingSummaryData(userId) }
+        } else {
+            flow { emit(getUserTrainingSummaryData(userId)) }
+        }
+    }
+
     /**
      * [weekOffset]: value >= 0, indicates current week, or 1, 2, 3... week in the past.
      */

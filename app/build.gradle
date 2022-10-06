@@ -106,6 +106,7 @@ dependencies {
 
     implementation(project(':data:user'))
     implementation(project(':data:tracking'))
+    implementation(project(':data:activity'))
 
     implementation project(':base:di')
     implementation project(':base:firebase')

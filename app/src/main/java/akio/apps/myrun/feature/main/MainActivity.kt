@@ -3,6 +3,8 @@ package akio.apps.myrun.feature.main
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activitydetail.ActivityExportService
+import akio.apps.myrun.feature.main.di.DaggerHomeTabFeatureComponent
+import akio.apps.myrun.feature.main.di.HomeTabFeatureComponent
 import akio.apps.myrun.feature.main.ui.MainNavHost
 import akio.apps.myrun.feature.route.RoutePlanningFacade
 import akio.apps.myrun.feature.tracking.LocationPermissionChecker
@@ -15,6 +17,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 
@@ -30,10 +33,15 @@ class MainActivity : AppCompatActivity() {
             MainNavHost(
                 onClickFloatingActionButton = ::openRouteTrackingOrCheckRequiredPermission,
                 onClickExportActivityFile = ::startActivityExportService,
-                openRoutePlanningAction = { RoutePlanningFacade.startRoutePlanning(this) }
+                openRoutePlanningAction = { RoutePlanningFacade.startRoutePlanning(this) },
+                ::provideHomeTabFeatureComponent
             )
         }
     }
+
+    private fun provideHomeTabFeatureComponent(
+        savedStateHandle: SavedStateHandle,
+    ): HomeTabFeatureComponent = DaggerHomeTabFeatureComponent.factory().create(application)
 
     private fun startActivityExportService(activity: BaseActivityModel) {
         val intent = ActivityExportService.createAddActivityIntent(

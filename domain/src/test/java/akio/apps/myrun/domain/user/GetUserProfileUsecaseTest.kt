@@ -46,7 +46,7 @@ class GetUserProfileUsecaseTest {
     fun `given user logged in, when get user profile, then return user profile data`() {
         // given
         val userProfile = createUserProfile()
-        whenever(mockedUserProfileRepository.getUserProfileFlow(defaultUserId)).thenReturn(
+        whenever(mockedUserProfileRepository.getUserProfileResourceFlow(defaultUserId)).thenReturn(
             flowOf(Resource.Success(userProfile))
         )
 
@@ -58,7 +58,7 @@ class GetUserProfileUsecaseTest {
             }
         }
 
-        verify(mockedUserProfileRepository).getUserProfileFlow(defaultUserId)
+        verify(mockedUserProfileRepository).getUserProfileResourceFlow(defaultUserId)
     }
 
     @Test
@@ -76,7 +76,7 @@ class GetUserProfileUsecaseTest {
 
         // then
         verify(mockedUserAuthenticationState).requireUserAccountId()
-        verify(mockedUserProfileRepository, never()).getUserProfileFlow(anyString())
+        verify(mockedUserProfileRepository, never()).getUserProfileResourceFlow(anyString())
     }
 
     private fun createUserProfile(): UserProfile {

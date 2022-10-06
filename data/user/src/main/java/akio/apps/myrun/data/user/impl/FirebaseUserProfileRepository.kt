@@ -43,7 +43,7 @@ class FirebaseUserProfileRepository @Inject constructor(
 
     private fun getAvatarStorage() = firebaseStorage.getReference(FIREBASE_STORAGE_USER_FOLDER)
 
-    override fun getUserProfileFlow(userId: String): Flow<Resource<UserProfile>> =
+    override fun getUserProfileResourceFlow(userId: String): Flow<Resource<UserProfile>> =
         callbackFlow {
             val listener = withContext(Dispatchers.Main.immediate) {
                 getUserDocument(userId).addSnapshotListener { snapshot, error ->

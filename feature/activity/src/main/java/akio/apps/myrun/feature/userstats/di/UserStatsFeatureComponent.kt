@@ -8,8 +8,8 @@ import akio.apps.myrun.data.authentication.di.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.di.DaggerAuthenticationDataComponent
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.userstats.UserStatsViewModel
+import akio.apps.myrun.feature.userstats.ui.UserStatsArguments
 import android.app.Application
-import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Component
 
@@ -24,14 +24,14 @@ import dagger.Component
         ActivityDataComponent::class
     ]
 )
-internal interface UserStatsFeatureComponent {
+interface UserStatsFeatureComponent {
     fun userStatsViewModel(): UserStatsViewModel
 
     @Component.Factory
     interface Factory {
         fun create(
             @BindsInstance application: Application,
-            @BindsInstance savedStateHandle: SavedStateHandle,
+            @BindsInstance arguments: UserStatsArguments,
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.factory().create(application),
             activityDataComponent: ActivityDataComponent =

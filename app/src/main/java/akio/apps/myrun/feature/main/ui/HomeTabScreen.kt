@@ -3,17 +3,13 @@ package akio.apps.myrun.feature.main.ui
 import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.core.ktx.px2dp
-import akio.apps.myrun.feature.core.ktx.rememberLocalViewModel
 import akio.apps.myrun.feature.core.navigation.HomeTabNavDestination
 import akio.apps.myrun.feature.core.ui.AppDimensions.AppBarHeight
 import akio.apps.myrun.feature.core.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.feed.ui.ActivityFeedScreen
-import akio.apps.myrun.feature.main.HomeTabViewModel
-import akio.apps.myrun.feature.main.di.DaggerHomeTabFeatureComponent
-import akio.apps.myrun.feature.userstats.ui.CurrentUserStatsScreen
-import android.app.Application
+import akio.apps.myrun.feature.userstats.ui.CurrentUserStatsComposable
 import androidx.annotation.StringRes
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -43,10 +39,7 @@ import androidx.compose.material.icons.rounded.BarChart
 import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -58,7 +51,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -76,10 +68,6 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-
-private val LocalHomeTabViewModel = compositionLocalOf<HomeTabViewModel> {
-    error("no default LocalHomeTabViewModel")
-}
 
 private object HomeTabNavTransitionDefaults {
     private val fadeInImmediately = fadeIn(
@@ -123,21 +111,13 @@ fun HomeTabScreen(
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     openRoutePlanningAction: () -> Unit,
-) {
-    val application = LocalContext.current.applicationContext as Application
-    val homeTabViewModel = rememberLocalViewModel {
-        DaggerHomeTabFeatureComponent.factory().create(application).homeTabViewModel()
-    }
-    CompositionLocalProvider(LocalHomeTabViewModel provides homeTabViewModel) {
-        AppTheme {
-            HomeTabScreenInternal(
-                appNavController,
-                onClickFloatingActionButton,
-                onClickExportActivityFile,
-                openRoutePlanningAction
-            )
-        }
-    }
+) = AppTheme {
+    HomeTabScreenInternal(
+        appNavController,
+        onClickFloatingActionButton,
+        onClickExportActivityFile,
+        openRoutePlanningAction
+    )
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -186,11 +166,7 @@ private fun HomeTabScreenInternal(
             openRoutePlanningAction
         )
 
-        HomeFabBox(
-            fabBoxHeightDp,
-            fabOffsetYAnimatable,
-            onClickFloatingActionButton,
-        )
+        HomeFabBox(fabBoxHeightDp, fabOffsetYAnimatable, onClickFloatingActionButton)
 
         Column(modifier = Modifier.align(Alignment.BottomCenter)) {
             HomeBottomNavBar(homeNavController, currentTabEntry)
@@ -205,14 +181,13 @@ private fun BoxScope.HomeFabBox(
     fabOffsetY: Animatable<Float, AnimationVector1D>,
     onClickFloatingActionButton: () -> Unit,
 ) {
-    val isTrackingStarted by LocalHomeTabViewModel.current.isTrackingStarted.collectAsState(false)
     Box(
         modifier = Modifier
             .height(fabBoxHeightDp)
             .align(Alignment.BottomCenter)
             .offset { IntOffset(x = 0, y = fabOffsetY.value.roundToInt()) }
     ) {
-        HomeFloatingActionButton(onClickFloatingActionButton, isTrackingStarted)
+        HomeFloatingActionButton(onClickFloatingActionButton, isTrackingStarted())
     }
 }
 
@@ -282,10 +257,9 @@ private fun HomeNavHost(
             )
         }
 
-        composable(HomeNavItemInfo.UserStats.route) { navEntry ->
-            CurrentUserStatsScreen(
+        composable(HomeNavItemInfo.UserStats.route) {
+            CurrentUserStatsComposable(
                 appNavController,
-                navEntry,
                 contentPaddings,
                 openRoutePlanningAction
             )
