@@ -4,7 +4,6 @@ import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.activitydetail.ui.ActivityDetailScreen
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.screen.WebViewContainer
-import akio.apps.myrun.feature.main.di.HomeTabFeatureComponent
 import akio.apps.myrun.feature.profile.ui.UserProfileScreen
 import akio.apps.myrun.feature.userfollow.ui.UserFollowScreen
 import akio.apps.myrun.feature.userprefs.ui.UserPreferencesScreen
@@ -18,7 +17,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.SavedStateHandle
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -50,7 +48,6 @@ fun MainNavHost(
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     openRoutePlanningAction: () -> Unit,
-    homeTabFeatureComponentProvider: (SavedStateHandle) -> HomeTabFeatureComponent,
 ) {
     val navController = rememberAnimatedNavController()
     AnimatedNavHost(
@@ -61,13 +58,12 @@ fun MainNavHost(
         popEnterTransition = { AppNavTransitionDefaults.popEnterTransition },
         popExitTransition = { AppNavTransitionDefaults.popExitTransition }
     ) {
-        composable(HomeNavDestination.Home.route) { navEntry ->
-            HomeTabScreenPresentation(
+        composable(HomeNavDestination.Home.route) {
+            HomeTabComposable(
                 navController,
                 onClickFloatingActionButton,
                 onClickExportActivityFile,
-                openRoutePlanningAction,
-                homeTabFeatureComponentProvider(navEntry.savedStateHandle)
+                openRoutePlanningAction
             )
         }
 

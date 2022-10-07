@@ -9,7 +9,10 @@ import akio.apps.myrun.feature.core.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.feed.ui.ActivityFeedScreen
+import akio.apps.myrun.feature.main.HomeTabViewModel
+import akio.apps.myrun.feature.main.di.DaggerHomeTabFeatureComponent
 import akio.apps.myrun.feature.userstats.ui.CurrentUserStatsComposable
+import android.app.Application
 import androidx.annotation.StringRes
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -51,6 +54,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -106,28 +110,22 @@ private enum class HomeNavItemInfo(
 private const val REVEAL_ANIM_THRESHOLD = 10
 
 @Composable
-fun HomeTabScreen(
-    appNavController: NavController,
-    onClickFloatingActionButton: () -> Unit,
-    onClickExportActivityFile: (BaseActivityModel) -> Unit,
-    openRoutePlanningAction: () -> Unit,
-) = AppTheme {
-    HomeTabScreenInternal(
-        appNavController,
-        onClickFloatingActionButton,
-        onClickExportActivityFile,
-        openRoutePlanningAction
-    )
+private fun rememberViewModel(): HomeTabViewModel {
+    val application = LocalContext.current.applicationContext as Application
+    return remember {
+        DaggerHomeTabFeatureComponent.factory().create(application).homeTabViewModel()
+    }
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun HomeTabScreenInternal(
+fun HomeTabComposable(
     appNavController: NavController,
     onClickFloatingActionButton: () -> Unit,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     openRoutePlanningAction: () -> Unit,
-) {
+    viewModel: HomeTabViewModel = rememberViewModel(),
+) = AppTheme {
     val homeNavController = rememberAnimatedNavController()
     val currentTabEntry by homeNavController.currentBackStackEntryAsState()
     // FAB is inactive when user selects a tab other than Feed
@@ -166,7 +164,12 @@ private fun HomeTabScreenInternal(
             openRoutePlanningAction
         )
 
-        HomeFabBox(fabBoxHeightDp, fabOffsetYAnimatable, onClickFloatingActionButton)
+        HomeFabBox(
+            viewModel.isTrackingStarted(),
+            fabBoxHeightDp,
+            fabOffsetYAnimatable,
+            onClickFloatingActionButton
+        )
 
         Column(modifier = Modifier.align(Alignment.BottomCenter)) {
             HomeBottomNavBar(homeNavController, currentTabEntry)
@@ -177,6 +180,7 @@ private fun HomeTabScreenInternal(
 
 @Composable
 private fun BoxScope.HomeFabBox(
+    isTrackingStarted: Boolean,
     fabBoxHeightDp: Dp,
     fabOffsetY: Animatable<Float, AnimationVector1D>,
     onClickFloatingActionButton: () -> Unit,
@@ -187,7 +191,7 @@ private fun BoxScope.HomeFabBox(
             .align(Alignment.BottomCenter)
             .offset { IntOffset(x = 0, y = fabOffsetY.value.roundToInt()) }
     ) {
-        HomeFloatingActionButton(onClickFloatingActionButton, isTrackingStarted())
+        HomeFloatingActionButton(onClickFloatingActionButton, isTrackingStarted)
     }
 }
 

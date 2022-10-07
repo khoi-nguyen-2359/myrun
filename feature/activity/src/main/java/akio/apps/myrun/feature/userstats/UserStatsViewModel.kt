@@ -16,10 +16,10 @@ import akio.apps.myrun.feature.core.BaseViewModel
 import akio.apps.myrun.feature.userstats.ui.UserStatsArguments
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapNotNull
-import javax.inject.Inject
 
 class UserStatsViewModel @Inject constructor(
     private val arguments: UserStatsArguments,
@@ -50,7 +50,7 @@ class UserStatsViewModel @Inject constructor(
 
     @Composable
     fun getTrainingSummaryData():
-            Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData> =
+        Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData> =
         rememberFlow(
             remember {
                 getTrainingSummaryDataUsecase.getUserTrainingSummaryDataFlow(userId)
