@@ -8,7 +8,7 @@ import akio.apps.myrun.feature.core.ui.AppDimensions.AppBarHeight
 import akio.apps.myrun.feature.core.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
-import akio.apps.myrun.feature.feed.ui.ActivityFeedScreen
+import akio.apps.myrun.feature.feed.ui.ActivityFeedComposable
 import akio.apps.myrun.feature.main.HomeTabViewModel
 import akio.apps.myrun.feature.main.di.DaggerHomeTabFeatureComponent
 import akio.apps.myrun.feature.userstats.ui.CurrentUserStatsComposable
@@ -108,8 +108,8 @@ fun HomeTabComposable(
     openRoutePlanningAction: () -> Unit,
     viewModel: HomeTabViewModel = rememberViewModel(),
 ) {
-    val navState = rememberNavigationState()
-    val fabState = rememberFabState(navState.currentTabNavEntry)
+    val navigator = rememberNavigator()
+    val fabState = rememberFabState(navigator.currentTabNavEntry)
     AppTheme {
         // toggle FAB when switching between tabs
         LaunchedEffect(fabState.isFabActive) {
@@ -121,9 +121,9 @@ fun HomeTabComposable(
                 .nestedScroll(fabState.fabAnimationScrollConnection)
         ) {
             HomeTabNavHost(
-                navState.homeNavHostController,
+                navigator.homeNavHostController,
                 onClickExportActivityFile,
-                PaddingValues(bottom = fabState.fabBoxHeightDp),
+                fabState.fabBoxHeightDp,
                 appNavController,
                 openRoutePlanningAction
             )
@@ -136,7 +136,7 @@ fun HomeTabComposable(
             )
 
             Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-                HomeBottomNavBar(navState)
+                HomeBottomNavBar(navigator)
                 NavigationBarSpacer()
             }
         }
@@ -174,13 +174,13 @@ private fun rememberFabState(currentTabEntry: NavBackStackEntry?): HomeTabFabSta
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun rememberNavigationState(
+private fun rememberNavigator(
     homeNavHostController: NavHostController = rememberAnimatedNavController(),
-): HomeTabNavigationState {
+): HomeTabNavigator {
     val currentTabNavEntry: NavBackStackEntry?
-        by homeNavHostController.currentBackStackEntryAsState()
+            by homeNavHostController.currentBackStackEntryAsState()
     return remember(homeNavHostController, currentTabNavEntry) {
-        HomeTabNavigationState(homeNavHostController, currentTabNavEntry)
+        HomeTabNavigator(homeNavHostController, currentTabNavEntry)
     }
 }
 
@@ -202,13 +202,13 @@ private fun BoxScope.HomeFabBox(
 }
 
 @Composable
-private fun HomeBottomNavBar(navState: HomeTabNavigationState) {
+private fun HomeBottomNavBar(navigator: HomeTabNavigator) {
     BottomNavigation {
         HomeNavItemInfo.values().forEach { itemInfo ->
-            val isSelected = navState.isSelectedDestination(itemInfo)
+            val isSelected = navigator.isSelectedDestination(itemInfo)
             BottomNavigationItem(
                 selected = isSelected,
-                onClick = { navState.navigateHomeDestination(itemInfo) },
+                onClick = { navigator.navigateHomeDestination(itemInfo) },
                 icon = { Icon(itemInfo.icon, "Home tab icon") },
                 label = { Text(text = stringResource(id = itemInfo.label)) }
             )
@@ -240,7 +240,7 @@ private fun HomeFloatingActionButton(
 private fun HomeTabNavHost(
     homeNavController: NavHostController,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
-    contentPaddings: PaddingValues,
+    contentPaddingBottom: Dp,
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
 ) {
@@ -254,11 +254,11 @@ private fun HomeTabNavHost(
         popExitTransition = { HomeTabNavTransitionDefaults.popExitTransition }
     ) {
         composable(HomeNavItemInfo.ActivityFeed.route) { navEntry ->
-            ActivityFeedScreen(
+            ActivityFeedComposable(
                 appNavController,
                 homeNavController,
                 navEntry,
-                contentPaddings,
+                contentPaddingBottom,
                 onClickExportActivityFile
             )
         }
@@ -266,7 +266,7 @@ private fun HomeTabNavHost(
         composable(HomeNavItemInfo.UserStats.route) {
             CurrentUserStatsComposable(
                 appNavController,
-                contentPaddings,
+                contentPaddingBottom,
                 openRoutePlanningAction
             )
         }

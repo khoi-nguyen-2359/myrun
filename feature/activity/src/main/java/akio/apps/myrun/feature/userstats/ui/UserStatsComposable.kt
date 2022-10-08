@@ -10,7 +10,6 @@ import akio.apps.myrun.feature.activity.BuildConfig
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.launchcatching.launchCatching
 import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
-import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppBarIconButton
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
@@ -53,12 +52,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -76,14 +72,8 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 
-data class UserStatsArguments(val userId: String?)
-
-class UserStatsScreenState(val scrollState: ScrollState) {
-    var errorMessage: String? by mutableStateOf(null)
-}
-
 @Composable
-private fun rememberViewModel(arguments: UserStatsArguments): UserStatsViewModel {
+private fun rememberViewModel(arguments: UserStatsViewModel.UserStatsArguments): UserStatsViewModel {
     val application = LocalContext.current.applicationContext as Application
     return remember(arguments) {
         DaggerUserStatsFeatureComponent.factory().create(application, arguments)
@@ -92,44 +82,50 @@ private fun rememberViewModel(arguments: UserStatsArguments): UserStatsViewModel
 }
 
 @Composable
-private fun rememberScreenState(
+private fun rememberUiState(
+    contentPaddingBottom: Dp,
     scrollState: ScrollState = rememberScrollState(),
-) = remember(scrollState) { UserStatsScreenState(scrollState) }
+) = rememberSaveable(contentPaddingBottom, scrollState, saver = UserStatsUiState.Saver) {
+    UserStatsUiState(contentPaddingBottom, scrollState)
+}
 
-private fun NavController.navigateProfileScreen(userId: String) {
-    navigate(HomeNavDestination.Profile.routeWithUserId(userId))
+@Composable
+private fun rememberNavigator(
+    navController: NavController
+): UserStatsNavigator = remember(navController) {
+    UserStatsNavigator(navController)
 }
 
 @Composable
 fun UserStatsComposable(
-    arguments: UserStatsArguments,
-    contentPadding: PaddingValues,
+    arguments: UserStatsViewModel.UserStatsArguments,
+    contentPaddingBottom: Dp,
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
     viewModel: UserStatsViewModel = rememberViewModel(arguments),
 ) {
-    val screenState: UserStatsScreenState = rememberScreenState()
+    val uiState: UserStatsUiState = rememberUiState(contentPaddingBottom)
+    val navigator: UserStatsNavigator = rememberNavigator(appNavController)
     AppTheme {
         Column {
             StatusBarSpacer()
             UserStatsTopBar(
                 viewModel.isCurrentUser,
-                appNavController,
+                navigator,
                 openRoutePlanningAction
             )
             UserStatsContent(
                 viewModel,
-                screenState,
+                uiState,
+                navigator,
                 modifier = Modifier.weight(1f),
-                appNavController,
-                appNavController::navigateProfileScreen
             )
-            Spacer(modifier = Modifier.height(contentPadding.calculateBottomPadding()))
+            Spacer(modifier = Modifier.height(uiState.contentPaddingBottom))
         }
 
-        if (screenState.errorMessage != null) {
-            ErrorDialog(text = screenState.errorMessage ?: "") {
-                screenState.errorMessage = null
+        if (uiState.errorMessage != null) {
+            ErrorDialog(text = uiState.errorMessage ?: "") {
+                uiState.errorMessage = null
             }
         }
     }
@@ -138,52 +134,43 @@ fun UserStatsComposable(
 @Composable
 private fun UserStatsContent(
     viewModel: UserStatsViewModel,
-    screenState: UserStatsScreenState,
+    uiState: UserStatsUiState,
+    navigator: UserStatsNavigator,
     modifier: Modifier = Modifier,
-    navController: NavController,
-    onClickEdit: (String) -> Unit,
 ) {
     val userId = viewModel.userId
-    val onClickUserFollowStats = remember {
-        createUserFollowClickAction(viewModel.isCurrentUser, userId, navController)
-    }
-    Column(modifier = modifier.verticalScroll(screenState.scrollState)) {
+    Column(modifier = modifier.verticalScroll(uiState.scrollState)) {
         ColumnSpacer(height = AppDimensions.screenVerticalSpacing)
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing)
         UserProfileHeader(
             viewModel,
-            screenState,
+            uiState,
             viewModel.getUserProfile(),
             viewModel.getUserRecentPlaceName(),
-            onClickEdit
+            navigator::navigateProfileScreen
         )
-        FollowCounterStats(viewModel.getUserFollowCounter(), onClickUserFollowStats)
+        FollowCounterStats(
+            viewModel.userId,
+            viewModel.isCurrentUser,
+            viewModel.getUserFollowCounter(),
+            navigator
+        )
         Divider(thickness = 4.dp)
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing * 2)
         TrainingSummaryTable(
+            uiState,
             viewModel.getTrainingSummaryData(),
             viewModel.getMeasureSystem()
         )
     }
 }
 
-private fun createUserFollowClickAction(
-    isCurrentUser: Boolean,
-    userId: String,
-    navController: NavController,
-): (() -> Unit)? = if (isCurrentUser) {
-    {
-        val userFollowRoute = HomeNavDestination.UserFollow.routeWithUserId(userId)
-        navController.navigate(userFollowRoute)
-    }
-} else {
-    null
-}
-
 @Composable
 private fun FollowCounterStats(
+    userId: String,
+    isCurrentUser: Boolean,
     userFollowCounter: UserFollowCounter,
-    onClick: (() -> Unit)? = null,
+    navigator: UserStatsNavigator,
 ) = Row(
     modifier = Modifier
         .padding(
@@ -192,7 +179,9 @@ private fun FollowCounterStats(
             top = 20.dp,
             bottom = 14.dp
         )
-        .clickable(enabled = onClick != null) { onClick?.invoke() }
+        .clickable(enabled = isCurrentUser) {
+            navigator.navigateUserFollowTab(userId)
+        }
 ) {
     arrayOf(
         R.string.user_stats_following_label to userFollowCounter.followingCount,
@@ -212,11 +201,11 @@ private fun FollowCounterStats(
 
 @Composable
 private fun TrainingSummaryTable(
+    uiState: UserStatsUiState,
     trainingSummaryData: Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>,
     measureSystem: MeasureSystem,
 ) {
-    var selectedActivityType by rememberSaveable { mutableStateOf(ActivityType.Running) }
-    val summaryData = trainingSummaryData[selectedActivityType]
+    val summaryData = trainingSummaryData[uiState.selectedActivityType]
         ?: return
     val (distanceFormatter, durationFormatter) =
         UnitFormatterSetFactory.createStatsUnitFormatterSet(measureSystem)
@@ -231,7 +220,7 @@ private fun TrainingSummaryTable(
 
     val context = LocalContext.current
     Column {
-        ActivityTypePane(selectedActivityType) { selectedActivityType = it }
+        ActivityTypePane(uiState.selectedActivityType) { uiState.selectedActivityType = it }
         ColumnSpacer(height = AppDimensions.rowVerticalPadding)
         Column(modifier = Modifier.padding(horizontal = AppDimensions.screenHorizontalPadding)) {
             TableRow {
@@ -409,7 +398,7 @@ private fun RowScope.TrainingSummaryProgress(
 @Composable
 private fun UserProfileHeader(
     viewModel: UserStatsViewModel,
-    screenState: UserStatsScreenState,
+    uiState: UserStatsUiState,
     userProfile: UserProfile,
     userRecentPlace: String?,
     onClickEdit: (String) -> Unit,
@@ -445,12 +434,12 @@ private fun UserProfileHeader(
             viewModel.userId,
             onClickEdit,
             {
-                scope.launchCatching({ screenState.errorMessage = it.message }) {
+                scope.launchCatching({ uiState.errorMessage = it.message }) {
                     viewModel.followUser(userProfile)
                 }
             },
             {
-                scope.launchCatching({ screenState.errorMessage = it.message }) {
+                scope.launchCatching({ uiState.errorMessage = it.message }) {
                     viewModel.unfollowUser()
                 }
             }
@@ -514,13 +503,13 @@ private fun UserStatsOutlinedButton(
 @Composable
 private fun UserStatsTopBar(
     isCurrentUser: Boolean,
-    navController: NavController,
+    navigator: UserStatsNavigator,
     openRoutePlanningAction: () -> Unit,
 ) = TopAppBar(
     title = { Text(text = stringResource(id = R.string.home_nav_user_stats_tab_label)) },
     actions = {
         if (isCurrentUser) {
-            TopBarActionButtons(openRoutePlanningAction, navController)
+            TopBarActionButtons(openRoutePlanningAction, navigator)
         }
     }
 )
@@ -528,7 +517,7 @@ private fun UserStatsTopBar(
 @Composable
 fun TopBarActionButtons(
     openRoutePlanningAction: () -> Unit,
-    navController: NavController,
+    navigator: UserStatsNavigator,
 ) {
     if (BuildConfig.DEBUG) {
         AppBarIconButton(
@@ -538,12 +527,8 @@ fun TopBarActionButtons(
     }
     AppBarIconButton(
         iconImageVector = Icons.Rounded.Settings,
-        onClick = navController::navigateUserPreferencesScreen
+        onClick = navigator::navigateUserPreferencesScreen
     )
-}
-
-private fun NavController.navigateUserPreferencesScreen() {
-    navigate(HomeNavDestination.UserPreferences.route)
 }
 
 @Composable
@@ -575,7 +560,7 @@ private fun UserProfileImage(
 // @Composable
 // private fun PreviewUserStats() {
 //    UserStatsScreen(
-//        screenState = UserStatsViewModel.ScreenState.StatsAvailable(
+//        uiState = UserStatsViewModel.ScreenState.StatsAvailable(
 //            UserProfile(name = "Super man", photo = "photo Url", accountId = "accountId"),
 //            GetUserStatsTypeUsecase.UserStatsType.FollowedUser,
 //            "Saigon, Vietnam",

@@ -1,8 +1,9 @@
 package akio.apps.myrun.feature.userstats.ui
 
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
-import androidx.compose.foundation.layout.PaddingValues
+import akio.apps.myrun.feature.userstats.UserStatsViewModel
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 
@@ -10,15 +11,14 @@ import androidx.navigation.NavController
 fun NormalUserStatsComposable(
     appNavController: NavController,
     navEntry: NavBackStackEntry,
-    contentPaddings: PaddingValues = PaddingValues(),
     openRoutePlanningAction: () -> Unit = { },
 ) {
     val userId =
         HomeNavDestination.NormalUserStats.userIdRequiredArg.parseValueInBackStackEntry(navEntry)
-    val arguments = UserStatsArguments(userId)
+    val arguments = UserStatsViewModel.UserStatsArguments(userId)
     UserStatsComposable(
         arguments,
-        contentPaddings,
+        contentPaddingBottom = 0.dp,
         appNavController,
         openRoutePlanningAction
     )

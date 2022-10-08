@@ -37,17 +37,14 @@ internal class HomeTabFabState(
 
     suspend fun toggleFabAnimation() {
         when {
-            isFabActive && fabOffsetY != 0f -> {
+            isFabActive && fabOffsetYAnimatable.value != 0f -> {
                 fabOffsetYAnimatable.animateTo(0f)
             }
-            !isFabActive && fabOffsetY != fabBoxHeightPx -> {
+            !isFabActive && fabOffsetYAnimatable.value != fabBoxHeightPx -> {
                 fabOffsetYAnimatable.animateTo(fabBoxHeightPx)
             }
         }
     }
-
-    private val fabOffsetY: Float
-        get() = fabOffsetYAnimatable.value
 
     companion object {
         private const val REVEAL_ANIM_THRESHOLD = 10

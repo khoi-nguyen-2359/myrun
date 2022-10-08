@@ -13,7 +13,6 @@ import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.domain.user.GetUserRecentPlaceNameUsecase
 import akio.apps.myrun.domain.user.GetUserStatsTypeUsecase
 import akio.apps.myrun.feature.core.BaseViewModel
-import akio.apps.myrun.feature.userstats.ui.UserStatsArguments
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import javax.inject.Inject
@@ -50,7 +49,7 @@ class UserStatsViewModel @Inject constructor(
 
     @Composable
     fun getTrainingSummaryData():
-        Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData> =
+            Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData> =
         rememberFlow(
             remember {
                 getTrainingSummaryDataUsecase.getUserTrainingSummaryDataFlow(userId)
@@ -94,4 +93,6 @@ class UserStatsViewModel @Inject constructor(
         )
 
     suspend fun unfollowUser() = userFollowRepository.unfollowUser(currentUserId, userId)
+
+    data class UserStatsArguments(val userId: String?)
 }

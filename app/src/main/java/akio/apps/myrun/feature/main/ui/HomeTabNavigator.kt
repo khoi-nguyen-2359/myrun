@@ -5,7 +5,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 
-internal class HomeTabNavigationState(
+internal class HomeTabNavigator(
     val homeNavHostController: NavHostController,
     val currentTabNavEntry: NavBackStackEntry?,
 ) {
