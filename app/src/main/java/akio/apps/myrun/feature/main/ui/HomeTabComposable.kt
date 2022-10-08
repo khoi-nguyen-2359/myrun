@@ -49,10 +49,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -62,16 +59,12 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlin.math.roundToInt
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 private object HomeTabNavTransitionDefaults {
     private val fadeInImmediately = fadeIn(
@@ -89,7 +82,7 @@ private object HomeTabNavTransitionDefaults {
     val popExitTransition: ExitTransition = fadeOutImmediately
 }
 
-private enum class HomeNavItemInfo(
+internal enum class HomeNavItemInfo(
     @StringRes
     val label: Int,
     val icon: ImageVector,
@@ -107,7 +100,48 @@ private enum class HomeNavItemInfo(
     ),
 }
 
-private const val REVEAL_ANIM_THRESHOLD = 10
+@Composable
+fun HomeTabComposable(
+    appNavController: NavController,
+    onClickFloatingActionButton: () -> Unit,
+    onClickExportActivityFile: (BaseActivityModel) -> Unit,
+    openRoutePlanningAction: () -> Unit,
+    viewModel: HomeTabViewModel = rememberViewModel(),
+) {
+    val navState = rememberNavigationState()
+    val fabState = rememberFabState(navState.currentTabNavEntry)
+    AppTheme {
+        // toggle FAB when switching between tabs
+        LaunchedEffect(fabState.isFabActive) {
+            fabState.toggleFabAnimation()
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(fabState.fabAnimationScrollConnection)
+        ) {
+            HomeTabNavHost(
+                navState.homeNavHostController,
+                onClickExportActivityFile,
+                PaddingValues(bottom = fabState.fabBoxHeightDp),
+                appNavController,
+                openRoutePlanningAction
+            )
+
+            HomeFabBox(
+                viewModel.isTrackingStarted(),
+                fabState.fabBoxHeightDp,
+                fabState.fabOffsetYAnimatable,
+                onClickFloatingActionButton
+            )
+
+            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+                HomeBottomNavBar(navState)
+                NavigationBarSpacer()
+            }
+        }
+    }
+}
 
 @Composable
 private fun rememberViewModel(): HomeTabViewModel {
@@ -117,64 +151,36 @@ private fun rememberViewModel(): HomeTabViewModel {
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun HomeTabComposable(
-    appNavController: NavController,
-    onClickFloatingActionButton: () -> Unit,
-    onClickExportActivityFile: (BaseActivityModel) -> Unit,
-    openRoutePlanningAction: () -> Unit,
-    viewModel: HomeTabViewModel = rememberViewModel(),
-) = AppTheme {
-    val homeNavController = rememberAnimatedNavController()
-    val currentTabEntry by homeNavController.currentBackStackEntryAsState()
-    // FAB is inactive when user selects a tab other than Feed
+private fun rememberFabState(currentTabEntry: NavBackStackEntry?): HomeTabFabState {
+    val systemBarBottomDp = WindowInsets.systemBars.getBottom(LocalDensity.current).px2dp.dp
+    val fabBoxHeightDp = FabSize * 4f / 3 + AppBarHeight + systemBarBottomDp
+    val fabBoxHeightPx = with(LocalDensity.current) { fabBoxHeightDp.roundToPx().toFloat() }
     val isFabActive by derivedStateOf {
         currentTabEntry?.destination?.route == HomeNavItemInfo.ActivityFeed.route
     }
-    val systemBarBottomDp = WindowInsets.systemBars.getBottom(LocalDensity.current).px2dp.dp
-    val fabBoxHeightDp = FabSize * 4f / 3 + AppBarHeight + systemBarBottomDp
-    val fabBoxSizePx = with(LocalDensity.current) { fabBoxHeightDp.roundToPx().toFloat() }
-    val fabOffsetYAnimatable = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
-    // insets may be updated, so remember scroll connection with keys
-    val fabAnimationScrollConnection = remember(fabBoxSizePx, isFabActive) {
-        createScrollConnectionForFabAnimation(
-            isFabActive,
-            fabBoxSizePx,
+    val fabOffsetYAnimatable = remember { Animatable(0f) }
+    return remember(fabBoxHeightDp, isFabActive) {
+        HomeTabFabState(
             coroutineScope,
-            fabOffsetYAnimatable
-        )
-    }
-
-    // toggle FAB when switching between tabs
-    LaunchedEffect(isFabActive) {
-        animateFabOffsetY(isFabActive, fabOffsetYAnimatable, fabBoxSizePx)
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(fabAnimationScrollConnection)
-    ) {
-        HomeNavHost(
-            homeNavController,
-            onClickExportActivityFile,
-            PaddingValues(bottom = fabBoxHeightDp),
-            appNavController,
-            openRoutePlanningAction
-        )
-
-        HomeFabBox(
-            viewModel.isTrackingStarted(),
-            fabBoxHeightDp,
             fabOffsetYAnimatable,
-            onClickFloatingActionButton
+            fabBoxHeightDp,
+            fabBoxHeightPx,
+            isFabActive
         )
+    }
+}
 
-        Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-            HomeBottomNavBar(homeNavController, currentTabEntry)
-            NavigationBarSpacer()
-        }
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun rememberNavigationState(
+    homeNavHostController: NavHostController = rememberAnimatedNavController(),
+): HomeTabNavigationState {
+    val currentTabNavEntry: NavBackStackEntry?
+        by homeNavHostController.currentBackStackEntryAsState()
+    return remember(homeNavHostController, currentTabNavEntry) {
+        HomeTabNavigationState(homeNavHostController, currentTabNavEntry)
     }
 }
 
@@ -182,60 +188,56 @@ fun HomeTabComposable(
 private fun BoxScope.HomeFabBox(
     isTrackingStarted: Boolean,
     fabBoxHeightDp: Dp,
-    fabOffsetY: Animatable<Float, AnimationVector1D>,
+    fabOffsetYAnimatable: Animatable<Float, AnimationVector1D>,
     onClickFloatingActionButton: () -> Unit,
 ) {
     Box(
         modifier = Modifier
             .height(fabBoxHeightDp)
             .align(Alignment.BottomCenter)
-            .offset { IntOffset(x = 0, y = fabOffsetY.value.roundToInt()) }
+            .offset { IntOffset(x = 0, y = fabOffsetYAnimatable.value.roundToInt()) }
     ) {
         HomeFloatingActionButton(onClickFloatingActionButton, isTrackingStarted)
     }
 }
 
-private fun createScrollConnectionForFabAnimation(
-    isFabActive: Boolean,
-    fabBoxSizePx: Float,
-    coroutineScope: CoroutineScope,
-    fabOffsetY: Animatable<Float, AnimationVector1D>,
-) = object : NestedScrollConnection {
-    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-        if (!isFabActive) {
-            return Offset.Zero
+@Composable
+private fun HomeBottomNavBar(navState: HomeTabNavigationState) {
+    BottomNavigation {
+        HomeNavItemInfo.values().forEach { itemInfo ->
+            val isSelected = navState.isSelectedDestination(itemInfo)
+            BottomNavigationItem(
+                selected = isSelected,
+                onClick = { navState.navigateHomeDestination(itemInfo) },
+                icon = { Icon(itemInfo.icon, "Home tab icon") },
+                label = { Text(text = stringResource(id = itemInfo.label)) }
+            )
         }
-        val delta = available.y
-        val targetFabOffsetY = when {
-            delta >= REVEAL_ANIM_THRESHOLD -> 0f // reveal (move up)
-            delta <= -REVEAL_ANIM_THRESHOLD -> fabBoxSizePx // go away (move down)
-            else -> return Offset.Zero
-        }
-        coroutineScope.launch {
-            fabOffsetY.animateTo(targetFabOffsetY)
-        }
-        return Offset.Zero
     }
 }
 
-private suspend fun animateFabOffsetY(
-    isFabActive: Boolean,
-    fabOffsetY: Animatable<Float, AnimationVector1D>,
-    fabBoxSizePx: Float,
+@Composable
+private fun HomeFloatingActionButton(
+    onClick: () -> Unit,
+    isTrackingStarted: Boolean,
+    modifier: Modifier = Modifier,
 ) {
-    when {
-        isFabActive && fabOffsetY.value != 0f -> {
-            fabOffsetY.animateTo(0f)
-        }
-        !isFabActive && fabOffsetY.value != fabBoxSizePx -> {
-            fabOffsetY.animateTo(fabBoxSizePx)
-        }
+    val fabIcon = if (isTrackingStarted) {
+        Icons.Rounded.DirectionsRun
+    } else {
+        Icons.Rounded.Add
+    }
+    FloatingActionButton(onClick = onClick, modifier = modifier) {
+        Icon(
+            imageVector = fabIcon,
+            contentDescription = "Floating action button on bottom bar"
+        )
     }
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun HomeNavHost(
+private fun HomeTabNavHost(
     homeNavController: NavHostController,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     contentPaddings: PaddingValues,
@@ -268,61 +270,5 @@ private fun HomeNavHost(
                 openRoutePlanningAction
             )
         }
-    }
-}
-
-@Composable
-private fun HomeBottomNavBar(
-    homeNavController: NavHostController,
-    currentTabEntry: NavBackStackEntry?,
-) {
-    BottomNavigation {
-        HomeNavItemInfo.values().forEach { itemInfo ->
-            val isSelected = currentTabEntry?.destination
-                ?.hierarchy
-                ?.any { it.route == itemInfo.route } == true
-            BottomNavigationItem(
-                selected = isSelected,
-                onClick = { navigateHomeDestination(homeNavController, itemInfo, currentTabEntry) },
-                icon = { Icon(itemInfo.icon, "Home tab icon") },
-                label = { Text(text = stringResource(id = itemInfo.label)) }
-            )
-        }
-    }
-}
-
-private fun navigateHomeDestination(
-    homeNavController: NavHostController,
-    itemInfo: HomeNavItemInfo,
-    currentTabEntry: NavBackStackEntry?,
-) {
-    val currentEntryDesId = currentTabEntry?.destination?.id
-        ?: homeNavController.graph.findStartDestination().id
-    homeNavController.navigate(itemInfo.route) {
-        popUpTo(currentEntryDesId) {
-            inclusive = true
-            saveState = true
-        }
-        launchSingleTop = true
-        restoreState = true
-    }
-}
-
-@Composable
-private fun HomeFloatingActionButton(
-    onClick: () -> Unit,
-    isTrackingStarted: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    val fabIcon = if (isTrackingStarted) {
-        Icons.Rounded.DirectionsRun
-    } else {
-        Icons.Rounded.Add
-    }
-    FloatingActionButton(onClick = onClick, modifier = modifier) {
-        Icon(
-            imageVector = fabIcon,
-            contentDescription = "Floating action button on bottom bar"
-        )
     }
 }
