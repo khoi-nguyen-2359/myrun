@@ -26,8 +26,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -40,11 +40,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ButtonColors
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -56,6 +53,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -138,7 +136,6 @@ private fun UserStatsContent(
     navigator: UserStatsNavigator,
     modifier: Modifier = Modifier,
 ) {
-    val userId = viewModel.userId
     Column(modifier = modifier.verticalScroll(uiState.scrollState)) {
         ColumnSpacer(height = AppDimensions.screenVerticalSpacing)
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing)
@@ -307,8 +304,9 @@ private fun ActivityTypePane(
                 text = stringResource(id = activityTypeLabel),
                 onClick = { selectActivityTypeAction(type) },
                 modifier = Modifier.padding(end = 12.dp),
-                colors = ButtonDefaults.outlinedButtonColors(backgroundColor, contentColor),
-                width = 65.dp
+                width = 65.dp,
+                contentColor = contentColor,
+                backgroundColor = backgroundColor
             )
         }
     }
@@ -480,23 +478,28 @@ private fun UserStatsActionButton(
 private fun UserStatsOutlinedButton(
     text: String,
     modifier: Modifier = Modifier,
-    colors: ButtonColors = ButtonDefaults.outlinedButtonColors(),
+    contentColor: Color = AppColors.primary,
+    backgroundColor: Color = Color.White,
     width: Dp = 50.dp,
     onClick: () -> Unit,
 ) {
-    OutlinedButton(
+    Surface(
         shape = RoundedCornerShape(3.dp),
-        onClick = { onClick() },
         border = BorderStroke(1.dp, AppColors.primary),
-        colors = colors,
-        modifier = modifier.size(width = width, height = 30.dp),
-        contentPadding = PaddingValues(4.dp)
+        modifier = modifier
+            .clickable(onClick = onClick)
+            .size(width = width, height = 30.dp),
+        color = backgroundColor
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.caption,
-            fontWeight = FontWeight.Bold
-        )
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Center) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.caption,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                color = contentColor,
+            )
+        }
     }
 }
 
