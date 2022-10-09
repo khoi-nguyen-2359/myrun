@@ -136,9 +136,12 @@ internal class ActivityFeedViewModel @Inject constructor(
                         userFollowActionStateMap[dataModel.uid] ?: false
                     )
                 }
-                listOf(FeedActivity(it), FeedUserFollowSuggestionList(feedModels))
+                listOf(
+                    FeedActivity(it, it.athleteInfo.userId == userId),
+                    FeedUserFollowSuggestionList(feedModels)
+                )
             } else {
-                listOf(FeedActivity(it))
+                listOf(FeedActivity(it, it.athleteInfo.userId == userId))
             }
         }
     }

@@ -12,10 +12,9 @@ import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.measurement.TrackUnitFormatter
 import akio.apps.myrun.feature.core.measurement.TrackUnitFormatterSet
 import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
-import akio.apps.myrun.feature.core.navigation.HomeNavDestination
-import akio.apps.myrun.feature.core.navigation.HomeTabNavDestination
 import akio.apps.myrun.feature.core.ui.UserAvatarImage
 import akio.apps.myrun.feature.feed.ActivityFeedViewModel
+import akio.apps.myrun.feature.feed.model.FeedActivity
 import android.content.Context
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
@@ -24,8 +23,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -42,11 +39,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,73 +49,45 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 
 @Composable
 internal fun FeedActivityItem(
     feedViewModel: ActivityFeedViewModel,
-    activity: BaseActivityModel,
+    feedItem: FeedActivity,
     userProfile: UserProfile?,
     preferredUnitSystem: MeasureSystem,
-    appNavController: NavController,
-    homeTabNavController: NavController,
+    navigator: FeedNavigator,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
+    val activity = feedItem.activityData
     val activityDisplayPlaceName = remember {
         feedViewModel.getActivityDisplayPlaceName(activity)
     }
     val activityFormattedStartTime = remember {
         feedViewModel.getFormattedStartTime(activity)
     }
-    val navigateUserStatsScreenAction = remember {
-        createNavigateUserStatsScreenAction(
-            feedViewModel,
-            activity,
-            appNavController,
-            homeTabNavController
-        )
-    }
+    val uiState = rememberUiState()
     FeedActivityItem(
-        activity,
+        uiState,
+        feedItem.activityData,
         activityFormattedStartTime,
         activityDisplayPlaceName,
         userProfile,
         preferredUnitSystem,
-        { activityModel ->
-            val route = HomeNavDestination.ActivityDetail.routeWithActivityId(activityModel.id)
-            appNavController.navigate(route)
-        },
+        { navigator.navigateActivityDetail(activity.id) },
         { onClickExportActivityFile(activity) },
-        navigateUserStatsScreenAction
+        { navigator.navigateUserStats(feedItem.isCurrentUser, activity.athleteInfo.userId) }
     )
 }
 
-private fun createNavigateUserStatsScreenAction(
-    activityFeedViewModel: ActivityFeedViewModel,
-    activity: BaseActivityModel,
-    appNavController: NavController,
-    homeTabNavController: NavController,
-): () -> Unit {
-    val isCurrentUser = activityFeedViewModel.isCurrentUser(activity.athleteInfo.userId)
-    val navController: NavController
-    val route: String
-    if (isCurrentUser) {
-        navController = homeTabNavController
-        route = HomeTabNavDestination.Stats.route
-    } else {
-        navController = appNavController
-        route = HomeNavDestination.NormalUserStats.routeWithUserId(
-            activity.athleteInfo.userId
-        )
-    }
-    return { navController.navigate(route) }
-}
+@Composable
+private fun rememberUiState() =
+    rememberSaveable(saver = FeedActivityItemUiState.Saver) { FeedActivityItemUiState() }
 
 @Composable
 private fun FeedActivityItem(
+    uiState: FeedActivityItemUiState,
     activity: BaseActivityModel,
     activityFormattedStartTime: ActivityDateTimeFormatter.Result,
     activityDisplayPlaceName: String,
@@ -134,16 +100,16 @@ private fun FeedActivityItem(
     Column(modifier = Modifier.clickable { onClickActivityAction(activity) }) {
         Spacer(modifier = Modifier.height(ActivityFeedDimensions.feedItemVerticalPadding))
         ActivityInformationView(
+            uiState,
             activity,
             activityFormattedStartTime,
             activityDisplayPlaceName,
             userProfile,
             onClickExportFile,
-            onClickUserAvatar,
-            isShareMenuVisible = true
+            onClickUserAvatar
         )
         Spacer(modifier = Modifier.height(8.dp))
-        ActivityRouteImageBox(activity, preferredSystem)
+        ActivityRouteImageBox(activity, preferredSystem, uiState)
     }
 }
 
@@ -151,11 +117,13 @@ private fun FeedActivityItem(
 private fun ActivityRouteImageBox(
     activity: BaseActivityModel,
     preferredSystem: MeasureSystem,
+    uiState: FeedActivityItemUiState,
 ) = Box(contentAlignment = Alignment.TopStart) {
     ActivityRouteImage(activity)
     ActivityPerformanceRow(
         activity,
         preferredSystem,
+        uiState,
         modifier = Modifier.padding(
             horizontal = ActivityFeedDimensions.activityItemHorizontalPadding,
             vertical = ActivityFeedDimensions.feedItemVerticalPadding
@@ -185,17 +153,17 @@ private const val PERFORMANCE_VALUE_DELIM = " - "
 private fun ActivityPerformanceRow(
     activity: BaseActivityModel,
     measureSystem: MeasureSystem,
+    uiState: FeedActivityItemUiState,
     modifier: Modifier = Modifier,
 ) {
-    var isExpanded by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
-    val performanceValue = remember(isExpanded, measureSystem) {
-        makePerformanceDisplayText(measureSystem, activity, context, isExpanded)
+    val performanceValue = remember(uiState.isDetailExpanded, measureSystem) {
+        makePerformanceDisplayText(measureSystem, activity, context, uiState.isDetailExpanded)
     }
 
     OutlinedButton(
         shape = RoundedCornerShape(3.dp),
-        onClick = { isExpanded = !isExpanded },
+        onClick = { uiState.isDetailExpanded = !uiState.isDetailExpanded },
         border = null,
         colors = ButtonDefaults.outlinedButtonColors(
             backgroundColor = Color(0xff494949),
@@ -242,46 +210,36 @@ private fun makePerformanceDisplayText(
         .removeSuffix(PERFORMANCE_VALUE_DELIM)
 }
 
-internal fun PaddingValues.clone(
-    start: Dp = calculateStartPadding(LayoutDirection.Ltr),
-    top: Dp = calculateTopPadding(),
-    end: Dp = calculateEndPadding(LayoutDirection.Ltr),
-    bottom: Dp = calculateBottomPadding(),
-): PaddingValues = PaddingValues(start, top, end, bottom)
-
 @Composable
 private fun ActivityInformationView(
+    uiState: FeedActivityItemUiState,
     activity: BaseActivityModel,
     activityFormattedStartTime: ActivityDateTimeFormatter.Result,
     activityDisplayPlaceName: String?,
     userProfile: UserProfile?,
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
-    isShareMenuVisible: Boolean = true,
-) =
-    Column(
-        modifier = Modifier.padding(start = ActivityFeedDimensions.activityItemHorizontalPadding)
-    ) {
-        val (userName, userAvatar) = if (userProfile?.accountId == activity.athleteInfo.userId) {
-            userProfile.name to userProfile.photo
-        } else {
-            activity.athleteInfo.userName to activity.athleteInfo.userAvatar
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            UserAvatarImage(userAvatar, onClickUserAvatar = onClickUserAvatar)
-            Spacer(modifier = Modifier.size(12.dp))
-            Column(modifier = Modifier.weight(1.0f)) {
-                AthleteNameText(userName.orEmpty())
-                Spacer(modifier = Modifier.height(2.dp))
-                ActivityTimeAndPlaceText(activityFormattedStartTime, activityDisplayPlaceName)
-            }
-            if (isShareMenuVisible) {
-                ActivityShareMenu(onClickExportFile)
-            }
-        }
-        Spacer(modifier = Modifier.size(12.dp))
-        ActivityNameText(activity)
+) = Column(
+    modifier = Modifier.padding(start = ActivityFeedDimensions.activityItemHorizontalPadding)
+) {
+    val (userName, userAvatar) = if (userProfile?.accountId == activity.athleteInfo.userId) {
+        userProfile.name to userProfile.photo
+    } else {
+        activity.athleteInfo.userName to activity.athleteInfo.userAvatar
     }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        UserAvatarImage(userAvatar, onClickUserAvatar = onClickUserAvatar)
+        Spacer(modifier = Modifier.size(12.dp))
+        Column(modifier = Modifier.weight(1.0f)) {
+            AthleteNameText(userName.orEmpty())
+            Spacer(modifier = Modifier.height(2.dp))
+            ActivityTimeAndPlaceText(activityFormattedStartTime, activityDisplayPlaceName)
+        }
+        ActivityShareMenu(uiState, onClickExportFile)
+    }
+    Spacer(modifier = Modifier.size(12.dp))
+    ActivityNameText(activity)
+}
 
 @Composable
 private fun AthleteNameText(userProfileName: String) = Text(
@@ -305,13 +263,13 @@ private fun ActivityNameText(
 
 @Composable
 private fun ActivityShareMenu(
+    uiState: FeedActivityItemUiState,
     onClickExportFile: () -> Unit,
 ) = Box(
     modifier = Modifier.padding(horizontal = 6.dp)
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
     IconButton(
-        onClick = { isExpanded = !isExpanded }
+        onClick = { uiState.isShareMenuExpanded = !uiState.isShareMenuExpanded }
     ) {
         Icon(
             imageVector = Icons.Outlined.Share,
@@ -319,13 +277,13 @@ private fun ActivityShareMenu(
         )
     }
     DropdownMenu(
-        expanded = isExpanded,
-        onDismissRequest = { isExpanded = false }
+        expanded = uiState.isShareMenuExpanded,
+        onDismissRequest = { uiState.isShareMenuExpanded = false }
     ) {
         DropdownMenuItem(
             onClick = {
                 onClickExportFile()
-                isExpanded = false
+                uiState.isShareMenuExpanded = false
             }
         ) {
             Text(text = stringResource(id = R.string.activity_share_menu_item_export_file))
@@ -372,6 +330,7 @@ private fun ActivityTimeAndPlaceText(
 @Composable
 private fun PreviewFeedActivityItem() {
     FeedActivityItem(
+        rememberUiState(),
         activity = RunningActivityModel(
             activityData = ActivityDataModel(
                 id = "id",

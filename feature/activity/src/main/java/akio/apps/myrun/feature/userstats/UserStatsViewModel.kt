@@ -49,7 +49,7 @@ class UserStatsViewModel @Inject constructor(
 
     @Composable
     fun getTrainingSummaryData():
-            Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData> =
+        Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData> =
         rememberFlow(
             remember {
                 getTrainingSummaryDataUsecase.getUserTrainingSummaryDataFlow(userId)

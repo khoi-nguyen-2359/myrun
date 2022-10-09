@@ -5,7 +5,6 @@ import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.ktx.px2dp
 import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
-import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
 import akio.apps.myrun.feature.core.ui.ErrorDialog
@@ -18,11 +17,9 @@ import akio.apps.myrun.feature.feed.ui.ActivityFeedColors.listBackground
 import akio.apps.myrun.feature.feed.ui.ActivityFeedDimensions.activityItemVerticalMargin
 import android.app.Application
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -33,7 +30,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Surface
@@ -45,10 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -70,9 +63,6 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import kotlin.math.roundToInt
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import timber.log.Timber
 
 private object ActivityFeedColors {
     val listBackground: Color = Color.White
@@ -85,82 +75,92 @@ internal object ActivityFeedDimensions {
     val feedItemHorizontalPadding: Dp = 12.dp
 }
 
-private const val REVEAL_ANIM_THRESHOLD = 10
-
 @Composable
-fun ActivityFeedScreen(
+fun ActivityFeedComposable(
     appNavController: NavController,
     homeTabNavController: NavController,
-    backStackEntry: NavBackStackEntry,
-    contentPadding: PaddingValues,
+    navEntry: NavBackStackEntry,
+    contentPaddingBottom: Dp,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
     val application = LocalContext.current.applicationContext as Application
-    val activityFeedViewModel = backStackEntry.rememberViewModelProvider { savedState ->
+    val activityFeedViewModel = navEntry.rememberViewModelProvider { savedState ->
         DaggerActivityFeedFeatureComponent.factory().create(application, savedState).feedViewModel()
     }
-    ActivityFeedScreen(
+    val uiState = rememberUiState(contentPaddingBottom)
+    val navigator = rememberNavigator(appNavController, homeTabNavController)
+    ActivityFeedComposableInternal(
         activityFeedViewModel,
-        contentPadding,
-        onClickExportActivityFile,
-        appNavController,
-        homeTabNavController
+        uiState,
+        navigator,
+        onClickExportActivityFile
     )
 }
 
 @Composable
-private fun ActivityFeedScreen(
-    activityFeedViewModel: ActivityFeedViewModel,
-    contentPadding: PaddingValues,
-    onClickExportActivityFile: (BaseActivityModel) -> Unit,
-    appNavController: NavController,
-    homeTabNavController: NavController,
-) {
-    Timber.d("Compose ActivityFeedScreen")
+private fun rememberUiState(contentPaddingBottom: Dp): FeedUiState {
     val coroutineScope = rememberCoroutineScope()
     val systemBarsTopDp = WindowInsets.systemBars.getTop(LocalDensity.current).px2dp.dp
     val topBarHeightDp = AppDimensions.AppBarHeight + systemBarsTopDp
-    val topBarOffsetY = remember { Animatable(0f) }
+    val topBarOffsetYAnimatable = remember { Animatable(0f) }
     val topBarHeightPx = with(LocalDensity.current) { topBarHeightDp.roundToPx().toFloat() }
-
-    // insets may be updated => top bar height changes, so remember scroll connection with keys
-    val nestedScrollConnection = remember(topBarHeightPx) {
-        createTopBarAnimScrollConnection(topBarHeightPx, coroutineScope, topBarOffsetY)
+    val feedListState = rememberLazyListState()
+    return remember(topBarHeightDp) {
+        FeedUiState(
+            contentPaddingBottom,
+            coroutineScope,
+            topBarHeightDp,
+            topBarHeightPx,
+            topBarOffsetYAnimatable,
+            feedListState
+        )
     }
+}
 
+@Composable
+private fun rememberNavigator(
+    appNavController: NavController,
+    homeTabNavController: NavController,
+): FeedNavigator = remember(appNavController, homeTabNavController) {
+    FeedNavigator(appNavController, homeTabNavController)
+}
+
+@Composable
+private fun ActivityFeedComposableInternal(
+    activityFeedViewModel: ActivityFeedViewModel,
+    uiState: FeedUiState,
+    navigator: FeedNavigator,
+    onClickExportActivityFile: (BaseActivityModel) -> Unit,
+) {
     val activityUploadBadge by activityFeedViewModel.activityUploadBadge.collectAsState(
         initial = ActivityFeedViewModel.ActivityUploadBadgeStatus.Hidden
     )
 
-    val feedListState = rememberLazyListState()
-
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .nestedScroll(nestedScrollConnection)
+            .nestedScroll(uiState.nestedScrollConnection)
     ) {
         ActivityFeedContainer(
-            activityFeedViewModel = activityFeedViewModel,
-            contentPadding = contentPadding.clone(
-                top = contentPadding.calculateTopPadding() + topBarHeightDp
-            ),
-            feedListState = feedListState,
-            onClickExportActivityFile = onClickExportActivityFile,
-            appNavController,
-            homeTabNavController
+            activityFeedViewModel,
+            uiState,
+            navigator,
+            onClickExportActivityFile
         )
 
         ActivityFeedTopBar(
             activityUploadBadge,
             Modifier
-                .height(topBarHeightDp)
+                .height(uiState.topBarHeightDp)
                 .align(Alignment.TopCenter)
-                .offset { IntOffset(x = 0, y = topBarOffsetY.value.roundToInt()) }
+                .offset { IntOffset(x = 0, y = uiState.topBarOffsetYAnimatable.value.roundToInt()) }
                 .background(AppColors.primary),
-            { onClickUploadCompleteBadge(coroutineScope, feedListState, activityFeedViewModel) }
-        ) {
-            appNavController.navigate(HomeNavDestination.UserPreferences.route)
-        }
+            onClickUploadCompleteBadge = {
+                uiState.animateScrollToFeedItem(pos = 0)
+                activityFeedViewModel.setUploadBadgeDismissed(true)
+            },
+            onClickUserPreferencesButton = navigator::navigateUserPreferences
+        )
     }
 
     val screenError by activityFeedViewModel.launchCatchingError.collectAsState(initial = null)
@@ -171,45 +171,13 @@ private fun ActivityFeedScreen(
     }
 }
 
-private fun onClickUploadCompleteBadge(
-    coroutineScope: CoroutineScope,
-    feedListState: LazyListState,
-    activityFeedViewModel: ActivityFeedViewModel,
-) {
-    coroutineScope.launch { feedListState.animateScrollToItem(0) }
-    activityFeedViewModel.setUploadBadgeDismissed(true)
-}
-
-private fun createTopBarAnimScrollConnection(
-    topBarHeightPx: Float,
-    coroutineScope: CoroutineScope,
-    topBarOffsetY: Animatable<Float, AnimationVector1D>,
-) = object : NestedScrollConnection {
-    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-        val delta = available.y
-        val targetOffset = when {
-            delta >= REVEAL_ANIM_THRESHOLD -> 0f
-            delta <= -REVEAL_ANIM_THRESHOLD -> -topBarHeightPx
-            else -> return Offset.Zero
-        }
-        coroutineScope.launch {
-            topBarOffsetY.animateTo(targetOffset)
-        }
-
-        return Offset.Zero
-    }
-}
-
 @Composable
 private fun ActivityFeedContainer(
     activityFeedViewModel: ActivityFeedViewModel,
-    contentPadding: PaddingValues,
-    feedListState: LazyListState,
+    uiState: FeedUiState,
+    navigator: FeedNavigator,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
-    appNavController: NavController,
-    homeTabNavController: NavController,
 ) {
-    Timber.d("Compose ActivityFeedContainer")
     val lazyPagingItems = activityFeedViewModel.myActivityList.collectAsLazyPagingItems()
     val isLoadingInitialData by activityFeedViewModel.isInitialLoading.collectAsState(false)
     when {
@@ -223,17 +191,15 @@ private fun ActivityFeedContainer(
         lazyPagingItems.loadState.append.endOfPaginationReached &&
             lazyPagingItems.itemCount == 0 -> {
             ActivityFeedEmptyMessage(
-                Modifier.padding(bottom = contentPadding.calculateBottomPadding() + 8.dp)
+                Modifier.padding(bottom = uiState.contentPaddings.calculateBottomPadding() + 8.dp)
             )
         }
         else -> ActivityFeedItemList(
             activityFeedViewModel,
-            contentPadding,
-            feedListState,
+            uiState,
+            navigator,
             lazyPagingItems,
-            onClickExportActivityFile,
-            appNavController,
-            homeTabNavController
+            onClickExportActivityFile
         )
     }
 }
@@ -241,12 +207,10 @@ private fun ActivityFeedContainer(
 @Composable
 private fun ActivityFeedItemList(
     activityFeedViewModel: ActivityFeedViewModel,
-    contentPadding: PaddingValues,
-    feedListState: LazyListState,
+    uiState: FeedUiState,
+    navigator: FeedNavigator,
     lazyPagingItems: LazyPagingItems<FeedUiModel>,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
-    navController: NavController,
-    homeTabNavController: NavController,
 ) {
     val userProfile by activityFeedViewModel.userProfile.collectAsState(initial = null)
     val preferredUnitSystem by activityFeedViewModel.preferredSystem.collectAsState(
@@ -257,8 +221,8 @@ private fun ActivityFeedItemList(
             .fillMaxWidth()
             .fillMaxHeight()
             .background(listBackground),
-        contentPadding = contentPadding,
-        state = feedListState
+        contentPadding = uiState.contentPaddings,
+        state = uiState.feedListState
     ) {
         items(
             lazyPagingItems,
@@ -268,11 +232,10 @@ private fun ActivityFeedItemList(
                 is FeedActivity -> {
                     FeedActivityItem(
                         activityFeedViewModel,
-                        feedItem.activityData,
+                        feedItem,
                         userProfile,
                         preferredUnitSystem,
-                        navController,
-                        homeTabNavController,
+                        navigator,
                         onClickExportActivityFile
                     )
                 }
@@ -280,7 +243,7 @@ private fun ActivityFeedItemList(
                     FeedUserFollowSuggestionItem(
                         feedItem,
                         activityFeedViewModel::followUser,
-                        navController::navigateSuggestedUserStats
+                        navigator::navigateNormalUserStats
                     )
                 }
                 null -> {
@@ -293,11 +256,6 @@ private fun ActivityFeedItemList(
             item { LoadingItem() }
         }
     }
-}
-
-private fun NavController.navigateSuggestedUserStats(userId: String) {
-    val route = HomeNavDestination.NormalUserStats.routeWithUserId(userId)
-    this.navigate(route)
 }
 
 @Composable

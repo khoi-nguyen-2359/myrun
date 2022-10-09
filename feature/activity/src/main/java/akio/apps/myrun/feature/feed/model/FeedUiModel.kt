@@ -5,7 +5,10 @@ import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 
 sealed class FeedUiModel(val id: String)
 
-data class FeedActivity(val activityData: BaseActivityModel) : FeedUiModel(activityData.id)
+data class FeedActivity(
+    val activityData: BaseActivityModel,
+    val isCurrentUser: Boolean,
+) : FeedUiModel(activityData.id)
 
 data class FeedSuggestedUserFollow(
     val userFollow: UserFollowSuggestion,

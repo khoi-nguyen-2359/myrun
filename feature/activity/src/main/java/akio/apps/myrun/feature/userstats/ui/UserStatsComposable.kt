@@ -71,7 +71,9 @@ import coil.request.ImageRequest
 import coil.size.Scale
 
 @Composable
-private fun rememberViewModel(arguments: UserStatsViewModel.UserStatsArguments): UserStatsViewModel {
+private fun rememberViewModel(
+    arguments: UserStatsViewModel.UserStatsArguments
+): UserStatsViewModel {
     val application = LocalContext.current.applicationContext as Application
     return remember(arguments) {
         DaggerUserStatsFeatureComponent.factory().create(application, arguments)
@@ -89,7 +91,7 @@ private fun rememberUiState(
 
 @Composable
 private fun rememberNavigator(
-    navController: NavController
+    navController: NavController,
 ): UserStatsNavigator = remember(navController) {
     UserStatsNavigator(navController)
 }
@@ -116,7 +118,7 @@ fun UserStatsComposable(
                 viewModel,
                 uiState,
                 navigator,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.height(uiState.contentPaddingBottom))
         }
@@ -497,7 +499,7 @@ private fun UserStatsOutlinedButton(
                 style = MaterialTheme.typography.caption,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                color = contentColor,
+                color = contentColor
             )
         }
     }

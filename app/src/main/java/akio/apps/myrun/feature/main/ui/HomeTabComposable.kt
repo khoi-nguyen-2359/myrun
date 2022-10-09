@@ -25,7 +25,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -178,7 +177,7 @@ private fun rememberNavigator(
     homeNavHostController: NavHostController = rememberAnimatedNavController(),
 ): HomeTabNavigator {
     val currentTabNavEntry: NavBackStackEntry?
-            by homeNavHostController.currentBackStackEntryAsState()
+        by homeNavHostController.currentBackStackEntryAsState()
     return remember(homeNavHostController, currentTabNavEntry) {
         HomeTabNavigator(homeNavHostController, currentTabNavEntry)
     }

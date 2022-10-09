@@ -143,11 +143,6 @@ private fun SuggestedUserCard(
     }
 }
 
-private fun NavController.navigateNormalUserStatsScreen(userId: String) {
-    val route = HomeNavDestination.NormalUserStats.routeWithUserId(userId)
-    this.navigate(route)
-}
-
 @Composable
 @Preview(backgroundColor = 0xffffff, showBackground = true)
 private fun PreviewSuggestedUserList() {
