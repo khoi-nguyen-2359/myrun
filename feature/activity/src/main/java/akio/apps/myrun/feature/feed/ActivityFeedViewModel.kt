@@ -35,19 +35,15 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 internal class ActivityFeedViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
     private val activityPagingSourceFactory: ActivityPagingSourceFactory,
     private val placeNameSelector: PlaceNameSelector,
     private val userRecentActivityRepository: UserRecentActivityRepository,
@@ -68,38 +64,12 @@ internal class ActivityFeedViewModel @Inject constructor(
 
     private var activityPagingSource: ActivityPagingSource? = null
 
-    private val isUploadBadgeDismissedFlow: MutableStateFlow<Boolean> =
-        MutableStateFlow(savedStateHandle.isUploadBadgeDismissed())
-
-    val activityUploadBadge: Flow<ActivityUploadBadgeStatus> =
-        createActivityUploadBadgeStatusFlow()
-
     val userProfile: Flow<UserProfile> =
         getUserProfileUsecase.getUserProfileFlow(userId).mapNotNull { it.data }.flowOn(ioDispatcher)
 
     val preferredSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystem()
 
     private var cachedUserFollowSuggestions: List<UserFollowSuggestion>? = null
-
-    private fun createActivityUploadBadgeStatusFlow(): Flow<ActivityUploadBadgeStatus> =
-        activityLocalStorage.getActivityStorageDataCountFlow()
-            .distinctUntilChanged()
-            .onEach {
-                if (it > 0) {
-                    setUploadBadgeDismissed(false)
-                }
-            }
-            .combine(isUploadBadgeDismissedFlow) { localActivityCount, isUploadBadgeDismissed ->
-                when {
-                    localActivityCount > 0 ->
-                        ActivityUploadBadgeStatus.InProgress(localActivityCount)
-                    localActivityCount == 0 && !isUploadBadgeDismissed ->
-                        ActivityUploadBadgeStatus.Complete
-                    else -> ActivityUploadBadgeStatus.Hidden
-                }
-            }
-            // convert to shared flow for multiple collectors
-            .shareIn(viewModelScope, replay = 1, started = SharingStarted.WhileSubscribed())
 
     private val userFollowSuggestionMutableFlow: MutableSharedFlow<List<UserFollowSuggestion>> =
         MutableSharedFlow()
@@ -174,11 +144,6 @@ internal class ActivityFeedViewModel @Inject constructor(
         }
     }
 
-    fun setUploadBadgeDismissed(isDismissed: Boolean) {
-        isUploadBadgeDismissedFlow.value = isDismissed
-        savedStateHandle.setUploadBadgeDismissed(isDismissed)
-    }
-
     fun getFormattedStartTime(activity: BaseActivityModel): ActivityDateTimeFormatter.Result =
         activityDateTimeFormatter.formatActivityDateTime(activity.startTime)
 
@@ -212,9 +177,6 @@ internal class ActivityFeedViewModel @Inject constructor(
         emitCachedUserFollowSuggestions()
     }
 
-    fun isCurrentUser(userId: String): Boolean =
-        userAuthenticationState.requireUserAccountId() == userId
-
     private fun loadUserFollowSuggestions() = viewModelScope.launch {
         cachedUserFollowSuggestions = withContext(ioDispatcher) {
             getUserFollowUsecase.getFollowSuggestion()
@@ -230,9 +192,11 @@ internal class ActivityFeedViewModel @Inject constructor(
     }
 
     private fun observeActivityUploadCount() = viewModelScope.launch {
-        activityUploadBadge.collect {
-            reloadFeedData()
-        }
+        activityLocalStorage.getActivityStorageDataCountFlow()
+            .distinctUntilChanged()
+            .collect {
+                reloadFeedData()
+            }
     }
 
     private fun reloadFeedData() {
@@ -259,22 +223,7 @@ internal class ActivityFeedViewModel @Inject constructor(
             }
         }
 
-    private fun SavedStateHandle.isUploadBadgeDismissed(): Boolean =
-        this[STATE_IS_UPLOAD_BADGE_DISMISSED] ?: true
-
-    private fun SavedStateHandle.setUploadBadgeDismissed(isDismissed: Boolean) {
-        this[STATE_IS_UPLOAD_BADGE_DISMISSED] = isDismissed
-    }
-
-    sealed class ActivityUploadBadgeStatus {
-        class InProgress(val activityCount: Int) : ActivityUploadBadgeStatus()
-        object Complete : ActivityUploadBadgeStatus()
-        object Hidden : ActivityUploadBadgeStatus()
-    }
-
     companion object {
         const val PAGE_SIZE = 6
-
-        private const val STATE_IS_UPLOAD_BADGE_DISMISSED = "STATE_IS_UPLOAD_BADGE_DISMISSED"
     }
 }

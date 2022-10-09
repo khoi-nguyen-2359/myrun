@@ -9,7 +9,9 @@ import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
 import akio.apps.myrun.feature.core.ui.ErrorDialog
 import akio.apps.myrun.feature.feed.ActivityFeedViewModel
+import akio.apps.myrun.feature.feed.FeedViewModel
 import akio.apps.myrun.feature.feed.di.DaggerActivityFeedFeatureComponent
+import akio.apps.myrun.feature.feed.di.DaggerFeedFeatureComponent
 import akio.apps.myrun.feature.feed.model.FeedActivity
 import akio.apps.myrun.feature.feed.model.FeedUiModel
 import akio.apps.myrun.feature.feed.model.FeedUserFollowSuggestionList
@@ -37,8 +39,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -84,17 +88,27 @@ fun ActivityFeedComposable(
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
     val application = LocalContext.current.applicationContext as Application
-    val activityFeedViewModel = navEntry.rememberViewModelProvider { savedState ->
-        DaggerActivityFeedFeatureComponent.factory().create(application, savedState).feedViewModel()
+    val activityFeedViewModel = navEntry.rememberViewModelProvider {
+        DaggerActivityFeedFeatureComponent.factory().create(application).feedViewModel()
     }
+    val feedViewModel = rememberViewModel()
     val uiState = rememberUiState(contentPaddingBottom)
     val navigator = rememberNavigator(appNavController, homeTabNavController)
     ActivityFeedComposableInternal(
+        feedViewModel,
         activityFeedViewModel,
         uiState,
         navigator,
         onClickExportActivityFile
     )
+}
+
+@Composable
+private fun rememberViewModel(): FeedViewModel {
+    val application = LocalContext.current.applicationContext as Application
+    return remember {
+        DaggerFeedFeatureComponent.factory().create(application).feedViewModel()
+    }
 }
 
 @Composable
@@ -105,6 +119,9 @@ private fun rememberUiState(contentPaddingBottom: Dp): FeedUiState {
     val topBarOffsetYAnimatable = remember { Animatable(0f) }
     val topBarHeightPx = with(LocalDensity.current) { topBarHeightDp.roundToPx().toFloat() }
     val feedListState = rememberLazyListState()
+    val uploadBadgeState: FeedUiState.UploadBadgeState by rememberSaveable {
+        mutableStateOf(FeedUiState.UploadBadgeState.Dismissed)
+    }
     return remember(topBarHeightDp) {
         FeedUiState(
             contentPaddingBottom,
@@ -112,7 +129,8 @@ private fun rememberUiState(contentPaddingBottom: Dp): FeedUiState {
             topBarHeightDp,
             topBarHeightPx,
             topBarOffsetYAnimatable,
-            feedListState
+            feedListState,
+            uploadBadgeState
         )
     }
 }
@@ -127,21 +145,19 @@ private fun rememberNavigator(
 
 @Composable
 private fun ActivityFeedComposableInternal(
+    feedViewModel: FeedViewModel,
     activityFeedViewModel: ActivityFeedViewModel,
     uiState: FeedUiState,
     navigator: FeedNavigator,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
-    val activityUploadBadge by activityFeedViewModel.activityUploadBadge.collectAsState(
-        initial = ActivityFeedViewModel.ActivityUploadBadgeStatus.Hidden
-    )
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .nestedScroll(uiState.nestedScrollConnection)
     ) {
         ActivityFeedContainer(
+            feedViewModel,
             activityFeedViewModel,
             uiState,
             navigator,
@@ -149,16 +165,17 @@ private fun ActivityFeedComposableInternal(
         )
 
         ActivityFeedTopBar(
-            activityUploadBadge,
+            uiState,
+            feedViewModel,
             Modifier
                 .height(uiState.topBarHeightDp)
                 .align(Alignment.TopCenter)
                 .offset { IntOffset(x = 0, y = uiState.topBarOffsetYAnimatable.value.roundToInt()) }
                 .background(AppColors.primary),
-            onClickUploadCompleteBadge = {
-                uiState.animateScrollToFeedItem(pos = 0)
-                activityFeedViewModel.setUploadBadgeDismissed(true)
-            },
+//            onClickUploadCompleteBadge = {
+////                uiState.animateScrollToFeedItem(pos = 0)
+////                activityFeedViewModel.setUploadBadgeDismissed(true)
+//            },
             onClickUserPreferencesButton = navigator::navigateUserPreferences
         )
     }
@@ -173,6 +190,7 @@ private fun ActivityFeedComposableInternal(
 
 @Composable
 private fun ActivityFeedContainer(
+    feedViewModel: FeedViewModel,
     activityFeedViewModel: ActivityFeedViewModel,
     uiState: FeedUiState,
     navigator: FeedNavigator,
@@ -182,19 +200,20 @@ private fun ActivityFeedContainer(
     val isLoadingInitialData by activityFeedViewModel.isInitialLoading.collectAsState(false)
     when {
         isLoadingInitialData ||
-            (
-                lazyPagingItems.loadState.refresh == LoadState.Loading &&
-                    lazyPagingItems.itemCount == 0
-                ) -> {
+                (
+                        lazyPagingItems.loadState.refresh == LoadState.Loading &&
+                                lazyPagingItems.itemCount == 0
+                        ) -> {
             FullscreenLoadingView()
         }
         lazyPagingItems.loadState.append.endOfPaginationReached &&
-            lazyPagingItems.itemCount == 0 -> {
+                lazyPagingItems.itemCount == 0 -> {
             ActivityFeedEmptyMessage(
                 Modifier.padding(bottom = uiState.contentPaddings.calculateBottomPadding() + 8.dp)
             )
         }
         else -> ActivityFeedItemList(
+            feedViewModel,
             activityFeedViewModel,
             uiState,
             navigator,
@@ -206,6 +225,7 @@ private fun ActivityFeedContainer(
 
 @Composable
 private fun ActivityFeedItemList(
+    feedViewModel: FeedViewModel,
     activityFeedViewModel: ActivityFeedViewModel,
     uiState: FeedUiState,
     navigator: FeedNavigator,

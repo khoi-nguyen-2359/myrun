@@ -7,10 +7,8 @@ import akio.apps.myrun.data.activity.di.DaggerActivityDataComponent
 import akio.apps.myrun.data.authentication.di.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.di.DaggerAuthenticationDataComponent
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingModule
-import akio.apps.myrun.feature.feed.ActivityFeedViewModel
 import akio.apps.myrun.feature.feed.FeedViewModel
 import android.app.Application
-import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Component
 
@@ -25,8 +23,8 @@ import dagger.Component
         ActivityDataComponent::class
     ]
 )
-internal interface ActivityFeedFeatureComponent {
-    fun feedViewModel(): ActivityFeedViewModel
+internal interface FeedFeatureComponent {
+    fun feedViewModel(): FeedViewModel
 
     @Component.Factory
     interface Factory {
@@ -36,6 +34,6 @@ internal interface ActivityFeedFeatureComponent {
                 DaggerAuthenticationDataComponent.factory().create(application),
             activityDataComponent: ActivityDataComponent =
                 DaggerActivityDataComponent.factory().create(application),
-        ): ActivityFeedFeatureComponent
+        ): FeedFeatureComponent
     }
 }

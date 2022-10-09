@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.feed.ui
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.ui.AppBarIconButton
 import akio.apps.myrun.feature.core.ui.AppDimensions
-import akio.apps.myrun.feature.feed.ActivityFeedViewModel
+import akio.apps.myrun.feature.feed.FeedViewModel
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,7 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import timber.log.Timber
 
 private object ActivityFeedTopBarColors {
     val uploadingBadgeContentColor = Color(0xffffffff)
@@ -39,12 +38,11 @@ private object ActivityFeedTopBarColors {
 
 @Composable
 internal fun ActivityFeedTopBar(
-    activityUploadBadge: ActivityFeedViewModel.ActivityUploadBadgeStatus?,
+    uiState: FeedUiState,
+    viewModel: FeedViewModel,
     modifier: Modifier = Modifier,
-    onClickUploadCompleteBadge: () -> Unit,
     onClickUserPreferencesButton: () -> Unit,
 ) {
-    Timber.d("Compose ActivityFeedTopBar")
     Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
         TopAppBar(
             title = {
@@ -54,7 +52,7 @@ internal fun ActivityFeedTopBar(
                 )
             },
             actions = {
-                ActivityUploadNotifierBadge(activityUploadBadge, onClickUploadCompleteBadge)
+                ActivityUploadNotifierBadge(uiState, viewModel.getUploadingActivityCount())
                 AppBarIconButton(iconImageVector = Icons.Rounded.Settings) {
                     onClickUserPreferencesButton()
                 }
@@ -64,17 +62,15 @@ internal fun ActivityFeedTopBar(
 }
 
 @Composable
-private fun ActivityUploadNotifierBadge(
-    activityUploadBadge: ActivityFeedViewModel.ActivityUploadBadgeStatus?,
-    onClickUploadCompleteBadge: () -> Unit,
-) {
-    Crossfade(targetState = activityUploadBadge) {
+private fun ActivityUploadNotifierBadge(uiState: FeedUiState, activityUploadingCount: Int) {
+    uiState.updateUploadBadgeState(activityUploadingCount)
+    Crossfade(targetState = uiState.uploadBadgeState) {
         when (it) {
-            is ActivityFeedViewModel.ActivityUploadBadgeStatus.InProgress -> {
-                UploadInProgressBadge(count = it.activityCount)
+            FeedUiState.UploadBadgeState.InProgress -> {
+                UploadInProgressBadge(count = activityUploadingCount)
             }
-            ActivityFeedViewModel.ActivityUploadBadgeStatus.Complete -> {
-                UploadCompleteBadge(onClickUploadCompleteBadge)
+            FeedUiState.UploadBadgeState.Complete -> {
+                UploadCompleteBadge(uiState::dismissActivityUploadBadge)
             }
             else -> {
                 // render void
