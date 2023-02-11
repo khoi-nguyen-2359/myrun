@@ -4,9 +4,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -21,7 +18,6 @@ class FeedUiState(
     val topBarHeightPx: Float,
     val topBarOffsetYAnimatable: Animatable<Float, AnimationVector1D>,
     val feedListState: LazyListState,
-    var uploadBadgeState: UploadBadgeState
 ) {
     val contentPaddings = PaddingValues(
         top = topBarHeightDp,
@@ -44,25 +40,10 @@ class FeedUiState(
         }
     }
 
-    fun updateUploadBadgeState(activityUploadingCount: Int) {
-        uploadBadgeState = when {
-            activityUploadingCount > 0 -> UploadBadgeState.InProgress
-            activityUploadingCount == 0 && uploadBadgeState != UploadBadgeState.Dismissed -> {
-                UploadBadgeState.Complete
-            }
-            else -> UploadBadgeState.Dismissed
-        }
-    }
-
     fun dismissActivityUploadBadge() {
         coroutineScope.launch {
             feedListState.animateScrollToItem(0)
         }
-        uploadBadgeState = UploadBadgeState.Dismissed
-    }
-
-    enum class UploadBadgeState {
-        InProgress, Complete, Dismissed
     }
 
     companion object {

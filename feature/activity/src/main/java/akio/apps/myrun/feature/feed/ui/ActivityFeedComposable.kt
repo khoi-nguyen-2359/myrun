@@ -39,10 +39,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -119,9 +117,6 @@ private fun rememberUiState(contentPaddingBottom: Dp): FeedUiState {
     val topBarOffsetYAnimatable = remember { Animatable(0f) }
     val topBarHeightPx = with(LocalDensity.current) { topBarHeightDp.roundToPx().toFloat() }
     val feedListState = rememberLazyListState()
-    val uploadBadgeState: FeedUiState.UploadBadgeState by rememberSaveable {
-        mutableStateOf(FeedUiState.UploadBadgeState.Dismissed)
-    }
     return remember(topBarHeightDp) {
         FeedUiState(
             contentPaddingBottom,
@@ -130,7 +125,6 @@ private fun rememberUiState(contentPaddingBottom: Dp): FeedUiState {
             topBarHeightPx,
             topBarOffsetYAnimatable,
             feedListState,
-            uploadBadgeState
         )
     }
 }
