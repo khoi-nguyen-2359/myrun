@@ -5,24 +5,19 @@ import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.UserFollowRepository
-import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.UserRecentActivityRepository
-import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.PlaceIdentifier
 import akio.apps.myrun.data.user.api.model.UserFollow
 import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
-import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.domain.user.FollowUserUsecase
 import akio.apps.myrun.domain.user.GetUserFollowSuggestionUsecase
-import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.PlaceNameSelector
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.feature.feed.model.FeedActivity
 import akio.apps.myrun.feature.feed.model.FeedSuggestedUserFollow
 import akio.apps.myrun.feature.feed.model.FeedUiModel
 import akio.apps.myrun.feature.feed.model.FeedUserFollowSuggestionList
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -32,13 +27,12 @@ import androidx.paging.cachedIn
 import androidx.paging.flatMap
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -50,9 +44,7 @@ internal class ActivityFeedViewModel @Inject constructor(
     private val userAuthenticationState: UserAuthenticationState,
     private val activityLocalStorage: ActivityLocalStorage,
     private val launchCatchingViewModel: LaunchCatchingDelegate,
-    private val getUserProfileUsecase: GetUserProfileUsecase,
     private val activityDateTimeFormatter: ActivityDateTimeFormatter,
-    private val userPreferences: UserPreferences,
     private val getUserFollowUsecase: GetUserFollowSuggestionUsecase,
     private val followUserUsecase: FollowUserUsecase,
     private val userFollowRepository: UserFollowRepository,
@@ -64,18 +56,13 @@ internal class ActivityFeedViewModel @Inject constructor(
 
     private var activityPagingSource: ActivityPagingSource? = null
 
-    val userProfile: Flow<UserProfile> =
-        getUserProfileUsecase.getUserProfileFlow(userId).mapNotNull { it.data }.flowOn(ioDispatcher)
+    private val userFollowActionStateMap: MutableStateFlow<Map<String, Boolean>> =
+        MutableStateFlow(emptyMap())
+    private val userFollowSuggestionFlow: Flow<List<UserFollowSuggestion>> = flow {
+        getUserFollowUsecase.getFollowSuggestion()
+    }
 
-    val preferredSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystem()
-
-    private var cachedUserFollowSuggestions: List<UserFollowSuggestion>? = null
-
-    private val userFollowSuggestionMutableFlow: MutableSharedFlow<List<UserFollowSuggestion>> =
-        MutableSharedFlow()
-    private val userFollowActionStateMap: MutableMap<String, Boolean> = mutableMapOf()
-
-    val myActivityList: Flow<PagingData<FeedUiModel>> = Pager(
+    private val pager = Pager(
         config = PagingConfig(
             pageSize = PAGE_SIZE,
             enablePlaceholders = false,
@@ -84,13 +71,28 @@ internal class ActivityFeedViewModel @Inject constructor(
         // do not pass initial key as timestamp because initialKey is reused in invalidating!
         // initialKey = System.currentTimeMillis()
     ) { recreateActivityPagingSource() }
+
+    val myActivityList: Flow<PagingData<FeedUiModel>> = pager
         .flow
         .cachedIn(viewModelScope)
-        .combine(userFollowSuggestionMutableFlow) { pagingData, userFollows ->
+        .combine(userFollowSuggestionFlow) { pagingData, userFollows ->
             combinePagingDataSources(pagingData, userFollows)
         }
         // cachedIn will help latest data to be emitted right after transition
         .cachedIn(viewModelScope)
+
+    private val myActivityListCached by lazy {
+        myActivityList
+    }
+
+    fun getActivityFlow(scope: CoroutineScope): Flow<PagingData<FeedUiModel>> {
+        return pager
+            .flow
+            .combine(userFollowSuggestionFlow) { pagingData, userFollows ->
+                combinePagingDataSources(pagingData, userFollows)
+            }
+            .cachedIn(scope)
+    }
 
     private fun combinePagingDataSources(
         pagingData: PagingData<BaseActivityModel>,
@@ -103,15 +105,17 @@ internal class ActivityFeedViewModel @Inject constructor(
                 val feedModels = userFollows.map { dataModel ->
                     FeedSuggestedUserFollow(
                         dataModel,
-                        userFollowActionStateMap[dataModel.uid] ?: false
+                        userFollowActionStateMap.value[dataModel.uid] ?: false
                     )
                 }
                 listOf(
-                    FeedActivity(it, it.athleteInfo.userId == userId),
+                    // FeedActivity(it, "", it.athleteInfo.userId == userId),
                     FeedUserFollowSuggestionList(feedModels)
                 )
             } else {
-                listOf(FeedActivity(it, it.athleteInfo.userId == userId))
+                listOf(
+                    // FeedActivity(it, "", it.athleteInfo.userId == userId)
+                )
             }
         }
     }
@@ -130,65 +134,6 @@ internal class ActivityFeedViewModel @Inject constructor(
     init {
         loadInitialData()
         observeActivityUploadCount()
-        loadUserFollowSuggestions()
-        observeUserFollowings()
-    }
-
-    private fun observeUserFollowings() = viewModelScope.launch {
-        userFollowingsFlow.collect { userFollowings ->
-            userFollowActionStateMap.clear()
-            userFollowings.forEach { userFollow ->
-                userFollowActionStateMap[userFollow.uid] = true
-            }
-            emitCachedUserFollowSuggestions()
-        }
-    }
-
-    fun getFormattedStartTime(activity: BaseActivityModel): ActivityDateTimeFormatter.Result =
-        activityDateTimeFormatter.formatActivityDateTime(activity.startTime)
-
-    fun getActivityDisplayPlaceName(activity: BaseActivityModel): String {
-        val activityPlaceIdentifier = activity.placeIdentifier
-            ?: return ""
-        val activityId = activity.id
-        var placeName = mapActivityIdToPlaceName[activityId]
-        if (placeName != null) {
-            return placeName
-        }
-
-        placeName = placeNameSelector.select(activityPlaceIdentifier, userRecentPlaceIdentifier)
-            ?: ""
-        mapActivityIdToPlaceName[activityId] = placeName
-
-        return placeName
-    }
-
-    fun followUser(userFollowSuggestion: UserFollowSuggestion) = viewModelScope.launch {
-        try {
-            userFollowActionStateMap[userFollowSuggestion.uid] = true
-            emitCachedUserFollowSuggestions()
-            withContext(ioDispatcher) {
-                followUserUsecase.followUser(userFollowSuggestion)
-            }
-        } catch (ex: Exception) {
-            setLaunchCatchingError(ex)
-            userFollowActionStateMap[userFollowSuggestion.uid] = false
-        }
-        emitCachedUserFollowSuggestions()
-    }
-
-    private fun loadUserFollowSuggestions() = viewModelScope.launch {
-        cachedUserFollowSuggestions = withContext(ioDispatcher) {
-            getUserFollowUsecase.getFollowSuggestion()
-        }
-
-        emitCachedUserFollowSuggestions()
-    }
-
-    private suspend fun emitCachedUserFollowSuggestions() {
-        cachedUserFollowSuggestions?.let { suggestions ->
-            userFollowSuggestionMutableFlow.emit(suggestions)
-        }
     }
 
     private fun observeActivityUploadCount() = viewModelScope.launch {

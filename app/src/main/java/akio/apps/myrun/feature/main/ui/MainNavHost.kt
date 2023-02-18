@@ -17,6 +17,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -50,6 +51,7 @@ fun MainNavHost(
     openRoutePlanningAction: () -> Unit,
 ) {
     val navController = rememberAnimatedNavController()
+    val pagingDataScope = rememberCoroutineScope()
     AnimatedNavHost(
         navController = navController,
         startDestination = HomeNavDestination.Home.route,
@@ -63,7 +65,8 @@ fun MainNavHost(
                 navController,
                 onClickFloatingActionButton,
                 onClickExportActivityFile,
-                openRoutePlanningAction
+                openRoutePlanningAction,
+                pagingDataScope = pagingDataScope
             )
         }
 

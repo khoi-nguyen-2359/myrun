@@ -8,9 +8,7 @@ import akio.apps.myrun.data.authentication.di.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.di.DaggerAuthenticationDataComponent
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingModule
 import akio.apps.myrun.feature.feed.ActivityFeedViewModel
-import akio.apps.myrun.feature.feed.FeedViewModel
 import android.app.Application
-import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Component
 

@@ -4,6 +4,9 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -13,12 +16,14 @@ import kotlinx.coroutines.launch
 
 class FeedUiState(
     contentPaddingBottom: Dp,
-    val coroutineScope: CoroutineScope,
+    val uiScope: CoroutineScope,
     val topBarHeightDp: Dp,
     val topBarHeightPx: Float,
     val topBarOffsetYAnimatable: Animatable<Float, AnimationVector1D>,
     val feedListState: LazyListState,
 ) {
+    var popupErrorException: Throwable? by mutableStateOf(null)
+
     val contentPaddings = PaddingValues(
         top = topBarHeightDp,
         bottom = contentPaddingBottom
@@ -32,7 +37,7 @@ class FeedUiState(
                 delta <= -REVEAL_ANIM_THRESHOLD -> -topBarHeightPx
                 else -> return Offset.Zero
             }
-            coroutineScope.launch {
+            uiScope.launch {
                 topBarOffsetYAnimatable.animateTo(targetOffset)
             }
 
@@ -41,7 +46,7 @@ class FeedUiState(
     }
 
     fun dismissActivityUploadBadge() {
-        coroutineScope.launch {
+        uiScope.launch {
             feedListState.animateScrollToItem(0)
         }
     }

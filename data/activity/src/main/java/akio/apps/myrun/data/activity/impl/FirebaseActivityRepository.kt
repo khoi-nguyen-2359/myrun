@@ -48,7 +48,6 @@ class FirebaseActivityRepository @Inject constructor(
         firebaseStorage.getReference("$PATH_ACTIVITY_IMAGE/$userId")
 
     override suspend fun getActivitiesByStartTime(
-        fixUserId: String,
         userIds: List<String>,
         startAfterTime: Long,
         limit: Int,

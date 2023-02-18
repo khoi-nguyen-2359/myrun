@@ -8,6 +8,8 @@ import akio.apps.myrun.feature.core.ui.AppDimensions.AppBarHeight
 import akio.apps.myrun.feature.core.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
+import akio.apps.myrun.feature.feed.FeedViewModel
+import akio.apps.myrun.feature.feed.di.DaggerFeedFeatureComponent
 import akio.apps.myrun.feature.feed.ui.ActivityFeedComposable
 import akio.apps.myrun.feature.main.HomeTabViewModel
 import akio.apps.myrun.feature.main.di.DaggerHomeTabFeatureComponent
@@ -64,6 +66,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlin.math.roundToInt
+import kotlinx.coroutines.CoroutineScope
 
 private object HomeTabNavTransitionDefaults {
     private val fadeInImmediately = fadeIn(
@@ -106,6 +109,7 @@ fun HomeTabComposable(
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     openRoutePlanningAction: () -> Unit,
     viewModel: HomeTabViewModel = rememberViewModel(),
+    pagingDataScope: CoroutineScope
 ) {
     val navigator = rememberNavigator()
     val fabState = rememberFabState(navigator.currentTabNavEntry)
@@ -124,7 +128,8 @@ fun HomeTabComposable(
                 onClickExportActivityFile,
                 fabState.fabBoxHeightDp,
                 appNavController,
-                openRoutePlanningAction
+                openRoutePlanningAction,
+                pagingDataScope
             )
 
             HomeFabBox(
@@ -242,7 +247,9 @@ private fun HomeTabNavHost(
     contentPaddingBottom: Dp,
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
+    pagingDataScope: CoroutineScope,
 ) {
+    val feedViewModel = rememberFeedViewModel(pagingDataScope)
     AnimatedNavHost(
         modifier = Modifier.fillMaxSize(),
         navController = homeNavController,
@@ -256,7 +263,7 @@ private fun HomeTabNavHost(
             ActivityFeedComposable(
                 appNavController,
                 homeNavController,
-                navEntry,
+                feedViewModel,
                 contentPaddingBottom,
                 onClickExportActivityFile
             )
@@ -269,5 +276,13 @@ private fun HomeTabNavHost(
                 openRoutePlanningAction
             )
         }
+    }
+}
+
+@Composable
+private fun rememberFeedViewModel(pagingDataScope: CoroutineScope): FeedViewModel {
+    val application = LocalContext.current.applicationContext as Application
+    return remember {
+        DaggerFeedFeatureComponent.factory().create(application, pagingDataScope).feedViewModel()
     }
 }

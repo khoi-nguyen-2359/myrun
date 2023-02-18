@@ -1,16 +1,14 @@
 package akio.apps.myrun.feature.feed.ui
 
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
-import akio.apps.myrun.data.user.api.model.MeasureSystem
+import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.ktx.px2dp
-import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
+import akio.apps.myrun.feature.core.launchcatching.launchCatching
 import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions
 import akio.apps.myrun.feature.core.ui.ErrorDialog
-import akio.apps.myrun.feature.feed.ActivityFeedViewModel
 import akio.apps.myrun.feature.feed.FeedViewModel
-import akio.apps.myrun.feature.feed.di.DaggerActivityFeedFeatureComponent
 import akio.apps.myrun.feature.feed.di.DaggerFeedFeatureComponent
 import akio.apps.myrun.feature.feed.model.FeedActivity
 import akio.apps.myrun.feature.feed.model.FeedUiModel
@@ -37,8 +35,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -58,13 +54,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import kotlin.math.roundToInt
+import kotlinx.coroutines.CoroutineScope
 
 private object ActivityFeedColors {
     val listBackground: Color = Color.White
@@ -81,20 +77,14 @@ internal object ActivityFeedDimensions {
 fun ActivityFeedComposable(
     appNavController: NavController,
     homeTabNavController: NavController,
-    navEntry: NavBackStackEntry,
+    feedViewModel: FeedViewModel,
     contentPaddingBottom: Dp,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
-    val application = LocalContext.current.applicationContext as Application
-    val activityFeedViewModel = navEntry.rememberViewModelProvider {
-        DaggerActivityFeedFeatureComponent.factory().create(application).feedViewModel()
-    }
-    val feedViewModel = rememberViewModel()
     val uiState = rememberUiState(contentPaddingBottom)
     val navigator = rememberNavigator(appNavController, homeTabNavController)
     ActivityFeedComposableInternal(
         feedViewModel,
-        activityFeedViewModel,
         uiState,
         navigator,
         onClickExportActivityFile
@@ -102,10 +92,10 @@ fun ActivityFeedComposable(
 }
 
 @Composable
-private fun rememberViewModel(): FeedViewModel {
+private fun rememberViewModel(viewModelScope: CoroutineScope): FeedViewModel {
     val application = LocalContext.current.applicationContext as Application
     return remember {
-        DaggerFeedFeatureComponent.factory().create(application).feedViewModel()
+        DaggerFeedFeatureComponent.factory().create(application, viewModelScope).feedViewModel()
     }
 }
 
@@ -140,7 +130,6 @@ private fun rememberNavigator(
 @Composable
 private fun ActivityFeedComposableInternal(
     feedViewModel: FeedViewModel,
-    activityFeedViewModel: ActivityFeedViewModel,
     uiState: FeedUiState,
     navigator: FeedNavigator,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
@@ -152,32 +141,26 @@ private fun ActivityFeedComposableInternal(
     ) {
         ActivityFeedContainer(
             feedViewModel,
-            activityFeedViewModel,
             uiState,
             navigator,
             onClickExportActivityFile
         )
 
         ActivityFeedTopBar(
-            uiState,
             feedViewModel,
             Modifier
                 .height(uiState.topBarHeightDp)
                 .align(Alignment.TopCenter)
                 .offset { IntOffset(x = 0, y = uiState.topBarOffsetYAnimatable.value.roundToInt()) }
                 .background(AppColors.primary),
-//            onClickUploadCompleteBadge = {
-////                uiState.animateScrollToFeedItem(pos = 0)
-////                activityFeedViewModel.setUploadBadgeDismissed(true)
-//            },
-            onClickUserPreferencesButton = navigator::navigateUserPreferences
+            onClickUserPreferencesButton = navigator::navigateUserPreferences,
+            onDismissUploadBadge = uiState::dismissActivityUploadBadge
         )
     }
 
-    val screenError by activityFeedViewModel.launchCatchingError.collectAsState(initial = null)
-    if (screenError != null) {
-        ErrorDialog(text = screenError?.message ?: "") {
-            activityFeedViewModel.setLaunchCatchingError(null)
+    uiState.popupErrorException?.let { popupError ->
+        ErrorDialog(text = popupError.message ?: "") {
+            uiState.popupErrorException = null
         }
     }
 }
@@ -185,30 +168,24 @@ private fun ActivityFeedComposableInternal(
 @Composable
 private fun ActivityFeedContainer(
     feedViewModel: FeedViewModel,
-    activityFeedViewModel: ActivityFeedViewModel,
     uiState: FeedUiState,
     navigator: FeedNavigator,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
-    val lazyPagingItems = activityFeedViewModel.myActivityList.collectAsLazyPagingItems()
-    val isLoadingInitialData by activityFeedViewModel.isInitialLoading.collectAsState(false)
+    val lazyPagingItems = feedViewModel.activityPagingFlow.collectAsLazyPagingItems()
     when {
-        isLoadingInitialData ||
-                (
-                        lazyPagingItems.loadState.refresh == LoadState.Loading &&
-                                lazyPagingItems.itemCount == 0
-                        ) -> {
+        lazyPagingItems.loadState.refresh == LoadState.Loading &&
+            lazyPagingItems.itemCount == 0 -> {
             FullscreenLoadingView()
         }
         lazyPagingItems.loadState.append.endOfPaginationReached &&
-                lazyPagingItems.itemCount == 0 -> {
+            lazyPagingItems.itemCount == 0 -> {
             ActivityFeedEmptyMessage(
                 Modifier.padding(bottom = uiState.contentPaddings.calculateBottomPadding() + 8.dp)
             )
         }
         else -> ActivityFeedItemList(
             feedViewModel,
-            activityFeedViewModel,
             uiState,
             navigator,
             lazyPagingItems,
@@ -220,16 +197,13 @@ private fun ActivityFeedContainer(
 @Composable
 private fun ActivityFeedItemList(
     feedViewModel: FeedViewModel,
-    activityFeedViewModel: ActivityFeedViewModel,
     uiState: FeedUiState,
     navigator: FeedNavigator,
     lazyPagingItems: LazyPagingItems<FeedUiModel>,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
-    val userProfile by activityFeedViewModel.userProfile.collectAsState(initial = null)
-    val preferredUnitSystem by activityFeedViewModel.preferredSystem.collectAsState(
-        initial = MeasureSystem.Default
-    )
+    val userProfile = feedViewModel.getUserProfile()
+    val preferredUnitSystem = feedViewModel.getMeasureSystem()
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -245,7 +219,6 @@ private fun ActivityFeedItemList(
             when (feedItem) {
                 is FeedActivity -> {
                     FeedActivityItem(
-                        activityFeedViewModel,
                         feedItem,
                         userProfile,
                         preferredUnitSystem,
@@ -256,7 +229,7 @@ private fun ActivityFeedItemList(
                 is FeedUserFollowSuggestionList -> {
                     FeedUserFollowSuggestionItem(
                         feedItem,
-                        activityFeedViewModel::followUser,
+                        { followUser(uiState, feedViewModel, it) },
                         navigator::navigateNormalUserStats
                     )
                 }
@@ -269,6 +242,18 @@ private fun ActivityFeedItemList(
         if (lazyPagingItems.loadState.append == LoadState.Loading) {
             item { LoadingItem() }
         }
+    }
+}
+
+private fun followUser(
+    uiState: FeedUiState,
+    viewModel: FeedViewModel,
+    followSuggestion: UserFollowSuggestion,
+) {
+    uiState.uiScope.launchCatching({
+        uiState.popupErrorException = it
+    }) {
+        viewModel.followUser(followSuggestion)
     }
 }
 

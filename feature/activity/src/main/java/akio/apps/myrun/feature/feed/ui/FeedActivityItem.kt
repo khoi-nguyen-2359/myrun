@@ -13,7 +13,6 @@ import akio.apps.myrun.feature.core.measurement.TrackUnitFormatter
 import akio.apps.myrun.feature.core.measurement.TrackUnitFormatterSet
 import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.core.ui.UserAvatarImage
-import akio.apps.myrun.feature.feed.ActivityFeedViewModel
 import akio.apps.myrun.feature.feed.model.FeedActivity
 import android.content.Context
 import androidx.compose.animation.animateContentSize
@@ -53,7 +52,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 internal fun FeedActivityItem(
-    feedViewModel: ActivityFeedViewModel,
     feedItem: FeedActivity,
     userProfile: UserProfile?,
     preferredUnitSystem: MeasureSystem,
@@ -61,18 +59,12 @@ internal fun FeedActivityItem(
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
     val activity = feedItem.activityData
-    val activityDisplayPlaceName = remember {
-        feedViewModel.getActivityDisplayPlaceName(activity)
-    }
-    val activityFormattedStartTime = remember {
-        feedViewModel.getFormattedStartTime(activity)
-    }
     val uiState = rememberUiState()
     FeedActivityItem(
         uiState,
         feedItem.activityData,
-        activityFormattedStartTime,
-        activityDisplayPlaceName,
+        feedItem.formattedStartTime,
+        feedItem.locationName,
         userProfile,
         preferredUnitSystem,
         { navigator.navigateActivityDetail(activity.id) },

@@ -21,6 +21,7 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.sharp.CheckCircleOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -43,10 +44,10 @@ private enum class UploadBadgeState {
 
 @Composable
 internal fun ActivityFeedTopBar(
-    uiState: FeedUiState,
     viewModel: FeedViewModel,
     modifier: Modifier = Modifier,
     onClickUserPreferencesButton: () -> Unit,
+    onDismissUploadBadge: () -> Unit
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
         TopAppBar(
@@ -59,7 +60,7 @@ internal fun ActivityFeedTopBar(
             actions = {
                 ActivityUploadNotifierBadge(
                     viewModel.getUploadingActivityCount(),
-                    uiState::dismissActivityUploadBadge
+                    onDismissUploadBadge
                 )
                 AppBarIconButton(iconImageVector = Icons.Rounded.Settings) {
                     onClickUserPreferencesButton()

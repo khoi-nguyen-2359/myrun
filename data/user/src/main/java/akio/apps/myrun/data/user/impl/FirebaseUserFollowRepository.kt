@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.Source
 import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -75,10 +76,20 @@ class FirebaseUserFollowRepository @Inject constructor(
     }
 
     override suspend fun getUserFollowings(userId: String): List<UserFollow> =
-        getUserFollowingsCollection(userId).get().await().documents
-            .mapNotNull {
-                it.toObject(FirestoreUserFollow::class.java)?.toUserFollow()
-            }
+        getUserFollowingsFromSource(userId)
+
+    private suspend fun getUserFollowingsFromSource(
+        userId: String,
+        source: Source = Source.DEFAULT
+    ) = getUserFollowingsCollection(userId).get(source).await().documents
+        .mapNotNull { it.toObject(FirestoreUserFollow::class.java)?.toUserFollow() }
+
+    override suspend fun getCachedUserFollowings(userId: String): List<UserFollow>? =
+        try {
+            getUserFollowingsFromSource(userId, Source.CACHE)
+        } catch (ex: Exception) {
+            null
+        }
 
     override fun getUserFollowingsFlow(userId: String): Flow<List<UserFollow>> = callbackFlow {
         val listenerReg = getUserFollowingsCollection(userId).addSnapshotListener { value, _ ->

@@ -11,7 +11,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
-internal class ActivityPagingSource(
+class ActivityPagingSource(
     private val getFeedActivitiesUsecase: GetFeedActivitiesUsecase,
     private val ioDispatcher: CoroutineDispatcher,
 ) : PagingSource<Long, BaseActivityModel>() {
@@ -36,7 +36,7 @@ internal class ActivityPagingSource(
     override fun getRefreshKey(state: PagingState<Long, BaseActivityModel>): Long? = null
 }
 
-internal class ActivityPagingSourceFactory @Inject constructor(
+class ActivityPagingSourceFactory @Inject constructor(
     private val getFeedActivitiesUsecase: GetFeedActivitiesUsecase,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,

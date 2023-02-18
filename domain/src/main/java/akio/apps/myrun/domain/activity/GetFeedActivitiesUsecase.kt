@@ -18,19 +18,21 @@ class GetFeedActivitiesUsecase @Inject constructor(
         count: Int,
     ): Resource<List<BaseActivityModel>> = try {
         val userAccountId = userAuthenticationState.requireUserAccountId()
-
-        // get first() may return cached data
-        val userIds = userFollowRepository.getUserFollowings(userAccountId)
-            .mapNotNull { userFollow ->
+        val userFollowings = userFollowRepository.getCachedUserFollowings(userAccountId)
+            ?: userFollowRepository.getUserFollowings(userAccountId)
+        val userIds = buildList {
+            val followingUids = userFollowings.mapNotNull { userFollow ->
                 if (userFollow.status == FollowStatus.Accepted) {
                     userFollow.uid
                 } else {
                     null
                 }
-            } + listOf(userAccountId)
+            }
+            add(userAccountId)
+            addAll(followingUids)
+        }
 
-        val activities =
-            activityRepository.getActivitiesByStartTime(userAccountId, userIds, startAfter, count)
+        val activities = activityRepository.getActivitiesByStartTime(userIds, startAfter, count)
         Resource.Success(activities)
     } catch (ex: Exception) {
         Resource.Error(ex)
