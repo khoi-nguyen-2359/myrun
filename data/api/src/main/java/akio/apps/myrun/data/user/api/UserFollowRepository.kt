@@ -20,7 +20,7 @@ interface UserFollowRepository {
     /**
      * Checks whether [userId] is following [targetId] or not. Emits null for error cases.
      */
-    fun getIsFollowingFlow(userId: String, targetId: String): Flow<Boolean?>
+    suspend fun getIsFollowing(userId: String, targetId: String): Boolean?
 
     /**
      * Accept a user at [followerId] to follow user at [userId]. If the follow request is not

@@ -18,8 +18,10 @@ import akio.apps.myrun.feature.core.ui.ColumnSpacer
 import akio.apps.myrun.feature.core.ui.ErrorDialog
 import akio.apps.myrun.feature.core.ui.RowSpacer
 import akio.apps.myrun.feature.core.ui.StatusBarSpacer
+import akio.apps.myrun.feature.core.ui.rememberFlowSaveable
 import akio.apps.myrun.feature.userstats.UserStatsViewModel
 import akio.apps.myrun.feature.userstats.di.DaggerUserStatsFeatureComponent
+import akio.apps.myrun.feature.userstats.model.UserStatsProfileUiModel
 import android.app.Application
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
@@ -72,7 +74,7 @@ import coil.size.Scale
 
 @Composable
 private fun rememberViewModel(
-    arguments: UserStatsViewModel.UserStatsArguments
+    arguments: UserStatsViewModel.UserStatsArguments,
 ): UserStatsViewModel {
     val application = LocalContext.current.applicationContext as Application
     return remember(arguments) {
@@ -144,25 +146,33 @@ private fun UserStatsContent(
         UserProfileHeader(
             viewModel,
             uiState,
-            viewModel.getUserProfile(),
-            viewModel.getUserRecentPlaceName(),
+            rememberFlowSaveable(viewModel.userStatsProfileFlow, UserStatsProfileUiModel.Default),
             navigator::navigateProfileScreen
         )
         FollowCounterStats(
             viewModel.userId,
             viewModel.isCurrentUser,
-            viewModel.getUserFollowCounter(),
+            rememberFlowSaveable(viewModel.userFollowCounterFlow, UserFollowCounter(0, 0)),
             navigator
         )
         Divider(thickness = 4.dp)
         ColumnSpacer(height = AppDimensions.sectionVerticalSpacing * 2)
         TrainingSummaryTable(
             uiState,
-            viewModel.getTrainingSummaryData(),
-            viewModel.getMeasureSystem()
+            rememberTrainingData(viewModel),
+            rememberFlowSaveable(viewModel.measureSystemFlow, MeasureSystem.Default)
         )
     }
 }
+
+@Composable
+private fun rememberTrainingData(viewModel: UserStatsViewModel) = rememberFlowSaveable(
+    viewModel.trainingSummaryDataFlow,
+    mapOf(
+        ActivityType.Running to GetTrainingSummaryDataUsecase.TrainingSummaryTableData(),
+        ActivityType.Cycling to GetTrainingSummaryDataUsecase.TrainingSummaryTableData()
+    )
+)
 
 @Composable
 private fun FollowCounterStats(
@@ -399,10 +409,10 @@ private fun RowScope.TrainingSummaryProgress(
 private fun UserProfileHeader(
     viewModel: UserStatsViewModel,
     uiState: UserStatsUiState,
-    userProfile: UserProfile,
-    userRecentPlace: String?,
+    userStatsProfile: UserStatsProfileUiModel,
     onClickEdit: (String) -> Unit,
 ) {
+    val (userProfile, userRecentPlace) = userStatsProfile
     val scope = rememberCoroutineScope()
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -416,7 +426,7 @@ private fun UserProfileHeader(
                 style = MaterialTheme.typography.h6,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
             if (!userRecentPlace.isNullOrBlank()) {
                 ColumnSpacer(height = 4.dp)
@@ -430,7 +440,10 @@ private fun UserProfileHeader(
         RowSpacer(width = 10.dp)
 
         UserStatsActionButton(
-            viewModel.getUserType(),
+            rememberFlowSaveable(
+                viewModel.userTypeFlow,
+                GetUserStatsTypeUsecase.UserStatsType.Invalid
+            ),
             viewModel.userId,
             onClickEdit,
             {

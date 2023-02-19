@@ -109,23 +109,12 @@ class FirebaseUserFollowRepository @Inject constructor(
         }
     }
 
-    override fun getIsFollowingFlow(userId: String, targetId: String): Flow<Boolean?> =
-        callbackFlow {
-            val listenerReg = getUserFollowingsCollection(userId).document(targetId)
-                .addSnapshotListener { value, error ->
-                    if (error != null) {
-                        trySend(null)
-                    } else {
-                        val isFollowing = value?.exists() ?: false
-                        trySend(isFollowing)
-                    }
-                }
-            awaitClose {
-                runBlocking(Dispatchers.Main.immediate) {
-                    listenerReg.remove()
-                }
-            }
-        }
+    override suspend fun getIsFollowing(userId: String, targetId: String): Boolean? = try {
+        val value = getUserFollowingsCollection(userId).document(targetId).get().await()
+        value?.exists() ?: false
+    } catch (ex: Exception) {
+        null
+    }
 
     override suspend fun getUserFollowByRecentActivity(
         userId: String,

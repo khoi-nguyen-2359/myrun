@@ -12,13 +12,15 @@ import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.domain.user.GetUserRecentPlaceNameUsecase
 import akio.apps.myrun.domain.user.GetUserStatsTypeUsecase
-import akio.apps.myrun.feature.core.BaseViewModel
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import javax.inject.Inject
+import akio.apps.myrun.feature.userstats.model.UserStatsProfileUiModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapNotNull
+import timber.log.Timber
+import javax.inject.Inject
 
 class UserStatsViewModel @Inject constructor(
     private val arguments: UserStatsArguments,
@@ -29,57 +31,44 @@ class UserStatsViewModel @Inject constructor(
     private val getUserRecentPlaceNameUsecase: GetUserRecentPlaceNameUsecase,
     private val getUserStatsTypeUsecase: GetUserStatsTypeUsecase,
     private val userProfileRepository: UserProfileRepository,
-) : BaseViewModel() {
+) {
     private val currentUserId = userAuthState.requireUserAccountId()
 
     val userId: String = arguments.userId ?: currentUserId
     val isCurrentUser: Boolean = userId == currentUserId
 
-    @Composable
-    fun getUserFollowCounter(): UserFollowCounter = rememberFlow(
-        flow = remember { userFollowRepository.getUserFollowCounterFlow(userId) },
-        default = UserFollowCounter(0, 0)
+    val measureSystemFlow: Flow<MeasureSystem> = userPreferences.getMeasureSystemFlow()
+
+    val trainingSummaryDataFlow:
+        Flow<Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>> =
+        getTrainingSummaryDataUsecase.getUserTrainingSummaryDataFlow(userId).flowOn(Dispatchers.IO)
+
+    private val userRecentPlaceFlow: Flow<String?> = flow {
+        emit(getUserRecentPlaceNameUsecase.getUserRecentPlaceName(userId))
+    }
+        .flowOn(Dispatchers.IO)
+
+    private val userProfileFlow =
+        userProfileRepository.getUserProfileResourceFlow(userId)
+            .mapNotNull { it.data }
+            .flowOn(Dispatchers.IO)
+
+    val userStatsProfileFlow: Flow<UserStatsProfileUiModel> = combine(
+        userProfileFlow,
+        userRecentPlaceFlow,
+        ::UserStatsProfileUiModel
     )
 
-    @Composable
-    fun getMeasureSystem(): MeasureSystem = rememberFlow(
-        flow = remember { userPreferences.getMeasureSystemFlow() },
-        default = MeasureSystem.Default
-    )
+    init {
+        Timber.d("init ViewModel")
+    }
 
-    @Composable
-    fun getTrainingSummaryData():
-        Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData> =
-        rememberFlow(
-            remember {
-                getTrainingSummaryDataUsecase.getUserTrainingSummaryDataFlow(userId)
-                    .flowOn(Dispatchers.IO)
-            },
-            mapOf(
-                ActivityType.Running to GetTrainingSummaryDataUsecase.TrainingSummaryTableData(),
-                ActivityType.Cycling to GetTrainingSummaryDataUsecase.TrainingSummaryTableData()
-            )
-        )
+    val userFollowCounterFlow: Flow<UserFollowCounter> =
+        userFollowRepository.getUserFollowCounterFlow(userId)
 
-    @Composable
-    fun getUserRecentPlaceName(): String? = rememberFlow(
-        flow = remember { getUserRecentPlaceNameUsecase.getUserRecentPlaceNameFlow(userId) },
-        default = "--"
-    )
-
-    @Composable
-    fun getUserType(): GetUserStatsTypeUsecase.UserStatsType = rememberFlow(
-        flow = remember { getUserStatsTypeUsecase.getUserStatsTypeFlow(userId) },
-        default = GetUserStatsTypeUsecase.UserStatsType.Invalid
-    )
-
-    @Composable
-    fun getUserProfile(): UserProfile = rememberFlow(
-        flow = remember {
-            userProfileRepository.getUserProfileResourceFlow(userId).mapNotNull { it.data }
-        },
-        default = UserProfile(accountId = "", photo = null, name = "--")
-    )
+    val userTypeFlow: Flow<GetUserStatsTypeUsecase.UserStatsType> = flow {
+        emit(getUserStatsTypeUsecase.getUserStatsType(userId))
+    }
 
     suspend fun followUser(followUserProfile: UserProfile) =
         userFollowRepository.followUser(

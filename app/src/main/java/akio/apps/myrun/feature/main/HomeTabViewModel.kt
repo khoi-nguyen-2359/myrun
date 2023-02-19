@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 
 class HomeTabViewModel @Inject constructor(
     private val routeTrackingState: RouteTrackingState,
-) : BaseViewModel() {
+) {
 
     val isTrackingStartedFlow: Flow<Boolean> =
         routeTrackingState.getTrackingStatusFlow().map { it != RouteTrackingStatus.STOPPED }
