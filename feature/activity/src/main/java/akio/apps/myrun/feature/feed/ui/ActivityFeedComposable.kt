@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.feed.ui
 
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
+import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.core.ktx.px2dp
@@ -35,6 +36,8 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -61,6 +64,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
+import timber.log.Timber
 
 private object ActivityFeedColors {
     val listBackground: Color = Color.White
@@ -77,14 +81,12 @@ internal object ActivityFeedDimensions {
 fun ActivityFeedComposable(
     appNavController: NavController,
     homeTabNavController: NavController,
-    feedViewModel: FeedViewModel,
     contentPaddingBottom: Dp,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
     val uiState = rememberUiState(contentPaddingBottom)
     val navigator = rememberNavigator(appNavController, homeTabNavController)
     ActivityFeedComposableInternal(
-        feedViewModel,
         uiState,
         navigator,
         onClickExportActivityFile
@@ -129,11 +131,11 @@ private fun rememberNavigator(
 
 @Composable
 private fun ActivityFeedComposableInternal(
-    feedViewModel: FeedViewModel,
     uiState: FeedUiState,
     navigator: FeedNavigator,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
+    val feedViewModel = rememberViewModel(rememberCoroutineScope())
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -174,10 +176,10 @@ private fun ActivityFeedContainer(
 ) {
     val lazyPagingItems = feedViewModel.activityPagingFlow.collectAsLazyPagingItems()
     when {
-        lazyPagingItems.loadState.refresh == LoadState.Loading &&
-            lazyPagingItems.itemCount == 0 -> {
-            FullscreenLoadingView()
-        }
+        // lazyPagingItems.loadState.refresh == LoadState.Loading &&
+        //     lazyPagingItems.itemCount == 0 -> {
+        //     FullscreenLoadingView()
+        // }
         lazyPagingItems.loadState.append.endOfPaginationReached &&
             lazyPagingItems.itemCount == 0 -> {
             ActivityFeedEmptyMessage(
@@ -202,8 +204,11 @@ private fun ActivityFeedItemList(
     lazyPagingItems: LazyPagingItems<FeedUiModel>,
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
 ) {
-    val userProfile = feedViewModel.getUserProfile()
-    val preferredUnitSystem = feedViewModel.getMeasureSystem()
+    Timber.d("render ActivityFeedItemList")
+    val userProfile by feedViewModel.userProfileFlow.collectAsState(initial = null)
+    val preferredUnitSystem by feedViewModel.measureSystem.collectAsState(
+        initial = MeasureSystem.Default
+    )
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -281,6 +286,7 @@ private fun FullscreenLoadingView() = Box(
     modifier = Modifier.fillMaxSize(),
     contentAlignment = Alignment.Center
 ) {
+    Timber.d("render FullscreenLoadingView")
     LoadingItem()
 }
 

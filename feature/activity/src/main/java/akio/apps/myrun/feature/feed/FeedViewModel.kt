@@ -15,14 +15,11 @@ import akio.apps.myrun.domain.user.FollowUserUsecase
 import akio.apps.myrun.domain.user.GetUserFollowSuggestionUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.PlaceNameSelector
-import akio.apps.myrun.feature.core.BaseViewModel
 import akio.apps.myrun.feature.feed.model.FeedActivity
 import akio.apps.myrun.feature.feed.model.FeedSuggestedUserFollow
 import akio.apps.myrun.feature.feed.model.FeedUiModel
 import akio.apps.myrun.feature.feed.model.FeedUserFollowSuggestionList
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.paging.Pager
@@ -30,6 +27,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.flatMap
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -38,14 +36,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapNotNull
-import timber.log.Timber
-import javax.inject.Inject
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
-class FeedViewModel @Inject constructor(
+internal class FeedViewModel @Inject constructor(
     private val activityLocalStorage: ActivityLocalStorage,
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val userAuthenticationState: UserAuthenticationState,
@@ -57,14 +52,16 @@ class FeedViewModel @Inject constructor(
     private val followUserUsecase: FollowUserUsecase,
     private val userFollowRepository: UserFollowRepository,
     private val activityDateTimeFormatter: ActivityDateTimeFormatter,
-    private val pagingDataScope: CoroutineScope,
-) : BaseViewModel() {
+    private val viewModelScope: CoroutineScope,
+) {
 
     private val userId: String = userAuthenticationState.requireUserAccountId()
 
     private val recentPlaceIdentifierFlow: Flow<PlaceIdentifier?> = flow {
-        emit(userRecentActivityRepository.getRecentPlaceIdentifier(userId))
-    }.flowOn(Dispatchers.IO)
+        emit(null)
+        emit(userRecentActivityRepository.getRecentPlaceIdentifier(userId, useCache = false))
+    }
+        .flowOn(Dispatchers.IO)
 
     private val followRequestedStateMap: SnapshotStateMap<String, Boolean> = mutableStateMapOf()
     private val followRequestedMapFlow: Flow<Map<String, Boolean>> = snapshotFlow {
@@ -74,35 +71,25 @@ class FeedViewModel @Inject constructor(
     }
 
     private val followSuggestionFlow: Flow<List<UserFollowSuggestion>> = flow {
+        emit(emptyList())
         emit(getUserFollowUsecase.getFollowSuggestion())
-    }.flowOn(Dispatchers.IO)
-
-    init {
-        Timber.d("create FeedViewModel")
-        observeUserFollowings()
     }
+        .flowOn(Dispatchers.IO)
 
-    private fun observeUserFollowings() = pagingDataScope.launch {
-        userFollowRepository.getUserFollowingsFlow(userId)
-            .flowOn(Dispatchers.IO)
-            .collect { followings ->
-                val requestedUidList = followings.map { following -> following.uid }
-                    .associateWith { true }
-                followRequestedStateMap.putAll(requestedUidList)
-            }
-    }
+    val userProfileFlow: Flow<UserProfile?> =
+        getUserProfileUsecase.getUserProfileFlow(userId).mapNotNull { it.data }
 
     val activityPagingFlow = Pager(
         config = PagingConfig(
-            pageSize = ActivityFeedViewModel.PAGE_SIZE,
+            pageSize = PAGE_SIZE,
             enablePlaceholders = false,
-            prefetchDistance = ActivityFeedViewModel.PAGE_SIZE
+            prefetchDistance = PAGE_SIZE
         )
         // do not pass initial key as timestamp because initialKey is reused in invalidating!
         // initialKey = System.currentTimeMillis()
     ) { recreateActivityPagingSource() }
         .flow
-        .cachedIn(pagingDataScope)
+        .cachedIn(viewModelScope)
         .let { pagingFlow ->
             combine(
                 pagingFlow,
@@ -112,9 +99,30 @@ class FeedViewModel @Inject constructor(
                 ::combinePagingDataSources
             )
         }
-        .cachedIn(pagingDataScope)
+        .cachedIn(viewModelScope)
 
     private var activityPagingSource: ActivityPagingSource? = null
+
+    val uploadingActivityCountFlow: Flow<Int> =
+        activityLocalStorage.getActivityStorageDataCountFlow().distinctUntilChanged()
+
+    val measureSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystemFlow()
+
+    init {
+        Timber.d("create FeedViewModel")
+        observeUserFollowings()
+        observeActivityUploadCount()
+    }
+
+    private fun observeUserFollowings() = viewModelScope.launch {
+        userFollowRepository.getUserFollowingsFlow(userId)
+            .flowOn(Dispatchers.IO)
+            .collect { followings ->
+                val requestedUidList = followings.map { following -> following.uid }
+                    .associateWith { true }
+                followRequestedStateMap.putAll(requestedUidList)
+            }
+    }
 
     private fun recreateActivityPagingSource(): ActivityPagingSource =
         activityPagingSourceFactory.createPagingSource().also {
@@ -128,37 +136,29 @@ class FeedViewModel @Inject constructor(
         userFollowsRequestedMap: Map<String, Boolean>,
         recentPlaceIdentifier: PlaceIdentifier?,
     ): PagingData<FeedUiModel> {
-        Timber.d("combine paging data")
+        Timber.d("combine paging data sources")
         var index = 0
         return pagingData.flatMap { baseActivity ->
             val locationName = getActivityDisplayLocation(baseActivity, recentPlaceIdentifier)
-            val formattedStartTime = activityDateTimeFormatter.formatActivityDateTime(baseActivity.startTime)
-            if (index++ == ActivityFeedViewModel.PAGE_SIZE / 2 && userFollows.isNotEmpty()) {
-                // insert follow suggestion in the end of the first page
-                val feedModels = userFollows.map { dataModel ->
+            val formattedStartTime =
+                activityDateTimeFormatter.formatActivityDateTime(baseActivity.startTime)
+            val activityItem = FeedActivity(
+                baseActivity,
+                locationName,
+                formattedStartTime,
+                baseActivity.athleteInfo.userId == userId
+            )
+            if (index++ == PAGE_SIZE / 2 && userFollows.isNotEmpty()) {
+                // insert follow suggestion item in the middle of the first page
+                val suggestionFeedModels = userFollows.map { suggestionData ->
                     FeedSuggestedUserFollow(
-                        dataModel,
-                        userFollowsRequestedMap[dataModel.uid] ?: false
+                        suggestionData,
+                        userFollowsRequestedMap[suggestionData.uid] ?: false
                     )
                 }
-                listOf(
-                    FeedActivity(
-                        baseActivity,
-                        locationName,
-                        formattedStartTime,
-                        baseActivity.athleteInfo.userId == userId
-                    ),
-                    FeedUserFollowSuggestionList(feedModels)
-                )
+                listOf(activityItem, FeedUserFollowSuggestionList(suggestionFeedModels))
             } else {
-                listOf(
-                    FeedActivity(
-                        baseActivity,
-                        locationName,
-                        formattedStartTime,
-                        baseActivity.athleteInfo.userId == userId
-                    )
-                )
+                listOf(activityItem)
             }
         }
     }
@@ -171,6 +171,17 @@ class FeedViewModel @Inject constructor(
             ?: return ""
         return placeNameSelector.select(activityPlaceIdentifier, userPlaceIdentifier)
             ?: ""
+    }
+
+    private fun observeActivityUploadCount() = viewModelScope.launch {
+        activityLocalStorage.getActivityStorageDataCountFlow()
+            .distinctUntilChanged()
+            .collect { reloadFeedData() }
+    }
+
+    private fun reloadFeedData() {
+        Timber.d("reloadFeedData")
+        activityPagingSource?.invalidate()
     }
 
     suspend fun followUser(userFollowSuggestion: UserFollowSuggestion) {
@@ -186,23 +197,7 @@ class FeedViewModel @Inject constructor(
         }
     }
 
-    @Composable
-    fun getUploadingActivityCount(): Int = rememberFlow(
-        flow = remember {
-            activityLocalStorage.getActivityStorageDataCountFlow().distinctUntilChanged()
-        }, default = 0
-    )
-
-    @Composable
-    fun getUserProfile(): UserProfile? = rememberFlow(
-        flow = remember {
-            getUserProfileUsecase.getUserProfileFlow(userId).mapNotNull { it.data }
-        }, default = null
-    )
-
-    @Composable
-    fun getMeasureSystem(): MeasureSystem = rememberFlow(
-        flow = remember { userPreferences.getMeasureSystem() },
-        default = MeasureSystem.Default
-    )
+    companion object {
+        const val PAGE_SIZE = 6
+    }
 }

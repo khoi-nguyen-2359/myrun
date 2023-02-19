@@ -24,7 +24,7 @@ import kotlinx.coroutines.CoroutineScope
         ActivityDataComponent::class
     ]
 )
-interface FeedFeatureComponent {
+internal interface FeedFeatureComponent {
     fun feedViewModel(): FeedViewModel
 
     @Component.Factory

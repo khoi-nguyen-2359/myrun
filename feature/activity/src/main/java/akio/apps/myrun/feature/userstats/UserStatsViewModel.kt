@@ -43,7 +43,7 @@ class UserStatsViewModel @Inject constructor(
 
     @Composable
     fun getMeasureSystem(): MeasureSystem = rememberFlow(
-        flow = remember { userPreferences.getMeasureSystem() },
+        flow = remember { userPreferences.getMeasureSystemFlow() },
         default = MeasureSystem.Default
     )
 

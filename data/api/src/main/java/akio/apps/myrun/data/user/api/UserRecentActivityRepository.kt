@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserRecentActivityRepository {
     suspend fun saveRecentPlace(userId: String, areaIdentifier: PlaceIdentifier)
-    suspend fun getRecentPlaceIdentifier(userId: String): PlaceIdentifier?
+    suspend fun getRecentPlaceIdentifier(userId: String, useCache: Boolean): PlaceIdentifier?
     fun getRecentPlaceIdentifierFlow(userId: String): Flow<Resource<out PlaceIdentifier?>>
 }

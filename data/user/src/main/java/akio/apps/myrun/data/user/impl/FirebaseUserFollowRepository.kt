@@ -75,21 +75,24 @@ class FirebaseUserFollowRepository @Inject constructor(
             .documents.mapNotNull { it.toObject(FirestoreUserFollow::class.java)?.toUserFollow() }
     }
 
-    override suspend fun getUserFollowings(userId: String): List<UserFollow> =
-        getUserFollowingsFromSource(userId)
+    override suspend fun getUserFollowings(userId: String, useCache: Boolean): List<UserFollow> {
+        val cache = if (useCache) {
+            getUserFollowingsFromSource(userId, Source.CACHE).takeIf { it.isNotEmpty() }
+        } else {
+            null
+        }
 
+        return cache ?: getUserFollowingsFromSource(userId)
+    }
+
+    /**
+     * Using [Source.CACHE] for [source] returns empty list in case no data in cache.
+     */
     private suspend fun getUserFollowingsFromSource(
         userId: String,
         source: Source = Source.DEFAULT
     ) = getUserFollowingsCollection(userId).get(source).await().documents
         .mapNotNull { it.toObject(FirestoreUserFollow::class.java)?.toUserFollow() }
-
-    override suspend fun getCachedUserFollowings(userId: String): List<UserFollow>? =
-        try {
-            getUserFollowingsFromSource(userId, Source.CACHE)
-        } catch (ex: Exception) {
-            null
-        }
 
     override fun getUserFollowingsFlow(userId: String): Flow<List<UserFollow>> = callbackFlow {
         val listenerReg = getUserFollowingsCollection(userId).addSnapshotListener { value, _ ->

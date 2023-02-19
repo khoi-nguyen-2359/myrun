@@ -11,6 +11,7 @@ interface ActivityRepository {
         userIds: List<String>,
         startAfterTime: Long,
         limit: Int,
+        useCache: Boolean
     ): List<BaseActivityModel>
 
     /**

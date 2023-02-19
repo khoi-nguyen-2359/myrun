@@ -65,8 +65,7 @@ fun MainNavHost(
                 navController,
                 onClickFloatingActionButton,
                 onClickExportActivityFile,
-                openRoutePlanningAction,
-                pagingDataScope = pagingDataScope
+                openRoutePlanningAction
             )
         }
 

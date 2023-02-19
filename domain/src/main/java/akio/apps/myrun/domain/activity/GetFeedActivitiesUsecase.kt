@@ -18,8 +18,7 @@ class GetFeedActivitiesUsecase @Inject constructor(
         count: Int,
     ): Resource<List<BaseActivityModel>> = try {
         val userAccountId = userAuthenticationState.requireUserAccountId()
-        val userFollowings = userFollowRepository.getCachedUserFollowings(userAccountId)
-            ?: userFollowRepository.getUserFollowings(userAccountId)
+        val userFollowings = userFollowRepository.getUserFollowings(userAccountId, useCache = true)
         val userIds = buildList {
             val followingUids = userFollowings.mapNotNull { userFollow ->
                 if (userFollow.status == FollowStatus.Accepted) {
@@ -32,7 +31,8 @@ class GetFeedActivitiesUsecase @Inject constructor(
             addAll(followingUids)
         }
 
-        val activities = activityRepository.getActivitiesByStartTime(userIds, startAfter, count)
+        val activities =
+            activityRepository.getActivitiesByStartTime(userIds, startAfter, count, useCache = true)
         Resource.Success(activities)
     } catch (ex: Exception) {
         Resource.Error(ex)

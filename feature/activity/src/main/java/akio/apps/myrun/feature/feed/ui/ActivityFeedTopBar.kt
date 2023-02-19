@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.sharp.CheckCircleOutline
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,10 +59,10 @@ internal fun ActivityFeedTopBar(
                 )
             },
             actions = {
-                ActivityUploadNotifierBadge(
-                    viewModel.getUploadingActivityCount(),
-                    onDismissUploadBadge
+                val uploadingCount by viewModel.uploadingActivityCountFlow.collectAsState(
+                    initial = 0
                 )
+                ActivityUploadNotifierBadge(uploadingCount, onDismissUploadBadge)
                 AppBarIconButton(iconImageVector = Icons.Rounded.Settings) {
                     onClickUserPreferencesButton()
                 }

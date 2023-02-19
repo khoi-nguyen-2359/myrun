@@ -37,7 +37,7 @@ class UserPreferencesViewModel @Inject constructor(
     private val isAccountDeletedFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     val screenState: Flow<ScreenState> = combine(
-        userPreferences.getMeasureSystem(),
+        userPreferences.getMeasureSystemFlow(),
         getProviderTokensUsecase.getProviderTokensFlow()
             .map(::mapAppTokensToStravaLinkState)
             .flowOn(ioDispatcher),

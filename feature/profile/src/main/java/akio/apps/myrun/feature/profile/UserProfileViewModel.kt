@@ -31,7 +31,7 @@ internal class UserProfileViewModel @Inject constructor(
 
     private val userId: String = userAuthState.requireUserAccountId()
 
-    val preferredSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystem()
+    val preferredSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystemFlow()
 
     /**
      * Presents the data of editing values in input fields. Null means no initial data fetched,

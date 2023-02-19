@@ -8,7 +8,6 @@ import akio.apps.myrun.feature.core.ui.AppDimensions.AppBarHeight
 import akio.apps.myrun.feature.core.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
-import akio.apps.myrun.feature.feed.FeedViewModel
 import akio.apps.myrun.feature.feed.di.DaggerFeedFeatureComponent
 import akio.apps.myrun.feature.feed.ui.ActivityFeedComposable
 import akio.apps.myrun.feature.main.HomeTabViewModel
@@ -44,6 +43,7 @@ import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -109,40 +109,37 @@ fun HomeTabComposable(
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     openRoutePlanningAction: () -> Unit,
     viewModel: HomeTabViewModel = rememberViewModel(),
-    pagingDataScope: CoroutineScope
-) {
+) = AppTheme {
     val navigator = rememberNavigator()
     val fabState = rememberFabState(navigator.currentTabNavEntry)
-    AppTheme {
-        // toggle FAB when switching between tabs
-        LaunchedEffect(fabState.isFabActive) {
-            fabState.toggleFabAnimation()
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .nestedScroll(fabState.fabAnimationScrollConnection)
-        ) {
-            HomeTabNavHost(
-                navigator.homeNavHostController,
-                onClickExportActivityFile,
-                fabState.fabBoxHeightDp,
-                appNavController,
-                openRoutePlanningAction,
-                pagingDataScope
-            )
+    // toggle FAB when switching between tabs
+    LaunchedEffect(fabState.isFabActive) {
+        fabState.toggleFabAnimation()
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(fabState.fabAnimationScrollConnection)
+    ) {
+        HomeTabNavHost(
+            navigator.homeNavHostController,
+            onClickExportActivityFile,
+            fabState.fabBoxHeightDp,
+            appNavController,
+            openRoutePlanningAction
+        )
 
-            HomeFabBox(
-                viewModel.isTrackingStarted(),
-                fabState.fabBoxHeightDp,
-                fabState.fabOffsetYAnimatable,
-                onClickFloatingActionButton
-            )
+        val isTrackingStarted by viewModel.isTrackingStartedFlow.collectAsState(initial = false)
+        HomeFabBox(
+            isTrackingStarted,
+            fabState.fabBoxHeightDp,
+            fabState.fabOffsetYAnimatable,
+            onClickFloatingActionButton
+        )
 
-            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-                HomeBottomNavBar(navigator)
-                NavigationBarSpacer()
-            }
+        Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+            HomeBottomNavBar(navigator)
+            NavigationBarSpacer()
         }
     }
 }
@@ -247,9 +244,7 @@ private fun HomeTabNavHost(
     contentPaddingBottom: Dp,
     appNavController: NavController,
     openRoutePlanningAction: () -> Unit,
-    pagingDataScope: CoroutineScope,
 ) {
-    val feedViewModel = rememberFeedViewModel(pagingDataScope)
     AnimatedNavHost(
         modifier = Modifier.fillMaxSize(),
         navController = homeNavController,
@@ -259,11 +254,10 @@ private fun HomeTabNavHost(
         popEnterTransition = { HomeTabNavTransitionDefaults.popEnterTransition },
         popExitTransition = { HomeTabNavTransitionDefaults.popExitTransition }
     ) {
-        composable(HomeNavItemInfo.ActivityFeed.route) { navEntry ->
+        composable(HomeNavItemInfo.ActivityFeed.route) {
             ActivityFeedComposable(
                 appNavController,
                 homeNavController,
-                feedViewModel,
                 contentPaddingBottom,
                 onClickExportActivityFile
             )
@@ -276,13 +270,5 @@ private fun HomeTabNavHost(
                 openRoutePlanningAction
             )
         }
-    }
-}
-
-@Composable
-private fun rememberFeedViewModel(pagingDataScope: CoroutineScope): FeedViewModel {
-    val application = LocalContext.current.applicationContext as Application
-    return remember {
-        DaggerFeedFeatureComponent.factory().create(application, pagingDataScope).feedViewModel()
     }
 }

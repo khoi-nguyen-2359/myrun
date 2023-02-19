@@ -14,6 +14,7 @@ import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 private val Context.prefDataStore:
@@ -26,7 +27,7 @@ private val Context.prefDataStore:
 class UserPreferencesImpl @Inject constructor(application: Application) : UserPreferences {
     private val prefs = application.prefDataStore
 
-    override fun getMeasureSystem(): Flow<MeasureSystem> = prefs.data.map { prefs ->
+    override fun getMeasureSystemFlow(): Flow<MeasureSystem> = prefs.data.map { prefs ->
         val id = prefs[KEY_MEASURE_UNIT_SYSTEM]
         MeasureSystem.createFromId(id)
     }

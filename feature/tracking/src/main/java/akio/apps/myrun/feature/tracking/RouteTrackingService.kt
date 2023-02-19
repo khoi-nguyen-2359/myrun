@@ -255,7 +255,7 @@ class RouteTrackingService : Service() {
     }
 
     private fun notifyTrackingNotification() = mainScope.launch {
-        val preferredSystem = userPreferences.getMeasureSystem().first()
+        val preferredSystem = userPreferences.getMeasureSystemFlow().first()
         val (distanceFormatter, _, _, durationFormatter) =
             UnitFormatterSetFactory.createUnitFormatterSet(preferredSystem)
         val notificationIntent = RouteTrackingActivity.launchIntent(this@RouteTrackingService)

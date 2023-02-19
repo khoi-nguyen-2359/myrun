@@ -40,10 +40,11 @@ internal class ActivityDetailViewModel @Inject constructor(
 
     val screenStateFlow: Flow<ScreenState> = combine(
         activityDetailsMutableStateFlow,
-        userPreferences.getMeasureSystem()
+        userPreferences.getMeasureSystemFlow()
     ) { activityResource, preferredSystem ->
         val userId = userAuthenticationState.requireUserAccountId()
-        val userPlaceIdentifier = userRecentActivityRepository.getRecentPlaceIdentifier(userId)
+        val userPlaceIdentifier =
+            userRecentActivityRepository.getRecentPlaceIdentifier(userId, useCache = false)
         val placeName =
             placeNameSelector.select(activityResource.data?.placeIdentifier, userPlaceIdentifier)
         val locations = activityResource.data?.id?.let { activityId ->
