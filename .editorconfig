@@ -58,6 +58,3 @@ trim_trailing_whitespace = false
 
 [*.json]
 indent_size = 2
-
-[**/build/anvil/src-gen*/**]
-ij_formatter_enabled = false
