@@ -26,6 +26,7 @@ ij_continuation_indent_size = 4
 ij_kotlin_import_nested_classes = false
 ij_kotlin_imports_layout = *,^
 ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = false
 ktlint_standard_filename = disabled
 
 [*.java]
