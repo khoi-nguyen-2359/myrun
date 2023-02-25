@@ -13,6 +13,7 @@ import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.domain.user.GetUserRecentPlaceNameUsecase
 import akio.apps.myrun.domain.user.GetUserStatsTypeUsecase
 import akio.apps.myrun.feature.userstats.model.UserStatsProfileUiModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -20,7 +21,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapNotNull
 import timber.log.Timber
-import javax.inject.Inject
 
 class UserStatsViewModel @Inject constructor(
     private val arguments: UserStatsArguments,

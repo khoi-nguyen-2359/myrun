@@ -22,7 +22,6 @@ import androidx.compose.material.icons.sharp.CheckCircleOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -48,7 +47,7 @@ internal fun ActivityFeedTopBar(
     viewModel: FeedViewModel,
     modifier: Modifier = Modifier,
     onClickUserPreferencesButton: () -> Unit,
-    onDismissUploadBadge: () -> Unit
+    onDismissUploadBadge: () -> Unit,
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
         TopAppBar(

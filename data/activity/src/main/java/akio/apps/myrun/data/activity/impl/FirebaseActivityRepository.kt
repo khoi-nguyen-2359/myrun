@@ -52,7 +52,7 @@ class FirebaseActivityRepository @Inject constructor(
         userIds: List<String>,
         startAfterTime: Long,
         limit: Int,
-        useCache: Boolean
+        useCache: Boolean,
     ): List<BaseActivityModel> {
         val cache = if (useCache) {
             getActivitiesByStartTimeFromSource(userIds, startAfterTime, limit, Source.CACHE)
@@ -71,7 +71,7 @@ class FirebaseActivityRepository @Inject constructor(
         userIds: List<String>,
         startAfterTime: Long,
         limit: Int,
-        source: Source = Source.DEFAULT
+        source: Source = Source.DEFAULT,
     ): List<BaseActivityModel> {
         val query = userActivityCollectionGroup.whereIn(FIELD_ATHLETE_USERID, userIds)
             .orderBy(FIELD_ACTIVITY_START_TIME, Query.Direction.DESCENDING)

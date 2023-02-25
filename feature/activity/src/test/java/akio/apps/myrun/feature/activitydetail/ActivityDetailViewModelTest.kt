@@ -89,7 +89,8 @@ class ActivityDetailViewModelTest {
         whenever(mockedActivityRepository.getActivityLocationDataPoints(defaultActivityId))
             .thenReturn(locationDataPoints)
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
-        whenever(mockedUserPreferences.getMeasureSystemFlow()).thenReturn(flowOf(MeasureSystem.Metric))
+        whenever(mockedUserPreferences.getMeasureSystemFlow())
+            .thenReturn(flowOf(MeasureSystem.Metric))
         whenever(
             mockedActivitySplitCalculator.createRunSplits(locationDataPoints, MeasureSystem.Metric)
         ).thenReturn(emptyList())

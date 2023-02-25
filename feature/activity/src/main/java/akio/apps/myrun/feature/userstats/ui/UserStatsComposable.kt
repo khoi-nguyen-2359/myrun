@@ -3,7 +3,6 @@ package akio.apps.myrun.feature.userstats.ui
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserFollowCounter
-import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.user.GetTrainingSummaryDataUsecase
 import akio.apps.myrun.domain.user.GetUserStatsTypeUsecase
 import akio.apps.myrun.feature.activity.BuildConfig
@@ -426,7 +425,7 @@ private fun UserProfileHeader(
                 style = MaterialTheme.typography.h6,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                overflow = TextOverflow.Ellipsis,
+                overflow = TextOverflow.Ellipsis
             )
             if (!userRecentPlace.isNullOrBlank()) {
                 ColumnSpacer(height = 4.dp)

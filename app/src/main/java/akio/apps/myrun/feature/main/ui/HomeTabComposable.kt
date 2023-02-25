@@ -8,7 +8,6 @@ import akio.apps.myrun.feature.core.ui.AppDimensions.AppBarHeight
 import akio.apps.myrun.feature.core.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
-import akio.apps.myrun.feature.feed.di.DaggerFeedFeatureComponent
 import akio.apps.myrun.feature.feed.ui.ActivityFeedComposable
 import akio.apps.myrun.feature.main.HomeTabViewModel
 import akio.apps.myrun.feature.main.di.DaggerHomeTabFeatureComponent
@@ -66,7 +65,6 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlin.math.roundToInt
-import kotlinx.coroutines.CoroutineScope
 
 private object HomeTabNavTransitionDefaults {
     private val fadeInImmediately = fadeIn(

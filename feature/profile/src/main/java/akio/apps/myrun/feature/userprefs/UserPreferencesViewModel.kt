@@ -11,6 +11,7 @@ import akio.apps.myrun.domain.user.GetProviderTokensUsecase
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.worker.UploadStravaFileWorker
 import android.app.Application
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +21,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class UserPreferencesViewModel @Inject constructor(
     private val application: Application,

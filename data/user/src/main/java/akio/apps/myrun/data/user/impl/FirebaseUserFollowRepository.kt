@@ -90,7 +90,7 @@ class FirebaseUserFollowRepository @Inject constructor(
      */
     private suspend fun getUserFollowingsFromSource(
         userId: String,
-        source: Source = Source.DEFAULT
+        source: Source = Source.DEFAULT,
     ) = getUserFollowingsCollection(userId).get(source).await().documents
         .mapNotNull { it.toObject(FirestoreUserFollow::class.java)?.toUserFollow() }
 

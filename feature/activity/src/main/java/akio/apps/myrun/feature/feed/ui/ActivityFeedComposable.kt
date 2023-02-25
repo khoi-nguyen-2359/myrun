@@ -116,7 +116,7 @@ private fun rememberUiState(contentPaddingBottom: Dp): FeedUiState {
             topBarHeightDp,
             topBarHeightPx,
             topBarOffsetYAnimatable,
-            feedListState,
+            feedListState
         )
     }
 }
