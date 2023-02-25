@@ -11,7 +11,6 @@ import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
 import akio.apps.myrun.domain.user.UpdateUserProfileUsecase
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -27,14 +26,14 @@ internal class UserProfileViewModel @Inject constructor(
     private val updateUserProfileUsecase: UpdateUserProfileUsecase,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
-) : ViewModel() {
+) {
 
     private val userId: String = userAuthState.requireUserAccountId()
 
-    val preferredSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystemFlow()
+    val measureSystemFlow: Flow<MeasureSystem> = userPreferences.getMeasureSystemFlow()
 
     /**
-     * Presents the data of editing values in input fields. Null means no initial data fetched,
+     * Data of editing values in input fields. Null means no initial data fetched,
      * screen hasn't ever entered editing state.
      */
     private val editingFormDataMutableStateFlow: MutableStateFlow<UserProfileFormData?> =
@@ -85,14 +84,12 @@ internal class UserProfileViewModel @Inject constructor(
         this[SAVED_STATE_USER_PHOTO_URL] = formData.photoUrl
     }
 
-    private fun SavedStateHandle.getUserId(): String? = this.get<String>(SAVED_STATE_USER_ID)
-
     sealed class ScreenState {
         object Loading : ScreenState()
         class ErrorRetry(val exception: Throwable) : ScreenState()
         class FormState(
             /**
-             * Data for values that are editing in input fields.
+             * Data for values that are being edited in input fields.
              */
             val editingFormData: UserProfileFormData,
         ) : ScreenState()
