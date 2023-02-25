@@ -65,7 +65,6 @@ dependencies {
 
     implementation(libs.androidx.appcompat)
     implementation(libs.timber)
-    implementation(libs.lifecycle.viewmodel.ktx)
 
     implementation(libs.dagger)
     implementation(libs.anvil.annotations)
