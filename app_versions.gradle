@@ -3,6 +3,6 @@ project.ext {
     versionCode = 2_01_01
     appId = "akio.apps.myrun"
     minSdk = 21
-    targetSdk = 30
+    targetSdk = 31
     compileSdk = 32
 }
