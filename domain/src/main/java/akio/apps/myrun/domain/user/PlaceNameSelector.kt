@@ -8,7 +8,7 @@ import javax.inject.Inject
  */
 class PlaceNameSelector @Inject constructor() {
     /**
-     * Gets the place name to display, depends on user current place.
+     * Returns the place name to display, depends on user current place.
      * [userPlaceIdentifier] is null in case current user doesn't have recent place recorded
      * yet.
      * Returns null if target place doesn't have a name.

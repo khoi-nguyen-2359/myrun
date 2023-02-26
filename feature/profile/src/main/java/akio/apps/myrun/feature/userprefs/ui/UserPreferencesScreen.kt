@@ -7,7 +7,6 @@ import akio.apps.myrun.data.eapps.api.model.ProviderToken
 import akio.apps.myrun.data.eapps.api.model.RunningApp
 import akio.apps.myrun.data.eapps.api.model.StravaAthlete
 import akio.apps.myrun.data.user.api.model.MeasureSystem
-import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.navigation.OnBoardingNavigation
 import akio.apps.myrun.feature.core.ui.AppBarArrowBackButton
@@ -58,6 +57,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,15 +70,18 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 
 @Composable
-fun UserPreferencesScreen(
-    navController: NavController,
-    backStackEntry: NavBackStackEntry,
-) {
+fun UserPreferencesScreen(navController: NavController, backStackEntry: NavBackStackEntry) {
+    UserPreferencesScreen(navController, rememberViewModel(backStackEntry))
+}
+
+@Composable
+fun rememberViewModel(navEntry: NavBackStackEntry): UserPreferencesViewModel {
     val application = LocalContext.current.applicationContext as Application
-    val viewModel = backStackEntry.rememberViewModelProvider {
-        DaggerUserProfileFeatureComponent.factory().create(application, it).userPrefsViewModel()
+    val vmScope = rememberCoroutineScope()
+    return remember {
+        DaggerUserProfileFeatureComponent.factory()
+            .create(application, navEntry.savedStateHandle, vmScope).userPrefsViewModel()
     }
-    UserPreferencesScreen(navController, viewModel)
 }
 
 @Composable

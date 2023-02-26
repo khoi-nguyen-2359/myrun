@@ -20,9 +20,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.sharp.CheckCircleOutline
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,12 +38,16 @@ private object ActivityFeedTopBarColors {
     val uploadingBadgeContentColor = Color(0xffffffff)
 }
 
+private enum class UploadBadgeState {
+    InProgress, Completed, Dismissed
+}
+
 @Composable
 internal fun ActivityFeedTopBar(
-    uiState: FeedUiState,
     viewModel: FeedViewModel,
     modifier: Modifier = Modifier,
     onClickUserPreferencesButton: () -> Unit,
+    onDismissUploadBadge: () -> Unit,
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
         TopAppBar(
@@ -52,7 +58,10 @@ internal fun ActivityFeedTopBar(
                 )
             },
             actions = {
-                ActivityUploadNotifierBadge(uiState, viewModel.getUploadingActivityCount())
+                val uploadingCount by viewModel.uploadingActivityCountFlow.collectAsState(
+                    initial = 0
+                )
+                ActivityUploadNotifierBadge(uploadingCount, onDismissUploadBadge)
                 AppBarIconButton(iconImageVector = Icons.Rounded.Settings) {
                     onClickUserPreferencesButton()
                 }
@@ -62,15 +71,27 @@ internal fun ActivityFeedTopBar(
 }
 
 @Composable
-private fun ActivityUploadNotifierBadge(uiState: FeedUiState, activityUploadingCount: Int) {
-    uiState.updateUploadBadgeState(activityUploadingCount)
-    Crossfade(targetState = uiState.uploadBadgeState) {
+private fun ActivityUploadNotifierBadge(
+    activityUploadingCount: Int,
+    dismissAction: () -> Unit,
+) {
+    var badgeState by rememberSaveable { mutableStateOf(UploadBadgeState.Dismissed) }
+    badgeState = when {
+        activityUploadingCount > 0 -> UploadBadgeState.InProgress
+        activityUploadingCount == 0 && badgeState != UploadBadgeState.Dismissed ->
+            UploadBadgeState.Completed
+        else -> UploadBadgeState.Dismissed
+    }
+    Crossfade(targetState = badgeState) {
         when (it) {
-            FeedUiState.UploadBadgeState.InProgress -> {
+            UploadBadgeState.InProgress -> {
                 UploadInProgressBadge(count = activityUploadingCount)
             }
-            FeedUiState.UploadBadgeState.Complete -> {
-                UploadCompleteBadge(uiState::dismissActivityUploadBadge)
+            UploadBadgeState.Completed -> {
+                UploadCompleteBadge {
+                    badgeState = UploadBadgeState.Dismissed
+                    dismissAction()
+                }
             }
             else -> {
                 // render void

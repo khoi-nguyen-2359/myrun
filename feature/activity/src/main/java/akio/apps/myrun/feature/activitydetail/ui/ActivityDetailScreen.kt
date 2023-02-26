@@ -6,7 +6,6 @@ import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.activitydetail.ActivityDetailViewModel
 import akio.apps.myrun.feature.activitydetail.ActivityRouteMapActivity
 import akio.apps.myrun.feature.activitydetail.di.DaggerActivityDetailFeatureComponent
-import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.core.measurement.TrackUnitFormatter
 import akio.apps.myrun.feature.core.measurement.TrackUnitFormatterSet
 import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
@@ -68,17 +67,23 @@ fun ActivityDetailScreen(
     navBackStackEntry: NavBackStackEntry,
     onClickExportFile: (BaseActivityModel) -> Unit,
 ) {
-    val activityId =
-        HomeNavDestination.ActivityDetail.activityIdRequiredArg.parseValueInBackStackEntry(
-            navBackStackEntry
-        )
+    val activityDetailViewModel = rememberViewModel(navBackStackEntry)
+    ActivityDetailScreen(activityDetailViewModel, onClickExportFile, navController)
+}
+
+@Composable
+private fun rememberViewModel(navEntry: NavBackStackEntry): ActivityDetailViewModel {
     val application = LocalContext.current.applicationContext as Application
-    val activityDetailViewModel = navBackStackEntry.rememberViewModelProvider { handle ->
+    val activityId =
+        HomeNavDestination.ActivityDetail.activityIdRequiredArg.parseValueInBackStackEntry(navEntry)
+    return remember {
         DaggerActivityDetailFeatureComponent.factory()
-            .create(application, ActivityDetailViewModel.setInitialSavedState(handle, activityId))
+            .create(
+                application,
+                ActivityDetailViewModel.setInitialSavedState(navEntry.savedStateHandle, activityId)
+            )
             .activityDetailsViewModel()
     }
-    ActivityDetailScreen(activityDetailViewModel, onClickExportFile, navController)
 }
 
 @Composable
@@ -95,7 +100,7 @@ private fun ActivityDetailScreen(
         navController,
         onClickExportFile
     ) {
-        activityDetailViewModel.loadActivityDetails()
+        activityDetailViewModel.refreshActivityDetails()
     }
 }
 

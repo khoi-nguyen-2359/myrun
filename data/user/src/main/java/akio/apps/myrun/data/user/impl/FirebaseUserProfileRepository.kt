@@ -22,7 +22,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.runBlocking
@@ -50,9 +49,9 @@ class FirebaseUserProfileRepository @Inject constructor(
                     val fsUser = snapshot?.toObject(FirestoreUser::class.java)
                         ?: return@addSnapshotListener
                     val userProfile = firestoreUserProfileMapper.map(fsUser)
-                    trySendBlocking(Resource.Success(userProfile))
+                    trySend(Resource.Success(userProfile))
                     error?.let {
-                        trySendBlocking(Resource.Error<UserProfile>(it))
+                        trySend(Resource.Error<UserProfile>(it))
                         close(it)
                     }
                 }

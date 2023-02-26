@@ -8,7 +8,7 @@ import akio.apps.myrun.data.user.api.model.UserFollowType
 import kotlinx.coroutines.flow.Flow
 
 interface UserFollowRepository {
-    suspend fun getUserFollowings(userId: String): List<UserFollow>
+    suspend fun getUserFollowings(userId: String, useCache: Boolean): List<UserFollow>
     fun getUserFollowingsFlow(userId: String): Flow<List<UserFollow>>
     suspend fun getUserFollowers(userId: String): List<UserFollow>
 
@@ -20,7 +20,7 @@ interface UserFollowRepository {
     /**
      * Checks whether [userId] is following [targetId] or not. Emits null for error cases.
      */
-    fun getIsFollowingFlow(userId: String, targetId: String): Flow<Boolean?>
+    suspend fun getIsFollowing(userId: String, targetId: String): Boolean?
 
     /**
      * Accept a user at [followerId] to follow user at [userId]. If the follow request is not

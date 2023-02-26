@@ -119,7 +119,7 @@ class RouteTrackingActivity(
         findViewById<RouteTrackingStatsView>(R.id.tracking_stats_view).apply {
             lifecycleScope.launch {
                 val preferredSystem =
-                    routeTrackingViewModel.userPreferences.getMeasureSystem().first()
+                    routeTrackingViewModel.userPreferences.getMeasureSystemFlow().first()
                 trackUnitFormatterSet =
                     UnitFormatterSetFactory.createUnitFormatterSet(preferredSystem)
             }

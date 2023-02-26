@@ -12,15 +12,15 @@ import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.domain.activity.ActivitySplitCalculator
 import akio.apps.myrun.domain.user.PlaceNameSelector
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 internal class ActivityDetailViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
@@ -33,17 +33,32 @@ internal class ActivityDetailViewModel @Inject constructor(
     userPreferences: UserPreferences,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
-) : ViewModel() {
+) {
 
-    private val activityDetailsMutableStateFlow: MutableStateFlow<Resource<BaseActivityModel>> =
-        MutableStateFlow(Resource.Loading())
+    private val activityRefreshSignalFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val activityDetailsFlow: Flow<Resource<BaseActivityModel>> =
+        activityRefreshSignalFlow.flatMapLatest { createActivityDetailFlow() }
+
+    private fun createActivityDetailFlow() = flow {
+        emit(Resource.Loading())
+        val activity = activityRepository.getActivity(savedStateHandle.getActivityId())
+        if (activity == null) {
+            emit(Resource.Error(ActivityNotFoundException()))
+        } else {
+            emit(Resource.Success(activity))
+        }
+    }
+        .flowOn(ioDispatcher)
 
     val screenStateFlow: Flow<ScreenState> = combine(
-        activityDetailsMutableStateFlow,
-        userPreferences.getMeasureSystem()
+        activityDetailsFlow,
+        userPreferences.getMeasureSystemFlow()
     ) { activityResource, preferredSystem ->
         val userId = userAuthenticationState.requireUserAccountId()
-        val userPlaceIdentifier = userRecentActivityRepository.getRecentPlaceIdentifier(userId)
+        val userPlaceIdentifier =
+            userRecentActivityRepository.getRecentPlaceIdentifier(userId, useCache = false)
         val placeName =
             placeNameSelector.select(activityResource.data?.placeIdentifier, userPlaceIdentifier)
         val locations = activityResource.data?.id?.let { activityId ->
@@ -58,27 +73,13 @@ internal class ActivityDetailViewModel @Inject constructor(
         )
     }
 
-    init {
-        loadActivityDetails()
-    }
-
-    fun loadActivityDetails() {
-        viewModelScope.launch {
-            activityDetailsMutableStateFlow.value = Resource.Loading()
-            val activity = withContext(ioDispatcher) {
-                activityRepository.getActivity(savedStateHandle.getActivityId())
-            }
-            if (activity == null) {
-                activityDetailsMutableStateFlow.value = Resource.Error(ActivityNotFoundException())
-            } else {
-                activityDetailsMutableStateFlow.value = Resource.Success(activity)
-            }
-        }
-    }
-
     private fun SavedStateHandle.getActivityId(): String =
         get<String>(SAVED_STATE_ACTIVITY_ID)
             ?: ""
+
+    fun refreshActivityDetails() {
+        activityRefreshSignalFlow.value = !activityRefreshSignalFlow.value
+    }
 
     class ActivityNotFoundException : Exception()
 

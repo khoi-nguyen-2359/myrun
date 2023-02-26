@@ -42,6 +42,7 @@ import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -106,38 +107,37 @@ fun HomeTabComposable(
     onClickExportActivityFile: (BaseActivityModel) -> Unit,
     openRoutePlanningAction: () -> Unit,
     viewModel: HomeTabViewModel = rememberViewModel(),
-) {
+) = AppTheme {
     val navigator = rememberNavigator()
     val fabState = rememberFabState(navigator.currentTabNavEntry)
-    AppTheme {
-        // toggle FAB when switching between tabs
-        LaunchedEffect(fabState.isFabActive) {
-            fabState.toggleFabAnimation()
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .nestedScroll(fabState.fabAnimationScrollConnection)
-        ) {
-            HomeTabNavHost(
-                navigator.homeNavHostController,
-                onClickExportActivityFile,
-                fabState.fabBoxHeightDp,
-                appNavController,
-                openRoutePlanningAction
-            )
+    // toggle FAB when switching between tabs
+    LaunchedEffect(fabState.isFabActive) {
+        fabState.toggleFabAnimation()
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(fabState.fabAnimationScrollConnection)
+    ) {
+        HomeTabNavHost(
+            navigator.homeNavHostController,
+            onClickExportActivityFile,
+            fabState.fabBoxHeightDp,
+            appNavController,
+            openRoutePlanningAction
+        )
 
-            HomeFabBox(
-                viewModel.isTrackingStarted(),
-                fabState.fabBoxHeightDp,
-                fabState.fabOffsetYAnimatable,
-                onClickFloatingActionButton
-            )
+        val isTrackingStarted by viewModel.isTrackingStartedFlow.collectAsState(initial = false)
+        HomeFabBox(
+            isTrackingStarted,
+            fabState.fabBoxHeightDp,
+            fabState.fabOffsetYAnimatable,
+            onClickFloatingActionButton
+        )
 
-            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-                HomeBottomNavBar(navigator)
-                NavigationBarSpacer()
-            }
+        Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+            HomeBottomNavBar(navigator)
+            NavigationBarSpacer()
         }
     }
 }
@@ -252,11 +252,10 @@ private fun HomeTabNavHost(
         popEnterTransition = { HomeTabNavTransitionDefaults.popEnterTransition },
         popExitTransition = { HomeTabNavTransitionDefaults.popExitTransition }
     ) {
-        composable(HomeNavItemInfo.ActivityFeed.route) { navEntry ->
+        composable(HomeNavItemInfo.ActivityFeed.route) {
             ActivityFeedComposable(
                 appNavController,
                 homeNavController,
-                navEntry,
                 contentPaddingBottom,
                 onClickExportActivityFile
             )

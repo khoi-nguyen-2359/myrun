@@ -1,5 +1,6 @@
 package akio.apps.myrun.domain.user
 
+import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityDataModel
 import akio.apps.myrun.data.activity.api.model.ActivityType
@@ -7,6 +8,7 @@ import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.activity.api.model.CyclingActivityModel
 import akio.apps.myrun.data.activity.api.model.RunningActivityModel
+import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.model.PlaceIdentifier
 import akio.apps.myrun.domain.time.TimeProvider
 import java.util.TimeZone
@@ -26,6 +28,8 @@ class GetTrainingSummaryDataUsecaseTest {
     private lateinit var usecase: GetTrainingSummaryDataUsecase
     private lateinit var mockedActivityRepository: ActivityRepository
     private lateinit var mockedTimeProvider: TimeProvider
+    private lateinit var mockedUserAuthState: UserAuthenticationState
+    private lateinit var mockedActivityLocalStorage: ActivityLocalStorage
 
     private val defaultUserId: String = "defaultUserId"
 
@@ -33,9 +37,13 @@ class GetTrainingSummaryDataUsecaseTest {
     fun setup() {
         mockedActivityRepository = mock()
         mockedTimeProvider = mock()
+        mockedUserAuthState = mock()
+        mockedActivityLocalStorage = mock()
         usecase = GetTrainingSummaryDataUsecase(
             mockedActivityRepository,
-            mockedTimeProvider
+            mockedTimeProvider,
+            mockedUserAuthState,
+            mockedActivityLocalStorage
         )
     }
 

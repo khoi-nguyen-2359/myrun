@@ -67,8 +67,6 @@ dependencies {
 
     implementation(libs.timber)
 
-    implementation(libs.lifecycle.viewmodel.ktx)
-
     implementation(libs.googlemaps.androidutils)
     implementation(libs.playservices.map)
     implementation(libs.googleplaces)

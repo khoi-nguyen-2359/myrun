@@ -17,9 +17,9 @@ class FeedNavigator(val appNavController: NavController, val homeTabController: 
 
     fun navigateUserStats(isCurrentUser: Boolean, userId: String) {
         if (isCurrentUser) {
-            navigateNormalUserStats(userId)
-        } else {
             navigateCurrentUserStats()
+        } else {
+            navigateNormalUserStats(userId)
         }
     }
 

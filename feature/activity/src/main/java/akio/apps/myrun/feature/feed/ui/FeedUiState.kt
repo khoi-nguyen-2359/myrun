@@ -16,13 +16,14 @@ import kotlinx.coroutines.launch
 
 class FeedUiState(
     contentPaddingBottom: Dp,
-    val coroutineScope: CoroutineScope,
+    val uiScope: CoroutineScope,
     val topBarHeightDp: Dp,
     val topBarHeightPx: Float,
     val topBarOffsetYAnimatable: Animatable<Float, AnimationVector1D>,
     val feedListState: LazyListState,
-    var uploadBadgeState: UploadBadgeState
 ) {
+    var popupErrorException: Throwable? by mutableStateOf(null)
+
     val contentPaddings = PaddingValues(
         top = topBarHeightDp,
         bottom = contentPaddingBottom
@@ -36,7 +37,7 @@ class FeedUiState(
                 delta <= -REVEAL_ANIM_THRESHOLD -> -topBarHeightPx
                 else -> return Offset.Zero
             }
-            coroutineScope.launch {
+            uiScope.launch {
                 topBarOffsetYAnimatable.animateTo(targetOffset)
             }
 
@@ -44,25 +45,10 @@ class FeedUiState(
         }
     }
 
-    fun updateUploadBadgeState(activityUploadingCount: Int) {
-        uploadBadgeState = when {
-            activityUploadingCount > 0 -> UploadBadgeState.InProgress
-            activityUploadingCount == 0 && uploadBadgeState != UploadBadgeState.Dismissed -> {
-                UploadBadgeState.Complete
-            }
-            else -> UploadBadgeState.Dismissed
-        }
-    }
-
     fun dismissActivityUploadBadge() {
-        coroutineScope.launch {
+        uiScope.launch {
             feedListState.animateScrollToItem(0)
         }
-        uploadBadgeState = UploadBadgeState.Dismissed
-    }
-
-    enum class UploadBadgeState {
-        InProgress, Complete, Dismissed
     }
 
     companion object {

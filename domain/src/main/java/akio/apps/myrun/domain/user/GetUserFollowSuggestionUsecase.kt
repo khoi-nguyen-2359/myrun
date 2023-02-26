@@ -15,11 +15,13 @@ class GetUserFollowSuggestionUsecase @Inject constructor(
 ) {
     suspend fun getFollowSuggestion(): List<UserFollowSuggestion> {
         val userId = authenticationState.requireUserAccountId()
-        val recentPlace = userRecentActivityRepository.getRecentPlaceIdentifier(userId)
-            ?: return emptyList()
+        val recentPlace =
+            userRecentActivityRepository.getRecentPlaceIdentifier(userId, useCache = false)
+                ?: return emptyList()
         val placeComponent = recentPlace.addressComponents.firstOrNull()
             ?: return emptyList()
-        val followingUserIds = userFollowRepository.getUserFollowings(userId).map { it.uid }.toSet()
+        val followingUserIds =
+            userFollowRepository.getUserFollowings(userId, useCache = false).map { it.uid }.toSet()
         var followSuggestions: List<UserFollowSuggestion>
         var startAfterActiveTime = timeProvider.currentTimeMillis()
         do {

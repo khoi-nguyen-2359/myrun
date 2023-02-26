@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.Source
 import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -74,11 +75,24 @@ class FirebaseUserFollowRepository @Inject constructor(
             .documents.mapNotNull { it.toObject(FirestoreUserFollow::class.java)?.toUserFollow() }
     }
 
-    override suspend fun getUserFollowings(userId: String): List<UserFollow> =
-        getUserFollowingsCollection(userId).get().await().documents
-            .mapNotNull {
-                it.toObject(FirestoreUserFollow::class.java)?.toUserFollow()
-            }
+    override suspend fun getUserFollowings(userId: String, useCache: Boolean): List<UserFollow> {
+        val cache = if (useCache) {
+            getUserFollowingsFromSource(userId, Source.CACHE).takeIf { it.isNotEmpty() }
+        } else {
+            null
+        }
+
+        return cache ?: getUserFollowingsFromSource(userId)
+    }
+
+    /**
+     * Using [Source.CACHE] for [source] returns empty list in case no data in cache.
+     */
+    private suspend fun getUserFollowingsFromSource(
+        userId: String,
+        source: Source = Source.DEFAULT,
+    ) = getUserFollowingsCollection(userId).get(source).await().documents
+        .mapNotNull { it.toObject(FirestoreUserFollow::class.java)?.toUserFollow() }
 
     override fun getUserFollowingsFlow(userId: String): Flow<List<UserFollow>> = callbackFlow {
         val listenerReg = getUserFollowingsCollection(userId).addSnapshotListener { value, _ ->
@@ -95,23 +109,12 @@ class FirebaseUserFollowRepository @Inject constructor(
         }
     }
 
-    override fun getIsFollowingFlow(userId: String, targetId: String): Flow<Boolean?> =
-        callbackFlow {
-            val listenerReg = getUserFollowingsCollection(userId).document(targetId)
-                .addSnapshotListener { value, error ->
-                    if (error != null) {
-                        trySend(null)
-                    } else {
-                        val isFollowing = value?.exists() ?: false
-                        trySend(isFollowing)
-                    }
-                }
-            awaitClose {
-                runBlocking(Dispatchers.Main.immediate) {
-                    listenerReg.remove()
-                }
-            }
-        }
+    override suspend fun getIsFollowing(userId: String, targetId: String): Boolean? = try {
+        val value = getUserFollowingsCollection(userId).document(targetId).get().await()
+        value?.exists() ?: false
+    } catch (ex: Exception) {
+        null
+    }
 
     override suspend fun getUserFollowByRecentActivity(
         userId: String,

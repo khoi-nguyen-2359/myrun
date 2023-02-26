@@ -11,10 +11,9 @@ import akio.apps.myrun.domain.user.GetProviderTokensUsecase
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
 import akio.apps.myrun.worker.UploadStravaFileWorker
 import android.app.Application
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -32,12 +31,13 @@ class UserPreferencesViewModel @Inject constructor(
     private val signInManager: SignInManager,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
-) : ViewModel(), LaunchCatchingDelegate by launchCatching {
+    private val viewModelScope: CoroutineScope,
+) : LaunchCatchingDelegate by launchCatching {
 
     private val isAccountDeletedFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     val screenState: Flow<ScreenState> = combine(
-        userPreferences.getMeasureSystem(),
+        userPreferences.getMeasureSystemFlow(),
         getProviderTokensUsecase.getProviderTokensFlow()
             .map(::mapAppTokensToStravaLinkState)
             .flowOn(ioDispatcher),

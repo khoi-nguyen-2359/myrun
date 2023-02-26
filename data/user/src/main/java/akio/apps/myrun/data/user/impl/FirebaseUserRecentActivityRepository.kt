@@ -9,6 +9,7 @@ import akio.apps.myrun.data.user.impl.model.FirestoreUserRecentActivityUpdateMap
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.Source
 import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -40,13 +41,36 @@ class FirebaseUserRecentActivityRepository @Inject constructor(
             .await()
     }
 
-    override suspend fun getRecentPlaceIdentifier(userId: String): PlaceIdentifier? =
-        usersCollection.document(userId)
-            .get()
-            .await()
-            .toObject(FirestoreUser::class.java)
-            ?.recentActivity
-            ?.placeComponents?.let(PlaceIdentifier::fromAddressComponents)
+    override suspend fun getRecentPlaceIdentifier(
+        userId: String,
+        useCache: Boolean,
+    ): PlaceIdentifier? {
+        val cache = if (useCache) {
+            try {
+                getRecentPlaceIdentifierFromSource(userId)
+            } catch (ex: Exception) {
+                null
+            }
+        } else {
+            null
+        }
+
+        return cache ?: getRecentPlaceIdentifierFromSource(userId, Source.DEFAULT)
+    }
+
+    /**
+     * Using [Source.CACHE] for [source] will throw exception if no data in cache.
+     */
+    @Throws(Exception::class)
+    private suspend fun getRecentPlaceIdentifierFromSource(
+        userId: String,
+        source: Source = Source.DEFAULT,
+    ) = usersCollection.document(userId)
+        .get(source)
+        .await()
+        .toObject(FirestoreUser::class.java)
+        ?.recentActivity
+        ?.placeComponents?.let(PlaceIdentifier::fromAddressComponents)
 
     override fun getRecentPlaceIdentifierFlow(
         userId: String,

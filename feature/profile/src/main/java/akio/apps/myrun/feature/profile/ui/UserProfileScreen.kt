@@ -4,7 +4,6 @@ import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserProfile
-import akio.apps.myrun.feature.core.ktx.rememberViewModelProvider
 import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
 import akio.apps.myrun.feature.core.navigation.HomeNavDestination
 import akio.apps.myrun.feature.core.ui.AppBarIconButton
@@ -59,6 +58,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -85,16 +85,26 @@ import java.util.Calendar
 
 @Composable
 fun UserProfileScreen(navController: NavController, backStackEntry: NavBackStackEntry) {
+    val userProfileViewModel = rememberViewModel(backStackEntry)
+    UserProfileScreen(navController, userProfileViewModel)
+}
+
+@Composable
+private fun rememberViewModel(backStackEntry: NavBackStackEntry): UserProfileViewModel {
     val application = LocalContext.current.applicationContext as Application
-    val userId = HomeNavDestination.Profile.userIdOptionalArg.parseValueInBackStackEntry(
-        backStackEntry
-    )
-    val userProfileViewModel = backStackEntry.rememberViewModelProvider { handle ->
+    val vmScope = rememberCoroutineScope()
+    return remember {
+        val userId = HomeNavDestination.Profile.userIdOptionalArg.parseValueInBackStackEntry(
+            backStackEntry
+        )
         DaggerUserProfileFeatureComponent.factory()
-            .create(application, UserProfileViewModel.setInitialSavedState(handle, userId))
+            .create(
+                application,
+                UserProfileViewModel.setInitialSavedState(backStackEntry.savedStateHandle, userId),
+                vmScope
+            )
             .userProfileViewModel()
     }
-    UserProfileScreen(navController, userProfileViewModel)
 }
 
 @Composable
@@ -104,7 +114,7 @@ private fun UserProfileScreen(
 ) = AppTheme {
     val screenState by userProfileViewModel.screenStateFlow
         .collectAsState(initial = UserProfileViewModel.ScreenState.Loading)
-    val preferredSystem by userProfileViewModel.preferredSystem
+    val preferredSystem by userProfileViewModel.measureSystemFlow
         .collectAsState(initial = MeasureSystem.Metric)
     UserProfileScreen(
         screenState,

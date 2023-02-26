@@ -13,6 +13,7 @@ import android.app.Application
 import androidx.lifecycle.SavedStateHandle
 import dagger.BindsInstance
 import dagger.Component
+import kotlinx.coroutines.CoroutineScope
 
 @FeatureScope
 @Component(
@@ -34,6 +35,7 @@ internal interface UserProfileFeatureComponent {
         fun create(
             @BindsInstance application: Application,
             @BindsInstance savedStateHandle: SavedStateHandle,
+            @BindsInstance viewModelScope: CoroutineScope,
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.factory().create(application),
             externalAppDataComponent: ExternalAppDataComponent =

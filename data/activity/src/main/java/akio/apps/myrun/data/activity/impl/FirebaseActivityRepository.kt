@@ -18,6 +18,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -48,17 +49,36 @@ class FirebaseActivityRepository @Inject constructor(
         firebaseStorage.getReference("$PATH_ACTIVITY_IMAGE/$userId")
 
     override suspend fun getActivitiesByStartTime(
-        fixUserId: String,
         userIds: List<String>,
         startAfterTime: Long,
         limit: Int,
+        useCache: Boolean,
+    ): List<BaseActivityModel> {
+        val cache = if (useCache) {
+            getActivitiesByStartTimeFromSource(userIds, startAfterTime, limit, Source.CACHE)
+                .takeIf { it.isNotEmpty() }
+                ?.also { Timber.d("get from cache - count = ${it.size}") }
+        } else {
+            null
+        }
+        return cache ?: getActivitiesByStartTimeFromSource(userIds, startAfterTime, limit)
+    }
+
+    /**
+     * Using [Source.CACHE] for [source] returns empty list in case no data in cache.
+     */
+    private suspend fun getActivitiesByStartTimeFromSource(
+        userIds: List<String>,
+        startAfterTime: Long,
+        limit: Int,
+        source: Source = Source.DEFAULT,
     ): List<BaseActivityModel> {
         val query = userActivityCollectionGroup.whereIn(FIELD_ATHLETE_USERID, userIds)
             .orderBy(FIELD_ACTIVITY_START_TIME, Query.Direction.DESCENDING)
             .startAfter(startAfterTime)
             .limit(limit.toLong())
 
-        val snapshot = query.get().await()
+        val snapshot = query.get(source).await()
 
         return snapshot.documents.mapNotNull { it.toObject(FirestoreActivity::class.java) }
             .map(firestoreActivityMapper::map)

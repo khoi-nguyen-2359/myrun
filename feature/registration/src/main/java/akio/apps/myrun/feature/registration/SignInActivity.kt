@@ -30,7 +30,9 @@ import timber.log.Timber
 
 class SignInActivity : AppCompatActivity(R.layout.activity_sign_in) {
 
-    private val extSignInOrReAuth by lazy { extra(OnBoardingNavigation.EXT_SIGNIN_OR_REAUTH, true) }
+    private val extSignInOrReAuth by lazy {
+        extra(OnBoardingNavigation.EXT_SIGNIN_OR_REAUTH, true)
+    }
 
     private val googleButton: View by lazy { findViewById(R.id.google_button) }
     private val facebookButton: View by lazy { findViewById(R.id.facebook_button) }

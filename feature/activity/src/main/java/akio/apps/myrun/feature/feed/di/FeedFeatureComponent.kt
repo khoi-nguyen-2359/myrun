@@ -11,6 +11,7 @@ import akio.apps.myrun.feature.feed.FeedViewModel
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
+import kotlinx.coroutines.CoroutineScope
 
 @FeatureScope
 @Component(
@@ -30,6 +31,7 @@ internal interface FeedFeatureComponent {
     interface Factory {
         fun create(
             @BindsInstance application: Application,
+            @BindsInstance viewModelScope: CoroutineScope,
             authenticationDataComponent: AuthenticationDataComponent =
                 DaggerAuthenticationDataComponent.factory().create(application),
             activityDataComponent: ActivityDataComponent =

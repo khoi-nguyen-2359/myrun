@@ -26,7 +26,7 @@ private val Context.prefDataStore:
 class UserPreferencesImpl @Inject constructor(application: Application) : UserPreferences {
     private val prefs = application.prefDataStore
 
-    override fun getMeasureSystem(): Flow<MeasureSystem> = prefs.data.map { prefs ->
+    override fun getMeasureSystemFlow(): Flow<MeasureSystem> = prefs.data.map { prefs ->
         val id = prefs[KEY_MEASURE_UNIT_SYSTEM]
         MeasureSystem.createFromId(id)
     }

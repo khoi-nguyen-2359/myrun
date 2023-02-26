@@ -19,7 +19,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -42,7 +42,7 @@ class ActivityDetailViewModelTest {
     private lateinit var mockedActivityDateTimeFormatter: ActivityDateTimeFormatter
     private lateinit var mockedUserPreferences: UserPreferences
 
-    private val testDispatcher: CoroutineDispatcher = UnconfinedTestDispatcher()
+    private val testDispatcher: CoroutineDispatcher = StandardTestDispatcher()
 
     private val defaultActivityId = "defaultActivityId"
     private val defaultUserId = "defaultUserId"
@@ -89,35 +89,32 @@ class ActivityDetailViewModelTest {
         whenever(mockedActivityRepository.getActivityLocationDataPoints(defaultActivityId))
             .thenReturn(locationDataPoints)
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
-        whenever(mockedUserPreferences.getMeasureSystem()).thenReturn(flowOf(MeasureSystem.Metric))
+        whenever(mockedUserPreferences.getMeasureSystemFlow())
+            .thenReturn(flowOf(MeasureSystem.Metric))
         whenever(
             mockedActivitySplitCalculator.createRunSplits(locationDataPoints, MeasureSystem.Metric)
         ).thenReturn(emptyList())
         whenever(mockedActivityDateTimeFormatter.formatActivityDateTime(activityStartTime))
             .thenReturn(mock())
 
-        viewModel =
-            initActivityDetailViewModel(
-                SavedStateHandle(mapOf("SAVED_STATE_ACTIVITY_ID" to defaultActivityId))
-            )
+        viewModel = initActivityDetailViewModel(
+            SavedStateHandle(mapOf("SAVED_STATE_ACTIVITY_ID" to defaultActivityId))
+        )
         viewModel.screenStateFlow.test {
-            val lastEmittedItem = awaitItem()
-            assertTrue(
-                lastEmittedItem is ActivityDetailViewModel.ScreenState.DataAvailable
-            )
-            assertEquals(activityModel, lastEmittedItem.activityData)
-            assertNull(lastEmittedItem.activityPlaceName)
+            val loadingItem = awaitItem()
+            assertTrue(loadingItem is ActivityDetailViewModel.ScreenState.FullScreenLoading)
+            val dataItem = awaitItem()
+            assertTrue(dataItem is ActivityDetailViewModel.ScreenState.DataAvailable)
+            assertEquals(activityModel, dataItem.activityData)
+            assertNull(dataItem.activityPlaceName)
         }
 
         verify(mockedActivityRepository).getActivity(defaultActivityId)
-
-        // only verify for once because we observe the flow for the last item
-        // (after view model initialization)
-        verify(mockedUserAuthenticationState).requireUserAccountId()
+        verify(mockedUserAuthenticationState, times(2)).requireUserAccountId()
     }
 
     @Test
-    fun testLoadActivityDetails_Success() = runTest(testDispatcher) {
+    fun testRefreshActivityDetails_Success() = runTest(testDispatcher) {
         testViewModelInitialization_Success()
 
         val activityStartTime = 1234L
@@ -130,19 +127,14 @@ class ActivityDetailViewModelTest {
         whenever(mockedActivityDateTimeFormatter.formatActivityDateTime(activityStartTime))
             .thenReturn(mock())
 
+        viewModel.refreshActivityDetails()
         viewModel.screenStateFlow.test {
-            awaitItem() // skip last emitted Item
-            viewModel.loadActivityDetails()
             val loadingItem = awaitItem()
-            assertTrue(
-                loadingItem is ActivityDetailViewModel.ScreenState.FullScreenLoading
-            )
-            val resultItem = awaitItem()
-            assertTrue(
-                resultItem is ActivityDetailViewModel.ScreenState.DataAvailable
-            )
-            assertEquals(activityModel, resultItem.activityData)
-            assertNull(resultItem.activityPlaceName)
+            assertTrue(loadingItem is ActivityDetailViewModel.ScreenState.FullScreenLoading)
+            val dataItem = awaitItem()
+            assertTrue(dataItem is ActivityDetailViewModel.ScreenState.DataAvailable)
+            assertEquals(activityModel, dataItem.activityData)
+            assertNull(dataItem.activityPlaceName)
         }
 
         verify(mockedActivityRepository, times(2)).getActivity(defaultActivityId)
@@ -150,21 +142,16 @@ class ActivityDetailViewModelTest {
     }
 
     @Test
-    fun testLoadActivityDetails_Failure() = runTest(testDispatcher) {
+    fun testRefreshActivityDetails_Failure() = runTest(testDispatcher) {
         testViewModelInitialization_Success()
 
         whenever(mockedActivityRepository.getActivity(defaultActivityId)).thenReturn(null)
 
         viewModel.screenStateFlow.test {
-            awaitItem() // lastEmittedItem
-            viewModel.loadActivityDetails()
-            assertTrue(
-                awaitItem() is ActivityDetailViewModel.ScreenState.FullScreenLoading
-            )
+            viewModel.refreshActivityDetails()
+            assertTrue(awaitItem() is ActivityDetailViewModel.ScreenState.FullScreenLoading)
             val failureItem = awaitItem()
-            assertTrue(
-                failureItem is ActivityDetailViewModel.ScreenState.ErrorAndRetry
-            )
+            assertTrue(failureItem is ActivityDetailViewModel.ScreenState.ErrorAndRetry)
         }
 
         verify(mockedActivityRepository, times(2)).getActivity(defaultActivityId)
