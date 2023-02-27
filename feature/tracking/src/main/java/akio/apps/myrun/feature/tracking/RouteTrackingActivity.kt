@@ -182,7 +182,7 @@ class RouteTrackingActivity(
             dialogDelegate::toggleProgressDialog
         )
         collectRepeatOnStarted(
-            routeTrackingViewModel.trackingLocationBatch,
+            routeTrackingViewModel.trackingLocationUpdateValue,
             ::onTrackingLocationUpdate
         )
         collectRepeatOnStarted(routeTrackingViewModel.trackingStats, trackingStatsView::update)
@@ -356,12 +356,14 @@ class RouteTrackingActivity(
             // This method will take a copy of the points, so further mutations to points will have
             // no effect on this polyline.
             val appendedPolypoints = currentPolyline.points.toMutableList()
-            appendedPolypoints.addAll(batch.map { it.toGmsLatLng() })
+            appendedPolypoints.addAll(
+                convertToBSpline(appendedPolypoints.takeLast(2) + batch.map { it.toGmsLatLng() })
+            )
             currentPolyline.points = appendedPolypoints
         }
             ?: run {
                 val polyline = PolylineOptions()
-                    .addAll(batch.map { LatLng(it.latitude, it.longitude) })
+                    .addAll(convertToBSpline(batch.map { LatLng(it.latitude, it.longitude) }))
                     .jointType(JointType.ROUND)
                     .startCap(RoundCap())
                     .endCap(RoundCap())
@@ -371,6 +373,41 @@ class RouteTrackingActivity(
             }
 
         drawnLocationCount += batch.size
+    }
+
+    @Suppress("ktlint:max-line-length")
+    private fun convertToBSpline(points: List<LatLng>): List<LatLng> {
+        if (points.size < 4) {
+            return points
+        }
+        return points.flatMapIndexed { i: Int, _ ->
+            if (i < 2 || i > points.size - 2) {
+                return@flatMapIndexed emptyList()
+            }
+            var t = 0.0
+            val converted = mutableListOf<LatLng>()
+            while (t < 1.0) {
+                val ax = (-points[i-2].latitude + 3 * points[i-1].latitude - 3 * points[i].latitude + points[i+1].latitude) / 6
+                val ay = (-points[i-2].longitude + 3 * points[i-1].longitude - 3 * points[i].longitude + points[i+1].longitude) / 6
+                val bx = (points[i-2].latitude - 2 * points[i-1].latitude + points[i].latitude) / 2
+                val by = (points[i-2].longitude - 2 * points[i-1].longitude + points[i].longitude) / 2
+                val cx = (-points[i-2].latitude + points[i].latitude) / 2
+                val cy = (-points[i-2].longitude + points[i].longitude) / 2
+                val dx = (points[i-2].latitude + 4 * points[i-1].latitude + points[i].latitude) / 6
+                val dy = (points[i-2].longitude + 4 * points[i-1].longitude + points[i].longitude) / 6
+                converted.add(
+                    LatLng(
+                        ax * Math.pow(t+0.1, 3.0) + bx * Math.pow(t+0.1, 2.0) + cx * (t+0.1) + dx,
+                        ay * Math.pow(t+0.1, 3.0) + by * Math.pow(t+0.1, 2.0) + cy * (t+0.1) + dy
+                    )
+                )
+
+                t += 0.1
+            }
+            converted
+        }.also {
+            Timber.d("khoi bspline converted=${it.size}")
+        }
     }
 
     private fun initViews() {
