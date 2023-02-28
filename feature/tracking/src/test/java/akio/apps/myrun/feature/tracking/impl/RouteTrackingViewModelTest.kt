@@ -74,7 +74,7 @@ class RouteTrackingViewModelTest {
             testee.requestInitialData()
 
             assertEquals(RouteTrackingStats(), testee.trackingStats.value)
-            assertTrue(testee.trackingLocationBatch.value.isEmpty())
+            assertTrue(testee.trackingLocationUpdateValue.value.isEmpty())
 
             verify(mockedRouteTrackingState).getTrackingStatusFlow()
             verifyBlocking(mockedRouteTrackingState) { getTrackingStatus() }
