@@ -375,7 +375,7 @@ class RouteTrackingActivity(
         drawnLocationCount += batch.size
     }
 
-    @Suppress("ktlint:max-line-length")
+    @Suppress("ktlint:max-line-length", "ktlint:op-spacing")
     private fun convertToBSpline(points: List<LatLng>): List<LatLng> {
         if (points.size < 4) {
             return points
