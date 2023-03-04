@@ -46,12 +46,12 @@ accompanist = "0.29.1-alpha"
 navigationcompose = "2.5.3"
 
 # google play services: https://developers.google.com/android/guides/releases
-playservices-plugin = "4.3.13"  # https://developers.google.com/android/guides/google-services-plugin
+playservices-plugin = "4.3.15"  # https://developers.google.com/android/guides/google-services-plugin
 playservices-gcm = "17.0.0"
-playservices-location = "20.0.0"
-playservices-auth = "20.2.0"
+playservices-location = "21.0.1"
+playservices-auth = "20.4.1"
 playservices-fitness = "21.1.0"
-playservices-map = "18.0.2"
+playservices-map = "18.1.0"
 
 # google map
 googleplaces = "2.6.0"
