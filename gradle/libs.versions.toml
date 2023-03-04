@@ -5,26 +5,31 @@ agp = "7.4.2"
 ksp = "1.5.30-1.0.0"
 buildtimetracker = "0.11.1"
 
-multidex = "1.0.3"
-
 kotlin = "1.8.10"
+
+# https://github.com/Kotlin/kotlinx.coroutines/releases
 coroutines = "1.6.4"
+
+# https://github.com/Kotlin/kotlinx.serialization/releases
 kotlinserialization = "1.5.0"
 
 # jetpack: https://developer.android.com/jetpack/androidx/versions/all-channel
-androidx-core = "1.8.0"
-appcompat = "1.4.2"
-activity = "1.5.0"
-fragment = "1.5.0"
+androidx-core = "1.9.0"
+appcompat = "1.6.1"
+activity = "1.6.1"
+fragment = "1.5.5"
 constraintlayout = "2.1.4"
-androidmaterial = "1.6.1"
 datastore = "1.0.0"
-workmanager = "2.7.1"
+workmanager = "2.8.0"
 paging = "3.1.1"
-room = "2.4.2"
-lifecycle = "2.5.0"
-splashscreen = "1.0.0-rc01"
-androidx-annotation = "1.4.0"
+room = "2.5.0"
+lifecycle = "2.5.1"
+splashscreen = "1.0.0"
+androidx-annotation = "1.6.0"
+multidex = "2.0.1"
+
+# https://github.com/material-components/material-components-android/releases
+androidmaterial = "1.8.0"
 
 # compose: https://developer.android.com/jetpack/androidx/releases/compose
 composecompiler = "1.4.3"
@@ -95,6 +100,7 @@ buildtimetracker = { module = "net.rdrei.android.buildtimetracker:gradle-plugin"
 kotlingradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
 multidex = { module = "com.android.support:multidex", version.ref = "multidex" }
+
 androidmaterial = { module = "com.google.android.material:material", version.ref = "androidmaterial" }
 
 # android-x

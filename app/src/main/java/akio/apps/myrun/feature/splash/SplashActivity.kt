@@ -49,6 +49,7 @@ class SplashActivity : AppCompatActivity() {
             goHome()
         } else {
             val intent = OnBoardingNavigation.createSignInIntent(this@SplashActivity)
+                ?: return@launch
             @Suppress("DEPRECATION")
             startActivityForResult(intent, RC_SIGN_IN)
         }
