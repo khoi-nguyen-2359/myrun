@@ -54,8 +54,8 @@ playservices-fitness = "21.1.0"
 playservices-map = "18.1.0"
 
 # google map
-googleplaces = "2.6.0"
-googlemaps-androidutils = "2.2.5"
+googleplaces = "3.0.0"
+googlemaps-androidutils = "3.4.0"
 
 # mapbox
 mapbox-java = "5.8.0"
