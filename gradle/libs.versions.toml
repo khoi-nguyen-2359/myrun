@@ -62,9 +62,9 @@ mapbox-java = "5.8.0"
 mapbox-maps = "10.0.0"
 
 # firebase: https://firebase.google.com/support/release-notes/android#latest_sdk_versions
-firebase-bom = "30.3.0"
-firebase-crashlytics-plugin = "2.9.1"
-firebase-perf-plugin = "1.4.1"
+firebase-bom = "31.2.3"
+firebase-crashlytics-plugin = "2.9.4"
+firebase-perf-plugin = "1.4.2"
 
 # others
 guava = "30.1.1-android"
