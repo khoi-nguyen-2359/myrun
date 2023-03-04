@@ -68,17 +68,17 @@ firebase-perf-plugin = "1.4.1"
 
 # others
 guava = "30.1.1-android"
-okhttp = "4.10.0"
-gson = "2.9.0"
+okhttp = "4.10.0" # https://square.github.io/okhttp/changelogs/changelog/
+gson = "2.10.1" # https://github.com/google/gson/releases
 retrofit = "2.9.0"
-dagger = "2.43.2"
+dagger = "2.45"
 anvil = "2.4.4"
 timber = "5.0.1"
-glide = "4.13.2"
-coil = "2.1.0"
-facebook = "9.1.1"
+glide = "4.15.0"
+coil = "2.2.2"
+facebook = "16.0.0" # https://github.com/facebook/facebook-android-sdk/blob/main/CHANGELOG.md
 tcxzpot = "0.2.0"
-leakcanary = "2.9.1"
+leakcanary = "2.10"
 javax-inject = "1"
 
 # testing
