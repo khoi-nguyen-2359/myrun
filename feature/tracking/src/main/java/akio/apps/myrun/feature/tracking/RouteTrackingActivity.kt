@@ -102,17 +102,6 @@ class RouteTrackingActivity(
     private val locationPermissionChecker: LocationPermissionChecker =
         LocationPermissionChecker(activity = this)
 
-    // check location permissions -> check location service availability -> allow user to use this screen
-    private val requisiteJobs = lifecycleScope.launchWhenCreated {
-        val requestConfig = routeTrackingViewModel.getLocationRequestConfigFlow().first()
-        val missingRequiredPermission =
-            !locationPermissionChecker.check() || !locationServiceChecker.check(requestConfig)
-        if (missingRequiredPermission) {
-            finish()
-            return@launchWhenCreated
-        }
-    }
-
     private var cameraMovement: CameraMovement = CameraMovement.StickyLocation
 
     private val trackingStatsView: RouteTrackingStatsView by lazy {
@@ -139,11 +128,27 @@ class RouteTrackingActivity(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        startRequiredChecks()
         setupEdgeToEdge()
 
         routeTrackingViewModel.requestInitialData()
         initViews()
         initMap()
+    }
+
+    /**
+     * Runs required checks on this screen and exits if there's any missing conditions. Ex:
+     * check location permissions
+     * -> check location service availability
+     * -> allow user to use this screen
+     */
+    private fun startRequiredChecks() = lifecycleScope.launch {
+        val requestConfig = routeTrackingViewModel.getLocationRequestConfigFlow().first()
+        val missingRequiredPermission =
+            !locationPermissionChecker.check() || !locationServiceChecker.check(requestConfig)
+        if (missingRequiredPermission) {
+            finish()
+        }
     }
 
     private fun setupEdgeToEdge() {
@@ -173,7 +178,6 @@ class RouteTrackingActivity(
         super.onDestroy()
 
         routePolyline = null
-        requisiteJobs.cancel()
     }
 
     private fun initObservers() {
@@ -387,18 +391,30 @@ class RouteTrackingActivity(
             var t = 0.0
             val converted = mutableListOf<LatLng>()
             while (t < 1.0) {
-                val ax = (-points[i-2].latitude + 3 * points[i-1].latitude - 3 * points[i].latitude + points[i+1].latitude) / 6
-                val ay = (-points[i-2].longitude + 3 * points[i-1].longitude - 3 * points[i].longitude + points[i+1].longitude) / 6
-                val bx = (points[i-2].latitude - 2 * points[i-1].latitude + points[i].latitude) / 2
-                val by = (points[i-2].longitude - 2 * points[i-1].longitude + points[i].longitude) / 2
-                val cx = (-points[i-2].latitude + points[i].latitude) / 2
-                val cy = (-points[i-2].longitude + points[i].longitude) / 2
-                val dx = (points[i-2].latitude + 4 * points[i-1].latitude + points[i].latitude) / 6
-                val dy = (points[i-2].longitude + 4 * points[i-1].longitude + points[i].longitude) / 6
+                val ax =
+                    (-points[i - 2].latitude + 3 * points[i - 1].latitude - 3 * points[i].latitude + points[i + 1].latitude) / 6
+                val ay =
+                    (-points[i - 2].longitude + 3 * points[i - 1].longitude - 3 * points[i].longitude + points[i + 1].longitude) / 6
+                val bx =
+                    (points[i - 2].latitude - 2 * points[i - 1].latitude + points[i].latitude) / 2
+                val by =
+                    (points[i - 2].longitude - 2 * points[i - 1].longitude + points[i].longitude) / 2
+                val cx = (-points[i - 2].latitude + points[i].latitude) / 2
+                val cy = (-points[i - 2].longitude + points[i].longitude) / 2
+                val dx =
+                    (points[i - 2].latitude + 4 * points[i - 1].latitude + points[i].latitude) / 6
+                val dy =
+                    (points[i - 2].longitude + 4 * points[i - 1].longitude + points[i].longitude) / 6
                 converted.add(
                     LatLng(
-                        ax * Math.pow(t+0.1, 3.0) + bx * Math.pow(t+0.1, 2.0) + cx * (t+0.1) + dx,
-                        ay * Math.pow(t+0.1, 3.0) + by * Math.pow(t+0.1, 2.0) + cy * (t+0.1) + dy
+                        ax * Math.pow(t + 0.1, 3.0) + bx * Math.pow(
+                            t + 0.1,
+                            2.0
+                        ) + cx * (t + 0.1) + dx,
+                        ay * Math.pow(t + 0.1, 3.0) + by * Math.pow(
+                            t + 0.1,
+                            2.0
+                        ) + cy * (t + 0.1) + dy
                     )
                 )
 

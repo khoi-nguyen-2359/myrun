@@ -78,14 +78,11 @@ class LocationDataSourceImpl @Inject constructor(
         }
             .flowOn(Dispatchers.Main) // need Main to request updates from location client
 
-    private fun LocationRequestConfig.toGmsLocationRequest(): LocationRequest {
-        val locationRequest = LocationRequest.create()
-        locationRequest.fastestInterval = fastestUpdateInterval
-        locationRequest.interval = updateInterval
-        locationRequest.priority = Priority.PRIORITY_HIGH_ACCURACY
-        locationRequest.smallestDisplacement = smallestDisplacement
-        return locationRequest
-    }
+    private fun LocationRequestConfig.toGmsLocationRequest(): LocationRequest =
+        LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, updateInterval)
+            .setMinUpdateIntervalMillis(fastestUpdateInterval)
+            .setMinUpdateDistanceMeters(smallestDisplacement)
+            .build()
 
     private fun AndroidLocation.toLocation(): Location =
         Location(

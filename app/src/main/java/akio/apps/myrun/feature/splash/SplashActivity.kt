@@ -3,6 +3,7 @@ package akio.apps.myrun.feature.splash
 import akio.apps.myrun.data.authentication.api.model.SignInSuccessResult
 import akio.apps.myrun.feature.core.DialogDelegate
 import akio.apps.myrun.feature.core.ktx.collectRepeatOnStarted
+import akio.apps.myrun.feature.core.ktx.getParcelableExtraExt
 import akio.apps.myrun.feature.core.ktx.lazyViewModelProvider
 import akio.apps.myrun.feature.core.navigation.OnBoardingNavigation
 import akio.apps.myrun.feature.main.MainActivity
@@ -74,9 +75,8 @@ class SplashActivity : AppCompatActivity() {
             return
         }
 
-        data.getParcelableExtra<SignInSuccessResult>(
-            SignInActivity.RESULT_SIGN_RESULT_DATA
-        ) ?: return
+        data.getParcelableExtraExt<SignInSuccessResult>(SignInActivity.RESULT_SIGN_RESULT_DATA)
+            ?: return
 
         goHome()
     }

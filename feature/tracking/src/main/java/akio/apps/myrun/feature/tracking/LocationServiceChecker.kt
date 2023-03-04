@@ -28,12 +28,11 @@ internal class LocationServiceChecker(
     private var resolutionContinuation: CancellableContinuation<Boolean>? = null
 
     suspend fun check(requestEntity: LocationRequestConfig): Boolean = withContext(Dispatchers.IO) {
-        val sampleRequest = LocationRequest.create().apply {
-            interval = requestEntity.updateInterval
-            fastestInterval = requestEntity.fastestUpdateInterval
-            priority = Priority.PRIORITY_HIGH_ACCURACY
-            smallestDisplacement = requestEntity.smallestDisplacement
-        }
+        val sampleRequest =
+            LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, requestEntity.updateInterval)
+                .setMinUpdateIntervalMillis(requestEntity.fastestUpdateInterval)
+                .setMinUpdateDistanceMeters(requestEntity.smallestDisplacement)
+                .build()
         val settingsReq = LocationSettingsRequest.Builder()
             .addAllLocationRequests(listOf(sampleRequest))
             .build()
