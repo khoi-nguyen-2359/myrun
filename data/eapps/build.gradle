@@ -6,6 +6,7 @@ plugins {
 }
 
 android {
+    namespace 'akio.apps.myrun.data.eapps'
     compileSdk project.compileSdk
 
     defaultConfig {
@@ -15,7 +16,6 @@ android {
 
     buildTypes {
         rc {
-            debuggable true
         }
     }
 

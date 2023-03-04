@@ -5,6 +5,7 @@ plugins {
 }
 
 android {
+    namespace 'akio.apps.myrun.data.location.impl.mapbox'
     compileSdk project.compileSdk
 
     defaultConfig {
@@ -14,7 +15,6 @@ android {
 
     buildTypes {
         rc {
-            debuggable true
         }
     }
 

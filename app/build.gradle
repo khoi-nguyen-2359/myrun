@@ -10,6 +10,7 @@ plugins {
 }
 
 android {
+    namespace 'akio.apps.myrun'
     compileSdkVersion project.compileSdk
 
     defaultConfig {
@@ -87,8 +88,8 @@ android {
         freeCompilerArgs += ["-opt-in=kotlin.RequiresOptIn"]
     }
 
-    lintOptions {
-        disable 'NullSafeMutableLiveData' // bypass this bug https://issuetracker.google.com/issues/169249668
+    lint {
+        disable 'NullSafeMutableLiveData'
     }
 }
 

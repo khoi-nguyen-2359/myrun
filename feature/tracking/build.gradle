@@ -4,13 +4,8 @@ plugins {
     id 'kotlin-kapt'
 }
 
-def loadProperty = { propertyName, defaultValue ->
-    getRootProject().hasProperty(propertyName)        \
-                   ? getRootProject().property(propertyName)
-            : defaultValue
-}
-
 android {
+    namespace 'akio.apps.myrun.feature.tracking'
     compileSdk project.compileSdk
 
     defaultConfig {
@@ -22,7 +17,6 @@ android {
 
     buildTypes {
         rc {
-            debuggable true
         }
     }
 

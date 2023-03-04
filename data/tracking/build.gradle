@@ -7,6 +7,7 @@ plugins {
 }
 
 android {
+    namespace 'akio.apps.myrun.data.tracking'
     compileSdk project.compileSdk
 
     defaultConfig {
@@ -24,7 +25,6 @@ android {
 
     buildTypes {
         rc {
-            debuggable true
         }
     }
 
