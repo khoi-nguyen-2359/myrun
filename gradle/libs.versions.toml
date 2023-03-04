@@ -1,5 +1,7 @@
 [versions]
-agp = "7.2.1"
+# https://developer.android.com/studio/releases/gradle-plugin
+agp = "7.4.2"
+
 ksp = "1.5.30-1.0.0"
 buildtimetracker = "0.11.1"
 
