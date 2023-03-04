@@ -5,6 +5,7 @@ import akio.apps.myrun.domain.activity.ExportTempTcxFileUsecase
 import akio.apps.myrun.feature.activity.R
 import akio.apps.myrun.feature.activitydetail.di.DaggerActivityExportFeatureComponent
 import akio.apps.myrun.feature.core.AppNotificationChannel
+import akio.apps.myrun.feature.core.ktx.getParcelableExtraExt
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
@@ -59,7 +60,7 @@ class ActivityExportService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_ADD_ACTIVITY) {
-            val activityInfo = intent.getParcelableExtra<ActivityInfo>(EXTRA_ACTIVITY_INFO)
+            val activityInfo = intent.getParcelableExtraExt<ActivityInfo>(EXTRA_ACTIVITY_INFO)
             if (activityInfo != null) {
                 onAddActivity(activityInfo)
             }
@@ -100,7 +101,7 @@ class ActivityExportService : Service() {
             .setSmallIcon(R.drawable.ic_run_circle)
             .setContentTitle(getString(R.string.activity_export_progress_notification_title))
             .setContentText(notificationContentText)
-            .setProgress(/*max = */0, /*progress = */0, /*indeterminate = */true)
+            .setProgress(/* max = */0, /* progress = */0, /* indeterminate = */true)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             notificationBuilder.setForegroundServiceBehavior(
                 Notification.FOREGROUND_SERVICE_IMMEDIATE
@@ -143,9 +144,9 @@ class ActivityExportService : Service() {
             pendingIntentFlag
         )
         val action = NotificationCompat.Action(
-            /*icon = */ null,
-            /*title = */ getString(R.string.action_retry),
-            /*intent = */ pendingIntent
+            /* icon = */ null,
+            /* title = */ getString(R.string.action_retry),
+            /* intent = */ pendingIntent
         )
         val notification = NotificationCompat.Builder(this, AppNotificationChannel.General.id)
             .setSmallIcon(R.drawable.ic_run_circle)

@@ -10,6 +10,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.location.Address
 import android.location.Geocoder
+import androidx.annotation.WorkerThread
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
@@ -96,12 +97,13 @@ class GooglePlaceDataSource @Inject constructor(
         }
     }
 
-    private fun getAddressFromLocation(
-        lat: Double,
-        lng: Double,
-    ): List<PlaceAddressComponent> {
+    @WorkerThread
+    private fun getAddressFromLocation(lat: Double, lng: Double): List<PlaceAddressComponent> {
         val geoCoder = Geocoder(application, Locale.US)
+
+        @Suppress("DEPRECATION")
         val addresses = geoCoder.getFromLocation(lat, lng, Int.MAX_VALUE)
+
         val addedAddressTypes = mutableSetOf<String>()
         val createAddressEntries: (Address) -> List<Pair<String?, String>> = {
             listOf(

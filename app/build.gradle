@@ -10,6 +10,7 @@ plugins {
 }
 
 android {
+    namespace 'akio.apps.myrun'
     compileSdkVersion project.compileSdk
 
     defaultConfig {
@@ -77,18 +78,18 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
         allWarningsAsErrors = localProps["werror"]
         freeCompilerArgs += ["-opt-in=kotlin.RequiresOptIn"]
     }
 
-    lintOptions {
-        disable 'NullSafeMutableLiveData' // bypass this bug https://issuetracker.google.com/issues/169249668
+    lint {
+        disable 'NullSafeMutableLiveData'
     }
 }
 

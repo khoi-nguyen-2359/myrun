@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="akio.apps.myrun">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Networking -->
     <uses-permission android:name="android.permission.INTERNET" />
