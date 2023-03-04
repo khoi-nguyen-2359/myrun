@@ -27,6 +27,10 @@ lifecycle = "2.5.1"
 splashscreen = "1.0.0"
 androidx-annotation = "1.6.0"
 multidex = "2.0.1"
+androidx-coretesting = "2.2.0"
+androidx-testrunner = "1.5.2"
+androidx-testrules = "1.5.0"
+androidx-junit = "1.1.5"
 
 # https://github.com/material-components/material-components-android/releases
 androidmaterial = "1.8.0"
@@ -79,18 +83,17 @@ javax-inject = "1"
 
 # testing
 junit = "4.13.2"
-mockito-core = "3.11.2"
-mockito-kotlin = "3.2.0"
-mockito-android = "3.5.10"
 
-androidx-coretesting = "2.1.0"
-androidx-testrunner = "1.4.0"
-androidx-testrules = "1.4.0"
-androidx-junit = "1.1.3"
+# mockito: https://github.com/mockito
+mockito-core = "5.1.1"
+mockito-kotlin = "4.1.0"
+mockito-android = "5.1.1"
 
 uiautomator = "2.2.0"
 espresso = "3.4.0"
-turbine = "0.8.0"
+
+# https://github.com/cashapp/turbine/releases
+turbine = "0.12.1"
 
 [libraries]
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -235,7 +238,6 @@ mockito-android = { module = "org.mockito:mockito-android", version.ref = "mocki
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
 espresso-contrib = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
 
 [bundles]
 compose = [
