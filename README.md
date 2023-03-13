@@ -17,12 +17,13 @@ Status
 
 Highlights
 ---
-- Use Jetpack Compose and MVVM to build a unidirectional data flow UI.
-- Make use of persistent storage and WorkManager to create a better offline user experience.
-- Use Android foreground service for run tracking operations.
-- Apply CI/CD using Github Action to automate code quality checks and publish process.
+- Utilize persistent storage and WorkManager to make offline UX.
+- Use Android foreground service for long run tracking.
+- Modularize the app vertically and horizontally.
+- Integrate Firebase for backend: Authentication, Firestore, Storage, Cloud functions.
+- Build CI/CD pipeline using Github Action (code quality, unit test checks, Play store publish workflow).
 
-Tech stack
+Techstack
 ---
 - Kotlin
 - Coroutines
@@ -30,12 +31,13 @@ Tech stack
 - Jetpack: Room, DataStore, WorkManager, Compose.
 - Firebase: Firestore, Storage, Authentication, Cloud function, Crashlytics.
 - Android foreground service.
+- Multi-module
 - Google Map, Map Box.
 
 Why I'm making this
 ---
 - Learning purpose: where I can change the project's architecture back and forth 😎
-- Sample of my work and my interests (beside my [resume 🧾](https://docs.google.com/document/d/1Qs8YTNrCz8lqp6FTVQ3VL7DRZCcARBSn/edit))
+- Sample of my work and my interests (beside my [resume 🧾](https://docs.google.com/document/d/1Qs8YTNrCz8lqp6FTVQ3VL7DRZCcARBSn))
 
 Wiki
 ---
