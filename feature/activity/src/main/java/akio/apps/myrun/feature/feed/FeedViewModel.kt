@@ -3,8 +3,8 @@ package akio.apps.myrun.feature.feed
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.user.api.CurrentUserPreferences
 import akio.apps.myrun.data.user.api.UserFollowRepository
-import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.UserRecentActivityRepository
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.PlaceIdentifier
@@ -44,7 +44,7 @@ internal class FeedViewModel @Inject constructor(
     private val activityLocalStorage: ActivityLocalStorage,
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val userAuthenticationState: UserAuthenticationState,
-    private val userPreferences: UserPreferences,
+    private val currentUserPreferences: CurrentUserPreferences,
     private val activityPagingSourceFactory: ActivityPagingSourceFactory,
     private val userRecentActivityRepository: UserRecentActivityRepository,
     private val placeNameSelector: PlaceNameSelector,
@@ -106,7 +106,7 @@ internal class FeedViewModel @Inject constructor(
     val uploadingActivityCountFlow: Flow<Int> =
         activityLocalStorage.getActivityStorageDataCountFlow().distinctUntilChanged()
 
-    val measureSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystemFlow()
+    val measureSystem: Flow<MeasureSystem> = currentUserPreferences.getMeasureSystemFlow()
 
     init {
         Timber.d("create FeedViewModel")

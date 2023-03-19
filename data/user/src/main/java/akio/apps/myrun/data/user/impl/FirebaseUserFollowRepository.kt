@@ -131,7 +131,7 @@ class FirebaseUserFollowRepository @Inject constructor(
             if (doc.id == userId) {
                 return@mapNotNull null
             }
-            val (userProfile, recentActivity) = doc.toObject(FirestoreUser::class.java)
+            val (_, userProfile, recentActivity) = doc.toObject(FirestoreUser::class.java)
                 ?: return@mapNotNull null
             UserFollowSuggestion(
                 userProfile.uid,

@@ -4,8 +4,9 @@ import akio.apps.myrun.base.firebase.FirebaseDataModule
 import akio.apps.myrun.data.authentication.api.SignInManager
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.AppMigrationState
+import akio.apps.myrun.data.user.api.CurrentUserPreferences
 import akio.apps.myrun.data.user.api.UserFollowRepository
-import akio.apps.myrun.data.user.api.UserPreferences
+import akio.apps.myrun.data.user.api.UserPreferencesRepository
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.UserRecentActivityRepository
 import android.app.Application
@@ -28,7 +29,8 @@ interface AuthenticationDataComponent {
     fun userProfileRepository(): UserProfileRepository
     fun appMigrationState(): AppMigrationState
     fun userFollowRepository(): UserFollowRepository
-    fun userPreferences(): UserPreferences
+    fun userPreferences(): CurrentUserPreferences
+    fun userPreferencesRepo(): UserPreferencesRepository
 
     @Component.Factory
     interface Factory {

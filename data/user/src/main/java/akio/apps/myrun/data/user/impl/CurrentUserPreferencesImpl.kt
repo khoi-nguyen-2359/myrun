@@ -1,7 +1,7 @@
 package akio.apps.myrun.data.user.impl
 
 import akio.apps.myrun.data.authentication.di.AuthenticationDataScope
-import akio.apps.myrun.data.user.api.UserPreferences
+import akio.apps.myrun.data.user.api.CurrentUserPreferences
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import android.app.Application
 import android.content.Context
@@ -23,7 +23,9 @@ private val Context.prefDataStore:
 
 @Singleton
 @ContributesBinding(AuthenticationDataScope::class)
-class UserPreferencesImpl @Inject constructor(application: Application) : UserPreferences {
+class CurrentUserPreferencesImpl @Inject constructor(
+    application: Application,
+) : CurrentUserPreferences {
     private val prefs = application.prefDataStore
 
     override fun getMeasureSystemFlow(): Flow<MeasureSystem> = prefs.data.map { prefs ->

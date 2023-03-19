@@ -4,7 +4,7 @@ import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
-import akio.apps.myrun.data.user.api.UserPreferences
+import akio.apps.myrun.data.user.api.CurrentUserPreferences
 import akio.apps.myrun.data.user.api.UserRecentActivityRepository
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
@@ -40,7 +40,7 @@ class ActivityDetailViewModelTest {
     private lateinit var mockedUserRecentActivityRepository: UserRecentActivityRepository
     private lateinit var mockedActivitySplitCalculator: ActivitySplitCalculator
     private lateinit var mockedActivityDateTimeFormatter: ActivityDateTimeFormatter
-    private lateinit var mockedUserPreferences: UserPreferences
+    private lateinit var mockedCurrentUserPreferences: CurrentUserPreferences
 
     private val testDispatcher: CoroutineDispatcher = StandardTestDispatcher()
 
@@ -55,7 +55,7 @@ class ActivityDetailViewModelTest {
         mockedUserRecentActivityRepository = mock()
         mockedActivitySplitCalculator = mock()
         mockedActivityDateTimeFormatter = mock()
-        mockedUserPreferences = mock()
+        mockedCurrentUserPreferences = mock()
     }
 
     private fun initActivityDetailViewModel(
@@ -68,7 +68,7 @@ class ActivityDetailViewModelTest {
         mock(),
         mockedActivitySplitCalculator,
         mockedActivityDateTimeFormatter,
-        mockedUserPreferences,
+        mockedCurrentUserPreferences,
         testDispatcher
     )
 
@@ -89,7 +89,7 @@ class ActivityDetailViewModelTest {
         whenever(mockedActivityRepository.getActivityLocationDataPoints(defaultActivityId))
             .thenReturn(locationDataPoints)
         whenever(mockedUserAuthenticationState.requireUserAccountId()).thenReturn(defaultUserId)
-        whenever(mockedUserPreferences.getMeasureSystemFlow())
+        whenever(mockedCurrentUserPreferences.getMeasureSystemFlow())
             .thenReturn(flowOf(MeasureSystem.Metric))
         whenever(
             mockedActivitySplitCalculator.createRunSplits(locationDataPoints, MeasureSystem.Metric)

@@ -5,7 +5,7 @@ import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.common.Resource
-import akio.apps.myrun.data.user.api.UserPreferences
+import akio.apps.myrun.data.user.api.CurrentUserPreferences
 import akio.apps.myrun.data.user.api.UserRecentActivityRepository
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
@@ -30,7 +30,7 @@ internal class ActivityDetailViewModel @Inject constructor(
     private val placeNameSelector: PlaceNameSelector,
     private val activitySplitCalculator: ActivitySplitCalculator,
     private val activityDateTimeFormatter: ActivityDateTimeFormatter,
-    userPreferences: UserPreferences,
+    currentUserPreferences: CurrentUserPreferences,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
 ) {
@@ -54,7 +54,7 @@ internal class ActivityDetailViewModel @Inject constructor(
 
     val screenStateFlow: Flow<ScreenState> = combine(
         activityDetailsFlow,
-        userPreferences.getMeasureSystemFlow()
+        currentUserPreferences.getMeasureSystemFlow()
     ) { activityResource, preferredSystem ->
         val userId = userAuthenticationState.requireUserAccountId()
         val userPlaceIdentifier =

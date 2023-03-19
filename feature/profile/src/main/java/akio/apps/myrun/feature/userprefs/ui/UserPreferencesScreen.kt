@@ -51,6 +51,7 @@ import androidx.compose.material.icons.rounded.AdminPanelSettings
 import androidx.compose.material.icons.rounded.CloudSync
 import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.ErrorOutline
+import androidx.compose.material.icons.rounded.Public
 import androidx.compose.material.icons.rounded.SquareFoot
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -114,17 +115,16 @@ private fun UserPreferencesScreen(
 
         // FormSectionSpace()
 
-        val privacyPolicyLabel = stringResource(id = R.string.user_prefs_privacy_policy)
-        CompoundText(
-            icon = Icons.Rounded.AdminPanelSettings,
-            label = privacyPolicyLabel
+        CompoundSwitch(
+            label = stringResource(id = R.string.user_prefs_is_map_visible),
+            checked = screenState.showActivityMapOnFeed,
+            enabled = true,
+            startIcon = Icons.Rounded.Public
         ) {
-            val route = HomeNavDestination.WebViewContainer.routeWithArgs(
-                url = "https://khoi-nguyen-2359.github.io/myrun/",
-                title = privacyPolicyLabel
-            )
-            navController.navigate(route)
+            userPrefsViewModel.toggleShowActivityMapOnFeed()
         }
+
+        PrivacyPolicyItem(navController)
 
         DeleteAccountSection {
             userPrefsViewModel.deleteUser()
@@ -132,11 +132,11 @@ private fun UserPreferencesScreen(
     }
 
     // overlay things
-    if (screenState.isLoading) {
+    if (screenState.loadingErrorState.first) {
         ProgressDialog(stringResource(id = R.string.message_loading))
     }
 
-    screenState.error?.let { error ->
+    screenState.loadingErrorState.second?.let { error ->
         when (error) {
             is UnauthorizedUserError -> {
                 showErrorToastAndNavigateToReAuth(context)
@@ -152,6 +152,21 @@ private fun UserPreferencesScreen(
     if (screenState.isAccountDeleted) {
         // reset to splash screen
         OnBoardingNavigation.createSplashIntent(context)?.let(context::startActivity)
+    }
+}
+
+@Composable
+private fun PrivacyPolicyItem(navController: NavController) {
+    val privacyPolicyLabel = stringResource(id = R.string.user_prefs_privacy_policy)
+    CompoundText(
+        icon = Icons.Rounded.AdminPanelSettings,
+        label = privacyPolicyLabel
+    ) {
+        val route = HomeNavDestination.WebViewContainer.routeWithArgs(
+            url = "https://khoi-nguyen-2359.github.io/myrun/",
+            title = privacyPolicyLabel
+        )
+        navController.navigate(route)
     }
 }
 

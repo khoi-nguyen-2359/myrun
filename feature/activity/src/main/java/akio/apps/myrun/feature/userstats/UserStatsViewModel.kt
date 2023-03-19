@@ -2,8 +2,8 @@ package akio.apps.myrun.feature.userstats
 
 import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.user.api.CurrentUserPreferences
 import akio.apps.myrun.data.user.api.UserFollowRepository
-import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.UserProfileRepository
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserFollowCounter
@@ -26,7 +26,7 @@ class UserStatsViewModel @Inject constructor(
     private val arguments: UserStatsArguments,
     private val userFollowRepository: UserFollowRepository,
     private val userAuthState: UserAuthenticationState,
-    private val userPreferences: UserPreferences,
+    private val currentUserPreferences: CurrentUserPreferences,
     private val getTrainingSummaryDataUsecase: GetTrainingSummaryDataUsecase,
     private val getUserRecentPlaceNameUsecase: GetUserRecentPlaceNameUsecase,
     private val getUserStatsTypeUsecase: GetUserStatsTypeUsecase,
@@ -37,7 +37,7 @@ class UserStatsViewModel @Inject constructor(
     val userId: String = arguments.userId ?: currentUserId
     val isCurrentUser: Boolean = userId == currentUserId
 
-    val measureSystemFlow: Flow<MeasureSystem> = userPreferences.getMeasureSystemFlow()
+    val measureSystemFlow: Flow<MeasureSystem> = currentUserPreferences.getMeasureSystemFlow()
 
     val trainingSummaryDataFlow:
         Flow<Map<ActivityType, GetTrainingSummaryDataUsecase.TrainingSummaryTableData>> =
