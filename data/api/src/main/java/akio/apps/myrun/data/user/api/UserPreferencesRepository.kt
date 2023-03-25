@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface UserPreferencesRepository {
     fun getUserPreferencesFlow(userId: String): Flow<UserPreferences>
     fun setShowActivityMapOnFeed(userId: String, isShow: Boolean)
+    suspend fun getShowActivityMapOnFeed(userId: String): Boolean
 }

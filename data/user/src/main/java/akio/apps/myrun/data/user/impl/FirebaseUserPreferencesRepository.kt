@@ -17,6 +17,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 @Singleton
@@ -58,6 +59,13 @@ class FirebaseUserPreferencesRepository @Inject constructor(
     private fun FirestoreUserPreferences.toRepoModel(): UserPreferences = UserPreferences(
         showActivityMapOnFeed
     )
+
+    override suspend fun getShowActivityMapOnFeed(userId: String): Boolean =
+        getUserDocument(userId).get()
+            .await()
+            .toObject(FirestoreUser::class.java)
+            ?.preferences
+            ?.showActivityMapOnFeed ?: false
 
     companion object {
         private const val FIRESTORE_USERS_DOCUMENT = "users"

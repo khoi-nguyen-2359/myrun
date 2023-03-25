@@ -141,12 +141,7 @@ private fun ActivityFeedComposableInternal(
             .fillMaxSize()
             .nestedScroll(uiState.nestedScrollConnection)
     ) {
-        ActivityFeedContainer(
-            feedViewModel,
-            uiState,
-            navigator,
-            onClickExportActivityFile
-        )
+        ActivityFeedContainer(feedViewModel, uiState, navigator, onClickExportActivityFile)
 
         ActivityFeedTopBar(
             feedViewModel,

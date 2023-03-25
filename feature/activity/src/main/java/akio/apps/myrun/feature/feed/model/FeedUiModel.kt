@@ -11,6 +11,7 @@ data class FeedActivity(
     val locationName: String,
     val formattedStartTime: ActivityDateTimeFormatter.Result,
     val isCurrentUser: Boolean,
+    val isMapVisible: Boolean,
 ) : FeedUiModel(activityData.id)
 
 data class FeedSuggestedUserFollow(

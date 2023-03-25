@@ -62,9 +62,7 @@ internal fun FeedActivityItem(
     val uiState = rememberUiState()
     FeedActivityItem(
         uiState,
-        feedItem.activityData,
-        feedItem.formattedStartTime,
-        feedItem.locationName,
+        feedItem,
         userProfile,
         preferredUnitSystem,
         { navigator.navigateActivityDetail(activity.id) },
@@ -80,28 +78,27 @@ private fun rememberUiState() =
 @Composable
 private fun FeedActivityItem(
     uiState: FeedActivityItemUiState,
-    activity: BaseActivityModel,
-    activityFormattedStartTime: ActivityDateTimeFormatter.Result,
-    activityDisplayPlaceName: String,
+    feedActivity: FeedActivity,
     userProfile: UserProfile?,
     preferredSystem: MeasureSystem,
     onClickActivityAction: (BaseActivityModel) -> Unit,
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
 ) = FeedItem {
+    val activity = feedActivity.activityData
     Column(modifier = Modifier.clickable { onClickActivityAction(activity) }) {
         Spacer(modifier = Modifier.height(ActivityFeedDimensions.feedItemVerticalPadding))
         ActivityInformationView(
             uiState,
-            activity,
-            activityFormattedStartTime,
-            activityDisplayPlaceName,
+            feedActivity,
             userProfile,
             onClickExportFile,
             onClickUserAvatar
         )
         Spacer(modifier = Modifier.height(8.dp))
-        ActivityRouteImageBox(activity, preferredSystem, uiState)
+        if (feedActivity.isMapVisible) {
+            ActivityRouteImageBox(activity, preferredSystem, uiState)
+        }
     }
 }
 
@@ -205,15 +202,14 @@ private fun makePerformanceDisplayText(
 @Composable
 private fun ActivityInformationView(
     uiState: FeedActivityItemUiState,
-    activity: BaseActivityModel,
-    activityFormattedStartTime: ActivityDateTimeFormatter.Result,
-    activityDisplayPlaceName: String?,
+    feedActivity: FeedActivity,
     userProfile: UserProfile?,
     onClickExportFile: () -> Unit,
     onClickUserAvatar: () -> Unit,
 ) = Column(
     modifier = Modifier.padding(start = ActivityFeedDimensions.activityItemHorizontalPadding)
 ) {
+    val activity = feedActivity.activityData
     val (userName, userAvatar) = if (userProfile?.accountId == activity.athleteInfo.userId) {
         userProfile.name to userProfile.photo
     } else {
@@ -225,7 +221,10 @@ private fun ActivityInformationView(
         Column(modifier = Modifier.weight(1.0f)) {
             AthleteNameText(userName.orEmpty())
             Spacer(modifier = Modifier.height(2.dp))
-            ActivityTimeAndPlaceText(activityFormattedStartTime, activityDisplayPlaceName)
+            ActivityTimeAndPlaceText(
+                feedActivity.formattedStartTime,
+                feedActivity.locationName
+            )
         }
         ActivityShareMenu(uiState, onClickExportFile)
     }
@@ -323,33 +322,37 @@ private fun ActivityTimeAndPlaceText(
 private fun PreviewFeedActivityItem() {
     FeedActivityItem(
         rememberUiState(),
-        activity = RunningActivityModel(
-            activityData = ActivityDataModel(
-                id = "id",
-                activityType = ActivityType.Running,
-                name = "Evening Run",
-                routeImage = "http://example.com",
-                placeIdentifier = null,
-                startTime = System.currentTimeMillis(),
-                endTime = 2000L,
-                duration = 1000L,
-                distance = 1234.0,
-                encodedPolyline = "",
-                athleteInfo = AthleteInfo(
-                    userId = "id",
-                    userName = "Khoi Nguyen",
-                    userAvatar = "userAvatar"
-                )
+        feedActivity = FeedActivity(
+            activityData = RunningActivityModel(
+                activityData = ActivityDataModel(
+                    id = "id",
+                    activityType = ActivityType.Running,
+                    name = "Evening Run",
+                    routeImage = "http://example.com",
+                    placeIdentifier = null,
+                    startTime = System.currentTimeMillis(),
+                    endTime = 2000L,
+                    duration = 1000L,
+                    distance = 1234.0,
+                    encodedPolyline = "",
+                    athleteInfo = AthleteInfo(
+                        userId = "id",
+                        userName = "Khoi Nguyen",
+                        userAvatar = "userAvatar"
+                    )
+                ),
+                pace = 12.34,
+                cadence = 160
             ),
-            pace = 12.34,
-            cadence = 160
+            locationName = "activityDisplayPlaceName",
+            formattedStartTime = ActivityDateTimeFormatter.Result.FullDateTime("dd/mm/yyyy"),
+            isMapVisible = true,
+            isCurrentUser = false
         ),
-        activityDisplayPlaceName = "activityDisplayPlaceName",
         onClickActivityAction = { },
         onClickExportFile = { },
         onClickUserAvatar = { },
         userProfile = UserProfile(accountId = "userId", photo = null),
-        activityFormattedStartTime = ActivityDateTimeFormatter.Result.FullDateTime("dd/mm/yyyy"),
         preferredSystem = MeasureSystem.Default
     )
 }

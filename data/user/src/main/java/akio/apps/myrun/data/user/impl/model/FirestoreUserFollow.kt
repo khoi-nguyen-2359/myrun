@@ -1,5 +1,6 @@
 package akio.apps.myrun.data.user.impl.model
 
+import akio.apps.myrun.data.user.impl.model.FirestoreUserPreferences.Companion.DEFAULT_MAP_VISIBILITY_VALUE
 import com.google.firebase.firestore.PropertyName
 
 data class FirestoreUserFollow(
@@ -14,4 +15,7 @@ data class FirestoreUserFollow(
 
     @PropertyName(FirestoreUserProfileFields.FIELD_FOLLOW_STATUS)
     val status: Int = FirestoreFollowStatus.Requested.rawValue,
+
+    @PropertyName(FirestoreUserProfileFields.FIELD_SHOW_ACTIVITY_MAP_ON_FEED)
+    val showActivityMapOnFeed: Boolean = DEFAULT_MAP_VISIBILITY_VALUE,
 )

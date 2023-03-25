@@ -5,7 +5,7 @@ data class UserFollow(
     val displayName: String,
     val photoUrl: String?,
     val status: FollowStatus,
-    val isMapVisible: Boolean = false, // TODO: fill data from server
+    val isMapVisible: Boolean,
 )
 
 enum class FollowStatus {

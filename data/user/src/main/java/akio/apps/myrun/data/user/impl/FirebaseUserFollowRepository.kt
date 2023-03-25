@@ -225,7 +225,7 @@ class FirebaseUserFollowRepository @Inject constructor(
     }
 
     private fun FirestoreUserFollow.toUserFollow() =
-        UserFollow(uid, displayName, photoUrl, toUserFollowStatus(status))
+        UserFollow(uid, displayName, photoUrl, toUserFollowStatus(status), showActivityMapOnFeed)
 
     private fun FollowStatus.toFirestoreFollowStatus() = when (this) {
         FollowStatus.Accepted -> FirestoreFollowStatus.Accepted
