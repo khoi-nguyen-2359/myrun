@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.feed
 
 import akio.apps.myrun.base.di.NamedIoDispatcher
-import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.common.Resource
 import akio.apps.myrun.domain.activity.GetFeedActivitiesUsecase
 import androidx.paging.PagingSource
@@ -14,8 +13,10 @@ import timber.log.Timber
 internal class ActivityPagingSource(
     private val getFeedActivitiesUsecase: GetFeedActivitiesUsecase,
     private val ioDispatcher: CoroutineDispatcher,
-) : PagingSource<Long, BaseActivityModel>() {
-    override suspend fun load(params: LoadParams<Long>): LoadResult<Long, BaseActivityModel> {
+) : PagingSource<Long, GetFeedActivitiesUsecase.FeedActivityModel>() {
+    override suspend fun load(
+        params: LoadParams<Long>,
+    ): LoadResult<Long, GetFeedActivitiesUsecase.FeedActivityModel> {
         Timber.d("load start")
         val startAfter = params.key ?: System.currentTimeMillis()
         val resource = withContext(ioDispatcher) {
@@ -28,7 +29,7 @@ internal class ActivityPagingSource(
                 LoadResult.Page(
                     data = resource.data,
                     prevKey = null,
-                    nextKey = resource.data.lastOrNull()?.startTime
+                    nextKey = resource.data.lastOrNull()?.activityData?.startTime
                 )
             }
             is Resource.Error -> {
@@ -39,7 +40,9 @@ internal class ActivityPagingSource(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Long, BaseActivityModel>): Long? = null
+    override fun getRefreshKey(
+        state: PagingState<Long, GetFeedActivitiesUsecase.FeedActivityModel>,
+    ): Long? = null
 }
 
 internal class ActivityPagingSourceFactory @Inject constructor(

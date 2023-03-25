@@ -13,7 +13,7 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.model.LocationProcessingConfig
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
-import akio.apps.myrun.data.user.api.UserPreferences
+import akio.apps.myrun.data.user.api.CurrentUserPreferences
 import akio.apps.myrun.domain.tracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.tracking.locationprocessor.AverageLocationAccumulator
 import akio.apps.myrun.domain.tracking.locationprocessor.LocationProcessorContainer
@@ -74,7 +74,7 @@ class RouteTrackingService : Service() {
     lateinit var routeTrackingConfiguration: RouteTrackingConfiguration
 
     @Inject
-    lateinit var userPreferences: UserPreferences
+    lateinit var currentUserPreferences: CurrentUserPreferences
 
     private var locationProcessors: LocationProcessorContainer = LocationProcessorContainer()
 
@@ -255,7 +255,7 @@ class RouteTrackingService : Service() {
     }
 
     private fun notifyTrackingNotification() = mainScope.launch {
-        val preferredSystem = userPreferences.getMeasureSystemFlow().first()
+        val preferredSystem = currentUserPreferences.getMeasureSystemFlow().first()
         val (distanceFormatter, _, _, durationFormatter) =
             UnitFormatterSetFactory.createUnitFormatterSet(preferredSystem)
         val notificationIntent = RouteTrackingActivity.launchIntent(this@RouteTrackingService)

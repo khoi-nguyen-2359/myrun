@@ -16,6 +16,8 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration
+import com.google.android.gms.maps.MapsInitializer
+import com.google.android.gms.maps.OnMapsSdkInitializedCallback
 import com.google.android.libraries.places.api.Places
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -30,7 +32,8 @@ class MyRunApp :
     Application(),
     DefaultLifecycleObserver,
     AppComponent.Holder,
-    Configuration.Provider {
+    Configuration.Provider,
+    OnMapsSdkInitializedCallback {
 
     @Inject
     lateinit var routeTrackingState: RouteTrackingState
@@ -68,6 +71,8 @@ class MyRunApp :
         ConfiguratorFacade.notifyInDebugMode(this)
 
         AppMigrationWorker.enqueue(this)
+
+        MapsInitializer.initialize(this, MapsInitializer.Renderer.LATEST, this)
     }
 
     private fun initPlacesSdk() {
@@ -103,6 +108,15 @@ class MyRunApp :
             Configuration.Builder()
                 .setMinimumLoggingLevel(android.util.Log.ERROR)
                 .build()
+        }
+    }
+
+    override fun onMapsSdkInitialized(renderer: MapsInitializer.Renderer) {
+        when (renderer) {
+            MapsInitializer.Renderer.LATEST ->
+                Timber.d("MapsDemo", "The latest version of the renderer is used.")
+            MapsInitializer.Renderer.LEGACY ->
+                Timber.d("MapsDemo", "The legacy version of the renderer is used.")
         }
     }
 }

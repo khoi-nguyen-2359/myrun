@@ -3,7 +3,7 @@ package akio.apps.myrun.feature.profile
 import akio.apps.myrun.base.di.NamedIoDispatcher
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.common.Resource
-import akio.apps.myrun.data.user.api.UserPreferences
+import akio.apps.myrun.data.user.api.CurrentUserPreferences
 import akio.apps.myrun.data.user.api.model.Gender
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.ProfileEditData
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.flowOn
 
 internal class UserProfileViewModel @Inject constructor(
     getUserProfileUsecase: GetUserProfileUsecase,
-    userPreferences: UserPreferences,
+    currentUserPreferences: CurrentUserPreferences,
     userAuthState: UserAuthenticationState,
     private val savedStateHandle: SavedStateHandle,
     private val updateUserProfileUsecase: UpdateUserProfileUsecase,
@@ -30,7 +30,7 @@ internal class UserProfileViewModel @Inject constructor(
 
     private val userId: String = userAuthState.requireUserAccountId()
 
-    val measureSystemFlow: Flow<MeasureSystem> = userPreferences.getMeasureSystemFlow()
+    val measureSystemFlow: Flow<MeasureSystem> = currentUserPreferences.getMeasureSystemFlow()
 
     /**
      * Data of editing values in input fields. Null means no initial data fetched,

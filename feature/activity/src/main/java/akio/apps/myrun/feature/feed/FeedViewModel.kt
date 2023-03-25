@@ -3,14 +3,15 @@ package akio.apps.myrun.feature.feed
 import akio.apps.myrun.data.activity.api.ActivityLocalStorage
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
+import akio.apps.myrun.data.user.api.CurrentUserPreferences
 import akio.apps.myrun.data.user.api.UserFollowRepository
-import akio.apps.myrun.data.user.api.UserPreferences
 import akio.apps.myrun.data.user.api.UserRecentActivityRepository
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.PlaceIdentifier
 import akio.apps.myrun.data.user.api.model.UserFollowSuggestion
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
+import akio.apps.myrun.domain.activity.GetFeedActivitiesUsecase
 import akio.apps.myrun.domain.user.FollowUserUsecase
 import akio.apps.myrun.domain.user.GetUserFollowSuggestionUsecase
 import akio.apps.myrun.domain.user.GetUserProfileUsecase
@@ -44,7 +45,7 @@ internal class FeedViewModel @Inject constructor(
     private val activityLocalStorage: ActivityLocalStorage,
     private val getUserProfileUsecase: GetUserProfileUsecase,
     private val userAuthenticationState: UserAuthenticationState,
-    private val userPreferences: UserPreferences,
+    private val currentUserPreferences: CurrentUserPreferences,
     private val activityPagingSourceFactory: ActivityPagingSourceFactory,
     private val userRecentActivityRepository: UserRecentActivityRepository,
     private val placeNameSelector: PlaceNameSelector,
@@ -106,7 +107,7 @@ internal class FeedViewModel @Inject constructor(
     val uploadingActivityCountFlow: Flow<Int> =
         activityLocalStorage.getActivityStorageDataCountFlow().distinctUntilChanged()
 
-    val measureSystem: Flow<MeasureSystem> = userPreferences.getMeasureSystemFlow()
+    val measureSystem: Flow<MeasureSystem> = currentUserPreferences.getMeasureSystemFlow()
 
     init {
         Timber.d("create FeedViewModel")
@@ -131,14 +132,15 @@ internal class FeedViewModel @Inject constructor(
         }
 
     private fun combinePagingDataSources(
-        pagingData: PagingData<BaseActivityModel>,
+        pagingData: PagingData<GetFeedActivitiesUsecase.FeedActivityModel>,
         userFollows: List<UserFollowSuggestion>,
         userFollowsRequestedMap: Map<String, Boolean>,
         recentPlaceIdentifier: PlaceIdentifier?,
     ): PagingData<FeedUiModel> {
         Timber.d("combine paging data sources")
         var index = 0
-        return pagingData.flatMap { baseActivity ->
+        return pagingData.flatMap { feedActivity ->
+            val (baseActivity, isMapVisible) = feedActivity
             val locationName = getActivityDisplayLocation(baseActivity, recentPlaceIdentifier)
             val formattedStartTime =
                 activityDateTimeFormatter.formatActivityDateTime(baseActivity.startTime)
@@ -146,7 +148,8 @@ internal class FeedViewModel @Inject constructor(
                 baseActivity,
                 locationName,
                 formattedStartTime,
-                baseActivity.athleteInfo.userId == userId
+                baseActivity.athleteInfo.userId == userId,
+                isMapVisible
             )
             if (index++ == PAGE_SIZE / 2 && userFollows.isNotEmpty()) {
                 // insert follow suggestion item in the middle of the first page

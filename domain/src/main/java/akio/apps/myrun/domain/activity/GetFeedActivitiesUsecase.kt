@@ -16,25 +16,35 @@ class GetFeedActivitiesUsecase @Inject constructor(
     suspend fun getUserTimelineActivity(
         startAfter: Long,
         count: Int,
-    ): Resource<List<BaseActivityModel>> = try {
-        val userAccountId = userAuthenticationState.requireUserAccountId()
-        val userFollowings = userFollowRepository.getUserFollowings(userAccountId, useCache = true)
-        val userIds = buildList {
-            val followingUids = userFollowings.mapNotNull { userFollow ->
-                if (userFollow.status == FollowStatus.Accepted) {
-                    userFollow.uid
-                } else {
-                    null
-                }
+    ): Resource<List<FeedActivityModel>> = try {
+        val currentUserId = userAuthenticationState.requireUserAccountId()
+        val userFollowingMap = userFollowRepository.getUserFollowings(
+            currentUserId,
+            useCache = true
+        )
+            .associateBy { it.uid }
+        val userIds = userFollowingMap.values.mapNotNull { userFollow ->
+            if (userFollow.status == FollowStatus.Accepted) {
+                userFollow.uid
+            } else {
+                null
             }
-            add(userAccountId)
-            addAll(followingUids)
-        }
-
+        } + listOf(currentUserId)
         val activities =
             activityRepository.getActivitiesByStartTime(userIds, startAfter, count, useCache = true)
+                .map { activityData ->
+                    FeedActivityModel(
+                        activityData,
+                        userFollowingMap[activityData.athleteInfo.userId]?.isMapVisible ?: true
+                    )
+                }
         Resource.Success(activities)
     } catch (ex: Exception) {
         Resource.Error(ex)
     }
+
+    data class FeedActivityModel(
+        val activityData: BaseActivityModel,
+        val isMapVisible: Boolean,
+    )
 }

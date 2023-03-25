@@ -12,4 +12,5 @@ data class UserProfile(
     val photo: String? = null,
     val birthdate: Long = 0,
     val lastActiveTime: Long = 0,
+    val showActivityMapOnFeed: Boolean = true,
 ) : Parcelable

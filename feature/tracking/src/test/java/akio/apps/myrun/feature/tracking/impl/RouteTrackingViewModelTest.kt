@@ -5,7 +5,7 @@ import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
 import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus.STOPPED
-import akio.apps.myrun.data.user.api.UserPreferences
+import akio.apps.myrun.data.user.api.CurrentUserPreferences
 import akio.apps.myrun.domain.tracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.tracking.StoreTrackingActivityDataUsecase
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegateImpl
@@ -39,7 +39,7 @@ class RouteTrackingViewModelTest {
     private lateinit var mockedAppContext: Application
     private lateinit var mockedLocationDataSource: LocationDataSource
     private lateinit var mockedRouteTrackingConfiguration: RouteTrackingConfiguration
-    private lateinit var mockedUserPreferences: UserPreferences
+    private lateinit var mockedCurrentUserPreferences: CurrentUserPreferences
     private lateinit var testee: RouteTrackingViewModel
     private lateinit var testCoroutineDispatcher: TestDispatcher
 
@@ -52,7 +52,7 @@ class RouteTrackingViewModelTest {
         mockedAppContext = mock()
         mockedLocationDataSource = mock()
         mockedRouteTrackingConfiguration = mock()
-        mockedUserPreferences = mock()
+        mockedCurrentUserPreferences = mock()
         testCoroutineDispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(testCoroutineDispatcher)
     }
@@ -89,7 +89,7 @@ class RouteTrackingViewModelTest {
         mockedLocationDataSource,
         mockedRouteTrackingConfiguration,
         LaunchCatchingDelegateImpl(),
-        mockedUserPreferences,
+        mockedCurrentUserPreferences,
         testCoroutineDispatcher
     )
 }

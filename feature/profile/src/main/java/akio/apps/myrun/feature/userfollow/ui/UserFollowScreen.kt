@@ -298,7 +298,7 @@ private fun PreviewUserFollowItem() =
     UserFollowItem(
         UserFollowType.Follower,
         UserFollowUiModel(
-            UserFollow("uid", "Name", "photo", FollowStatus.Requested),
+            UserFollow("uid", "Name", "photo", FollowStatus.Requested, true),
             true
         ),
         { },
