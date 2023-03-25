@@ -2,9 +2,11 @@ package akio.apps.myrun.feature.activitydetail
 
 import akio.apps.myrun.data.activity.api.ActivityRepository
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
+import akio.apps.myrun.data.activity.api.model.AthleteInfo
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.user.api.CurrentUserPreferences
+import akio.apps.myrun.data.user.api.UserPreferencesRepository
 import akio.apps.myrun.data.user.api.UserRecentActivityRepository
 import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
@@ -41,6 +43,7 @@ class ActivityDetailViewModelTest {
     private lateinit var mockedActivitySplitCalculator: ActivitySplitCalculator
     private lateinit var mockedActivityDateTimeFormatter: ActivityDateTimeFormatter
     private lateinit var mockedCurrentUserPreferences: CurrentUserPreferences
+    private lateinit var mockedUserPrefRepo: UserPreferencesRepository
 
     private val testDispatcher: CoroutineDispatcher = StandardTestDispatcher()
 
@@ -56,6 +59,7 @@ class ActivityDetailViewModelTest {
         mockedActivitySplitCalculator = mock()
         mockedActivityDateTimeFormatter = mock()
         mockedCurrentUserPreferences = mock()
+        mockedUserPrefRepo = mock()
     }
 
     private fun initActivityDetailViewModel(
@@ -69,6 +73,7 @@ class ActivityDetailViewModelTest {
         mockedActivitySplitCalculator,
         mockedActivityDateTimeFormatter,
         mockedCurrentUserPreferences,
+        mockedUserPrefRepo,
         testDispatcher
     )
 
@@ -80,8 +85,12 @@ class ActivityDetailViewModelTest {
     @Test
     fun testViewModelInitialization_Success() = runTest(testDispatcher) {
         val activityStartTime = 1234L
+        val mockAthleteInfo: AthleteInfo = mock {
+            on { userId }.thenReturn(defaultUserId)
+        }
         val activityModel = mock<BaseActivityModel> {
             on { startTime }.thenReturn(activityStartTime)
+            on { athleteInfo }.thenReturn(mockAthleteInfo)
         }
         val locationDataPoints = mock<List<ActivityLocation>>()
 
@@ -106,20 +115,24 @@ class ActivityDetailViewModelTest {
             val dataItem = awaitItem()
             assertTrue(dataItem is ActivityDetailViewModel.ScreenState.DataAvailable)
             assertEquals(activityModel, dataItem.activityData)
+            assertTrue(dataItem.isMapVisible)
             assertNull(dataItem.activityPlaceName)
         }
 
         verify(mockedActivityRepository).getActivity(defaultActivityId)
-        verify(mockedUserAuthenticationState, times(2)).requireUserAccountId()
+        verify(mockedUserAuthenticationState, times(3)).requireUserAccountId()
     }
 
     @Test
     fun testRefreshActivityDetails_Success() = runTest(testDispatcher) {
         testViewModelInitialization_Success()
-
+        val mockAthleteInfo: AthleteInfo = mock {
+            on { userId }.thenReturn(defaultUserId)
+        }
         val activityStartTime = 1234L
         val activityModel = mock<BaseActivityModel> {
             on { startTime }.thenReturn(activityStartTime)
+            on { athleteInfo }.thenReturn(mockAthleteInfo)
         }
 
         whenever(mockedActivityRepository.getActivity(defaultActivityId)).thenReturn(activityModel)
@@ -138,7 +151,7 @@ class ActivityDetailViewModelTest {
         }
 
         verify(mockedActivityRepository, times(2)).getActivity(defaultActivityId)
-        verify(mockedUserAuthenticationState, times(4)).requireUserAccountId()
+        verify(mockedUserAuthenticationState, times(6)).requireUserAccountId()
     }
 
     @Test
