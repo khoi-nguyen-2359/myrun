@@ -5,6 +5,7 @@ import akio.apps.myrun.data.user.api.UserPreferencesRepository
 import akio.apps.myrun.data.user.api.model.UserPreferences
 import akio.apps.myrun.data.user.impl.model.FirestoreUser
 import akio.apps.myrun.data.user.impl.model.FirestoreUserPreferences
+import akio.apps.myrun.data.user.impl.model.FirestoreUserPreferences.Companion.DEFAULT_MAP_VISIBILITY_VALUE
 import akio.apps.myrun.data.user.impl.model.FirestoreUserPreferencesUpdateMap
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -65,7 +66,7 @@ class FirebaseUserPreferencesRepository @Inject constructor(
             .await()
             .toObject(FirestoreUser::class.java)
             ?.preferences
-            ?.showActivityMapOnFeed ?: false
+            ?.showActivityMapOnFeed ?: DEFAULT_MAP_VISIBILITY_VALUE
 
     companion object {
         private const val FIRESTORE_USERS_DOCUMENT = "users"

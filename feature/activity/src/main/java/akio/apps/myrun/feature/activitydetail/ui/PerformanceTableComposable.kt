@@ -29,10 +29,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
-internal fun PerformanceTableComposable(
+internal fun WidePerformanceTableComposable(
     activity: BaseActivityModel,
     trackUnitFormatterSet: TrackUnitFormatterSet,
     modifier: Modifier = Modifier,
@@ -41,16 +43,28 @@ internal fun PerformanceTableComposable(
         createActivityFormatterList(activity, trackUnitFormatterSet)
     }
 
-    val iterator = trackingValueFormatterList.iterator()
-    while (iterator.hasNext()) {
+    FlexiblePerformanceTable(trackingValueFormatterList, chunkSize = 2, activity)
+}
+
+@Composable
+private fun FlexiblePerformanceTable(
+    trackingValueFormatterList: List<TrackUnitFormatter<*>>,
+    chunkSize: Int,
+    activity: BaseActivityModel,
+    textHozAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    statsFontSize: TextUnit = 20.sp,
+) {
+    trackingValueFormatterList.chunked(chunkSize).forEach { chunk ->
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(AppDimensions.rowVerticalPadding)
+                .padding(
+                    vertical = AppDimensions.rowVerticalPadding,
+                    horizontal = AppDimensions.screenHorizontalPadding
+                )
         ) {
-            this.PerformedResultCellComposable(activity, iterator.next())
-            if (iterator.hasNext()) {
-                this.PerformedResultCellComposable(activity, iterator.next())
+            chunk.forEach { formatter ->
+                PerformedResultCellComposable(activity, formatter, textHozAlignment, statsFontSize)
             }
         }
         Divider(
@@ -60,6 +74,24 @@ internal fun PerformanceTableComposable(
                 .height(0.5.dp)
         )
     }
+}
+
+@Composable
+internal fun CompactPerformanceTableComposable(
+    activity: BaseActivityModel,
+    trackUnitFormatterSet: TrackUnitFormatterSet,
+    modifier: Modifier = Modifier,
+) = Column(modifier) {
+    val trackingValueFormatterList = remember(trackUnitFormatterSet) {
+        createActivityFormatterList(activity, trackUnitFormatterSet)
+    }
+    FlexiblePerformanceTable(
+        trackingValueFormatterList,
+        chunkSize = 3,
+        activity,
+        textHozAlignment = Alignment.Start,
+        statsFontSize = 18.sp
+    )
 }
 
 private fun createActivityFormatterList(
@@ -84,8 +116,10 @@ private fun createActivityFormatterList(
 private fun RowScope.PerformedResultCellComposable(
     activity: BaseActivityModel,
     trackUnitFormatter: TrackUnitFormatter<*>,
+    hozAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    statsFontSize: TextUnit = 20.sp,
 ) = Column(
-    horizontalAlignment = Alignment.CenterHorizontally,
+    horizontalAlignment = hozAlignment,
     modifier = Modifier.weight(weight = 1f)
 ) {
     Text(
@@ -98,16 +132,46 @@ private fun RowScope.PerformedResultCellComposable(
     val unit = trackUnitFormatter.getUnit(LocalContext.current)
     Text(
         text = "$formattedValue $unit",
-        style = MaterialTheme.typography.h6,
+        fontSize = statsFontSize,
         textAlign = TextAlign.Center,
-        fontWeight = FontWeight.Normal
+        fontWeight = FontWeight.Normal,
+        style = MaterialTheme.typography.h6
     )
 }
 
 @Preview(showBackground = true, backgroundColor = 0xffffff)
 @Composable
-private fun PreviewTable() {
-    PerformanceTableComposable(
+private fun Preview_WideTable() {
+    WidePerformanceTableComposable(
+        activity = RunningActivityModel(
+            activityData = ActivityDataModel(
+                id = "id",
+                activityType = ActivityType.Running,
+                name = "Evening Run",
+                routeImage = "http://example.com",
+                placeIdentifier = null,
+                startTime = System.currentTimeMillis(),
+                endTime = 2000L,
+                duration = 1000L,
+                distance = 100.0,
+                encodedPolyline = "",
+                athleteInfo = AthleteInfo(
+                    userId = "id",
+                    userName = "Khoi Nguyen",
+                    userAvatar = "userAvatar"
+                )
+            ),
+            pace = 1.0,
+            cadence = 160
+        ),
+        UnitFormatterSetFactory.createUnitFormatterSet(MeasureSystem.Default)
+    )
+}
+
+@Preview(showBackground = true, backgroundColor = 0xffffff)
+@Composable
+private fun Preview_CompactTable() {
+    CompactPerformanceTableComposable(
         activity = RunningActivityModel(
             activityData = ActivityDataModel(
                 id = "id",

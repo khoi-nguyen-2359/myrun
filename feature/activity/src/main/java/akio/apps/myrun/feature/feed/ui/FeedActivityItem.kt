@@ -9,6 +9,7 @@ import akio.apps.myrun.data.user.api.model.MeasureSystem
 import akio.apps.myrun.data.user.api.model.UserProfile
 import akio.apps.myrun.domain.activity.ActivityDateTimeFormatter
 import akio.apps.myrun.feature.activity.R
+import akio.apps.myrun.feature.activitydetail.ui.CompactPerformanceTableComposable
 import akio.apps.myrun.feature.core.measurement.TrackUnitFormatter
 import akio.apps.myrun.feature.core.measurement.TrackUnitFormatterSet
 import akio.apps.myrun.feature.core.measurement.UnitFormatterSetFactory
@@ -95,9 +96,14 @@ private fun FeedActivityItem(
             onClickExportFile,
             onClickUserAvatar
         )
-        Spacer(modifier = Modifier.height(8.dp))
         if (feedActivity.isMapVisible) {
+            Spacer(modifier = Modifier.height(8.dp))
             ActivityRouteImageBox(activity, preferredSystem, uiState)
+        } else {
+            val trackValueFormatterSet = remember(preferredSystem) {
+                UnitFormatterSetFactory.createUnitFormatterSet(preferredSystem)
+            }
+            CompactPerformanceTableComposable(activity, trackValueFormatterSet)
         }
     }
 }
@@ -319,7 +325,7 @@ private fun ActivityTimeAndPlaceText(
 
 @Preview
 @Composable
-private fun PreviewFeedActivityItem() {
+private fun PreviewFeedActivityItem_VisibleMap() {
     FeedActivityItem(
         rememberUiState(),
         feedActivity = FeedActivity(
@@ -347,6 +353,46 @@ private fun PreviewFeedActivityItem() {
             locationName = "activityDisplayPlaceName",
             formattedStartTime = ActivityDateTimeFormatter.Result.FullDateTime("dd/mm/yyyy"),
             isMapVisible = true,
+            isCurrentUser = false
+        ),
+        onClickActivityAction = { },
+        onClickExportFile = { },
+        onClickUserAvatar = { },
+        userProfile = UserProfile(accountId = "userId", photo = null),
+        preferredSystem = MeasureSystem.Default
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewFeedActivityItem_InvisibleMap() {
+    FeedActivityItem(
+        rememberUiState(),
+        feedActivity = FeedActivity(
+            activityData = RunningActivityModel(
+                activityData = ActivityDataModel(
+                    id = "id",
+                    activityType = ActivityType.Running,
+                    name = "Evening Run",
+                    routeImage = "http://example.com",
+                    placeIdentifier = null,
+                    startTime = System.currentTimeMillis(),
+                    endTime = 2000L,
+                    duration = 1000L,
+                    distance = 1234.0,
+                    encodedPolyline = "",
+                    athleteInfo = AthleteInfo(
+                        userId = "id",
+                        userName = "Khoi Nguyen",
+                        userAvatar = "userAvatar"
+                    )
+                ),
+                pace = 12.34,
+                cadence = 160
+            ),
+            locationName = "activityDisplayPlaceName",
+            formattedStartTime = ActivityDateTimeFormatter.Result.FullDateTime("dd/mm/yyyy"),
+            isMapVisible = false,
             isCurrentUser = false
         ),
         onClickActivityAction = { },

@@ -165,7 +165,7 @@ private fun ActivityDetailDataContainer(
             ActivityRouteImage(screenState.activityData) {
                 navigateToActivityMap(context, screenState.activityData.encodedPolyline)
             }
-            PerformanceTableComposable(screenState.activityData, trackValueFormatterPreference)
+            WidePerformanceTableComposable(screenState.activityData, trackValueFormatterPreference)
             if (screenState.runSplits.isNotEmpty()) {
                 RunSplitsTable(
                     screenState.runSplits,
