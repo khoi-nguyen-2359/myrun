@@ -619,8 +619,7 @@ class RouteTrackingActivity(
 
     @SuppressLint("MissingPermission", "PotentialBehaviorOverride")
     private fun initMapView(map: GoogleMap) {
-        this.mapView = map
-        map.apply {
+        this.mapView = map.apply {
             setMaxZoomPreference(MAX_MAP_ZOOM_LEVEL)
             setOnCameraIdleListener {
                 hasMapCameraBeenIdled = true
@@ -634,12 +633,9 @@ class RouteTrackingActivity(
             }
             setOnMarkerClickListener { true } // avoid camera movement on marker click event
             isMyLocationEnabled = true
-            setMapStyle(
-                MapStyleOptions.loadRawResourceStyle(
-                    this@RouteTrackingActivity,
-                    R.raw.google_map_styles
-                )
-            )
+            isBuildingsEnabled = false
+            isIndoorEnabled = false
+            isTrafficEnabled = false
             uiSettings.apply {
                 isMyLocationButtonEnabled = false
                 setAllGesturesEnabled(true)
@@ -650,6 +646,18 @@ class RouteTrackingActivity(
                 isTiltGesturesEnabled = false
             }
         }
+
+        loadMapStyles()
+    }
+
+    private fun loadMapStyles() = lifecycleScope.launch {
+        val stylesContent = withContext(Dispatchers.IO) {
+            val stylesContentStream = resources.openRawResource(R.raw.google_map_styles)
+            stylesContentStream.reader().use {
+                it.readText()
+            }
+        }
+        mapView.setMapStyle(MapStyleOptions(stylesContent))
     }
 
     override fun onActivityTypeSelected(activityType: ActivityType) {
