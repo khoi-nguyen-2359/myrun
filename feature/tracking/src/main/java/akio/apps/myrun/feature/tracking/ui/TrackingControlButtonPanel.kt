@@ -159,19 +159,19 @@ enum class TrackingControlButtonType(
 ) {
     Start(
         label = R.string.action_start,
-        color = Color(0xff00c853)
+        color = AppColors.available
     ),
     Pause(
         label = R.string.action_pause,
-        color = Color(0xffb71c1c)
+        color = AppColors.destructive
     ),
     Resume(
         label = R.string.action_resume,
-        color = Start.color
+        color = AppColors.available
     ),
     Stop(
         label = R.string.action_stop,
-        color = Pause.color
+        color = AppColors.destructive
     ),
 }
 
