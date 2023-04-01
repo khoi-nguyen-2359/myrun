@@ -114,6 +114,8 @@ dependencies {
     implementation platform(libs.firebase.bom)
     implementation(libs.bundles.firebase.data)
     implementation(libs.firebase.perf.ktx)
+    implementation(libs.firebase.appcheck)
+    implementation(libs.firebase.appcheck.debug)
 
     implementation(libs.googleplaces)   // to init place sdk in application class
 
