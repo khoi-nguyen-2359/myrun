@@ -296,6 +296,7 @@ class RouteTrackingService : Service() {
             .setSmallIcon(R.drawable.ic_run_circle)
             .setContentIntent(pendingIntent)
             .setOnlyAlertOnce(true)
+            .setOngoing(true)
             .build()
 
         startForeground(NOTIF_ID_TRACKING, notification)
