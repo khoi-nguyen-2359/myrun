@@ -167,9 +167,6 @@ class RouteTrackingService : Service() {
         if (processedLocations.isEmpty()) {
             return@withContext
         }
-        Timber.tag(LOG_TAG_LOCATION).d(
-            "[RouteTrackingService] Location processed: ${processedLocations.size}"
-        )
         routeTrackingLocationRepository.insert(
             mapLocationUpdateToActivityLocation(processedLocations)
         )

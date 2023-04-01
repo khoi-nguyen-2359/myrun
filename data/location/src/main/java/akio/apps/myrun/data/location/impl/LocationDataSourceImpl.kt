@@ -80,8 +80,9 @@ class LocationDataSourceImpl @Inject constructor(
 
     private fun LocationRequestConfig.toGmsLocationRequest(): LocationRequest =
         LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, updateInterval)
-            .setMinUpdateIntervalMillis(fastestUpdateInterval)
-            .setMinUpdateDistanceMeters(smallestDisplacement)
+            .setMinUpdateIntervalMillis(minUpdateInterval)
+            .setMinUpdateDistanceMeters(minUpdateDistance)
+            .setMaxUpdateDelayMillis(maxUpdateInterval)
             .build()
 
     private fun AndroidLocation.toLocation(): Location =

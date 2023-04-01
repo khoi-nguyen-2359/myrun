@@ -35,7 +35,7 @@ fun LocationUpdateConfiguration(
         singleLine = true
     )
     TextField(
-        label = { Text("Fastest update interval") },
+        label = { Text("Min update interval") },
         value = config.fastestUpdateInterval,
         onValueChange = { value -> onValueChanged(config.copy(fastestUpdateInterval = value)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -43,7 +43,15 @@ fun LocationUpdateConfiguration(
         singleLine = true
     )
     TextField(
-        label = { Text("Smallest displacement") },
+        label = { Text("Max update interval") },
+        value = config.maxUpdateInterval,
+        onValueChange = { value -> onValueChanged(config.copy(maxUpdateInterval = value)) },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        maxLines = 1,
+        singleLine = true
+    )
+    TextField(
+        label = { Text("Min update distance") },
         value = config.smallestDisplacement,
         onValueChange = { value -> onValueChanged(config.copy(smallestDisplacement = value)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

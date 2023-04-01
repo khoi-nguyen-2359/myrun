@@ -295,7 +295,9 @@ class RouteTrackingActivity(
 
     private var startPointMarker: Marker? = null
     private fun onTrackingLocationUpdate(batch: List<ActivityLocation>) {
-        Timber.tag(LOG_TAG_LOCATION).d("onTrackingLocationUpdate: ${batch.size}")
+        Timber.tag(LOG_TAG_LOCATION).d(
+            "[RouteTrackingActivity] onTrackingLocationUpdate: ${batch.size}"
+        )
         addStartPointMarkerIfNotAdded(batch)
         drawTrackingLocationUpdate(batch)
         moveMapCameraOnTrackingLocationUpdate(batch)

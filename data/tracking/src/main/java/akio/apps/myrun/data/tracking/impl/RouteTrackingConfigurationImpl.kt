@@ -37,17 +37,20 @@ class RouteTrackingConfigurationImpl @Inject constructor(
         prefDataStore.data.map { data ->
             LocationRequestConfig(
                 updateInterval = data[LOCATION_UPDATE_INTERVAL_KEY] ?: LOCATION_UPDATE_INTERVAL,
-                fastestUpdateInterval = data[LOCATION_FASTEST_UPDATE_INTERVAL_KEY]
-                    ?: LOCATION_FASTEST_UPDATE_INTERVAL,
-                smallestDisplacement = data[LOCATION_SMALLEST_DISPLACEMENT] ?: SMALLEST_DISPLACEMENT
+                minUpdateInterval = data[LOCATION_FASTEST_UPDATE_INTERVAL_KEY]
+                    ?: LOCATION_MIN_UPDATE_INTERVAL,
+                minUpdateDistance = data[LOCATION_SMALLEST_DISPLACEMENT] ?: MIN_UPDATE_DISTANCE,
+                maxUpdateInterval = data[LOCATION_MAX_UPDATE_INTERVAL_KEY]
+                    ?: LOCATION_MAX_UPDATE_INTERVAL
             )
         }
 
     override suspend fun setLocationRequestConfiguration(config: LocationRequestConfig) {
         prefDataStore.edit { data ->
             data[LOCATION_UPDATE_INTERVAL_KEY] = config.updateInterval
-            data[LOCATION_FASTEST_UPDATE_INTERVAL_KEY] = config.fastestUpdateInterval
-            data[LOCATION_SMALLEST_DISPLACEMENT] = config.smallestDisplacement
+            data[LOCATION_FASTEST_UPDATE_INTERVAL_KEY] = config.minUpdateInterval
+            data[LOCATION_SMALLEST_DISPLACEMENT] = config.minUpdateDistance
+            data[LOCATION_MAX_UPDATE_INTERVAL_KEY] = config.maxUpdateInterval
         }
     }
 
@@ -67,8 +70,9 @@ class RouteTrackingConfigurationImpl @Inject constructor(
 
     companion object {
         private const val LOCATION_UPDATE_INTERVAL = 2000L
-        private const val LOCATION_FASTEST_UPDATE_INTERVAL = 100L
-        private const val SMALLEST_DISPLACEMENT = 1f
+        private const val LOCATION_MIN_UPDATE_INTERVAL = 100L
+        private const val LOCATION_MAX_UPDATE_INTERVAL = 6000L
+        private const val MIN_UPDATE_DISTANCE = 1f
         private const val AVG_ACCUM_ENABLED = true
         private const val SPEED_FILTER_ENABLED = false
 
@@ -78,6 +82,8 @@ class RouteTrackingConfigurationImpl @Inject constructor(
             longPreferencesKey("LOCATION_FASTEST_UPDATE_INTERVAL_KEY")
         private val LOCATION_SMALLEST_DISPLACEMENT =
             floatPreferencesKey("LOCATION_SMALLEST_DISPLACEMENT")
+        private val LOCATION_MAX_UPDATE_INTERVAL_KEY =
+            longPreferencesKey("LOCATION_MAX_UPDATE_INTERVAL_KEY")
         private val LOCATION_SPEED_FILTER_ENABLED =
             booleanPreferencesKey("LOCATION_SPEED_FILTER_ENABLED")
         private val LOCATION_AVG_ACCUMULATION_ENABLED =
