@@ -156,7 +156,7 @@ class RouteTrackingService : Service() {
         if (locationProcessingConfig.isAvgAccumulatorEnabled) {
             Timber.d("avg location accumulator, interval=${locationRequest.updateInterval}")
             locationProcessors.addProcessor(
-                AverageLocationAccumulator(locationRequest.updateInterval)
+                AverageLocationAccumulator(locationRequest.maxUpdateInterval)
             )
         }
     }

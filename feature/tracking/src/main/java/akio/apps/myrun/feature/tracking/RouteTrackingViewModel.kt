@@ -62,7 +62,6 @@ internal class RouteTrackingViewModel @Inject constructor(
         locationUpdateFlow.replayCache.lastOrNull()?.lastOrNull()
             ?: locationUpdateFlow.first { it.isNotEmpty() }.first()
 
-    private val _trackingLocationBatch = mutableListOf<ActivityLocation>()
     private val _trackingLocationUpdateValue = MutableStateFlow<List<ActivityLocation>>(emptyList())
     val trackingLocationUpdateValue: StateFlow<List<ActivityLocation>> =
         _trackingLocationUpdateValue
@@ -157,12 +156,7 @@ internal class RouteTrackingViewModel @Inject constructor(
         if (batch.isNotEmpty()) {
             Timber.tag(LOG_TAG_LOCATION)
                 .d("[RouteTrackingViewModel] notifyLatestDataUpdate: ${batch.size}")
-            _trackingLocationBatch.addAll(batch)
-            if (_trackingLocationBatch.size >= LOCATION_BATCH_THRESHOLD) {
-                Timber.d("deliver location batch size=${_trackingLocationBatch.size}")
-                _trackingLocationUpdateValue.value = buildList { addAll(_trackingLocationBatch) }
-                _trackingLocationBatch.clear()
-            }
+            _trackingLocationUpdateValue.value = buildList { addAll(batch) }
             processedLocationCount += batch.size
         }
     }
@@ -211,6 +205,5 @@ internal class RouteTrackingViewModel @Inject constructor(
 
     companion object {
         const val TRACKING_TIMER_PERIOD = 1000L
-        private const val LOCATION_BATCH_THRESHOLD = 2
     }
 }

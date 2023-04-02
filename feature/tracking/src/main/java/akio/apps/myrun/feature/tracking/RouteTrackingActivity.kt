@@ -92,7 +92,6 @@ class RouteTrackingActivity(
     }
 
     private var routePolyline: Polyline? = null
-    private var drawnLocationCount: Int = 0
 
     /**
      * LatLngBounds that is used for map camera to zoom into the whole route.
@@ -298,23 +297,21 @@ class RouteTrackingActivity(
         Timber.tag(LOG_TAG_LOCATION).d(
             "[RouteTrackingActivity] onTrackingLocationUpdate: ${batch.size}"
         )
-        addStartPointMarkerIfNotAdded(batch)
         drawTrackingLocationUpdate(batch)
         moveMapCameraOnTrackingLocationUpdate(batch)
     }
 
-    private fun addStartPointMarkerIfNotAdded(batch: List<ActivityLocation>) {
-        if (startPointMarker != null || batch.isEmpty()) {
+    private suspend fun addStartPointMarkerIfNotAdded() {
+        if (startPointMarker != null) {
             return
         }
-        val startPointLocation = batch.first()
-        val startMarkerBitmap = createDrawableBitmap(
-            context = this,
-            drawableResId = R.drawable.ic_start_marker
-        )
+        val lastLocation = routeTrackingViewModel.getLastLocation()
+        val startMarkerBitmap = withContext(Dispatchers.Default) {
+            createDrawableBitmap(context = this@RouteTrackingActivity, R.drawable.ic_start_marker)
+        }
         if (startMarkerBitmap != null) {
             val startMarker = MarkerOptions()
-                .position(startPointLocation.toGmsLatLng())
+                .position(lastLocation.toGmsLatLng())
                 .icon(BitmapDescriptorFactory.fromBitmap(startMarkerBitmap))
                 .anchor(0.5f, 0.5f)
             startPointMarker = mapView.addMarker(startMarker)
@@ -357,28 +354,39 @@ class RouteTrackingActivity(
         return Size(mapWidth, (mapWidth / routeImageRatio).toInt())
     }
 
+    /**
+     * Keep a batch of location update up to a threshold before drawing the batch on the map.
+     * This accumulation is to have enough points for bsplines converting.
+     */
+    private val locationUpdateBatch: MutableList<ActivityLocation> = mutableListOf()
     private fun drawTrackingLocationUpdate(batch: List<ActivityLocation>) {
-        routePolyline?.let { currentPolyline ->
-            // This method will take a copy of the points, so further mutations to points will have
+        locationUpdateBatch.addAll(batch)
+        if (routePolyline == null &&
+            locationUpdateBatch.size >= LOCATION_UPDATE_FIRST_BATCH_THRESHOLD
+        ) {
+            val polyline = PolylineOptions()
+                .addAll(convertToBSpline(locationUpdateBatch.map { LatLng(it.latitude, it.longitude) }))
+                .jointType(JointType.ROUND)
+                .startCap(RoundCap())
+                .endCap(RoundCap())
+                .color(ContextCompat.getColor(this, R.color.route_tracking_polyline))
+                .width(3.dp2px)
+            routePolyline = mapView.addPolyline(polyline)
+            locationUpdateBatch.clear()
+        } else if (routePolyline != null &&
+            locationUpdateBatch.size >= LOCATION_UPDATE_BATCH_THRESHOLD
+        ) {
+            // This takes a copy of the points, so further mutations to points will have
             // no effect on this polyline.
-            val appendedPolypoints = currentPolyline.points.toMutableList()
+            val appendedPolypoints = routePolyline?.points?.toMutableList() ?: mutableListOf()
             appendedPolypoints.addAll(
-                convertToBSpline(appendedPolypoints.takeLast(2) + batch.map { it.toGmsLatLng() })
+                convertToBSpline(
+                    appendedPolypoints.takeLast(2) + locationUpdateBatch.map { it.toGmsLatLng() }
+                )
             )
-            currentPolyline.points = appendedPolypoints
+            routePolyline?.points = appendedPolypoints
+            locationUpdateBatch.clear()
         }
-            ?: run {
-                val polyline = PolylineOptions()
-                    .addAll(convertToBSpline(batch.map { LatLng(it.latitude, it.longitude) }))
-                    .jointType(JointType.ROUND)
-                    .startCap(RoundCap())
-                    .endCap(RoundCap())
-                    .color(ContextCompat.getColor(this, R.color.route_tracking_polyline))
-                    .width(3.dp2px)
-                routePolyline = mapView.addPolyline(polyline)
-            }
-
-        drawnLocationCount += batch.size
     }
 
     @Suppress("ktlint:max-line-length", "ktlint:op-spacing")
@@ -409,14 +417,8 @@ class RouteTrackingActivity(
                     (points[i - 2].longitude + 4 * points[i - 1].longitude + points[i].longitude) / 6
                 converted.add(
                     LatLng(
-                        ax * Math.pow(t + 0.1, 3.0) + bx * Math.pow(
-                            t + 0.1,
-                            2.0
-                        ) + cx * (t + 0.1) + dx,
-                        ay * Math.pow(t + 0.1, 3.0) + by * Math.pow(
-                            t + 0.1,
-                            2.0
-                        ) + cy * (t + 0.1) + dy
+                        ax * Math.pow(t + 0.1, 3.0) + bx * Math.pow(t + 0.1, 2.0) + cx * (t + 0.1) + dx,
+                        ay * Math.pow(t + 0.1, 3.0) + by * Math.pow(t + 0.1, 2.0) + cy * (t + 0.1) + dy
                     )
                 )
 
@@ -482,6 +484,7 @@ class RouteTrackingActivity(
     private fun startRouteTracking() {
         ContextCompat.startForegroundService(this, RouteTrackingService.startIntent(this))
         routeTrackingViewModel.startDataUpdates()
+        lifecycleScope.launch { addStartPointMarkerIfNotAdded() }
     }
 
     private fun pauseRouteTracking() {
@@ -691,6 +694,10 @@ class RouteTrackingActivity(
         private const val DEFAULT_CAMERA_ANIMATE_DURATION = 1000
         private val MAP_LATLNG_BOUND_PADDING = 30.dp2px.toInt()
         private const val MAX_MAP_ZOOM_LEVEL = 19f // 20 = buildings level
+
+        private const val LOCATION_UPDATE_FIRST_BATCH_THRESHOLD = 4
+        private const val LOCATION_UPDATE_BATCH_THRESHOLD = 2
+
         const val ROUTE_IMAGE_RATIO = 1.7f
 
         const val RC_LOCATION_SERVICE = 1
