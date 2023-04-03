@@ -69,11 +69,11 @@ class RouteTrackingConfigurationImpl @Inject constructor(
         }
 
     companion object {
-        private const val LOCATION_UPDATE_INTERVAL = 2000L
-        private const val LOCATION_MIN_UPDATE_INTERVAL = 100L
-        private const val LOCATION_MAX_UPDATE_INTERVAL = 6000L
+        private const val LOCATION_UPDATE_INTERVAL = 1000L
+        private const val LOCATION_MIN_UPDATE_INTERVAL = 500L
+        private const val LOCATION_MAX_UPDATE_INTERVAL = 1000L
         private const val MIN_UPDATE_DISTANCE = 1f
-        private const val AVG_ACCUM_ENABLED = true
+        private const val AVG_ACCUM_ENABLED = false
         private const val SPEED_FILTER_ENABLED = false
 
         private val LOCATION_UPDATE_INTERVAL_KEY =
