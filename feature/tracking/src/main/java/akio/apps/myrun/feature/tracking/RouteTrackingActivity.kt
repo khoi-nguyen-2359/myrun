@@ -365,7 +365,9 @@ class RouteTrackingActivity(
             locationUpdateBatch.size >= LOCATION_UPDATE_FIRST_BATCH_THRESHOLD
         ) {
             val polyline = PolylineOptions()
-                .addAll(convertToBSpline(locationUpdateBatch.map { LatLng(it.latitude, it.longitude) }))
+                .addAll(
+                    convertToBSpline(locationUpdateBatch.map { LatLng(it.latitude, it.longitude) })
+                )
                 .jointType(JointType.ROUND)
                 .startCap(RoundCap())
                 .endCap(RoundCap())
