@@ -4,6 +4,7 @@ import akio.apps.myrun.R
 import akio.apps.myrun.data.activity.api.model.BaseActivityModel
 import akio.apps.myrun.feature.core.ktx.px2dp
 import akio.apps.myrun.feature.core.navigation.HomeTabNavDestination
+import akio.apps.myrun.feature.core.ui.AppColors
 import akio.apps.myrun.feature.core.ui.AppDimensions.AppBarHeight
 import akio.apps.myrun.feature.core.ui.AppDimensions.FabSize
 import akio.apps.myrun.feature.core.ui.AppTheme
@@ -37,8 +38,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.BarChart
-import androidx.compose.material.icons.rounded.DirectionsRun
 import androidx.compose.material.icons.rounded.Timeline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -221,12 +222,17 @@ private fun HomeFloatingActionButton(
     isTrackingStarted: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val fabIcon = if (isTrackingStarted) {
-        Icons.Rounded.DirectionsRun
+    val (fabIcon, bgColor) = if (isTrackingStarted) {
+        Icons.Rounded.ArrowForward to AppColors.available
     } else {
-        Icons.Rounded.Add
+        Icons.Rounded.Add to AppColors.secondary
     }
-    FloatingActionButton(onClick = onClick, modifier = modifier) {
+    FloatingActionButton(
+        onClick = onClick,
+        modifier = modifier,
+        backgroundColor = bgColor,
+        contentColor = AppColors.onSecondary
+    ) {
         Icon(
             imageVector = fabIcon,
             contentDescription = "Floating action button on bottom bar"

@@ -19,6 +19,10 @@ import androidx.work.Configuration
 import com.google.android.gms.maps.MapsInitializer
 import com.google.android.gms.maps.OnMapsSdkInitializedCallback
 import com.google.android.libraries.places.api.Places
+import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -55,6 +59,8 @@ class MyRunApp :
     override fun onCreate() {
         super<Application>.onCreate()
 
+        initFirebase()
+
         // create all notification channels at app startup.
         AppNotificationChannel.values().forEach { it.createChannelCompat(this) }
 
@@ -73,6 +79,18 @@ class MyRunApp :
         AppMigrationWorker.enqueue(this)
 
         MapsInitializer.initialize(this, MapsInitializer.Renderer.LATEST, this)
+    }
+
+    private fun initFirebase() {
+        FirebaseApp.initializeApp(/*context=*/this)
+        val firebaseAppCheck = FirebaseAppCheck.getInstance()
+        firebaseAppCheck.installAppCheckProviderFactory(
+            if (BuildConfig.DEBUG) {
+                DebugAppCheckProviderFactory.getInstance()
+            } else {
+                PlayIntegrityAppCheckProviderFactory.getInstance()
+            }
+        )
     }
 
     private fun initPlacesSdk() {

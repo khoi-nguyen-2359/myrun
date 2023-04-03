@@ -14,7 +14,9 @@ object AppColors {
     val secondary = Color(0xff5e92f3)
     val onSecondary = Color(0xffffffff)
     val onPrimary = Color(0xffffffff)
-    val black = Color(0x00000000)
+
+    val available = Color(0xff00c853)
+    val destructive = Color(0xffb71c1c)
 
     @Composable
     fun error() = MaterialTheme.colors.error

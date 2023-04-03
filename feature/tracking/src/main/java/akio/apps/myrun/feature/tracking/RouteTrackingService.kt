@@ -156,7 +156,7 @@ class RouteTrackingService : Service() {
         if (locationProcessingConfig.isAvgAccumulatorEnabled) {
             Timber.d("avg location accumulator, interval=${locationRequest.updateInterval}")
             locationProcessors.addProcessor(
-                AverageLocationAccumulator(locationRequest.updateInterval)
+                AverageLocationAccumulator(locationRequest.maxUpdateInterval)
             )
         }
     }
@@ -167,9 +167,6 @@ class RouteTrackingService : Service() {
         if (processedLocations.isEmpty()) {
             return@withContext
         }
-        Timber.tag(LOG_TAG_LOCATION).d(
-            "[RouteTrackingService] Location processed: ${processedLocations.size}"
-        )
         routeTrackingLocationRepository.insert(
             mapLocationUpdateToActivityLocation(processedLocations)
         )
@@ -296,6 +293,7 @@ class RouteTrackingService : Service() {
             .setSmallIcon(R.drawable.ic_run_circle)
             .setContentIntent(pendingIntent)
             .setOnlyAlertOnce(true)
+            .setOngoing(true)
             .build()
 
         startForeground(NOTIF_ID_TRACKING, notification)

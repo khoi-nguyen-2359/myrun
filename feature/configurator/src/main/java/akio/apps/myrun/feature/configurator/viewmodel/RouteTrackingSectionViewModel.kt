@@ -32,8 +32,9 @@ class RouteTrackingSectionViewModel @Inject constructor(
                 cachedLocationRequestConfig = locationRequestConfig
                 LocationUpdateConfiguration(
                     updateInterval = locationRequestConfig.updateInterval.toString(),
-                    fastestUpdateInterval = locationRequestConfig.fastestUpdateInterval.toString(),
-                    smallestDisplacement = locationRequestConfig.smallestDisplacement.toString(),
+                    fastestUpdateInterval = locationRequestConfig.minUpdateInterval.toString(),
+                    smallestDisplacement = locationRequestConfig.minUpdateDistance.toString(),
+                    maxUpdateInterval = locationRequestConfig.maxUpdateInterval.toString(),
                     isAvgAccumulationEnabled = locationProcessingConfig.isAvgAccumulatorEnabled,
                     isSpeedFilterEnabled = locationProcessingConfig.isSpeedFilterEnabled
                 )
@@ -54,10 +55,12 @@ class RouteTrackingSectionViewModel @Inject constructor(
         val updateLocationRequest = LocationRequestConfig(
             updateInterval = updateConfig.updateInterval.toLongOrNull()
                 ?: cachedLocationRequestConfig.updateInterval,
-            fastestUpdateInterval = updateConfig.fastestUpdateInterval.toLongOrNull()
-                ?: cachedLocationRequestConfig.fastestUpdateInterval,
-            smallestDisplacement = updateConfig.smallestDisplacement.toFloatOrNull()
-                ?: cachedLocationRequestConfig.smallestDisplacement
+            minUpdateInterval = updateConfig.fastestUpdateInterval.toLongOrNull()
+                ?: cachedLocationRequestConfig.minUpdateInterval,
+            minUpdateDistance = updateConfig.smallestDisplacement.toFloatOrNull()
+                ?: cachedLocationRequestConfig.minUpdateDistance,
+            maxUpdateInterval = updateConfig.maxUpdateInterval.toLongOrNull()
+                ?: cachedLocationRequestConfig.maxUpdateInterval
         )
         routeTrackingConfiguration.setLocationRequestConfiguration(updateLocationRequest)
 
@@ -73,6 +76,7 @@ class RouteTrackingSectionViewModel @Inject constructor(
         val updateInterval: String = "",
         val fastestUpdateInterval: String = "",
         val smallestDisplacement: String = "",
+        val maxUpdateInterval: String = "",
         val isAvgAccumulationEnabled: Boolean = false,
         val isSpeedFilterEnabled: Boolean = false,
     )
