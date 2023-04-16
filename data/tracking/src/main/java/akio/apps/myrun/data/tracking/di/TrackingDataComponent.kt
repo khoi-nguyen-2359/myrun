@@ -1,6 +1,7 @@
 package akio.apps.myrun.data.tracking.di
 
 import akio.apps.myrun.data.tracking.api.FitnessDataRepository
+import akio.apps.myrun.data.tracking.api.LocationPresentConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
@@ -19,6 +20,7 @@ interface TrackingDataComponent {
     fun routeTrackingLocationRepo(): RouteTrackingLocationRepository
     fun routeTrackingState(): RouteTrackingState
     fun fitnessDataRepo(): FitnessDataRepository
+    fun locationPresentConfig(): LocationPresentConfiguration
 
     @Component.Factory
     interface Factory {

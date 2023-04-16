@@ -3,6 +3,7 @@ package akio.apps.myrun.feature.configurator
 import akio.apps.myrun.feature.configurator.di.ConfiguratorComponent
 import akio.apps.myrun.feature.configurator.di.DaggerConfiguratorComponent
 import akio.apps.myrun.feature.configurator.ui.ConfiguratorScreen
+import akio.apps.myrun.feature.configurator.viewmodel.LocationPresentViewModel
 import akio.apps.myrun.feature.configurator.viewmodel.RouteTrackingSectionViewModel
 import akio.apps.myrun.feature.configurator.viewmodel.UserAuthenticationSectionViewModel
 import android.os.Bundle
@@ -19,6 +20,10 @@ class ConfiguratorActivity : AppCompatActivity() {
         configuratorComponent.routeTrackingSectionViewModel()
     }
 
+    private val locationPresentViewModel: LocationPresentViewModel by lazy {
+        configuratorComponent.locationPresentViewModel()
+    }
+
     private val userAuthSectionViewModel: UserAuthenticationSectionViewModel by lazy {
         configuratorComponent.userAuthenticationViewModel()
     }
@@ -28,6 +33,7 @@ class ConfiguratorActivity : AppCompatActivity() {
         setContent {
             ConfiguratorScreen(
                 routeTrackingViewModel,
+                locationPresentViewModel,
                 userAuthSectionViewModel
             )
         }

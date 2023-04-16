@@ -7,6 +7,7 @@ import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.LocationDataSource
 import akio.apps.myrun.data.location.api.model.Location
 import akio.apps.myrun.data.location.api.model.LocationRequestConfig
+import akio.apps.myrun.data.tracking.api.LocationPresentConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
@@ -35,6 +36,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -48,6 +50,7 @@ internal class RouteTrackingViewModel @Inject constructor(
     private val locationDataSource: LocationDataSource,
     private val routeTrackingConfiguration: RouteTrackingConfiguration,
     private val launchCatchingDelegate: LaunchCatchingDelegate,
+    private val locationPresentConfiguration: LocationPresentConfiguration,
     val currentUserPreferences: CurrentUserPreferences,
     @NamedIoDispatcher
     private val ioDispatcher: CoroutineDispatcher,
@@ -83,6 +86,10 @@ internal class RouteTrackingViewModel @Inject constructor(
         ActivityType.Running to R.string.activity_name_running,
         ActivityType.Cycling to R.string.activity_name_cycling
     )
+
+    val isBSplinesEnabledFlow: StateFlow<Boolean> =
+        locationPresentConfiguration.isBSplinesEnabledFlow()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = false)
 
     @OptIn(FlowPreview::class)
     val locationUpdateFlow: SharedFlow<List<Location>> =
