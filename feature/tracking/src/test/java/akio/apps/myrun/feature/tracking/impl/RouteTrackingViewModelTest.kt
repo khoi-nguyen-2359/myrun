@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.tracking.impl
 
 import akio.apps.myrun.data.location.api.LocationDataSource
+import akio.apps.myrun.data.tracking.api.LocationPresentConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingConfiguration
 import akio.apps.myrun.data.tracking.api.RouteTrackingLocationRepository
 import akio.apps.myrun.data.tracking.api.RouteTrackingState
@@ -40,6 +41,7 @@ class RouteTrackingViewModelTest {
     private lateinit var mockedLocationDataSource: LocationDataSource
     private lateinit var mockedRouteTrackingConfiguration: RouteTrackingConfiguration
     private lateinit var mockedCurrentUserPreferences: CurrentUserPreferences
+    private lateinit var mockedLocationPresentConfig: LocationPresentConfiguration
     private lateinit var testee: RouteTrackingViewModel
     private lateinit var testCoroutineDispatcher: TestDispatcher
 
@@ -53,6 +55,7 @@ class RouteTrackingViewModelTest {
         mockedLocationDataSource = mock()
         mockedRouteTrackingConfiguration = mock()
         mockedCurrentUserPreferences = mock()
+        mockedLocationPresentConfig = mock()
         testCoroutineDispatcher = UnconfinedTestDispatcher()
         Dispatchers.setMain(testCoroutineDispatcher)
     }
@@ -89,6 +92,7 @@ class RouteTrackingViewModelTest {
         mockedLocationDataSource,
         mockedRouteTrackingConfiguration,
         LaunchCatchingDelegateImpl(),
+        mockedLocationPresentConfig,
         mockedCurrentUserPreferences,
         testCoroutineDispatcher
     )
