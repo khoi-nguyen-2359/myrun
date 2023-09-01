@@ -99,7 +99,11 @@ class ActivityUploadWorker(appContext: Context, params: WorkerParameters) :
                 .build()
 
             val workRequest = OneTimeWorkRequestBuilder<ActivityUploadWorker>()
-                .setBackoffCriteria(BackoffPolicy.LINEAR, 1 /* backoffDelay */, TimeUnit.MINUTES)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    1 /* backoffDelay */,
+                    TimeUnit.MINUTES
+                )
                 .setConstraints(constraints)
                 .build()
             WorkManager.getInstance(context)

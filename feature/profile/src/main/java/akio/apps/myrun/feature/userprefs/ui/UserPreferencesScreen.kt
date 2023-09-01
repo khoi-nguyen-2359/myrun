@@ -283,8 +283,7 @@ private fun StravaLinkSwitch(
                 openStravaLinkActivity(context)
             UserPreferencesViewModel.StravaLinkState.Linked ->
                 isUnlinkAlertShowing = true
-            else -> { /* do nothing */
-            }
+            else -> { /* do nothing */ }
         }
     }
 
