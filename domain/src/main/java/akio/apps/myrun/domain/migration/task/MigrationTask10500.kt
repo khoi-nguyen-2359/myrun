@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.first
  */
 class MigrationTask10500 @Inject constructor(
     private val routeTrackingConfiguration: RouteTrackingConfiguration,
-) : MigrationTask(AppVersion.V1_5_0) {
+) : MigrationTask(AppVersion.V1050) {
     override suspend fun migrateInternal() {
         val locationProcessConfig = routeTrackingConfiguration.getLocationProcessingConfig().first()
         if (!locationProcessConfig.isSpeedFilterEnabled) {

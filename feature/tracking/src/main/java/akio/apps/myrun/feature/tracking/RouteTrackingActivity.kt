@@ -81,8 +81,12 @@ class RouteTrackingActivity(
 
     private val dialogDelegate by lazy { DialogDelegate(this) }
 
+    private val routeTrackingFeatureComponent by lazy {
+        DaggerRouteTrackingFeatureComponent.factory().create(application)
+    }
+
     private val routeTrackingViewModel: RouteTrackingViewModel by lazyViewModelProvider {
-        DaggerRouteTrackingFeatureComponent.factory().create(application).routeTrackingViewModel()
+        routeTrackingFeatureComponent.routeTrackingViewModel()
     }
 
     private lateinit var mapView: GoogleMap
@@ -137,8 +141,8 @@ class RouteTrackingActivity(
 
     /**
      * Runs required checks on this screen and exits if there's any missing conditions. Ex:
-     * check location permissions
-     * -> check location service availability
+     * 1. check location permissions
+     * 2. check location service availability
      * -> allow user to use this screen
      */
     private fun startRequiredChecks() = lifecycleScope.launch {
@@ -297,7 +301,7 @@ class RouteTrackingActivity(
         Timber.tag(LOG_TAG_LOCATION).d(
             "[RouteTrackingActivity] onTrackingLocationUpdate: ${batch.size}"
         )
-        drawTrackingLocationUpdate(batch)
+        lifecycleScope.launch { drawTrackingLocationUpdate(batch) }
         moveMapCameraOnTrackingLocationUpdate(batch)
     }
 
@@ -354,19 +358,28 @@ class RouteTrackingActivity(
         return Size(mapWidth, (mapWidth / routeImageRatio).toInt())
     }
 
+    private fun getPolylinePointsConverter(): suspend (List<LatLng>) -> List<LatLng> =
+        if (routeTrackingViewModel.isBSplinesEnabledFlow.value) {
+            ::convertToBSpline
+        } else {
+            { it }
+        }
+
     /**
      * Keep a batch of location update up to a threshold before drawing the batch on the map.
      * This accumulation is to have enough points for bsplines converting.
      */
     private val locationUpdateBatch: MutableList<ActivityLocation> = mutableListOf()
-    private fun drawTrackingLocationUpdate(batch: List<ActivityLocation>) {
+    private suspend fun drawTrackingLocationUpdate(batch: List<ActivityLocation>) {
         locationUpdateBatch.addAll(batch)
         if (routePolyline == null &&
             locationUpdateBatch.size >= LOCATION_UPDATE_FIRST_BATCH_THRESHOLD
         ) {
             val polyline = PolylineOptions()
                 .addAll(
-                    convertToBSpline(locationUpdateBatch.map { LatLng(it.latitude, it.longitude) })
+                    getPolylinePointsConverter()(
+                        locationUpdateBatch.map { LatLng(it.latitude, it.longitude) }
+                    )
                 )
                 .jointType(JointType.ROUND)
                 .startCap(RoundCap())
@@ -381,22 +394,23 @@ class RouteTrackingActivity(
             // This takes a copy of the points, so further mutations to points will have
             // no effect on this polyline.
             val appendedPolypoints = routePolyline?.points?.toMutableList() ?: mutableListOf()
-            appendedPolypoints.addAll(
-                convertToBSpline(
-                    appendedPolypoints.takeLast(2) + locationUpdateBatch.map { it.toGmsLatLng() }
-                )
+            val appendingPoints = getPolylinePointsConverter()(
+                appendedPolypoints.takeLast(2) + locationUpdateBatch.map { it.toGmsLatLng() }
             )
+            appendedPolypoints.addAll(getPolylinePointsConverter()(appendingPoints))
             routePolyline?.points = appendedPolypoints
             locationUpdateBatch.clear()
         }
     }
 
     @Suppress("ktlint:max-line-length", "ktlint:op-spacing")
-    private fun convertToBSpline(points: List<LatLng>): List<LatLng> {
+    private suspend fun convertToBSpline(
+        points: List<LatLng>,
+    ): List<LatLng> = withContext(Dispatchers.Default) {
         if (points.size < 4) {
-            return points
+            return@withContext points
         }
-        return points.flatMapIndexed { i: Int, _ ->
+        return@withContext points.flatMapIndexed { i: Int, _ ->
             if (i < 2 || i > points.size - 2) {
                 return@flatMapIndexed emptyList()
             }

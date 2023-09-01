@@ -4,7 +4,7 @@ import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.model.Location
 import timber.log.Timber
 
-class LocationProcessorContainer : LocationProcessor {
+class LocationProcessorComposite : LocationProcessor {
     private val processorList: MutableList<LocationProcessor> = mutableListOf()
     fun addProcessor(locationProcessor: LocationProcessor) {
         processorList.add(locationProcessor)

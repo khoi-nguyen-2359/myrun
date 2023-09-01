@@ -33,6 +33,7 @@ internal class LocationServiceChecker(
                 .setMinUpdateIntervalMillis(requestEntity.minUpdateInterval)
                 .setMinUpdateDistanceMeters(requestEntity.minUpdateDistance)
                 .setMaxUpdateDelayMillis(requestEntity.maxUpdateInterval)
+                .setWaitForAccurateLocation(false)
                 .build()
         val settingsReq = LocationSettingsRequest.Builder()
             .addAllLocationRequests(listOf(sampleRequest))

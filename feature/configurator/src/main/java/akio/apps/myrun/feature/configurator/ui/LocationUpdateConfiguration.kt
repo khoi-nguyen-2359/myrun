@@ -14,6 +14,7 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 
@@ -23,7 +24,8 @@ fun LocationUpdateConfiguration(
     onValueChanged: (RouteTrackingSectionViewModel.LocationUpdateConfiguration) -> Unit,
 ) {
     Text(
-        text = "Location Update:",
+        text = "Location Update",
+        fontWeight = FontWeight.Bold,
         modifier = Modifier.padding(vertical = SectionSpacing.elementVerticalPadding)
     )
     TextField(

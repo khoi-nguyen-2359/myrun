@@ -82,7 +82,7 @@ class MyRunApp :
     }
 
     private fun initFirebase() {
-        FirebaseApp.initializeApp(/*context=*/this)
+        FirebaseApp.initializeApp(this/* context */)
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         firebaseAppCheck.installAppCheckProviderFactory(
             if (BuildConfig.DEBUG) {

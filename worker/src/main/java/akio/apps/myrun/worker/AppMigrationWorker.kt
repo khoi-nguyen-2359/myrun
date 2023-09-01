@@ -28,10 +28,9 @@ class AppMigrationWorker(
 
     override suspend fun doWork(): Result {
         @Suppress("DEPRECATION")
-        val currVersionCode = applicationContext.packageManager.getPackageInfo(
-            applicationContext.packageName,
-            0 /* flags */
-        ).versionCode
+        val currVersionCode =
+            applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0)
+                .versionCode
         val isSucceeded = appMigrationUsecase.migrate(AppVersion(currVersionCode))
         return if (isSucceeded) {
             Result.success()

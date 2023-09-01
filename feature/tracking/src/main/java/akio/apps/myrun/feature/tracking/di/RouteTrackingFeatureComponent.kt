@@ -13,6 +13,7 @@ import akio.apps.myrun.data.location.di.LocationDataComponent
 import akio.apps.myrun.data.tracking.di.DaggerTrackingDataComponent
 import akio.apps.myrun.data.tracking.di.TrackingDataComponent
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingModule
+import akio.apps.myrun.feature.tracking.RouteTrackingActivity
 import akio.apps.myrun.feature.tracking.RouteTrackingService
 import akio.apps.myrun.feature.tracking.RouteTrackingViewModel
 import android.app.Application
@@ -37,6 +38,7 @@ internal interface RouteTrackingFeatureComponent {
     fun routeTrackingViewModel(): RouteTrackingViewModel
 
     fun inject(service: RouteTrackingService)
+    fun inject(routeTrackingActivity: RouteTrackingActivity)
 
     @Component.Factory
     interface Factory {

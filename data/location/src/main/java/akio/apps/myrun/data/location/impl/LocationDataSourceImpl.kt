@@ -83,6 +83,7 @@ class LocationDataSourceImpl @Inject constructor(
             .setMinUpdateIntervalMillis(minUpdateInterval)
             .setMinUpdateDistanceMeters(minUpdateDistance)
             .setMaxUpdateDelayMillis(maxUpdateInterval)
+            .setWaitForAccurateLocation(false)
             .build()
 
     private fun AndroidLocation.toLocation(): Location =

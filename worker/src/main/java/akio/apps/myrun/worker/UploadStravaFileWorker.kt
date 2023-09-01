@@ -53,7 +53,11 @@ class UploadStravaFileWorker(
 
             val workRequest = OneTimeWorkRequestBuilder<UploadStravaFileWorker>()
                 .setConstraints(constraints)
-                .setBackoffCriteria(BackoffPolicy.LINEAR, 1 /* backoffDelay */, TimeUnit.HOURS)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    1 /* backoffDelay */,
+                    TimeUnit.HOURS
+                )
                 .build()
             WorkManager.getInstance(context)
                 .enqueueUniqueWork(UNIQUE_WORK_NAME, ExistingWorkPolicy.KEEP, workRequest)

@@ -6,6 +6,7 @@ import akio.apps.myrun.data.authentication.di.AuthenticationDataComponent
 import akio.apps.myrun.data.authentication.di.DaggerAuthenticationDataComponent
 import akio.apps.myrun.data.tracking.di.DaggerTrackingDataComponent
 import akio.apps.myrun.data.tracking.di.TrackingDataComponent
+import akio.apps.myrun.feature.configurator.viewmodel.LocationPresentViewModel
 import akio.apps.myrun.feature.configurator.viewmodel.RouteTrackingSectionViewModel
 import akio.apps.myrun.feature.configurator.viewmodel.UserAuthenticationSectionViewModel
 import android.app.Application
@@ -22,6 +23,7 @@ import dagger.Component
 )
 interface ConfiguratorComponent {
     fun routeTrackingSectionViewModel(): RouteTrackingSectionViewModel
+    fun locationPresentViewModel(): LocationPresentViewModel
     fun userAuthenticationViewModel(): UserAuthenticationSectionViewModel
 
     @Component.Factory

@@ -1,7 +1,6 @@
 package akio.apps.myrun.feature.tracking
 
 import akio.apps.myrun.data.activity.api.model.ActivityLocation
-import akio.apps.myrun.data.activity.api.model.ActivityType
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.data.location.api.LOG_TAG_LOCATION
 import akio.apps.myrun.data.location.api.LocationDataSource
@@ -16,7 +15,7 @@ import akio.apps.myrun.data.tracking.api.model.RouteTrackingStatus
 import akio.apps.myrun.data.user.api.CurrentUserPreferences
 import akio.apps.myrun.domain.tracking.ClearRouteTrackingStateUsecase
 import akio.apps.myrun.domain.tracking.locationprocessor.AverageLocationAccumulator
-import akio.apps.myrun.domain.tracking.locationprocessor.LocationProcessorContainer
+import akio.apps.myrun.domain.tracking.locationprocessor.LocationProcessorComposite
 import akio.apps.myrun.domain.tracking.locationprocessor.LocationSpeedFilter
 import akio.apps.myrun.feature.core.AppNotificationChannel
 import akio.apps.myrun.feature.core.flowTimer
@@ -76,8 +75,6 @@ class RouteTrackingService : Service() {
     @Inject
     lateinit var currentUserPreferences: CurrentUserPreferences
 
-    private var locationProcessors: LocationProcessorContainer = LocationProcessorContainer()
-
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         Timber.e(exception)
     }
@@ -129,41 +126,40 @@ class RouteTrackingService : Service() {
         val locationRequest = routeTrackingConfiguration.getLocationRequestConfig()
         val locationProcessingConfig =
             routeTrackingConfiguration.getLocationProcessingConfig().first()
-        configureLocationProcessors(locationRequest, locationProcessingConfig)
+        val processorComposite = createLocationProcessors(locationRequest, locationProcessingConfig)
 
         locationUpdateJob?.cancel()
         locationUpdateJob = locationDataSource.getLocationUpdate(locationRequest)
-            .onEach(::onLocationUpdate)
+            .onEach { onLocationUpdate(it, processorComposite) }
             .launchIn(mainScope)
     }
 
-    private suspend fun configureLocationProcessors(
+    private suspend fun createLocationProcessors(
         locationRequest: LocationRequestConfig,
         locationProcessingConfig: LocationProcessingConfig,
-    ) {
+    ): LocationProcessorComposite {
         Timber.d("requestLocationUpdates with processors")
-        locationProcessors.clear()
+        val processors = LocationProcessorComposite()
         if (locationProcessingConfig.isSpeedFilterEnabled) {
-            val maxValidSpeed = when (routeTrackingState.getActivityType()) {
-                ActivityType.Running -> LocationSpeedFilter.RUNNING_MAX_SPEED
-                ActivityType.Cycling -> LocationSpeedFilter.CYCLING_MAX_SPEED
-                else -> Double.MAX_VALUE
-            }
-            Timber.d("add speed filter, maxValidSpeed=$maxValidSpeed")
-            locationProcessors.addProcessor(LocationSpeedFilter(maxValidSpeed))
+            val activityType = routeTrackingState.getActivityType()
+            processors.addProcessor(LocationSpeedFilter.createInstance(activityType))
+            Timber.d("add speed filter for $activityType")
         }
 
         if (locationProcessingConfig.isAvgAccumulatorEnabled) {
             Timber.d("avg location accumulator, interval=${locationRequest.updateInterval}")
-            locationProcessors.addProcessor(
-                AverageLocationAccumulator(locationRequest.maxUpdateInterval)
-            )
+            processors.addProcessor(AverageLocationAccumulator(locationRequest.maxUpdateInterval))
         }
+
+        return processors
     }
 
-    private suspend fun onLocationUpdate(locations: List<Location>) = withContext(ioDispatcher) {
+    private suspend fun onLocationUpdate(
+        locations: List<Location>,
+        processorContainer: LocationProcessorComposite,
+    ) = withContext(ioDispatcher) {
         Timber.tag(LOG_TAG_LOCATION).d("[RouteTrackingService] onLocationUpdate: ${locations.size}")
-        val processedLocations: List<Location> = locationProcessors.process(locations)
+        val processedLocations: List<Location> = processorContainer.process(locations)
         if (processedLocations.isEmpty()) {
             return@withContext
         }

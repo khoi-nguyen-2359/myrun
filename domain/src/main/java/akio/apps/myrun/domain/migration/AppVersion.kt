@@ -1,8 +1,8 @@
 package akio.apps.myrun.domain.migration
 
 open class AppVersion(private val appVersionInt: Int) {
-    object V1_5_0 : AppVersion(1_05_00)
-    object V1_6_0 : AppVersion(1_06_00)
+    object V1050 : AppVersion(1_05_00)
+    object V1060 : AppVersion(1_06_00)
 
     /**
      * Human-friendly app version string.

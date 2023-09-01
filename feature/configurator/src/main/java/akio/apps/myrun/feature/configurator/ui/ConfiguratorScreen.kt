@@ -1,5 +1,6 @@
 package akio.apps.myrun.feature.configurator.ui
 
+import akio.apps.myrun.feature.configurator.viewmodel.LocationPresentViewModel
 import akio.apps.myrun.feature.configurator.viewmodel.RouteTrackingSectionViewModel
 import akio.apps.myrun.feature.configurator.viewmodel.UserAuthenticationSectionViewModel
 import akio.apps.myrun.feature.core.ui.AppTheme
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ConfiguratorScreen(
     routeTrackingViewModel: RouteTrackingSectionViewModel,
+    locationPresentationViewModel: LocationPresentViewModel,
     userAuthenticationSectionSectionViewModel: UserAuthenticationSectionViewModel,
 ) =
     AppTheme {
@@ -25,7 +27,7 @@ fun ConfiguratorScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            RouteTrackingSection(routeTrackingViewModel)
+            RouteTrackingSection(routeTrackingViewModel, locationPresentationViewModel)
             UserAuthenticationSection(userAuthenticationSectionSectionViewModel)
         }
     }
@@ -36,18 +38,23 @@ object SectionSpacing {
 }
 
 @Composable
-private fun RouteTrackingSection(routeTrackingViewModel: RouteTrackingSectionViewModel) =
-    ExpandableSection(label = "Route Tracking") {
-        val locationUpdateConfig by routeTrackingViewModel.locationUpdateConfigFlow
-            .collectAsState(RouteTrackingSectionViewModel.LocationUpdateConfiguration())
-        LocationUpdateConfiguration(
-            locationUpdateConfig,
-            onValueChanged = { value ->
-                routeTrackingViewModel.onLocationUpdateConfigurationChanged(value)
-            }
-        )
-        ApplyButton { routeTrackingViewModel.applyChanges() }
-    }
+private fun RouteTrackingSection(
+    routeTrackingViewModel: RouteTrackingSectionViewModel,
+    locationPresentationViewModel: LocationPresentViewModel,
+) = ExpandableSection(label = "Route Tracking") {
+    val locationUpdateConfig by routeTrackingViewModel.locationUpdateConfigFlow
+        .collectAsState(RouteTrackingSectionViewModel.LocationUpdateConfiguration())
+    LocationUpdateConfiguration(
+        locationUpdateConfig,
+        onValueChanged = { value ->
+            routeTrackingViewModel.onLocationUpdateConfigurationChanged(value)
+        }
+    )
+    val isBSplinesEnabled by
+        locationPresentationViewModel.isBSplinesEnabledFlow.collectAsState(initial = false)
+    LocationPresentConfiguration(isBSplinesEnabled, locationPresentationViewModel::updateConfig)
+    ApplyButton { routeTrackingViewModel.applyChanges() }
+}
 
 @Composable
 private fun ApplyButton(onClick: () -> Unit) = Button(
