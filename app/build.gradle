@@ -27,15 +27,20 @@ android {
         rc {
             setRoot 'src/release'
         }
+
+        pub {
+            java.srcDirs = ['src/release/java']
+        }
     }
 
     signingConfigs {
-        debug {
+        pub {
             storeFile file('./keystores/myrun_debug_key_v2.jks')
             storePassword 'myrundebugkeyv2'
             keyAlias = 'myrun_debug_key_v2'
             keyPassword 'myrundebugkeyv2'
         }
+
         rc {
             def path = project.localProps['signing.rc.path'] ?: "invalid"
             def password = project.localProps['signing.rc.password']
@@ -63,8 +68,11 @@ android {
 
         debug {
             applicationIdSuffix ".debug"
+        }
 
-            signingConfig signingConfigs.debug
+        pub {
+            debuggable true
+            signingConfig signingConfigs.pub
         }
     }
 

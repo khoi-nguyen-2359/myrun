@@ -16,8 +16,8 @@ android {
     }
 
     buildTypes {
-        rc {
-        }
+        rc { }
+        pub { }
     }
 
     buildFeatures {
