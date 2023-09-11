@@ -19,7 +19,7 @@ jobs:
         with:
           java-version: 11
 
-      - name: Generate Files for Publishing
+      - name: Generate Files for Release Bundle
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.RELEASE_GOOGLE_SERVICES_JSON_BASE64 }}
           REGISTRATION_CREDENTIALS: ${{ secrets.RELEASE_REGISTRATION_CREDENTIALS_BASE64 }}
@@ -36,13 +36,9 @@ jobs:
           mkdir -p data/location/src/release/res/values/
           echo "$LOCATION_CREDENTIALS" > loc_credentials.xml.b64
           base64 -d -i loc_credentials.xml.b64 > data/location/src/release/res/values/credentials.xml
-          touch local.properties & echo -e "mapbox.downloads.token=$MAPBOX_DOWNLOAD_TOKEN" >> local.properties
-          echo '${{ secrets.PUBLISH_SERVICE_ACCOUNT }}' > service_account.json
-          mkdir distribution
-          touch distribution/whatsnew-en-US
-          echo "${{ github.event.release.body }}" > distribution/whatsnew-en-US
+          echo -e "mapbox.downloads.token=$MAPBOX_DOWNLOAD_TOKEN" > local.properties
 
-      - name: Bundle Release
+      - name: Make Release Bundle
         run: bash ./gradlew bundleRelease
 
       - name: Sign the Release Bundle
@@ -54,14 +50,17 @@ jobs:
           keyStorePassword: ${{ secrets.RELEASE_PLAY_STORE_UPLOAD_KEY_PWD }}
           keyPassword: ${{ secrets.RELEASE_PLAY_STORE_UPLOAD_KEY_PWD }}
 
+      - name: Generate Files for Publishing
+        run: echo "${{ github.event.release.body }}" > whatsnew-en-US
+
       - name: Publish to Beta
-        uses: r0adkll/upload-google-play@v1.0.15
+        uses: r0adkll/upload-google-play@v1.1.1
         with:
-          serviceAccountJson: service_account.json
+          serviceAccountJsonPlainText: ${{ secrets.PUBLISH_SERVICE_ACCOUNT }}
           packageName: akio.apps.myrun
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
           track: beta
-          whatsNewDirectory: distribution
+          whatsNewDirectory: .
           mappingFile: app/build/outputs/mapping/release/mapping.txt
 
   post_publish:
