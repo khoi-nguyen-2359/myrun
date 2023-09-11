@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "859766660533",
+    "project_id": "myrun-public",
+    "storage_bucket": "myrun-public.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859766660533:android:1d9a79d7510c668a658dfc",
+        "android_client_info": {
+          "package_name": "akio.apps.myrun"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "859766660533-h4o6hrsikvm0if7v4ecgfai24fkbakmg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "akio.apps.myrun",
+            "certificate_hash": "d9bf38c30293e9567ac9d2b26bebf694836f5c28"
+          }
+        },
+        {
+          "client_id": "859766660533-1nb1cc0fcd7tkjb7q4hjladhtn63sghp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqD5ZvmraE6IeFyqbV9BE5OFZYbdw9ykY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "859766660533-1nb1cc0fcd7tkjb7q4hjladhtn63sghp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

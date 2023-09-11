@@ -21,11 +21,15 @@ android {
         rc {
             setRoot 'src/release'
         }
+
+        pub {
+            java.srcDirs = ['src/release/java']
+        }
     }
 
     buildTypes {
-        rc {
-        }
+        rc { }
+        pub { }
     }
 
     compileOptions {
