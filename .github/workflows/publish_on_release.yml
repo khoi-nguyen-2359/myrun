@@ -69,7 +69,7 @@ jobs:
     needs: publish
     steps:
       - name: Checkout
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
 
       - name: Create PR
         run: gh pr create --title "Auto-pull ${{ github.ref }} into develop" --label "Auto-PR" --base develop
