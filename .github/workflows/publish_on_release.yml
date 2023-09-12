@@ -72,6 +72,6 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Create PR
-        run: gh pr create --title "Auto-pull ${{ github.ref }} into develop" --label "Auto-PR" --base develop
+        run: gh pr create --title "Auto PR to merge ${{ github.ref }} into develop" --body "Auto PR to merge ${{ github.ref }} into develop" --label "Auto-PR" --base develop
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
