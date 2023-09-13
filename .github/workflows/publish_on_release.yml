@@ -74,8 +74,9 @@ jobs:
       - name: Create PR
         run: |
           tag_name="${{ github.ref_name }}"
-          ver_nums=(${tag_name//;/ })
+          ver_nums=(${tag_name//./ })
           release_branch="release/${ver_nums[0]}.${ver_nums[1]}"
-          gh pr create --title "Auto PR to merge ${{ github.ref }} into develop" --body "Auto PR to merge ${{ github.ref }} into develop" --label "Auto-PR" --base develop --head ${release_branch}
+          pr_content="Auto PR to merge ${release_branch} into develop"
+          gh pr create --title "${pr_content}" --body "${pr_content}" --label "Auto-PR" --base develop --head "${release_branch}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
