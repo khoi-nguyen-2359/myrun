@@ -1,6 +1,7 @@
 package akio.apps.myrun.feature.core.permissions
 
 import android.Manifest
+import android.os.Build
 
 object AppPermissions {
     const val preciseLocationPermission: String = Manifest.permission.ACCESS_FINE_LOCATION
@@ -14,5 +15,10 @@ object AppPermissions {
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.CAMERA
     )
-    val pickPhotoPermissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+    val pickPhotoPermissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE) +
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+        } else {
+            emptyArray()
+        }
 }

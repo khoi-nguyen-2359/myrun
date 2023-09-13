@@ -7,7 +7,7 @@ on:
 
 jobs:
   lint:
-    name: Lint
+    name: Develop PR - Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
@@ -22,7 +22,7 @@ jobs:
         shell: bash
 
   build:
-    name: Build & Test
+    name: Develop PR - Unit Test
     runs-on: ubuntu-latest
 
     steps:
