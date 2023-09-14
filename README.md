@@ -13,7 +13,7 @@ Status
 ---
 [![Develop](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/develop_pr_checks.yml/badge.svg)](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/develop_pr_checks.yml)
 [![Release](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/release_pr_checks.yml/badge.svg)](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/release_pr_checks.yml)
-[![Publish](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/publish.yml/badge.svg)](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/publish.yml)
+[![Publish](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/publish_on_release.yml/badge.svg)](https://github.com/khoi-nguyen-2359/myrun/actions/workflows/publish_on_release.yml)
 
 Highlights
 ---
