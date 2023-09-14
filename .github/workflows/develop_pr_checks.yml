@@ -36,7 +36,7 @@ jobs:
       - name: Make local.properties
         env:
           MAPBOX_DEV_TOKEN: sk.eyJ1IjoiYWtob2k5MCIsImEiOiJjbGUwMjNxa3AwNDEzM3Fyejh6b2ZrNGw3In0.mSo-Z30lqYW4K2Ime0z62g
-        run: echo -e "mapbox.downloads.token=$MAPBOX_DOWNLOAD_TOKEN" > local.properties
+        run: echo -e "mapbox.downloads.token=$MAPBOX_DEV_TOKEN" > local.properties
 
       - name: Build Debug APK
         run: bash ./gradlew :app:assembleDebug
