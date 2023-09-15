@@ -20,7 +20,7 @@ jobs:
             exit 1
           fi
           parts=(${tag_name//./ })
-          partsJson="[${parts[0]},${parts[1]},${parts[2]}]"
+          partsJson="[\"${parts[0]}\",\"${parts[1]}\",\"${parts[2]}\"]"
           echo "version_nums=${partsJson}" >> $GITHUB_OUTPUT
 
 #  publish:
@@ -94,6 +94,7 @@ jobs:
       - name: Create PR
         run: |
           ver_nums=${{ fromJson(needs.pre_publish.outputs.version_nums) }}
+          echo "Version: ${ver_nums}"
           release_branch="release/${ver_nums[0]}.${ver_nums[1]}"
           pr_content="Auto PR to merge ${release_branch} into develop"
           gh pr create --title "${pr_content}" --body "${pr_content}" --label "Auto-PR" --base develop --head "${release_branch}"
