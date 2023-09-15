@@ -6,22 +6,16 @@ on:
 
 jobs:
   pre_publish:
-    name: Check Version Name
+    name: Validate Version Name
     runs-on: ubuntu-latest
-    outputs:
-      version_nums: ${{ steps.parse.outputs.version_nums }}
     steps:
-      - id: parse
-        shell: bash
+      - shell: bash
         run: |
           tag_name="${{ github.ref_name }}"
           if ! [[ $tag_name =~ ^(([0-9]{1}|[1-9]{1}[0-9]{1}))\.(([0-9]{1}|[1-9]{1}[0-9]{1}))\.(([0-9]{1}|[1-9]{1}[0-9]{1}))$ ]]; then
             echo "Wrong format tag name ${tag_name}"
             exit 1
           fi
-          parts=(${tag_name//./ })
-          partsJson="[\"${parts[0]}\",\"${parts[1]}\",\"${parts[2]}\"]"
-          echo "version_nums=${partsJson}" >> $GITHUB_OUTPUT
 
 #  publish:
 #    name: Upload Release Bundle
@@ -85,16 +79,15 @@ jobs:
   post_publish:
     name: Post Publish
     runs-on: ubuntu-latest
-#    needs: publish
-    needs: pre_publish
+    needs: publish
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Create PR
         run: |
-          ver_nums=${{ fromJson(needs.pre_publish.outputs.version_nums) }}
-          echo "Version: ${ver_nums}"
+          tag_name="${{ github.ref_name }}"
+          ver_nums=(${tag_name//./ })
           release_branch="release/${ver_nums[0]}.${ver_nums[1]}"
           pr_content="Auto PR to merge ${release_branch} into develop"
           gh pr create --title "${pr_content}" --body "${pr_content}" --label "Auto-PR" --base develop --head "${release_branch}"
