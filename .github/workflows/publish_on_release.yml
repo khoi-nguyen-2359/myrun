@@ -5,76 +5,94 @@ on:
     types: [published]
 
 jobs:
-  publish:
-    name: Upload Release Bundle
+  pre_publish:
+    name: Check Version Name
+    id: pre_publish
     runs-on: ubuntu-latest
-    environment: production
+    run: |
+      tag_name="${{ github.ref_name }}"
+      ver_nums=(${tag_name//./ })
+      if ! [[ ${#ver_nums[@]} -eq 3 ]]; then
+        exit 1
+      fi
+      for p in ${ver_nums[@]}; do
+        if ! [[ p =~ '^\d{1}|[1-9]\d{1}$' ]]; then
+          exit 1
+        fi
+      done
+      echo "parts=ver_nums" >> $GITHUB_OUTPUT
 
-    steps:
-      - name: Checkout The Code
-        uses: actions/checkout@v2
-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-
-      - name: Generate Files for Release Bundle
-        env:
-          GOOGLE_SERVICES_JSON: ${{ secrets.RELEASE_GOOGLE_SERVICES_JSON_BASE64 }}
-          REGISTRATION_CREDENTIALS: ${{ secrets.RELEASE_REGISTRATION_CREDENTIALS_BASE64 }}
-          LOCATION_CREDENTIALS: ${{ secrets.RELEASE_LOCATION_CREDENTIALS_BASE64 }}
-          MAPBOX_DOWNLOAD_TOKEN: ${{ secrets.MAPBOX_SDK_DOWNLOAD_TOKEN }}
-
-        run: |
-          mkdir -p app/src/release/
-          echo "$GOOGLE_SERVICES_JSON" > google-services.json.b64
-          base64 -d -i google-services.json.b64 > app/src/release/google-services.json
-          mkdir -p feature/registration/src/release/res/values/
-          echo "$REGISTRATION_CREDENTIALS" > reg_credentials.xml.b64
-          base64 -d -i reg_credentials.xml.b64 > feature/registration/src/release/res/values/credentials.xml
-          mkdir -p data/location/src/release/res/values/
-          echo "$LOCATION_CREDENTIALS" > loc_credentials.xml.b64
-          base64 -d -i loc_credentials.xml.b64 > data/location/src/release/res/values/credentials.xml
-          echo -e "mapbox.downloads.token=$MAPBOX_DOWNLOAD_TOKEN" > local.properties
-
-      - name: Make Release Bundle
-        run: bash ./gradlew bundleRelease
-
-      - name: Sign the Release Bundle
-        uses: r0adkll/sign-android-release@v1
-        with:
-          releaseDirectory: app/build/outputs/bundle/release
-          signingKeyBase64: ${{ secrets.RELEASE_PLAY_STORE_UPLOAD_KEY }}
-          alias: ${{ secrets.RELEASE_PLAY_STORE_UPLOAD_KEY_ALIAS }}
-          keyStorePassword: ${{ secrets.RELEASE_PLAY_STORE_UPLOAD_KEY_PWD }}
-          keyPassword: ${{ secrets.RELEASE_PLAY_STORE_UPLOAD_KEY_PWD }}
-
-      - name: Generate Files for Publishing
-        run: echo "${{ github.event.release.body }}" > whatsnew-en-US
-
-      - name: Publish to Beta
-        uses: r0adkll/upload-google-play@v1.1.1
-        with:
-          serviceAccountJsonPlainText: ${{ secrets.PUBLISH_SERVICE_ACCOUNT }}
-          packageName: akio.apps.myrun
-          releaseFiles: app/build/outputs/bundle/release/app-release.aab
-          track: beta
-          whatsNewDirectory: .
-          mappingFile: app/build/outputs/mapping/release/mapping.txt
+#  publish:
+#    name: Upload Release Bundle
+#    runs-on: ubuntu-latest
+#    needs: pre_publish
+#    environment: production
+#
+#    steps:
+#      - name: Checkout The Code
+#        uses: actions/checkout@v2
+#
+#      - name: Set up JDK 11
+#        uses: actions/setup-java@v1
+#        with:
+#          java-version: 11
+#
+#      - name: Generate Files for Release Bundle
+#        env:
+#          GOOGLE_SERVICES_JSON: ${{ secrets.RELEASE_GOOGLE_SERVICES_JSON_BASE64 }}
+#          REGISTRATION_CREDENTIALS: ${{ secrets.RELEASE_REGISTRATION_CREDENTIALS_BASE64 }}
+#          LOCATION_CREDENTIALS: ${{ secrets.RELEASE_LOCATION_CREDENTIALS_BASE64 }}
+#          MAPBOX_DOWNLOAD_TOKEN: ${{ secrets.MAPBOX_SDK_DOWNLOAD_TOKEN }}
+#
+#        run: |
+#          mkdir -p app/src/release/
+#          echo "$GOOGLE_SERVICES_JSON" > google-services.json.b64
+#          base64 -d -i google-services.json.b64 > app/src/release/google-services.json
+#          mkdir -p feature/registration/src/release/res/values/
+#          echo "$REGISTRATION_CREDENTIALS" > reg_credentials.xml.b64
+#          base64 -d -i reg_credentials.xml.b64 > feature/registration/src/release/res/values/credentials.xml
+#          mkdir -p data/location/src/release/res/values/
+#          echo "$LOCATION_CREDENTIALS" > loc_credentials.xml.b64
+#          base64 -d -i loc_credentials.xml.b64 > data/location/src/release/res/values/credentials.xml
+#          echo -e "mapbox.downloads.token=$MAPBOX_DOWNLOAD_TOKEN" > local.properties
+#
+#      - name: Make Release Bundle
+#        run: bash ./gradlew bundleRelease
+#
+#      - name: Sign the Release Bundle
+#        uses: r0adkll/sign-android-release@v1
+#        with:
+#          releaseDirectory: app/build/outputs/bundle/release
+#          signingKeyBase64: ${{ secrets.RELEASE_PLAY_STORE_UPLOAD_KEY }}
+#          alias: ${{ secrets.RELEASE_PLAY_STORE_UPLOAD_KEY_ALIAS }}
+#          keyStorePassword: ${{ secrets.RELEASE_PLAY_STORE_UPLOAD_KEY_PWD }}
+#          keyPassword: ${{ secrets.RELEASE_PLAY_STORE_UPLOAD_KEY_PWD }}
+#
+#      - name: Generate Files for Publishing
+#        run: echo "${{ github.event.release.body }}" > whatsnew-en-US
+#
+#      - name: Publish to Beta
+#        uses: r0adkll/upload-google-play@v1.1.1
+#        with:
+#          serviceAccountJsonPlainText: ${{ secrets.PUBLISH_SERVICE_ACCOUNT }}
+#          packageName: akio.apps.myrun
+#          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+#          track: beta
+#          whatsNewDirectory: .
+#          mappingFile: app/build/outputs/mapping/release/mapping.txt
 
   post_publish:
     name: Post Publish
     runs-on: ubuntu-latest
-    needs: publish
+#    needs: publish
+    needs: pre_publish
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Create PR
         run: |
-          tag_name="${{ github.ref_name }}"
-          ver_nums=(${tag_name//./ })
+          ver_nums=${{ needs.pre_publish.outputs.parts }}
           release_branch="release/${ver_nums[0]}.${ver_nums[1]}"
           pr_content="Auto PR to merge ${release_branch} into develop"
           gh pr create --title "${pr_content}" --body "${pr_content}" --label "Auto-PR" --base develop --head "${release_branch}"
