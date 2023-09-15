@@ -21,7 +21,7 @@ jobs:
           fi
           for p in ${ver_nums[@]}; do
             if ! [[ $p =~ '^\d{1}|[1-9]\d{1}$' ]]; then
-              echo "Wrong format tag name ${tag_name}"
+              echo "Wrong format tag name ${p} in ${tag_name}"
               exit 1
             fi
           done
