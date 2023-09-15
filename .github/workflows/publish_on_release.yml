@@ -7,7 +7,6 @@ on:
 jobs:
   pre_publish:
     name: Check Version Name
-    id: pre_publish
     runs-on: ubuntu-latest
     outputs:
       parts: ${{ steps.parse.outputs.parts }}
