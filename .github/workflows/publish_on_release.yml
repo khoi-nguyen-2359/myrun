@@ -9,18 +9,22 @@ jobs:
     name: Check Version Name
     id: pre_publish
     runs-on: ubuntu-latest
-    run: |
-      tag_name="${{ github.ref_name }}"
-      ver_nums=(${tag_name//./ })
-      if ! [[ ${#ver_nums[@]} -eq 3 ]]; then
-        exit 1
-      fi
-      for p in ${ver_nums[@]}; do
-        if ! [[ p =~ '^\d{1}|[1-9]\d{1}$' ]]; then
-          exit 1
-        fi
-      done
-      echo "parts=ver_nums" >> $GITHUB_OUTPUT
+    outputs:
+      parts: ${{ steps.parse.outputs.parts }}
+    steps:
+      - id: parse
+        run: |
+          tag_name="${{ github.ref_name }}"
+          ver_nums=(${tag_name//./ })
+          if ! [[ ${#ver_nums[@]} -eq 3 ]]; then
+            exit 1
+          fi
+          for p in ${ver_nums[@]}; do
+            if ! [[ p =~ '^\d{1}|[1-9]\d{1}$' ]]; then
+              exit 1
+            fi
+          done
+          echo "parts=ver_nums" >> $GITHUB_OUTPUT
 
 #  publish:
 #    name: Upload Release Bundle
