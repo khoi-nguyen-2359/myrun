@@ -12,6 +12,7 @@ jobs:
       version_nums: ${{ steps.parse.outputs.version_nums }}
     steps:
       - id: parse
+        shell: bash
         run: |
           tag_name="${{ github.ref_name }}"
           if ! [[ $tag_name =~ ^(([0-9]{1}|[1-9]{1}[0-9]{1}))\.(([0-9]{1}|[1-9]{1}[0-9]{1}))\.(([0-9]{1}|[1-9]{1}[0-9]{1}))$ ]]; then
@@ -19,7 +20,7 @@ jobs:
             exit 1
           fi
           parts=(${tag_name//./ })
-          partsJson="[" + parts[0] + "," + parts[1] + "," + parts[2] + "]"
+          partsJson="[${parts[0]},${parts[1]},${parts[2]}]"
           echo "version_nums=${partsJson}" >> $GITHUB_OUTPUT
 
 #  publish:
