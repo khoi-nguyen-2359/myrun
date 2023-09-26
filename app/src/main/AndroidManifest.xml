@@ -56,21 +56,15 @@
             android:exported="false" />
 
         <activity
-            android:name=".feature.splash.SplashActivity"
+            android:name=".feature.main.MainActivity"
             android:theme="@style/AppTheme.SplashScreen"
             android:screenOrientation="portrait"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".feature.main.MainActivity"
-            android:theme="@style/AppTheme.SemiTransparentSystemBars"
-            android:screenOrientation="portrait"
-            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.gms.version"

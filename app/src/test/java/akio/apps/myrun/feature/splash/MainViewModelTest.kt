@@ -2,6 +2,7 @@ package akio.apps.myrun.feature.splash
 
 import akio.apps.myrun.data.authentication.api.UserAuthenticationState
 import akio.apps.myrun.feature.core.launchcatching.LaunchCatchingDelegate
+import akio.apps.myrun.feature.main.MainViewModel
 import app.cash.turbine.test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -12,9 +13,9 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class SplashViewModelTest {
+class MainViewModelTest {
 
-    private lateinit var splashViewModel: SplashViewModel
+    private lateinit var mainViewModel: MainViewModel
     private lateinit var mockedUserAuthState: UserAuthenticationState
     private lateinit var mockLaunchCatchingDelegate: LaunchCatchingDelegate
 
@@ -30,8 +31,8 @@ class SplashViewModelTest {
         whenever(mockedUserAuthState.isSignedIn())
             .then { throw userAuthStateError }
 
-        splashViewModel = SplashViewModel(mockedUserAuthState, mockLaunchCatchingDelegate)
-        splashViewModel.isUserSignedIn.test {
+        mainViewModel = MainViewModel(mockedUserAuthState, mockLaunchCatchingDelegate)
+        mainViewModel.isUserSignedIn.test {
             awaitComplete()
             verify(mockLaunchCatchingDelegate).setLaunchCatchingError(userAuthStateError)
         }

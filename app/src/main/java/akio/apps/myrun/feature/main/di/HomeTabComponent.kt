@@ -10,7 +10,7 @@ import dagger.Component
 
 @FeatureScope
 @Component(dependencies = [TrackingDataComponent::class])
-interface HomeTabFeatureComponent {
+interface HomeTabComponent {
     fun homeTabViewModel(): HomeTabViewModel
 
     @Component.Factory
@@ -19,6 +19,6 @@ interface HomeTabFeatureComponent {
             @BindsInstance application: Application,
             trackingDataComponent: TrackingDataComponent =
                 DaggerTrackingDataComponent.factory().create(application),
-        ): HomeTabFeatureComponent
+        ): HomeTabComponent
     }
 }
