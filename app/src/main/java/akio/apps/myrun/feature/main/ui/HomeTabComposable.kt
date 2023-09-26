@@ -11,7 +11,7 @@ import akio.apps.myrun.feature.core.ui.AppTheme
 import akio.apps.myrun.feature.core.ui.NavigationBarSpacer
 import akio.apps.myrun.feature.feed.ui.ActivityFeedComposable
 import akio.apps.myrun.feature.main.HomeTabViewModel
-import akio.apps.myrun.feature.main.di.DaggerHomeTabFeatureComponent
+import akio.apps.myrun.feature.main.di.DaggerHomeTabComponent
 import akio.apps.myrun.feature.userstats.ui.CurrentUserStatsComposable
 import android.app.Application
 import androidx.annotation.StringRes
@@ -147,7 +147,7 @@ fun HomeTabComposable(
 private fun rememberViewModel(): HomeTabViewModel {
     val application = LocalContext.current.applicationContext as Application
     return remember {
-        DaggerHomeTabFeatureComponent.factory().create(application).homeTabViewModel()
+        DaggerHomeTabComponent.factory().create(application).homeTabViewModel()
     }
 }
 
